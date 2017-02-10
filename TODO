@@ -1,0 +1,58 @@
+All libtorrent options
+-------------------------------
+*************
+bitswash
+*************
+- periodical save fast resume
+
+*************
+session
+*************
+- ip_filter
+- set_peer_proxy, set_web_seed_proxy, set_tracker_proxy, set_dht_proxy,
+- supports_sparse_files //check before enabling sparse file option
+
+*************
+torrent_info
+*************
+- create_torrent
+	- set_comment, set_piece_size, set_creator, set_hash, add_tracker, add_file,
+- add_tracker
+- remap_files // actually rename downloaded files
+- url_seeds //add url seed
+- trackers
+- set_priv (private torrent, wont distribute in DHT)
+
+*************
+torrent_handle
+*************
+- connect_peer
+- sequenced_download_threshold
+- peer_download_limit/peer_upload_limit
+- is_seed
+= set_tracker_login
+- trackers, replace_trackers
+- add_url_seed, remove_url_seed, url_seeds
+- save resume periodically
+- get_download_queue //draw the partial finished progressbar
+
+
+*************
+torrent_status
+*************
+- total_wanted, total_wanted_done, total done 
+
+*************
+peer_info
+*************
+- new flags : on_parole, optimistic_unchoke, seed
+
+*************
+session_settings
+*************
+
+
+************
+alert
+************
+- check for new alerts type

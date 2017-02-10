@@ -1,0 +1,2103 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: 0.0.6\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2008-06-05 12:00-0400\n"
+"PO-Revision-Date: 2007-11-19 20:10+0800\n"
+"Last-Translator: Osipov Igor <oival@yandex.ru>\n"
+"Language-Team: RUSSIAN <LL@li.org>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF8\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+#: ../src/mainframe.cpp:1229
+msgid " and data"
+msgstr " и данные"
+
+#: ../src/summarypane.cpp:396
+#, c-format
+msgid "%s"
+msgstr "%s"
+
+#: ../src/mainframe.cpp:545
+msgid "&About"
+msgstr "О программе(&A)"
+
+#: ../src/mainframe.cpp:433
+msgid "&File"
+msgstr "Файл(&F)"
+
+#: ../src/mainframe.cpp:448
+msgid "&Force Start Torrent\tCtrl+Alt+S"
+msgstr "Форсированный Запуск Торрента(&F)"
+
+#: ../src/mainframe.cpp:547
+msgid "&Help"
+msgstr "Помощь(&H)"
+
+#: ../src/mainframe.cpp:542
+msgid "&Help\tF1"
+msgstr "Помощь(&H)\tF1"
+
+#: ../src/swashtrayicon.cpp:100
+msgid "&Hide Taskbar Icon"
+msgstr "Свернуть в трей(&H)"
+
+#: ../src/mainframe.cpp:537
+msgid "&Language"
+msgstr "Язык(&L)"
+
+#: ../src/swashtrayicon.cpp:102 ../src/mainframe.cpp:420
+msgid "&Open Torrent\tCtrl+O"
+msgstr "Открыть Торрент(&O)\tCtrl+O"
+
+#: ../src/mainframe.cpp:539
+msgid "&Options"
+msgstr "Настройки(&O)"
+
+#: ../src/mainframe.cpp:451
+msgid "&Pause Torrent\tCtrl+P"
+msgstr "Пауза(&P)\tCtrl-P"
+
+#: ../src/mainframe.cpp:445
+msgid "&Queue Torrent\tCtrl+S"
+msgstr "Добавить Торрент в Очередь(&Q)\tCtrl+S"
+
+#: ../src/mainframe.cpp:458
+msgid "&Remove Torrent"
+msgstr "Удалить Торрент(&R)"
+
+#: ../src/swashtrayicon.cpp:99
+msgid "&Restore"
+msgstr "Развернуть(&R)"
+
+#: ../src/mainframe.cpp:486
+msgid "&Torrent"
+msgstr "Торрент(&T)"
+
+#: ../src/mainframe.cpp:442
+msgid "&View"
+msgstr "Вид(&V)"
+
+#: ../src/peerlistctrl.cpp:122
+msgid "(D)"
+msgstr "(D)"
+
+#: ../src/peerlistctrl.cpp:124
+msgid "(L)"
+msgstr "(L)"
+
+#: ../src/peerlistctrl.cpp:123
+msgid "(P)"
+msgstr "(P)"
+
+#: ../src/peerlistctrl.cpp:125
+msgid "(R)"
+msgstr "(R)"
+
+#: ../src/peerlistctrl.cpp:121
+msgid "(T)"
+msgstr "(T)"
+
+#: ../src/mainframe.cpp:545
+msgid "About"
+msgstr "О программе"
+
+#: ../src/extensionsetting.cpp:113
+msgid "Accept Unencrypted Peer"
+msgstr "Принимать шифрованные соединения"
+
+#: ../src/trackerlistctrl.cpp:139
+msgid "Add"
+msgstr ""
+
+#: ../src/trackerlistctrl.cpp:189
+msgid ""
+"Add tracker\n"
+"Please enter a new tracker address"
+msgstr ""
+
+#: ../src/bitswash.cpp:76
+msgid "Afghanistan"
+msgstr "Афганистан"
+
+#: ../src/bitswash.cpp:77
+msgid "Albania"
+msgstr "Албания"
+
+#: ../src/bitswash.cpp:78
+msgid "Algeria"
+msgstr "Алжир"
+
+#: ../src/mainframe.cpp:301
+msgid "All"
+msgstr "Все"
+
+#: ../src/bitswash.cpp:79
+msgid "American Samoa"
+msgstr "Американское Самоа"
+
+#: ../src/bitswash.cpp:80
+msgid "Andorra"
+msgstr "Андорра"
+
+#: ../src/bitswash.cpp:81
+msgid "Angola"
+msgstr "Ангола"
+
+#: ../src/bitswash.cpp:82
+msgid "Anguilla"
+msgstr "Ангилья"
+
+#: ../src/bitswash.cpp:83
+msgid "Antigua and Barbuda"
+msgstr "Антигуа и Барбуда"
+
+#: ../src/bitswash.cpp:84
+msgid "Argentina"
+msgstr "Аргентина"
+
+#: ../src/bitswash.cpp:85
+msgid "Armenia"
+msgstr "Армения"
+
+#: ../src/bitswash.cpp:86
+msgid "Aruba"
+msgstr "Аруба"
+
+#: ../src/bitswash.cpp:87
+msgid "Australia"
+msgstr "Австралия"
+
+#: ../src/bitswash.cpp:88
+msgid "Austria"
+msgstr "Австрия"
+
+#: ../src/bitswash.cpp:89
+msgid "Azerbaijan"
+msgstr "Азербайджан"
+
+#: ../src/bitswash.cpp:90
+msgid "Bahamas"
+msgstr "Багамы"
+
+#: ../src/bitswash.cpp:91
+msgid "Bahrain"
+msgstr "Бахрейн"
+
+#: ../src/bitswash.cpp:92
+msgid "Bangladesh"
+msgstr "Бангладеш"
+
+#: ../src/bitswash.cpp:93
+msgid "Barbados"
+msgstr "Барбадос"
+
+#: ../src/bitswash.cpp:94
+msgid "Belarus"
+msgstr "Беларусь"
+
+#: ../src/bitswash.cpp:95
+msgid "Belgium"
+msgstr "Бельгия"
+
+#: ../src/bitswash.cpp:96
+msgid "Belize"
+msgstr "Белиз"
+
+#: ../src/bitswash.cpp:97
+msgid "Benin"
+msgstr "Бенин"
+
+#: ../src/bitswash.cpp:98
+msgid "Bermuda"
+msgstr "Бермуды"
+
+#: ../src/bitswash.cpp:99
+msgid "Bhutan"
+msgstr "Бутан"
+
+#: ../src/mainframe.cpp:633
+msgid "Bitswash homepage"
+msgstr "Сайт Bitswash"
+
+#: ../src/bitswash.cpp:100
+msgid "Bolivia"
+msgstr "Боливия"
+
+#: ../src/bitswash.cpp:101
+msgid "Bosnia and Herzegovina"
+msgstr "Босния и Герцеговина"
+
+#: ../src/bitswash.cpp:102
+msgid "Botswana"
+msgstr "Ботсвана"
+
+#: ../src/bitswash.cpp:103
+msgid "Bouvet Island Bouvetoya"
+msgstr "Bouvet Island Bouvetoya"
+
+#: ../src/bitswash.cpp:104
+msgid "Brazil"
+msgstr "Бразилия"
+
+#: ../src/bitswash.cpp:105
+msgid "British Indian Ocean Territory Chagos Archipelago"
+msgstr "British Indian Ocean Territory Chagos Archipelago"
+
+#: ../src/bitswash.cpp:106
+msgid "British Virgin Islands"
+msgstr "British Virgin Islands"
+
+#: ../src/bitswash.cpp:107
+msgid "Brunei Darussalam"
+msgstr "Бруней"
+
+#: ../src/bitswash.cpp:108
+msgid "Bulgaria"
+msgstr "Болгария"
+
+#: ../src/bitswash.cpp:109
+msgid "Burkina Faso"
+msgstr "Буркина Фасо"
+
+#: ../src/bitswash.cpp:110
+msgid "Burundi"
+msgstr "Бурунди"
+
+#: ../src/bitswash.cpp:111
+msgid "Cambodia"
+msgstr "Cambodia"
+
+#: ../src/bitswash.cpp:112
+msgid "Cameroon"
+msgstr "Камерун"
+
+#: ../src/bitswash.cpp:113
+msgid "Canada"
+msgstr "Канада"
+
+#: ../src/bitswash.cpp:114
+msgid "Cape Verde"
+msgstr "Кабо-Верде"
+
+#: ../src/mainframe.cpp:298
+msgid "Categories"
+msgstr "Категории"
+
+#: ../src/bitswash.cpp:115
+msgid "Cayman Islands"
+msgstr "Каймановы Острова"
+
+#: ../src/bitswash.cpp:116
+msgid "Central African Republic"
+msgstr "Центральная Африканская Республика"
+
+#: ../src/bitswash.cpp:117
+msgid "Chad"
+msgstr "Чад"
+
+#: ../src/bitswash.cpp:118
+msgid "Chile"
+msgstr "Чили"
+
+#: ../src/bitswash.cpp:119
+msgid "China"
+msgstr "Китай"
+
+#: ../src/torrentsetting.cpp:318
+msgid "Choose default download directory"
+msgstr "Выберите директорию для сохранения по умолчанию"
+
+#: ../src/bitswash.cpp:120
+msgid "Christmas Island"
+msgstr "Christmas Island"
+
+#: ../src/loggerctrl.cpp:101
+msgid "Clear Log"
+msgstr "Очестить Лог"
+
+#: ../src/peerlistctrl.cpp:61 ../src/peerlistctrl.cpp:76
+msgid "Client"
+msgstr "Клиент"
+
+#: ../src/peerlistctrl.cpp:57 ../src/peerlistctrl.cpp:72
+msgid "Client IP address"
+msgstr "IP адрес клиента"
+
+#: ../src/peerlistctrl.cpp:58 ../src/peerlistctrl.cpp:73
+msgid "Client country"
+msgstr "Страна клиента"
+
+#: ../src/peerlistctrl.cpp:61 ../src/peerlistctrl.cpp:76
+msgid "Client name"
+msgstr "Название клиента"
+
+#: ../src/bitswash.cpp:121
+msgid "Cocos Keeling Islands"
+msgstr "Cocos Keeling Islands"
+
+#: ../src/bitswash.cpp:122
+msgid "Colombia"
+msgstr "Колумбия"
+
+#: ../src/summarypane.cpp:151 ../src/torrentproperty.cpp:99
+msgid "Comment:"
+msgstr "Комментарий:"
+
+#: ../src/bitswash.cpp:123
+msgid "Comoros"
+msgstr "Коморские острова"
+
+#: ../src/bittorrentsession.cpp:463 ../src/torrentsetting.cpp:164
+#: ../src/torrentsetting.cpp:193
+msgid "Compact"
+msgstr ""
+
+#: ../src/mainframe.cpp:1232
+msgid "Confirm Remove"
+msgstr "Подтвердите удаление"
+
+#: ../src/mainframe.cpp:1231
+msgid "Confirm remove "
+msgstr "Подтвердите удаление"
+
+#: ../src/trackerlistctrl.cpp:255
+#, fuzzy
+msgid "Confirm remove tracker"
+msgstr "Подтвердите удаление"
+
+#: ../src/trackerlistctrl.cpp:254
+#, fuzzy
+msgid "Confirm remove tracker "
+msgstr "Подтвердите удаление"
+
+#: ../src/bitswash.cpp:124 ../src/bitswash.cpp:125
+msgid "Congo"
+msgstr "Конго"
+
+#: ../src/peerlistctrl.cpp:157
+msgid "Connecting"
+msgstr "Соединение"
+
+#: ../src/swashsetting.cpp:72
+msgid "Connections"
+msgstr "Соединения"
+
+#: ../src/bitswash.cpp:126
+msgid "Cook Islands"
+msgstr "Острова Кука"
+
+#: ../src/torrentlistctrl.cpp:63 ../src/torrentlistctrl.cpp:80
+msgid "Copies"
+msgstr "Копии"
+
+#: ../src/bitswash.cpp:127
+msgid "Costa Rica"
+msgstr "Коста Рика"
+
+#: ../src/bitswash.cpp:128
+msgid "Cote D'Ivoire"
+msgstr "Кот-д’Ивуар"
+
+#: ../src/peerlistctrl.cpp:58 ../src/peerlistctrl.cpp:73
+msgid "Country"
+msgstr "Страна"
+
+#: ../src/mainframe.cpp:570
+msgid "Create Torrent"
+msgstr "Создать Торрент"
+
+#: ../src/mainframe.cpp:572
+msgid "Create torrent file"
+msgstr "Создать торрент-файл"
+
+#: ../src/mainframe.cpp:572
+msgid "Create torrent file to publish"
+msgstr "Создать торрент-файл для раздачи"
+
+#: ../src/loggerctrl.cpp:86 ../src/generalsetting.cpp:163
+msgid "Critical"
+msgstr "Критическое"
+
+#: ../src/bitswash.cpp:129
+msgid "Cuba"
+msgstr "Куба"
+
+#: ../src/bitswash.cpp:130
+msgid "Cyprus"
+msgstr "Кипр"
+
+#: ../src/bitswash.cpp:131
+msgid "Czech Republic"
+msgstr "Чехия"
+
+#: ../src/mainframe.cpp:1557
+msgid "DHT Nodes"
+msgstr "Сообщения DHT"
+
+#: ../src/summarypane.cpp:420
+#, c-format
+msgid "DHT Status: %s"
+msgstr "Статус DHT: %s"
+
+#: ../src/loggerctrl.cpp:86 ../src/generalsetting.cpp:163
+msgid "Debug"
+msgstr "Отладка"
+
+#: ../src/trackerlistctrl.cpp:141 ../src/mainframe.cpp:595
+msgid "Delete"
+msgstr "Удаление"
+
+#: ../src/mainframe.cpp:599
+msgid "Delete Data"
+msgstr "Удалить Файлы"
+
+#: ../src/mainframe.cpp:458
+msgid "Delete Torrent"
+msgstr "Удалить Торрент"
+
+#: ../src/mainframe.cpp:461
+msgid "Delete Torrent and Data"
+msgstr "Удалить Торрент и Файлы"
+
+#: ../src/mainframe.cpp:597
+msgid "Delete torrent file"
+msgstr "Удалить торрент-файл"
+
+#: ../src/mainframe.cpp:601
+msgid "Delete torrent file and downloaded data"
+msgstr "Удалить торрент-файл и скаченные файлы"
+
+#: ../src/bitswash.cpp:132
+msgid "Denmark"
+msgstr "Дания"
+
+#: ../src/bitswash.cpp:133
+msgid "Djibouti"
+msgstr "Джибути"
+
+#: ../src/filelistctrl.cpp:196
+msgid "Do not download"
+msgstr "Не загружать"
+
+#: ../src/torrentsetting.cpp:130
+msgid "Do not prompt for torrent settings."
+msgstr "Не запрашивать настройки торрента"
+
+#: ../src/bitswash.cpp:134
+msgid "Dominica"
+msgstr "Доминика"
+
+#: ../src/bitswash.cpp:135
+msgid "Dominican Republic"
+msgstr "Доминиканская Республика"
+
+#: ../src/filelistctrl.cpp:67 ../src/filelistctrl.cpp:75
+msgid "Download"
+msgstr "Загрузить"
+
+#: ../src/mainframe.cpp:1557
+msgid "Download Rate"
+msgstr "Приоритет загрузки"
+
+#: ../src/connectionsetting.cpp:122 ../src/torrentsetting.cpp:203
+msgid "Download Rate Limit:"
+msgstr "Ограничение загрузки:"
+
+#: ../src/summarypane.cpp:363
+#, c-format
+msgid "Download Rate Limit: %s"
+msgstr "Ограничение загрузки: %s"
+
+#: ../src/torrentlistctrl.cpp:58 ../src/torrentlistctrl.cpp:75
+#: ../src/peerlistctrl.cpp:63 ../src/peerlistctrl.cpp:78
+msgid "Download Speed"
+msgstr "Скорость скачивания"
+
+#: ../src/summarypane.cpp:351
+#, c-format
+msgid "Download Speed: %s"
+msgstr "Скорость скачивания: %s"
+
+#: ../src/torrentlistctrl.cpp:61 ../src/torrentlistctrl.cpp:78
+#: ../src/peerlistctrl.cpp:65 ../src/peerlistctrl.cpp:80
+msgid "Downloaded"
+msgstr "Загружено"
+
+#: ../src/summarypane.cpp:375
+#, c-format
+msgid "Downloaded: %s"
+msgstr "Загружено: %s"
+
+#: ../src/mainframe.cpp:302
+msgid "Downloads"
+msgstr "Загрузки"
+
+#: ../src/swashtrayicon.cpp:109
+msgid "E&xit"
+msgstr "Выход(&E)"
+
+#: ../src/mainframe.cpp:431
+msgid "E&xit\tAlt-F4"
+msgstr "Выход(&x)\tAlt-F4"
+
+#: ../src/bitswash.cpp:136
+msgid "Ecuador"
+msgstr "Эквадор"
+
+#: ../src/trackerlistctrl.cpp:140
+#, fuzzy
+msgid "Edit"
+msgstr "Выход"
+
+#: ../src/trackerlistctrl.cpp:224
+#, fuzzy
+msgid "Edit tracker\n"
+msgstr "Трэкер"
+
+#: ../src/trackerlistctrl.cpp:225
+msgid "Edit tracker address"
+msgstr ""
+
+#: ../src/bitswash.cpp:137
+msgid "Egypt"
+msgstr "Египет"
+
+#: ../src/bitswash.cpp:138
+msgid "El Salvador"
+msgstr "Сальвадор"
+
+#: ../src/connectionsetting.cpp:89
+msgid "Enable DHT, Port (UDP):"
+msgstr "Включить DHT，Порт (UDP):"
+
+#: ../src/extensionsetting.cpp:108
+msgid "Enable Encryption"
+msgstr "Включить Шифрование"
+
+#: ../src/extensionsetting.cpp:148
+msgid "Enable Local Service Discovery"
+msgstr "Enable Local Service Discovery"
+
+# ?????
+#: ../src/extensionsetting.cpp:79
+msgid "Enable Metadata"
+msgstr "Активировать Метаданные"
+
+#: ../src/extensionsetting.cpp:143
+msgid "Enable NAT Port Mapping"
+msgstr "Включить Переадресацию NAT Port Mapping"
+
+#: ../src/extensionsetting.cpp:84
+msgid "Enable Peer Exchange"
+msgstr "Разрешить Обмен Пирами"
+
+#: ../src/generalsetting.cpp:128
+msgid "Enable Systray Icon"
+msgstr "Значёк в Системном Трее"
+
+#: ../src/extensionsetting.cpp:138
+msgid "Enable UPnP"
+msgstr "Включить UPnP"
+
+#: ../src/trackerlistctrl.cpp:190
+msgid "Enter a new tracker address"
+msgstr ""
+
+#: ../src/bitswash.cpp:139
+msgid "Equatorial Guinea"
+msgstr "Экваториальная Гвинея"
+
+#: ../src/bitswash.cpp:140
+msgid "Eritrea"
+msgstr "Эретрея"
+
+#: ../src/mainframe.cpp:1549
+msgid "Error"
+msgstr "Ошибка"
+
+#: ../src/torrentlistctrl.cpp:64 ../src/torrentlistctrl.cpp:81
+msgid "Estimated time left to finish"
+msgstr "Предположительное время до завершения"
+
+#: ../src/bitswash.cpp:141
+msgid "Estonia"
+msgstr "Эстония"
+
+#: ../src/bitswash.cpp:142
+msgid "Ethiopia"
+msgstr "Эфиопия"
+
+#: ../src/bitswash.cpp:143
+msgid "Europe"
+msgstr "Европа"
+
+#: ../src/generalsetting.cpp:82
+msgid "Exclude seeding"
+msgstr "Запретить сидирование"
+
+#: ../src/mainframe.cpp:638
+msgid "Exit"
+msgstr "Выход"
+
+#: ../src/mainframe.cpp:431 ../src/mainframe.cpp:640
+msgid "Exit Bitswash"
+msgstr "Выйти из Bitswash"
+
+#: ../src/extensionsetting.cpp:68 ../src/swashsetting.cpp:74
+msgid "Extensions"
+msgstr "Расширения"
+
+#: ../src/bitswash.cpp:144
+msgid "Faeroe Islands"
+msgstr "Фарэрские Острова"
+
+#: ../src/bitswash.cpp:145
+msgid "Falkland Islands Malvinas"
+msgstr "Falkland Islands Malvinas"
+
+#: ../src/loggerctrl.cpp:86 ../src/generalsetting.cpp:163
+msgid "Fatal"
+msgstr "Крушение"
+
+#: ../src/bitswash.cpp:146
+msgid "Fiji"
+msgstr "Фиджи"
+
+#: ../src/filelistctrl.cpp:65 ../src/filelistctrl.cpp:73
+msgid "File"
+msgstr "Файл"
+
+#: ../src/filelistctrl.cpp:68 ../src/filelistctrl.cpp:76
+msgid "File download progress"
+msgstr "Прогресс загрузки файла"
+
+#: ../src/filelistctrl.cpp:67 ../src/filelistctrl.cpp:75
+msgid "File priority"
+msgstr "Приоритет файла"
+
+#: ../src/filelistctrl.cpp:66 ../src/filelistctrl.cpp:74
+msgid "File size"
+msgstr "Размер Файла"
+
+#: ../src/torrentproperty.cpp:129 ../src/torrentinfo.cpp:67
+msgid "Files"
+msgstr "Файлы"
+
+#: ../src/filelistctrl.cpp:65 ../src/filelistctrl.cpp:73
+msgid "Files in torrent"
+msgstr "Файлы в торренте"
+
+#: ../src/bitswash.cpp:147
+msgid "Finland"
+msgstr "Финляндия"
+
+#: ../src/peerlistctrl.cpp:62 ../src/peerlistctrl.cpp:77
+msgid "Flags"
+msgstr "Флаги"
+
+#: ../src/mainframe.cpp:478
+#, fuzzy
+msgid "Force Re&check Torrent"
+msgstr "Принудительно повторить торрент"
+
+#: ../src/mainframe.cpp:475
+msgid "Force Reannounce Torrent"
+msgstr "Принудительно повторить торрент"
+
+#: ../src/mainframe.cpp:478
+#, fuzzy
+msgid "Force Recheck Torrent"
+msgstr "Принудительно повторить торрент"
+
+#: ../src/mainframe.cpp:448
+msgid "Force Torrent Download"
+msgstr "Форсировать Закачку"
+
+#: ../src/bitswash.cpp:148
+msgid "France"
+msgstr "Франция"
+
+#: ../src/bitswash.cpp:149
+msgid "French Guiana"
+msgstr "Французская Гвиана"
+
+#: ../src/bitswash.cpp:150
+msgid "French Polynesia"
+msgstr "Французская Полинезия"
+
+#: ../src/bitswash.cpp:151
+msgid "French Southern Territories"
+msgstr "Южные Территории Франции"
+
+#: ../src/bittorrentsession.cpp:457 ../src/torrentsetting.cpp:162
+#: ../src/torrentsetting.cpp:187
+msgid "Full"
+msgstr ""
+
+#: ../src/generalsetting.cpp:108
+msgid "GUI"
+msgstr "GUI"
+
+#: ../src/bitswash.cpp:152
+msgid "Gabon"
+msgstr "Габон"
+
+#: ../src/bitswash.cpp:153
+msgid "Gambia"
+msgstr "Гамбия"
+
+#: ../src/generalsetting.cpp:63 ../src/swashsetting.cpp:71
+msgid "General"
+msgstr "Главное"
+
+#: ../src/bitswash.cpp:154
+msgid "Georgia"
+msgstr "Грузия"
+
+#: ../src/bitswash.cpp:155
+msgid "Germany"
+msgstr "Германия"
+
+#: ../src/bitswash.cpp:156
+msgid "Ghana"
+msgstr "Гана"
+
+#: ../src/bitswash.cpp:157
+msgid "Gibraltar"
+msgstr "Гибралтар"
+
+#: ../src/bitswash.cpp:158
+msgid "Greece"
+msgstr "Греция"
+
+#: ../src/bitswash.cpp:159
+msgid "Greenland"
+msgstr "Гренландия"
+
+#: ../src/bitswash.cpp:160
+msgid "Grenada"
+msgstr "Гренада"
+
+#: ../src/bitswash.cpp:161
+msgid "Guadaloupe"
+msgstr "Гваделупа"
+
+#: ../src/bitswash.cpp:162
+msgid "Guam"
+msgstr "Гуам"
+
+#: ../src/bitswash.cpp:163
+msgid "Guatemala"
+msgstr "Гватемала"
+
+#: ../src/bitswash.cpp:164
+msgid "Guinea"
+msgstr "Гвинея"
+
+#: ../src/bitswash.cpp:165
+msgid "Guinea-Bissau"
+msgstr "Гвинея-Биссау"
+
+#: ../src/bitswash.cpp:166
+msgid "Guyana"
+msgstr "Гуана"
+
+#: ../src/bitswash.cpp:167
+msgid "Haiti"
+msgstr "Гаити"
+
+#: ../src/peerlistctrl.cpp:153
+msgid "Handshaking"
+msgstr "Рукопожатие"
+
+#: ../src/summarypane.cpp:333
+#, c-format
+msgid "Hash: %s"
+msgstr "Хэш: %s"
+
+#: ../src/bitswash.cpp:168
+msgid "Heard and McDonald Islands"
+msgstr "Heard and McDonald Islands"
+
+#: ../src/mainframe.cpp:542
+msgid "Help"
+msgstr "Помощь"
+
+#: ../src/filelistctrl.cpp:148
+msgid "Higest"
+msgstr "Higest"
+
+# ?????
+#: ../src/filelistctrl.cpp:200
+msgid "Highest Priority"
+msgstr "Наивысший Приоритет"
+
+#: ../src/bitswash.cpp:169
+msgid "Holy See Vatican City State"
+msgstr "Holy See Vatican City State"
+
+#: ../src/mainframe.cpp:544
+msgid "Home&page"
+msgstr "Домашняя страница(&p)"
+
+#: ../src/mainframe.cpp:544 ../src/mainframe.cpp:631
+msgid "Homepage"
+msgstr "Домашняя страница"
+
+#: ../src/bitswash.cpp:170
+msgid "Honduras"
+msgstr "Гондурас"
+
+#: ../src/bitswash.cpp:171
+msgid "Hong Kong"
+msgstr "Гон Конг"
+
+#: ../src/bitswash.cpp:172
+msgid "Hrvatska Croatia"
+msgstr "Хорватия"
+
+#: ../src/bitswash.cpp:173
+msgid "Hungary"
+msgstr "Венгрия"
+
+#: ../src/peerlistctrl.cpp:57 ../src/peerlistctrl.cpp:72
+msgid "IP"
+msgstr "IP"
+
+#: ../src/bitswash.cpp:174
+msgid "Iceland"
+msgstr "Исландия"
+
+#: ../src/mainframe.cpp:1557
+msgid "Incoming"
+msgstr "Вхидящий"
+
+#: ../src/torrentlistctrl.cpp:53 ../src/torrentlistctrl.cpp:70
+msgid "Index"
+msgstr "Индекс"
+
+#: ../src/bitswash.cpp:175
+msgid "India"
+msgstr "Индия"
+
+#: ../src/bitswash.cpp:176
+msgid "Indonesia"
+msgstr "Индонезия"
+
+#: ../src/loggerctrl.cpp:86 ../src/generalsetting.cpp:163
+#: ../src/summarypane.cpp:82
+msgid "Info"
+msgstr "Инфо"
+
+#: ../src/bitswash.cpp:177
+msgid "Iran"
+msgstr "Иран"
+
+#: ../src/bitswash.cpp:178
+msgid "Iraq"
+msgstr "Ирак"
+
+#: ../src/bitswash.cpp:179
+msgid "Ireland"
+msgstr "Ирландия"
+
+#: ../src/bitswash.cpp:180
+msgid "Israel"
+msgstr "Израиль"
+
+#: ../src/bitswash.cpp:181
+msgid "Italy"
+msgstr "Италия"
+
+#: ../src/bitswash.cpp:182
+msgid "Jamaica"
+msgstr "Ямайка"
+
+#: ../src/bitswash.cpp:183
+msgid "Japan"
+msgstr "Япония"
+
+#: ../src/bitswash.cpp:184
+msgid "Jordan"
+msgstr "Иордан"
+
+#: ../src/bitswash.cpp:185
+msgid "Kazakhstan"
+msgstr "Казахстан"
+
+#: ../src/bitswash.cpp:186
+msgid "Kenya"
+msgstr "Кения"
+
+#: ../src/bitswash.cpp:187
+msgid "Kiribati"
+msgstr "Кирибати"
+
+#: ../src/bitswash.cpp:188 ../src/bitswash.cpp:189
+msgid "Korea"
+msgstr "Корея"
+
+#: ../src/bitswash.cpp:190
+msgid "Kuwait"
+msgstr "Кувейт"
+
+#: ../src/bitswash.cpp:191
+msgid "Kyrgyz Republic"
+msgstr "Киргизия"
+
+#: ../src/mainframe.cpp:537
+msgid "Language"
+msgstr "Язык"
+
+#: ../src/bitswash.cpp:192
+msgid "Lao People's Democratic Republic"
+msgstr "Лаос"
+
+#: ../src/bitswash.cpp:193
+msgid "Latvia"
+msgstr "Латвия"
+
+#: ../src/bitswash.cpp:194
+msgid "Lebanon"
+msgstr "Lebanon"
+
+#: ../src/bitswash.cpp:195
+msgid "Lesotho"
+msgstr "Лесото"
+
+#: ../src/bitswash.cpp:196
+msgid "Liberia"
+msgstr "Либерия"
+
+#: ../src/bitswash.cpp:197
+msgid "Libyan Arab Jamahiriya"
+msgstr "Libyan Arab Jamahiriya"
+
+#: ../src/bitswash.cpp:198
+msgid "Liechtenstein"
+msgstr "Лихтенштейн"
+
+#: ../src/connectionsetting.cpp:110
+msgid "Limits"
+msgstr "Ограничения"
+
+#: ../src/bitswash.cpp:199
+msgid "Lithuania"
+msgstr "Lithuania"
+
+#: ../src/peerlistctrl.cpp:165
+msgid "Local"
+msgstr "Локальный"
+
+#: ../src/generalsetting.cpp:149 ../src/torrentinfo.cpp:74
+msgid "Log"
+msgstr "Лог"
+
+#: ../src/generalsetting.cpp:160
+msgid "Log Severity:"
+msgstr "Настройки Лога"
+
+#: ../src/loggerctrl.cpp:96
+msgid "Log to File"
+msgstr "Записать Лог в Файл"
+
+#: ../src/generalsetting.cpp:179
+msgid "Log to File:"
+msgstr "Записать Лог в Файл:"
+
+#: ../src/filelistctrl.cpp:142
+msgid "Lowest"
+msgstr "Низкий"
+
+#: ../src/filelistctrl.cpp:198
+msgid "Lowest Priority"
+msgstr "Низкий Приоритет"
+
+#: ../src/bitswash.cpp:200
+msgid "Luxembourg"
+msgstr "Люксембург"
+
+#: ../src/bitswash.cpp:201
+msgid "Macao"
+msgstr "Макао"
+
+#: ../src/bitswash.cpp:202
+msgid "Macedonia"
+msgstr "Македония"
+
+#: ../src/bitswash.cpp:203
+msgid "Madagascar"
+msgstr "Мадагаскар"
+
+#: ../src/bitswash.cpp:204
+msgid "Malawi"
+msgstr "Малави"
+
+#: ../src/bitswash.cpp:205
+msgid "Malaysia"
+msgstr "Малазия"
+
+#: ../src/bitswash.cpp:206
+msgid "Maldives"
+msgstr "Мальдивы"
+
+#: ../src/bitswash.cpp:207
+msgid "Mali"
+msgstr "Мали"
+
+#: ../src/bitswash.cpp:208
+msgid "Malta"
+msgstr "Мальта"
+
+#: ../src/bitswash.cpp:209
+msgid "Marshall Islands"
+msgstr "Маршаловы острова"
+
+#: ../src/bitswash.cpp:210
+msgid "Martinique"
+msgstr "Мартиника"
+
+#: ../src/bitswash.cpp:211
+msgid "Mauritania"
+msgstr "Муритания"
+
+#: ../src/bitswash.cpp:212
+msgid "Mauritius"
+msgstr "Маврикий"
+
+#: ../src/connectionsetting.cpp:137 ../src/torrentsetting.cpp:218
+msgid "Maximum Connections:"
+msgstr "Максимум Соединений"
+
+#: ../src/connectionsetting.cpp:152
+msgid "Maximum Half Open Connections:"
+msgstr "Максимамльное Количество Открытых Соединений:"
+
+#: ../src/generalsetting.cpp:172
+msgid "Maximum Lines:"
+msgstr "Максимальное Количество Линий:"
+
+#: ../src/generalsetting.cpp:74
+msgid "Maximum Running Job:"
+msgstr "Максимальное Количество Активных Заданий:"
+
+#: ../src/connectionsetting.cpp:144 ../src/torrentsetting.cpp:225
+msgid "Maximum Upload Slots:"
+msgstr "Максимальное Количество Раздач"
+
+#: ../src/bitswash.cpp:213
+msgid "Mayotte"
+msgstr "Майотта"
+
+#: ../src/bitswash.cpp:214
+msgid "Mexico"
+msgstr "Мексика"
+
+#: ../src/bitswash.cpp:215
+msgid "Micronesia"
+msgstr "Микронезия"
+
+#: ../src/generalsetting.cpp:133
+msgid "Minimize to Systray"
+msgstr "Свернуть в Трей"
+
+#: ../src/bitswash.cpp:216
+msgid "Moldova"
+msgstr "Молдова"
+
+#: ../src/bitswash.cpp:217
+msgid "Monaco"
+msgstr "Монако"
+
+#: ../src/bitswash.cpp:218
+msgid "Mongolia"
+msgstr "Монголия"
+
+#: ../src/bitswash.cpp:219
+msgid "Montserrat"
+msgstr "Монтсеррат"
+
+#: ../src/bitswash.cpp:220
+msgid "Morocco"
+msgstr "Морокко"
+
+#: ../src/mainframe.cpp:465
+msgid "Move &Up\tAlt+UP"
+msgstr "Вверх(&U)"
+
+#: ../src/mainframe.cpp:469
+msgid "Move Do&wn\tAlt+DOWN"
+msgstr "Вниз(&w)"
+
+#: ../src/mainframe.cpp:610
+msgid "Move Down"
+msgstr "Вниз"
+
+#: ../src/mainframe.cpp:605
+msgid "Move Up"
+msgstr "Вверх"
+
+#: ../src/mainframe.cpp:469 ../src/mainframe.cpp:613
+msgid "Move torrent down"
+msgstr "Опустить торрент ниже"
+
+#: ../src/mainframe.cpp:613
+msgid "Move torrent down in the queue position"
+msgstr "Опустить торрент ниже в очереди"
+
+#: ../src/mainframe.cpp:465 ../src/mainframe.cpp:608
+msgid "Move torrent up"
+msgstr "Поднять торрент вверх"
+
+#: ../src/mainframe.cpp:608
+msgid "Move torrent up in the queue position"
+msgstr "Поднять торрент выше в очереди"
+
+#: ../src/bitswash.cpp:221
+msgid "Mozambique"
+msgstr "Мозамбик"
+
+#: ../src/bitswash.cpp:222
+msgid "Myanmar"
+msgstr "Мьянмар"
+
+#: ../src/extensionsetting.cpp:127
+msgid "NAT Service"
+msgstr "Слажба NAT"
+
+#: ../src/torrentproperty.cpp:89
+msgid "Name:"
+msgstr "Название:"
+
+#: ../src/bitswash.cpp:223
+msgid "Namibia"
+msgstr "Намибия"
+
+#: ../src/bitswash.cpp:224
+msgid "Nauru"
+msgstr "Науру"
+
+#: ../src/bitswash.cpp:225
+msgid "Nepal"
+msgstr "Непал"
+
+#: ../src/bitswash.cpp:227
+msgid "Netherlands"
+msgstr "Нидерланды"
+
+#: ../src/bitswash.cpp:226
+msgid "Netherlands Antilles"
+msgstr "Netherlands Antilles"
+
+#: ../src/bitswash.cpp:228
+msgid "New Caledonia"
+msgstr "# Новая Каледония"
+
+#: ../src/bitswash.cpp:229
+msgid "New Zealand"
+msgstr "Новая Зеландия"
+
+#: ../src/summarypane.cpp:414
+#, c-format
+msgid "Next Update: %s"
+msgstr "Следующее Обновление:%s"
+
+#: ../src/bitswash.cpp:230
+msgid "Nicaragua"
+msgstr "Никарагуа"
+
+#: ../src/bitswash.cpp:231
+msgid "Niger"
+msgstr "Нигер"
+
+#: ../src/bitswash.cpp:232
+msgid "Nigeria"
+msgstr "Нигерия"
+
+#: ../src/bitswash.cpp:233
+msgid "Niue"
+msgstr "Ниуэ"
+
+#: ../src/filelistctrl.cpp:141
+msgid "No"
+msgstr "Нет"
+
+#: ../src/loggerctrl.cpp:86 ../src/generalsetting.cpp:163
+msgid "None"
+msgstr "Нет"
+
+#: ../src/bitswash.cpp:234
+msgid "Norfolk Island"
+msgstr "Остров Норфолк"
+
+#: ../src/filelistctrl.cpp:145
+msgid "Normal"
+msgstr "Норма"
+
+#: ../src/filelistctrl.cpp:199
+msgid "Normal Priority"
+msgstr "Нормальный Приоритет"
+
+#: ../src/bitswash.cpp:235
+msgid "Northern Mariana Islands"
+msgstr "Северные Марианские острова"
+
+#: ../src/bitswash.cpp:236
+msgid "Norway"
+msgstr "Норвегия"
+
+#: ../src/torrentlistctrl.cpp:63 ../src/torrentlistctrl.cpp:80
+msgid "Number of copies in swarm"
+msgstr "Количество копий в общем"
+
+#: ../src/torrentlistctrl.cpp:60 ../src/torrentlistctrl.cpp:77
+msgid "Number or peers"
+msgstr "Количество пиров"
+
+#: ../src/mainframe.cpp:1548
+msgid "Ok"
+msgstr "Ок"
+
+#: ../src/bitswash.cpp:237
+msgid "Oman"
+msgstr "Оман"
+
+#: ../src/mainframe.cpp:617
+msgid "Open"
+msgstr "Открыть"
+
+#: ../src/mainframe.cpp:480
+msgid "Open &Directory"
+msgstr "Открыть папку(&D)"
+
+#: ../src/swashtrayicon.cpp:103 ../src/mainframe.cpp:423
+msgid "Open &URL\tCtrl+U"
+msgstr "Открыть URL(&U)\tCtrl+U"
+
+#: ../src/swashtrayicon.cpp:102 ../src/mainframe.cpp:420
+#: ../src/mainframe.cpp:559
+msgid "Open Torrent"
+msgstr "Открыть Торрент"
+
+#: ../src/mainframe.cpp:761
+msgid "Open Torrent(s)..."
+msgstr "Открыть Торрент(ы)..."
+
+#: ../src/swashtrayicon.cpp:103 ../src/mainframe.cpp:423
+#: ../src/mainframe.cpp:563
+msgid "Open URL"
+msgstr "Открыть URL"
+
+#: ../src/mainframe.cpp:619
+msgid "Open destination directory"
+msgstr "Указать папку назначения"
+
+#: ../src/mainframe.cpp:619
+msgid "Open destination downloaded directory"
+msgstr "Указать папку сохранения"
+
+#: ../src/mainframe.cpp:480
+msgid "Open downloaded directory"
+msgstr "Открыть папку сохранения"
+
+#: ../src/mainframe.cpp:561
+msgid "Open torrent file"
+msgstr "Открыть торрент-файл"
+
+#: ../src/mainframe.cpp:565
+msgid "Open torrent from URL"
+msgstr "Открыть торрент из URL"
+
+#: ../src/mainframe.cpp:565
+msgid "Open torrent from url"
+msgstr "Открыть торрент из url"
+
+#: ../src/bitswash.cpp:238
+msgid "Pakistan"
+msgstr "Пакистан"
+
+#: ../src/bitswash.cpp:239
+msgid "Palau"
+msgstr "Палау"
+
+#: ../src/bitswash.cpp:240
+msgid "Palestinian Territory"
+msgstr "Палестина"
+
+#: ../src/bitswash.cpp:241
+msgid "Panama"
+msgstr "Панама"
+
+#: ../src/bitswash.cpp:242
+msgid "Papua New Guinea"
+msgstr "Папуа и Новая Гвинея"
+
+#: ../src/bitswash.cpp:243
+msgid "Paraguay"
+msgstr "Парагвай"
+
+#: ../src/mainframe.cpp:585
+msgid "Pause"
+msgstr "Пауза"
+
+#: ../src/mainframe.cpp:451
+msgid "Pause Download"
+msgstr "Приостановть Загрузку"
+
+#: ../src/loggerctrl.cpp:105
+msgid "Pause Log"
+msgstr "Приостановить Лог"
+
+#: ../src/mainframe.cpp:587
+msgid "Pause downlaoding"
+msgstr "Приоставить скачивание"
+
+#: ../src/mainframe.cpp:587
+msgid "Pause download"
+msgstr "Приостановить закачку"
+
+#: ../src/peerlistctrl.cpp:148
+msgid "Peer"
+msgstr "Пир"
+
+#: ../src/peerlistctrl.cpp:62 ../src/peerlistctrl.cpp:77
+msgid "Peer flags"
+msgstr "Флаги пира"
+
+#: ../src/peerlistctrl.cpp:60 ../src/peerlistctrl.cpp:75
+msgid "Peer status"
+msgstr "Статус пира"
+
+#: ../src/peerlistctrl.cpp:59 ../src/peerlistctrl.cpp:74
+msgid "Peer type"
+msgstr "Тип пира"
+
+#: ../src/torrentlistctrl.cpp:60 ../src/torrentlistctrl.cpp:77
+#: ../src/mainframe.cpp:1557 ../src/torrentinfo.cpp:65
+msgid "Peers"
+msgstr "Пиры"
+
+#: ../src/summarypane.cpp:339
+#, c-format
+msgid "Peers: %s"
+msgstr "Пиры: %s"
+
+#: ../src/swashstatbar.cpp:61
+#, c-format
+msgid "Peers: %s DHT: %s"
+msgstr "Пиры: %s DHT: %s"
+
+#: ../src/bitswash.cpp:244
+msgid "Peru"
+msgstr "Перу"
+
+#: ../src/bitswash.cpp:245
+msgid "Philippines"
+msgstr "Филипины"
+
+#: ../src/summarypane.cpp:327
+#, c-format
+msgid "Pieces: %s"
+msgstr "Кусочки: %s"
+
+#: ../src/bitswash.cpp:246
+msgid "Pitcairn Island"
+msgstr "Острова Питкэрн"
+
+#: ../src/bitswash.cpp:247
+msgid "Poland"
+msgstr "Gjkmif"
+
+#: ../src/connectionsetting.cpp:68
+msgid "Port Range (TCP):"
+msgstr "Диапазон Портов (TCP):"
+
+#: ../src/connectionsetting.cpp:56
+msgid "Ports Setting"
+msgstr "Настройки Портов"
+
+#: ../src/bitswash.cpp:248
+msgid "Portugal"
+msgstr "Португалия"
+
+#: ../src/swashtrayicon.cpp:105 ../src/mainframe.cpp:489
+msgid "Prefere&nce\tCtrl+F"
+msgstr "Настройки(&P)\t(Ctrl+P)"
+
+#: ../src/swashsetting.h:57 ../src/swashtrayicon.cpp:105
+#: ../src/mainframe.cpp:489 ../src/mainframe.cpp:626
+msgid "Preference"
+msgstr "Настройки"
+
+#: ../src/mainframe.cpp:628
+msgid "Program settings"
+msgstr "Настройки программы"
+
+#: ../src/filelistctrl.cpp:68 ../src/filelistctrl.cpp:76
+#: ../src/torrentlistctrl.cpp:57 ../src/torrentlistctrl.cpp:74
+#: ../src/peerlistctrl.cpp:67 ../src/peerlistctrl.cpp:82
+msgid "Progress"
+msgstr "Прогресс"
+
+#: ../src/mainframe.cpp:483
+msgid "Propert&ies"
+msgstr "Свойства(&i)"
+
+#: ../src/extensionsetting.cpp:97
+msgid "Protocol Encryption"
+msgstr "Шифрование Протокола"
+
+#: ../src/bitswash.cpp:249
+msgid "Puerto Rico"
+msgstr "Пуэрто Рико"
+
+#: ../src/bitswash.cpp:250
+msgid "Qatar"
+msgstr "Катар"
+
+#: ../src/mainframe.cpp:581
+msgid "Queue"
+msgstr "Очередь"
+
+#: ../src/mainframe.cpp:445
+msgid "Queue Download"
+msgstr "Очередь Загрузки"
+
+#: ../src/torrentlistctrl.cpp:53 ../src/torrentlistctrl.cpp:70
+msgid "Queue Index"
+msgstr "Индекс Очереди"
+
+#: ../src/mainframe.cpp:583
+msgid "Queue torrent"
+msgstr "Очередь торрентов"
+
+#: ../src/peerlistctrl.cpp:161
+msgid "Queued"
+msgstr "В очереди"
+
+#: ../src/mainframe.cpp:475
+msgid "Re&announce Torrent"
+msgstr "Повторить Торрент(&a)"
+
+#: ../src/generalsetting.cpp:119
+#, fuzzy
+msgid "Refresh Timer (s):"
+msgstr "Обновлять Таймер (ms):"
+
+#: ../src/peerlistctrl.cpp:167
+msgid "Remote"
+msgstr "Удалённо"
+
+#: ../src/mainframe.cpp:461
+msgid "Remove Torrent and &Data"
+msgstr "Удалить Торрент и Файлы(&D)"
+
+#: ../src/bitswash.cpp:251
+msgid "Reunion"
+msgstr "Воссоздать"
+
+#: ../src/bitswash.cpp:252
+msgid "Romania"
+msgstr "Румыния"
+
+#: ../src/bitswash.cpp:253
+msgid "Russian Federation"
+msgstr "Россия"
+
+#: ../src/bitswash.cpp:254
+msgid "Rwanda"
+msgstr "Рванда"
+
+#: ../src/bitswash.cpp:260
+msgid "Samoa"
+msgstr "Самоэ"
+
+#: ../src/bitswash.cpp:261
+msgid "San Marino"
+msgstr "Сан Марино"
+
+#: ../src/bitswash.cpp:262
+msgid "Sao Tome and Principe"
+msgstr "Сан-Томе и Принсипи"
+
+#: ../src/bitswash.cpp:263
+msgid "Saudi Arabia"
+msgstr "Сайдовская Аравия"
+
+#: ../src/summarypane.cpp:315
+#, c-format
+msgid "Save As: %s"
+msgstr "Сохранить как: %s"
+
+#: ../src/generalsetting.cpp:90
+msgid "Save Fastresume every (s):"
+msgstr ""
+
+#: ../src/torrentsetting.cpp:73
+msgid "Save:"
+msgstr "Сохранить:"
+
+#: ../src/peerlistctrl.cpp:148
+msgid "Seed"
+msgstr "Сид"
+
+#: ../src/torrentsetting.cpp:232
+msgid "Seed Ratio"
+msgstr "Приоритет Сидирования"
+
+#: ../src/mainframe.cpp:303
+msgid "Seeds"
+msgstr "Сиды"
+
+#: ../src/summarypane.cpp:345
+#, c-format
+msgid "Seeds: %s"
+msgstr "Сиды: %s"
+
+#: ../src/bitswash.cpp:264
+msgid "Senegal"
+msgstr "Сенегал"
+
+#: ../src/bitswash.cpp:265
+msgid "Serbia and Montenegro"
+msgstr "Сербия и Черногория"
+
+#: ../src/mainframe.cpp:628
+msgid "Set user preference"
+msgstr "Установить настройки профиля"
+
+#: ../src/torrentproperty.cpp:133
+msgid "Settings"
+msgstr "Настройки"
+
+#: ../src/loggerctrl.cpp:83
+msgid "Severity"
+msgstr "Строгость"
+
+#: ../src/bitswash.cpp:266
+msgid "Seychelles"
+msgstr "Сейшелы"
+
+#: ../src/torrentlistctrl.cpp:65 ../src/torrentlistctrl.cpp:82
+msgid "Share Ratio"
+msgstr "Поделиться Ратио"
+
+#: ../src/summarypane.cpp:387
+#, c-format
+msgid "Share Ratio: %s"
+msgstr "Поделиться Ратио: %s"
+
+#: ../src/swashlistctrl.cpp:367
+msgid "Show/Hide"
+msgstr "Показать/Спрятать"
+
+#: ../src/bitswash.cpp:267
+msgid "Sierra Leone"
+msgstr "Сьерра Леоне"
+
+#: ../src/bitswash.cpp:268
+msgid "Singapore"
+msgstr "Сингапур"
+
+#: ../src/filelistctrl.cpp:66 ../src/filelistctrl.cpp:74
+#: ../src/torrentlistctrl.cpp:56 ../src/torrentlistctrl.cpp:73
+msgid "Size"
+msgstr "Размер"
+
+#: ../src/torrentproperty.cpp:111
+msgid "Size:"
+msgstr "Размер:"
+
+#: ../src/summarypane.cpp:321
+#, c-format
+msgid "Size: %s"
+msgstr "Размер: %s"
+
+#: ../src/bitswash.cpp:269
+msgid "Slovakia Slovak Republic"
+msgstr "Словакия"
+
+#: ../src/bitswash.cpp:270
+msgid "Slovenia"
+msgstr "Словения"
+
+#: ../src/bitswash.cpp:271
+msgid "Solomon Islands"
+msgstr "Соломоновы Острова"
+
+#: ../src/bitswash.cpp:272
+msgid "Somalia"
+msgstr "Сомали"
+
+#: ../src/bitswash.cpp:273
+msgid "South Africa"
+msgstr "ЮАР"
+
+#: ../src/bitswash.cpp:274
+msgid "South Georgia and the South Sandwich Islands"
+msgstr "Южная Грузия и Южные Острова Сэндвича"
+
+#: ../src/bitswash.cpp:275
+msgid "Spain"
+msgstr "Испания"
+
+#: ../src/bittorrentsession.cpp:460 ../src/bittorrentsession.cpp:467
+#: ../src/torrentsetting.cpp:163 ../src/torrentsetting.cpp:190
+#: ../src/torrentsetting.cpp:196
+#, fuzzy
+msgid "Sparse"
+msgstr "пауза"
+
+#: ../src/bitswash.cpp:276
+msgid "Sri Lanka"
+msgstr "Шри Ланка"
+
+#: ../src/mainframe.cpp:454
+msgid "St&op Torrent\tCtrl+T"
+msgstr "Остановить Торрент(&t)\tCtrl+T"
+
+#: ../src/bitswash.cpp:255
+msgid "St. Helena"
+msgstr "Св. Елена"
+
+#: ../src/bitswash.cpp:256
+msgid "St. Kitts and Nevis"
+msgstr "St. Kitts and Nevis"
+
+#: ../src/bitswash.cpp:257
+msgid "St. Lucia"
+msgstr "St. Lucia"
+
+#: ../src/bitswash.cpp:258
+msgid "St. Pierre and Miquelon"
+msgstr "St. Pierre and Miquelon"
+
+#: ../src/bitswash.cpp:259
+msgid "St. Vincent and the Grenadines"
+msgstr "St. Vincent and the Grenadines"
+
+#: ../src/torrentsetting.cpp:105
+msgid "Start Torrent"
+msgstr "Запустить Торрент"
+
+#: ../src/torrentlistctrl.cpp:55 ../src/torrentlistctrl.cpp:72
+#: ../src/torrentinfo.cpp:62 ../src/peerlistctrl.cpp:60
+#: ../src/peerlistctrl.cpp:75
+msgid "Status"
+msgstr "Статус"
+
+#: ../src/summarypane.cpp:408
+#, c-format
+msgid "Status: %s"
+msgstr "Статус: %s"
+
+#: ../src/mainframe.cpp:454
+msgid "Stop Download"
+msgstr "Остановить Закачку"
+
+#: ../src/mainframe.cpp:591
+msgid "Stop downlaoding"
+msgstr "Остановить загрузку"
+
+#: ../src/mainframe.cpp:591
+msgid "Stop download"
+msgstr "Остановить закачку"
+
+#: ../src/torrentsetting.cpp:157
+msgid "Storage Allocation Mode:"
+msgstr ""
+
+#: ../src/bitswash.cpp:277
+msgid "Sudan"
+msgstr "Судан"
+
+#: ../src/bitswash.cpp:278
+msgid "Suriname"
+msgstr "Суринам"
+
+#: ../src/bitswash.cpp:279
+msgid "Svalbard & Jan Mayen Islands"
+msgstr "Svalbard & Jan Mayen Islands"
+
+#: ../src/bitswash.cpp:280
+msgid "Swaziland"
+msgstr "Свазиленд"
+
+#: ../src/bitswash.cpp:281
+msgid "Sweden"
+msgstr "Швеция"
+
+#: ../src/bitswash.cpp:282
+msgid "Switzerland"
+msgstr "Швейцария"
+
+#: ../src/bitswash.cpp:283
+msgid "Syrian Arab Republic"
+msgstr "Сирия"
+
+#: ../src/mainframe.cpp:498
+msgid "System Language"
+msgstr "Язык Системы"
+
+#: ../src/bitswash.cpp:284
+msgid "Taiwan"
+msgstr "Тайвань"
+
+#: ../src/bitswash.cpp:285
+msgid "Tajikistan"
+msgstr "Таджикистан"
+
+#: ../src/bitswash.cpp:286
+msgid "Tanzania"
+msgstr "Танзания"
+
+#: ../src/bitswash.cpp:287
+msgid "Thailand"
+msgstr "Тайланд"
+
+#: ../src/torrentlistctrl.cpp:64 ../src/torrentlistctrl.cpp:81
+msgid "Time Left"
+msgstr "Времени прошло"
+
+#: ../src/bitswash.cpp:288
+msgid "Timor-Leste"
+msgstr "Тимур"
+
+#: ../src/bitswash.cpp:289
+msgid "Togo"
+msgstr "Того"
+
+#: ../src/bitswash.cpp:290
+msgid "Tokelau Tokelau Islands"
+msgstr "Tokelau Tokelau Islands"
+
+#: ../src/bitswash.cpp:291
+msgid "Tonga"
+msgstr "Тонга"
+
+#: ../src/torrentlistctrl.cpp:54 ../src/torrentlistctrl.cpp:71
+msgid "Torrent"
+msgstr "Торрент"
+
+#: ../src/torrentproperty.cpp:77
+msgid "Torrent Info"
+msgstr "Онформация о Торренте"
+
+#: ../src/mainframe.cpp:483
+msgid "Torrent Properties"
+msgstr "Свойства Торрента"
+
+#: ../src/torrentsetting.cpp:61
+msgid "Torrent Settings"
+msgstr "Настройки Торрента"
+
+#: ../src/trackerlistctrl.cpp:52 ../src/trackerlistctrl.cpp:57
+#, fuzzy
+msgid "Torrent Tracker URL"
+msgstr "URL Трэкера: %s"
+
+#: ../src/torrentlistctrl.cpp:54 ../src/torrentlistctrl.cpp:71
+msgid "Torrent name"
+msgstr "Название Торрента"
+
+#: ../src/torrentlistctrl.cpp:56 ../src/torrentlistctrl.cpp:73
+msgid "Torrent size"
+msgstr "Размер Торрента"
+
+#: ../src/torrentlistctrl.cpp:55 ../src/torrentlistctrl.cpp:72
+msgid "Torrent status"
+msgstr "Статус Торрента"
+
+#: ../src/swashsetting.cpp:73
+msgid "Torrents"
+msgstr "Торренты"
+
+#: ../src/torrentlistctrl.cpp:61 ../src/torrentlistctrl.cpp:78
+#: ../src/peerlistctrl.cpp:65 ../src/peerlistctrl.cpp:80
+msgid "Total bytes downloaded"
+msgstr "Всего байт загружено"
+
+#: ../src/torrentlistctrl.cpp:62 ../src/torrentlistctrl.cpp:79
+#: ../src/peerlistctrl.cpp:66 ../src/peerlistctrl.cpp:81
+msgid "Total bytes uploaded"
+msgstr "Всего байт отдано"
+
+#: ../src/summarypane.cpp:169
+msgid "Tracker"
+msgstr "Трэкер"
+
+#: ../src/summarypane.cpp:402
+#, c-format
+msgid "Tracker URL: %s"
+msgstr "URL Трэкера: %s"
+
+#: ../src/torrentinfo.cpp:70
+#, fuzzy
+msgid "Trackers"
+msgstr "Трэкер"
+
+#: ../src/bitswash.cpp:292
+msgid "Trinidad and Tobago"
+msgstr "Тринидад и Тобаго"
+
+#: ../src/bitswash.cpp:293
+msgid "Tunisia"
+msgstr "Тунис"
+
+#: ../src/bitswash.cpp:294
+msgid "Turkey"
+msgstr "Турция"
+
+#: ../src/bitswash.cpp:295
+msgid "Turkmenistan"
+msgstr "Туркменистан"
+
+#: ../src/bitswash.cpp:296
+msgid "Turks and Caicos Islands"
+msgstr "Turks and Caicos Islands"
+
+#: ../src/bitswash.cpp:297
+msgid "Tuvalu"
+msgstr "Tuvalu"
+
+#: ../src/peerlistctrl.cpp:59 ../src/peerlistctrl.cpp:74
+msgid "Type"
+msgstr "Тип"
+
+#: ../src/trackerlistctrl.cpp:52 ../src/trackerlistctrl.cpp:57
+#, fuzzy
+msgid "URL"
+msgstr "URL:"
+
+#: ../src/urldialog.cpp:46
+msgid "URL:"
+msgstr "URL:"
+
+#: ../src/bitswash.cpp:298
+msgid "US Virgin Islands"
+msgstr "Острова Вирджинии"
+
+#: ../src/bitswash.cpp:299
+msgid "Uganda"
+msgstr "Уганда"
+
+#: ../src/bitswash.cpp:300
+msgid "Ukraine"
+msgstr "Украина"
+
+#: ../src/bitswash.cpp:301
+msgid "United Arab Emirates"
+msgstr "Объединённые Арабские Эмираты"
+
+#: ../src/bitswash.cpp:302
+msgid "United Kingdom of Great Britain & N. Ireland"
+msgstr "Великобритания"
+
+#: ../src/bitswash.cpp:303
+msgid "United States Minor Outlying Islands"
+msgstr "United States Minor Outlying Islands"
+
+#: ../src/bitswash.cpp:304
+msgid "United States of America"
+msgstr "United States of America"
+
+#: ../src/bitswash.cpp:75
+msgid "Unknown"
+msgstr "Неизвестно"
+
+#: ../src/mainframe.cpp:1557
+msgid "Upload Rate"
+msgstr "Ограничение Раздачи"
+
+#: ../src/connectionsetting.cpp:130 ../src/torrentsetting.cpp:211
+msgid "Upload Rate Limit:"
+msgstr "Ограничение Раздачи:"
+
+#: ../src/summarypane.cpp:369
+#, c-format
+msgid "Upload Rate Limit: %s"
+msgstr "Ограничение Раздачи: %s"
+
+#: ../src/torrentlistctrl.cpp:59 ../src/torrentlistctrl.cpp:76
+#: ../src/peerlistctrl.cpp:64 ../src/peerlistctrl.cpp:79
+msgid "Upload Speed"
+msgstr "Скорость отдачи"
+
+#: ../src/summarypane.cpp:357
+#, c-format
+msgid "Upload Speed: %s"
+msgstr "Скорость отдачи: %s"
+
+#: ../src/torrentlistctrl.cpp:65 ../src/torrentlistctrl.cpp:82
+msgid "Upload/Download ratio"
+msgstr "Ратио Загрузки/Отдачи"
+
+#: ../src/torrentlistctrl.cpp:62 ../src/torrentlistctrl.cpp:79
+#: ../src/peerlistctrl.cpp:66 ../src/peerlistctrl.cpp:81
+msgid "Uploaded"
+msgstr "Отдано"
+
+#: ../src/summarypane.cpp:381
+#, c-format
+msgid "Uploaded: %s"
+msgstr "Отдано: %s"
+
+#: ../src/bitswash.cpp:305
+msgid "Uruguay"
+msgstr "Уругвай"
+
+#: ../src/bitswash.cpp:306
+msgid "Uzbekistan"
+msgstr "Узбекистан"
+
+#: ../src/bitswash.cpp:307
+msgid "Vanuatu"
+msgstr "Вануату"
+
+#: ../src/bitswash.cpp:308
+msgid "Venezuela"
+msgstr "Венесуэлла"
+
+#: ../src/bitswash.cpp:309
+msgid "Viet Nam"
+msgstr "Вьетнам"
+
+#: ../src/mainframe.cpp:438
+msgid "View &Status"
+msgstr "Показать Статуса(&S)"
+
+#: ../src/mainframe.cpp:436
+msgid "View &Toolbar"
+msgstr "Показать Панель Инструментов(&T)"
+
+#: ../src/mainframe.cpp:438
+msgid "View Status"
+msgstr "Показать Статус"
+
+#: ../src/mainframe.cpp:436
+msgid "View Toolbar"
+msgstr "Показать Панель Инструментов"
+
+#: ../src/mainframe.cpp:633
+msgid "Visit Bitswash homepage"
+msgstr "Посетить сайт Bitswash"
+
+#: ../src/bitswash.cpp:310
+msgid "Wallis and Futuna Islands"
+msgstr "Wallis and Futuna Islands"
+
+#: ../src/loggerctrl.cpp:86 ../src/generalsetting.cpp:163
+msgid "Warning"
+msgstr "Предупреждение"
+
+#: ../src/bitswash.cpp:311
+msgid "Western Sahara"
+msgstr "Западная Сахара"
+
+#: ../src/bitswash.cpp:312
+msgid "Yemen"
+msgstr "Йемен"
+
+#: ../src/bitswash.cpp:313
+msgid "Zambia"
+msgstr "Замбия"
+
+#: ../src/bitswash.cpp:314
+msgid "Zimbabwe"
+msgstr "Зимбабве"
+
+#: ../src/torrentlistctrl.cpp:144
+msgid "allocating"
+msgstr "расположение"
+
+#: ../src/torrentlistctrl.cpp:138
+msgid "checking"
+msgstr "проверка"
+
+#: ../src/torrentlistctrl.cpp:139
+msgid "connecting"
+msgstr "соединение"
+
+#: ../src/torrentlistctrl.cpp:141
+msgid "downloading"
+msgstr "загрузка"
+
+#: ../src/torrentlistctrl.cpp:140
+msgid "downloading meta data"
+msgstr "загрузка мета данных"
+
+#: ../src/torrentlistctrl.cpp:142
+msgid "finished"
+msgstr "закончено"
+
+#: ../src/torrentlistctrl.cpp:255
+msgid "inf"
+msgstr "инфо"
+
+#: ../src/generalsetting.cpp:175
+msgid "line"
+msgstr "линия"
+
+#: ../src/torrentlistctrl.cpp:172
+msgid "pause"
+msgstr "пауза"
+
+#: ../src/torrentlistctrl.cpp:160
+msgid "queue"
+msgstr "очередь"
+
+#: ../src/torrentlistctrl.cpp:137
+msgid "queued"
+msgstr "в очереди"
+
+#: ../src/torrentlistctrl.cpp:143
+msgid "seeding"
+msgstr "сидирование"
+
+#: ../src/torrentlistctrl.cpp:165 ../src/mainframe.cpp:589
+msgid "stop"
+msgstr "стоп"
+
+#: ../src/connectionsetting.cpp:75
+msgid "to"
+msgstr "в"
+
+#: ../src/mainframe.cpp:1226
+msgid "torrent"
+msgstr "торрент"
+
+#: ../src/mainframe.cpp:1224
+msgid "torrents"
+msgstr "торренты"
+
+#~ msgid "Compact allocation"
+#~ msgstr "Краткое содержание"
+
+#~ msgid "Level"
+#~ msgstr "Уровень"
+
+#~ msgid "Log Level"
+#~ msgstr "Уровень Логирования"
+
+#~ msgid "Log message"
+#~ msgstr "Сообщение Лога"
+
+#~ msgid "Log source"
+#~ msgstr "Источник Лога"
+
+#~ msgid "Message"
+#~ msgstr "Сообщение"
+
+#~ msgid "Source"
+#~ msgstr "Источник"
+
+#~ msgid "Time"
+#~ msgstr "Время"
