@@ -64,7 +64,7 @@ SummaryPane::SummaryPane(wxWindow *parent,
 	//SetMinSize(wxSize(500,100));
 	GetClientSize(&w, &h);
 	
-	m_summarypane_sizer = new wxFlexGridSizer( 4, 1, 3, 0 );
+	m_summarypane_sizer = new wxFlexGridSizer( 0, 1, 3, 0 );
 	m_summarypane_sizer->SetFlexibleDirection( wxBOTH );
 	m_summarypane_sizer->SetDimension(0, 0, w-50, -1);
 	m_summarypane_sizer->SetMinSize(500, -1);
@@ -94,7 +94,7 @@ SummaryPane::SummaryPane(wxWindow *parent,
 	m_summarypane_sizer->Add( m_label_saveas, 0, wxALL, 3 );
 	
 	wxFlexGridSizer* m_status_info_sizer;
-	m_status_info_sizer = new wxFlexGridSizer( 1, 3, 3, 0 );
+	m_status_info_sizer = new wxFlexGridSizer( 0, 3, 3, 0 );
 	m_status_info_sizer->AddGrowableCol( 0 );
 	m_status_info_sizer->AddGrowableCol( 1 );
 	m_status_info_sizer->AddGrowableCol( 2 );
