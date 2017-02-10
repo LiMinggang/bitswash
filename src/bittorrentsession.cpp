@@ -1510,28 +1510,28 @@ void BitTorrentSession::GetTorrentLog()
 		event_string << '\n' << '\0';
 		if (a->severity() == alert::fatal)
 		{
-			wxLogError(wxString::FromAscii(event_string.str().c_str()));
+			wxLogError(wxString(event_string.str()));
 		}
 		else if (a->severity() == alert::critical)
 		{
-			wxLogError(wxString::FromAscii(event_string.str().c_str()));
+			wxLogError(wxString(event_string.str()));
 		}
 		else if (a->severity() == alert::warning)
 		{
-			wxLogWarning(wxString::FromAscii(event_string.str().c_str()));
+			wxLogWarning(wxString(event_string.str()));
 		}
 		else if (a->severity() == alert::info)
 		{
-			wxLogInfo(wxString::FromAscii(event_string.str().c_str()));
+			wxLogInfo(wxString(event_string.str()));
 
 		}
 		else if (a->severity() == alert::debug)
 		{
-			wxLogDebug(wxString::FromAscii(event_string.str().c_str()));
+			wxLogDebug(wxString(event_string.str()));
 
 		} else 
 		{
-			wxLogDebug(wxString::FromAscii(event_string.str().c_str()));
+			wxLogDebug(wxString(event_string.str()));
 		}
 
 		a = m_libbtsession->pop_alert();

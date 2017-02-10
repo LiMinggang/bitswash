@@ -158,13 +158,6 @@ MainFrame::MainFrame(wxFrame *frame, const wxString& title)
 
 	m_btsession = wxGetApp().GetBitTorrentSession();
 
-	//Refresh timer
-	wxLogDebug(_T("Refresh timer %d\n"), m_config->GetRefreshTime());
-	m_refreshtimer.SetOwner(this, ID_TIMER_GUI_UPDATE);
-	m_refreshtimer.Start(m_config->GetRefreshTime() * 1000, wxTIMER_CONTINUOUS);
-
-	//Refresh torrent list on timer
-	//
 	CreateToolBar();
 
 	//XXX category 
@@ -198,6 +191,14 @@ MainFrame::MainFrame(wxFrame *frame, const wxString& title)
 	ShowSystray(m_config->GetUseSystray());
 
 	UpdateUI();
+
+	//Refresh timer
+	wxLogDebug(_T("Refresh timer %d\n"), m_config->GetRefreshTime());
+	m_refreshtimer.SetOwner(this, ID_TIMER_GUI_UPDATE);
+	m_refreshtimer.Start(m_config->GetRefreshTime() * 1000, wxTIMER_CONTINUOUS);
+
+	//Refresh torrent list on timer
+	//
 }
 
 MainFrame::~MainFrame()
