@@ -30,6 +30,9 @@
 #define PREFIX "."
 #endif
 
+#ifdef TORRENT_DISABLE_RESOLVE_COUNTRIES
+#error you must not disable RESOLVE COUNTRIES by defind TORRENT_DISABLE_RESOLVE_COUNTRIES
+#endif
 
 #include <wx/stdpaths.h>
 #include <wx/filename.h>

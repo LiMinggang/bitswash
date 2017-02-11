@@ -48,9 +48,6 @@
     <ClInclude Include="libtorrent\include\libtorrent\allocator.hpp">
       <Filter>Header Files\libtorrent</Filter>
     </ClInclude>
-    <ClInclude Include="libtorrent\include\libtorrent\asio.hpp">
-      <Filter>Header Files\libtorrent</Filter>
-    </ClInclude>
     <ClInclude Include="libtorrent\include\libtorrent\assert.hpp">
       <Filter>Header Files\libtorrent</Filter>
     </ClInclude>
@@ -66,55 +63,7 @@
     <ClInclude Include="libtorrent\include\libtorrent\bandwidth_socket.hpp">
       <Filter>Header Files\libtorrent</Filter>
     </ClInclude>
-    <ClInclude Include="libtorrent\include\libtorrent\asio\ssl\basic_context.hpp">
-      <Filter>Header Files\libtorrent</Filter>
-    </ClInclude>
-    <ClInclude Include="libtorrent\include\libtorrent\asio\basic_datagram_socket.hpp">
-      <Filter>Header Files\libtorrent</Filter>
-    </ClInclude>
-    <ClInclude Include="libtorrent\include\libtorrent\asio\basic_deadline_timer.hpp">
-      <Filter>Header Files\libtorrent</Filter>
-    </ClInclude>
-    <ClInclude Include="libtorrent\include\libtorrent\asio\ip\basic_endpoint.hpp">
-      <Filter>Header Files\libtorrent</Filter>
-    </ClInclude>
-    <ClInclude Include="libtorrent\include\libtorrent\asio\basic_io_object.hpp">
-      <Filter>Header Files\libtorrent</Filter>
-    </ClInclude>
-    <ClInclude Include="libtorrent\include\libtorrent\asio\ip\basic_resolver.hpp">
-      <Filter>Header Files\libtorrent</Filter>
-    </ClInclude>
-    <ClInclude Include="libtorrent\include\libtorrent\asio\ip\basic_resolver_entry.hpp">
-      <Filter>Header Files\libtorrent</Filter>
-    </ClInclude>
-    <ClInclude Include="libtorrent\include\libtorrent\asio\ip\basic_resolver_iterator.hpp">
-      <Filter>Header Files\libtorrent</Filter>
-    </ClInclude>
-    <ClInclude Include="libtorrent\include\libtorrent\asio\ip\basic_resolver_query.hpp">
-      <Filter>Header Files\libtorrent</Filter>
-    </ClInclude>
-    <ClInclude Include="libtorrent\include\libtorrent\asio\basic_socket.hpp">
-      <Filter>Header Files\libtorrent</Filter>
-    </ClInclude>
-    <ClInclude Include="libtorrent\include\libtorrent\asio\basic_socket_acceptor.hpp">
-      <Filter>Header Files\libtorrent</Filter>
-    </ClInclude>
-    <ClInclude Include="libtorrent\include\libtorrent\asio\basic_socket_iostream.hpp">
-      <Filter>Header Files\libtorrent</Filter>
-    </ClInclude>
-    <ClInclude Include="libtorrent\include\libtorrent\asio\basic_socket_streambuf.hpp">
-      <Filter>Header Files\libtorrent</Filter>
-    </ClInclude>
-    <ClInclude Include="libtorrent\include\libtorrent\asio\basic_stream_socket.hpp">
-      <Filter>Header Files\libtorrent</Filter>
-    </ClInclude>
-    <ClInclude Include="libtorrent\include\libtorrent\asio\basic_streambuf.hpp">
-      <Filter>Header Files\libtorrent</Filter>
-    </ClInclude>
     <ClInclude Include="libtorrent\include\libtorrent\bencode.hpp">
-      <Filter>Header Files\libtorrent</Filter>
-    </ClInclude>
-    <ClInclude Include="libtorrent\include\libtorrent\asio\detail\bind_handler.hpp">
       <Filter>Header Files\libtorrent</Filter>
     </ClInclude>
     <ClInclude Include="libtorrent\include\libtorrent\bitfield.hpp">
@@ -132,67 +81,16 @@
     <ClInclude Include="libtorrent\include\libtorrent\buffer.hpp">
       <Filter>Header Files\libtorrent</Filter>
     </ClInclude>
-    <ClInclude Include="libtorrent\include\libtorrent\asio\buffer.hpp">
-      <Filter>Header Files\libtorrent</Filter>
-    </ClInclude>
-    <ClInclude Include="libtorrent\include\libtorrent\asio\detail\buffer_resize_guard.hpp">
-      <Filter>Header Files\libtorrent</Filter>
-    </ClInclude>
-    <ClInclude Include="libtorrent\include\libtorrent\asio\buffered_read_stream.hpp">
-      <Filter>Header Files\libtorrent</Filter>
-    </ClInclude>
-    <ClInclude Include="libtorrent\include\libtorrent\asio\buffered_read_stream_fwd.hpp">
-      <Filter>Header Files\libtorrent</Filter>
-    </ClInclude>
-    <ClInclude Include="libtorrent\include\libtorrent\asio\buffered_stream.hpp">
-      <Filter>Header Files\libtorrent</Filter>
-    </ClInclude>
-    <ClInclude Include="libtorrent\include\libtorrent\asio\buffered_stream_fwd.hpp">
-      <Filter>Header Files\libtorrent</Filter>
-    </ClInclude>
-    <ClInclude Include="libtorrent\include\libtorrent\asio\detail\buffered_stream_storage.hpp">
-      <Filter>Header Files\libtorrent</Filter>
-    </ClInclude>
-    <ClInclude Include="libtorrent\include\libtorrent\asio\buffered_write_stream.hpp">
-      <Filter>Header Files\libtorrent</Filter>
-    </ClInclude>
-    <ClInclude Include="libtorrent\include\libtorrent\asio\buffered_write_stream_fwd.hpp">
-      <Filter>Header Files\libtorrent</Filter>
-    </ClInclude>
     <ClInclude Include="libtorrent\include\libtorrent\build_config.hpp">
       <Filter>Header Files\libtorrent</Filter>
     </ClInclude>
-    <ClInclude Include="libtorrent\include\libtorrent\asio\detail\call_stack.hpp">
-      <Filter>Header Files\libtorrent</Filter>
-    </ClInclude>
     <ClInclude Include="libtorrent\include\libtorrent\chained_buffer.hpp">
-      <Filter>Header Files\libtorrent</Filter>
-    </ClInclude>
-    <ClInclude Include="libtorrent\include\libtorrent\kademlia\closest_nodes.hpp">
-      <Filter>Header Files\libtorrent</Filter>
-    </ClInclude>
-    <ClInclude Include="libtorrent\include\libtorrent\asio\completion_condition.hpp">
       <Filter>Header Files\libtorrent</Filter>
     </ClInclude>
     <ClInclude Include="libtorrent\include\libtorrent\config.hpp">
       <Filter>Header Files\libtorrent</Filter>
     </ClInclude>
     <ClInclude Include="libtorrent\include\libtorrent\connection_queue.hpp">
-      <Filter>Header Files\libtorrent</Filter>
-    </ClInclude>
-    <ClInclude Include="libtorrent\include\libtorrent\asio\detail\const_buffers_iterator.hpp">
-      <Filter>Header Files\libtorrent</Filter>
-    </ClInclude>
-    <ClInclude Include="libtorrent\include\libtorrent\asio\detail\consuming_buffers.hpp">
-      <Filter>Header Files\libtorrent</Filter>
-    </ClInclude>
-    <ClInclude Include="libtorrent\include\libtorrent\asio\ssl\context.hpp">
-      <Filter>Header Files\libtorrent</Filter>
-    </ClInclude>
-    <ClInclude Include="libtorrent\include\libtorrent\asio\ssl\context_base.hpp">
-      <Filter>Header Files\libtorrent</Filter>
-    </ClInclude>
-    <ClInclude Include="libtorrent\include\libtorrent\asio\ssl\context_service.hpp">
       <Filter>Header Files\libtorrent</Filter>
     </ClInclude>
     <ClInclude Include="libtorrent\include\libtorrent\ConvertUTF.h">
@@ -207,31 +105,13 @@
     <ClInclude Include="libtorrent\include\libtorrent\create_torrent.hpp">
       <Filter>Header Files\libtorrent</Filter>
     </ClInclude>
-    <ClInclude Include="libtorrent\include\libtorrent\asio\datagram_socket_service.hpp">
-      <Filter>Header Files\libtorrent</Filter>
-    </ClInclude>
-    <ClInclude Include="libtorrent\include\libtorrent\asio\deadline_timer.hpp">
-      <Filter>Header Files\libtorrent</Filter>
-    </ClInclude>
     <ClInclude Include="libtorrent\include\libtorrent\deadline_timer.hpp">
-      <Filter>Header Files\libtorrent</Filter>
-    </ClInclude>
-    <ClInclude Include="libtorrent\include\libtorrent\asio\detail\deadline_timer_service.hpp">
-      <Filter>Header Files\libtorrent</Filter>
-    </ClInclude>
-    <ClInclude Include="libtorrent\include\libtorrent\asio\deadline_timer_service.hpp">
       <Filter>Header Files\libtorrent</Filter>
     </ClInclude>
     <ClInclude Include="libtorrent\include\libtorrent\debug.hpp">
       <Filter>Header Files\libtorrent</Filter>
     </ClInclude>
     <ClInclude Include="libtorrent\zlib\deflate.h">
-      <Filter>Header Files\libtorrent</Filter>
-    </ClInclude>
-    <ClInclude Include="libtorrent\include\libtorrent\asio\detail\dev_poll_reactor.hpp">
-      <Filter>Header Files\libtorrent</Filter>
-    </ClInclude>
-    <ClInclude Include="libtorrent\include\libtorrent\asio\detail\dev_poll_reactor_fwd.hpp">
       <Filter>Header Files\libtorrent</Filter>
     </ClInclude>
     <ClInclude Include="libtorrent\include\libtorrent\kademlia\dht_observer.hpp">
@@ -258,19 +138,7 @@
     <ClInclude Include="libtorrent\include\libtorrent\enum_net.hpp">
       <Filter>Header Files\libtorrent</Filter>
     </ClInclude>
-    <ClInclude Include="libtorrent\include\libtorrent\asio\detail\epoll_reactor.hpp">
-      <Filter>Header Files\libtorrent</Filter>
-    </ClInclude>
-    <ClInclude Include="libtorrent\include\libtorrent\asio\detail\epoll_reactor_fwd.hpp">
-      <Filter>Header Files\libtorrent</Filter>
-    </ClInclude>
-    <ClInclude Include="libtorrent\include\libtorrent\asio\error.hpp">
-      <Filter>Header Files\libtorrent</Filter>
-    </ClInclude>
     <ClInclude Include="libtorrent\include\libtorrent\error.hpp">
-      <Filter>Header Files\libtorrent</Filter>
-    </ClInclude>
-    <ClInclude Include="libtorrent\include\libtorrent\asio\error_code.hpp">
       <Filter>Header Files\libtorrent</Filter>
     </ClInclude>
     <ClInclude Include="libtorrent\include\libtorrent\error_code.hpp">
@@ -279,16 +147,10 @@
     <ClInclude Include="libtorrent\include\libtorrent\escape_string.hpp">
       <Filter>Header Files\libtorrent</Filter>
     </ClInclude>
-    <ClInclude Include="libtorrent\include\libtorrent\asio\detail\event.hpp">
-      <Filter>Header Files\libtorrent</Filter>
-    </ClInclude>
     <ClInclude Include="libtorrent\include\libtorrent\export.hpp">
       <Filter>Header Files\libtorrent</Filter>
     </ClInclude>
     <ClInclude Include="libtorrent\include\libtorrent\extensions.hpp">
-      <Filter>Header Files\libtorrent</Filter>
-    </ClInclude>
-    <ClInclude Include="libtorrent\include\libtorrent\asio\detail\fd_set_adapter.hpp">
       <Filter>Header Files\libtorrent</Filter>
     </ClInclude>
     <ClInclude Include="libtorrent\include\libtorrent\file.hpp">
@@ -318,28 +180,7 @@
     <ClInclude Include="libtorrent\include\libtorrent\gzip.hpp">
       <Filter>Header Files\libtorrent</Filter>
     </ClInclude>
-    <ClInclude Include="libtorrent\include\libtorrent\asio\detail\handler_alloc_helpers.hpp">
-      <Filter>Header Files\libtorrent</Filter>
-    </ClInclude>
-    <ClInclude Include="libtorrent\include\libtorrent\asio\handler_alloc_hook.hpp">
-      <Filter>Header Files\libtorrent</Filter>
-    </ClInclude>
-    <ClInclude Include="libtorrent\include\libtorrent\asio\detail\handler_invoke_helpers.hpp">
-      <Filter>Header Files\libtorrent</Filter>
-    </ClInclude>
-    <ClInclude Include="libtorrent\include\libtorrent\asio\handler_invoke_hook.hpp">
-      <Filter>Header Files\libtorrent</Filter>
-    </ClInclude>
-    <ClInclude Include="libtorrent\include\libtorrent\asio\detail\handler_queue.hpp">
-      <Filter>Header Files\libtorrent</Filter>
-    </ClInclude>
-    <ClInclude Include="libtorrent\include\libtorrent\asio\detail\hash_map.hpp">
-      <Filter>Header Files\libtorrent</Filter>
-    </ClInclude>
     <ClInclude Include="libtorrent\include\libtorrent\hasher.hpp">
-      <Filter>Header Files\libtorrent</Filter>
-    </ClInclude>
-    <ClInclude Include="libtorrent\include\libtorrent\asio\ip\host_name.hpp">
       <Filter>Header Files\libtorrent</Filter>
     </ClInclude>
     <ClInclude Include="libtorrent\include\libtorrent\http_connection.hpp">
@@ -387,12 +228,6 @@
     <ClInclude Include="libtorrent\include\libtorrent\io.hpp">
       <Filter>Header Files\libtorrent</Filter>
     </ClInclude>
-    <ClInclude Include="libtorrent\include\libtorrent\asio\detail\io_control.hpp">
-      <Filter>Header Files\libtorrent</Filter>
-    </ClInclude>
-    <ClInclude Include="libtorrent\include\libtorrent\asio\io_service.hpp">
-      <Filter>Header Files\libtorrent</Filter>
-    </ClInclude>
     <ClInclude Include="libtorrent\include\libtorrent\io_service.hpp">
       <Filter>Header Files\libtorrent</Filter>
     </ClInclude>
@@ -405,25 +240,10 @@
     <ClInclude Include="libtorrent\include\libtorrent\ip_voter.hpp">
       <Filter>Header Files\libtorrent</Filter>
     </ClInclude>
-    <ClInclude Include="libtorrent\include\libtorrent\asio\is_read_buffered.hpp">
-      <Filter>Header Files\libtorrent</Filter>
-    </ClInclude>
-    <ClInclude Include="libtorrent\include\libtorrent\asio\is_write_buffered.hpp">
-      <Filter>Header Files\libtorrent</Filter>
-    </ClInclude>
     <ClInclude Include="libtorrent\include\libtorrent\kademlia\item.hpp">
       <Filter>Header Files\libtorrent</Filter>
     </ClInclude>
-    <ClInclude Include="libtorrent\include\libtorrent\asio\detail\kqueue_reactor.hpp">
-      <Filter>Header Files\libtorrent</Filter>
-    </ClInclude>
-    <ClInclude Include="libtorrent\include\libtorrent\asio\detail\kqueue_reactor_fwd.hpp">
-      <Filter>Header Files\libtorrent</Filter>
-    </ClInclude>
     <ClInclude Include="libtorrent\include\libtorrent\lazy_entry.hpp">
-      <Filter>Header Files\libtorrent</Filter>
-    </ClInclude>
-    <ClInclude Include="libtorrent\include\libtorrent\asio\detail\local_free_on_block_exit.hpp">
       <Filter>Header Files\libtorrent</Filter>
     </ClInclude>
     <ClInclude Include="libtorrent\include\libtorrent\extensions\logger.hpp">
@@ -450,12 +270,6 @@
     <ClInclude Include="libtorrent\include\libtorrent\kademlia\msg.hpp">
       <Filter>Header Files\libtorrent</Filter>
     </ClInclude>
-    <ClInclude Include="libtorrent\include\libtorrent\asio\ip\multicast.hpp">
-      <Filter>Header Files\libtorrent</Filter>
-    </ClInclude>
-    <ClInclude Include="libtorrent\include\libtorrent\asio\detail\mutex.hpp">
-      <Filter>Header Files\libtorrent</Filter>
-    </ClInclude>
     <ClInclude Include="libtorrent\include\libtorrent\natpmp.hpp">
       <Filter>Header Files\libtorrent</Filter>
     </ClInclude>
@@ -468,52 +282,13 @@
     <ClInclude Include="libtorrent\include\libtorrent\kademlia\node_id.hpp">
       <Filter>Header Files\libtorrent</Filter>
     </ClInclude>
-    <ClInclude Include="libtorrent\include\libtorrent\asio\detail\noncopyable.hpp">
-      <Filter>Header Files\libtorrent</Filter>
-    </ClInclude>
-    <ClInclude Include="libtorrent\include\libtorrent\asio\detail\null_event.hpp">
-      <Filter>Header Files\libtorrent</Filter>
-    </ClInclude>
-    <ClInclude Include="libtorrent\include\libtorrent\asio\detail\null_mutex.hpp">
-      <Filter>Header Files\libtorrent</Filter>
-    </ClInclude>
-    <ClInclude Include="libtorrent\include\libtorrent\asio\detail\null_signal_blocker.hpp">
-      <Filter>Header Files\libtorrent</Filter>
-    </ClInclude>
-    <ClInclude Include="libtorrent\include\libtorrent\asio\detail\null_thread.hpp">
-      <Filter>Header Files\libtorrent</Filter>
-    </ClInclude>
-    <ClInclude Include="libtorrent\include\libtorrent\asio\detail\null_tss_ptr.hpp">
-      <Filter>Header Files\libtorrent</Filter>
-    </ClInclude>
     <ClInclude Include="libtorrent\include\libtorrent\kademlia\observer.hpp">
-      <Filter>Header Files\libtorrent</Filter>
-    </ClInclude>
-    <ClInclude Include="libtorrent\include\libtorrent\asio\detail\old_win_sdk_compat.hpp">
-      <Filter>Header Files\libtorrent</Filter>
-    </ClInclude>
-    <ClInclude Include="libtorrent\include\libtorrent\asio\ssl\detail\openssl_context_service.hpp">
-      <Filter>Header Files\libtorrent</Filter>
-    </ClInclude>
-    <ClInclude Include="libtorrent\include\libtorrent\asio\ssl\detail\openssl_init.hpp">
-      <Filter>Header Files\libtorrent</Filter>
-    </ClInclude>
-    <ClInclude Include="libtorrent\include\libtorrent\asio\ssl\detail\openssl_operation.hpp">
-      <Filter>Header Files\libtorrent</Filter>
-    </ClInclude>
-    <ClInclude Include="libtorrent\include\libtorrent\asio\ssl\detail\openssl_stream_service.hpp">
-      <Filter>Header Files\libtorrent</Filter>
-    </ClInclude>
-    <ClInclude Include="libtorrent\include\libtorrent\asio\ssl\detail\openssl_types.hpp">
       <Filter>Header Files\libtorrent</Filter>
     </ClInclude>
     <ClInclude Include="libtorrent\include\libtorrent\packet_buffer.hpp">
       <Filter>Header Files\libtorrent</Filter>
     </ClInclude>
     <ClInclude Include="libtorrent\include\libtorrent\parse_url.hpp">
-      <Filter>Header Files\libtorrent</Filter>
-    </ClInclude>
-    <ClInclude Include="libtorrent\include\libtorrent\pch.hpp">
       <Filter>Header Files\libtorrent</Filter>
     </ClInclude>
     <ClInclude Include="libtorrent\include\libtorrent\pe_crypto.hpp">
@@ -540,31 +315,7 @@
     <ClInclude Include="libtorrent\include\libtorrent\piece_picker.hpp">
       <Filter>Header Files\libtorrent</Filter>
     </ClInclude>
-    <ClInclude Include="libtorrent\include\libtorrent\asio\detail\pipe_select_interrupter.hpp">
-      <Filter>Header Files\libtorrent</Filter>
-    </ClInclude>
-    <ClInclude Include="libtorrent\include\libtorrent\asio\placeholders.hpp">
-      <Filter>Header Files\libtorrent</Filter>
-    </ClInclude>
     <ClInclude Include="libtorrent\include\libtorrent\policy.hpp">
-      <Filter>Header Files\libtorrent</Filter>
-    </ClInclude>
-    <ClInclude Include="libtorrent\include\libtorrent\asio\detail\posix_event.hpp">
-      <Filter>Header Files\libtorrent</Filter>
-    </ClInclude>
-    <ClInclude Include="libtorrent\include\libtorrent\asio\detail\posix_fd_set_adapter.hpp">
-      <Filter>Header Files\libtorrent</Filter>
-    </ClInclude>
-    <ClInclude Include="libtorrent\include\libtorrent\asio\detail\posix_mutex.hpp">
-      <Filter>Header Files\libtorrent</Filter>
-    </ClInclude>
-    <ClInclude Include="libtorrent\include\libtorrent\asio\detail\posix_signal_blocker.hpp">
-      <Filter>Header Files\libtorrent</Filter>
-    </ClInclude>
-    <ClInclude Include="libtorrent\include\libtorrent\asio\detail\posix_thread.hpp">
-      <Filter>Header Files\libtorrent</Filter>
-    </ClInclude>
-    <ClInclude Include="libtorrent\include\libtorrent\asio\detail\posix_tss_ptr.hpp">
       <Filter>Header Files\libtorrent</Filter>
     </ClInclude>
     <ClInclude Include="libtorrent\include\libtorrent\proxy_base.hpp">
@@ -579,31 +330,7 @@
     <ClInclude Include="libtorrent\include\libtorrent\random.hpp">
       <Filter>Header Files\libtorrent</Filter>
     </ClInclude>
-    <ClInclude Include="libtorrent\include\libtorrent\random_sample.hpp">
-      <Filter>Header Files\libtorrent</Filter>
-    </ClInclude>
-    <ClInclude Include="libtorrent\include\libtorrent\asio\detail\reactive_socket_service.hpp">
-      <Filter>Header Files\libtorrent</Filter>
-    </ClInclude>
-    <ClInclude Include="libtorrent\include\libtorrent\asio\detail\reactor_op_queue.hpp">
-      <Filter>Header Files\libtorrent</Filter>
-    </ClInclude>
-    <ClInclude Include="libtorrent\include\libtorrent\asio\read.hpp">
-      <Filter>Header Files\libtorrent</Filter>
-    </ClInclude>
-    <ClInclude Include="libtorrent\include\libtorrent\asio\read_until.hpp">
-      <Filter>Header Files\libtorrent</Filter>
-    </ClInclude>
     <ClInclude Include="libtorrent\include\libtorrent\kademlia\refresh.hpp">
-      <Filter>Header Files\libtorrent</Filter>
-    </ClInclude>
-    <ClInclude Include="libtorrent\include\libtorrent\asio\ip\resolver_query_base.hpp">
-      <Filter>Header Files\libtorrent</Filter>
-    </ClInclude>
-    <ClInclude Include="libtorrent\include\libtorrent\asio\detail\resolver_service.hpp">
-      <Filter>Header Files\libtorrent</Filter>
-    </ClInclude>
-    <ClInclude Include="libtorrent\include\libtorrent\asio\ip\resolver_service.hpp">
       <Filter>Header Files\libtorrent</Filter>
     </ClInclude>
     <ClInclude Include="libtorrent\include\libtorrent\kademlia\routing_table.hpp">
@@ -613,30 +340,6 @@
       <Filter>Header Files\libtorrent</Filter>
     </ClInclude>
     <ClInclude Include="libtorrent\include\libtorrent\rss.hpp">
-      <Filter>Header Files\libtorrent</Filter>
-    </ClInclude>
-    <ClInclude Include="libtorrent\include\libtorrent\asio\detail\scoped_lock.hpp">
-      <Filter>Header Files\libtorrent</Filter>
-    </ClInclude>
-    <ClInclude Include="libtorrent\include\libtorrent\asio\detail\select_interrupter.hpp">
-      <Filter>Header Files\libtorrent</Filter>
-    </ClInclude>
-    <ClInclude Include="libtorrent\include\libtorrent\asio\detail\select_reactor.hpp">
-      <Filter>Header Files\libtorrent</Filter>
-    </ClInclude>
-    <ClInclude Include="libtorrent\include\libtorrent\asio\detail\select_reactor_fwd.hpp">
-      <Filter>Header Files\libtorrent</Filter>
-    </ClInclude>
-    <ClInclude Include="libtorrent\include\libtorrent\asio\detail\service_base.hpp">
-      <Filter>Header Files\libtorrent</Filter>
-    </ClInclude>
-    <ClInclude Include="libtorrent\include\libtorrent\asio\detail\service_id.hpp">
-      <Filter>Header Files\libtorrent</Filter>
-    </ClInclude>
-    <ClInclude Include="libtorrent\include\libtorrent\asio\detail\service_registry.hpp">
-      <Filter>Header Files\libtorrent</Filter>
-    </ClInclude>
-    <ClInclude Include="libtorrent\include\libtorrent\asio\detail\service_registry_fwd.hpp">
       <Filter>Header Files\libtorrent</Filter>
     </ClInclude>
     <ClInclude Include="libtorrent\include\libtorrent\session.hpp">
@@ -657,12 +360,6 @@
     <ClInclude Include="libtorrent\include\libtorrent\sha1_hash.hpp">
       <Filter>Header Files\libtorrent</Filter>
     </ClInclude>
-    <ClInclude Include="libtorrent\include\libtorrent\asio\detail\signal_blocker.hpp">
-      <Filter>Header Files\libtorrent</Filter>
-    </ClInclude>
-    <ClInclude Include="libtorrent\include\libtorrent\asio\detail\signal_init.hpp">
-      <Filter>Header Files\libtorrent</Filter>
-    </ClInclude>
     <ClInclude Include="libtorrent\include\libtorrent\size_type.hpp">
       <Filter>Header Files\libtorrent</Filter>
     </ClInclude>
@@ -675,28 +372,7 @@
     <ClInclude Include="libtorrent\include\libtorrent\socket.hpp">
       <Filter>Header Files\libtorrent</Filter>
     </ClInclude>
-    <ClInclude Include="libtorrent\include\libtorrent\asio\socket_acceptor_service.hpp">
-      <Filter>Header Files\libtorrent</Filter>
-    </ClInclude>
-    <ClInclude Include="libtorrent\include\libtorrent\asio\socket_base.hpp">
-      <Filter>Header Files\libtorrent</Filter>
-    </ClInclude>
-    <ClInclude Include="libtorrent\include\libtorrent\asio\detail\socket_holder.hpp">
-      <Filter>Header Files\libtorrent</Filter>
-    </ClInclude>
     <ClInclude Include="libtorrent\include\libtorrent\socket_io.hpp">
-      <Filter>Header Files\libtorrent</Filter>
-    </ClInclude>
-    <ClInclude Include="libtorrent\include\libtorrent\asio\detail\socket_ops.hpp">
-      <Filter>Header Files\libtorrent</Filter>
-    </ClInclude>
-    <ClInclude Include="libtorrent\include\libtorrent\asio\ip\detail\socket_option.hpp">
-      <Filter>Header Files\libtorrent</Filter>
-    </ClInclude>
-    <ClInclude Include="libtorrent\include\libtorrent\asio\detail\socket_option.hpp">
-      <Filter>Header Files\libtorrent</Filter>
-    </ClInclude>
-    <ClInclude Include="libtorrent\include\libtorrent\asio\detail\socket_select_interrupter.hpp">
       <Filter>Header Files\libtorrent</Filter>
     </ClInclude>
     <ClInclude Include="libtorrent\include\libtorrent\socket_type.hpp">
@@ -705,16 +381,7 @@
     <ClInclude Include="libtorrent\include\libtorrent\socket_type_fwd.hpp">
       <Filter>Header Files\libtorrent</Filter>
     </ClInclude>
-    <ClInclude Include="libtorrent\include\libtorrent\asio\detail\socket_types.hpp">
-      <Filter>Header Files\libtorrent</Filter>
-    </ClInclude>
-    <ClInclude Include="libtorrent\include\libtorrent\socks4_stream.hpp">
-      <Filter>Header Files\libtorrent</Filter>
-    </ClInclude>
     <ClInclude Include="libtorrent\include\libtorrent\socks5_stream.hpp">
-      <Filter>Header Files\libtorrent</Filter>
-    </ClInclude>
-    <ClInclude Include="libtorrent\include\libtorrent\asio\ssl.hpp">
       <Filter>Header Files\libtorrent</Filter>
     </ClInclude>
     <ClInclude Include="libtorrent\include\libtorrent\ssl_stream.hpp">
@@ -729,64 +396,13 @@
     <ClInclude Include="libtorrent\include\libtorrent\storage_defs.hpp">
       <Filter>Header Files\libtorrent</Filter>
     </ClInclude>
-    <ClInclude Include="libtorrent\include\libtorrent\asio\strand.hpp">
-      <Filter>Header Files\libtorrent</Filter>
-    </ClInclude>
-    <ClInclude Include="libtorrent\include\libtorrent\asio\detail\strand_service.hpp">
-      <Filter>Header Files\libtorrent</Filter>
-    </ClInclude>
-    <ClInclude Include="libtorrent\include\libtorrent\asio\ssl\stream.hpp">
-      <Filter>Header Files\libtorrent</Filter>
-    </ClInclude>
-    <ClInclude Include="libtorrent\include\libtorrent\asio\ssl\stream_base.hpp">
-      <Filter>Header Files\libtorrent</Filter>
-    </ClInclude>
-    <ClInclude Include="libtorrent\include\libtorrent\asio\ssl\stream_service.hpp">
-      <Filter>Header Files\libtorrent</Filter>
-    </ClInclude>
-    <ClInclude Include="libtorrent\include\libtorrent\asio\stream_socket_service.hpp">
-      <Filter>Header Files\libtorrent</Filter>
-    </ClInclude>
-    <ClInclude Include="libtorrent\include\libtorrent\asio\streambuf.hpp">
-      <Filter>Header Files\libtorrent</Filter>
-    </ClInclude>
     <ClInclude Include="libtorrent\include\libtorrent\string_util.hpp">
-      <Filter>Header Files\libtorrent</Filter>
-    </ClInclude>
-    <ClInclude Include="libtorrent\include\libtorrent\asio\system_error.hpp">
-      <Filter>Header Files\libtorrent</Filter>
-    </ClInclude>
-    <ClInclude Include="libtorrent\include\libtorrent\asio\detail\task_io_service.hpp">
-      <Filter>Header Files\libtorrent</Filter>
-    </ClInclude>
-    <ClInclude Include="libtorrent\include\libtorrent\asio\detail\task_io_service_fwd.hpp">
-      <Filter>Header Files\libtorrent</Filter>
-    </ClInclude>
-    <ClInclude Include="libtorrent\include\libtorrent\asio\ip\tcp.hpp">
-      <Filter>Header Files\libtorrent</Filter>
-    </ClInclude>
-    <ClInclude Include="libtorrent\include\libtorrent\asio\thread.hpp">
-      <Filter>Header Files\libtorrent</Filter>
-    </ClInclude>
-    <ClInclude Include="libtorrent\include\libtorrent\asio\detail\thread.hpp">
       <Filter>Header Files\libtorrent</Filter>
     </ClInclude>
     <ClInclude Include="libtorrent\include\libtorrent\thread.hpp">
       <Filter>Header Files\libtorrent</Filter>
     </ClInclude>
-    <ClInclude Include="libtorrent\include\libtorrent\asio\detail\throw_error.hpp">
-      <Filter>Header Files\libtorrent</Filter>
-    </ClInclude>
     <ClInclude Include="libtorrent\include\libtorrent\time.hpp">
-      <Filter>Header Files\libtorrent</Filter>
-    </ClInclude>
-    <ClInclude Include="libtorrent\include\libtorrent\asio\time_traits.hpp">
-      <Filter>Header Files\libtorrent</Filter>
-    </ClInclude>
-    <ClInclude Include="libtorrent\include\libtorrent\asio\detail\timer_queue.hpp">
-      <Filter>Header Files\libtorrent</Filter>
-    </ClInclude>
-    <ClInclude Include="libtorrent\include\libtorrent\asio\detail\timer_queue_base.hpp">
       <Filter>Header Files\libtorrent</Filter>
     </ClInclude>
     <ClInclude Include="libtorrent\include\libtorrent\timestamp_history.hpp">
@@ -819,19 +435,10 @@
     <ClInclude Include="libtorrent\zlib\trees.h">
       <Filter>Header Files\libtorrent</Filter>
     </ClInclude>
-    <ClInclude Include="libtorrent\include\libtorrent\asio\detail\tss_ptr.hpp">
-      <Filter>Header Files\libtorrent</Filter>
-    </ClInclude>
-    <ClInclude Include="libtorrent\include\libtorrent\asio\ip\udp.hpp">
-      <Filter>Header Files\libtorrent</Filter>
-    </ClInclude>
     <ClInclude Include="libtorrent\include\libtorrent\udp_socket.hpp">
       <Filter>Header Files\libtorrent</Filter>
     </ClInclude>
     <ClInclude Include="libtorrent\include\libtorrent\udp_tracker_connection.hpp">
-      <Filter>Header Files\libtorrent</Filter>
-    </ClInclude>
-    <ClInclude Include="libtorrent\include\libtorrent\asio\ip\unicast.hpp">
       <Filter>Header Files\libtorrent</Filter>
     </ClInclude>
     <ClInclude Include="libtorrent\include\libtorrent\union_endpoint.hpp">
@@ -855,15 +462,6 @@
     <ClInclude Include="libtorrent\include\libtorrent\utp_stream.hpp">
       <Filter>Header Files\libtorrent</Filter>
     </ClInclude>
-    <ClInclude Include="libtorrent\include\libtorrent\asio\ip\v6_only.hpp">
-      <Filter>Header Files\libtorrent</Filter>
-    </ClInclude>
-    <ClInclude Include="libtorrent\include\libtorrent\variant_stream.hpp">
-      <Filter>Header Files\libtorrent</Filter>
-    </ClInclude>
-    <ClInclude Include="libtorrent\include\libtorrent\asio\version.hpp">
-      <Filter>Header Files\libtorrent</Filter>
-    </ClInclude>
     <ClInclude Include="libtorrent\include\libtorrent\version.hpp">
       <Filter>Header Files\libtorrent</Filter>
     </ClInclude>
@@ -871,48 +469,6 @@
       <Filter>Header Files\libtorrent</Filter>
     </ClInclude>
     <ClInclude Include="libtorrent\include\libtorrent\web_peer_connection.hpp">
-      <Filter>Header Files\libtorrent</Filter>
-    </ClInclude>
-    <ClInclude Include="libtorrent\include\libtorrent\asio\detail\win_event.hpp">
-      <Filter>Header Files\libtorrent</Filter>
-    </ClInclude>
-    <ClInclude Include="libtorrent\include\libtorrent\asio\detail\win_fd_set_adapter.hpp">
-      <Filter>Header Files\libtorrent</Filter>
-    </ClInclude>
-    <ClInclude Include="libtorrent\include\libtorrent\asio\detail\win_iocp_io_service.hpp">
-      <Filter>Header Files\libtorrent</Filter>
-    </ClInclude>
-    <ClInclude Include="libtorrent\include\libtorrent\asio\detail\win_iocp_io_service_fwd.hpp">
-      <Filter>Header Files\libtorrent</Filter>
-    </ClInclude>
-    <ClInclude Include="libtorrent\include\libtorrent\asio\detail\win_iocp_operation.hpp">
-      <Filter>Header Files\libtorrent</Filter>
-    </ClInclude>
-    <ClInclude Include="libtorrent\include\libtorrent\asio\detail\win_iocp_socket_service.hpp">
-      <Filter>Header Files\libtorrent</Filter>
-    </ClInclude>
-    <ClInclude Include="libtorrent\include\libtorrent\asio\detail\win_mutex.hpp">
-      <Filter>Header Files\libtorrent</Filter>
-    </ClInclude>
-    <ClInclude Include="libtorrent\include\libtorrent\asio\detail\win_signal_blocker.hpp">
-      <Filter>Header Files\libtorrent</Filter>
-    </ClInclude>
-    <ClInclude Include="libtorrent\include\libtorrent\asio\detail\win_thread.hpp">
-      <Filter>Header Files\libtorrent</Filter>
-    </ClInclude>
-    <ClInclude Include="libtorrent\include\libtorrent\asio\detail\win_tss_ptr.hpp">
-      <Filter>Header Files\libtorrent</Filter>
-    </ClInclude>
-    <ClInclude Include="libtorrent\include\libtorrent\asio\detail\wince_thread.hpp">
-      <Filter>Header Files\libtorrent</Filter>
-    </ClInclude>
-    <ClInclude Include="libtorrent\include\libtorrent\asio\detail\winsock_init.hpp">
-      <Filter>Header Files\libtorrent</Filter>
-    </ClInclude>
-    <ClInclude Include="libtorrent\include\libtorrent\asio\detail\wrapped_handler.hpp">
-      <Filter>Header Files\libtorrent</Filter>
-    </ClInclude>
-    <ClInclude Include="libtorrent\include\libtorrent\asio\write.hpp">
       <Filter>Header Files\libtorrent</Filter>
     </ClInclude>
     <ClInclude Include="libtorrent\include\libtorrent\xml_parse.hpp">
@@ -1009,15 +565,6 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="src\swashstatbar.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="libtorrent\include\libtorrent\asio\detail\pop_options.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="libtorrent\include\libtorrent\asio\detail\push_options.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="src\version.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
