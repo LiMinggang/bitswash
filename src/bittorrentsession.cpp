@@ -171,6 +171,8 @@ void BitTorrentSession::OnExit()
 
 	SaveAllTorrent();
 
+	std::auto_ptr<libtorrent::alert> a = m_libbtsession->pop_alert();
+
 	delete m_libbtsession;
 
 	for (torrents_t::iterator i = m_torrent_queue.begin();
@@ -706,6 +708,8 @@ void BitTorrentSession::SaveAllTorrent()
 {
 
 	wxLogDebug(_T("Saving torrent info\n"));
+
+	m_libbtsession->pause();
 
 	/* take this opportunity to sync torrent index back to zero */
 	int idx=0;

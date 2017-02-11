@@ -221,7 +221,7 @@ int PeerListCtrl::GetItemColumnImage(long item, long columnid) const
 	{
 		case PEERLIST_COLUMN_IP:
 			wxString ctry = wxString::FromAscii(peer_info.country);
-			if ((('A' <= ctry[0]) &&
+			if ((!ctry.IsEmpty())&&(('A' <= ctry[0]) &&
 					(ctry[0] <= 'Z')) &&
 				 (('A' <= ctry[1]) &&
 					(ctry[1] <= 'Z')))
