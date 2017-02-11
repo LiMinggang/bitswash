@@ -82,7 +82,7 @@ TorrentProperty::TorrentProperty(torrent_t* pTorrent, wxWindow *parent,
 	m_torrentsettings_sizer->Add( m_pane_info, 1, wxEXPAND | wxALL, 5 );
 	
 	wxFlexGridSizer* fgSizer11;
-	fgSizer11 = new wxFlexGridSizer( 1, 2, 5, 5 );
+	fgSizer11 = new wxFlexGridSizer( 0, 2, 5, 5 );
 	fgSizer11->AddGrowableCol( 1 );
 	fgSizer11->SetFlexibleDirection( wxBOTH );
 	

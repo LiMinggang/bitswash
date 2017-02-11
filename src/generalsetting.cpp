@@ -55,7 +55,7 @@ GeneralSettingPane::GeneralSettingPane( wxWindow* parent,
 	m_pcfg = ((MainFrame*)m_pMainFrame)->GetConfig();
 
 	wxFlexGridSizer* fgSizerMain;
-	fgSizerMain = new wxFlexGridSizer( 1, 1, 0, 0 );
+	fgSizerMain = new wxFlexGridSizer( 0, 1, 0, 0 );
 	fgSizerMain->SetFlexibleDirection( wxBOTH );
 	
 	m_pane_infogeneral = new wxPanel( this, wxID_ANY, wxDefaultPosition, wxSize( -1,20 ), wxTAB_TRAVERSAL );
@@ -72,7 +72,7 @@ GeneralSettingPane::GeneralSettingPane( wxWindow* parent,
 	fgSizerMain->Add( m_pane_infogeneral, 1, wxEXPAND | wxALL, 5 );
 	
 	wxFlexGridSizer* fgSizerGeneral;
-	fgSizerGeneral = new wxFlexGridSizer( 1, 2, 0, 0 );
+	fgSizerGeneral = new wxFlexGridSizer( 0, 2, 0, 0 );
 	fgSizerGeneral->SetFlexibleDirection( wxBOTH );
 	
 	m_static_maxstart = new wxStaticText( this, wxID_ANY, _("Maximum Running Job:"), wxDefaultPosition, wxDefaultSize, 0 );

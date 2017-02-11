@@ -446,7 +446,8 @@ void BitTorrentSession::AddTorrentSession(torrent_t* torrent)
 		libtorrent::add_torrent_params p;
 		p.ti = t;
 		p.save_path = (const char*)torrent->config->GetDownloadPath().mb_str(wxConvUTF8);
-		p.resume_data = resume_data.preformatted();
+		bencode(std::back_inserter(p.resume_data), resume_data);
+		//p.resume_data = resume_data.preformatted();
 		p.paused = (torrent->config->GetTorrentState() != TORRENT_STATE_PAUSE);
 		p.duplicate_is_error = true;
 		p.auto_managed = true;
