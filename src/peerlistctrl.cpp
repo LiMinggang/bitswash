@@ -225,7 +225,7 @@ int PeerListCtrl::GetItemColumnImage(long item, long columnid) const
 			(('A' <= ctry[1]) &&
 			(ctry[1] <= 'Z')))
 		{
-			ctry[2] = '\0';
+			//ctry[2] = '\0';
 			int index = wxGetApp().GetCountryFlag(ctry);
 			wxLogDebug(_T("Image idx %s %d\n"), ctry.c_str(), index);
 			return index;
