@@ -56,7 +56,7 @@ ExtensionSettingPane::ExtensionSettingPane( wxWindow* parent,
 	m_pcfg = ((MainFrame*)m_pMainFrame)->GetConfig();
 
 	wxFlexGridSizer* fgSizerMain;
-	fgSizerMain = new wxFlexGridSizer( 1, 1, 0, 0 );
+	fgSizerMain = new wxFlexGridSizer( 0, 1, 0, 0 );
 	fgSizerMain->SetFlexibleDirection( wxBOTH );
 	
 	m_pane_infoextension = new wxPanel( this, wxID_ANY, wxDefaultPosition, wxSize( -1,20 ), wxTAB_TRAVERSAL );
@@ -66,14 +66,14 @@ ExtensionSettingPane::ExtensionSettingPane( wxWindow* parent,
 	bSizer1 = new wxBoxSizer( wxVERTICAL );
 	
 	m_static_infoextension = new wxStaticText( m_pane_infoextension, wxID_ANY, _("Extensions"), wxDefaultPosition, wxDefaultSize, 0 );
-	bSizer1->Add( m_static_infoextension, 0, wxALL, 5 );
+	bSizer1->Add( m_static_infoextension, 0, wxALL, 0 );
 	
 	m_pane_infoextension->SetSizer( bSizer1 );
 	m_pane_infoextension->Layout();
 	fgSizerMain->Add( m_pane_infoextension, 1, wxEXPAND | wxALL, 5 );
 	
 	wxFlexGridSizer* fgSizerExtensions;
-	fgSizerExtensions = new wxFlexGridSizer( 1, 1, 0, 0 );
+	fgSizerExtensions = new wxFlexGridSizer( 0, 1, 0, 0 );
 	fgSizerExtensions->SetFlexibleDirection( wxBOTH );
 	
 	m_check_metadata = new wxCheckBox( this, wxID_ANY, _("Enable Metadata"), wxDefaultPosition, wxDefaultSize, 0 );
@@ -95,14 +95,14 @@ ExtensionSettingPane::ExtensionSettingPane( wxWindow* parent,
 	bSizer11 = new wxBoxSizer( wxVERTICAL );
 	
 	m_static_infoencryption = new wxStaticText( m_pane_infoencryption, wxID_ANY, _("Protocol Encryption"), wxDefaultPosition, wxDefaultSize, 0 );
-	bSizer11->Add( m_static_infoencryption, 0, wxALL, 5 );
+	bSizer11->Add( m_static_infoencryption, 0, wxALL, 0 );
 	
 	m_pane_infoencryption->SetSizer( bSizer11 );
 	m_pane_infoencryption->Layout();
 	fgSizerMain->Add( m_pane_infoencryption, 1, wxEXPAND | wxALL, 5 );
 	
 	wxFlexGridSizer* fgSizerEncryption;
-	fgSizerEncryption = new wxFlexGridSizer( 1, 1, 0, 0 );
+	fgSizerEncryption = new wxFlexGridSizer( 0, 1, 0, 0 );
 	fgSizerEncryption->SetFlexibleDirection( wxBOTH );
 	
 	m_check_pe = new wxCheckBox( this, EXTENSION_ID_ENABLEPE, _("Enable Encryption"), wxDefaultPosition, wxDefaultSize, 0 );
@@ -125,14 +125,14 @@ ExtensionSettingPane::ExtensionSettingPane( wxWindow* parent,
 	bSizer111 = new wxBoxSizer( wxVERTICAL );
 	
 	m_static_infonat = new wxStaticText( m_pane_infonetwork, wxID_ANY, _("NAT Service"), wxDefaultPosition, wxDefaultSize, 0 );
-	bSizer111->Add( m_static_infonat, 0, wxALL, 5 );
+	bSizer111->Add( m_static_infonat, 0, wxALL, 0 );
 	
 	m_pane_infonetwork->SetSizer( bSizer111 );
 	m_pane_infonetwork->Layout();
 	fgSizerMain->Add( m_pane_infonetwork, 1, wxEXPAND | wxALL, 5 );
 	
 	wxFlexGridSizer* fgSizerNetwork;
-	fgSizerNetwork = new wxFlexGridSizer( 1, 1, 0, 0 );
+	fgSizerNetwork = new wxFlexGridSizer( 0, 1, 0, 0 );
 	fgSizerNetwork->SetFlexibleDirection( wxBOTH );
 	
 	m_check_upnp = new wxCheckBox( this, EXTENSION_ID_CHECK_UPNP, _("Enable UPnP"), wxDefaultPosition, wxDefaultSize, 0 );

@@ -44,11 +44,11 @@ TorrentSettingPane::TorrentSettingPane( wxWindow* parent, torrent_t* pTorrent, i
 	m_pTorrent = pTorrent;
 
 	wxFlexGridSizer* m_torrentsettings_sizer;
-	m_torrentsettings_sizer = new wxFlexGridSizer( 1, 1, 3, 3 );
+	m_torrentsettings_sizer = new wxFlexGridSizer( 0, 1, 3, 3 );
 	m_torrentsettings_sizer->SetFlexibleDirection( wxVERTICAL);
 	
 	wxFlexGridSizer* fgTorrentSettings;
-	fgTorrentSettings = new wxFlexGridSizer( 1, 1, 0, 0 );
+	fgTorrentSettings = new wxFlexGridSizer( 0, 1, 0, 0 );
 	fgTorrentSettings->SetFlexibleDirection( wxBOTH );
 	
 	m_pane_info1 = new wxPanel( this, wxID_ANY, wxDefaultPosition, wxSize( -1,20 ), wxTAB_TRAVERSAL );
@@ -59,7 +59,7 @@ TorrentSettingPane::TorrentSettingPane( wxWindow* parent, torrent_t* pTorrent, i
 	m_pane_boxsizer1 = new wxBoxSizer( wxVERTICAL );
 	
 	m_pane_label_settings = new wxStaticText( m_pane_info1, wxID_ANY, _("Torrent Settings"), wxDefaultPosition, wxDefaultSize, 0 );
-	m_pane_boxsizer1->Add( m_pane_label_settings, 0, wxALL, 5 );
+	m_pane_boxsizer1->Add( m_pane_label_settings, 0, wxALL, 0 );
 	
 	m_pane_info1->SetSizer( m_pane_boxsizer1 );
 	m_pane_info1->Layout();
@@ -149,7 +149,7 @@ TorrentSettingPane::TorrentSettingPane( wxWindow* parent, torrent_t* pTorrent, i
 	fgTorrentSettings->Add( m_staticHline, 0, wxALL, 5 );
 	
 	wxFlexGridSizer* fgTorrentSettingsInner;
-	fgTorrentSettingsInner = new wxFlexGridSizer( 1, 2, 0, 0 );
+	fgTorrentSettingsInner = new wxFlexGridSizer( 0, 2, 0, 0 );
 	fgTorrentSettingsInner->AddGrowableCol( 0 );
 	fgTorrentSettingsInner->SetFlexibleDirection( wxBOTH );
 	

@@ -65,7 +65,7 @@ GeneralSettingPane::GeneralSettingPane( wxWindow* parent,
 	bSizer1 = new wxBoxSizer( wxVERTICAL );
 	
 	m_static_infogeneral = new wxStaticText( m_pane_infogeneral, wxID_ANY, _("General"), wxDefaultPosition, wxDefaultSize, 0 );
-	bSizer1->Add( m_static_infogeneral, 0, wxALL, 5 );
+	bSizer1->Add( m_static_infogeneral, 0, wxALL, 0 );
 	
 	m_pane_infogeneral->SetSizer( bSizer1 );
 	m_pane_infogeneral->Layout();
@@ -118,14 +118,14 @@ GeneralSettingPane::GeneralSettingPane( wxWindow* parent,
 	bSizer11 = new wxBoxSizer( wxVERTICAL );
 	
 	m_static_infogui = new wxStaticText( m_pane_infogui, wxID_ANY, _("GUI"), wxDefaultPosition, wxDefaultSize, 0 );
-	bSizer11->Add( m_static_infogui, 0, wxALL, 5 );
+	bSizer11->Add( m_static_infogui, 0, wxALL, 0 );
 	
 	m_pane_infogui->SetSizer( bSizer11 );
 	m_pane_infogui->Layout();
 	fgSizerMain->Add( m_pane_infogui, 1, wxEXPAND | wxALL, 5 );
 	
 	wxFlexGridSizer* fgSizerGUI;
-	fgSizerGUI = new wxFlexGridSizer( 1, 2, 0, 0 );
+	fgSizerGUI = new wxFlexGridSizer( 0, 2, 0, 0 );
 	fgSizerGUI->SetFlexibleDirection( wxBOTH );
 	
 	m_static_refreshtimer = new wxStaticText( this, wxID_ANY, _("Refresh Timer (s):"), wxDefaultPosition, wxDefaultSize, 0 );
@@ -159,14 +159,14 @@ GeneralSettingPane::GeneralSettingPane( wxWindow* parent,
 	bSizer2 = new wxBoxSizer( wxVERTICAL );
 	
 	m_static_infolog = new wxStaticText( m_pane_infolog, wxID_ANY, _("Log"), wxDefaultPosition, wxDefaultSize, 0 );
-	bSizer2->Add( m_static_infolog, 0, wxALL, 5 );
+	bSizer2->Add( m_static_infolog, 0, wxALL, 0 );
 	
 	m_pane_infolog->SetSizer( bSizer2 );
 	m_pane_infolog->Layout();
 	fgSizerMain->Add( m_pane_infolog, 1, wxEXPAND | wxALL, 5 );
 	
 	wxFlexGridSizer* fgSizerLog;
-	fgSizerLog = new wxFlexGridSizer( 1, 2, 0, 0 );
+	fgSizerLog = new wxFlexGridSizer( 0, 2, 0, 0 );
 	fgSizerLog->SetFlexibleDirection( wxBOTH );
 	
 	m_static_logseverity = new wxStaticText( this, wxID_ANY, _("Log Severity:"), wxDefaultPosition, wxDefaultSize, 0 );

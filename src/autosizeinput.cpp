@@ -40,7 +40,7 @@ static wxChar units[MAX_UNITS][2] = { _T(""), _T("K"), _T("M"), _T("G"), _T("T")
 AutoSizeInput::AutoSizeInput( wxWindow* parent, wxString unitbase, int usize, int id, wxPoint pos , wxSize size, int style) : wxPanel (parent, id, pos, size, style) 
 {
 	wxFlexGridSizer* fgSizer;
-	fgSizer = new wxFlexGridSizer( 1, 2, 0, 0 );
+	fgSizer = new wxFlexGridSizer( 0, 2, 0, 0 );
 	fgSizer->SetFlexibleDirection( wxBOTH );
 	
 	m_unit_size = usize;

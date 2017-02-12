@@ -44,7 +44,7 @@ ConnectionSettingPane::ConnectionSettingPane( wxWindow* parent, int id, wxPoint 
 	Configuration* pcfg = pMainFrame->GetConfig();
 
 	wxFlexGridSizer* fgConnectionMain;
-	fgConnectionMain = new wxFlexGridSizer( 2, 1, 0, 0 );
+	fgConnectionMain = new wxFlexGridSizer( 0, 1, 0, 0 );
 	fgConnectionMain->SetFlexibleDirection( wxBOTH );
 	
 	m_pane_infoport = new wxPanel( this, wxID_ANY, wxDefaultPosition, wxSize( -1,20 ), wxTAB_TRAVERSAL );
@@ -54,7 +54,7 @@ ConnectionSettingPane::ConnectionSettingPane( wxWindow* parent, int id, wxPoint 
 	bSizer1 = new wxBoxSizer( wxVERTICAL );
 	
 	m_static_infoport = new wxStaticText( m_pane_infoport, wxID_ANY, _("Ports Setting"), wxDefaultPosition, wxDefaultSize, 0 );
-	bSizer1->Add( m_static_infoport, 0, wxALL, 5 );
+	bSizer1->Add( m_static_infoport, 0, wxALL, 0 );
 	
 	m_pane_infoport->SetSizer( bSizer1 );
 	m_pane_infoport->Layout();
@@ -108,14 +108,14 @@ ConnectionSettingPane::ConnectionSettingPane( wxWindow* parent, int id, wxPoint 
 	bSizer11 = new wxBoxSizer( wxVERTICAL );
 	
 	m_static_infoport1 = new wxStaticText( m_pane_infolimit, wxID_ANY, _("Limits"), wxDefaultPosition, wxDefaultSize, 0 );
-	bSizer11->Add( m_static_infoport1, 0, wxALL, 5 );
+	bSizer11->Add( m_static_infoport1, 0, wxALL, 0 );
 	
 	m_pane_infolimit->SetSizer( bSizer11 );
 	m_pane_infolimit->Layout();
 	fgConnectionMain->Add( m_pane_infolimit, 1, wxEXPAND | wxALL, 5 );
 	
 	wxFlexGridSizer* fgLimit;
-	fgLimit = new wxFlexGridSizer( 1, 2, 0, 0 );
+	fgLimit = new wxFlexGridSizer( 0, 2, 0, 0 );
 	fgLimit->AddGrowableCol( 0 );
 	fgLimit->SetFlexibleDirection( wxBOTH );
 	
