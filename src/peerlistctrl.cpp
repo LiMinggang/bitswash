@@ -134,7 +134,7 @@ wxString PeerListCtrl::GetItemValue(long item, long columnid) const
 		ret = wxString(c_ip.to_string());
 		break;
 	case PEERLIST_COLUMN_COUNTRY:
-		ret = wxString(peer_info.country);
+		ret = wxString(peer_info.country, sizeof(peer_info.country) / sizeof(peer_info.country[0]));
 		break;
 	case PEERLIST_COLUMN_CLIENT:
 		ret = wxString(peer_info.client.c_str(), *wxConvCurrent);
@@ -256,7 +256,7 @@ int PeerListCtrl::OnGetItemImage(long item) const
 
 	//wxLogDebug(_T("PeerListCtrl GetItemImage Column %ld of item %ld"), 0, item);
 
-	wxString ctry = wxString::FromAscii(peer_info.country);
+	wxString ctry = wxString::FromAscii(peer_info.country, sizeof(peer_info.country) / sizeof(peer_info.country[0]));
 	//wxLogDebug(_T("Image idx %s %d\n"),ctry.c_str(), wxGetApp().GetCountryFlag(ctry.c_str()));
 	return wxGetApp().GetCountryFlag(ctry);
 }
