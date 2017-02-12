@@ -198,6 +198,11 @@ void BitTorrentSession::ConfigureSession()
 
 	wxASSERT(m_libbtsession!= NULL);
 
+#ifndef TORRENT_DISABLE_GEO_IP
+	m_libbtsession->load_asnum_db("GeoIPASNum.dat");
+	m_libbtsession->load_country_db("GeoIP.dat");
+#endif
+
 	SetLogSeverity();
 	
 	//Network settings
@@ -314,10 +319,13 @@ void BitTorrentSession::SetDht()
 		//dht_state.print(std::cout, 1);
 
 		m_libbtsession->start_dht(dht_state);
-   		m_libbtsession->add_dht_router(std::make_pair(std::string("router.bittorrent->com"), 6881));
-		m_libbtsession->add_dht_router(std::make_pair(std::string("router.utorrent->com"), 6881));
-		m_libbtsession->add_dht_router(std::make_pair(std::string("router.bitcomet.com"), 6881));		
 		
+        m_libbtsession->add_dht_router(std::make_pair(std::string("dht.libtorrent.org"), 25401));
+        m_libbtsession->add_dht_router(std::make_pair(std::string("router.bittorrent.com"), 6881));
+        m_libbtsession->add_dht_router(std::make_pair(std::string("router.utorrent.com"), 6881));
+        m_libbtsession->add_dht_router(std::make_pair(std::string("dht.transmissionbt.com"), 6881));
+        m_libbtsession->add_dht_router(std::make_pair(std::string("dht.aelitis.com"), 6881)); // Vuze
+	
 		wxLogMessage(_T("DHT service started, port %d\n"), m_config->GetDHTPort());
 	} else {
 		wxLogMessage(_T("DHT is disabled\n"));
@@ -372,14 +380,29 @@ void BitTorrentSession::StartUpnp()
 	{
 		// XXX workaround upnp crashed when started twice 
 		// libtorrent bugs
-		if (! m_upnp_started) m_libbtsession->start_upnp();
+		if (! m_upnp_started)
+		{
+#if LIBTORRENT_VERSION_NUM < 10100
+			m_libbtsession->start_upnp();
+#else
+			settings_pack settingsPack = m_libbtsession->get_settings();
+			settingsPack.set_bool(settings_pack::enable_upnp, true);
+			m_libbtsession->apply_settings(settingsPack);
+#endif
+		}
 		m_upnp_started = true;
 	}
 	else
+	{
+#if LIBTORRENT_VERSION_NUM < 10100
 		m_libbtsession->stop_upnp();
-
-
-
+#else
+		settings_pack settingsPack = m_libbtsession->get_settings();
+		settingsPack.set_bool(settings_pack::enable_upnp, false);
+		m_libbtsession->apply_settings(settingsPack);
+#endif
+		m_upnp_started = true;
+	}
 }
 
 void BitTorrentSession::StartNatpmp()
@@ -388,13 +411,29 @@ void BitTorrentSession::StartNatpmp()
 
 	if(m_config->GetEnableNatpmp())
 	{
-		if (!m_natpmp_started) m_libbtsession->start_natpmp();
+		if (!m_natpmp_started)
+		{
+#if LIBTORRENT_VERSION_NUM < 10100
+			m_libbtsession->start_natpmp();
+#else
+			settings_pack settingsPack = m_libbtsession->get_settings();
+			settingsPack.set_bool(settings_pack::enable_natpmp, true);
+			m_libbtsession->apply_settings(settingsPack);
+#endif
+		}
 		m_natpmp_started = true;
 	}
 	else
+	{
+#if LIBTORRENT_VERSION_NUM < 10100
 		m_libbtsession->stop_natpmp();
-
-
+#else
+		settings_pack settingsPack = m_libbtsession->get_settings();
+		settingsPack.set_bool(settings_pack::enable_natpmp, false);
+		m_libbtsession->apply_settings(settingsPack);
+		m_natpmp_started = false;
+#endif
+	}
 }
 
 void BitTorrentSession::StartLsd()
@@ -704,12 +743,24 @@ int BitTorrentSession::find_torrent_from_hash(wxString hash)
 
 }
 
+char const* timestamp()
+{
+	time_t t = std::time(0);
+	tm* timeinfo = std::localtime(&t);
+	static char str[200];
+	std::strftime(str, 200, "%b %d %X", timeinfo);
+	return str;
+}
 //save torrent fast resume data
 //posibly called in interval fashion
 void BitTorrentSession::SaveAllTorrent()
 {
 
 	wxLogDebug(_T("Saving torrent info\n"));
+	// keep track of the number of resume data
+	// alerts to wait for
+	int num_paused = 0;
+	int num_failed = 0;
 
 	m_libbtsession->pause();
 
@@ -727,6 +778,7 @@ void BitTorrentSession::SaveAllTorrent()
 
 		if (!torrent->handle.is_valid() || \
 				!torrent->handle.has_metadata() || \
+				(!((torrent->handle.status()).need_save_resume)) || \
 				torrent->config->GetTorrentState() == TORRENT_STATE_STOP)
 		{
 			continue;
@@ -740,6 +792,58 @@ void BitTorrentSession::SaveAllTorrent()
 
 	}
 
+	while (num_outstanding_resume_data > 0)
+	{
+		alert const* a = m_libbtsession->wait_for_alert(seconds(10));
+		if (a == 0) continue;
+
+		std::deque<alert*> alerts;
+		m_libbtsession->pop_alerts(&alerts);
+		std::string now = timestamp();
+		for (std::deque<alert*>::iterator i = alerts.begin()
+			, end(alerts.end()); i != end; ++i)
+		{
+			// make sure to delete each alert
+			std::auto_ptr<alert> a(*i);
+
+			torrent_paused_alert const* tp = alert_cast<torrent_paused_alert>(*i);
+			if (tp)
+			{
+				++num_paused;
+				wxLogDebug(_T("\rleft: %d failed: %d pause: %d ")
+					, num_outstanding_resume_data, num_failed, num_paused);
+				continue;
+			}
+
+			if (alert_cast<save_resume_data_failed_alert>(*i))
+			{
+				++num_failed;
+				--num_outstanding_resume_data;
+				wxLogDebug(_T("\rleft: %d failed: %d pause: %d ")
+					, num_outstanding_resume_data, num_failed, num_paused);
+				continue;
+			}
+
+			save_resume_data_alert const* rd = alert_cast<save_resume_data_alert>(*i);
+			if (!rd) continue;
+			--num_outstanding_resume_data;
+			wxLogDebug(_T("\rleft: %d failed: %d pause: %d ")
+				, num_outstanding_resume_data, num_failed, num_paused);
+
+			if (!rd->resume_data) continue;
+
+			torrent_handle h = rd->handle;
+			torrent_status st = h.status(torrent_handle::query_save_path);
+			//std::vector<char> out;
+			//bencode(std::back_inserter(out), *rd->resume_data);
+			wxString resumefile = wxGetApp().SaveTorrentsPath() + wxGetApp().PathSeparator() + to_hex(st.info_hash.to_string()) + _T(".resume");
+			std::ofstream out((const char*)resumefile.mb_str(wxConvFile), std::ios_base::binary);
+			
+			out.unsetf(std::ios_base::skipws);
+			
+			bencode(std::ostream_iterator<char>(out), *rd->resume_data);
+		}
+	}
 }
 
 void BitTorrentSession::SaveTorrentResumeData(torrent_t* torrent)
