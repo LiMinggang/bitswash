@@ -37,7 +37,7 @@ enum
 };
 
 #ifdef __WXMSW__
-wxString GeneralSettingPane::m_startup_regkey = wxT("SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Run");
+wxString GeneralSettingPane::m_startup_regkey = wxT("HKEY_CURRENT_USER\\SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Run");
 #endif
 
 BEGIN_EVENT_TABLE(GeneralSettingPane, wxPanel)

@@ -116,7 +116,7 @@ SwashSetting::SwashSetting( wxWindow* parent, Configuration *pcfg, int id, wxStr
 	m_pane_torrentsettings = new TorrentSettingPane((wxWindow*)m_listbookmenu);
 	
 #ifdef __WXMSW__
-	wxRegKey *pRegKey = new wxRegKey(GeneralSettingPane::m_startup_regkey );
+	wxRegKey *pRegKey = new wxRegKey(GeneralSettingPane::m_startup_regkey);
 
 	if( pRegKey->Exists() )
 	{
