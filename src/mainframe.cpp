@@ -342,11 +342,11 @@ void MainFrame::OnAbout(wxCommandEvent& event)
 {
 	wxAboutDialogInfo info;
 	
-	info.SetName(_T("Bitswash"));
+	info.SetName(_T("Bitswash-Mod"));
 	info.SetVersion(BITSWASH_VERSION);
 	info.SetDescription(_T("Bittorrent Client"));
 	info.SetCopyright(_T("(c) 2017 Bitswash Developers"));
-	info.SetWebSite(_T("http://www.bitswash.org/"), _T("Bitswash Homepage"));
+	info.SetWebSite(_T("https://github.com/LiMinggang/bitswash"), _T("Bitswash Homepage"));
 
 	info.SetLicence(_T(" \n\n \
  This program is free software; you can redistribute it and/or modify\n \
@@ -375,11 +375,7 @@ void MainFrame::OnAbout(wxCommandEvent& event)
 	info.AddTranslator(_T("\nzh_CN--------Aarons Wang Shi <aarons.wang@gmail.com>"));
 	info.AddTranslator(_T("\nzh_TW--------Aarons Wang Shi <aarons.wang@gmail.com>"));
 
-
 	wxAboutBox(info);
-							
-	
-
 }
 
 void MainFrame::OnMenuHelp(wxCommandEvent& event)
