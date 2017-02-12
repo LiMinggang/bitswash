@@ -874,7 +874,7 @@ void MainFrame::UpdateUI()
 			t++;
 		}
 		TorrentListIsValid(true);
-		wxLogDebug(_T("Refreshing torrent list size %d\n"), m_torrentlistitems.size());
+		wxLogDebug(_T("Refreshing torrent list size %s\n"), ( wxLongLong( m_torrentlistitems.size() ).ToString() ).c_str());
 
 		m_torrentlistctrl->SetItemCount(m_torrentlistitems.size());
 
@@ -890,7 +890,7 @@ void MainFrame::UpdateUI()
 			libtorrent::torrent_handle &torrent_handle = m_torrentlistitems[selecteditems[0]]->handle;
 			libtorrent::torrent_info const& torrent_info = *m_torrentlistitems[selecteditems[0]]->info;
 
-			wxLogDebug(_T("MainFrame: list size %d selected items %d\n"), m_torrentlistitems.size(), selecteditems.size());
+			wxLogDebug(_T("MainFrame: list size %s selected items %s\n"), ( wxLongLong( m_torrentlistitems.size() ).ToString() ).c_str(), ( wxLongLong( selecteditems.size() ).ToString() ).c_str());
 			/* if torrent is started in libtorrent */
 			if (torrent_handle.is_valid())
 			{

@@ -874,7 +874,7 @@ void BitTorrentSession::DumpTorrents()
 	{ 
 		torrent_t *torrent = *i;
 
-		wxLogMessage(_T("[%d] %s\n"), torrent->config->GetQIndex(), torrent->name.c_str());
+		wxLogMessage(_T("[%s] %s\n"), ( wxLongLong( torrent->config->GetQIndex() ).ToString() ).c_str(), torrent->name.c_str());
 	}
 						
 }
@@ -1007,7 +1007,7 @@ void BitTorrentSession::QueueTorrent(torrent_t* t_torrent)
 
 	torrent_t *torrent = m_torrent_queue[idx];
 
-	wxLogInfo(_T("%s: Queue\n"), torrent->name.c_str());
+	//wxLogInfo(_T("%s: Queue\n"), torrent->name.c_str());
 	torrent_handle& handle = torrent->handle;
 
 	/*
@@ -1336,13 +1336,13 @@ void BitTorrentSession::ConfigureTorrent(torrent_t* torrent)
 		h.set_max_connections(torrent->config->GetTorrentMaxConnections());
 		h.set_ratio(torrent->config->GetTorrentRatio());
 
-		wxLogDebug(_T("%s: Upload Limit %d download limit %d, max uploads %d, max connections %d, ratio %lf\n"),
+		wxLogDebug(_T("%s: Upload Limit %s download limit %s, max uploads %s, max connections %s, ratio %lf\n"),
 				torrent->name.c_str(),
-				h.upload_limit(),
-				h.download_limit(),
-				torrent->config->GetTorrentMaxUploads(),
-				torrent->config->GetTorrentMaxConnections(),
-				torrent->config->GetTorrentRatio() / 100 );
+				( wxLongLong( h.upload_limit() ).ToString() ).c_str(),
+				( wxLongLong( h.download_limit() ).ToString() ).c_str(),
+				( wxLongLong( torrent->config->GetTorrentMaxUploads() ).ToString() ).c_str(),
+				( wxLongLong( torrent->config->GetTorrentMaxConnections() ).ToString() ).c_str(),
+				(float)torrent->config->GetTorrentRatio() / 100 );
 		ConfigureTorrentFilesPriority(torrent);
 		ConfigureTorrentTrackers(torrent);
 	}

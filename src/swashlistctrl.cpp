@@ -564,15 +564,15 @@ void SwashListCtrl::OnRightClick(wxMouseEvent& event)
         default: where = _T("not clear exactly where on"); break;
     }
 
-    wxLogDebug(_T("Right double click %s item %ld, subitem %ld"),
-                 where.c_str(), item, subitem);
+    wxLogDebug(_T("Right double click %s item %s, subitem %s"),
+                 where.c_str(), ( wxLongLong( item ).ToString() ).c_str(), ( wxLongLong( subitem ).ToString() ).c_str());
 }
 
 void SwashListCtrl::LogListEvent(const wxListEvent& event, const wxChar *eventName)
 {
-    wxLogDebug(_T("Item %ld: %s (item text = %s, data = %ld)"),
-                 event.GetIndex(), eventName,
-                 event.GetText().c_str(), event.GetData());
+    wxLogDebug(_T("Item %s: %s (item text = %s, data = %s)"),
+                 ( wxLongLong( event.GetIndex() ).ToString() ).c_str(), eventName,
+                 event.GetText().c_str(), ( wxLongLong( event.GetData() ).ToString() ).c_str());
 }
 
 wxString SwashListCtrl::OnGetItemText(long item, long column) const
