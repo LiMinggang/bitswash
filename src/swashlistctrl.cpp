@@ -592,13 +592,11 @@ wxString SwashListCtrl::OnGetItemText(long item, long column) const
 wxString SwashListCtrl::GetItemValue(long item, long columnid) const
 {
 	return _T("");
-
 }
 
 int SwashListCtrl::GetItemColumnImage(long item, long columnid) const
 {
 	return -1;
-
 }
 
 int SwashListCtrl::OnGetItemColumnImage(long item, long column) const

@@ -86,7 +86,7 @@ class BitSwash : public wxApp
 		
 		wxChar PathSeparator() { return wxFileName::GetPathSeparator(wxPATH_NATIVE); }
 
-		int GetCountryFlag(const wxChar* code);
+		int GetCountryFlag(const wxString & code);
 
 		wxImageList* GetCountryFlagsList() { return m_imglist_ctryflags ;} 
 		wxImageList* GetSettingIconsList() { return m_imglist_settingicons;} 
