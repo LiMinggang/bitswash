@@ -854,7 +854,6 @@ void MainFrame::UpdateUI()
 {
 	wxASSERT(m_btsession);
 
-
 	if (!TorrentListIsValid())
 	{
 		int t=0;
@@ -873,7 +872,6 @@ void MainFrame::UpdateUI()
 		wxLogDebug(_T("Refreshing torrent list size %s\n"), ( wxLongLong( m_torrentlistitems.size() ).ToString() ).c_str());
 
 		m_torrentlistctrl->SetItemCount(m_torrentlistitems.size());
-
 	}
 
 	if (m_torrentlistitems.size() > 0)

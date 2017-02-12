@@ -45,6 +45,14 @@
 #include "bitswash.h"
 #include "bittorrentsession.h"
 
+#ifdef TORRENT_DISABLE_RESOLVE_COUNTRIES
+#error you must not disable RESOLVE COUNTRIES
+#endif
+
+#ifdef TORRENT_DISABLE_DHT
+#error you must not disable DHT
+#endif
+
 struct BTQueueSortAsc
 {
 	bool operator()(const torrent_t* torrent_start, const torrent_t* torrent_end)

@@ -30,15 +30,9 @@
 #define PREFIX "."
 #endif
 
-#ifdef TORRENT_DISABLE_RESOLVE_COUNTRIES
-#error you must not disable RESOLVE COUNTRIES by defind TORRENT_DISABLE_RESOLVE_COUNTRIES
-#endif
-
 #include <wx/stdpaths.h>
 #include <wx/filename.h>
 #include <wx/url.h>
-
-
 
 #include "bitswash.h"
 #include "mainframe.h"
@@ -318,9 +312,10 @@ static struct CountryFlags_t {
 	{ _T(""), _T("")}
 };
 
+std::map<wxString, int> CountryCodeIndexMap;
+
 bool BitSwash::OnInit()
 {
-
 	int initcountdown = 1;
     SetVendorName(APPNAME);
     SetAppName(APPBINNAME);
@@ -503,25 +498,26 @@ void BitSwash::LoadFlags()
 	
 
 #if 1
-		if((empty.HasAlpha()))
-		{
-	i=0;j=0;
-	while(i<16)
+	if((empty.HasAlpha()))
 	{
-		while(j<16)
+		i=0;j=0;
+		while(i<16)
 		{
-			empty.SetAlpha(i,j,255);
-			j++;
+			while(j<16)
+			{
+				empty.SetAlpha(i,j,255);
+				j++;
+			}
+			i++;
 		}
-		i++;
 	}
-		}
 #endif
 
 	emptyidx = m_imglist_ctryflags->Add(wxBitmap(empty, 32));
 
 	for (i=0; i< N_COUNTRY ; i++)
 	{
+		CountryCodeIndexMap[wxString(CountryFlags[i].code)] = i;
 		if (( wxIsEmpty(CountryFlags[i].code )) ||(! wxStricmp(CountryFlags[i].code, _T("--"))) )
 		{
 			CountryFlags[i].imgidx = emptyidx;
@@ -545,20 +541,27 @@ void BitSwash::LoadFlags()
 
 int BitSwash::GetCountryFlag(const wxChar* code)
 {
-	int i;
+	//int i;
 	wxString strcode = wxString(code);
-	wxString strcode2 ;
+	//wxString strcode2 ;
 
 	if ( wxIsEmpty(code))
 		return 0;
 
-	for (i=0; i< N_COUNTRY ; i++)
+	std::map<wxString, int>::iterator it = CountryCodeIndexMap.find(strcode);
+
+	if(it != CountryCodeIndexMap.end())
+	{
+		wxASSERT(it->second < N_COUNTRY);
+		return CountryFlags[it->second].imgidx;
+	}
+	/*for (i=0; i< N_COUNTRY ; i++)
 	{
 		strcode2.sprintf(_T("%s"), CountryFlags[i].code);
 
 		if ( ! (strcode2.CmpNoCase(strcode.Mid(0,2)) ) )
 			return CountryFlags[i].imgidx;
-	}
+	}*/
 
 	return -1;
 

@@ -90,9 +90,7 @@ PeerListCtrl::PeerListCtrl(wxWindow *parent,
                long style)
         : SwashListCtrl(parent, SWASHLISTCOL_SIZE(peerlistcols), peerlistcols, settings, id, pos, size, style)
 {
-
 	SetImageList(wxGetApp().GetCountryFlagsList(), wxIMAGE_LIST_SMALL);
-
 }
 
 PeerListCtrl::~PeerListCtrl()
@@ -133,13 +131,13 @@ wxString PeerListCtrl::GetItemValue(long item, long columnid) const
  	switch(columnid) 
 	{
 		case PEERLIST_COLUMN_IP:
-			ret = wxString::FromAscii(c_ip.to_string().c_str());
+			ret = wxString(c_ip.to_string());
 			break;
 		case PEERLIST_COLUMN_COUNTRY:
-			ret = (wxString::FromAscii(peer_info.country));
+			ret = wxString(peer_info.country);
 			break;
 		case PEERLIST_COLUMN_CLIENT:
-			ret = wxString::FromAscii(peer_info.client.c_str());
+			ret = wxString(peer_info.client.c_str(), *wxConvCurrent);
 			break;
 		case PEERLIST_COLUMN_TYPE:
 			peertype_flag = peer_info.source;

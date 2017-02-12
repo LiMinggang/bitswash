@@ -112,36 +112,36 @@ wxString TorrentListCtrl::GetItemValue(long item, long columnid) const
 	}
 
 	//wxLogDebug(_T("TorrentListCtrl::Showing %d items column %d\n"), torrentlistitems->size(), columnid);
-	torrent_t torrent= *(torrentlistitems->at(item));
+	torrent_t &torrent= *(torrentlistitems->at(item));
 	stats_t& torrentstats = torrent.config->GetTorrentStats();
 
-	libtorrent::torrent_handle torrent_handle = torrent.handle;
+	libtorrent::torrent_handle &torrenthandle = torrent.handle;
 
-	libtorrent::torrent_info const& torrent_info = *torrent.info;
+	libtorrent::torrent_info const& torrentinfo = *torrent.info;
 
-	libtorrent::torrent_status torrent_status;
+	libtorrent::torrent_status torrentstatus;
 
-	int torrentstoped = !torrent_handle.is_valid();
+	int torrentstoped = !torrenthandle.is_valid();
 	
 	if (!torrentstoped)
 	{
-		torrent_status = torrent_handle.status();
+		torrentstatus = torrenthandle.status();
 
-		torrentstats.progress = torrent_status.progress;
-		torrentstats.total_download = torrent_status.total_payload_download;
-		torrentstats.total_upload = torrent_status.total_payload_upload;
+		torrentstats.progress = torrentstatus.progress;
+		torrentstats.total_download = torrentstatus.total_payload_download;
+		torrentstats.total_upload = torrentstatus.total_payload_upload;
 
 	}
 
 	static const wxChar *state_str[] = {
 			_("queued"),
 			_("checking"),
-			_("connecting"),
 			_("downloading meta data"),
 			_("downloading"),
 			_("finished"),
 			_("seeding"),
-			_("allocating")
+			_("allocating"),
+			_("checking resume data")
 	};
 
 	wxString ret;
@@ -151,7 +151,7 @@ wxString TorrentListCtrl::GetItemValue(long item, long columnid) const
 			ret = wxString::Format(_T("%d"), torrent.config->GetQIndex());
 			break;
 		case TORRENTLIST_COLUMN_TORRENT:
-			ret = wxString(wxConvUTF8.cMB2WC(torrent_info.name().c_str()));
+			ret = wxString(wxConvUTF8.cMB2WC(torrentinfo.name().c_str()));
 			break;
 		case TORRENTLIST_COLUMN_STATUS:
 			
@@ -167,18 +167,21 @@ wxString TorrentListCtrl::GetItemValue(long item, long columnid) const
 			else
 			{
 				if((torrent.config->GetTorrentState() == TORRENT_STATE_PAUSE ) || 
-								(torrent_status.paused))
+								(torrentstatus.paused))
 				{
 					ret = _("pause");
 				}
 				else
 				{
-					ret = wxString::Format(_T("%s"),state_str[torrent_status.state]);
+					if(torrentstatus.state < (sizeof(state_str)/(sizeof(wxChar *))))
+						ret = wxString::Format(_T("%s"),state_str[torrentstatus.state]);
+					else
+						ret = _("error");
 				}
 			}
 			break;
 		case TORRENTLIST_COLUMN_SIZE:
-			ret = HumanReadableByte((wxDouble) torrent_info.total_size());
+			ret = HumanReadableByte((wxDouble) torrentinfo.total_size());
 			break;
 		case TORRENTLIST_COLUMN_DOWNLOADED:
 			ret = HumanReadableByte((wxDouble) torrentstats.total_download);
@@ -193,28 +196,28 @@ wxString TorrentListCtrl::GetItemValue(long item, long columnid) const
 			if(torrentstoped)
 				ret = _T("0 Bps");
 			else
-				ret = HumanReadableByte((wxDouble) torrent_status.download_payload_rate) + wxString(_T("ps"));
+				ret = HumanReadableByte((wxDouble) torrentstatus.download_payload_rate) + wxString(_T("ps"));
 			break;
 		case TORRENTLIST_COLUMN_UPSPEED:
 			if(torrentstoped)
 				ret = _T("0 Bps");
 			else
-				ret = HumanReadableByte((wxDouble) torrent_status.upload_payload_rate) + wxString(_T("ps"));
+				ret = HumanReadableByte((wxDouble) torrentstatus.upload_payload_rate) + wxString(_T("ps"));
 			break;
 		case TORRENTLIST_COLUMN_TIMELEFT:
-			if((torrent_status.state == libtorrent::torrent_status::seeding )|| (torrent_status.progress >= 1))
+			if((torrentstatus.state == libtorrent::torrent_status::seeding )|| (torrentstatus.progress >= 1))
 			{
 				ret = _T("00:00:00");
 			}
-			else if (torrent_status.distributed_copies <= 0 )
+			else if (torrentstatus.distributed_copies <= 0 )
 			{
 				ret = _T("99:99:99");
 			} 
 			else
 			{
-				unsigned long byteleft =(unsigned long)( (double)torrent_info.total_size() * (1 - torrentstats.progress));
+				unsigned long byteleft =(unsigned long)( (double)torrentinfo.total_size() * (1 - torrentstats.progress));
 				unsigned long secleft = 999999;
-				unsigned long downloadrate = torrent_status.download_payload_rate ;
+				unsigned long downloadrate = torrentstatus.download_payload_rate ;
 				if ( downloadrate > 0)
 				{
 					secleft =  byteleft / downloadrate;
@@ -240,13 +243,13 @@ wxString TorrentListCtrl::GetItemValue(long item, long columnid) const
 			if(torrentstoped)
 				ret = _T("0/0");
 			else
-				ret = wxString::Format(_T("%d/%d"), torrent_status.num_peers, torrent_status.num_seeds);
+				ret = wxString::Format(_T("%d/%d"), torrentstatus.num_peers, torrentstatus.num_seeds);
 			break;
 		case TORRENTLIST_COLUMN_COPIES:
 			if(torrentstoped)
 				ret = _T("0");
 			else
-				ret = wxString::Format(_T("%.02f"), torrent_status.distributed_copies);
+				ret = wxString::Format(_T("%.02f"), torrentstatus.distributed_copies);
 			break;
 		case TORRENTLIST_COLUMN_RATIO:
 			if(torrentstats.total_download > 0) 
