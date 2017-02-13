@@ -157,26 +157,26 @@ wxString TorrentListCtrl::GetItemValue(long item, long columnid) const
 			
 			if (torrent.config->GetTorrentState() == TORRENT_STATE_QUEUE)
 			{
-				ret = _("queue");
+				ret = _("Queueing");
 			} 
 			else if ( (torrent.config->GetTorrentState() == TORRENT_STATE_STOP) ||
 					(torrentstoped) )
 			{
-				ret = _("stop");
+				ret = _("Stopped");
 			}
 			else
 			{
 				if((torrent.config->GetTorrentState() == TORRENT_STATE_PAUSE ) || 
 								(torrentstatus.paused))
 				{
-					ret = _("pause");
+					ret = _("Paused");
 				}
 				else
 				{
 					if(torrentstatus.state < (sizeof(state_str)/(sizeof(wxChar *))))
 						ret = wxString::Format(_T("%s"),state_str[torrentstatus.state]);
 					else
-						ret = _("error");
+						ret = _("Error!");
 				}
 			}
 			break;

@@ -2,6 +2,7 @@
 Fix: Crash on startup if no icons
 Fix: Crash on timer
 Fix: Lots of GUI issue in configuration dialog
+Fix: Adjust flag image to 16*11
 New: 64bits build
 New: Run at Windows startup
 Upgrade libtorrent to 1.0.11

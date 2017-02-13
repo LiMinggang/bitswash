@@ -218,7 +218,6 @@ void MainFrame::OnClose(wxCloseEvent& event)
 {
 	wxLogDebug(_T("MainFrame Closing\n"));
     
-
 	//stop update timer
 	m_refreshtimer.Stop();
 
@@ -313,8 +312,6 @@ wxTreeCtrl* MainFrame::CreateSideTreeCtrl() {
 void MainFrame::ToDo(wxCommandEvent& event)
 {
     wxMessageBox(_T("ToDo\n"), _T("Bitswash"), wxICON_INFORMATION | wxOK, this);
-
-
 }
 
 void MainFrame::OnQuit(wxCommandEvent& event)
@@ -351,7 +348,7 @@ void MainFrame::OnAbout(wxCommandEvent& event)
 	info.SetLicence(_T(" \n\n \
  This program is free software; you can redistribute it and/or modify\n \
  it under the terms of the GNU General Public License as published by\n \
- the Free Software Foundation; either version 2 of the License, or\n \
+ the Free Software Foundation; either version 3 of the License, or\n \
  (at your option) any later version.\n\n \
  This program is distributed in the hope that it will be useful,\n \
  but WITHOUT ANY WARRANTY; without even the implied warranty of\n \

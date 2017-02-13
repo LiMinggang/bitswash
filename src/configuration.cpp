@@ -29,60 +29,12 @@
 #include <wx/wfstream.h>
 
 #include "bitswash.h"
+#include "functions.h"
 #include "configuration.h"
 
 #ifdef __WXMSW__
 wxString Configuration::m_startup_regkey = wxT("HKEY_CURRENT_USER\\SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Run");
 #endif
-
-wxString GetExecutablePath()
-{
-	static bool	found =	false;
-	static wxString	path;
-
-	if (!found)	{
-#ifdef __WXMSW__
-
-		wxChar buf[512];
-		*buf = wxT('\0');
-		GetModuleFileName(NULL,	buf, 511);
-		path = buf;
-
-#elif defined(__WXMAC__)
-
-		ProcessInfoRec processinfo;
-		ProcessSerialNumber	procno ;
-		FSSpec fsSpec;
-
-		procno.highLongOfPSN = NULL	;
-		procno.lowLongOfPSN	= kCurrentProcess ;
-		processinfo.processInfoLength =	sizeof(ProcessInfoRec);
-		processinfo.processName	= NULL;
-		processinfo.processAppSpec = &fsSpec;
-
-		GetProcessInformation( &procno , &processinfo )	;
-		path = wxMacFSSpec2MacFilename(&fsSpec);
-#else
-		wxString argv0 = wxTheApp->argv[0];
-
-		if (wxIsAbsolutePath(argv0)) {
-			path = argv0;
-		}
-		else {
-			wxPathList pathlist;
-			pathlist.AddEnvList(wxT("PATH"));
-			path = pathlist.FindAbsoluteValidPath(argv0);
-		}
-
-		wxFileName filename(path);
-		filename.Normalize();
-		path = filename.GetFullPath();
-#endif
-		found =	true;
-	}
-
-	return path;
-}
 
 Configuration::Configuration(const wxString& AppName)
 : wxFileConfig (wxEmptyString, wxEmptyString, AppName, wxEmptyString, wxCONFIG_USE_LOCAL_FILE | wxCONFIG_USE_RELATIVE_PATH)
@@ -98,7 +50,6 @@ Configuration::Configuration(const wxString& AppName)
     m_cfg = new wxFileConfig( (wxInputStream &)fis);
 	
     Load();
-
 }
 
 Configuration::~Configuration()

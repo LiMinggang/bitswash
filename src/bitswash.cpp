@@ -453,33 +453,14 @@ int BitSwash::OnExit()
 #define N_COUNTRY sizeof(CountryFlags) / sizeof(struct CountryFlags_t)
 void BitSwash::LoadFlags()
 {
-	int i, j;
+	int i;
 	wxChar dirsep = wxFileName::GetPathSeparator( wxPATH_NATIVE );
-	wxImage empty( 16, 16, true );
+	wxString un = wxString::Format( _T( "%s%c%s%s" ), m_flagspath.c_str(), dirsep, "un", _T( ".png" ) );
+	wxImage empty(un);
 	int emptyidx = 0;
-	empty.SetMask( true );
-	empty.SetMaskColour( 0, 0, 0 );
-	if( !( empty.HasAlpha() ) )
-		empty.InitAlpha();
-	m_imglist_ctryflags = new wxImageList( 16, 16, false );
-#if 1
-	if( ( empty.HasAlpha() ) )
-	{
-		i = 0;
-		j = 0;
-		while( i < 16 )
-		{
-			while( j < 16 )
-			{
-				empty.SetAlpha( i, j, 255 );
-				j++;
-			}
-			i++;
-		}
-	}
-#endif
-	emptyidx = m_imglist_ctryflags->Add( wxBitmap( empty, 32 ) );
-	for( i = 0; i < N_COUNTRY ; i++ )
+	m_imglist_ctryflags = new wxImageList( 16, 11, false );
+	emptyidx = m_imglist_ctryflags->Add( wxBitmap( empty ) );
+	for( i = 0; i < N_COUNTRY ; ++i )
 	{
 		CountryCodeIndexMap[wxString( CountryFlags[i].code )] = i;
 		if( ( wxIsEmpty( CountryFlags[i].code ) ) || ( ! wxStricmp( CountryFlags[i].code, _T( "--" ) ) ) )
@@ -491,7 +472,7 @@ void BitSwash::LoadFlags()
 		wxImage flags;
 		if( ( flags.LoadFile( filename ) ) )
 		{
-			CountryFlags[i].imgidx = m_imglist_ctryflags->Add( wxBitmap( flags.Resize( wxSize( 16, 16 ), wxPoint( 0, 0 ) ), 32 ) );
+			CountryFlags[i].imgidx = m_imglist_ctryflags->Add( wxBitmap( flags ) );
 		}
 		else
 		{
