@@ -1583,5 +1583,4 @@ void MainFrame::GetTorrentLog()
 void MainFrame::OnUpdateOptionLanguage(wxUpdateUIEvent& event)
 {
 		wxLogMessage(_T("UI Command %s, item %p\n"), event.GetString().c_str(), event.GetEventObject());
-
 }
