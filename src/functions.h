@@ -28,5 +28,6 @@ int MoveDirectory(wxString path);
 int CopyDirectory(wxString frompath, wxString topath);
 void SystemOpenURL(wxString url);
 wxString GetExecutablePath();
+bool isUrl(const wxString &s, bool isScheme = true);
 
 #endif // FUNCTIONS_H

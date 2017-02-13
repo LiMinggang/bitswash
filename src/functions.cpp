@@ -30,6 +30,9 @@
 #include <wx/filename.h>
 #include <wx/stdpaths.h>
 #include <wx/mimetype.h>
+#include <wx/url.h>
+
+#include <boost/regex.hpp>
 
 #include "functions.h"
 
@@ -269,5 +272,14 @@ wxString GetExecutablePath()
 	}
 
 	return path;
+}
+
+bool isUrl(const wxString &s, bool isScheme/* = true*/)
+{
+	wxString scheme = s;
+	if(!isScheme)
+        scheme = wxURL(s).GetScheme();
+    boost::regex is_url("http[s]?|ftp", boost::regex_constants::icase);
+    return boost::regex_match(scheme.ToStdString(), is_url);
 }
 

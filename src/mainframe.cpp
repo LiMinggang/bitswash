@@ -778,45 +778,47 @@ void MainFrame::OpenTorrentUrl()
 	{
 		wxLogDebug(_T("openurl: Fetch URL %s\n"), url.c_str());
 		wxURL *torrenturl = new wxURL(url);
-		if(torrenturl->GetError() == wxURL_NOERR)
+		if(isUrl(torrenturl->GetScheme()))
 		{
-			wxInputStream *in_stream = torrenturl->GetInputStream();
-			if(in_stream && in_stream->IsOk())
+			if(torrenturl->GetError() == wxURL_NOERR)
 			{
-				wxString contenttype =	torrenturl->GetProtocol().GetContentType();
-				size_t s_size = in_stream->GetSize();
-
-				wxLogDebug(_T("openurl: type %s, size %d\n"), contenttype.c_str(), s_size);
-				wxString tmpfile = wxFileName::CreateTempFileName(_T("bitswash"));
-				wxLogDebug(_T("openurl: Tmp file %s\n"), tmpfile.c_str());
+				wxInputStream *in_stream = torrenturl->GetInputStream();
+				if(in_stream && in_stream->IsOk())
 				{
-					/* write downloaded stream in to temporary file */
-					wxFileOutputStream fos(tmpfile);
-					if(!fos.Ok())
+					wxString contenttype =	torrenturl->GetProtocol().GetContentType();
+					size_t s_size = in_stream->GetSize();
+
+					wxLogDebug(_T("openurl: type %s, size %d\n"), contenttype.c_str(), s_size);
+					wxString tmpfile = wxFileName::CreateTempFileName(_T("bitswash"));
+					wxLogDebug(_T("openurl: Tmp file %s\n"), tmpfile.c_str());
 					{
-						wxLogError(_T("Error creating temporary file %s\n"), tmpfile.c_str());
-						return;
+						/* write downloaded stream in to temporary file */
+						wxFileOutputStream fos(tmpfile);
+						if(!fos.Ok())
+						{
+							wxLogError(_T("Error creating temporary file %s\n"), tmpfile.c_str());
+							return;
+						}
+						static char buffer[4096];
+						memset(buffer, 0, 4096);
+						int counter = 0;
+						while (!in_stream->Eof() && in_stream->CanRead())
+						{
+							in_stream->Read(buffer, 4096);
+							size_t size = in_stream->LastRead();
+							if (size == 0)
+								break;
+							fos.Write(buffer, size);
+							counter += size;
+						}
 					}
-					static char buffer[4096];
-					memset(buffer, 0, 4096);
-					int counter = 0;
-					while (!in_stream->Eof() && in_stream->CanRead())
-					{
-						in_stream->Read(buffer, 4096);
-						size_t size = in_stream->LastRead();
-						if (size == 0)
-							break;
-						fos.Write(buffer, size);
-						counter += size;
-					}
+					/* everythings seems fine
+					 * add torrent to session
+					 */
+
+					AddTorrent(tmpfile, false);
 				}
-				/* everythings seems fine
-				 * add torrent to session
-				 */
-
-				AddTorrent(tmpfile, false);
 			}
-
 		}
 	}
 	else
