@@ -545,6 +545,7 @@ void BitSwash::LoadSettingIcons()
 		}
 		else
 		{
+			m_imglist_settingicons->Add( wxBitmap( empty ) );
 			wxLogWarning( _T( "Configuration icon %s not found \n" ), filename.c_str() );
 		}
 	}
@@ -616,9 +617,14 @@ void BitSwash::LoadIcons()
 	}
 }
 
-wxImage BitSwash::GetAppIcon( enum appicon_id id )
+wxImage & BitSwash::GetAppIcon( enum appicon_id id )
 {
 	wxASSERT( id < BITSWASH_ICON_MAX );
+	
+	static wxImage empty( 16, 16, true );
 	//wxLogMessage(_T("size %dx%d\n"), AppIcons[id].image->GetHeight(), AppIcons[id].image->GetWidth());
-	return *AppIcons[id].image;
+	if(AppIcons[id].image)
+		return *AppIcons[id].image;
+	else
+		return empty;
 }

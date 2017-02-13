@@ -95,7 +95,7 @@ class BitSwash : public wxApp
 
 		void SetLogLevel();
 
-		wxImage GetAppIcon(enum appicon_id id);
+		wxImage & GetAppIcon(enum appicon_id id);
 
 		BitTorrentSession* GetBitTorrentSession() { return m_btsession ; }
 		void BTInitDone() { m_btinitdone = true; }
