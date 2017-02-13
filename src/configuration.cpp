@@ -31,6 +31,58 @@
 #include "bitswash.h"
 #include "configuration.h"
 
+#ifdef __WXMSW__
+wxString Configuration::m_startup_regkey = wxT("HKEY_CURRENT_USER\\SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Run");
+#endif
+
+wxString GetExecutablePath()
+{
+	static bool	found =	false;
+	static wxString	path;
+
+	if (!found)	{
+#ifdef __WXMSW__
+
+		wxChar buf[512];
+		*buf = wxT('\0');
+		GetModuleFileName(NULL,	buf, 511);
+		path = buf;
+
+#elif defined(__WXMAC__)
+
+		ProcessInfoRec processinfo;
+		ProcessSerialNumber	procno ;
+		FSSpec fsSpec;
+
+		procno.highLongOfPSN = NULL	;
+		procno.lowLongOfPSN	= kCurrentProcess ;
+		processinfo.processInfoLength =	sizeof(ProcessInfoRec);
+		processinfo.processName	= NULL;
+		processinfo.processAppSpec = &fsSpec;
+
+		GetProcessInformation( &procno , &processinfo )	;
+		path = wxMacFSSpec2MacFilename(&fsSpec);
+#else
+		wxString argv0 = wxTheApp->argv[0];
+
+		if (wxIsAbsolutePath(argv0)) {
+			path = argv0;
+		}
+		else {
+			wxPathList pathlist;
+			pathlist.AddEnvList(wxT("PATH"));
+			path = pathlist.FindAbsoluteValidPath(argv0);
+		}
+
+		wxFileName filename(path);
+		filename.Normalize();
+		path = filename.GetFullPath();
+#endif
+		found =	true;
+	}
+
+	return path;
+}
 
 Configuration::Configuration(const wxString& AppName)
 : wxFileConfig (wxEmptyString, wxEmptyString, AppName, wxEmptyString, wxCONFIG_USE_LOCAL_FILE | wxCONFIG_USE_RELATIVE_PATH)
@@ -58,7 +110,6 @@ Configuration::~Configuration()
 void Configuration::Save()
 {
 	//GUI
-
 	m_cfg->Write(_T("/GUI/x"),(long) m_gui.x);
 	m_cfg->Write(_T("/GUI/y"), (long) m_gui.y);
 	m_cfg->Write(_T("/GUI/w"), (long) m_gui.w);
@@ -85,7 +136,24 @@ void Configuration::Save()
 	m_cfg->Write(_T("/Config/hidetaskbar"), (bool)m_hidetaskbar);
 
 	m_cfg->Write(_T("/Config/exclude_seed"), (bool)m_exclude_seed);
-
+#ifdef __WXMSW__
+	m_cfg->Write(_T("/Config/run_at_startup"), (bool)m_run_at_startup);
+	wxRegKey regKey(m_startup_regkey);
+	if(regKey.Exists())
+	{
+		wxString exepath;
+		if(!m_run_at_startup)
+		{
+			if(regKey.QueryValue(APPNAME, exepath))
+				regKey.DeleteValue (APPNAME);
+		}
+		else
+		{
+			exepath = GetExecutablePath();
+			regKey.SetValue( APPNAME, exepath );
+		}
+	}
+#endif
 	m_cfg->Write(_T("/Config/enable_upnp"), (bool)m_enable_upnp);
 	m_cfg->Write(_T("/Config/enable_natpmp"), (bool)m_enable_natpmp);
 	m_cfg->Write(_T("/Config/enable_lsd"), (bool)m_enable_lsd);
@@ -256,6 +324,24 @@ void Configuration::Load()
 	m_cfg->Read(_T("/Config/hidetaskbar"), &m_hidetaskbar, false) ;
 
 	m_cfg->Read(_T("/Config/exclude_seed"), &m_exclude_seed ,true);
+#ifdef __WXMSW__
+	m_cfg->Read(_T("/Config/run_at_startup"), &m_run_at_startup, false);
+	wxRegKey regKey(m_startup_regkey);
+	if(regKey.Exists())
+	{
+		if(!m_run_at_startup)
+		{
+				wxString value;
+				if(regKey.QueryValue(APPNAME, value))
+					regKey.DeleteValue (APPNAME);
+		}
+		else
+		{
+				wxString exepath = GetExecutablePath();
+				regKey.SetValue( APPNAME, exepath );
+		}
+	}
+#endif
 
 	//
 	m_cfg->Read(_T("/Config/enable_upnp"), &m_enable_upnp, true);
@@ -264,7 +350,6 @@ void Configuration::Load()
 
 	m_cfg->Read(_T("/Config/enable_metadata"), &m_enable_metadata,true);
 	m_cfg->Read(_T("/Config/enable_pex"), &m_enable_pex, true);
-
 
 	m_language = m_cfg->Read(_T("/Config/language"), _T(""));
 	//session

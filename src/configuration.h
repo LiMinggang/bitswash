@@ -132,6 +132,10 @@ class Configuration : public wxFileConfig
 
 		bool GetExcludeSeed() { return m_exclude_seed; }
 		void SetExcludeSeed(bool exclude_seed ) { m_exclude_seed = exclude_seed; }
+#ifdef __WXMSW__
+        bool GetRunAtStartup() { return m_run_at_startup; }
+        void SetRunAtStartup(bool run_at_startup ) { m_run_at_startup = run_at_startup; }
+#endif
 
 
         // libtorrent
@@ -359,7 +363,11 @@ class Configuration : public wxFileConfig
 		bool		m_enable_pex;
 			
 		bool 		m_exclude_seed;
-	
+#ifdef __WXMSW__
+        bool        m_run_at_startup;
+        static wxString m_startup_regkey;
+#endif
+
 		wxString m_language;
 	
         	//Session

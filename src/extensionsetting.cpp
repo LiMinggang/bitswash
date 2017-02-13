@@ -66,7 +66,7 @@ ExtensionSettingPane::ExtensionSettingPane( wxWindow* parent,
 	bSizer1 = new wxBoxSizer( wxVERTICAL );
 	
 	m_static_infoextension = new wxStaticText( m_pane_infoextension, wxID_ANY, _("Extensions"), wxDefaultPosition, wxDefaultSize, 0 );
-	bSizer1->Add( m_static_infoextension, 0, wxALL, 0 );
+	bSizer1->Add( m_static_infoextension, 0, wxALL, 2 );
 	
 	m_pane_infoextension->SetSizer( bSizer1 );
 	m_pane_infoextension->Layout();
@@ -95,7 +95,7 @@ ExtensionSettingPane::ExtensionSettingPane( wxWindow* parent,
 	bSizer11 = new wxBoxSizer( wxVERTICAL );
 	
 	m_static_infoencryption = new wxStaticText( m_pane_infoencryption, wxID_ANY, _("Protocol Encryption"), wxDefaultPosition, wxDefaultSize, 0 );
-	bSizer11->Add( m_static_infoencryption, 0, wxALL, 0 );
+	bSizer11->Add( m_static_infoencryption, 0, wxALL, 2 );
 	
 	m_pane_infoencryption->SetSizer( bSizer11 );
 	m_pane_infoencryption->Layout();
@@ -125,7 +125,7 @@ ExtensionSettingPane::ExtensionSettingPane( wxWindow* parent,
 	bSizer111 = new wxBoxSizer( wxVERTICAL );
 	
 	m_static_infonat = new wxStaticText( m_pane_infonetwork, wxID_ANY, _("NAT Service"), wxDefaultPosition, wxDefaultSize, 0 );
-	bSizer111->Add( m_static_infonat, 0, wxALL, 0 );
+	bSizer111->Add( m_static_infonat, 0, wxALL, 2 );
 	
 	m_pane_infonetwork->SetSizer( bSizer111 );
 	m_pane_infonetwork->Layout();

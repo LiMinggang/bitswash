@@ -54,7 +54,7 @@ ConnectionSettingPane::ConnectionSettingPane( wxWindow* parent, int id, wxPoint 
 	bSizer1 = new wxBoxSizer( wxVERTICAL );
 	
 	m_static_infoport = new wxStaticText( m_pane_infoport, wxID_ANY, _("Ports Setting"), wxDefaultPosition, wxDefaultSize, 0 );
-	bSizer1->Add( m_static_infoport, 0, wxALL, 0 );
+	bSizer1->Add( m_static_infoport, 0, wxALL, 2 );
 	
 	m_pane_infoport->SetSizer( bSizer1 );
 	m_pane_infoport->Layout();
@@ -108,7 +108,7 @@ ConnectionSettingPane::ConnectionSettingPane( wxWindow* parent, int id, wxPoint 
 	bSizer11 = new wxBoxSizer( wxVERTICAL );
 	
 	m_static_infoport1 = new wxStaticText( m_pane_infolimit, wxID_ANY, _("Limits"), wxDefaultPosition, wxDefaultSize, 0 );
-	bSizer11->Add( m_static_infoport1, 0, wxALL, 0 );
+	bSizer11->Add( m_static_infoport1, 0, wxALL, 2 );
 	
 	m_pane_infolimit->SetSizer( bSizer11 );
 	m_pane_infolimit->Layout();

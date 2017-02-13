@@ -36,10 +36,6 @@ enum
 	GENERAL_ID_LOGTOFILE  
 };
 
-#ifdef __WXMSW__
-wxString GeneralSettingPane::m_startup_regkey = wxT("HKEY_CURRENT_USER\\SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Run");
-#endif
-
 BEGIN_EVENT_TABLE(GeneralSettingPane, wxPanel)
 	EVT_CHECKBOX(GENERAL_ID_USESYSTRAY, GeneralSettingPane::OnUseSystray)
 END_EVENT_TABLE()
@@ -65,7 +61,7 @@ GeneralSettingPane::GeneralSettingPane( wxWindow* parent,
 	bSizer1 = new wxBoxSizer( wxVERTICAL );
 	
 	m_static_infogeneral = new wxStaticText( m_pane_infogeneral, wxID_ANY, _("General"), wxDefaultPosition, wxDefaultSize, 0 );
-	bSizer1->Add( m_static_infogeneral, 0, wxALL, 0 );
+	bSizer1->Add( m_static_infogeneral, 0, wxALL, 2 );
 	
 	m_pane_infogeneral->SetSizer( bSizer1 );
 	m_pane_infogeneral->Layout();
@@ -90,11 +86,11 @@ GeneralSettingPane::GeneralSettingPane( wxWindow* parent,
 	fgSizerGeneral->Add( m_check_excludeseed, 0, wxALL, 5 );
 
 #ifdef __WXMSW__
-	m_check_startwithsystem = new wxCheckBox( this, wxID_ANY, _("Start on Windows startup"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_check_runatstartup = new wxCheckBox( this, wxID_ANY, _("Run at Windows startup"), wxDefaultPosition, wxDefaultSize, 0 );
 
-	m_check_startwithsystem->SetValue(false);
+	m_check_runatstartup->SetValue(m_pcfg->GetRunAtStartup());
 	
-	fgSizerGeneral->Add( m_check_startwithsystem, 0, wxALL, 5 );
+	fgSizerGeneral->Add( m_check_runatstartup, 0, wxALL, 5 );
 #endif
 
 //	fgSizerGeneral->AddSpacer( 5 );
@@ -118,7 +114,7 @@ GeneralSettingPane::GeneralSettingPane( wxWindow* parent,
 	bSizer11 = new wxBoxSizer( wxVERTICAL );
 	
 	m_static_infogui = new wxStaticText( m_pane_infogui, wxID_ANY, _("GUI"), wxDefaultPosition, wxDefaultSize, 0 );
-	bSizer11->Add( m_static_infogui, 0, wxALL, 0 );
+	bSizer11->Add( m_static_infogui, 0, wxALL, 2 );
 	
 	m_pane_infogui->SetSizer( bSizer11 );
 	m_pane_infogui->Layout();
@@ -159,7 +155,7 @@ GeneralSettingPane::GeneralSettingPane( wxWindow* parent,
 	bSizer2 = new wxBoxSizer( wxVERTICAL );
 	
 	m_static_infolog = new wxStaticText( m_pane_infolog, wxID_ANY, _("Log"), wxDefaultPosition, wxDefaultSize, 0 );
-	bSizer2->Add( m_static_infolog, 0, wxALL, 0 );
+	bSizer2->Add( m_static_infolog, 0, wxALL, 2 );
 	
 	m_pane_infolog->SetSizer( bSizer2 );
 	m_pane_infolog->Layout();

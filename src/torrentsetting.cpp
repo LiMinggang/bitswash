@@ -59,7 +59,7 @@ TorrentSettingPane::TorrentSettingPane( wxWindow* parent, torrent_t* pTorrent, i
 	m_pane_boxsizer1 = new wxBoxSizer( wxVERTICAL );
 	
 	m_pane_label_settings = new wxStaticText( m_pane_info1, wxID_ANY, _("Torrent Settings"), wxDefaultPosition, wxDefaultSize, 0 );
-	m_pane_boxsizer1->Add( m_pane_label_settings, 0, wxALL, 0 );
+	m_pane_boxsizer1->Add( m_pane_label_settings, 0, wxALL, 2 );
 	
 	m_pane_info1->SetSizer( m_pane_boxsizer1 );
 	m_pane_info1->Layout();

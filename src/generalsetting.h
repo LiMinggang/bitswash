@@ -52,9 +52,8 @@ class GeneralSettingPane :  public wxPanel
 		int GetLogLineCount();
 		bool GetLogToFile(); 
 #ifdef __WXMSW__
-		void SetStartWithSystem(bool start) { m_check_startwithsystem->SetValue(start); }
-#endif
-#ifdef __WXMSW__
+		void SetRunAtStartup(bool start) { m_check_runatstartup->SetValue(start); }
+		bool GetRunAtStartup() { return m_check_runatstartup->GetValue(); }
         static wxString m_startup_regkey;
 #endif
 	private:
@@ -67,7 +66,7 @@ class GeneralSettingPane :  public wxPanel
 		wxSpinCtrl* m_spin_maxstart;
 		wxCheckBox* m_check_excludeseed;
 #ifdef __WXMSW__
-		wxCheckBox* m_check_startwithsystem;
+		wxCheckBox* m_check_runatstartup;
 #endif
 
 		wxPanel* m_pane_infogui;

@@ -30,55 +30,6 @@
 #include "swashsetting.h"
 #include "bittorrentsession.h"
 
-wxString GetExecutablePath()
-{
-	static bool	found =	false;
-	static wxString	path;
-
-	if (!found)	{
-#ifdef __WXMSW__
-
-		wxChar buf[512];
-		*buf = wxT('\0');
-		GetModuleFileName(NULL,	buf, 511);
-		path = buf;
-
-#elif defined(__WXMAC__)
-
-		ProcessInfoRec processinfo;
-		ProcessSerialNumber	procno ;
-		FSSpec fsSpec;
-
-		procno.highLongOfPSN = NULL	;
-		procno.lowLongOfPSN	= kCurrentProcess ;
-		processinfo.processInfoLength =	sizeof(ProcessInfoRec);
-		processinfo.processName	= NULL;
-		processinfo.processAppSpec = &fsSpec;
-
-		GetProcessInformation( &procno , &processinfo )	;
-		path = wxMacFSSpec2MacFilename(&fsSpec);
-#else
-		wxString argv0 = wxTheApp->argv[0];
-
-		if (wxIsAbsolutePath(argv0)) {
-			path = argv0;
-		}
-		else {
-			wxPathList pathlist;
-			pathlist.AddEnvList(wxT("PATH"));
-			path = pathlist.FindAbsoluteValidPath(argv0);
-		}
-
-		wxFileName filename(path);
-		filename.Normalize();
-		path = filename.GetFullPath();
-#endif
-		found =	true;
-	}
-
-	return path;
-}
-
 BEGIN_EVENT_TABLE(SwashSetting, wxDialog)
 	EVT_BUTTON(wxID_OK, SwashSetting::OnOK)
 	EVT_BUTTON(wxID_CANCEL, SwashSetting::OnCancel)
@@ -114,22 +65,6 @@ SwashSetting::SwashSetting( wxWindow* parent, Configuration *pcfg, int id, wxStr
 
 	m_pane_connectionsettings = new ConnectionSettingPane(m_listbookmenu);
 	m_pane_torrentsettings = new TorrentSettingPane((wxWindow*)m_listbookmenu);
-	
-#ifdef __WXMSW__
-	wxRegKey *pRegKey = new wxRegKey(GeneralSettingPane::m_startup_regkey);
-
-	if( pRegKey->Exists() )
-	{
-		wxString exepath = GetExecutablePath();
-
-		if( pRegKey->QueryValue( APPNAME, exepath ) )
-		{
-			m_pane_generalsettings->SetStartWithSystem( true );
-		}
-	}
-
-	delete pRegKey;
-#endif
 	m_pane_extensionsettings = new ExtensionSettingPane(m_listbookmenu);
 
 
@@ -165,6 +100,11 @@ void SwashSetting::OnOK(wxCommandEvent& event)
 {
 	m_pcfg->SetMaxStart(m_pane_generalsettings->GetMaxStart());
 	m_pcfg->SetExcludeSeed(m_pane_generalsettings->GetExcludeSeed());
+
+#ifdef __WXMSW__
+	m_pcfg->SetRunAtStartup(m_pane_generalsettings->GetRunAtStartup());
+#endif
+
 	m_pcfg->SetFastResumeSaveTime(m_pane_generalsettings->GetFastResumeSaveTime());
 	m_pcfg->SetRefreshTime(m_pane_generalsettings->GetRefreshTimer());
 	m_pcfg->SetUseSystray(m_pane_generalsettings->GetUseSystray());
