@@ -167,7 +167,7 @@ SummaryPane::SummaryPane(wxWindow *parent,
 	m_pane_boxsizer1 = new wxBoxSizer( wxVERTICAL );
 	
 	m_pane_label_tracker = new wxStaticText( m_pane_tracker, wxID_ANY, _("Tracker"), wxDefaultPosition, wxDefaultSize, 0 );
-	m_pane_boxsizer1->Add( m_pane_label_tracker, 0, wxALL, 3 );
+	m_pane_boxsizer1->Add( m_pane_label_tracker, 0, wxALL, 2 );
 	
 	m_pane_tracker->SetSizer( m_pane_boxsizer1 );
 	m_pane_tracker->Layout();

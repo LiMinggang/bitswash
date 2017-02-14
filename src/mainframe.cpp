@@ -142,7 +142,7 @@ MainFrame::MainFrame(wxFrame *frame, const wxString& title)
 	m_frameicon.CopyFromBitmap(wxGetApp().GetAppIcon(BITSWASH_ICON_APP256).Rescale(64, 64));
 	//wxLogMessage(_T("orig %dx%d, traicon %dx%d, frameicon %dx%d\n"), wxGetApp().GetAppIcon(BITSWASH_ICON_APP256).GetHeight(), wxGetApp().GetAppIcon(BITSWASH_ICON_APP256).GetWidth(), m_trayicon.GetHeight(), m_trayicon.GetWidth(), m_frameicon.GetHeight(), m_frameicon.GetWidth());
 
-	SetIcon(m_trayicon);
+	SetIcon(m_frameicon);
 #if WXVER >= 280
     m_mgr.SetManagedWindow(this);
 #else
@@ -1530,7 +1530,7 @@ wxString MainFrame::GetStatusIncoming(){
 void MainFrame::UpdateTrayInfo()
 {
 
-	wxString tooltips = wxString::Format(_T("%-20s : %s\n%-20s : %s\n%-20s : %s\n%-20s : %s\n%-20s : %s"), _("Download Rate\t"), GetStatusDownloadRate().c_str(), _("Upload Rate\t"), GetStatusUploadRate().c_str(), _("Peers\t"), GetStatusPeers().c_str(), _("DHT Nodes\t"), GetStatusDHT().c_str(), _("Incoming"), GetStatusIncoming().c_str());
+	wxString tooltips = wxString::Format(_T("%-20s : %s\n%-20s  : %s\n%-20s    : %s\n%-20s  : %s\n%-20s : %s"), _("Download Rate"), GetStatusDownloadRate().c_str(), _("Upload Rate"), GetStatusUploadRate().c_str(), _("Peers"), GetStatusPeers().c_str(), _("DHT Nodes"), GetStatusDHT().c_str(), _("Incoming"), GetStatusIncoming().c_str());
 
 	m_swashtrayicon->SetIcon(m_trayicon, tooltips);
 

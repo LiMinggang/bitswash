@@ -225,7 +225,7 @@ void SystemOpenURL(wxString url)
 
 }
 
-wxString GetExecutablePath()
+wxString & GetExecutablePath()
 {
 	static bool	found =	false;
 	static wxString	path;

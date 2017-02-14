@@ -288,7 +288,8 @@ void Configuration::Load()
 		}
 		else
 		{
-				wxString exepath = GetExecutablePath();
+				wxString exepath(_T("\""));
+				exepath += GetExecutablePath() + _T("\"");
 				regKey.SetValue( APPNAME, exepath );
 		}
 	}
