@@ -79,11 +79,15 @@ class LoggerCtrl: public wxPanel, wxLog
 
 		bool m_issuspend;
 		std::vector<struct log_data> m_suspended_logdata;
-
+#if WXWIN_COMPATIBILITY_2_8
 		virtual void DoLog(wxLogLevel level, const wxChar *szString, time_t t);
 
 		virtual void DoLogString( const wxChar *szString, time_t WXUNUSED(t));
-
+#else
+		virtual void DoLogTextAtLevel(wxLogLevel level, const wxString& msg);
+		
+		virtual void DoLogText(const wxString& msg);
+#endif
 		void OnSize(wxSizeEvent& event);
 		void OnSeverityChoice(wxCommandEvent& event);
 		void OnLogFileCheck(wxCommandEvent& event);

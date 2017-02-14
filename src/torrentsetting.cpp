@@ -271,7 +271,7 @@ libtorrent::storage_mode_t TorrentSettingPane::GetStorageMode()
 
 bool TorrentSettingPane::GetStartTorrent()
 {
-	return (m_check_start->IsChecked() ? TORRENT_STATE_QUEUE:TORRENT_STATE_STOP);
+	return (m_check_start->IsChecked());
 }
 
 bool TorrentSettingPane::GetUseDefault()
