@@ -54,6 +54,7 @@ private:
 	//wxString OnGetItemText(long item, long column) const;
 	wxString GetItemValue(long item, long columnid) const;
 	void ShowContextMenu(const wxPoint& pos);
+	wxMenu* m_torrentmenu;
 
     DECLARE_NO_COPY_CLASS(TorrentListCtrl)
     DECLARE_EVENT_TABLE()
