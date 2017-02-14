@@ -159,7 +159,7 @@ SummaryPane::SummaryPane(wxWindow *parent,
 
 	m_summarypane_sizer->Add( m_text_comment, 0, wxALL, 3 );
 
-	m_pane_tracker = new wxPanel( this, wxID_ANY, wxDefaultPosition, wxSize( -1,10 ), wxTAB_TRAVERSAL );
+	m_pane_tracker = new wxPanel( this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL );
 	m_pane_tracker->SetBackgroundColour( wxSystemSettings::GetColour( wxSYS_COLOUR_ACTIVECAPTION) );
 	m_pane_tracker->SetMaxSize( wxSize( -1,20 ) );
 	

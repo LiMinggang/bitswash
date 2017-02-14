@@ -733,7 +733,6 @@ void BitTorrentSession::ScanTorrentsDirectory(wxString dirname)
 //find and return index of torrent handle from hash string
 int BitTorrentSession::find_torrent_from_hash(wxString hash) 
 {
-
 	int j=0;
 
 	for (torrents_t::iterator i = m_torrent_queue.begin();
@@ -748,7 +747,6 @@ int BitTorrentSession::find_torrent_from_hash(wxString hash)
 	}
 
 	return -1;
-
 }
 
 char const* timestamp()

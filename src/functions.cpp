@@ -32,7 +32,7 @@
 #include <wx/mimetype.h>
 #include <wx/url.h>
 
-#include <boost/regex.hpp>
+#include <wx/regex.h>
 
 #include "functions.h"
 
@@ -74,8 +74,6 @@ wxString HumanReadableTime(wxDouble second)
 	//XXX format time	
 	return _T("TODO");
 }
-
-
 
 int RemoveDirectory(wxString path) {
 
@@ -279,7 +277,7 @@ bool isUrl(const wxString &s, bool isScheme/* = true*/)
 	wxString scheme = s;
 	if(!isScheme)
         scheme = wxURL(s).GetScheme();
-    boost::regex is_url("http[s]?|ftp", boost::regex_constants::icase);
-    return boost::regex_match(scheme.ToStdString(), is_url);
+    wxRegEx is_url(_T("http[s]?|ftp"), wxRE_ICASE);
+    return is_url.Matches(scheme);
 }
 

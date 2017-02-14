@@ -559,7 +559,9 @@
     <ClCompile Include="src\filelistctrl.cpp" />
     <ClCompile Include="src\functions.cpp" />
     <ClCompile Include="src\generalsetting.cpp" />
+    <ClCompile Include="src\infohash.cpp" />
     <ClCompile Include="src\loggerctrl.cpp" />
+    <ClCompile Include="src\magneturi.cpp" />
     <ClCompile Include="src\mainframe.cpp" />
     <ClCompile Include="src\peerlistctrl.cpp" />
     <ClCompile Include="src\summarypane.cpp" />
@@ -573,6 +575,7 @@
     <ClCompile Include="src\torrentlistctrl.cpp" />
     <ClCompile Include="src\torrentproperty.cpp" />
     <ClCompile Include="src\torrentsetting.cpp" />
+    <ClCompile Include="src\trackerentry.cpp" />
     <ClCompile Include="src\trackerlistctrl.cpp" />
     <ClCompile Include="src\urldialog.cpp" />
   </ItemGroup>

@@ -1006,5 +1006,14 @@
     <ClCompile Include="libtorrent\src\version.cpp">
       <Filter>Source Files\libtorrent</Filter>
     </ClCompile>
+    <ClCompile Include="src\infohash.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\magneturi.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\trackerentry.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
 </Project>
