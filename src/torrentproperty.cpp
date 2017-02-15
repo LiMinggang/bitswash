@@ -3,7 +3,6 @@
 //(*InternalHeaders(TorrentProperty)
 #include <wx/settings.h>
 #include <wx/intl.h>
-#include <wx/button.h>
 #include <wx/string.h>
 //*)
 
@@ -22,8 +21,8 @@ const long TorrentProperty::ID_TEXTCTRL1 = wxNewId();
 const long TorrentProperty::ID_STATICTEXT5 = wxNewId();
 const long TorrentProperty::ID_STATICTEXT6 = wxNewId();
 const long TorrentProperty::ID_NOTEBOOK1 = wxNewId();
-const long TorrentProperty::ID_BUTTONUNCHECKALL = wxNewId();
-const long TorrentProperty::ID_BUTTONCHECKALL = wxNewId();
+const long TorrentProperty::ID_BUTTONSELECTNONE = wxNewId();
+const long TorrentProperty::ID_BUTTONSELECTALL = wxNewId();
 //*)
 
 BEGIN_EVENT_TABLE(TorrentProperty,wxDialog)
@@ -39,13 +38,13 @@ TorrentProperty::TorrentProperty(torrent_t* pTorrent, wxWindow* parent,wxWindowI
 
 	m_pTorrent = pTorrent;
 	//(*Initialize(TorrentProperty)
+	wxButton* ButtonSelectAll;
 	wxBoxSizer* m_pane_boxsizer;
+	wxButton* ButtonSelectNone;
 	wxFlexGridSizer* fgSizer11;
 	wxButton* ButtonOK;
 	wxButton* ButtonCancel;
 	wxBoxSizer* BoxSizer1;
-	wxButton* ButtonUnCheckAll;
-	wxButton* ButtonCheckAll;
 	wxFlexGridSizer* m_torrentsettings_sizer;
 	int w,h;
 
@@ -102,11 +101,12 @@ TorrentProperty::TorrentProperty(torrent_t* pTorrent, wxWindow* parent,wxWindowI
 	m_notebook_property->SetSelection(0);
 	m_torrentsettings_sizer->Add( m_notebook_property, 1, wxEXPAND | wxALL, 5 );
 	BoxSizer1 = new wxBoxSizer(wxHORIZONTAL);
-	ButtonUnCheckAll = new wxButton(this, ID_BUTTONUNCHECKALL, _("Unselect All"), wxDefaultPosition, wxDefaultSize, 0, wxDefaultValidator, _T("ID_BUTTONUNCHECKALL"));
-	BoxSizer1->Add(ButtonUnCheckAll, 0, wxALL|wxALIGN_CENTER_HORIZONTAL|wxALIGN_CENTER_VERTICAL, 5);
-	ButtonCheckAll = new wxButton(this, ID_BUTTONCHECKALL, _("Select All"), wxDefaultPosition, wxDefaultSize, 0, wxDefaultValidator, _T("ID_BUTTONCHECKALL"));
-	BoxSizer1->Add(ButtonCheckAll, 0, wxALL|wxALIGN_CENTER_HORIZONTAL|wxALIGN_CENTER_VERTICAL, 5);
+	ButtonSelectNone = new wxButton(this, ID_BUTTONSELECTNONE, _("Select None"), wxDefaultPosition, wxDefaultSize, 0, wxDefaultValidator, _T("ID_BUTTONSELECTNONE"));
+	BoxSizer1->Add(ButtonSelectNone, 0, wxALL|wxALIGN_CENTER_HORIZONTAL|wxALIGN_CENTER_VERTICAL, 5);
+	ButtonSelectAll = new wxButton(this, ID_BUTTONSELECTALL, _("Select All"), wxDefaultPosition, wxDefaultSize, 0, wxDefaultValidator, _T("ID_BUTTONSELECTALL"));
+	BoxSizer1->Add(ButtonSelectAll, 0, wxALL|wxALIGN_CENTER_HORIZONTAL|wxALIGN_CENTER_VERTICAL, 5);
 	ButtonOK = new wxButton(this, wxID_OK, _("OK"), wxDefaultPosition, wxDefaultSize, 0, wxDefaultValidator, _T("wxID_OK"));
+	ButtonOK->SetDefault();
 	BoxSizer1->Add(ButtonOK, 0, wxALL|wxALIGN_CENTER_HORIZONTAL|wxALIGN_CENTER_VERTICAL, 5);
 	ButtonCancel = new wxButton(this, wxID_CANCEL, _("Cancel"), wxDefaultPosition, wxDefaultSize, 0, wxDefaultValidator, _T("wxID_CANCEL"));
 	BoxSizer1->Add(ButtonCancel, 0, wxALL|wxALIGN_CENTER_HORIZONTAL|wxALIGN_CENTER_VERTICAL, 5);
@@ -170,7 +170,6 @@ void TorrentProperty::OnCancel(wxCommandEvent& event)
 
 }
 
-//XXX onfocus not working
 void TorrentProperty::OnFocus(wxFocusEvent& event)
 {
 		wxLogDebug(_T("TorrentProperty OnFocus %d\n"), m_notebook_property->GetSelection());

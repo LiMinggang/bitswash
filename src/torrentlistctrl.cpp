@@ -270,8 +270,6 @@ wxString TorrentListCtrl::GetItemValue(long item, long columnid) const
 #if USE_CONTEXT_MENU
 void TorrentListCtrl::ShowContextMenu(const wxPoint& pos)
 {
-	wxLogDebug(_T("TorrentListCtrl: ShowContextMenu (%d, %d)\n"), pos.x, pos.y);
-
 	MainFrame* pMainFrame = (MainFrame*) wxGetApp().GetTopWindow();
 	if(!m_torrentmenu)
 	{
@@ -279,26 +277,6 @@ void TorrentListCtrl::ShowContextMenu(const wxPoint& pos)
 	}
 
 	pMainFrame->TorrentOperationMenu(m_torrentmenu, ( GetSelectedItemCount() > 0 ));
-	/*if( GetSelectedItemCount() > 0 )
-	{
-		m_torrentmenu->Enable( ID_TORRENT_START, true );
-		m_torrentmenu->Enable( ID_TORRENT_PAUSE, true );
-		m_torrentmenu->Enable( ID_TORRENT_STOP, true );
-		m_torrentmenu->Enable( ID_TORRENT_OPENDIR, true );
-		m_torrentmenu->Enable( ID_TORRENT_PROPERTIES, true );
-		m_torrentmenu->Enable( ID_TORRENT_REMOVE, true );
-		m_torrentmenu->Enable( ID_TORRENT_REMOVEDATA, true );
-	}
-	else
-	{
-		m_torrentmenu->Enable( ID_TORRENT_START, false );
-		m_torrentmenu->Enable( ID_TORRENT_PAUSE, false );
-		m_torrentmenu->Enable( ID_TORRENT_STOP, false );
-		m_torrentmenu->Enable( ID_TORRENT_OPENDIR, false );
-		m_torrentmenu->Enable( ID_TORRENT_PROPERTIES, false );
-		m_torrentmenu->Enable( ID_TORRENT_REMOVE, false );
-		m_torrentmenu->Enable( ID_TORRENT_REMOVEDATA, false );
-	}*/
 
 	PopupMenu(m_torrentmenu, pos);
 }

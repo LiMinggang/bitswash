@@ -7,6 +7,7 @@
 #include <wx/stattext.h>
 #include <wx/textctrl.h>
 #include <wx/panel.h>
+#include <wx/button.h>
 #include <wx/dialog.h>
 //*)
 
@@ -49,8 +50,8 @@ class TorrentProperty: public wxDialog
 		static const long ID_STATICTEXT5;
 		static const long ID_STATICTEXT6;
 		static const long ID_NOTEBOOK1;
-		static const long ID_BUTTONUNCHECKALL;
-		static const long ID_BUTTONCHECKALL;
+		static const long ID_BUTTONSELECTNONE;
+		static const long ID_BUTTONSELECTALL;
 		//*)
 
 	private:
