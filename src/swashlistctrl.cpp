@@ -84,7 +84,6 @@ SwashListCtrl::SwashListCtrl(wxWindow *parent,
 	/* XXX initialize list column based on array */
 	Init(num_cols, columns);
 	Create(parent, id, pos, size, style);
-
 }
 
 void SwashListCtrl::Init(long num_cols, SwashColumnItem *columns)
@@ -194,12 +193,11 @@ wxString SwashListCtrl::Settings() const
 
 bool SwashListCtrl::Create(wxWindow* parent, wxWindowID id, const wxPoint& pos, const wxSize& size, long style)
 {
-
 	wxListView::Create(parent, id, pos, size, style);
 
 	int i = 0 ;
 	int j = 0;
-	for (i= 0; i < m_numberofcolumns ; i++)
+	for (i= 0; i < m_numberofcolumns ; ++i)
 	{
 		if(m_columns[i].show)
 		{
@@ -299,7 +297,6 @@ void SwashListCtrl::OnColumnSelected(wxCommandEvent& event)
 					}
 
 					wxLogDebug(_T("Insert before %s %d\n"), m_columns[i].name.c_str(), insert);
-
 					break;
 				}
 			}
@@ -309,7 +306,6 @@ void SwashListCtrl::OnColumnSelected(wxCommandEvent& event)
 			{
 				insert = GetColumnCount();
 			}
-
 		}
 
 		m_columns[colnum].show = true;
@@ -323,7 +319,6 @@ void SwashListCtrl::OnColumnSelected(wxCommandEvent& event)
 			SetColumnWidth(insert,m_columns[colnum].width);
 		else 
 			SetColumnWidth(insert, wxLIST_AUTOSIZE_USEHEADER);
-
 	}
 	else
 	{
@@ -333,7 +328,7 @@ void SwashListCtrl::OnColumnSelected(wxCommandEvent& event)
 		/* find column number */
 		wxListItem item;
 		item.SetMask(wxLIST_MASK_TEXT);
-		for(i=0; i< GetColumnCount(); i++)
+		for(i=0; i< GetColumnCount(); ++i)
 		{
 			GetColumn(i, item);
 			if (item.GetText() == wxGetTranslation(m_columns[colnum].title) )
@@ -348,7 +343,6 @@ void SwashListCtrl::OnColumnSelected(wxCommandEvent& event)
 			m_columns[colnum].width = GetColumnWidth(deleted);
 			DeleteColumn(deleted);
 		}
-
 	}
 }
 
@@ -653,7 +647,6 @@ void SwashListCtrl::UpdateSwashList()
 	if (m_showfrom > m_showto)
 		m_showfrom = m_showto;
 
-	
 	RefreshItems(m_showfrom, m_showto);	
 }
 
