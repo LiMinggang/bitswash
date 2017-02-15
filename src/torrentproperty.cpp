@@ -64,10 +64,10 @@ TorrentProperty::TorrentProperty(torrent_t* pTorrent, wxWindow *parent,
 	GetClientSize(&w, &h);
 
 	wxFlexGridSizer* m_torrentsettings_sizer;
-	m_torrentsettings_sizer = new wxFlexGridSizer( 1, 1, 3, 3 );
+	m_torrentsettings_sizer = new wxFlexGridSizer( 0, 1, 3, 3 );
 	m_torrentsettings_sizer->SetFlexibleDirection( wxVERTICAL);
 	
-	m_pane_info = new wxPanel( this, wxID_ANY, wxDefaultPosition, wxSize( -1,10 ), wxTAB_TRAVERSAL );
+	m_pane_info = new wxPanel( this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL );
 	m_pane_info->SetBackgroundColour( wxSystemSettings::GetColour( wxSYS_COLOUR_ACTIVECAPTION ) );
 	m_pane_info->SetMaxSize( wxSize( -1,20 ) );
 	

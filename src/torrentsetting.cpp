@@ -51,7 +51,7 @@ TorrentSettingPane::TorrentSettingPane( wxWindow* parent, torrent_t* pTorrent, i
 	fgTorrentSettings = new wxFlexGridSizer( 0, 1, 0, 0 );
 	fgTorrentSettings->SetFlexibleDirection( wxBOTH );
 	
-	m_pane_info1 = new wxPanel( this, wxID_ANY, wxDefaultPosition, wxSize( -1,20 ), wxTAB_TRAVERSAL );
+	m_pane_info1 = new wxPanel( this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL );
 	m_pane_info1->SetBackgroundColour( wxSystemSettings::GetColour( wxSYS_COLOUR_ACTIVECAPTION ) );
 	m_pane_info1->SetMaxSize( wxSize( -1,20 ) );
 	

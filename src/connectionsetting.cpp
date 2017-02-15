@@ -47,7 +47,7 @@ ConnectionSettingPane::ConnectionSettingPane( wxWindow* parent, int id, wxPoint 
 	fgConnectionMain = new wxFlexGridSizer( 0, 1, 0, 0 );
 	fgConnectionMain->SetFlexibleDirection( wxBOTH );
 	
-	m_pane_infoport = new wxPanel( this, wxID_ANY, wxDefaultPosition, wxSize( -1,20 ), wxTAB_TRAVERSAL );
+	m_pane_infoport = new wxPanel( this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL );
 	m_pane_infoport->SetBackgroundColour( wxSystemSettings::GetColour( wxSYS_COLOUR_ACTIVECAPTION ) );
 	
 	wxBoxSizer* bSizer1;
@@ -101,7 +101,7 @@ ConnectionSettingPane::ConnectionSettingPane( wxWindow* parent, int id, wxPoint 
 	m_staticline1 = new wxStaticLine( this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxLI_HORIZONTAL );
 	fgConnectionMain->Add( m_staticline1, 0, wxALL, 5 );
 	
-	m_pane_infolimit = new wxPanel( this, wxID_ANY, wxDefaultPosition, wxSize( -1,20 ), wxTAB_TRAVERSAL );
+	m_pane_infolimit = new wxPanel( this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL );
 	m_pane_infolimit->SetBackgroundColour( wxSystemSettings::GetColour( wxSYS_COLOUR_ACTIVECAPTION ) );
 	
 	wxBoxSizer* bSizer11;

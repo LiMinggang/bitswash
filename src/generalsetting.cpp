@@ -54,7 +54,7 @@ GeneralSettingPane::GeneralSettingPane( wxWindow* parent,
 	fgSizerMain = new wxFlexGridSizer( 0, 1, 0, 0 );
 	fgSizerMain->SetFlexibleDirection( wxBOTH );
 	
-	m_pane_infogeneral = new wxPanel( this, wxID_ANY, wxDefaultPosition, wxSize( -1,20 ), wxTAB_TRAVERSAL );
+	m_pane_infogeneral = new wxPanel( this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL );
 	m_pane_infogeneral->SetBackgroundColour( wxSystemSettings::GetColour( wxSYS_COLOUR_ACTIVECAPTION ) );
 	
 	wxBoxSizer* bSizer1;
@@ -107,7 +107,7 @@ GeneralSettingPane::GeneralSettingPane( wxWindow* parent,
 	fgSizerGeneral->AddSpacer( 5 );
 	fgSizerMain->Add( fgSizerGeneral, 1, wxEXPAND, 5 );
 	
-	m_pane_infogui = new wxPanel( this, wxID_ANY, wxDefaultPosition, wxSize( -1,20 ), wxTAB_TRAVERSAL );
+	m_pane_infogui = new wxPanel( this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL );
 	m_pane_infogui->SetBackgroundColour( wxSystemSettings::GetColour( wxSYS_COLOUR_ACTIVECAPTION ) );
 	
 	wxBoxSizer* bSizer11;
@@ -148,7 +148,7 @@ GeneralSettingPane::GeneralSettingPane( wxWindow* parent,
 	fgSizerMain->Add( fgSizerGUI, 1, wxEXPAND, 5 );
 
 
-	m_pane_infolog = new wxPanel( this, wxID_ANY, wxDefaultPosition, wxSize( -1,20 ), wxTAB_TRAVERSAL );
+	m_pane_infolog = new wxPanel( this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL );
 	m_pane_infolog->SetBackgroundColour( wxSystemSettings::GetColour( wxSYS_COLOUR_ACTIVECAPTION ) );
 	
 	wxBoxSizer* bSizer2;

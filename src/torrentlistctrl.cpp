@@ -272,12 +272,13 @@ void TorrentListCtrl::ShowContextMenu(const wxPoint& pos)
 {
 	wxLogDebug(_T("TorrentListCtrl: ShowContextMenu (%d, %d)\n"), pos.x, pos.y);
 
+	MainFrame* pMainFrame = (MainFrame*) wxGetApp().GetTopWindow();
 	if(!m_torrentmenu)
 	{
-		MainFrame* pMainFrame = (MainFrame*) wxGetApp().GetTopWindow();
-
-		m_torrentmenu = pMainFrame->GetTorrentMenu();
+		m_torrentmenu = pMainFrame->GetNewTorrentMenu();
 	}
+
+	pMainFrame->TorrentOperationMenu(m_torrentmenu, ( GetSelectedItemCount() > 0 ));
 	/*if( GetSelectedItemCount() > 0 )
 	{
 		m_torrentmenu->Enable( ID_TORRENT_START, true );

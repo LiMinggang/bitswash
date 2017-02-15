@@ -104,9 +104,9 @@ class MainFrame: public wxFrame
         MainFrame(wxFrame *frame, const wxString& title);
 		~MainFrame();
 
-		wxMenu* GetTorrentMenu();
+		wxMenu* GetNewTorrentMenu();
 		void OnMenuOpen(wxMenuEvent& event);
-		void TorrentOperationMenu(bool enabled);
+		void TorrentOperationMenu(wxMenu* torrentmenu, bool enabled);
 		void UpdateUI();
    		void UpdateSelectedTorrent();
 

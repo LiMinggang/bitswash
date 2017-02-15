@@ -59,7 +59,7 @@ ExtensionSettingPane::ExtensionSettingPane( wxWindow* parent,
 	fgSizerMain = new wxFlexGridSizer( 0, 1, 0, 0 );
 	fgSizerMain->SetFlexibleDirection( wxBOTH );
 	
-	m_pane_infoextension = new wxPanel( this, wxID_ANY, wxDefaultPosition, wxSize( -1,20 ), wxTAB_TRAVERSAL );
+	m_pane_infoextension = new wxPanel( this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL );
 	m_pane_infoextension->SetBackgroundColour( wxSystemSettings::GetColour( wxSYS_COLOUR_ACTIVECAPTION ) );
 	
 	wxBoxSizer* bSizer1;
@@ -88,7 +88,7 @@ ExtensionSettingPane::ExtensionSettingPane( wxWindow* parent,
 	
 	fgSizerMain->Add( fgSizerExtensions, 1, wxEXPAND, 5 );
 	
-	m_pane_infoencryption = new wxPanel( this, wxID_ANY, wxDefaultPosition, wxSize( -1,20 ), wxTAB_TRAVERSAL );
+	m_pane_infoencryption = new wxPanel( this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL );
 	m_pane_infoencryption->SetBackgroundColour( wxSystemSettings::GetColour( wxSYS_COLOUR_ACTIVECAPTION ) );
 	
 	wxBoxSizer* bSizer11;
@@ -118,7 +118,7 @@ ExtensionSettingPane::ExtensionSettingPane( wxWindow* parent,
 	
 	fgSizerMain->Add( fgSizerEncryption, 1, wxEXPAND, 5 );
 	
-	m_pane_infonetwork = new wxPanel( this, wxID_ANY, wxDefaultPosition, wxSize( -1,20 ), wxTAB_TRAVERSAL );
+	m_pane_infonetwork = new wxPanel( this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL );
 	m_pane_infonetwork->SetBackgroundColour( wxSystemSettings::GetColour( wxSYS_COLOUR_ACTIVECAPTION ) );
 	
 	wxBoxSizer* bSizer111;

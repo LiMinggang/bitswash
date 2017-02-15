@@ -356,7 +356,7 @@ wxMenuBar* MainFrame::CreateMainMenuBar()
 	menuitem = viewMenu->Append( ID_VIEW_STATUS, _( "View &Status" ), _( "View Status" ) );
 	//menuitem = viewMenu->Append(ID_VIEW_FAVORITE, _("View &Categories"), _("View Categories"));
 	mbar->Append( viewMenu, _( "&View" ) );
-	m_torrentmenu = GetTorrentMenu();
+	m_torrentmenu = GetNewTorrentMenu();
 
 	mbar->Append( m_torrentmenu, _( "&Torrent" ) );
 	wxMenu* optionsMenu = new wxMenu( wxEmptyString );
@@ -758,30 +758,30 @@ void MainFrame::UpdateSelectedTorrent()
 	m_torrentinfo->UpdateTorrentInfo( true );
 }
 
-void MainFrame::TorrentOperationMenu( bool enabled )
+void MainFrame::TorrentOperationMenu( wxMenu* torrentmenu, bool enabled )
 {
 	//wxLogMessage(_T("TorrentOperationMenu enabled %d\n"), enabled);
 	/* TODO: Check state to enable certain menu only */
 	/* TODO: enable/disable toolbar too */
 	if( !enabled )
 	{
-		m_torrentmenu->Enable( ID_TORRENT_START, false );
-		m_torrentmenu->Enable( ID_TORRENT_PAUSE, false );
-		m_torrentmenu->Enable( ID_TORRENT_STOP, false );
-		m_torrentmenu->Enable( ID_TORRENT_OPENDIR, false );
-		m_torrentmenu->Enable( ID_TORRENT_PROPERTIES, false );
-		m_torrentmenu->Enable( ID_TORRENT_REMOVE, false );
-		m_torrentmenu->Enable( ID_TORRENT_REMOVEDATA, false );
+		torrentmenu->Enable( ID_TORRENT_START, false );
+		torrentmenu->Enable( ID_TORRENT_PAUSE, false );
+		torrentmenu->Enable( ID_TORRENT_STOP, false );
+		torrentmenu->Enable( ID_TORRENT_OPENDIR, false );
+		torrentmenu->Enable( ID_TORRENT_PROPERTIES, false );
+		torrentmenu->Enable( ID_TORRENT_REMOVE, false );
+		torrentmenu->Enable( ID_TORRENT_REMOVEDATA, false );
 	}
 	else
 	{
-		m_torrentmenu->Enable( ID_TORRENT_START, true );
-		m_torrentmenu->Enable( ID_TORRENT_PAUSE, true );
-		m_torrentmenu->Enable( ID_TORRENT_STOP, true );
-		m_torrentmenu->Enable( ID_TORRENT_OPENDIR, true );
-		m_torrentmenu->Enable( ID_TORRENT_PROPERTIES, true );
-		m_torrentmenu->Enable( ID_TORRENT_REMOVE, true );
-		m_torrentmenu->Enable( ID_TORRENT_REMOVEDATA, true );
+		torrentmenu->Enable( ID_TORRENT_START, true );
+		torrentmenu->Enable( ID_TORRENT_PAUSE, true );
+		torrentmenu->Enable( ID_TORRENT_STOP, true );
+		torrentmenu->Enable( ID_TORRENT_OPENDIR, true );
+		torrentmenu->Enable( ID_TORRENT_PROPERTIES, true );
+		torrentmenu->Enable( ID_TORRENT_REMOVE, true );
+		torrentmenu->Enable( ID_TORRENT_REMOVEDATA, true );
 	}
 	//wxLogMessage(_T("TorrentOperationMenu enabled %d\n"), enabled);
 }
@@ -793,7 +793,7 @@ void MainFrame::OnMenuOpen( wxMenuEvent& event )
 	wxMenu* openmenu = event.GetMenu();
 	if( openmenu == m_torrentmenu )
 	{
-		TorrentOperationMenu( m_torrentlistctrl->GetSelectedItemCount() > 0 );
+		TorrentOperationMenu( m_torrentmenu, m_torrentlistctrl->GetSelectedItemCount() > 0 );
 	}
 }
 
@@ -1296,7 +1296,7 @@ void MainFrame::OnUpdateOptionLanguage( wxUpdateUIEvent& event )
 	wxLogMessage( _T( "UI Command %s, item %p\n" ), event.GetString().c_str(), event.GetEventObject() );
 }
 
-wxMenu* MainFrame::GetTorrentMenu()
+wxMenu* MainFrame::GetNewTorrentMenu()
 {
 	wxMenuItem* menuitem = 0;
 	wxMenu* torrentMenu = new wxMenu( wxT( "" ) );
