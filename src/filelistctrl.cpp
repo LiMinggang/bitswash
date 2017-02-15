@@ -92,13 +92,7 @@ FileListCtrl::FileListCtrl(wxWindow *parent,
 			: SwashListCtrl(parent, SWASHLISTCOL_SIZE(filelistcols), filelistcols, settings, id, pos, size, style),
 			m_pTorrent(NULL)
 {
-    SetImageList(&m_imageList, wxIMAGE_LIST_SMALL);
 
-	// the add order must respect the wxCLC_XXX_IMGIDX defines in the headers !
-    m_imageList.Add(wxIcon(unchecked_xpm));
-    m_imageList.Add(wxIcon(checked_xpm));
-    m_imageList.Add(wxIcon(unchecked_dis_xpm));
-    m_imageList.Add(wxIcon(checked_dis_xpm));
 }
 
 

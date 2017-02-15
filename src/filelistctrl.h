@@ -43,7 +43,6 @@
 
 class FileListCtrl : public SwashListCtrl
 {
-
 public:
 // IDs for the menu commands
 	FileListCtrl(wxWindow *parent,
@@ -66,7 +65,6 @@ private:
 	void OnMenuPriority(wxCommandEvent &event);
 
 	torrent_t* m_pTorrent;
-	wxImageList m_imageList;
 
 	DECLARE_NO_COPY_CLASS(FileListCtrl)
 	DECLARE_EVENT_TABLE()
