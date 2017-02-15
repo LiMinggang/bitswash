@@ -26,6 +26,12 @@
 #include "filelistctrl.h"
 #include "functions.h"
 
+// resources
+#include "../icons/checked.xpm"
+#include "../icons/unchecked.xpm"
+#include "../icons/checked_dis.xpm"
+#include "../icons/unchecked_dis.xpm"
+
 enum
 {
 	FILELISTCTRL_MENU_PRIORITY0 = 10000,
@@ -86,7 +92,13 @@ FileListCtrl::FileListCtrl(wxWindow *parent,
 			: SwashListCtrl(parent, SWASHLISTCOL_SIZE(filelistcols), filelistcols, settings, id, pos, size, style),
 			m_pTorrent(NULL)
 {
+    SetImageList(&m_imageList, wxIMAGE_LIST_SMALL);
 
+	// the add order must respect the wxCLC_XXX_IMGIDX defines in the headers !
+    m_imageList.Add(wxIcon(unchecked_xpm));
+    m_imageList.Add(wxIcon(checked_xpm));
+    m_imageList.Add(wxIcon(unchecked_dis_xpm));
+    m_imageList.Add(wxIcon(checked_dis_xpm));
 }
 
 
@@ -206,7 +218,6 @@ void FileListCtrl::ShowContextMenu(const wxPoint& pos)
 /* update files priority to torrent config */
 void FileListCtrl::OnMenuPriority(wxCommandEvent& event)
 {
-
 	MainFrame* pMainFrame = (MainFrame*)wxGetApp().GetTopWindow();
 
 	int priority = event.GetId() - FILELISTCTRL_MENU_PRIORITY0;
@@ -234,14 +245,15 @@ void FileListCtrl::OnMenuPriority(wxCommandEvent& event)
 
 	}
 
+#ifdef _DEBUG
 	wxLogDebug(_T("FileListCtrl: Num files %d\n"), filespriority.size()) ;
 	
 
 	for (file_it = filespriority.begin(); file_it!= filespriority.end();file_it++)
 	{
-			wxLogDebug(_T("%d:"), *file_it);
+		wxLogDebug(_T("%d:"), *file_it);
 	}
-
+#endif
 	int selectedfiles = GetFirstSelected();
 
 	while(selectedfiles != -1)
@@ -252,17 +264,18 @@ void FileListCtrl::OnMenuPriority(wxCommandEvent& event)
 		selectedfiles = GetNextSelected(selectedfiles);
 	}
 
+#ifdef _DEBUG
 	wxLogDebug(_T("FileListCtrl: Changed %d\n"), filespriority.size()) ;
 	for (file_it = filespriority.begin(); file_it != filespriority.end(); file_it++)
 	{
-			wxLogDebug(_T("%d:"), *file_it);
+		wxLogDebug(_T("%d:"), *file_it);
 	}
-	
+#endif
 	pTorrent->config->SetFilesPriority(filespriority);
 	if(!m_pTorrent)
 		pTorrent->config->Save();
 
 	wxGetApp().GetBitTorrentSession()->ConfigureTorrentFilesPriority(pTorrent);
-
+	Refresh(false);
 }
 

@@ -172,9 +172,9 @@ void TorrentProperty::OnCancel(wxCommandEvent& event)
 
 void TorrentProperty::OnFocus(wxFocusEvent& event)
 {
-		wxLogDebug(_T("TorrentProperty OnFocus %d\n"), m_notebook_property->GetSelection());
-		if(m_notebook_property->GetSelection() == 0)
-		{
-			m_filespane->UpdateSwashList();
-		}
+	wxLogDebug(_T("TorrentProperty OnFocus %d\n"), m_notebook_property->GetSelection());
+	if(m_notebook_property->GetSelection() == 0)
+	{
+		m_filespane->UpdateSwashList();
+	}
 }

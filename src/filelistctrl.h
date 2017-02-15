@@ -45,30 +45,31 @@ class FileListCtrl : public SwashListCtrl
 {
 
 public:
-	// IDs for the menu commands
-		FileListCtrl(wxWindow *parent,
-			const wxString settings,
-			const wxWindowID id,
-			const wxPoint& pos = wxDefaultPosition,
-			const wxSize& size = wxDefaultSize,
-			long style = wxLC_VIRTUAL | wxLC_REPORT);
-               
-		~FileListCtrl();
-	
-		void SetStaticHandle(torrent_t* torrent) { m_pTorrent = torrent; }
-		void DeleteStaticHandle() { m_pTorrent = NULL; }
-	protected:
-		// FileListCtrl variables
-	
-	private:
-		wxString GetItemValue(long item, long columnid) const;
-		void ShowContextMenu(const wxPoint& pos);
-		void OnMenuPriority(wxCommandEvent &event);
+// IDs for the menu commands
+	FileListCtrl(wxWindow *parent,
+		const wxString settings,
+		const wxWindowID id,
+		const wxPoint& pos = wxDefaultPosition,
+		const wxSize& size = wxDefaultSize,
+		long style = wxLC_VIRTUAL | wxLC_REPORT);
+           
+	~FileListCtrl();
 
-		torrent_t* m_pTorrent;
+	void SetStaticHandle(torrent_t* torrent) { m_pTorrent = torrent; }
+	void DeleteStaticHandle() { m_pTorrent = NULL; }
+protected:
+	// FileListCtrl variables
 
-    	DECLARE_NO_COPY_CLASS(FileListCtrl)
-    	DECLARE_EVENT_TABLE()
+private:
+	wxString GetItemValue(long item, long columnid) const;
+	void ShowContextMenu(const wxPoint& pos);
+	void OnMenuPriority(wxCommandEvent &event);
+
+	torrent_t* m_pTorrent;
+	wxImageList m_imageList;
+
+	DECLARE_NO_COPY_CLASS(FileListCtrl)
+	DECLARE_EVENT_TABLE()
 };	
 	
 	

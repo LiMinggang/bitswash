@@ -89,7 +89,6 @@ SwashListCtrl::SwashListCtrl(wxWindow *parent,
 
 void SwashListCtrl::Init(long num_cols, SwashColumnItem *columns)
 {
-
 	m_numberofcolumns = num_cols;
 	m_columns = columns;
 	int i;
@@ -131,7 +130,6 @@ void SwashListCtrl::Init(long num_cols, SwashColumnItem *columns)
 
 			}
 		}
-
 	}
 }
 
@@ -147,7 +145,6 @@ long SwashListCtrl::ColumnId(long column) const
 			return i;
 	}
 	return -1;
-
 }
 
 wxString SwashListCtrl::Settings() const
@@ -305,14 +302,12 @@ void SwashListCtrl::OnColumnSelected(wxCommandEvent& event)
 
 					break;
 				}
-
 			}
 
 			/* last visible column not checked */
 			if (insert <=0 )
 			{
 				insert = GetColumnCount();
-
 			}
 
 		}
@@ -332,24 +327,27 @@ void SwashListCtrl::OnColumnSelected(wxCommandEvent& event)
 	}
 	else
 	{
-		int deleted;
+		int deleted = -1;
 		m_columns[colnum].show = false;
 
 		/* find column number */
+		wxListItem item;
+		item.SetMask(wxLIST_MASK_TEXT);
 		for(i=0; i< GetColumnCount(); i++)
 		{
-			wxListItem item;
 			GetColumn(i, item);
 			if (item.GetText() == wxGetTranslation(m_columns[colnum].title) )
 			{
 				deleted = i;
 				break;
 			}
-
 		}
-		m_columns[colnum].width = GetColumnWidth(deleted);
-		
-		DeleteColumn(deleted);
+		wxASSERT(deleted != -1);
+		if (deleted != -1)
+		{
+			m_columns[colnum].width = GetColumnWidth(deleted);
+			DeleteColumn(deleted);
+		}
 
 	}
 }
@@ -639,8 +637,6 @@ void SwashListCtrl::ShowContextMenu(const wxPoint& pos)
 {
 	wxLogDebug(_T("SwashListCtrl: ShowContextMenu (%d, %d)\n"), pos.x, pos.y);
 }
-
-
 
 void SwashListCtrl::UpdateSwashList() 
 {
