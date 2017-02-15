@@ -1504,71 +1504,72 @@ void BitTorrentSession::GetTorrentLog()
 	std::auto_ptr<libtorrent::alert> a;
 
 	a = m_libbtsession->pop_alert();
+	wxString event_string;
 	while (a.get())
 	{
-		std::stringstream event_string;
+		event_string.Empty();
 
 		if (torrent_finished_alert* p = dynamic_cast<torrent_finished_alert*>(a.get()))
 		{
 
-			event_string << p->handle.get_torrent_info().name() << ": "
+			event_string << p->handle.get_torrent_info().name() << _T(": ")
 				<< a->message();
 		}
 		else if (peer_ban_alert* p = dynamic_cast<peer_ban_alert*>(a.get()))
 		{
-			event_string << "peer: " << "(" << p->ip << ")" << a->message();
+			event_string << _T("peer: (") << p->ip.address().to_string() << _T(")") << a->message();
 		}
 		else if (peer_error_alert* p = dynamic_cast<peer_error_alert*>(a.get()))
 		{
-			event_string << "peer: " << identify_client(p->pid) << ": " << a->message();
+			event_string << _T("peer: ") << identify_client(p->pid) << _T(": ") << a->message();
 		}
 		else if (peer_blocked_alert* p = dynamic_cast<peer_blocked_alert*>(a.get()))
 		{
-			event_string << "peer: " << "(" << p->ip << ")" << a->message();
+			event_string << _T("peer: (") << p->ip.to_string() << _T(")") << a->message();
 		}
 		else if (invalid_request_alert* p = dynamic_cast<invalid_request_alert*>(a.get()))
 		{
-			event_string << identify_client(p->pid) << ": " << a->message();
+			event_string << identify_client(p->pid) << _T(": ") << a->message();
 		}
 		else if (tracker_warning_alert* p = dynamic_cast<tracker_warning_alert*>(a.get()))
 		{
-			event_string << "tracker: " << p->message();
+			event_string << _T("tracker: ") << p->message();
 		}
 		else if (tracker_reply_alert* p = dynamic_cast<tracker_reply_alert*>(a.get()))
 		{
-			event_string << "tracker:" << p->message() << " (" << p->num_peers << ")";
+			event_string << _T("tracker:") << p->message() << _T(" (") << p->num_peers << _T(")");
 		}
 		else if (url_seed_alert* p = dynamic_cast<url_seed_alert*>(a.get()))
 		{
-			event_string << "web seed '" << p->url << "': " << p->message();
+			event_string << _T("web seed '") << p->url << _T("': ") << p->message();
 		}
 		else if (peer_blocked_alert* p = dynamic_cast<peer_blocked_alert*>(a.get()))
 		{
-			event_string << "(" << p->ip << ") " << p->message();
+			event_string << _T("(") << p->ip.to_string() << _T(") ") << p->message();
 		}
 		else if (listen_failed_alert* p = dynamic_cast<listen_failed_alert*>(a.get()))
 		{
-			event_string << "listen failed: " << p->message();
+			event_string << _T("listen failed: ") << p->message();
 		}
 		else if (portmap_error_alert* p = dynamic_cast<portmap_error_alert*>(a.get()))
 		{
-			event_string << "portmap error: " << p->message();
+			event_string << _T("portmap error: ") << p->message();
 		}
 		else if (portmap_alert* p = dynamic_cast<portmap_alert*>(a.get()))
 		{
-			event_string << "portmap: " << p->message();
+			event_string << _T("portmap: ") << p->message();
 		}
 		else if (tracker_announce_alert* p = dynamic_cast<tracker_announce_alert*>(a.get()))
 		{
-			event_string << "tracker: " << p->message();
+			event_string << _T("tracker: ") << p->message();
 		}
 		else if (file_error_alert* p = dynamic_cast<file_error_alert*>(a.get()))
 		{
-			event_string << "file error: " << p->message();
+			event_string << _T("file error: ") << p->message();
 		}
 		else if (tracker_reply_alert* p = dynamic_cast<tracker_reply_alert*>(a.get()))
 		{
-			event_string << p->message() << " number of peers " << p->num_peers;
+			event_string << p->message() << _T(" number of peers ") << p->num_peers;
 		}
 		else if (tracker_warning_alert* p = dynamic_cast<tracker_warning_alert*>(a.get()))
 		{
@@ -1576,27 +1577,27 @@ void BitTorrentSession::GetTorrentLog()
 		}
 		else if (url_seed_alert* p = dynamic_cast<url_seed_alert*>(a.get()))
 		{
-			event_string << "url-seed: " << p->message();
+			event_string << _T("url-seed: ") << p->message();
 		}
 		else if (hash_failed_alert* p = dynamic_cast<hash_failed_alert*>(a.get()))
 		{
-			event_string << "hash: " << p->message();
+			event_string << _T("hash: ") << p->message();
 		}
 		else if (metadata_failed_alert* p = dynamic_cast<metadata_failed_alert*>(a.get()))
 		{
-			event_string << "metadata: " << p->message();
+			event_string << _T("metadata: ") << p->message();
 		}
 		else if (metadata_received_alert* p = dynamic_cast<metadata_received_alert*>(a.get()))
 		{
-			event_string << "metadata: " << p->message();
+			event_string << _T("metadata: ") << p->message();
 		}
 		else if (fastresume_rejected_alert* p = dynamic_cast<fastresume_rejected_alert*>(a.get()))
 		{
-			event_string << "fastresume: " << p->message();
+			event_string << _T("fastresume: ") << p->message();
 		}
 		else if (fastresume_rejected_alert* p = dynamic_cast<fastresume_rejected_alert*>(a.get()))
 		{
-			event_string << "fastresume: " << p->message();
+			event_string << _T("fastresume: ") << p->message();
 		}
 		else if(save_resume_data_alert *p = dynamic_cast<save_resume_data_alert*>(a.get()))
 		{
@@ -1617,7 +1618,7 @@ void BitTorrentSession::GetTorrentLog()
 
 				//save_resume_data to disk
 			}
-			event_string << h.name() << ": " << p->message();
+			event_string << h.name() << _T(": ") << p->message();
 		}
 		else
 		{
@@ -1625,31 +1626,30 @@ void BitTorrentSession::GetTorrentLog()
 		}
 		//XXX include more alert from latest libtorrent 
 		//
-		event_string << '\n' << '\0';
+		event_string << _T('\n') << _T('\0');
 		if (a->severity() == alert::fatal)
 		{
-			wxLogError(wxString(event_string.str()));
+			wxLogError(event_string);
 		}
 		else if (a->severity() == alert::critical)
 		{
-			wxLogError(wxString(event_string.str()));
+			wxLogError(event_string);
 		}
 		else if (a->severity() == alert::warning)
 		{
-			wxLogWarning(wxString(event_string.str()));
+			wxLogWarning(event_string);
 		}
 		else if (a->severity() == alert::info)
 		{
-			wxLogInfo(wxString(event_string.str()));
-
+			wxLogInfo(event_string);
 		}
 		else if (a->severity() == alert::debug)
 		{
-			wxLogDebug(wxString(event_string.str()));
+			wxLogDebug(event_string);
 
 		} else 
 		{
-			wxLogDebug(wxString(event_string.str()));
+			wxLogDebug(event_string);
 		}
 
 		a = m_libbtsession->pop_alert();

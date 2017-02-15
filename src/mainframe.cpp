@@ -61,6 +61,7 @@
 
 #include "bitswash.h"
 #include "mainframe.h"
+#include "torrentproperty.h"
 #include "functions.h"
 #include "urldialog.h"
 #include "swashlistctrl.h" //for itemlist_t
@@ -545,6 +546,8 @@ void MainFrame::AddTorrent( wxString filename, bool usedefault )
 				return;
 			}
 		}
+#if 0
+
 		if( m_btsession->AddTorrent( torrent ) )
 		{
 			wxString torrent_backup = wxGetApp().SaveTorrentsPath() + wxGetApp().PathSeparator() + torrent->hash + _T( ".torrent" );
@@ -556,6 +559,7 @@ void MainFrame::AddTorrent( wxString filename, bool usedefault )
 			TorrentListIsValid( false );
 			UpdateUI();
 		}
+#endif
 	}
 }
 

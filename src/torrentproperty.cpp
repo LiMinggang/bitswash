@@ -1,123 +1,90 @@
-/*
- *  This program is free software; you can redistribute it and/or modify
- *  it under the terms of the GNU General Public License as published by
- *  the Free Software Foundation; either version 2 of the License, or
- *  (at your option) any later version.
- *
- *  This program is distributed in the hope that it will be useful,
- *  but WITHOUT ANY WARRANTY; without even the implied warranty of
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *  GNU Library General Public License for more details.
- *
- *  You should have received a copy of the GNU General Public License
- *  along with this program; if not, write to the Free Software
- *  Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
- */
+#include "torrentproperty.h"
 
-
-//
-// Class: TorrentProperty
-//
-// Created by: lim k. c. <admin@bitswash.org>
-// Created on: Sat Feb  3 17:02:38 2007
-//
-
-#include <wx/filename.h>
-#include <wx/sstream.h>
-#include <wx/textctrl.h>
-#include <wx/log.h>
-
-//#include <boost/date_time/posix_time/posix_time.hpp>
+//(*InternalHeaders(TorrentProperty)
+#include <wx/settings.h>
+#include <wx/intl.h>
+#include <wx/button.h>
+#include <wx/string.h>
+//*)
 
 #include "mainframe.h"
 #include "torrentsetting.h"
 
 #include "functions.h"
 
-BEGIN_EVENT_TABLE(TorrentProperty, wxDialog)
-	EVT_BUTTON(wxID_OK, TorrentProperty::OnOK)
-	EVT_BUTTON(wxID_CANCEL, TorrentProperty::OnCancel)
-	EVT_SET_FOCUS(TorrentProperty::OnFocus)
+//(*IdInit(TorrentProperty)
+const long TorrentProperty::ID_STATICTEXT1 = wxNewId();
+const long TorrentProperty::ID_PANEL1 = wxNewId();
+const long TorrentProperty::ID_STATICTEXT2 = wxNewId();
+const long TorrentProperty::ID_STATICTEXT3 = wxNewId();
+const long TorrentProperty::ID_STATICTEXT4 = wxNewId();
+const long TorrentProperty::ID_TEXTCTRL1 = wxNewId();
+const long TorrentProperty::ID_STATICTEXT5 = wxNewId();
+const long TorrentProperty::ID_STATICTEXT6 = wxNewId();
+const long TorrentProperty::ID_NOTEBOOK1 = wxNewId();
+const long TorrentProperty::ID_BUTTONUNCHECKALL = wxNewId();
+const long TorrentProperty::ID_BUTTONCHECKALL = wxNewId();
+//*)
+
+BEGIN_EVENT_TABLE(TorrentProperty,wxDialog)
+	//(*EventTable(TorrentProperty)
+	//*)
 END_EVENT_TABLE()
 
-TorrentProperty::TorrentProperty(torrent_t* pTorrent, wxWindow *parent,
-                const wxWindowID id,
-		wxString title,
-               const wxPoint& pos,
-               const wxSize& size,
-               long style) : wxDialog(parent, id, title, pos, size, style)
+TorrentProperty::TorrentProperty(torrent_t* pTorrent, wxWindow* parent,wxWindowID id,const wxPoint& pos,const wxSize& size)
 {
-
 	wxASSERT( pTorrent != NULL);
 
 	m_pMainFrame = (wxFrame*)parent;
 
 	m_pTorrent = pTorrent;
-
-	this->SetSizeHints(wxDefaultSize, wxDefaultSize);
-	this->Centre (wxBOTH);
-
-	SetMaxSize(wxSize(400,-1));
-	int w,h;
-	//SetScrollbars(20,20,5,5);
-
-	GetClientSize(&w, &h);
-
-	wxFlexGridSizer* m_torrentsettings_sizer;
-	m_torrentsettings_sizer = new wxFlexGridSizer( 0, 1, 3, 3 );
-	m_torrentsettings_sizer->SetFlexibleDirection( wxVERTICAL);
-	
-	m_pane_info = new wxPanel( this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL );
-	m_pane_info->SetBackgroundColour( wxSystemSettings::GetColour( wxSYS_COLOUR_ACTIVECAPTION ) );
-	m_pane_info->SetMaxSize( wxSize( -1,20 ) );
-	
+	//(*Initialize(TorrentProperty)
 	wxBoxSizer* m_pane_boxsizer;
-	m_pane_boxsizer = new wxBoxSizer( wxVERTICAL );
-	
-	m_pane_label_info = new wxStaticText( m_pane_info, wxID_ANY, _("Torrent Info"), wxDefaultPosition, wxDefaultSize, 0 );
-	m_pane_boxsizer->Add( m_pane_label_info, 0, wxALL, 2 );
-	
-	m_pane_info->SetSizer( m_pane_boxsizer );
-	m_pane_info->Layout();
-	m_torrentsettings_sizer->Add( m_pane_info, 1, wxEXPAND | wxALL, 5 );
-	
 	wxFlexGridSizer* fgSizer11;
-	fgSizer11 = new wxFlexGridSizer( 0, 2, 5, 5 );
-	fgSizer11->AddGrowableCol( 1 );
-	fgSizer11->SetFlexibleDirection( wxBOTH );
-	
-	m_label_name = new wxStaticText( this, wxID_ANY, _("Name:"), wxDefaultPosition, wxDefaultSize, 0 );
-	fgSizer11->Add( m_label_name, 0, wxALL, 5 );
-	
+	wxButton* ButtonOK;
+	wxButton* ButtonCancel;
+	wxBoxSizer* BoxSizer1;
+	wxButton* ButtonUnCheckAll;
+	wxButton* ButtonCheckAll;
+	wxFlexGridSizer* m_torrentsettings_sizer;
+	int w,h;
+
+	Create(parent, wxID_ANY, _("Torrent Setting"), wxDefaultPosition, wxDefaultSize, wxDEFAULT_DIALOG_STYLE, _T("wxID_ANY"));
+	SetClientSize(wxDefaultSize);
+	GetClientSize(&w, &h);
+	m_torrentsettings_sizer = new wxFlexGridSizer(0, 1, 3, 3);
+	m_pane_info = new wxPanel(this, ID_PANEL1, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL, _T("ID_PANEL1"));
+	m_pane_info->SetBackgroundColour(wxSystemSettings::GetColour(wxSYS_COLOUR_ACTIVECAPTION));
+	m_pane_boxsizer = new wxBoxSizer(wxVERTICAL);
+	m_pane_label_info = new wxStaticText(m_pane_info, ID_STATICTEXT1, _("Torrent Info"), wxDefaultPosition, wxDefaultSize, 0, _T("ID_STATICTEXT1"));
+	m_pane_boxsizer->Add(m_pane_label_info, 1, wxALL|wxEXPAND, 5);
+	m_pane_info->SetSizer(m_pane_boxsizer);
+	m_pane_boxsizer->Fit(m_pane_info);
+	m_pane_boxsizer->SetSizeHints(m_pane_info);
+	m_torrentsettings_sizer->Add(m_pane_info, 1, wxALL|wxEXPAND, 5);
+	fgSizer11 = new wxFlexGridSizer(0, 2, 2, 2);
+	m_label_name = new wxStaticText(this, ID_STATICTEXT2, _("Name:"), wxDefaultPosition, wxDefaultSize, 0, _T("ID_STATICTEXT2"));
+	fgSizer11->Add(m_label_name, 0, wxALL|wxALIGN_LEFT|wxALIGN_CENTER_VERTICAL, 5);
 	libtorrent::torrent_info const& torrent_info = *(m_pTorrent->info);
  	wxString t_name = wxString(wxConvUTF8.cMB2WC(torrent_info.name().c_str()));
-
-
-	m_label_torrentname = new wxStaticText( this, wxID_ANY, t_name, wxDefaultPosition, wxDefaultSize, 0 );
-	fgSizer11->Add( m_label_torrentname, 0, wxALL, 5 );
-	
-	m_label_comment = new wxStaticText( this, wxID_ANY, _("Comment:"), wxDefaultPosition, wxDefaultSize, 0 );
-	fgSizer11->Add( m_label_comment, 0, wxALL, 5 );
-	
+	m_label_torrentname = new wxStaticText(this, ID_STATICTEXT3, t_name, wxDefaultPosition, wxDefaultSize, 0, _T("ID_STATICTEXT3"));
+	fgSizer11->Add(m_label_torrentname, 0, wxALL|wxEXPAND, 5);
+	m_label_comment = new wxStaticText(this, ID_STATICTEXT4, _("Comment:"), wxDefaultPosition, wxDefaultSize, 0, _T("ID_STATICTEXT4"));
+	fgSizer11->Add(m_label_comment, 1, wxALL|wxALIGN_LEFT|wxALIGN_CENTER_VERTICAL, 5);
 	wxString t_comment = wxString(wxConvUTF8.cMB2WC(torrent_info.comment().c_str()));
 
 	int cw, ch;
 	m_label_comment->GetClientSize(&cw, &ch);
-
-	m_text_torrentcomment = new wxTextCtrl(this, wxID_ANY, t_comment, wxDefaultPosition, wxSize(w-50 - cw , 80) , wxTE_AUTO_URL | wxTE_BESTWRAP | wxTE_MULTILINE | wxTE_READONLY) ;
-	//m_label_torrentcomment = new wxStaticText( this, wxID_ANY, t_comment, wxDefaultPosition, wxDefaultSize, 0 );
-	fgSizer11->Add( m_text_torrentcomment, 0, wxALL, 5 );
-	
-	m_label_size = new wxStaticText( this, wxID_ANY, _("Size:"), wxDefaultPosition, wxDefaultSize, 0 );
-	fgSizer11->Add( m_label_size, 0, wxALL, 5 );
+	m_text_torrentcomment = new wxTextCtrl(this, ID_TEXTCTRL1, t_comment, wxDefaultPosition, wxSize(w-50 - cw , 80), 0, wxDefaultValidator, _T("ID_TEXTCTRL1"));
+	fgSizer11->Add(m_text_torrentcomment, 1, wxALL|wxEXPAND, 5);
+	m_label_size = new wxStaticText(this, ID_STATICTEXT5, _("Size:"), wxDefaultPosition, wxDefaultSize, 0, _T("ID_STATICTEXT5"));
+	fgSizer11->Add(m_label_size, 1, wxALL|wxALIGN_LEFT|wxALIGN_CENTER_VERTICAL, 5);
 	
 	wxString t_size = HumanReadableByte((wxDouble)torrent_info.total_size());
-	m_label_torrentsize = new wxStaticText( this, wxID_ANY, t_size, wxDefaultPosition, wxDefaultSize, 0 );
-	fgSizer11->Add( m_label_torrentsize, 0, wxALL, 5 );
-	
-	m_torrentsettings_sizer->Add( fgSizer11, 1, wxEXPAND, 5 );
-	
-	m_notebook_property = new wxNotebook( this, wxID_ANY, wxDefaultPosition, wxDefaultSize, 0 );
+	m_label_torrentsize = new wxStaticText(this, ID_STATICTEXT6, _("Label"), wxDefaultPosition, wxDefaultSize, 0, _T("ID_STATICTEXT6"));
+	fgSizer11->Add(m_label_torrentsize, 1, wxALL|wxEXPAND, 5);
+	m_torrentsettings_sizer->Add(fgSizer11, 0, wxALL|wxEXPAND, 5);
+	m_notebook_property = new wxNotebook(this, ID_NOTEBOOK1, wxDefaultPosition, wxDefaultSize, 0, _T("ID_NOTEBOOK1"));
 	m_notebook_property->SetMinSize( wxSize( 400,-1 ) );
 	
 	m_filespane= new FileListCtrl( m_notebook_property, wxEmptyString, wxID_ANY );
@@ -134,41 +101,33 @@ TorrentProperty::TorrentProperty(torrent_t* pTorrent, wxWindow *parent,
 	
 	m_notebook_property->SetSelection(0);
 	m_torrentsettings_sizer->Add( m_notebook_property, 1, wxEXPAND | wxALL, 5 );
-	
-	m_sdbSizer = new wxStdDialogButtonSizer();
-	m_sdbSizer->AddButton( new wxButton( this, wxID_OK ) );
-	m_sdbSizer->AddButton( new wxButton( this, wxID_CANCEL ) );
-	m_sdbSizer->Realize();
-
-	m_torrentsettings_sizer->Add( m_sdbSizer, 0, wxALIGN_RIGHT|wxALL, 5 );
-
-	this->SetSizer( m_torrentsettings_sizer );
-	
-	this->Layout();
+	BoxSizer1 = new wxBoxSizer(wxHORIZONTAL);
+	ButtonUnCheckAll = new wxButton(this, ID_BUTTONUNCHECKALL, _("Unselect All"), wxDefaultPosition, wxDefaultSize, 0, wxDefaultValidator, _T("ID_BUTTONUNCHECKALL"));
+	BoxSizer1->Add(ButtonUnCheckAll, 0, wxALL|wxALIGN_CENTER_HORIZONTAL|wxALIGN_CENTER_VERTICAL, 5);
+	ButtonCheckAll = new wxButton(this, ID_BUTTONCHECKALL, _("Select All"), wxDefaultPosition, wxDefaultSize, 0, wxDefaultValidator, _T("ID_BUTTONCHECKALL"));
+	BoxSizer1->Add(ButtonCheckAll, 0, wxALL|wxALIGN_CENTER_HORIZONTAL|wxALIGN_CENTER_VERTICAL, 5);
+	ButtonOK = new wxButton(this, wxID_OK, _("OK"), wxDefaultPosition, wxDefaultSize, 0, wxDefaultValidator, _T("wxID_OK"));
+	BoxSizer1->Add(ButtonOK, 0, wxALL|wxALIGN_CENTER_HORIZONTAL|wxALIGN_CENTER_VERTICAL, 5);
+	ButtonCancel = new wxButton(this, wxID_CANCEL, _("Cancel"), wxDefaultPosition, wxDefaultSize, 0, wxDefaultValidator, _T("wxID_CANCEL"));
+	BoxSizer1->Add(ButtonCancel, 0, wxALL|wxALIGN_CENTER_HORIZONTAL|wxALIGN_CENTER_VERTICAL, 5);
+	m_torrentsettings_sizer->Add(BoxSizer1, 1, wxALL|wxALIGN_CENTER_HORIZONTAL|wxALIGN_CENTER_VERTICAL, 5);
 	m_torrentsettings_sizer->Fit(this);
+	m_torrentsettings_sizer->SetSizeHints(this);
+	SetSizer(m_torrentsettings_sizer);
+	Layout();
+	Center();
 
-
-	/*
-	std::vector<struct libtorrent::announce_entry>::const_iterator idx;
-	std::vector<struct libtorrent::announce_entry> trackers = m_pTorrent->handle.trackers();
-
-	for(idx = trackers.begin(); idx != trackers.end(); ++idx)
-	{
-		struct libtorrent::announce_entry an = *idx;
-		wxLogMessage(_T("tracker [%d] - %s\n"), an.tier, wxString::FromAscii(an.url.c_str()).c_str());
-	}
-	*/
+	Connect(wxEVT_SET_FOCUS,(wxObjectEventFunction)&TorrentProperty::OnFocus);
+	//*)
+	
+	Connect(wxID_OK,(wxObjectEventFunction)&TorrentProperty::OnOK);
+	Connect(wxID_CANCEL,(wxObjectEventFunction)&TorrentProperty::OnCancel);
 }
-
 
 TorrentProperty::~TorrentProperty()
 {
-		/* //delete all pointer?
-
-	delete m_status_info_sizer;
-	delete m_status_chunk_sizer;
-	delete m_statusbox;
-	*/
+	//(*Destroy(TorrentProperty)
+	//*)
 }
 
 

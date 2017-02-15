@@ -52,7 +52,7 @@
 #include "torrentinfo.h"
 #include "summarypane.h"
 #include "configuration.h"
-#include "torrentproperty.h"
+//#include "torrentproperty.h"
 #include "torrentconfig.h"
 #include "swashsetting.h"
 #include "swashstatbar.h"
@@ -60,6 +60,7 @@
 
 class TorrentInfo;
 class SummaryPane;
+class TorrentProperty;
 
 class MainFrame: public wxFrame 
 {
