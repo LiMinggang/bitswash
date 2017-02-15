@@ -546,7 +546,6 @@ void MainFrame::AddTorrent( wxString filename, bool usedefault )
 				return;
 			}
 		}
-#if 0
 
 		if( m_btsession->AddTorrent( torrent ) )
 		{
@@ -559,7 +558,6 @@ void MainFrame::AddTorrent( wxString filename, bool usedefault )
 			TorrentListIsValid( false );
 			UpdateUI();
 		}
-#endif
 	}
 }
 

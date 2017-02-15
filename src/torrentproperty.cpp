@@ -81,7 +81,7 @@ TorrentProperty::TorrentProperty(torrent_t* pTorrent, wxWindow* parent,wxWindowI
 	fgSizer11->Add(m_label_size, 1, wxALL|wxALIGN_LEFT|wxALIGN_CENTER_VERTICAL, 5);
 	
 	wxString t_size = HumanReadableByte((wxDouble)torrent_info.total_size());
-	m_label_torrentsize = new wxStaticText(this, ID_STATICTEXT6, _("Label"), wxDefaultPosition, wxDefaultSize, 0, _T("ID_STATICTEXT6"));
+	m_label_torrentsize = new wxStaticText(this, ID_STATICTEXT6, t_size, wxDefaultPosition, wxDefaultSize, 0, _T("ID_STATICTEXT6"));
 	fgSizer11->Add(m_label_torrentsize, 1, wxALL|wxEXPAND, 5);
 	m_torrentsettings_sizer->Add(fgSizer11, 0, wxALL|wxEXPAND, 5);
 	m_notebook_property = new wxNotebook(this, ID_NOTEBOOK1, wxDefaultPosition, wxDefaultSize, 0, _T("ID_NOTEBOOK1"));
