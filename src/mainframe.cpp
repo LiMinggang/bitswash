@@ -43,6 +43,8 @@
 #include <wx/wfstream.h>
 #include <wx/txtstrm.h>
 #include <wx/url.h>
+#include <wx/tokenzr.h>
+
 #ifdef __UNIX_LIKE__
 	#include <wx/utils.h>
 #endif
@@ -124,7 +126,8 @@ MainFrame::MainFrame( wxFrame *frame, const wxString& title )
 	  m_upnp_started( false ),
 	  m_natpmp_started( false ),
 	  m_lsd_started( false ),
-	  m_torrentlistisvalid( false )
+	  m_torrentlistisvalid( false ),
+	  m_closed(false)
 {
 	int x, y;
 	m_config = wxGetApp().GetConfig();
@@ -195,6 +198,7 @@ MainFrame::~MainFrame()
 
 void MainFrame::OnClose( wxCloseEvent& event )
 {
+	if(m_closed) return;
 	wxLogDebug( _T( "MainFrame Closing\n" ) );
 	//stop update timer
 	m_refreshtimer.Stop();
@@ -207,6 +211,7 @@ void MainFrame::OnClose( wxCloseEvent& event )
 	m_config->Save();
 	m_mgr.UnInit();
 	Destroy();
+	m_closed = true;
 }
 
 void MainFrame::OnMinimize( wxIconizeEvent& event )
@@ -529,6 +534,20 @@ void MainFrame::CreateTorrentList()
 			flags );
 }
 
+void MainFrame::ReceiveTorrent(wxString fileorurl)
+{
+	MainFrame* frame = wxDynamicCast( wxGetApp().GetTopWindow(), MainFrame );
+	if(frame)
+	{
+		wxStringTokenizer tkz( fileorurl, ' ' );
+		wxString filename;
+		while( tkz.HasMoreTokens() )
+		{
+			filename = tkz.GetNextToken();
+			frame->AddTorrent(filename, true);
+		}
+	}
+}
 
 /* parse torrent file and add to session */
 void MainFrame::AddTorrent( wxString filename, bool usedefault )

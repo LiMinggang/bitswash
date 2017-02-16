@@ -25,6 +25,12 @@
 #include <wx/filename.h>
 #include <wx/imaglist.h>
 #include <wx/intl.h>
+#include <wx/ipc.h>
+#include <wx/stackwalk.h>
+#include <wx/snglinst.h>
+#include <wx/dir.h>
+#include <wx/filename.h>
+#include <wx/stdpaths.h>
 
 #include <libtorrent/session.hpp>
 
@@ -35,7 +41,6 @@
 #else
 #include "version_win.h"
 #endif
-
 
 #define APPNAME _T("Bitswash")
 #define APPBINNAME _T("bitswash")
@@ -67,64 +72,114 @@ enum appicon_id
 	BITSWASH_ICON_MAX
 };
 
+class wxSingleInstanceChecker;
+class BitSwashAppConn : public wxConnection
+{
+public:
+    bool OnExecute(const wxString& topic,
+#if wxMAJOR_VERSION < 2 || (wxMAJOR_VERSION == 2 && wxMINOR_VERSION < 9)
+                            wxChar* data,
+                            int WXUNUSED(size),
+#else
+                            const void * data,
+                            size_t WXUNUSED(size),
+#endif
+                            wxIPCFormat WXUNUSED(format));
+};
+
+class BitSwashAppSrv : public wxServer
+{
+public:
+    virtual wxConnectionBase* OnAcceptConnection(const wxString& topic);
+};
+
+class BitSwashAppClnt : public wxClient
+{
+public:
+    virtual wxConnectionBase* OnMakeConnection() {return new BitSwashAppConn();}
+};
+
+#if (wxUSE_ON_FATAL_EXCEPTION == 1) && (wxUSE_STACKWALKER == 1)
+class BitSwashStackWalker : public wxStackWalker
+{
+    wxFile * m_DumpFile;
+public:
+    BitSwashStackWalker():m_DumpFile(0) {}
+    void SetDumpFile(wxFile * file){m_DumpFile = file;}
+protected:
+    inline void OnStackFrame(const wxStackFrame & frame);
+};
+#endif
+
 class BitSwash : public wxApp
 {
-	public:
-		virtual bool OnInit();
-		virtual int OnExit();
+public:
+	virtual bool OnInit();
+	virtual int OnExit();
+    virtual void OnInitCmdLine(wxCmdLineParser& cmdParser);
+    virtual bool OnCmdLineParsed(wxCmdLineParser& cmdParser);
+#if (wxUSE_ON_FATAL_EXCEPTION == 1) && (wxUSE_STACKWALKER == 1)
+    void OnFatalException();
+#endif
 
-		wxString DataPath() { return m_datapath ;}
-		wxString ConfigPath() { return m_configpath ;}
-		wxString SaveTorrentsPath() { return m_savetorrentspath ;}
-		wxString IconsPath() { return m_iconspath ; }
-		wxString FlagsPath() { return m_flagspath ; }
-		wxString DHTStatePath() { return m_dhtstatepath ;} 
-		wxString UserAgent() { return wxString::Format(_T("%s %s"), APPNAME, BITSWASH_VERSION );}
-		wxString LogPath() { return m_logpath; }
+	wxString DataPath() { return m_datapath ;}
+	wxString ConfigPath() { return m_configpath ;}
+	wxString SaveTorrentsPath() { return m_savetorrentspath ;}
+	wxString IconsPath() { return m_iconspath ; }
+	wxString FlagsPath() { return m_flagspath ; }
+	wxString DHTStatePath() { return m_dhtstatepath ;} 
+	wxString UserAgent() { return wxString::Format(_T("%s %s"), APPNAME, BITSWASH_VERSION );}
+	wxString LogPath() { return m_logpath; }
 
-		Configuration* GetConfig() { return m_config; }
-		
-		wxChar PathSeparator() { return wxFileName::GetPathSeparator(wxPATH_NATIVE); }
+	Configuration* GetConfig() { return m_config; }
+	
+	wxChar PathSeparator() { return wxFileName::GetPathSeparator(wxPATH_NATIVE); }
 
-		int GetCountryFlag(const wxString & code);
+	int GetCountryFlag(const wxString & code);
 
-		wxImageList* GetCountryFlagsList() { return m_imglist_ctryflags ;} 
-		wxImageList* GetSettingIconsList() { return m_imglist_settingicons;} 
+	wxImageList* GetCountryFlagsList() { return m_imglist_ctryflags ;} 
+	wxImageList* GetSettingIconsList() { return m_imglist_settingicons;} 
 
-		bool SetLocale(wxString lang);
+	bool SetLocale(wxString lang);
 
-		void SetLogLevel();
+	void SetLogLevel();
 
-		wxImage & GetAppIcon(enum appicon_id id);
+	wxImage & GetAppIcon(enum appicon_id id);
 
-		BitTorrentSession* GetBitTorrentSession() { return m_btsession ; }
-		void BTInitDone() { m_btinitdone = true; }
+	BitTorrentSession* GetBitTorrentSession() { return m_btsession ; }
+	void BTInitDone() { m_btinitdone = true; }
 
-	private:
-		BitTorrentSession* m_btsession;
+private:
+	BitTorrentSession* m_btsession;
 
-		wxLog* m_logold;
+	wxLog* m_logold;
 
-		wxString m_datapath;
-		wxString m_configpath;
-		wxString m_savetorrentspath;
-		wxString m_iconspath;
-		wxString m_flagspath;
-		wxString m_dhtstatepath;
-		wxString m_logpath;
+	wxString m_datapath;
+	wxString m_configpath;
+	wxString m_savetorrentspath;
+	wxString m_iconspath;
+	wxString m_flagspath;
+	wxString m_dhtstatepath;
+	wxString m_logpath;
 
-		Configuration *m_config;
+	Configuration *m_config;
 
-		void LoadIcons();
-		void LoadFlags();
-		void LoadSettingIcons();
+	void LoadIcons();
+	void LoadFlags();
+	void LoadSettingIcons();
 
-		wxImageList *m_imglist_ctryflags;
-		wxImageList *m_imglist_settingicons;
+	wxImageList *m_imglist_ctryflags;
+	wxImageList *m_imglist_settingicons;
 
-		wxLocale *m_locale;
-		bool m_btinitdone;
-		
+	wxLocale *m_locale;
+	bool m_btinitdone;
+    wxArrayString m_FileNames;
+    wxSingleInstanceChecker * m_SigleAppChecker;
+    BitSwashAppSrv * m_AppServer;
+#if (wxUSE_ON_FATAL_EXCEPTION == 1) && (wxUSE_STACKWALKER == 1)
+    BitSwashStackWalker m_StackWalker;
+#endif
+
 };
 
 DECLARE_APP(BitSwash)

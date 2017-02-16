@@ -33,10 +33,72 @@
 #include <wx/stdpaths.h>
 #include <wx/filename.h>
 #include <wx/url.h>
+#include <wx/cmdline.h>
 
 #include "bitswash.h"
 #include "mainframe.h"
 #include "functions.h"
+
+const wxString g_BitSwashServerStr = wxT( "BitSwashMainApp" );
+const wxString g_BitSwashTopicStr = wxT( "single-instance" );
+
+wxConnectionBase *BitSwashAppSrv::OnAcceptConnection( const wxString& topic )
+{
+	if( topic.Lower() == g_BitSwashTopicStr )
+	{
+		// Check that there are no modal dialogs active
+		wxWindowList::Node* node = wxTopLevelWindows.GetFirst();
+
+		while( node )
+		{
+			wxDialog* dialog = wxDynamicCast( node->GetData(), wxDialog );
+
+			if( dialog && dialog->IsModal() )
+			{
+				return NULL;
+			}
+
+			node = node->GetNext();
+		}
+
+		return new BitSwashAppConn();
+	}
+	else
+		return NULL;
+}
+
+// Opens a file passed from another instance
+bool BitSwashAppConn::OnExecute( const wxString& topic,
+#if wxMAJOR_VERSION < 2 || (wxMAJOR_VERSION == 2 && wxMINOR_VERSION < 9)
+	wxChar* data,
+	int WXUNUSED( size ),
+#else
+	const void * data,
+	size_t WXUNUSED( size ),
+#endif
+	wxIPCFormat WXUNUSED( format ) )
+{
+	MainFrame* frame = wxDynamicCast( wxGetApp().GetTopWindow(), MainFrame );
+	wxString filenames( ( wxChar* )data );
+
+	if( filenames.IsEmpty() )
+	{
+		// Just raise the main window
+		if( frame )
+		{
+			frame->Restore();    // for minimized frame
+			frame->Raise();
+		}
+	}
+	else
+	{
+		// Check if the filename is already open,
+		// and raise that instead.
+		frame->ReceiveTorrent(filenames);
+	}
+
+	return true;
+}
 
 IMPLEMENT_APP( BitSwash )
 
@@ -316,9 +378,95 @@ static struct CountryFlags_t
 };
 
 std::map<wxString, int> CountryCodeIndexMap;
+wxString g_BitSwashAppDir;
+wxString g_BitSwashHomeDir;
+
+static const wxCmdLineEntryDesc g_cmdLineDesc [] =
+{
+	{
+		wxCMD_LINE_SWITCH, "h", "help", "Displays help on the command line parameters",
+		wxCMD_LINE_VAL_NONE, wxCMD_LINE_OPTION_HELP
+	},
+	{ wxCMD_LINE_PARAM, NULL, NULL, "File(s) to be opened", wxCMD_LINE_VAL_STRING,  wxCMD_LINE_PARAM_OPTIONAL | wxCMD_LINE_PARAM_MULTIPLE },
+
+	{ wxCMD_LINE_NONE }
+};
 
 bool BitSwash::OnInit()
 {
+	//==========================================================================
+	wxFileName filename( GetExecutablePath() );
+	filename.MakeAbsolute();
+	g_BitSwashAppDir = filename.GetPath( wxPATH_GET_VOLUME | wxPATH_GET_SEPARATOR );
+	m_SigleAppChecker = 0;
+	m_AppServer = 0;
+#ifdef __WXMSW__
+	g_BitSwashHomeDir = g_BitSwashAppDir;
+#else //linux: ~/.madedit
+	g_BitSwashHomeDir = wxStandardPaths::Get().GetUserDataDir() + wxFILE_SEP_PATH;
+
+	if( !wxDirExists( g_BitSwashHomeDir ) )
+	{
+		wxLogNull nolog; // no error message
+		wxMkdir( g_BitSwashHomeDir );
+	}
+#endif
+
+	wxString name = wxString::Format( wxT( "BitSwash-%s" ), wxGetUserId().GetData() );
+	m_SigleAppChecker = new wxSingleInstanceChecker( name );
+
+	// If using a single instance, use IPC to
+	// communicate with the other instance
+	if( !m_SigleAppChecker->IsAnotherRunning() )
+	{
+		// Create a new server
+		m_AppServer = new BitSwashAppSrv;
+
+		if( !m_AppServer->Create( g_BitSwashServerStr ) )
+		{
+			wxLogDebug( wxGetTranslation(wxT( "Failed to create an IPC service." ) ));
+		}
+	}
+	else
+	{
+		wxLogNull logNull;
+		// OK, there IS another one running, so try to connect to it
+		// and send it any filename before exiting.
+		BitSwashAppClnt* client = new BitSwashAppClnt;
+		// ignored under DDE, host name in TCP/IP based classes
+		wxString hostName = wxT( "localhost" );
+		// Create the connection
+		wxConnectionBase* connection = client->MakeConnection( hostName, g_BitSwashServerStr, g_BitSwashTopicStr );
+
+		if( connection )
+		{
+			// Only file names would be send to the instance, ignore other switches, options
+			// Ask the other instance to open a file or raise itself
+			wxString fnames;
+
+			for( size_t i = 0; i < m_FileNames.GetCount(); ++i )
+			{
+				//The name is what follows the last \ or /
+				fnames +=  m_FileNames[i] + wxT( ' ' );
+			}
+
+			connection->Execute( fnames );
+			connection->Disconnect();
+			delete connection;
+		}
+		else
+		{
+			wxMessageBox( wxGetTranslation(wxT( "Sorry, the existing instance may be too busy too respond.\nPlease close any open dialogs and retry." )),
+						   APPNAME, wxICON_INFORMATION | wxOK );
+		}
+
+		delete client;
+		return false;
+	}
+
+	wxHandleFatalExceptions();
+	//==========================================================================
+
 	int initcountdown = 1;
 	SetVendorName( APPNAME );
 	SetAppName( APPBINNAME );
@@ -447,6 +595,12 @@ int BitSwash::OnExit()
 	//restore log handle
 #endif
 	wxLog::SetActiveTarget( m_logold );
+	if( m_SigleAppChecker )
+		delete m_SigleAppChecker;
+
+	if( m_AppServer )
+		delete m_AppServer;
+
 	return 0;
 }
 
@@ -609,3 +763,122 @@ wxImage & BitSwash::GetAppIcon( enum appicon_id id )
 	else
 		return empty;
 }
+
+void BitSwash::OnInitCmdLine( wxCmdLineParser& cmdParser )
+{
+	cmdParser.SetDesc( g_cmdLineDesc );
+	// must refuse '/' as parameter starter or cannot use "/path" style paths
+	cmdParser.SetSwitchChars( wxT( "-" ) );
+}
+
+bool BitSwash::OnCmdLineParsed( wxCmdLineParser& cmdParser )
+{
+	wxFileName filename;
+
+	// parse commandline to filenames, every file is with a trailing char '|', ex: filename1|filename2|
+	m_FileNames.Empty();
+	// to get at your unnamed parameters use GetParam
+	int flags = wxDIR_FILES | wxDIR_HIDDEN;
+	wxString fname;
+
+	for( size_t i = 0; i < cmdParser.GetParamCount(); i++ )
+	{
+		fname = cmdParser.GetParam( i );
+		fname.Replace(wxT("\\\\"), wxT("\\"));
+		filename = fname;
+
+		filename.MakeAbsolute();
+		fname = filename.GetFullName();
+
+		if( cmdParser.Found( wxT( "w" ) ) )
+		{
+			//WildCard
+			if( cmdParser.Found( wxT( "r" ) ) ) flags |= wxDIR_DIRS;
+
+			wxArrayString files;
+			size_t nums = wxDir::GetAllFiles( filename.GetPath(), &files, fname, flags );
+
+			for( size_t i = 0; i < nums; ++i )
+			{
+				m_FileNames.Add( files[i] );
+			}
+		}
+		else
+		{
+			// Support for name*linenum
+			m_FileNames.Add( filename.GetFullPath() );
+		}
+	}
+
+	// and other command line parameters
+	// then do what you need with them.
+	return true;
+}
+
+
+#if (wxUSE_ON_FATAL_EXCEPTION == 1) && (wxUSE_STACKWALKER == 1)
+#include <wx/longlong.h>
+void BitSwashStackWalker::OnStackFrame( const wxStackFrame & frame )
+{
+	if( m_DumpFile )
+	{
+		wxULongLong address( ( size_t )frame.GetAddress() );
+#if defined(__x86_64__) || defined(__LP64__) || defined(_WIN64)
+		wxString fmt( wxT( "[%02u]:[%08X%08X] %s(%i)\t%s%s\n" ) );
+#else
+		wxString fmt( wxT( "[%02u]:[%08X] %s(%i)\t%s%s\n" ) );
+#endif
+		wxString paramInfo( wxT( "(" ) );
+#if defined(_WIN32)
+		wxString type, name, value;
+		size_t count = frame.GetParamCount(), i = 0;
+
+		while( i < count )
+		{
+			frame.GetParam( i, &type, &name, &value );
+			paramInfo += type + wxT( " " ) + name + wxT( " = " ) + value;
+
+			if( ++i < count ) paramInfo += wxT( ", " );
+		}
+
+#endif
+		paramInfo += wxT( ")" );
+		m_DumpFile->Write( wxString::Format( fmt,
+											 ( unsigned )frame.GetLevel(),
+#if defined(__x86_64__) || defined(__LP64__) || defined(_WIN64)
+											 address.GetHi(),
+#endif
+											 address.GetLo(),
+											 frame.GetFileName().c_str(),
+											 ( unsigned )frame.GetLine(),
+											 frame.GetName().c_str(),
+											 paramInfo.c_str() )
+						 );
+	}
+}
+
+void BitSwash::OnFatalException()
+{
+	wxString name = g_BitSwashHomeDir + wxString::Format(
+						wxT( "%s_%s_%lu.dmp" ),
+						wxTheApp ? ( const wxChar* )wxTheApp->GetAppDisplayName().c_str()
+						: wxT( "wxwindows" ),
+						wxDateTime::Now().Format( wxT( "%Y%m%dT%H%M%S" ) ).c_str(),
+#if defined(__WXMSW__)
+						::GetCurrentProcessId()
+#else
+						( unsigned )getpid()
+#endif
+					);
+	wxFile dmpFile( name.c_str(), wxFile::write );
+
+	if( dmpFile.IsOpened() )
+	{
+		m_StackWalker.SetDumpFile( &dmpFile );
+		m_StackWalker.WalkFromException();
+		dmpFile.Close();
+	}
+}
+#endif
+
+

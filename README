@@ -5,6 +5,9 @@ Fix: Lots of GUI issue in configuration dialog
 Fix: Adjust flag image to 16*11
 New: 64bits build
 New: Run at Windows startup
+New: Crash handler
+New: Single instance
+New: Open torrent at command line
 Upgrade libtorrent to 1.0.11
 Upgrade boost to 1.62
 Upgrade openssl to 1.1.0d

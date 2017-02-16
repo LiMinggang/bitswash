@@ -64,7 +64,7 @@ class TorrentProperty;
 
 class MainFrame: public wxFrame 
 {
-     enum
+    enum
     {
         ID_FILE_EXIT = wxID_EXIT,
         ID_HELP_ABOUT = wxID_ABOUT,
@@ -90,156 +90,157 @@ class MainFrame: public wxFrame
         ID_OPTIONS_PREFERENCES,
         ID_HELP_BITSWASH_HELP,
         ID_HELP_HOMEPAGE,
-		
-		/* TIMER */
-		ID_TIMER_GUI_UPDATE,
+    	
+    	/* TIMER */
+    	ID_TIMER_GUI_UPDATE,
 
         ID_OPTIONS_LANGUAGE,
-		/* plenty of languages follows
-		 * next item should starts with +100 or so
-		 */
+    	/* plenty of languages follows
+    	 * next item should starts with +100 or so
+    	 */
 
     };
 
-	public:
-        MainFrame(wxFrame *frame, const wxString& title);
-		~MainFrame();
+public:
+    MainFrame(wxFrame *frame, const wxString& title);
+	~MainFrame();
 
-		wxMenu* GetNewTorrentMenu();
-		void OnMenuOpen(wxMenuEvent& event);
-		void TorrentOperationMenu(wxMenu* torrentmenu, bool enabled);
-		void UpdateUI();
-   		void UpdateSelectedTorrent();
+	wxMenu* GetNewTorrentMenu();
+	void OnMenuOpen(wxMenuEvent& event);
+	void TorrentOperationMenu(wxMenu* torrentmenu, bool enabled);
+	void UpdateUI();
+		void UpdateSelectedTorrent();
 
-		torrent_t* GetSelectedTorrent() ;
-		
-		const std::vector<torrent_t*>* GetTorrentList() { return &m_torrentlistitems;  }
-		const PeerListCtrl::peer_list_t* GetPeersList() { return &m_peerlistitems;  }
-		
-		wxMutex& GetListLock() {return  m_listlock; }
-		wxString GetStatusDownloadRate();
-		wxString GetStatusUploadRate();
-		wxString GetStatusPeers();
-		wxString GetStatusDHT();
-		wxString GetStatusIncoming();
-		Configuration* GetConfig() { return m_config ; }
+	torrent_t* GetSelectedTorrent() ;
+	
+	const std::vector<torrent_t*>* GetTorrentList() { return &m_torrentlistitems;  }
+	const PeerListCtrl::peer_list_t* GetPeersList() { return &m_peerlistitems;  }
+	
+	wxMutex& GetListLock() {return  m_listlock; }
+	wxString GetStatusDownloadRate();
+	wxString GetStatusUploadRate();
+	wxString GetStatusPeers();
+	wxString GetStatusDHT();
+	wxString GetStatusIncoming();
+	Configuration* GetConfig() { return m_config ; }
 
-		void ShowSystray(bool show);
+	void ShowSystray(bool show);
 
-		void OpenTorrent();
-		void OpenTorrentUrl();
-		void ShowPreferences();
+	void OpenTorrent();
+	void OpenTorrentUrl();
+	void ShowPreferences();
 
-		void SetLogSeverity();
+	void SetLogSeverity();
 
-		void OnListItemClick(long item);
+	void OnListItemClick(long item);
 
-		bool TorrentListIsValid() { return m_torrentlistisvalid; }
-		void TorrentListIsValid(bool valid) { m_torrentlistisvalid = valid; }
-	private:
+	bool TorrentListIsValid() { return m_torrentlistisvalid; }
+	void TorrentListIsValid(bool valid) { m_torrentlistisvalid = valid; }
+    static void ReceiveTorrent(wxString fileorurl);
+private:
 
-        wxMenuBar* CreateMainMenuBar();
-        void CreateToolBar();
-        wxToolBar* CreateMainToolBar();
-        void SaveFramePosition();
-		void SaveFrameSize();
-        wxTreeCtrl* CreateSideTreeCtrl();
-        void DoSize();
-        void CreateTorrentPanel();
-        void UpdateTorrentPanel();
-        void CreateMainPanel();
-        void CreateTorrentList();
-        void CreateTorrentInfo();
+    wxMenuBar* CreateMainMenuBar();
+    void CreateToolBar();
+    wxToolBar* CreateMainToolBar();
+    void SaveFramePosition();
+	void SaveFrameSize();
+    wxTreeCtrl* CreateSideTreeCtrl();
+    void DoSize();
+    void CreateTorrentPanel();
+    void UpdateTorrentPanel();
+    void CreateMainPanel();
+    void CreateTorrentList();
+    void CreateTorrentInfo();
 #if wxUSE_STATUSBAR
-		void UpdateStatusBar();
+	void UpdateStatusBar();
 #endif
-		void UpdateTrayInfo();
+	void UpdateTrayInfo();
 
-		void AddTorrent(wxString filename, bool usedefault = false);
-		void RemoveTorrent(bool deletedata);
-		void OnMenuOpenTorrent(wxCommandEvent& event);
-		void OnMenuOpenTorrentUrl(wxCommandEvent& event);
-		void ToDo(wxCommandEvent& event);
-		void OnQuit(wxCommandEvent& event);
-		void OnMenuHelp(wxCommandEvent& event);
-		void OnHelpHomepage(wxCommandEvent& event);
-		void OnAbout(wxCommandEvent& event);
-		void OnMenuViewStatusBar(wxCommandEvent& event);
-		void OnMenuViewToolbar(wxCommandEvent& event);
-		void OnMenuTorrentStart(wxCommandEvent& event);
-		void OnMenuTorrentPause(wxCommandEvent& event);
-		void OnMenuTorrentStop(wxCommandEvent& event);
-		void OnMenuTorrentProperties(wxCommandEvent& event);
-		void OnMenuTorrentRemove(wxCommandEvent& event);
-		void OnMenuTorrentRemoveData(wxCommandEvent& event);
-		void OnMenuTorrentMoveUp(wxCommandEvent& event);
-		void OnMenuTorrentMoveDown(wxCommandEvent& event);
-		void OnMenuTorrentReannounce(wxCommandEvent& event);
-		void OnMenuTorrentRecheck(wxCommandEvent& event);
-		void OnMenuTorrentOpenDir(wxCommandEvent& event);
-		void OnMenuPreferences(wxCommandEvent& event);
-		void OnMenuOptionLanguage(wxCommandEvent& event);
-		void OnUpdateOptionLanguage(wxUpdateUIEvent& event);
-		void OnClose(wxCloseEvent& event);
-		void OnMinimize(wxIconizeEvent& event);
-		void OnMove(wxMoveEvent& event);
-		void OnSize(wxSizeEvent& event);
-	
-		void LoadIcons();
-		void SaveTorrentResumeData(torrent_t* torrent);
-		int find_torrent_from_hash(wxString hash) ;
-	
-    private:
-		BitTorrentSession* m_btsession;
-		wxMenu* m_torrentmenu;
-		wxMenu* m_languagemenu;
+	void AddTorrent(wxString filename, bool usedefault = false);
+	void RemoveTorrent(bool deletedata);
+	void OnMenuOpenTorrent(wxCommandEvent& event);
+	void OnMenuOpenTorrentUrl(wxCommandEvent& event);
+	void ToDo(wxCommandEvent& event);
+	void OnQuit(wxCommandEvent& event);
+	void OnMenuHelp(wxCommandEvent& event);
+	void OnHelpHomepage(wxCommandEvent& event);
+	void OnAbout(wxCommandEvent& event);
+	void OnMenuViewStatusBar(wxCommandEvent& event);
+	void OnMenuViewToolbar(wxCommandEvent& event);
+	void OnMenuTorrentStart(wxCommandEvent& event);
+	void OnMenuTorrentPause(wxCommandEvent& event);
+	void OnMenuTorrentStop(wxCommandEvent& event);
+	void OnMenuTorrentProperties(wxCommandEvent& event);
+	void OnMenuTorrentRemove(wxCommandEvent& event);
+	void OnMenuTorrentRemoveData(wxCommandEvent& event);
+	void OnMenuTorrentMoveUp(wxCommandEvent& event);
+	void OnMenuTorrentMoveDown(wxCommandEvent& event);
+	void OnMenuTorrentReannounce(wxCommandEvent& event);
+	void OnMenuTorrentRecheck(wxCommandEvent& event);
+	void OnMenuTorrentOpenDir(wxCommandEvent& event);
+	void OnMenuPreferences(wxCommandEvent& event);
+	void OnMenuOptionLanguage(wxCommandEvent& event);
+	void OnUpdateOptionLanguage(wxUpdateUIEvent& event);
+	void OnClose(wxCloseEvent& event);
+	void OnMinimize(wxIconizeEvent& event);
+	void OnMove(wxMoveEvent& event);
+	void OnSize(wxSizeEvent& event);
+
+	void LoadIcons();
+	void SaveTorrentResumeData(torrent_t* torrent);
+	int find_torrent_from_hash(wxString hash) ;
+
+private:
+	BitTorrentSession* m_btsession;
+	wxMenu* m_torrentmenu;
+	wxMenu* m_languagemenu;
 
 #if WXVER >= 280
-		wxAuiManager m_mgr;
+	wxAuiManager m_mgr;
 #else
-		wxFrameManager m_mgr;
+	wxFrameManager m_mgr;
 #endif
-		wxPanel* m_torrentpane;
-		TorrentInfo* m_torrentinfo;
+	wxPanel* m_torrentpane;
+	TorrentInfo* m_torrentinfo;
 
-		TorrentListCtrl* m_torrentlistctrl;
-		PeerListCtrl* m_peerlistctrl;
-		FileListCtrl* m_filelistctrl;
-		SummaryPane* m_summarypane;
-		TrackerListCtrl* m_trackerlistctrl;
+	TorrentListCtrl* m_torrentlistctrl;
+	PeerListCtrl* m_peerlistctrl;
+	FileListCtrl* m_filelistctrl;
+	SummaryPane* m_summarypane;
+	TrackerListCtrl* m_trackerlistctrl;
 
-		Configuration *m_config;
-		TorrentProperty *m_torrentproperty;
-		SwashSetting *m_swashsetting;
-		SwashStatBar *m_swashstatbar;
+	Configuration *m_config;
+	TorrentProperty *m_torrentproperty;
+	SwashSetting *m_swashsetting;
+	SwashStatBar *m_swashstatbar;
 
-		wxLog* m_oldlog;
+	wxLog* m_oldlog;
 
-		void OnRefreshTimer(wxTimerEvent& WXUNUSED(event));
-		void GetTorrentLog();
-	
-		wxTimer m_refreshtimer;
+	void OnRefreshTimer(wxTimerEvent& WXUNUSED(event));
+	void GetTorrentLog();
 
-		torrents_t m_torrentlistitems;
-		PeerListCtrl::peer_list_t m_peerlistitems;
-	
-		int m_lastqindex;
-		wxMutex m_listlock;
+	wxTimer m_refreshtimer;
+
+	torrents_t m_torrentlistitems;
+	PeerListCtrl::peer_list_t m_peerlistitems;
+
+	int m_lastqindex;
+	wxMutex m_listlock;
 
 
-		SwashTrayIcon* m_swashtrayicon;
-		wxIcon m_trayicon;
-		wxIcon m_frameicon;
-	
-		bool m_upnp_started;
-		bool m_natpmp_started;
-		bool m_lsd_started;
+	SwashTrayIcon* m_swashtrayicon;
+	wxIcon m_trayicon;
+	wxIcon m_frameicon;
 
-		int m_prevlocale;
-		long m_prevselecteditem;
-		bool m_torrentlistisvalid;
+	bool m_upnp_started;
+	bool m_natpmp_started;
+	bool m_lsd_started;
 
-		DECLARE_EVENT_TABLE()
+	int m_prevlocale;
+	long m_prevselecteditem;
+	bool m_torrentlistisvalid;
+    bool m_closed;
+	DECLARE_EVENT_TABLE()
 };
 
 #endif // _MAINFRAME_H_
