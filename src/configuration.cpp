@@ -443,7 +443,7 @@ void Configuration::WriteSavePath()
 		history_f->Clear();
 
 		std::vector<wxString>::const_iterator path;
-		for(path = m_savepathhistory.begin(); path!= m_savepathhistory.end(); path++)
+		for(path = m_savepathhistory.begin(); path!= m_savepathhistory.end(); ++path)
 		{
 			history_f->AddLine(*path);
 		}

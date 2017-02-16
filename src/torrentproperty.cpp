@@ -21,8 +21,8 @@ const long TorrentProperty::ID_TEXTCTRL1 = wxNewId();
 const long TorrentProperty::ID_STATICTEXT5 = wxNewId();
 const long TorrentProperty::ID_STATICTEXT6 = wxNewId();
 const long TorrentProperty::ID_NOTEBOOK1 = wxNewId();
-const long TorrentProperty::ID_BUTTONSELECTNONE = wxNewId();
-const long TorrentProperty::ID_BUTTONSELECTALL = wxNewId();
+const long TorrentProperty::ID_BUTTONDOWNLOADNONE = wxNewId();
+const long TorrentProperty::ID_BUTTONDOWNLOADALL = wxNewId();
 //*)
 
 BEGIN_EVENT_TABLE(TorrentProperty,wxDialog)
@@ -101,9 +101,9 @@ TorrentProperty::TorrentProperty(torrent_t* pTorrent, wxWindow* parent,wxWindowI
 	m_notebook_property->SetSelection(0);
 	m_torrentsettings_sizer->Add( m_notebook_property, 1, wxEXPAND | wxALL, 5 );
 	BoxSizer1 = new wxBoxSizer(wxHORIZONTAL);
-	ButtonSelectNone = new wxButton(this, ID_BUTTONSELECTNONE, _("Select None"), wxDefaultPosition, wxDefaultSize, 0, wxDefaultValidator, _T("ID_BUTTONSELECTNONE"));
+	ButtonSelectNone = new wxButton(this, ID_BUTTONDOWNLOADNONE, _("Select None"), wxDefaultPosition, wxDefaultSize, 0, wxDefaultValidator, _T("ID_BUTTONSELECTNONE"));
 	BoxSizer1->Add(ButtonSelectNone, 0, wxALL|wxALIGN_CENTER_HORIZONTAL|wxALIGN_CENTER_VERTICAL, 5);
-	ButtonSelectAll = new wxButton(this, ID_BUTTONSELECTALL, _("Select All"), wxDefaultPosition, wxDefaultSize, 0, wxDefaultValidator, _T("ID_BUTTONSELECTALL"));
+	ButtonSelectAll = new wxButton(this, ID_BUTTONDOWNLOADALL, _("Select All"), wxDefaultPosition, wxDefaultSize, 0, wxDefaultValidator, _T("ID_BUTTONSELECTALL"));
 	BoxSizer1->Add(ButtonSelectAll, 0, wxALL|wxALIGN_CENTER_HORIZONTAL|wxALIGN_CENTER_VERTICAL, 5);
 	ButtonOK = new wxButton(this, wxID_OK, _("OK"), wxDefaultPosition, wxDefaultSize, 0, wxDefaultValidator, _T("wxID_OK"));
 	ButtonOK->SetDefault();
@@ -117,11 +117,13 @@ TorrentProperty::TorrentProperty(torrent_t* pTorrent, wxWindow* parent,wxWindowI
 	Layout();
 	Center();
 
-	Connect(wxEVT_SET_FOCUS,(wxObjectEventFunction)&TorrentProperty::OnFocus);
+	Bind( wxEVT_SET_FOCUS,  &TorrentProperty::OnFocus, this );
 	//*)
-	
-	Connect(wxID_OK,(wxObjectEventFunction)&TorrentProperty::OnOK);
-	Connect(wxID_CANCEL,(wxObjectEventFunction)&TorrentProperty::OnCancel);
+
+	Bind( wxEVT_COMMAND_BUTTON_CLICKED,  &TorrentProperty::OnOK, this, wxID_OK );
+	Bind( wxEVT_COMMAND_BUTTON_CLICKED,  &TorrentProperty::OnCancel, this, wxID_CANCEL );
+	Bind( wxEVT_COMMAND_BUTTON_CLICKED,  &TorrentProperty::OnDownloadNone, this, ID_BUTTONDOWNLOADNONE );
+	Bind( wxEVT_COMMAND_BUTTON_CLICKED,  &TorrentProperty::OnDownloadAll, this, ID_BUTTONDOWNLOADALL );
 }
 
 TorrentProperty::~TorrentProperty()
@@ -178,3 +180,20 @@ void TorrentProperty::OnFocus(wxFocusEvent& event)
 		m_filespane->UpdateSwashList();
 	}
 }
+
+void TorrentProperty::OnDownloadAll(wxCommandEvent& event)
+{
+	TorrentConfig* pConfig = m_pTorrent->config;
+	std::vector<int> filespriority(m_pTorrent->info->num_files(), 4);
+	pConfig->SetFilesPriority(filespriority);
+	m_filespane->UpdateSwashList();
+}
+
+void TorrentProperty::OnDownloadNone(wxCommandEvent& event)
+{
+	TorrentConfig* pConfig = m_pTorrent->config;
+	std::vector<int> filespriority(m_pTorrent->info->num_files(), 0);
+	pConfig->SetFilesPriority(filespriority);
+	m_filespane->UpdateSwashList();
+}
+

@@ -158,7 +158,7 @@ void TorrentConfig::WriteFilesPriority()
 
 	std::vector<int>::const_iterator i = m_files_priority.begin();
 
-	for (i=m_files_priority.begin(); i != m_files_priority.end() ; i++)
+	for (i=m_files_priority.begin(); i != m_files_priority.end() ; ++i)
 	{
 		filespriority_data << *i << _T(",");
 	}
@@ -182,7 +182,7 @@ void TorrentConfig::WriteTrackersUrl()
 	std::string t_url;
 	int t_tier;
 
-	for (t=m_trackers_url.begin(); t != m_trackers_url.end() ; t++)
+	for (t=m_trackers_url.begin(); t != m_trackers_url.end() ; ++t)
 	{
 		t_url = t->url;
 		t_tier = t->tier;

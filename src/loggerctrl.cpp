@@ -96,7 +96,7 @@ LoggerCtrl::LoggerCtrl( wxWindow *parent, wxLog* oldlog,
 	fgSizerLog->AddGrowableCol( 2 );
 	fgSizerLog->SetFlexibleDirection( wxBOTH );
 	m_log_text = new wxTextCtrl( m_panelLog, LOGGER_CTRL_TEXTAREA, wxEmptyString, wxDefaultPosition, wxSize( 600, 200 ), wxTE_MULTILINE | wxTE_READONLY | wxTE_DONTWRAP );
-	fgSizerLog->Add( m_log_text, 0, wxALL, 5 );
+	fgSizerLog->Add( m_log_text, 1, wxALL, 5 );
 	m_panelLog->SetSizer( fgSizerLog );
 	m_panelLog->Layout();
 	fgSizerCtrl->Fit( m_panelLog );

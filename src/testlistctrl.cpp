@@ -35,7 +35,7 @@ TestListCtrl::~TestListCtrl()
 {
 #if 1
 	std::vector<wxGauge*>::const_iterator git = m_gauge_list.begin();
-	for (git; git != m_gauge_list.end(); git++)
+	for (git; git != m_gauge_list.end(); ++git)
 	{
 		wxGauge* tmpGauge = *git;
 		tmpGauge->Show(0);

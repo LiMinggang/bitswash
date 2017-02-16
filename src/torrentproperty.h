@@ -50,8 +50,8 @@ class TorrentProperty: public wxDialog
 		static const long ID_STATICTEXT5;
 		static const long ID_STATICTEXT6;
 		static const long ID_NOTEBOOK1;
-		static const long ID_BUTTONSELECTNONE;
-		static const long ID_BUTTONSELECTALL;
+		static const long ID_BUTTONDOWNLOADNONE;
+		static const long ID_BUTTONDOWNLOADALL;
 		//*)
 
 	private:
@@ -62,7 +62,9 @@ class TorrentProperty: public wxDialog
 		void OnOK(wxCommandEvent& event);
 		void OnCancel(wxCommandEvent& event);
 		void OnFileButton(wxCommandEvent& event);
-		
+        void OnDownloadAll(wxCommandEvent& event);
+        void OnDownloadNone(wxCommandEvent& event);
+
 		wxFrame* m_pMainFrame;
 		torrent_t *m_pTorrent;
 

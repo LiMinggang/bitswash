@@ -93,7 +93,7 @@ class TorrentConfig : public wxFileConfig
 	void SetTorrentStats(stats_t& stats) { m_torrent_stats = stats;}
 
 	std::vector<int>& GetFilesPriorities() { return m_files_priority ;}
-	void SetFilesPriority(std::vector<int>& files) ;
+	void SetFilesPriority(std::vector<int>& files);
 	std::vector<libtorrent::announce_entry>& GetTrackersURL() { return m_trackers_url;}
 	void  SetTrackersURL(std::vector<libtorrent::announce_entry>& trackers) ;
 	void WriteFilesPriority();
@@ -101,8 +101,8 @@ class TorrentConfig : public wxFileConfig
 	void WriteTrackersUrl();
 	void ReadTrackersUrl();
 
-    protected:
-    private:
+protected:
+private:
 	wxString m_torrentname;
 	wxString m_configfile;
 	wxFileConfig *m_cfg;
@@ -125,7 +125,6 @@ class TorrentConfig : public wxFileConfig
 	std::vector<int> m_files_priority;
 	std::vector<libtorrent::announce_entry> m_trackers_url;
 	stats_t m_torrent_stats;
-
 };
 
 
