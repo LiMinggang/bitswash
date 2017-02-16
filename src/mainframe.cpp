@@ -121,6 +121,8 @@ BEGIN_EVENT_TABLE( MainFrame, wxFrame )
 
 END_EVENT_TABLE()
 
+MainFrame * g_BitSwashMainFrame = 0;
+
 MainFrame::MainFrame( wxFrame *frame, const wxString& title )
 	: wxFrame( frame, -1, title ), m_swashtrayicon( NULL ),
 	  m_upnp_started( false ),
@@ -536,15 +538,14 @@ void MainFrame::CreateTorrentList()
 
 void MainFrame::ReceiveTorrent(wxString fileorurl)
 {
-	MainFrame* frame = wxDynamicCast( wxGetApp().GetTopWindow(), MainFrame );
-	if(frame)
+	if(g_BitSwashMainFrame)
 	{
 		wxStringTokenizer tkz( fileorurl, ' ' );
 		wxString filename;
 		while( tkz.HasMoreTokens() )
 		{
 			filename = tkz.GetNextToken();
-			frame->AddTorrent(filename, true);
+			g_BitSwashMainFrame->AddTorrent(filename, true);
 		}
 	}
 }

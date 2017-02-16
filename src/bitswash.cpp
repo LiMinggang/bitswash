@@ -94,13 +94,15 @@ bool BitSwashAppConn::OnExecute( const wxString& topic,
 	{
 		// Check if the filename is already open,
 		// and raise that instead.
-		frame->ReceiveTorrent(filenames);
+		MainFrame::ReceiveTorrent(filenames);
 	}
 
 	return true;
 }
 
 IMPLEMENT_APP( BitSwash )
+
+extern MainFrame * g_BitSwashMainFrame;
 
 static struct AppIcons_t
 {
@@ -394,23 +396,12 @@ static const wxCmdLineEntryDesc g_cmdLineDesc [] =
 
 bool BitSwash::OnInit()
 {
-	//==========================================================================
-	wxFileName filename( GetExecutablePath() );
-	filename.MakeAbsolute();
-	g_BitSwashAppDir = filename.GetPath( wxPATH_GET_VOLUME | wxPATH_GET_SEPARATOR );
 	m_SigleAppChecker = 0;
 	m_AppServer = 0;
-#ifdef __WXMSW__
-	g_BitSwashHomeDir = g_BitSwashAppDir;
-#else //linux: ~/.madedit
-	g_BitSwashHomeDir = wxStandardPaths::Get().GetUserDataDir() + wxFILE_SEP_PATH;
 
-	if( !wxDirExists( g_BitSwashHomeDir ) )
-	{
-		wxLogNull nolog; // no error message
-		wxMkdir( g_BitSwashHomeDir );
-	}
-#endif
+	//==========================================================================
+	if( !wxApp::OnInit() )
+			return false;
 
 	wxString name = wxString::Format( wxT( "BitSwash-%s" ), wxGetUserId().GetData() );
 	m_SigleAppChecker = new wxSingleInstanceChecker( name );
@@ -463,6 +454,21 @@ bool BitSwash::OnInit()
 		delete client;
 		return false;
 	}
+
+	wxFileName filename( GetExecutablePath() );
+	filename.MakeAbsolute();
+	g_BitSwashAppDir = filename.GetPath( wxPATH_GET_VOLUME | wxPATH_GET_SEPARATOR );
+#ifdef __WXMSW__
+	g_BitSwashHomeDir = g_BitSwashAppDir;
+#else //linux: ~/.madedit
+	g_BitSwashHomeDir = wxStandardPaths::Get().GetUserDataDir() + wxFILE_SEP_PATH;
+
+	if( !wxDirExists( g_BitSwashHomeDir ) )
+	{
+		wxLogNull nolog; // no error message
+		wxMkdir( g_BitSwashHomeDir );
+	}
+#endif
 
 	wxHandleFatalExceptions();
 	//==========================================================================
@@ -564,9 +570,16 @@ bool BitSwash::OnInit()
 	//XXX shows some splash
 	while( !m_btinitdone || ( initcountdown-- > 0 ) )
 		wxSleep( 1 );
-	wxFrame *frame = new MainFrame( 0L, APPNAME );
-	frame->Show( TRUE );
-	SetTopWindow( frame );
+	g_BitSwashMainFrame = new MainFrame( 0L, APPNAME );
+	if(!( m_config->GetUseSystray() && m_config->GetHideTaskbar() ))
+	{
+		g_BitSwashMainFrame->Show( TRUE );
+		SetTopWindow( g_BitSwashMainFrame );
+	}
+	for( size_t i = 0; i < m_FileNames.GetCount(); ++i )
+	{
+		MainFrame::ReceiveTorrent(m_FileNames[i]);
+	}
 	SetExitOnFrameDelete( true );
 	return TRUE;
 }
@@ -737,7 +750,7 @@ void BitSwash::LoadIcons()
 {
 	int i;
 	wxChar dirsep = wxFileName::GetPathSeparator( wxPATH_NATIVE );
-	for( i = 0; i < BITSWASH_ICON_MAX; i++ )
+	for( i = 0; i < BITSWASH_ICON_MAX; ++i )
 	{
 		wxString filename = m_iconspath + dirsep + AppIcons[i].filename ;
 		wxImage icon;
@@ -790,23 +803,13 @@ bool BitSwash::OnCmdLineParsed( wxCmdLineParser& cmdParser )
 		filename.MakeAbsolute();
 		fname = filename.GetFullName();
 
-		if( cmdParser.Found( wxT( "w" ) ) )
-		{
-			//WildCard
-			if( cmdParser.Found( wxT( "r" ) ) ) flags |= wxDIR_DIRS;
+		//WildCard
+		wxArrayString files;
+		size_t nums = wxDir::GetAllFiles(filename.GetPath(), &files, fname, flags);
 
-			wxArrayString files;
-			size_t nums = wxDir::GetAllFiles( filename.GetPath(), &files, fname, flags );
-
-			for( size_t i = 0; i < nums; ++i )
-			{
-				m_FileNames.Add( files[i] );
-			}
-		}
-		else
+		for (size_t i = 0; i < nums; ++i)
 		{
-			// Support for name*linenum
-			m_FileNames.Add( filename.GetFullPath() );
+			m_FileNames.Add(files[i]);
 		}
 	}
 
