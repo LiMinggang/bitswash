@@ -24,7 +24,7 @@
 #ifndef _MAINFRAME_H_
 #define _MAINFRAME_H_
 
-
+#include <set>
 #include "compat.h"
 #include <wx/hashmap.h>
 #include <wx/menu.h>
@@ -98,7 +98,6 @@ class MainFrame: public wxFrame
     	/* plenty of languages follows
     	 * next item should starts with +100 or so
     	 */
-
     };
 
 public:
@@ -188,7 +187,8 @@ private:
 
 	void LoadIcons();
 	void SaveTorrentResumeData(torrent_t* torrent);
-	int find_torrent_from_hash(wxString hash) ;
+	bool IsTorrentExisting(wxString hash);
+	//int find_torrent_from_hash(wxString hash) ;
 
 private:
 	BitTorrentSession* m_btsession;
@@ -226,7 +226,7 @@ private:
 
 	int m_lastqindex;
 	wxMutex m_listlock;
-
+	std::set<wxString> m_torrent_hash_set;
 
 	SwashTrayIcon* m_swashtrayicon;
 	wxIcon m_trayicon;

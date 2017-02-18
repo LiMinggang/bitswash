@@ -49,6 +49,7 @@ typedef struct torrent_handle_t {
 
 /* watch out the s after torrent */
 typedef std::vector<torrent_t*> torrents_t;
+typedef std::map<wxString, int> torrents_map;
 
 class BitTorrentSession : public wxThread
 {
@@ -76,7 +77,7 @@ class BitTorrentSession : public wxThread
 
 		torrent_t* ParseTorrent(wxString filename);
 
-		torrents_t* GetTorrentQueue() { return &m_torrent_queue; }
+		void GetTorrentQueue(torrents_t & queue_copy);
 
 		void StartTorrent(torrent_t* torrent, bool force);
 		void StopTorrent(torrent_t* torrent);
@@ -108,7 +109,9 @@ class BitTorrentSession : public wxThread
 		bool m_natpmp_started;
 		bool m_lsd_started;
 
+		wxMutex m_torrent_queue_lock;
 		torrents_t m_torrent_queue;
+		torrents_map m_torrent_map;
 
 		wxApp* m_pParent;
 		Configuration* m_config;

@@ -170,16 +170,20 @@ void BitTorrentSession::OnExit()
     m_libbtsession->pop_alerts( &alerts );
     delete m_libbtsession;
 
-    for( torrents_t::iterator i = m_torrent_queue.begin();
-            i != m_torrent_queue.end(); ++i )
-    {
-        torrent_t *torrent = *i;
-        delete torrent->config;
-        delete torrent;
-    }
+	{
+		wxMutexLocker ml(m_torrent_queue_lock);
 
-    m_torrent_queue.empty();
-    m_torrent_queue.swap( m_torrent_queue );
+	    for( torrents_t::iterator i = m_torrent_queue.begin();
+	            i != m_torrent_queue.end(); ++i )
+	    {
+	        torrent_t *torrent = *i;
+	        delete torrent->config;
+	        delete torrent;
+	    }
+
+	    m_torrent_queue.empty();
+	    m_torrent_queue.swap( m_torrent_queue );
+	}
 }
 
 void BitTorrentSession::ConfigureSession()
@@ -543,7 +547,11 @@ bool BitTorrentSession::AddTorrent( torrent_t* torrent )
             }
         }
 
-        m_torrent_queue.push_back( torrent );
+		{
+			wxMutexLocker ml(m_torrent_queue_lock);
+	        m_torrent_queue.push_back( torrent );
+			m_torrent_map.insert(std::pair<wxString, int>(torrent->hash, m_torrent_queue.size()-1));
+		}
 
         if( state == TORRENT_STATE_FORCE_START || state == TORRENT_STATE_START )
         {
@@ -633,8 +641,13 @@ void BitTorrentSession::RemoveTorrent( torrent_t* torrent, bool deletedata )
     }
 
     torrents_t::iterator torrent_it = m_torrent_queue.begin() + idx;
+	
+	{
+		wxMutexLocker ml(m_torrent_queue_lock);
+		m_torrent_map.erase((*torrent_it)->hash);
+	    m_torrent_queue.erase( torrent_it );
+	}
     delete( torrent );
-    m_torrent_queue.erase( torrent_it );
 }
 
 void BitTorrentSession::ScanTorrentsDirectory( wxString dirname )
@@ -663,8 +676,16 @@ void BitTorrentSession::ScanTorrentsDirectory( wxString dirname )
         cont = torrents_dir.GetNext( &filename );
     }
 
-    std::sort( m_torrent_queue.begin(), m_torrent_queue.end(),
-               BTQueueSortAsc() );
+	{
+		wxMutexLocker ml(m_torrent_queue_lock);
+	    std::sort( m_torrent_queue.begin(), m_torrent_queue.end(),
+	               BTQueueSortAsc() );
+	}
+	m_torrent_map.clear();
+	for(int i = 0; i < m_torrent_queue.size(); ++i)
+	{
+		m_torrent_map[m_torrent_queue[i]->hash] = i;
+	}
 }
 
 //find and return index of torrent handle from hash string
@@ -846,6 +867,17 @@ torrent_t* BitTorrentSession::ParseTorrent( wxString filename )
     return torrent;
 }
 
+void BitTorrentSession::GetTorrentQueue(torrents_t & queue_copy)
+{
+	size_t t = 0;
+	queue_copy.clear();
+
+	while( t < m_torrent_queue.size() )
+	{
+		queue_copy.push_back( m_torrent_queue.at( t ) );
+		t++;
+	}
+}
 void BitTorrentSession::StartTorrent( torrent_t* t_torrent, bool force )
 {
     long idx = 0;
@@ -988,9 +1020,17 @@ void BitTorrentSession::MoveTorrentUp( torrent_t* torrent )
     torrent->config->Save();
     prev_torrent->config->SetQIndex( qindex );
     prev_torrent->config->Save();
-    m_torrent_queue.erase( torrent_it );
-    torrent_it = m_torrent_queue.begin() + idx;
-    m_torrent_queue.insert( torrent_it, prev_torrent );
+	
+	{
+		wxMutexLocker ml(m_torrent_queue_lock);
+		m_torrent_queue[idx-1] = torrent;
+		m_torrent_queue[idx] = prev_torrent;
+		m_torrent_map[torrent->hash] = idx-1;
+		m_torrent_map[prev_torrent->hash] = idx;
+	}
+	//m_torrent_queue.erase( torrent_it );
+    //torrent_it = m_torrent_queue.begin() + idx;
+    //m_torrent_queue.insert( torrent_it, prev_torrent );
 }
 
 void BitTorrentSession::MoveTorrentDown( torrent_t* torrent )
@@ -1025,9 +1065,16 @@ void BitTorrentSession::MoveTorrentDown( torrent_t* torrent )
     torrent->config->Save();
     next_torrent->config->SetQIndex( qindex );
     next_torrent->config->Save();
-    m_torrent_queue.erase( torrent_it );
-    torrent_it = m_torrent_queue.begin() + idx + 1 ;
-    m_torrent_queue.insert( torrent_it, torrent );
+	{
+		wxMutexLocker ml(m_torrent_queue_lock);
+		m_torrent_queue[idx] = next_torrent;
+		m_torrent_queue[idx+1] = torrent;
+		m_torrent_map[torrent->hash] = idx+1;
+		m_torrent_map[next_torrent->hash] = idx;
+	}
+    //m_torrent_queue.erase( torrent_it );
+    //torrent_it = m_torrent_queue.begin() + idx + 1 ;
+    //m_torrent_queue.insert( torrent_it, torrent );
 }
 
 void BitTorrentSession::ReannounceTorrent( torrent_t* t_torrent )
@@ -1230,6 +1277,8 @@ void BitTorrentSession::CheckQueueItem()
     int maxstart = m_config->GetMaxStart();
 
     //wxLogDebug(_T("CheckQueueItem %d\n"), m_torrent_queue.size());
+
+	wxMutexLocker ml(m_torrent_queue_lock);
 
     for( torrent_it = m_torrent_queue.begin(); torrent_it != m_torrent_queue.end(); ++torrent_it )
     {

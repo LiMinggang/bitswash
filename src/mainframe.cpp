@@ -67,6 +67,7 @@
 #include "functions.h"
 #include "urldialog.h"
 #include "swashlistctrl.h" //for itemlist_t
+#include "magneturi.h"
 
 #ifndef __WXMSW__
 #include "languages.h"
@@ -536,6 +537,11 @@ void MainFrame::CreateTorrentList()
 			flags );
 }
 
+bool MainFrame::IsTorrentExisting(wxString hash)
+{
+	return (m_torrent_hash_set.find(hash) != m_torrent_hash_set.end());
+}
+
 void MainFrame::ReceiveTorrent(wxString fileorurl)
 {
 	if(g_BitSwashMainFrame)
@@ -557,26 +563,34 @@ void MainFrame::AddTorrent( wxString filename, bool usedefault )
 	torrent_t *torrent = m_btsession->ParseTorrent( filename );
 	if( torrent->isvalid )
 	{
-		if( !m_config->GetUseDefault() )
+		if(IsTorrentExisting(torrent->hash) == false)
 		{
-			TorrentProperty torrent_property_dlg( torrent, this, wxID_ANY );
-			if( torrent_property_dlg.ShowModal() != wxID_OK )
+			if( !m_config->GetUseDefault() )
 			{
-				wxLogMessage( _T( "Canceled by user\n" ) );
-				return;
+				TorrentProperty torrent_property_dlg( torrent, this, wxID_ANY );
+				if( torrent_property_dlg.ShowModal() != wxID_OK )
+				{
+					wxLogMessage( _T( "Canceled by user\n" ) );
+					return;
+				}
+			}
+
+			if( m_btsession->AddTorrent( torrent ) )
+			{
+				m_torrent_hash_set.insert(torrent->hash);
+				wxString torrent_backup = wxGetApp().SaveTorrentsPath() + wxGetApp().PathSeparator() + torrent->hash + _T( ".torrent" );
+				/* save a copy of torrent file */
+				if( !wxCopyFile( filename, torrent_backup, true ) )
+				{
+					wxLogError( _T( "Error copying backup file %s\n" ), filename.c_str() );
+				}
+				TorrentListIsValid( false );
+				UpdateUI();
 			}
 		}
-
-		if( m_btsession->AddTorrent( torrent ) )
+		else
 		{
-			wxString torrent_backup = wxGetApp().SaveTorrentsPath() + wxGetApp().PathSeparator() + torrent->hash + _T( ".torrent" );
-			/* save a copy of torrent file */
-			if( !wxCopyFile( filename, torrent_backup, true ) )
-			{
-				wxLogError( _T( "Error copying backup file %s\n" ), filename.c_str() );
-			}
-			TorrentListIsValid( false );
-			UpdateUI();
+			wxLogMessage( _T( "Torrent Exists\n" ) );
 		}
 	}
 }
@@ -674,6 +688,21 @@ void MainFrame::OpenTorrentUrl()
 				}
 			}
 		}
+		else
+		{
+			MagnetUri magnetUri(url);
+			if (magnetUri.isValid())
+			{
+				if (IsTorrentExisting(magnetUri.hash()) == false)
+				{
+					wxLogMessage( _T( "MagnerUri to Torrent\n" ) );
+				}
+			}
+			else
+			{
+				wxLogMessage( _T( "Not Supported\n" ) );
+			}
+		}
 	}
 	else
 	{
@@ -705,16 +734,11 @@ void MainFrame::UpdateUI()
 	wxASSERT( m_btsession );
 	if( !TorrentListIsValid() )
 	{
-		int t = 0;
-		torrents_t *torrentqueue = m_btsession->GetTorrentQueue();
+		//int t = 0;
+		//torrents_t *torrentqueue = m_btsession->GetTorrentQueue();
 		///torrents_t::const_iterator torrent_it = torrentqueue->begin();
 		/* XXX more filtering/sorting */
-		m_torrentlistitems.clear();
-		while( t < torrentqueue->size() )
-		{
-			m_torrentlistitems.push_back( torrentqueue->at( t ) );
-			t++;
-		}
+		m_btsession->GetTorrentQueue(m_torrentlistitems);
 		TorrentListIsValid( true );
 		wxLogDebug( _T( "Refreshing torrent list size %s\n" ), ( wxLongLong( m_torrentlistitems.size() ).ToString() ).c_str() );
 		m_torrentlistctrl->SetItemCount( m_torrentlistitems.size() );
@@ -1014,6 +1038,7 @@ void MainFrame::RemoveTorrent( bool deletedata )
 		{
 			//torrent_t* torrent = m_torrentlistitems[selecteditems[i] - (offset++)];
 			torrent_t* torrent = m_torrentlistitems[selecteditems[i]] ;
+			m_torrent_hash_set.erase(torrent->hash);
 			m_btsession->RemoveTorrent( torrent, deletedata );
 		}
 		/* mark for list refresh */
