@@ -110,9 +110,9 @@ public:
 	void UpdateUI();
 		void UpdateSelectedTorrent();
 
-	torrent_t* GetSelectedTorrent() ;
+	shared_ptr<torrent_t> GetSelectedTorrent() ;
 	
-	const std::vector<torrent_t*>* GetTorrentList() { return &m_torrentlistitems;  }
+	const std::vector<shared_ptr<torrent_t> >* GetTorrentList() { return &m_torrentlistitems;  }
 	const PeerListCtrl::peer_list_t* GetPeersList() { return &m_peerlistitems;  }
 	
 	wxMutex& GetListLock() {return  m_listlock; }
@@ -186,8 +186,7 @@ private:
 	void OnSize(wxSizeEvent& event);
 
 	void LoadIcons();
-	void SaveTorrentResumeData(torrent_t* torrent);
-	bool IsTorrentExisting(wxString hash);
+	//void SaveTorrentResumeData(shared_ptr<ptorrent_t>& torrent);
 	//int find_torrent_from_hash(wxString hash) ;
 
 private:

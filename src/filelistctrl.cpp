@@ -101,7 +101,7 @@ wxString FileListCtrl::GetItemValue( long item, long columnid ) const
     //XXX backward compatible
     int nopriority = 0;
     wxLogDebug( _T( "FileListCtrl column %ld of item %ld\n" ), columnid, item );
-    torrent_t* pTorrent;
+    shared_ptr<torrent_t> pTorrent;
 
     if( m_pTorrent )
     {
@@ -112,7 +112,7 @@ wxString FileListCtrl::GetItemValue( long item, long columnid ) const
         pTorrent = pMainFrame->GetSelectedTorrent();
     }
 
-    if( pTorrent == NULL )
+    if( !pTorrent )
     { return _T( "" ); }
 
     libtorrent::torrent_handle h = pTorrent->handle;
@@ -196,14 +196,14 @@ void FileListCtrl::OnMenuPriority( wxCommandEvent& event )
 {
     MainFrame* pMainFrame = ( MainFrame* )wxGetApp().GetTopWindow();
     int priority = event.GetId() - FILELISTCTRL_MENU_PRIORITY0;
-    torrent_t *pTorrent = NULL;
+    shared_ptr<torrent_t> pTorrent;
 
     if( m_pTorrent )
     { pTorrent = m_pTorrent; }
     else
     { pTorrent = pMainFrame->GetSelectedTorrent(); }
 
-    if( pTorrent == NULL )
+    if( !pTorrent )
     { return; }
 
     //XXX get some default priority definition

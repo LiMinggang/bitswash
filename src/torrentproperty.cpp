@@ -30,9 +30,9 @@ BEGIN_EVENT_TABLE(TorrentProperty,wxDialog)
 	//*)
 END_EVENT_TABLE()
 
-TorrentProperty::TorrentProperty(torrent_t* pTorrent, wxWindow* parent,wxWindowID id,const wxPoint& pos,const wxSize& size)
+TorrentProperty::TorrentProperty(shared_ptr<torrent_t>& pTorrent, wxWindow* parent,wxWindowID id,const wxPoint& pos,const wxSize& size)
 {
-	wxASSERT( pTorrent != NULL);
+	wxASSERT( pTorrent );
 
 	m_pMainFrame = (wxFrame*)parent;
 
@@ -137,7 +137,7 @@ void TorrentProperty::OnOK(wxCommandEvent& event)
 {
 	wxLogDebug(_T("OnOk\n"));
 
-	TorrentConfig* pConfig = m_pTorrent->config;
+	shared_ptr<TorrentConfig> pConfig = m_pTorrent->config;
 	Configuration *pMainConfig = wxGetApp().GetConfig();
 
 	pConfig->SetDownloadPath(m_panel_settings->GetDownloadPath());
@@ -183,7 +183,7 @@ void TorrentProperty::OnFocus(wxFocusEvent& event)
 
 void TorrentProperty::OnDownloadAll(wxCommandEvent& event)
 {
-	TorrentConfig* pConfig = m_pTorrent->config;
+	shared_ptr<TorrentConfig> pConfig = m_pTorrent->config;
 	std::vector<int> filespriority(m_pTorrent->info->num_files(), 4);
 	pConfig->SetFilesPriority(filespriority);
 	m_filespane->UpdateSwashList();
@@ -191,7 +191,7 @@ void TorrentProperty::OnDownloadAll(wxCommandEvent& event)
 
 void TorrentProperty::OnDownloadNone(wxCommandEvent& event)
 {
-	TorrentConfig* pConfig = m_pTorrent->config;
+	shared_ptr<TorrentConfig> pConfig = m_pTorrent->config;
 	std::vector<int> filespriority(m_pTorrent->info->num_files(), 0);
 	pConfig->SetFilesPriority(filespriority);
 	m_filespane->UpdateSwashList();

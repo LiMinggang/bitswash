@@ -46,7 +46,7 @@ class TorrentSettingPane : public wxPanel
 		enum {
 			ID_TORRENTSETTING_FILEBUTTON = ID_TORRENTSETTING_START
 		};
-		TorrentSettingPane( wxWindow* parent, torrent_t* pTorrent = NULL, int id = wxID_ANY, wxPoint pos = wxDefaultPosition, wxSize size = wxDefaultSize, int style = wxTAB_TRAVERSAL);
+		TorrentSettingPane( wxWindow* parent, shared_ptr<torrent_t>& pTorrent = shared_ptr<torrent_t>(), int id = wxID_ANY, wxPoint pos = wxDefaultPosition, wxSize size = wxDefaultSize, int style = wxTAB_TRAVERSAL);
 
 		wxString GetDownloadPath();
 		/* libtorrent r1749 */
@@ -61,9 +61,9 @@ class TorrentSettingPane : public wxPanel
 		int GetMaxUpload();
 		int GetRatio();
 
-		void SetTorrentHandle(torrent_t* pTorrent) { m_pTorrent= pTorrent; }
+		void SetTorrentHandle(shared_ptr<torrent_t>& pTorrent) { m_pTorrent= pTorrent; }
 	private:
-		torrent_t* m_pTorrent;
+		shared_ptr<torrent_t> m_pTorrent;
 		void OnFileButton(wxCommandEvent& event);
 		/* torrent settings */
 		wxPanel* m_pane_info1;

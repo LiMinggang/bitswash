@@ -125,10 +125,18 @@ END_EVENT_TABLE()
 MainFrame * g_BitSwashMainFrame = 0;
 
 MainFrame::MainFrame( wxFrame *frame, const wxString& title )
-	: wxFrame( frame, -1, title ), m_swashtrayicon( NULL ),
+	: wxFrame( frame, -1, title ),
+	  m_btsession(0), m_torrentmenu(0), m_languagemenu(0),
+	  m_torrentpane(0), m_torrentinfo(0), m_torrentlistctrl(0),
+	  m_peerlistctrl(0), m_filelistctrl(0), m_summarypane(0),
+	  m_trackerlistctrl(0), m_config(0), m_torrentproperty(0),
+	  m_swashsetting(0), m_swashstatbar(0), m_oldlog(0),
+	  m_swashtrayicon( NULL ),
 	  m_upnp_started( false ),
 	  m_natpmp_started( false ),
 	  m_lsd_started( false ),
+	  m_prevlocale(0),
+	  m_prevselecteditem(0),
 	  m_torrentlistisvalid( false ),
 	  m_closed(false)
 {
@@ -213,6 +221,7 @@ void MainFrame::OnClose( wxCloseEvent& event )
 	m_config->SetAuiPerspective( m_mgr.SavePerspective() );
 	m_config->Save();
 	m_mgr.UnInit();
+	if(m_swashsetting) delete m_swashsetting;
 	Destroy();
 	m_closed = true;
 }
@@ -291,7 +300,7 @@ void MainFrame::OnQuit( wxCommandEvent& event )
 
 void MainFrame::OnMenuTorrentOpenDir( wxCommandEvent& event )
 {
-	torrent_t* pTorrent = GetSelectedTorrent();
+	shared_ptr<torrent_t> pTorrent = GetSelectedTorrent();
 	if( pTorrent == NULL )
 		return;
 	//XXX windows might needs special treatment here!
@@ -537,10 +546,6 @@ void MainFrame::CreateTorrentList()
 			flags );
 }
 
-bool MainFrame::IsTorrentExisting(wxString hash)
-{
-	return (m_torrent_hash_set.find(hash) != m_torrent_hash_set.end());
-}
 
 void MainFrame::ReceiveTorrent(wxString fileorurl)
 {
@@ -560,10 +565,11 @@ void MainFrame::ReceiveTorrent(wxString fileorurl)
 void MainFrame::AddTorrent( wxString filename, bool usedefault )
 {
 	wxLogDebug( _T( "MainFrame: Add Torrent: %s\n" ), filename.c_str() );
-	torrent_t *torrent = m_btsession->ParseTorrent( filename );
+	shared_ptr<torrent_t> torrent = m_btsession->ParseTorrent( filename );
 	if( torrent->isvalid )
 	{
-		if(IsTorrentExisting(torrent->hash) == false)
+		shared_ptr<torrent_t> tmp_torrent = m_btsession->FindTorrent(torrent->hash);
+		if(tmp_torrent)
 		{
 			if( !m_config->GetUseDefault() )
 			{
@@ -590,7 +596,12 @@ void MainFrame::AddTorrent( wxString filename, bool usedefault )
 		}
 		else
 		{
-			wxLogMessage( _T( "Torrent Exists\n" ) );
+			int answer = wxMessageBox("Torrent Exists. Do you want to update trackers from the torrent?", "Confirm", wxYES_NO, this);
+			if (answer == wxYES)
+			{
+				libtorrent::torrent_handle &torrent_handle = tmp_torrent->handle;
+				wxLogMessage( _T( "Torrent Exists\n" ) );
+			}
 		}
 	}
 }
@@ -693,7 +704,7 @@ void MainFrame::OpenTorrentUrl()
 			MagnetUri magnetUri(url);
 			if (magnetUri.isValid())
 			{
-				if (IsTorrentExisting(magnetUri.hash()) == false)
+				if (m_btsession->FindTorrent(magnetUri.hash()) == 0)
 				{
 					wxLogMessage( _T( "MagnerUri to Torrent\n" ) );
 				}
@@ -985,7 +996,7 @@ void MainFrame::OnMenuTorrentProperties( wxCommandEvent& event )
 	{
 		for( i = 0; i < selecteditems.size(); i++ )
 		{
-			torrent_t* torrent = ( m_torrentlistitems[selecteditems[i]] );
+			shared_ptr<torrent_t> torrent = ( m_torrentlistitems[selecteditems[i]] );
 			TorrentProperty torrent_property_dlg( torrent, this, wxID_ANY );
 			if( torrent_property_dlg.ShowModal() == wxID_OK )
 			{
@@ -1036,8 +1047,8 @@ void MainFrame::RemoveTorrent( bool deletedata )
 		/* remove data in ui list, and bt list */
 		for( i = 0; i < selecteditems.size(); i++ )
 		{
-			//torrent_t* torrent = m_torrentlistitems[selecteditems[i] - (offset++)];
-			torrent_t* torrent = m_torrentlistitems[selecteditems[i]] ;
+			//shared_ptr<torrent_t> torrent = m_torrentlistitems[selecteditems[i] - (offset++)];
+			shared_ptr<torrent_t> torrent = m_torrentlistitems[selecteditems[i]] ;
 			m_torrent_hash_set.erase(torrent->hash);
 			m_btsession->RemoveTorrent( torrent, deletedata );
 		}
@@ -1168,7 +1179,7 @@ void MainFrame::OnMenuTorrentRecheck( wxCommandEvent& event )
 		{
 			//m_btsession->ReannounceTorrent((m_torrentlistitems[selecteditems[i]]));
 			//XXX Workaround for libtorrent lack of recheck redo if supported in core
-			torrent_t* torrent = m_torrentlistitems[selecteditems[i]];
+			shared_ptr<torrent_t> torrent = m_torrentlistitems[selecteditems[i]];
 			enum torrent_state prev_state = ( enum torrent_state ) torrent->config->GetTorrentState();
 			if( ( prev_state == TORRENT_STATE_START ) ||
 					( prev_state == TORRENT_STATE_FORCE_START ) ||
@@ -1201,19 +1212,21 @@ void MainFrame::OnMenuTorrentRecheck( wxCommandEvent& event )
 	}
 }
 
-torrent_t* MainFrame::GetSelectedTorrent()
+shared_ptr<torrent_t> MainFrame::GetSelectedTorrent()
 {
+	shared_ptr<torrent_t> torrent;
 	if( !TorrentListIsValid() )
-		return NULL;
+		return torrent;
 	const SwashListCtrl::itemlist_t selecteditems = m_torrentlistctrl->GetSelectedItems();
 	if( selecteditems.size() > 0 )
 		return m_torrentlistitems[selecteditems[0]];
-	return NULL;
+	return torrent;
 }
 
 void MainFrame::ShowPreferences()
 {
-	m_swashsetting = new SwashSetting( this, m_config );
+	if(m_swashsetting == 0)
+		m_swashsetting = new SwashSetting( this, m_config );
 	if( m_swashsetting->ShowModal() == wxID_OK )
 	{
 		//XXX settorrent session

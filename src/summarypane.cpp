@@ -224,7 +224,7 @@ SummaryPane::~SummaryPane()
 void SummaryPane::UpdateSummary()
 {
 	wxLogDebug(_T("UpdateSummary\n"));
-	torrent_t *pTorrent = ((MainFrame*)m_pMainFrame)->GetSelectedTorrent();
+	shared_ptr<torrent_t> pTorrent = ((MainFrame*)m_pMainFrame)->GetSelectedTorrent();
 	wxChar dirsep = wxFileName::GetPathSeparator(wxPATH_NATIVE);
 
 

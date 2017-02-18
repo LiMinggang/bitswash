@@ -55,8 +55,8 @@ public:
                
 		~TrackerListCtrl();
 	
-		void SetStaticHandle(torrent_t* torrent) { m_pTorrent = torrent; }
-		void DeleteStaticHandle() { m_pTorrent = NULL; }
+		void SetStaticHandle(shared_ptr<torrent_t>& torrent) { m_pTorrent = torrent; }
+		void DeleteStaticHandle() { m_pTorrent.reset(); }
 	protected:
 		// TrackerListCtrl variables
 	
@@ -65,7 +65,7 @@ public:
 		void ShowContextMenu(const wxPoint& pos);
 		void OnMenuEdit(wxCommandEvent &event);
 
-		torrent_t* m_pTorrent;
+		shared_ptr<torrent_t> m_pTorrent;
 
     	DECLARE_NO_COPY_CLASS(TrackerListCtrl)
     	DECLARE_EVENT_TABLE()

@@ -25,6 +25,14 @@
 #define _BITTORRENTSESSION_H_
 
 #include <vector>
+#if __cplusplus <= 199711L
+#include <boost/shared_ptr.hpp>
+using boost::shared_ptr;
+#else
+#include <memory>
+using std::shared_ptr;
+#endif
+
 #include <wx/app.h>
 #include <wx/thread.h>
 
@@ -43,12 +51,12 @@ typedef struct torrent_handle_t {
 	wxString hash;
 	libtorrent::torrent_handle handle;
 	boost::intrusive_ptr<libtorrent::torrent_info> info;
-	TorrentConfig *config;
+	shared_ptr<TorrentConfig> config;
 	bool isvalid;
 } torrent_t ;
 
 /* watch out the s after torrent */
-typedef std::vector<torrent_t*> torrents_t;
+typedef std::vector<shared_ptr<torrent_t> > torrents_t;
 typedef std::map<wxString, int> torrents_map;
 
 class BitTorrentSession : public wxThread
@@ -71,24 +79,25 @@ class BitTorrentSession : public wxThread
 		void StartNatpmp();
 		void StartLsd();
 		
-		void AddTorrentSession(torrent_t* torrent);
-		bool AddTorrent(torrent_t* torrent);
-		void RemoveTorrent(torrent_t* torrent, bool deletedata);
+		void AddTorrentSession(shared_ptr<torrent_t>& torrent);
+		bool AddTorrent(shared_ptr<torrent_t>& torrent);
+		void RemoveTorrent(shared_ptr<torrent_t>& torrent, bool deletedata);
+		shared_ptr<torrent_t> FindTorrent(const wxString &hash) const;
 
-		torrent_t* ParseTorrent(wxString filename);
+		shared_ptr<torrent_t> ParseTorrent(const wxString& filename);
 
 		void GetTorrentQueue(torrents_t & queue_copy);
 
-		void StartTorrent(torrent_t* torrent, bool force);
-		void StopTorrent(torrent_t* torrent);
-		void QueueTorrent(torrent_t* torrent);
-		void PauseTorrent(torrent_t* torrent);
-		void MoveTorrentUp(torrent_t* torrent);
-		void MoveTorrentDown(torrent_t* torrent);
-		void ReannounceTorrent(torrent_t* torrent);
-		void ConfigureTorrent(torrent_t* torrent);
-		void ConfigureTorrentFilesPriority(torrent_t* torrent);
-		void ConfigureTorrentTrackers(torrent_t* torrent);
+		void StartTorrent(shared_ptr<torrent_t>& torrent, bool force);
+		void StopTorrent(shared_ptr<torrent_t>& torrent);
+		void QueueTorrent(shared_ptr<torrent_t>& torrent);
+		void PauseTorrent(shared_ptr<torrent_t>& torrent);
+		void MoveTorrentUp(shared_ptr<torrent_t>& torrent);
+		void MoveTorrentDown(shared_ptr<torrent_t>& torrent);
+		void ReannounceTorrent(shared_ptr<torrent_t>& torrent);
+		void ConfigureTorrent(shared_ptr<torrent_t>& torrent);
+		void ConfigureTorrentFilesPriority(shared_ptr<torrent_t>& torrent);
+		void ConfigureTorrentTrackers(shared_ptr<torrent_t>& torrent);
 	
 		libtorrent::session* GetLibTorrent() { return m_libbtsession;}
 
@@ -96,10 +105,10 @@ class BitTorrentSession : public wxThread
 
 	private:
 
-		void ScanTorrentsDirectory(wxString dirname);
-		int find_torrent_from_hash(wxString hash);
+		void ScanTorrentsDirectory(const wxString& dirname);
+		int find_torrent_from_hash(const wxString&  hash) const;
 
-		void SaveTorrentResumeData(torrent_t* torrent);
+		void SaveTorrentResumeData(shared_ptr<torrent_t>& torrent);
 		void SaveAllTorrent();
 
 		void DumpTorrents();

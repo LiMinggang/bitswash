@@ -54,8 +54,8 @@ public:
            
 	~FileListCtrl();
 
-	void SetStaticHandle(torrent_t* torrent) { m_pTorrent = torrent; }
-	void DeleteStaticHandle() { m_pTorrent = NULL; }
+	void SetStaticHandle(shared_ptr<torrent_t>& torrent) { m_pTorrent = torrent; }
+	void DeleteStaticHandle() { m_pTorrent.reset(); }
 protected:
 	// FileListCtrl variables
 
@@ -64,7 +64,7 @@ private:
 	void ShowContextMenu(const wxPoint& pos);
 	void OnMenuPriority(wxCommandEvent &event);
 
-	torrent_t* m_pTorrent;
+	shared_ptr<torrent_t> m_pTorrent;
 
 	DECLARE_NO_COPY_CLASS(FileListCtrl)
 	DECLARE_EVENT_TABLE()

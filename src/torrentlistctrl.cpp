@@ -103,7 +103,7 @@ wxString TorrentListCtrl::GetItemValue(long item, long columnid) const
 	TorrentListCtrl* pThis = const_cast<TorrentListCtrl*>(this);
 
 	MainFrame* pMainFrame = (MainFrame*)(wxGetApp().GetTopWindow());
-	const std::vector<torrent_t*> *torrentlistitems = pMainFrame->GetTorrentList();
+	const std::vector<shared_ptr<torrent_t> > *torrentlistitems = pMainFrame->GetTorrentList();
 
 	if (torrentlistitems == NULL)
 	{
@@ -112,12 +112,12 @@ wxString TorrentListCtrl::GetItemValue(long item, long columnid) const
 	}
 
 	//wxLogDebug(_T("TorrentListCtrl::Showing %d items column %d\n"), torrentlistitems->size(), columnid);
-	torrent_t &torrent= *(torrentlistitems->at(item));
-	stats_t& torrentstats = torrent.config->GetTorrentStats();
+	shared_ptr<torrent_t> torrent= torrentlistitems->at(item);
+	stats_t& torrentstats = torrent->config->GetTorrentStats();
 
-	libtorrent::torrent_handle &torrenthandle = torrent.handle;
+	libtorrent::torrent_handle &torrenthandle = torrent->handle;
 
-	libtorrent::torrent_info const& torrentinfo = *torrent.info;
+	libtorrent::torrent_info const& torrentinfo = *(torrent->info);
 
 	libtorrent::torrent_status torrentstatus;
 
@@ -148,25 +148,25 @@ wxString TorrentListCtrl::GetItemValue(long item, long columnid) const
  	switch(columnid) 
 	{
 		case TORRENTLIST_COLUMN_INDEX:
-			ret = wxString::Format(_T("%d"), torrent.config->GetQIndex());
+			ret = wxString::Format(_T("%d"),torrent->config->GetQIndex());
 			break;
 		case TORRENTLIST_COLUMN_TORRENT:
 			ret = wxString(wxConvUTF8.cMB2WC(torrentinfo.name().c_str()));
 			break;
 		case TORRENTLIST_COLUMN_STATUS:
 			
-			if (torrent.config->GetTorrentState() == TORRENT_STATE_QUEUE)
+			if (torrent->config->GetTorrentState() == TORRENT_STATE_QUEUE)
 			{
 				ret = _("Queueing");
 			} 
-			else if ( (torrent.config->GetTorrentState() == TORRENT_STATE_STOP) ||
+			else if ( (torrent->config->GetTorrentState() == TORRENT_STATE_STOP) ||
 					(torrentstoped) )
 			{
 				ret = _("Stopped");
 			}
 			else
 			{
-				if((torrent.config->GetTorrentState() == TORRENT_STATE_PAUSE ) || 
+				if((torrent->config->GetTorrentState() == TORRENT_STATE_PAUSE ) || 
 								(torrentstatus.paused))
 				{
 					ret = _("Paused");

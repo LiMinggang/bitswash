@@ -36,7 +36,7 @@ BEGIN_EVENT_TABLE(TorrentSettingPane, wxPanel)
 	EVT_BUTTON(10000, TorrentSettingPane::OnFileButton)
 END_EVENT_TABLE()
 
-TorrentSettingPane::TorrentSettingPane( wxWindow* parent, torrent_t* pTorrent, int id, wxPoint pos, wxSize size, int style) : 
+TorrentSettingPane::TorrentSettingPane( wxWindow* parent, shared_ptr<torrent_t>& pTorrent, int id, wxPoint pos, wxSize size, int style) : 
 		wxPanel(parent, id, pos, size, style)
 {
 

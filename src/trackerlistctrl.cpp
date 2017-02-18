@@ -84,7 +84,7 @@ wxString TrackerListCtrl::GetItemValue(long item, long columnid) const
 	wxString ret;
 
 	wxLogDebug(_T("TrackerListCtrl column %ld of item %ld\n"), columnid, item);
-	torrent_t* pTorrent;
+	shared_ptr<torrent_t> pTorrent;
 	
 	if (m_pTorrent)
 	{
@@ -154,7 +154,7 @@ void TrackerListCtrl::OnMenuEdit(wxCommandEvent& event)
 	//int cmd = event.GetId() - TRACKERLISTCTRL_MENU_ADD;
 	int cmd = event.GetId(); 
 	bool refreshtrk = false;
-	torrent_t *pTorrent= NULL;
+	shared_ptr<torrent_t> pTorrent;
 
 	if (m_pTorrent)
 		pTorrent = m_pTorrent;

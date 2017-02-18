@@ -4,6 +4,9 @@ Fix: Crash on timer
 Fix: Lots of GUI issue in configuration dialog
 Fix: Adjust flag image to 16*11
 Fix: No mutex for multithreading
+Fix: Class members were not initialized
+Fix: Memory leak in ShowPreferences
+Fix: Use shared_ptr to replace torrent_t* to fix a lot of memory leak
 New: 64bits build
 New: Run at Windows startup
 New: Crash handler
