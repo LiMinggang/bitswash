@@ -68,7 +68,7 @@ static SwashColumnItem torrentlistcols[] =
 static SwashColumnItem torrentlistcols[] = 
 {
 	{  TORRENTLIST_COLUMN_INDEX,  _("Index"),  _("Index"), _("Queue Index"),  0,  false},
-	{  TORRENTLIST_COLUMN_ORRENT,  _("Torrent"),  _("Torrent"), _("Torrent name"),  256,  true },
+	{  TORRENTLIST_COLUMN_TORRENT,  _("Torrent"),  _("Torrent"), _("Torrent name"),  256,  true },
 	{  TORRENTLIST_COLUMN_STATUS,  _("Status"),  _("Status"), _("Torrent status"),  60,  true }, 
 	{  TORRENTLIST_COLUMN_SIZE,  _("Size"),  _("Size"), _("Torrent size"),  80,  true },
 	{  TORRENTLIST_COLUMN_PROGRESS,  _("Progress"),  _("Progress"), _("Progress"),  68,  true },
@@ -78,7 +78,7 @@ static SwashColumnItem torrentlistcols[] =
 	{  TORRENTLIST_COLUMN_DOWNLOADED,  _("Downloaded"),  _("Downloaded"), _("Total bytes downloaded"),  92,  true },
 	{  TORRENTLIST_COLUMN_UPLOADED,  _("Uploaded"),  _("Uploaded"), _("Total bytes uploaded"),  92,  true },
 	{  TORRENTLIST_COLUMN_COPIES,  _("Copies"),  _("Copies"), _("Number of copies in swarm"),  54,  true },
-	{  TORRENTLIST_COLUMN_IMELEFT,  _("Time Left"),  _("Time Left"), _("Estimated time left to finish"),  70,  true },
+	{  TORRENTLIST_COLUMN_TIMELEFT,  _("Time Left"),  _("Time Left"), _("Estimated time left to finish"),  70,  true },
 	{  TORRENTLIST_COLUMN_RATIO,  _("Share Ratio"),  _("Share Ratio"), _("Upload/Download ratio"),  82,  true },
 };
 #endif

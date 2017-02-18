@@ -704,9 +704,13 @@ void MainFrame::OpenTorrentUrl()
 			MagnetUri magnetUri(url);
 			if (magnetUri.isValid())
 			{
-				if (m_btsession->FindTorrent(magnetUri.hash()) == 0)
+				shared_ptr<torrent_t> torrent = m_btsession->FindTorrent(magnetUri.hash());
+				if (!torrent)
 				{
 					wxLogMessage( _T( "MagnerUri to Torrent\n" ) );
+				}
+				else
+				{
 				}
 			}
 			else
@@ -808,6 +812,7 @@ void MainFrame::UpdateUI()
 	UpdateStatusBar();
 	if( m_config->GetUseSystray() )
 		UpdateTrayInfo();
+	Refresh(false);
 }
 
 void MainFrame::UpdateSelectedTorrent()
