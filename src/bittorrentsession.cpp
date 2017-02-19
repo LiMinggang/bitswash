@@ -37,6 +37,7 @@
 #include <libtorrent/session_settings.hpp>
 #include <libtorrent/identify_client.hpp>
 #include <libtorrent/alert_types.hpp>
+#include <libtorrent/create_torrent.hpp>
 //plugins
 #include <libtorrent/extensions/metadata_transfer.hpp>
 #include <libtorrent/extensions/ut_pex.hpp>
@@ -669,6 +670,20 @@ void BitTorrentSession::MergeTorrent(shared_ptr<torrent_t>& dst_torrent, shared_
 	}
 }
 
+void BitTorrentSession::MergeTorrent(shared_ptr<torrent_t>& dst_torrent, MagnetUri& src_magneturi)
+{
+	libtorrent::torrent_handle &torrent_handle = dst_torrent->handle;
+	std::vector<std::string> const& trackers = src_magneturi.trackers();
+	for(size_t i = 0; i < trackers.size(); ++i)
+	{
+		torrent_handle.add_tracker(libtorrent::announce_entry(trackers.at(i)));
+	}
+	std::vector<std::string> const& url_seeds = src_magneturi.urlSeeds();
+	for (std::vector<std::string>::const_iterator i = url_seeds.begin(); i != url_seeds.end(); ++i)
+	{
+		torrent_handle.add_url_seed(*i);
+	}
+}
 void BitTorrentSession::ScanTorrentsDirectory( const wxString& dirname )
 {
     wxASSERT( m_libbtsession != NULL );
@@ -966,6 +981,24 @@ shared_ptr<torrent_t> BitTorrentSession::LoadMagnetUri( MagnetUri& magneturi )
 	return torrent;
 }
 
+bool BitTorrentSession::SaveTorrent(shared_ptr<torrent_t>& torrent, const wxString& filename)
+{
+	libtorrent::create_torrent ct_torrent(*(torrent->info));
+
+	try
+	{
+		std::ofstream out( ( const char* )filename.mb_str( wxConvFile ), std::ios_base::binary );
+		out.unsetf( std::ios_base::skipws );
+		bencode( std::ostream_iterator<char>( out ), ct_torrent.generate() );
+	}
+	catch( std::exception &e )
+	{
+		wxLogError( wxString::FromAscii( e.what() ) + _T( "\n" ) );
+		return false;
+	}
+
+	return true;
+}
 
 void BitTorrentSession::GetTorrentQueue(torrents_t & queue_copy)
 {

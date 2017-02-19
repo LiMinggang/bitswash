@@ -86,10 +86,12 @@ class BitTorrentSession : public wxThread
 		void RemoveTorrent(shared_ptr<torrent_t>& torrent, bool deletedata);
 		shared_ptr<torrent_t> FindTorrent(const wxString &hash) const;
 		void MergeTorrent(shared_ptr<torrent_t>& dst_torrent, shared_ptr<torrent_t>& src_torrent);
+		void MergeTorrent(shared_ptr<torrent_t>& dst_torrent, MagnetUri& src_magneturi);
 
 		shared_ptr<torrent_t> ParseTorrent(const wxString& filename);
 		shared_ptr<torrent_t> LoadMagnetUri( MagnetUri& magneturi );
-
+		bool SaveTorrent(shared_ptr<torrent_t>& torrent, const wxString& filename);
+		
 		void GetTorrentQueue(torrents_t & queue_copy);
 
 		void StartTorrent(shared_ptr<torrent_t>& torrent, bool force);

@@ -326,6 +326,11 @@ class Configuration : public wxFileConfig
 			}
 			m_savepathhistory.push_back(path);
 		}
+#ifdef __WXMSW__
+		bool DetectType(const wxString& type);
+		void AddType(const wxString& type);
+		void RemoveType(const wxString& type);
+#endif
     protected:
 		void ReadSavePath();
 		void WriteSavePath();
@@ -366,6 +371,7 @@ class Configuration : public wxFileConfig
 #ifdef __WXMSW__
         bool        m_run_at_startup;
         static wxString m_startup_regkey;
+		static wxString m_bitswash_regkey_path;
 #endif
 
 		wxString m_language;

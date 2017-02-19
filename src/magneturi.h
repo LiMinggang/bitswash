@@ -46,8 +46,8 @@ public:
     bool isValid() const;
     InfoHash hash() const;
     wxString name() const;
-	const std::list<TrackerEntry>& trackers() const;
-	const std::list<wxURL>& urlSeeds() const;
+	const std::vector<std::string>& trackers() const;
+	const std::vector<std::string>& urlSeeds() const;
     wxString url() const;
 
     libtorrent::add_torrent_params addTorrentParams() const;
@@ -57,8 +57,6 @@ private:
     wxString m_url;
     InfoHash m_hash;
     wxString m_name;
-	std::list<TrackerEntry> m_trackers;
-	std::list<wxURL> m_urlSeeds;
     libtorrent::add_torrent_params m_addTorrentParams;
 };
 

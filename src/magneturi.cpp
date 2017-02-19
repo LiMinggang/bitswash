@@ -88,16 +88,6 @@ MagnetUri::MagnetUri(const wxString &source)
     m_valid = true;
     m_hash = m_addTorrentParams.info_hash;
     m_name = wxString(m_addTorrentParams.name);
-
-	size_t i = 0;
-	for(i = 0; i < m_addTorrentParams.trackers.size(); ++i )
-	{
-		m_trackers.push_back(wxString(m_addTorrentParams.trackers[i]));
-	}
-	for(i = 0; i < m_addTorrentParams.url_seeds.size(); ++i )
-	{
-		m_urlSeeds.push_back(wxURL(m_addTorrentParams.url_seeds[i]));
-	}
 }
 
 bool MagnetUri::isValid() const
@@ -115,14 +105,14 @@ wxString MagnetUri::name() const
     return m_name;
 }
 
-const std::list<TrackerEntry> & MagnetUri::trackers() const
+const std::vector<std::string> & MagnetUri::trackers() const
 {
-    return m_trackers;
+	return m_addTorrentParams.trackers;
 }
 
-const std::list<wxURL> & MagnetUri::urlSeeds() const
+const std::vector<std::string> & MagnetUri::urlSeeds() const
 {
-    return m_urlSeeds;
+    return m_addTorrentParams.url_seeds;
 }
 
 wxString MagnetUri::url() const

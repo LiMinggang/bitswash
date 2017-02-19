@@ -705,10 +705,25 @@ void MainFrame::OpenTorrentUrl()
 				shared_ptr<torrent_t> torrent = m_btsession->FindTorrent(magnetUri.hash());
 				if (!torrent)
 				{
-					wxLogMessage( _T( "MagnerUri to Torrent\n" ) );
+					torrent = m_btsession->LoadMagnetUri( magnetUri );
+					
+					if(torrent && torrent->isvalid)
+					{
+						wxString torrent_backup = wxGetApp().SaveTorrentsPath() + wxGetApp().PathSeparator() + torrent->hash + _T( ".torrent" );
+						m_btsession->SaveTorrent(torrent, torrent_backup);
+					}
+					else
+					{
+						wxLogMessage( _T( "Load Magnet URI error\n" ) );
+					}
 				}
 				else
 				{
+					int answer = wxMessageBox("Torrent Exists. Do you want to update trackers/seeds from the torrent?", "Confirm", wxYES_NO, this);
+					if (answer == wxYES)
+					{
+						m_btsession->MergeTorrent(torrent, magnetUri);
+					}
 				}
 			}
 			else

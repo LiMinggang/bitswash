@@ -34,6 +34,7 @@
 
 #ifdef __WXMSW__
 	wxString Configuration::m_startup_regkey = wxT( "HKEY_CURRENT_USER\\SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Run" );
+	wxString Configuration::m_bitswash_regkey_path = wxT( "HKEY_CURRENT_USER\\Software\\Classes\\" );
 #endif
 
 Configuration::Configuration( const wxString& AppName )
@@ -379,3 +380,139 @@ void Configuration::WriteSavePath()
 		}
 	}
 }
+
+#ifdef __WXMSW__
+bool Configuration::DetectType(const wxString& type)
+{
+	wxLogNull nolog; // disable error log
+	wxString value;
+	wxRegKey *pRegKey = new wxRegKey( m_bitswash_regkey_path + type );
+
+	if( pRegKey->Exists() ) { pRegKey->QueryValue( wxEmptyString, value ); }
+
+	delete pRegKey;
+
+	if( !value.IsEmpty() )
+	{
+		pRegKey = new wxRegKey( m_bitswash_regkey_path
+								+ value
+								+ wxString( wxT( "\\shell\\open\\command" ) ) );
+		value.Empty();
+
+		if( pRegKey->Exists() ) { pRegKey->QueryValue( wxEmptyString, value ); }
+
+		delete pRegKey;
+		wxString exepath = GetExecutablePath();
+
+		if( value.Upper().Find( exepath.Upper() ) >= 0 )
+		{
+			return true;
+		}
+	}
+
+	return false;
+}
+
+void Configuration::AddType( const wxString& type )
+{
+	wxString value;
+	wxString bitswash_type = wxString( APPNAME ) + type;
+	wxRegKey *pRegKey = new wxRegKey( m_bitswash_regkey_path + type );
+
+	if( !pRegKey->Exists() ) { pRegKey->Create(); }
+	else { pRegKey->QueryValue( wxEmptyString, value ); }
+
+	if( value != bitswash_type )
+	{
+		if( !value.IsEmpty() ) //save old default value
+		{
+			pRegKey->SetValue( wxT( "Old_Default" ), value );
+			//if(type == wxT(".txt"))
+			//{
+			//    wxRegKey *pRegKey1 = new wxRegKey(wxString(wxT("HKEY_CLASSES_ROOT\\")) + type);
+			//    pRegKey->QueryValue(wxEmptyString, txt_name);
+			//    delete pRegKey1;
+			//}
+		}
+
+		value = bitswash_type;
+		pRegKey->SetValue( wxEmptyString, value );
+	}
+
+	delete pRegKey;
+	wxString name( m_bitswash_regkey_path );
+	name += value;
+
+	if( type == wxT( ".torrent" ) )
+	{
+		wxString txt_name;
+		pRegKey = new wxRegKey( wxString( m_bitswash_regkey_path + wxT( "torrent" ) ) );
+
+		if( pRegKey->Exists() ) { pRegKey->QueryValue( wxEmptyString, txt_name ); }
+
+		delete pRegKey;
+
+		if( txt_name.IsEmpty() ) { txt_name = wxT( "Bittorrent file" ); }
+
+		pRegKey = new wxRegKey( name );
+		pRegKey->Create();
+		pRegKey->SetValue( wxEmptyString, txt_name );
+		delete pRegKey;
+	}
+
+	name += wxT( "\\shell\\open\\command" );
+	pRegKey = new wxRegKey( name );
+	pRegKey->Create();
+	wxString exepath = GetExecutablePath();
+	pRegKey->SetValue( wxEmptyString, wxString( wxT( '"' ) ) + exepath + wxString( wxT( "\" \"%1\"" ) ) );
+	delete pRegKey;
+	name = m_bitswash_regkey_path;
+	name += value;
+	name += wxT( "\\DefaultIcon" );
+	pRegKey = new wxRegKey( name );
+	pRegKey->Create();
+	pRegKey->SetValue( wxEmptyString, exepath + wxString( wxT( ",1" ) ) );
+	delete pRegKey;
+}
+
+void Configuration::RemoveType( const wxString& type )
+{
+	if( type.IsEmpty() ) { return; }
+
+	wxString value, old_default;
+	wxString bitswash_type = wxString( APPNAME ) + type;
+	wxRegKey *pRegKey = new wxRegKey( m_bitswash_regkey_path + type );
+
+	if( pRegKey->Exists() )
+	{
+		pRegKey->QueryValue( wxT( "Old_Default" ), old_default );
+		pRegKey->QueryValue( wxEmptyString, value );
+	}
+
+	if( !old_default.IsEmpty() )
+	{
+		pRegKey->DeleteValue( wxT( "Old_Default" ) );
+		pRegKey->SetValue( wxEmptyString, old_default );
+	}
+	else
+		if( !value.IsEmpty() )
+		{
+			if( value == bitswash_type )
+			{
+				pRegKey->DeleteSelf();
+			}
+		}
+
+	delete pRegKey;
+
+	if( value == bitswash_type )
+	{
+		pRegKey = new wxRegKey( m_bitswash_regkey_path + value );
+
+		if( pRegKey->Exists() ) { pRegKey->DeleteSelf(); }
+
+		delete pRegKey;
+	}
+}
+#endif
+
