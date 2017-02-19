@@ -569,7 +569,7 @@ void MainFrame::AddTorrent( wxString filename, bool usedefault )
 	if( torrent->isvalid )
 	{
 		shared_ptr<torrent_t> tmp_torrent = m_btsession->FindTorrent(torrent->hash);
-		if(tmp_torrent)
+		if(!tmp_torrent)
 		{
 			if( !m_config->GetUseDefault() )
 			{
@@ -583,7 +583,6 @@ void MainFrame::AddTorrent( wxString filename, bool usedefault )
 
 			if( m_btsession->AddTorrent( torrent ) )
 			{
-				m_torrent_hash_set.insert(torrent->hash);
 				wxString torrent_backup = wxGetApp().SaveTorrentsPath() + wxGetApp().PathSeparator() + torrent->hash + _T( ".torrent" );
 				/* save a copy of torrent file */
 				if( !wxCopyFile( filename, torrent_backup, true ) )
@@ -596,11 +595,10 @@ void MainFrame::AddTorrent( wxString filename, bool usedefault )
 		}
 		else
 		{
-			int answer = wxMessageBox("Torrent Exists. Do you want to update trackers from the torrent?", "Confirm", wxYES_NO, this);
+			int answer = wxMessageBox("Torrent Exists. Do you want to update trackers/seeds from the torrent?", "Confirm", wxYES_NO, this);
 			if (answer == wxYES)
 			{
-				libtorrent::torrent_handle &torrent_handle = tmp_torrent->handle;
-				wxLogMessage( _T( "Torrent Exists\n" ) );
+				m_btsession->MergeTorrent(tmp_torrent, torrent);
 			}
 		}
 	}
@@ -1054,7 +1052,6 @@ void MainFrame::RemoveTorrent( bool deletedata )
 		{
 			//shared_ptr<torrent_t> torrent = m_torrentlistitems[selecteditems[i] - (offset++)];
 			shared_ptr<torrent_t> torrent = m_torrentlistitems[selecteditems[i]] ;
-			m_torrent_hash_set.erase(torrent->hash);
 			m_btsession->RemoveTorrent( torrent, deletedata );
 		}
 		/* mark for list refresh */

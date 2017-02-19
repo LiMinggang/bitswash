@@ -225,7 +225,6 @@ private:
 
 	int m_lastqindex;
 	wxMutex m_listlock;
-	std::set<wxString> m_torrent_hash_set;
 
 	SwashTrayIcon* m_swashtrayicon;
 	wxIcon m_trayicon;

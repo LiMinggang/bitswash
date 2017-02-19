@@ -41,6 +41,8 @@ using std::shared_ptr;
 #include "configuration.h"
 #include "torrentconfig.h"
 
+class MagnetUri;
+
 typedef struct torrent_handle_t {
 
 	torrent_handle_t() :
@@ -83,8 +85,10 @@ class BitTorrentSession : public wxThread
 		bool AddTorrent(shared_ptr<torrent_t>& torrent);
 		void RemoveTorrent(shared_ptr<torrent_t>& torrent, bool deletedata);
 		shared_ptr<torrent_t> FindTorrent(const wxString &hash) const;
+		void MergeTorrent(shared_ptr<torrent_t>& dst_torrent, shared_ptr<torrent_t>& src_torrent);
 
 		shared_ptr<torrent_t> ParseTorrent(const wxString& filename);
+		shared_ptr<torrent_t> LoadMagnetUri( MagnetUri& magneturi );
 
 		void GetTorrentQueue(torrents_t & queue_copy);
 

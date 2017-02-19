@@ -42,6 +42,7 @@
 #include <libtorrent/extensions/ut_pex.hpp>
 
 #include "functions.h"
+#include "magneturi.h"
 #include "bitswash.h"
 #include "bittorrentsession.h"
 
@@ -650,6 +651,24 @@ shared_ptr<torrent_t> BitTorrentSession::FindTorrent(const wxString &hash) const
 	return torrent;
 }
 
+void BitTorrentSession::MergeTorrent(shared_ptr<torrent_t>& dst_torrent, shared_ptr<torrent_t>& src_torrent)
+{
+	libtorrent::torrent_handle &torrent_handle = dst_torrent->handle;
+	std::vector<libtorrent::announce_entry> const& trackers = src_torrent->info->trackers();
+	for(size_t i = 0; i < trackers.size(); ++i)
+	{
+		torrent_handle.add_tracker(trackers.at(i));
+	}
+	std::vector<libtorrent::web_seed_entry> const& web_seeds = src_torrent->info->web_seeds();
+	for (std::vector<libtorrent::web_seed_entry>::const_iterator i = web_seeds.begin(); i != web_seeds.end(); ++i)
+	{
+		if (i->type == libtorrent::web_seed_entry::url_seed)
+			torrent_handle.add_url_seed(i->url);
+		else if (i->type == libtorrent::web_seed_entry::http_seed)
+			torrent_handle.add_http_seed(i->url);
+	}
+}
+
 void BitTorrentSession::ScanTorrentsDirectory( const wxString& dirname )
 {
     wxASSERT( m_libbtsession != NULL );
@@ -868,6 +887,85 @@ shared_ptr<torrent_t> BitTorrentSession::ParseTorrent( const wxString& filename 
 
     return torrent;
 }
+
+shared_ptr<torrent_t> BitTorrentSession::LoadMagnetUri( MagnetUri& magneturi )
+{
+	shared_ptr<torrent_t> torrent( new torrent_t());
+
+	try
+	{
+		libtorrent::add_torrent_params& p = magneturi.addTorrentParams();
+		libtorrent::error_code ec;
+
+		// Limits
+		//p.max_connections = maxConnectionsPerTorrent();
+		//p.max_uploads = maxUploadsPerTorrent();
+		shared_ptr<torrent_t> torrent( new torrent_t());
+		
+        boost::intrusive_ptr<libtorrent::torrent_info> t = new torrent_info( sha1_hash(magneturi.hash()) );
+        torrent->info = t;
+		torrent->name = wxString( wxConvUTF8.cMB2WC( t->name().c_str() ) );
+        torrent->hash = magneturi.hash();
+        torrent->config.reset( new TorrentConfig( torrent->hash ));
+
+		p.save_path = ( const char* )torrent->config->GetDownloadPath().mb_str( wxConvUTF8 );
+		// Flags
+        if( torrent->config->GetTorrentCompactAlloc() )
+        {
+            wxLogInfo( _T( "%s: Compact allocation mode\n" ), torrent->name.c_str() );
+            p.storage_mode = libtorrent::storage_mode_compact;
+        }
+        else
+        {
+            wxString strStorageMode;
+            enum libtorrent::storage_mode_t eStorageMode = torrent->config->GetTorrentStorageMode();
+
+            switch( eStorageMode )
+            {
+            case libtorrent::storage_mode_allocate:
+                strStorageMode = _( "Full" );
+                break;
+
+            case libtorrent::storage_mode_sparse:
+                strStorageMode = _( "Sparse" );
+                break;
+
+            case libtorrent::storage_mode_compact:
+                strStorageMode = _( "Compact" );
+                break;
+
+            default:
+                eStorageMode = libtorrent::storage_mode_sparse;
+                strStorageMode = _( "Sparse" );
+                break;
+            }
+
+            p.storage_mode = eStorageMode;
+            wxLogInfo( _T( "%s: %s allocation mode\n" ), torrent->name.c_str(), strStorageMode.c_str() );
+        }
+
+        p.duplicate_is_error = true;
+        p.auto_managed = true;
+
+		// Forced start
+		p.flags &= ~libtorrent::add_torrent_params::flag_paused;
+		p.flags &= ~libtorrent::add_torrent_params::flag_auto_managed;
+		// Solution to avoid accidental file writes
+		p.flags |= libtorrent::add_torrent_params::flag_upload_mode;
+		
+		// Adding torrent to BitTorrent session
+		torrent->handle = m_libbtsession->add_torrent(p, ec);
+        torrent->handle.resolve_countries( true );
+		if (!ec) torrent->isvalid = true;
+	}
+	catch( std::exception &e )
+	{
+		wxLogError( wxString::FromAscii( e.what() ) + _T( "\n" ) );
+	}
+
+	return torrent;
+}
+
 
 void BitTorrentSession::GetTorrentQueue(torrents_t & queue_copy)
 {
