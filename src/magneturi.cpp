@@ -28,6 +28,8 @@
 #include <algorithm>
 #include <wx/wx.h>
 #include <wx/regex.h>
+#include <wx/base64.h> 
+#include <wx/tokenzr.h>
 
 #include <libtorrent/bencode.hpp>
 #include <libtorrent/error_code.hpp>
@@ -35,26 +37,39 @@
 
 #include "magneturi.h"
 
-#if 0
+
 namespace
 {
-    wxString bcLinkToMagnet(wxString& bcLink)
+    wxString bcLinkToMagnet(const wxString& bcLink)
     {
         wxString rawBc(bcLink.ToUTF8());
         rawBc = rawBc.Mid(8); // skip bc://bt/
-        rawBc = QByteArray::fromBase64(rawBc); // Decode base64
+        
+		wxMemoryBuffer decoded = wxBase64Decode(rawBc);
+		rawBc.assign((char *)(decoded.GetData()), decoded.GetDataLen());
         // Format is now AA/url_encoded_filename/size_bytes/info_hash/ZZ
-        QStringList parts = wxString(rawBc).split("/");
-        if (parts.size() != 5) return wxString();
+        wxStringTokenizer tkz( rawBc, '/' );
+        if (tkz.CountTokens() != 5) return wxString();
 
-        wxString filename = parts.at(1);
-        wxString hash = parts.at(3);
+		int i = 0;
+        wxString token, filename, hash;
+		while( tkz.HasMoreTokens() )
+		{
+			token = tkz.GetNextToken();
+			if(i == 1) filename = token;
+			if(i == 3)
+			{
+				hash = token;
+				break;
+			}
+			++i;
+		}
+
         wxString magnet = "magnet:?xt=urn:btih:" + hash;
         magnet += "&dn=" + filename;
         return magnet;
     }
 }
-#endif
 
 namespace libt = libtorrent;
 
@@ -68,9 +83,7 @@ MagnetUri::MagnetUri(const wxString &source)
 	size_t len = source.size();
 	wxString tmp = source.Lower();
     if (tmp.StartsWith(_T("bc://bt/"))) {
-        wxLogDebug(_T("Creating magnet link from bc link not supported"));
-		return;
-        //m_url = bcLinkToMagnet(source);
+        m_url = bcLinkToMagnet(source);
     }
 	else if (((len == 60) || (len == 52)) && tmp.StartsWith(_T("magnet:?xt=urn:btih:")))
 	{
