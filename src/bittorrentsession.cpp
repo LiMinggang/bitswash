@@ -925,7 +925,7 @@ shared_ptr<torrent_t> BitTorrentSession::LoadMagnetUri( MagnetUri& magneturi )
 
 		p.save_path = ( const char* )torrent->config->GetDownloadPath().mb_str( wxConvUTF8 );
 		// Flags
-        if( torrent->config->GetTorrentCompactAlloc() )
+/*        if( torrent->config->GetTorrentCompactAlloc() )
         {
             wxLogInfo( _T( "%s: Compact allocation mode\n" ), torrent->name.c_str() );
             p.storage_mode = libtorrent::storage_mode_compact;
@@ -958,7 +958,7 @@ shared_ptr<torrent_t> BitTorrentSession::LoadMagnetUri( MagnetUri& magneturi )
             p.storage_mode = eStorageMode;
             wxLogInfo( _T( "%s: %s allocation mode\n" ), torrent->name.c_str(), strStorageMode.c_str() );
         }
-
+*/
         p.duplicate_is_error = true;
         p.auto_managed = true;
 
@@ -969,9 +969,11 @@ shared_ptr<torrent_t> BitTorrentSession::LoadMagnetUri( MagnetUri& magneturi )
 		p.flags |= libtorrent::add_torrent_params::flag_upload_mode;
 		
 		// Adding torrent to BitTorrent session
-		torrent->handle = m_libbtsession->add_torrent(p, ec);
+		//torrent->handle = m_libbtsession->add_torrent(p, ec);
+		torrent->config->SetTorrentState(TORRENT_STATE_START);
         torrent->handle.resolve_countries( true );
-		if (!ec) torrent->isvalid = true;
+		AddTorrent( torrent );
+		torrent->isvalid = true;
 	}
 	catch( std::exception &e )
 	{
