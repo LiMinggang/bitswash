@@ -915,50 +915,14 @@ shared_ptr<torrent_t> BitTorrentSession::LoadMagnetUri( MagnetUri& magneturi )
 		// Limits
 		//p.max_connections = maxConnectionsPerTorrent();
 		//p.max_uploads = maxUploadsPerTorrent();
-		shared_ptr<torrent_t> torrent( new torrent_t());
 		
         boost::intrusive_ptr<libtorrent::torrent_info> t = new torrent_info( sha1_hash(magneturi.hash()) );
         torrent->info = t;
-		torrent->name = wxString( wxConvUTF8.cMB2WC( t->name().c_str() ) );
+		torrent->name = magneturi.name();
         torrent->hash = magneturi.hash();
         torrent->config.reset( new TorrentConfig( torrent->hash ));
 
 		p.save_path = ( const char* )torrent->config->GetDownloadPath().mb_str( wxConvUTF8 );
-		// Flags
-/*        if( torrent->config->GetTorrentCompactAlloc() )
-        {
-            wxLogInfo( _T( "%s: Compact allocation mode\n" ), torrent->name.c_str() );
-            p.storage_mode = libtorrent::storage_mode_compact;
-        }
-        else
-        {
-            wxString strStorageMode;
-            enum libtorrent::storage_mode_t eStorageMode = torrent->config->GetTorrentStorageMode();
-
-            switch( eStorageMode )
-            {
-            case libtorrent::storage_mode_allocate:
-                strStorageMode = _( "Full" );
-                break;
-
-            case libtorrent::storage_mode_sparse:
-                strStorageMode = _( "Sparse" );
-                break;
-
-            case libtorrent::storage_mode_compact:
-                strStorageMode = _( "Compact" );
-                break;
-
-            default:
-                eStorageMode = libtorrent::storage_mode_sparse;
-                strStorageMode = _( "Sparse" );
-                break;
-            }
-
-            p.storage_mode = eStorageMode;
-            wxLogInfo( _T( "%s: %s allocation mode\n" ), torrent->name.c_str(), strStorageMode.c_str() );
-        }
-*/
         p.duplicate_is_error = true;
         p.auto_managed = true;
 

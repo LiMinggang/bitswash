@@ -228,7 +228,7 @@ void SummaryPane::UpdateSummary()
 	wxChar dirsep = wxFileName::GetPathSeparator(wxPATH_NATIVE);
 
 
-	if ( pTorrent == NULL)
+	if ( !pTorrent )
 	{
 		ResetSummary();
 		wxLogInfo(_T("No torrent selected\n"));
@@ -250,7 +250,10 @@ void SummaryPane::UpdateSummary()
 	UpdateSaveAs(pTorrent->config->GetDownloadPath() + dirsep + t_name);
 
 	UpdateSize(HumanReadableByte((wxDouble) t.total_size()));
-	UpdatePieces(wxString::Format(_T("%d x %s"), t.num_pieces(), HumanReadableByte(t.piece_length()).c_str()));
+	if(!h.has_metadata())
+		UpdatePieces(wxString::Format(_T("%d x %s"), 0, HumanReadableByte(0).c_str()));
+	else
+		UpdatePieces(wxString::Format(_T("%d x %s"), t.num_pieces(), HumanReadableByte(t.piece_length()).c_str()));
 
 	std::stringstream hash_stream;
 	hash_stream << t.info_hash();

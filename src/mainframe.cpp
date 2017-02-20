@@ -709,9 +709,11 @@ void MainFrame::OpenTorrentUrl()
 					
 					if(torrent && torrent->isvalid)
 					{
-						wxString torrent_backup = wxGetApp().SaveTorrentsPath() + wxGetApp().PathSeparator() + torrent->hash + _T( ".torrent" );
-						m_btsession->SaveTorrent(torrent, torrent_backup);
-						
+						if(torrent->handle.has_metadata())
+						{
+							wxString torrent_backup = wxGetApp().SaveTorrentsPath() + wxGetApp().PathSeparator() + torrent->hash + _T( ".torrent" );
+							m_btsession->SaveTorrent(torrent, torrent_backup);
+						}
 						TorrentListIsValid( false );
 						UpdateUI();
 					}
