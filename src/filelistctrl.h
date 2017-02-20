@@ -28,8 +28,7 @@
 
 #include <wx/wx.h>
 #include <wx/listctrl.h>
-#include <wx/frame.h>
-
+#include <wx/imaglist.h>
 
 #include <libtorrent/torrent_handle.hpp>
 
@@ -56,6 +55,7 @@ public:
 
 	void SetStaticHandle(shared_ptr<torrent_t>& torrent) { m_pTorrent = torrent; }
 	void DeleteStaticHandle() { m_pTorrent.reset(); }
+    int GetItemColumnImage(long item, long columnid) const; /* override to get image for shown columns */
 protected:
 	// FileListCtrl variables
 
@@ -65,6 +65,7 @@ private:
 	void OnMenuPriority(wxCommandEvent &event);
 
 	shared_ptr<torrent_t> m_pTorrent;
+	wxImageList m_imageList;
 
 	DECLARE_NO_COPY_CLASS(FileListCtrl)
 	DECLARE_EVENT_TABLE()

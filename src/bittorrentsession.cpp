@@ -936,8 +936,7 @@ shared_ptr<torrent_t> BitTorrentSession::LoadMagnetUri( MagnetUri& magneturi )
 		//torrent->handle = m_libbtsession->add_torrent(p, ec);
 		torrent->config->SetTorrentState(TORRENT_STATE_START);
         torrent->handle.resolve_countries( true );
-		AddTorrent( torrent );
-		torrent->isvalid = true;
+		torrent->isvalid = AddTorrent( torrent );
 	}
 	catch( std::exception &e )
 	{
