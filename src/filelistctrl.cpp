@@ -34,74 +34,75 @@
 
 enum
 {
-    FILELISTCTRL_MENU_PRIORITY0 = 10000,
-    FILELISTCTRL_MENU_PRIORITY1,
-    FILELISTCTRL_MENU_PRIORITY2,
-    FILELISTCTRL_MENU_PRIORITY3,
-    FILELISTCTRL_MENU_PRIORITY4,
-    FILELISTCTRL_MENU_PRIORITY5,
-    FILELISTCTRL_MENU_PRIORITY6,
-    FILELISTCTRL_MENU_PRIORITY7
+ 	FILELISTCTRL_MENU_PRIORITY0 = 10000,
+ 	FILELISTCTRL_MENU_PRIORITY1,
+ 	FILELISTCTRL_MENU_PRIORITY2,
+ 	FILELISTCTRL_MENU_PRIORITY3,
+ 	FILELISTCTRL_MENU_PRIORITY4,
+ 	FILELISTCTRL_MENU_PRIORITY5,
+ 	FILELISTCTRL_MENU_PRIORITY6,
+ 	FILELISTCTRL_MENU_PRIORITY7
 };
 
 
 BEGIN_EVENT_TABLE( FileListCtrl, SwashListCtrl )
-    EVT_MENU( FILELISTCTRL_MENU_PRIORITY0, FileListCtrl::OnMenuPriority )
-    EVT_MENU( FILELISTCTRL_MENU_PRIORITY1, FileListCtrl::OnMenuPriority )
-    EVT_MENU( FILELISTCTRL_MENU_PRIORITY2, FileListCtrl::OnMenuPriority )
-    EVT_MENU( FILELISTCTRL_MENU_PRIORITY3, FileListCtrl::OnMenuPriority )
-    EVT_MENU( FILELISTCTRL_MENU_PRIORITY4, FileListCtrl::OnMenuPriority )
-    EVT_MENU( FILELISTCTRL_MENU_PRIORITY5, FileListCtrl::OnMenuPriority )
-    EVT_MENU( FILELISTCTRL_MENU_PRIORITY6, FileListCtrl::OnMenuPriority )
-    EVT_MENU( FILELISTCTRL_MENU_PRIORITY7, FileListCtrl::OnMenuPriority )
+ 	EVT_MENU( FILELISTCTRL_MENU_PRIORITY0, FileListCtrl::OnMenuPriority )
+ 	EVT_MENU( FILELISTCTRL_MENU_PRIORITY1, FileListCtrl::OnMenuPriority )
+ 	EVT_MENU( FILELISTCTRL_MENU_PRIORITY2, FileListCtrl::OnMenuPriority )
+ 	EVT_MENU( FILELISTCTRL_MENU_PRIORITY3, FileListCtrl::OnMenuPriority )
+ 	EVT_MENU( FILELISTCTRL_MENU_PRIORITY4, FileListCtrl::OnMenuPriority )
+ 	EVT_MENU( FILELISTCTRL_MENU_PRIORITY5, FileListCtrl::OnMenuPriority )
+ 	EVT_MENU( FILELISTCTRL_MENU_PRIORITY6, FileListCtrl::OnMenuPriority )
+ 	EVT_MENU( FILELISTCTRL_MENU_PRIORITY7, FileListCtrl::OnMenuPriority )
+ 	EVT_LEFT_DOWN(FileListCtrl::OnLeftClick)
 END_EVENT_TABLE()
 // FileListCtrl
 
 
 enum torrentlistcolumnid
 {
-    FILELIST_COLUMN_SELECTED = 0,
+ 	FILELIST_COLUMN_SELECTED = 0,
 	FILELIST_COLUMN_FILE,
-    FILELIST_COLUMN_SIZE,
-    FILELIST_COLUMN_DOWNLOAD,
-    FILELIST_COLUMN_PROGRESS,
+ 	FILELIST_COLUMN_SIZE,
+ 	FILELIST_COLUMN_DOWNLOAD,
+ 	FILELIST_COLUMN_PROGRESS,
 };
 
 #ifndef __WXMSW__
 static SwashColumnItem filelistcols[] =
 {
-	{ id: FILELIST_COLUMN_SELECTED, name: _T( "" ), title: _T( "" ), tooltip: _T( "" ), width: 16, show: true },
-    { id: FILELIST_COLUMN_FILE, name: _( "File" ), title: _( "File" ), tooltip: _( "Files in torrent" ), width: 315, show: true},
-    { id: FILELIST_COLUMN_SIZE, name: _( "Size" ), title: _( "Size" ), tooltip: _( "File size" ), width: 88, show: true},
-    { id: FILELIST_COLUMN_FILE, name: _( "Download" ), title: _( "Download" ), tooltip: _( "File priority" ), width: 88, show: true},
-    { id: FILELIST_COLUMN_PROGRESS, name: _( "Progress" ), title: _( "Progress" ), tooltip: _( "File download progress" ), width: 88, show: true },
+	{ id: FILELIST_COLUMN_SELECTED, name: _T( "" ), title: _T( "" ), tooltip: _T( "" ), width: 20, show: true },
+ 	{ id: FILELIST_COLUMN_FILE, name: _( "File" ), title: _( "File" ), tooltip: _( "Files in torrent" ), width: 315, show: true},
+ 	{ id: FILELIST_COLUMN_SIZE, name: _( "Size" ), title: _( "Size" ), tooltip: _( "File size" ), width: 88, show: true},
+ 	{ id: FILELIST_COLUMN_FILE, name: _( "Download" ), title: _( "Download" ), tooltip: _( "File priority" ), width: 88, show: true},
+ 	{ id: FILELIST_COLUMN_PROGRESS, name: _( "Progress" ), title: _( "Progress" ), tooltip: _( "File download progress" ), width: 88, show: true },
 };
 #else
 static SwashColumnItem filelistcols[] =
 {
 	{ FILELIST_COLUMN_SELECTED, _T( "" ), _T( "" ), _T( "" ), 16, true },
-    { FILELIST_COLUMN_FILE,  _( "File" ), _( "File" ), _( "Files in torrent" ), 315, true},
-    { FILELIST_COLUMN_SIZE, _( "Size" ), _( "Size" ), _( "File size" ), 88, true},
-    { FILELIST_COLUMN_FILE, _( "Download" ),  _( "Download" ), _( "File priority" ), 88, true},
-    { FILELIST_COLUMN_PROGRESS,  _( "Progress" ), _( "Progress" ), _( "File download progress" ),  88, true },
+ 	{ FILELIST_COLUMN_FILE,  _( "File" ), _( "File" ), _( "Files in torrent" ), 315, true},
+ 	{ FILELIST_COLUMN_SIZE, _( "Size" ), _( "Size" ), _( "File size" ), 88, true},
+ 	{ FILELIST_COLUMN_FILE, _( "Download" ),  _( "Download" ), _( "File priority" ), 88, true},
+ 	{ FILELIST_COLUMN_PROGRESS,  _( "Progress" ), _( "Progress" ), _( "File download progress" ),  88, true },
 };
 
 #endif
 FileListCtrl::FileListCtrl( wxWindow *parent,
-                            const wxString settings,
-                            const wxWindowID id,
-                            const wxPoint& pos,
-                            const wxSize& size,
-                            long style )
-    : SwashListCtrl( parent, SWASHLISTCOL_SIZE( filelistcols ), filelistcols, settings, id, pos, size, style ), m_imageList(16, 16, TRUE)
+ 	 	 	 	 	 	 	const wxString settings,
+ 	 	 	 	 	 	 	const wxWindowID id,
+ 	 	 	 	 	 	 	const wxPoint& pos,
+ 	 	 	 	 	 	 	const wxSize& size,
+ 	 	 	 	 	 	 	long style )
+ 	: SwashListCtrl( parent, SWASHLISTCOL_SIZE( filelistcols ), filelistcols, settings, id, pos, size, style ), m_imageList(16, 16, TRUE)
 {
-    SetImageList(&m_imageList, wxIMAGE_LIST_SMALL);
+ 	SetImageList(&m_imageList, wxIMAGE_LIST_SMALL);
 
 	// the add order must respect the wxCLC_XXX_IMGIDX defines in the headers !
-    /*0*/m_imageList.Add(wxIcon(unchecked_xpm));
-    /*1*/m_imageList.Add(wxIcon(checked_xpm));
-    /*2*/m_imageList.Add(wxIcon(unchecked_dis_xpm));
-    /*3*/m_imageList.Add(wxIcon(checked_dis_xpm));
+ 	/*0*/m_imageList.Add(wxIcon(unchecked_xpm));
+ 	/*1*/m_imageList.Add(wxIcon(checked_xpm));
+ 	/*2*/m_imageList.Add(wxIcon(unchecked_dis_xpm));
+ 	/*3*/m_imageList.Add(wxIcon(checked_dis_xpm));
 }
 
 FileListCtrl::~FileListCtrl()
@@ -110,86 +111,86 @@ FileListCtrl::~FileListCtrl()
 
 wxString FileListCtrl::GetItemValue( long item, long columnid ) const
 {
-    FileListCtrl* pThis = const_cast<FileListCtrl*>( this );
-    MainFrame* pMainFrame = ( MainFrame* )( wxGetApp().GetTopWindow() );
-    wxString ret;
-    //XXX backward compatible
-    int nopriority = 0;
-    wxLogDebug( _T( "FileListCtrl column %ld of item %ld\n" ), columnid, item );
-    shared_ptr<torrent_t> pTorrent;
+ 	FileListCtrl* pThis = const_cast<FileListCtrl*>( this );
+ 	MainFrame* pMainFrame = ( MainFrame* )( wxGetApp().GetTopWindow() );
+ 	wxString ret;
+ 	//XXX backward compatible
+ 	int nopriority = 0;
+ 	wxLogDebug( _T( "FileListCtrl column %ld of item %ld\n" ), columnid, item );
+ 	shared_ptr<torrent_t> pTorrent;
 
-    if( m_pTorrent )
-    {
-        pTorrent = m_pTorrent;
-    }
-    else
-    {
-        pTorrent = pMainFrame->GetSelectedTorrent();
-    }
+ 	if( m_pTorrent )
+ 	{
+ 	 	pTorrent = m_pTorrent;
+ 	}
+ 	else
+ 	{
+ 	 	pTorrent = pMainFrame->GetSelectedTorrent();
+ 	}
 
-    if( !pTorrent )
-    { return _T( "" ); }
+ 	if( !pTorrent )
+ 	{ return _T( "" ); }
 
-    libtorrent::torrent_handle h = pTorrent->handle;
-    libtorrent::file_entry f_entry;
-    libtorrent::torrent_info const& torrent_info = *( pTorrent->info );
-    std::vector<int> filespriority = pTorrent->config->GetFilesPriorities();
+ 	libtorrent::torrent_handle h = pTorrent->handle;
+ 	libtorrent::file_entry f_entry;
+ 	libtorrent::torrent_info const& torrent_info = *( pTorrent->info );
+ 	std::vector<int> filespriority = pTorrent->config->GetFilesPriorities();
 
-    if( filespriority.size() != torrent_info.num_files() )
-    {
-        nopriority = 1;
-    }
+ 	if( filespriority.size() != torrent_info.num_files() )
+ 	{
+ 	 	nopriority = 1;
+ 	}
 
-    // some priority has no name and not made an option yet
-    //
-    const static wxChar* priority[] =
-    {
-        _( "No" ),
-        _( "Lowest" ),
-        _T( "2" ), /* unused priority level */
-        _T( "3" ), /* unused priority level */
-        _( "Normal" ),
-        _T( "5" ), /* unused priority level */
-        _T( "6" ), /* unused priority level */
-        _( "Higest" )
-    };
-    std::vector<float> f_progress;
-    f_entry = torrent_info.file_at( item );
+ 	// some priority has no name and not made an option yet
+ 	//
+ 	const static wxChar* priority[] =
+ 	{
+ 	 	_( "No" ),
+ 	 	_( "Lowest" ),
+ 	 	_T( "2" ), /* unused priority level */
+ 	 	_T( "3" ), /* unused priority level */
+ 	 	_( "Normal" ),
+ 	 	_T( "5" ), /* unused priority level */
+ 	 	_T( "6" ), /* unused priority level */
+ 	 	_( "Higest" )
+ 	};
+ 	std::vector<float> f_progress;
+ 	f_entry = torrent_info.file_at( item );
 
-    if( h.is_valid() )
-    { h.file_progress( f_progress ); }
+ 	if( h.is_valid() )
+ 	{ h.file_progress( f_progress ); }
 
-    switch( columnid )
-    {
-    case FILELIST_COLUMN_FILE:
-        ret = wxString( wxConvUTF8.cMB2WC( f_entry.path.c_str() ) );
-        break;
+ 	switch( columnid )
+ 	{
+ 	case FILELIST_COLUMN_FILE:
+ 	 	ret = wxString( wxConvUTF8.cMB2WC( f_entry.path.c_str() ) );
+ 	 	break;
 
-    case FILELIST_COLUMN_SIZE:
-        ret = HumanReadableByte( ( wxDouble ) f_entry.size );
-        break;
+ 	case FILELIST_COLUMN_SIZE:
+ 	 	ret = HumanReadableByte( ( wxDouble ) f_entry.size );
+ 	 	break;
 
-    case FILELIST_COLUMN_DOWNLOAD:
-        if( nopriority )
-        { ret = priority[4]; }
-        else
-        { ret = priority[filespriority[item]]; }
+ 	case FILELIST_COLUMN_DOWNLOAD:
+ 	 	if( nopriority )
+ 	 	{ ret = priority[4]; }
+ 	 	else
+ 	 	{ ret = priority[filespriority[item]]; }
 
-        break;
+ 	 	break;
 
-    case FILELIST_COLUMN_PROGRESS:
-        if( h.is_valid() )
-        { return wxString::Format( _T( "%.02f%%" ), ( ( wxDouble ) f_progress[item] * 100 ) ); }
-        else
-        { ret = _T( "0.00" ); }
+ 	case FILELIST_COLUMN_PROGRESS:
+ 	 	if( h.is_valid() )
+ 	 	{ return wxString::Format( _T( "%.02f%%" ), ( ( wxDouble ) f_progress[item] * 100 ) ); }
+ 	 	else
+ 	 	{ ret = _T( "0.00" ); }
 
-        break;
+ 	 	break;
 
-    default:
-        ret = _T( "" );
-    }
+ 	default:
+ 	 	ret = _T( "" );
+ 	}
 
-    return ret;
+ 	return ret;
 }
 
 int FileListCtrl::GetItemColumnImage(long item, long columnid) const
@@ -197,21 +198,21 @@ int FileListCtrl::GetItemColumnImage(long item, long columnid) const
 	int ret = -1;
 	if(columnid == FILELIST_COLUMN_SELECTED)
 	{
-	    FileListCtrl* pThis = const_cast<FileListCtrl*>( this );
-	    MainFrame* pMainFrame = ( MainFrame* )( wxGetApp().GetTopWindow() );
-	    //XXX backward compatible
-	    int nopriority = 0;
-	    wxLogDebug( _T( "FileListCtrl column %ld of item %ld\n" ), columnid, item );
-	    shared_ptr<torrent_t> pTorrent;
+	 	FileListCtrl* pThis = const_cast<FileListCtrl*>( this );
+	 	MainFrame* pMainFrame = ( MainFrame* )( wxGetApp().GetTopWindow() );
+	 	//XXX backward compatible
+	 	int nopriority = 0;
+	 	wxLogDebug( _T( "FileListCtrl column %ld of item %ld\n" ), columnid, item );
+	 	shared_ptr<torrent_t> pTorrent;
 
-	    if( m_pTorrent )
-	    {
-	        pTorrent = m_pTorrent;
-	    }
-	    else
-	    {
-	        pTorrent = pMainFrame->GetSelectedTorrent();
-	    }
+	 	if( m_pTorrent )
+	 	{
+	 	 	pTorrent = m_pTorrent;
+	 	}
+	 	else
+	 	{
+	 	 	pTorrent = pMainFrame->GetSelectedTorrent();
+	 	}
 
 		if (pTorrent)
 		{
@@ -247,117 +248,112 @@ int FileListCtrl::GetItemColumnImage(long item, long columnid) const
 	return ret;
 }
 
-void FileListCtrl::OnColClick(wxListEvent& event)
+void FileListCtrl::OnLeftClick(wxMouseEvent& event)
 {
-}
+ 	int flags;
+ 	long subitem = -1;
+#if wxCHECK_VERSION(2,8,0)
+ 	long item = HitTest(event.GetPosition(), flags, &subitem);
+#else
+ 	long item = HitTest(event.GetPosition(), flags );
+#endif
 
-void FileListCtrl::OnSelected(wxListEvent& event)
-{
-    int item = event.GetIndex();
-	int col = event.GetColumn(  )  ;
-	if(col == FILELIST_COLUMN_SELECTED)
-	{
-	    FileListCtrl* pThis = const_cast<FileListCtrl*>( this );
-	    MainFrame* pMainFrame = ( MainFrame* )( wxGetApp().GetTopWindow() );
-	    //XXX backward compatible
-	    int nopriority = 0;
-	    wxLogDebug( _T( "FileListCtrl column %ld of item %ld\n" ), col, item );
-	    shared_ptr<torrent_t> pTorrent;
+ 	switch ( flags )
+ 	{
+ 	 	case wxLIST_HITTEST_ONITEMICON: /*FILELIST_COLUMN_SELECTED*/
+ 	 	 	{
+ 	 		 	FileListCtrl* pThis = const_cast<FileListCtrl*>( this );
+ 	 		 	MainFrame* pMainFrame = ( MainFrame* )( wxGetApp().GetTopWindow() );
+ 	 		 	//XXX backward compatible
+ 	 		 	int nopriority = 0;
+ 	 		 	shared_ptr<torrent_t> pTorrent;
 
-	    if( m_pTorrent )
-	    {
-	        pTorrent = m_pTorrent;
-	    }
-	    else
-	    {
-	        pTorrent = pMainFrame->GetSelectedTorrent();
-	    }
+ 	 		 	if( m_pTorrent )
+ 	 		 	{
+ 	 		 	 	pTorrent = m_pTorrent;
+ 	 		 	}
+ 	 		 	else
+ 	 		 	{
+ 	 		 	 	pTorrent = pMainFrame->GetSelectedTorrent();
+ 	 		 	}
 
-		if (pTorrent)
-		{
-			libtorrent::torrent_handle h = pTorrent->handle;
-			libtorrent::file_entry f_entry;
-			libtorrent::torrent_info const& torrent_info = *(pTorrent->info);
-			std::vector<int> filespriority = pTorrent->config->GetFilesPriorities();
+ 	 			if (pTorrent)
+ 	 			{
+ 	 				libtorrent::torrent_handle h = pTorrent->handle;
+ 	 				libtorrent::file_entry f_entry;
+ 	 				libtorrent::torrent_info const& torrent_info = *(pTorrent->info);
+ 	 				std::vector<int>& filespriority = pTorrent->config->GetFilesPriorities();
 
-			if (filespriority.size() != torrent_info.num_files())
-			{
-				nopriority = 1;
-			}
-			/*0--unchecked_xpm*/
-			/*1--checked_xpm*/
-			/*2--unchecked_dis_xpm*/
-			/*3--checked_dis_xpm*/
-
-			switch (col)
-			{
-			case FILELIST_COLUMN_SELECTED:
-
-				if (nopriority || filespriority[item] != 0);
-				
-				break;
-
-			default:
-				break;
-			}
-		}
-	}
-
-	SwashListCtrl::OnSelected(event);
+ 	 				if ((item < filespriority.size() ) && filespriority[item] != 0)
+ 	 				{
+ 	 					filespriority[item] = 0;
+ 	 				}
+ 	 				else
+ 	 				{
+	 					filespriority[item] = 4; /*Normal*/
+ 	 				}
+                    Refresh(false);
+                    return;
+ 	 			}
+ 	 	 	}
+ 	 	default: 
+ 	 	 	break;
+ 	}
+    event.Skip();
 }
 
 void FileListCtrl::ShowContextMenu( const wxPoint& pos )
 {
-    wxMenu menu;
-    /* XXX openfile */
-    menu.Append( FILELISTCTRL_MENU_PRIORITY0, _( "Do not download" ) );
-    menu.AppendSeparator();
-    menu.Append( FILELISTCTRL_MENU_PRIORITY1, _( "Lowest Priority" ) );
-    menu.Append( FILELISTCTRL_MENU_PRIORITY4, _( "Normal Priority" ) );
-    menu.Append( FILELISTCTRL_MENU_PRIORITY7, _( "Highest Priority" ) );
-    PopupMenu( &menu, pos );
+ 	wxMenu menu;
+ 	/* XXX openfile */
+ 	menu.Append( FILELISTCTRL_MENU_PRIORITY0, _( "Do not download" ) );
+ 	menu.AppendSeparator();
+ 	menu.Append( FILELISTCTRL_MENU_PRIORITY1, _( "Lowest Priority" ) );
+ 	menu.Append( FILELISTCTRL_MENU_PRIORITY4, _( "Normal Priority" ) );
+ 	menu.Append( FILELISTCTRL_MENU_PRIORITY7, _( "Highest Priority" ) );
+ 	PopupMenu( &menu, pos );
 }
 
 /* update files priority to torrent config */
 void FileListCtrl::OnMenuPriority( wxCommandEvent& event )
 {
-    MainFrame* pMainFrame = ( MainFrame* )wxGetApp().GetTopWindow();
-    int priority = event.GetId() - FILELISTCTRL_MENU_PRIORITY0;
-    shared_ptr<torrent_t> pTorrent;
+ 	MainFrame* pMainFrame = ( MainFrame* )wxGetApp().GetTopWindow();
+ 	int priority = event.GetId() - FILELISTCTRL_MENU_PRIORITY0;
+ 	shared_ptr<torrent_t> pTorrent;
 
-    if( m_pTorrent )
-    { pTorrent = m_pTorrent; }
-    else
-    { pTorrent = pMainFrame->GetSelectedTorrent(); }
+ 	if( m_pTorrent )
+ 	{ pTorrent = m_pTorrent; }
+ 	else
+ 	{ pTorrent = pMainFrame->GetSelectedTorrent(); }
 
-    if( !pTorrent )
-    { return; }
+ 	if( !pTorrent )
+ 	{ return; }
 
-    //XXX get some default priority definition
-    // Get existing priority from pTorrent->t_cfg;
-    std::vector<int> & filespriority = pTorrent->config->GetFilesPriorities();
-    std::vector<int> deffilespriority( pTorrent->info->num_files(), 4 );
-    std::vector<int>::iterator file_it ;
+ 	//XXX get some default priority definition
+ 	// Get existing priority from pTorrent->t_cfg;
+ 	std::vector<int> & filespriority = pTorrent->config->GetFilesPriorities();
+ 	std::vector<int> deffilespriority( pTorrent->info->num_files(), 4 );
+ 	std::vector<int>::iterator file_it ;
 
-    if( filespriority.size() != pTorrent->info->num_files() )
-    {
-        filespriority.swap( deffilespriority );
-    }
+ 	if( filespriority.size() != pTorrent->info->num_files() )
+ 	{
+ 	 	filespriority.swap( deffilespriority );
+ 	}
 
-    int selectedfiles = GetFirstSelected();
+ 	int selectedfiles = GetFirstSelected();
 
-    while( selectedfiles != -1 )
-    {
-        file_it = filespriority.begin() + selectedfiles;
-        *file_it = priority;
-        selectedfiles = GetNextSelected( selectedfiles );
-    }
+ 	while( selectedfiles != -1 )
+ 	{
+ 	 	file_it = filespriority.begin() + selectedfiles;
+ 	 	*file_it = priority;
+ 	 	selectedfiles = GetNextSelected( selectedfiles );
+ 	}
 
-    //pTorrent->config->SetFilesPriority(filespriority);
-    if( !m_pTorrent )
-    { pTorrent->config->Save(); }
+ 	//pTorrent->config->SetFilesPriority(filespriority);
+ 	if( !m_pTorrent )
+ 	{ pTorrent->config->Save(); }
 
-    wxGetApp().GetBitTorrentSession()->ConfigureTorrentFilesPriority( pTorrent );
-    Refresh( false );
+ 	wxGetApp().GetBitTorrentSession()->ConfigureTorrentFilesPriority( pTorrent );
+ 	Refresh( false );
 }
 
