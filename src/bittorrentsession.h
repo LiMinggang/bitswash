@@ -63,75 +63,74 @@ typedef std::map<wxString, int> torrents_map;
 
 class BitTorrentSession : public wxThread
 {
-	public:
-		BitTorrentSession(wxApp* pParent, Configuration* config);
-		~BitTorrentSession();
+public:
+	BitTorrentSession(wxApp* pParent, Configuration* config);
+	~BitTorrentSession();
 
-		virtual void *Entry();
-		virtual void OnExit();
+	virtual void *Entry();
+	virtual void OnExit();
 
-		void ConfigureSession();
-		void SetLogSeverity();
-		void SetConnection();
-		void SetConnectionLimit();
-		void SetDht();
-		void SetEncryption();
-		void StartExtensions();
-		void StartUpnp();
-		void StartNatpmp();
-		void StartLsd();
-		
-		void AddTorrentSession(shared_ptr<torrent_t>& torrent);
-		bool AddTorrent(shared_ptr<torrent_t>& torrent);
-		void RemoveTorrent(shared_ptr<torrent_t>& torrent, bool deletedata);
-		shared_ptr<torrent_t> FindTorrent(const wxString &hash) const;
-		void MergeTorrent(shared_ptr<torrent_t>& dst_torrent, shared_ptr<torrent_t>& src_torrent);
-		void MergeTorrent(shared_ptr<torrent_t>& dst_torrent, MagnetUri& src_magneturi);
-
-		shared_ptr<torrent_t> ParseTorrent(const wxString& filename);
-		shared_ptr<torrent_t> LoadMagnetUri( MagnetUri& magneturi );
-		bool SaveTorrent(shared_ptr<torrent_t>& torrent, const wxString& filename);
-		
-		void GetTorrentQueue(torrents_t & queue_copy);
-
-		void StartTorrent(shared_ptr<torrent_t>& torrent, bool force);
-		void StopTorrent(shared_ptr<torrent_t>& torrent);
-		void QueueTorrent(shared_ptr<torrent_t>& torrent);
-		void PauseTorrent(shared_ptr<torrent_t>& torrent);
-		void MoveTorrentUp(shared_ptr<torrent_t>& torrent);
-		void MoveTorrentDown(shared_ptr<torrent_t>& torrent);
-		void ReannounceTorrent(shared_ptr<torrent_t>& torrent);
-		void ConfigureTorrent(shared_ptr<torrent_t>& torrent);
-		void ConfigureTorrentFilesPriority(shared_ptr<torrent_t>& torrent);
-		void ConfigureTorrentTrackers(shared_ptr<torrent_t>& torrent);
+	void ConfigureSession();
+	void SetLogSeverity();
+	void SetConnection();
+	void SetConnectionLimit();
+	void SetDht();
+	void SetEncryption();
+	void StartExtensions();
+	void StartUpnp();
+	void StartNatpmp();
+	void StartLsd();
 	
-		libtorrent::session* GetLibTorrent() { return m_libbtsession;}
+	void AddTorrentSession(shared_ptr<torrent_t>& torrent);
+	bool AddTorrent(shared_ptr<torrent_t>& torrent);
+	void RemoveTorrent(shared_ptr<torrent_t>& torrent, bool deletedata);
+	shared_ptr<torrent_t> FindTorrent(const wxString &hash) const;
+	void MergeTorrent(shared_ptr<torrent_t>& dst_torrent, shared_ptr<torrent_t>& src_torrent);
+	void MergeTorrent(shared_ptr<torrent_t>& dst_torrent, MagnetUri& src_magneturi);
 
-		void GetTorrentLog();
+	shared_ptr<torrent_t> ParseTorrent(const wxString& filename);
+	shared_ptr<torrent_t> LoadMagnetUri( MagnetUri& magneturi );
+	bool SaveTorrent(shared_ptr<torrent_t>& torrent, const wxString& filename);
+	
+	void GetTorrentQueue(torrents_t & queue_copy);
 
-	private:
+	void StartTorrent(shared_ptr<torrent_t>& torrent, bool force);
+	void StopTorrent(shared_ptr<torrent_t>& torrent);
+	void QueueTorrent(shared_ptr<torrent_t>& torrent);
+	void PauseTorrent(shared_ptr<torrent_t>& torrent);
+	void MoveTorrentUp(shared_ptr<torrent_t>& torrent);
+	void MoveTorrentDown(shared_ptr<torrent_t>& torrent);
+	void ReannounceTorrent(shared_ptr<torrent_t>& torrent);
+	void ConfigureTorrent(shared_ptr<torrent_t>& torrent);
+	void ConfigureTorrentFilesPriority(shared_ptr<torrent_t>& torrent);
+	void ConfigureTorrentTrackers(shared_ptr<torrent_t>& torrent);
 
-		void ScanTorrentsDirectory(const wxString& dirname);
-		int find_torrent_from_hash(const wxString&  hash) const;
+	libtorrent::session* GetLibTorrent() { return m_libbtsession;}
 
-		void SaveTorrentResumeData(shared_ptr<torrent_t>& torrent);
-		void SaveAllTorrent();
+	void GetTorrentLog();
 
-		void DumpTorrents();
-		void CheckQueueItem();
+private:
 
-		bool m_upnp_started;
-		bool m_natpmp_started;
-		bool m_lsd_started;
+	void ScanTorrentsDirectory(const wxString& dirname);
+	int find_torrent_from_hash(const wxString&  hash) const;
 
-		wxMutex m_torrent_queue_lock;
-		torrents_t m_torrent_queue;
-		torrents_map m_torrent_map;
+	void SaveTorrentResumeData(shared_ptr<torrent_t>& torrent);
+	void SaveAllTorrent();
 
-		wxApp* m_pParent;
-		Configuration* m_config;
-		libtorrent::session* m_libbtsession;
-		
+	void DumpTorrents();
+	void CheckQueueItem();
+
+	bool m_upnp_started;
+	bool m_natpmp_started;
+	bool m_lsd_started;
+
+	wxMutex m_torrent_queue_lock;
+	torrents_t m_torrent_queue;
+	torrents_map m_torrent_map;
+
+	wxApp* m_pParent;
+	Configuration* m_config;
+	libtorrent::session* m_libbtsession;
 };
 
 #endif // _BITTORRENTSESSION_H_
