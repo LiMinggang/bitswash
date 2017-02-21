@@ -185,6 +185,9 @@ private:
 	void OnMove(wxMoveEvent& event);
 	void OnSize(wxSizeEvent& event);
 
+	void OnUpdateUI_MenuTorrentStart(wxUpdateUIEvent& event);
+	void OnUpdateUI_MenuTorrentStop(wxUpdateUIEvent& event);
+
 	void LoadIcons();
 	//void SaveTorrentResumeData(shared_ptr<ptorrent_t>& torrent);
 	//int find_torrent_from_hash(wxString hash) ;

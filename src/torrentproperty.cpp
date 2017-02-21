@@ -165,11 +165,8 @@ void TorrentProperty::OnOK(wxCommandEvent& event)
 
 void TorrentProperty::OnCancel(wxCommandEvent& event)
 {
-	wxLogDebug(_T("OnCancel\n"));
-
 	EndModal (wxID_CANCEL);
 	event.Skip();
-
 }
 
 void TorrentProperty::OnFocus(wxFocusEvent& event)

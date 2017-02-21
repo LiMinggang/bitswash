@@ -215,7 +215,7 @@ int FileListCtrl::GetItemColumnImage(long item, long columnid) const
 	 	}
 	 	else
 	 	{
-            MainFrame* pMainFrame = ( MainFrame* )( wxGetApp().GetTopWindow() );
+	 	 	MainFrame* pMainFrame = ( MainFrame* )( wxGetApp().GetTopWindow() );
 	 	 	pTorrent = pMainFrame->GetSelectedTorrent();
 	 	}
 

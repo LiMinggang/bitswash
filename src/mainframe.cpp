@@ -44,6 +44,7 @@
 #include <wx/txtstrm.h>
 #include <wx/url.h>
 #include <wx/tokenzr.h>
+#include <wx/aui/auibar.h>
 
 #ifdef __UNIX_LIKE__
 	#include <wx/utils.h>
@@ -96,9 +97,11 @@ BEGIN_EVENT_TABLE( MainFrame, wxFrame )
 	EVT_MENU( ID_VIEW_STATUS, MainFrame::OnMenuViewStatusBar )
 	EVT_MENU( ID_VIEW_TOOLBAR, MainFrame::OnMenuViewToolbar )
 	EVT_MENU( ID_TORRENT_START, MainFrame::OnMenuTorrentStart )
+	EVT_UPDATE_UI( ID_TORRENT_START, MainFrame::OnUpdateUI_MenuTorrentStart )
 	EVT_MENU( ID_TORRENT_FORCE_START, MainFrame::OnMenuTorrentStart )
 	EVT_MENU( ID_TORRENT_PAUSE, MainFrame::OnMenuTorrentPause )
 	EVT_MENU( ID_TORRENT_STOP, MainFrame::OnMenuTorrentStop )
+	EVT_UPDATE_UI( ID_TORRENT_STOP, MainFrame::OnUpdateUI_MenuTorrentStop )
 	EVT_MENU( ID_TORRENT_PROPERTIES, MainFrame::OnMenuTorrentProperties )
 	EVT_MENU( ID_TORRENT_REMOVE, MainFrame::OnMenuTorrentRemove )
 	EVT_MENU( ID_TORRENT_REMOVEDATA, MainFrame::OnMenuTorrentRemoveData )
@@ -169,15 +172,15 @@ MainFrame::MainFrame( wxFrame *frame, const wxString& title )
 	//XXX category
 	/* layer 1 put side bar occupied whole vertical zone
 	m_mgr.AddPane(CreateSideTreeCtrl(), AUIPANEINFO.
-	              Name(_T("category")).Caption(_("Category")).
-	              Left().Layer(1).Position(0).
-	              MinimizeButton(true).CloseButton(false));
+	 	 	 	  Name(_T("category")).Caption(_("Category")).
+	 	 	 	  Left().Layer(1).Position(0).
+	 	 	 	  MinimizeButton(true).CloseButton(false));
 
 	m_mgr.AddPane(CreateSideTreeCtrl(), AUIPANEINFO.
-	              Name(_T("category")).Caption(_("Category")).
-	              Left().Layer(0).Position(0).
-	              MinimizeButton(true).CloseButton(false));
-	              */
+	 	 	 	  Name(_T("category")).Caption(_("Category")).
+	 	 	 	  Left().Layer(0).Position(0).
+	 	 	 	  MinimizeButton(true).CloseButton(false));
+	 	 	 	  */
 	CreateTorrentPanel();
 	m_mgr.SetFlags( m_mgr.GetFlags() | wxAUI_MGR_ALLOW_ACTIVE_PANE );
 	//#ifndef __WXDEBUG__ //XXX asert failure fired in gtk debug library.
@@ -428,82 +431,84 @@ wxMenuBar* MainFrame::CreateMainMenuBar()
 	return mbar;
 }
 
-#define BITSWASH_TOOLBAR_FLAGS (wxNO_BORDER | wxTB_HORIZONTAL | wxTB_3DBUTTONS | wxTB_FLAT)
+//#define BITSWASH_TOOLBAR_FLAGS (wxNO_BORDER | wxTB_HORIZONTAL | wxTB_3DBUTTONS | wxTB_FLAT)
+#define BITSWASH_TOOLBAR_FLAGS (wxAUI_TB_HORIZONTAL | wxAUI_TB_HORZ_LAYOUT | wxAUI_TB_PLAIN_BACKGROUND | wxAUI_TB_GRIPPER)
 void MainFrame::CreateToolBar()
 {
-	wxToolBar* mainToolBar = new wxToolBar( this, wxID_ANY, wxDefaultPosition, wxDefaultSize, BITSWASH_TOOLBAR_FLAGS );
+	wxAuiToolBar* mainToolBar = new wxAuiToolBar( this, wxID_ANY, wxDefaultPosition, wxDefaultSize, BITSWASH_TOOLBAR_FLAGS );
 	mainToolBar->SetToolBitmapSize( wxSize( 16, 16 ) );
 	mainToolBar->AddTool( ID_FILE_OPEN_TORRENT, _( "Open Torrent" ),
 						  wxBitmap( wxGetApp().GetAppIcon( BITSWASH_ICON_TORRENT_OPEN ) ), wxNullBitmap, wxITEM_NORMAL,
-						  _( "Open torrent file" ), _( "Open torrent file" ) );
+						  _( "Open torrent file" ), _( "Open torrent file" ), 0 );
 	mainToolBar->AddTool( ID_FILE_OPEN_URL, _( "Open URL" ),
 						  wxBitmap( wxGetApp().GetAppIcon( BITSWASH_ICON_TORRENT_OPENURL ) ), wxNullBitmap, wxITEM_NORMAL,
-						  _( "Open torrent from url" ), _( "Open torrent from URL" ) );
-	mainToolBar->AddSeparator();
+						  _( "Open torrent from url" ), _( "Open torrent from URL" ), 0 );
+	//mainToolBar->AddSeparator();
 #if 0 //TODO Create Torrent
 	mainToolBar->AddTool( ID_FILE_CREATE_TORRENT, _( "Create Torrent" ),
 						  wxBitmap( wxGetApp().GetAppIcon( BITSWASH_ICON_TORRENT_CREATE ), wxNullBitmap, wxITEM_NORMAL,
 									_( "Create torrent file" ), _( "Create torrent file to publish" ) );
 #endif
-						  mainToolBar->Realize();
-						  wxToolBar* torrentToolBar = new wxToolBar( this, wxID_ANY, wxDefaultPosition, wxDefaultSize, BITSWASH_TOOLBAR_FLAGS );
-						  torrentToolBar->SetToolBitmapSize( wxSize( 16, 16 ) );
-						  torrentToolBar->AddTool( ID_TORRENT_START, _( "Queue" ),
-								  wxBitmap( wxGetApp().GetAppIcon( BITSWASH_ICON_TORRENT_START ) ), wxNullBitmap, wxITEM_NORMAL,
-								  _( "Queue torrent" ), _( "Queue torrent" ) );
-						  torrentToolBar->AddTool( ID_TORRENT_PAUSE, _( "Pause" ),
-								  wxBitmap( wxGetApp().GetAppIcon( BITSWASH_ICON_TORRENT_PAUSE ) ), wxNullBitmap, wxITEM_NORMAL,
-								  _( "Pause download" ), _( "Pause downlaoding" ) );
-						  torrentToolBar->AddTool( ID_TORRENT_STOP, _( "stop" ),
-								  wxBitmap( wxGetApp().GetAppIcon( BITSWASH_ICON_TORRENT_STOP ) ), wxNullBitmap, wxITEM_NORMAL,
-								  _( "Stop download" ), _( "Stop downlaoding" ) );
-						  torrentToolBar->AddSeparator();
-						  torrentToolBar->AddTool( ID_TORRENT_REMOVE, _( "Delete" ),
-								  wxBitmap( wxGetApp().GetAppIcon( BITSWASH_ICON_TORRENT_REMOVE ) ), wxNullBitmap, wxITEM_NORMAL,
-								  _( "Delete torrent file" ), _( "Delete torrent file" ) );
-						  torrentToolBar->AddTool( ID_TORRENT_REMOVEDATA, _( "Delete Data" ),
-								  wxBitmap( wxGetApp().GetAppIcon( BITSWASH_ICON_TORRENT_REMOVEDATA ) ), wxNullBitmap, wxITEM_NORMAL,
-								  _( "Delete torrent file and downloaded data" ), _( "Delete torrent file and downloaded data" ) );
-						  torrentToolBar->AddSeparator();
-						  torrentToolBar->AddTool( ID_TORRENT_MOVEUP, _( "Move Up" ),
-								  wxArtProvider::GetBitmap( wxART_GO_UP, wxART_OTHER, wxSize( 16, 16 ) ),
-								  wxNullBitmap, wxITEM_NORMAL,
-								  _( "Move torrent up" ), _( "Move torrent up in the queue position" ) );
-						  torrentToolBar->AddTool( ID_TORRENT_MOVEDOWN, _( "Move Down" ),
-								  wxArtProvider::GetBitmap( wxART_GO_DOWN, wxART_OTHER, wxSize( 16, 16 ) ),
-								  wxNullBitmap, wxITEM_NORMAL,
-								  _( "Move torrent down" ), _( "Move torrent down in the queue position" ) );
-						  torrentToolBar->AddSeparator();
-						  torrentToolBar->AddTool( ID_TORRENT_OPENDIR, _( "Open" ),
-								  wxBitmap( wxGetApp().GetAppIcon( BITSWASH_ICON_TORRENT_OPENDIR ) ), wxNullBitmap, wxITEM_NORMAL,
-								  _( "Open destination directory" ), _( "Open destination downloaded directory" ) );
-						  torrentToolBar->Realize();
-						  wxToolBar* miscToolBar = new wxToolBar( this, wxID_ANY, wxDefaultPosition, wxDefaultSize, BITSWASH_TOOLBAR_FLAGS );
-						  miscToolBar->SetToolBitmapSize( wxSize( 16, 16 ) );
-						  miscToolBar->AddTool( ID_OPTIONS_PREFERENCES, _( "Preference" ),
-								  wxBitmap( wxGetApp().GetAppIcon( BITSWASH_ICON_OPTION_PREFERENCE ) ), wxNullBitmap, wxITEM_NORMAL,
-								  _( "Program settings" ), _( "Set user preference" ) );
-						  miscToolBar->AddTool( ID_HELP_HOMEPAGE, _( "Homepage" ),
-								  wxBitmap( wxGetApp().GetAppIcon( BITSWASH_ICON_APP ) ), wxNullBitmap, wxITEM_NORMAL,
-								  _( "Bitswash homepage" ), _( "Visit Bitswash homepage" ) );
-						  miscToolBar->AddSeparator();
-						  miscToolBar->AddTool( ID_FILE_EXIT, _( "Exit" ),
-								  wxArtProvider::GetBitmap( wxART_QUIT, wxART_OTHER, wxSize( 16, 16 ) ), wxNullBitmap, wxITEM_NORMAL,
-								  _( "Exit Bitswash" ), _( "Exit Bitswash" ) );
-						  miscToolBar->Realize();
-						  // add the toolbars to the manager
-						  m_mgr.AddPane( mainToolBar, AUIPANEINFO.
-										 Name( wxT( "mainToolBar" ) ).Caption( wxT( "Main ToolBar" ) ).
-										 ToolbarPane().Top().
-										 LeftDockable( false ).RightDockable( false ) );
-						  m_mgr.AddPane( torrentToolBar, AUIPANEINFO.
-										 Name( wxT( "torrentToolBar" ) ).Caption( wxT( "Torrent ToolBar" ) ).
-										 ToolbarPane().Top().Row( 0 ).Position( 1 ).
-										 LeftDockable( false ).RightDockable( false ) );
-						  m_mgr.AddPane( miscToolBar, AUIPANEINFO.
-										 Name( wxT( "miscToolBar" ) ).Caption( wxT( "Miscellanous" ) ).
-										 ToolbarPane().Top().Row( 0 ).Position( 2 ).
-										 LeftDockable( false ).RightDockable( false ) );
+ 	mainToolBar->Realize();
+ 	wxAuiToolBar* torrentToolBar = new wxAuiToolBar( this, wxID_ANY, wxDefaultPosition, wxDefaultSize, BITSWASH_TOOLBAR_FLAGS );
+ 	torrentToolBar->SetToolBitmapSize( wxSize( 16, 16 ) );
+ 	torrentToolBar->AddTool( ID_TORRENT_START, _( "Queue" ),
+ 		  wxBitmap( wxGetApp().GetAppIcon( BITSWASH_ICON_TORRENT_START ) ), wxNullBitmap, wxITEM_NORMAL,
+ 		  _( "Queue torrent" ), _( "Queue torrent" ), 0);
+ 	torrentToolBar->AddTool( ID_TORRENT_PAUSE, _( "Pause" ),
+ 		  wxBitmap( wxGetApp().GetAppIcon( BITSWASH_ICON_TORRENT_PAUSE ) ), wxNullBitmap, wxITEM_NORMAL,
+ 		  _( "Pause download" ), _( "Pause downlaoding" ), 0);
+ 	torrentToolBar->AddTool( ID_TORRENT_STOP, _( "stop" ),
+ 		  wxBitmap( wxGetApp().GetAppIcon( BITSWASH_ICON_TORRENT_STOP ) ), wxNullBitmap, wxITEM_NORMAL,
+ 		  _( "Stop download" ), _( "Stop downlaoding" ), 0);
+ 	torrentToolBar->AddSeparator();
+ 	torrentToolBar->AddTool( ID_TORRENT_REMOVE, _( "Delete" ),
+ 		  wxBitmap( wxGetApp().GetAppIcon( BITSWASH_ICON_TORRENT_REMOVE ) ), wxNullBitmap, wxITEM_NORMAL,
+ 		  _( "Delete torrent file" ), _( "Delete torrent file" ), 0);
+ 	torrentToolBar->AddTool( ID_TORRENT_REMOVEDATA, _( "Delete Data" ),
+ 		  wxBitmap( wxGetApp().GetAppIcon( BITSWASH_ICON_TORRENT_REMOVEDATA ) ), wxNullBitmap, wxITEM_NORMAL,
+ 		  _( "Delete torrent file and downloaded data" ), _( "Delete torrent file and downloaded data" ), 0);
+ 	torrentToolBar->AddSeparator();
+ 	torrentToolBar->AddTool( ID_TORRENT_MOVEUP, _( "Move Up" ),
+ 		  wxArtProvider::GetBitmap( wxART_GO_UP, wxART_OTHER, wxSize( 16, 16 ) ),
+ 		  wxNullBitmap, wxITEM_NORMAL,
+ 		  _( "Move torrent up" ), _( "Move torrent up in the queue position" ), 0);
+ 	torrentToolBar->AddTool( ID_TORRENT_MOVEDOWN, _( "Move Down" ),
+ 		  wxArtProvider::GetBitmap( wxART_GO_DOWN, wxART_OTHER, wxSize( 16, 16 ) ),
+ 		  wxNullBitmap, wxITEM_NORMAL,
+ 		  _( "Move torrent down" ), _( "Move torrent down in the queue position" ), 0);
+ 	torrentToolBar->AddSeparator();
+ 	torrentToolBar->AddTool( ID_TORRENT_OPENDIR, _( "Open" ),
+ 		  wxBitmap( wxGetApp().GetAppIcon( BITSWASH_ICON_TORRENT_OPENDIR ) ), wxNullBitmap, wxITEM_NORMAL,
+ 		  _( "Open destination directory" ), _( "Open destination downloaded directory" ), 0);
+ 	torrentToolBar->Realize();
+ 	wxAuiToolBar* miscToolBar = new wxAuiToolBar( this, wxID_ANY, wxDefaultPosition, wxDefaultSize, BITSWASH_TOOLBAR_FLAGS );
+ 	miscToolBar->SetToolBitmapSize( wxSize( 16, 16 ) );
+ 	miscToolBar->AddTool( ID_OPTIONS_PREFERENCES, _( "Preference" ),
+ 		  wxBitmap( wxGetApp().GetAppIcon( BITSWASH_ICON_OPTION_PREFERENCE ) ), wxNullBitmap, wxITEM_NORMAL,
+ 		  _( "Program settings" ), _( "Set user preference" ), 0);
+ 	miscToolBar->AddTool( ID_HELP_HOMEPAGE, _( "Homepage" ),
+ 		  wxBitmap( wxGetApp().GetAppIcon( BITSWASH_ICON_APP ) ), wxNullBitmap, wxITEM_NORMAL,
+ 		  _( "Bitswash homepage" ), _( "Visit Bitswash homepage" ), 0);
+ 	miscToolBar->AddSeparator();
+ 	miscToolBar->AddTool( ID_FILE_EXIT, _( "Exit" ),
+ 		  wxArtProvider::GetBitmap( wxART_QUIT, wxART_OTHER, wxSize( 16, 16 ) ), wxNullBitmap, wxITEM_NORMAL,
+ 		  _( "Exit Bitswash" ), _( "Exit Bitswash" ), 0);
+ 	miscToolBar->Realize();
+ 	// add the toolbars to the manager
+ 	m_mgr.AddPane( mainToolBar, AUIPANEINFO.
+ 				 Name( wxT( "mainToolBar" ) ).Caption( wxT( "Main ToolBar" ) ).
+ 				 ToolbarPane().Top().
+ 				 LeftDockable( false ).RightDockable( false ) );
+ 	m_mgr.AddPane( torrentToolBar, AUIPANEINFO.
+ 				 Name( wxT( "torrentToolBar" ) ).Caption( wxT( "Torrent ToolBar" ) ).
+ 				 ToolbarPane().Top().Row( 0 ).Position( 1 ).
+ 				 LeftDockable( false ).RightDockable( false ) );
+ 	m_mgr.AddPane( miscToolBar, AUIPANEINFO.
+ 				 Name( wxT( "miscToolBar" ) ).Caption( wxT( "Miscellanous" ) ).
+ 				 ToolbarPane().Top().Row( 0 ).Position( 2 ).
+ 				 LeftDockable( false ).RightDockable( false ) );
+ 	m_mgr.Update();
 }
 
 void MainFrame::CreateTorrentPanel()
@@ -866,6 +871,57 @@ void MainFrame::TorrentOperationMenu( wxMenu* torrentmenu, bool enabled )
 	//wxLogMessage(_T("TorrentOperationMenu enabled %d\n"), enabled);
 }
 
+void MainFrame::OnUpdateUI_MenuTorrentStart(wxUpdateUIEvent& event)
+{
+ 	bool enable = false;
+	if( m_torrentlistitems.size() > 0 )
+	{
+		const SwashListCtrl::itemlist_t selecteditems = m_torrentlistctrl->GetSelectedItems();
+		/* selected more than 1 item in the torrent list */
+ 	 	size_t total = selecteditems.size();
+		if( total > 0 )
+		{
+		 	int torrent_state;
+		 	for(size_t i = 0; i < total; ++i)
+ 	 	 	{
+ 	 	 	 	torrent_state = (m_torrentlistitems[selecteditems[i]])->config->GetTorrentState();
+ 	 	 	 	if(torrent_state != TORRENT_STATE_START && torrent_state != TORRENT_STATE_FORCE_START)
+ 	 	 	 	{
+ 	 	 	 	 	enable = true;
+ 	 	 	 	 	break;
+ 	 	 	 	}
+ 	 	 	}
+		}
+	}
+
+ 	event.Enable(enable);
+}
+
+void MainFrame::OnUpdateUI_MenuTorrentStop(wxUpdateUIEvent& event)
+{
+ 	bool enable = false;
+	if( m_torrentlistitems.size() > 0 )
+	{
+		const SwashListCtrl::itemlist_t selecteditems = m_torrentlistctrl->GetSelectedItems();
+		/* selected more than 1 item in the torrent list */
+ 	 	size_t total = selecteditems.size();
+		if( total > 0 )
+		{
+		 	int torrent_state;
+		 	for(size_t i = 0; i < total; ++i)
+ 	 	 	{
+ 	 	 	 	torrent_state = (m_torrentlistitems[selecteditems[i]])->config->GetTorrentState();
+ 	 	 	 	if(torrent_state != TORRENT_STATE_STOP)
+ 	 	 	 	{
+ 	 	 	 	 	enable = true;
+ 	 	 	 	 	break;
+ 	 	 	 	}
+ 	 	 	}
+		}
+	}
+
+ 	event.Enable(enable);
+}
 
 // XXX probly not needed, we do this in torrentlist
 void MainFrame::OnMenuOpen( wxMenuEvent& event )
@@ -1330,7 +1386,7 @@ wxString MainFrame::GetStatusIncoming()
 
 void MainFrame::UpdateTrayInfo()
 {
-	wxString tooltips = wxString::Format( _T( "%-20s : %s\n%-20s  : %s\n%-20s    : %s\n%-20s  : %s\n%-20s : %s" ), _( "Download Rate" ), GetStatusDownloadRate().c_str(), _( "Upload Rate" ), GetStatusUploadRate().c_str(), _( "Peers" ), GetStatusPeers().c_str(), _( "DHT Nodes" ), GetStatusDHT().c_str(), _( "Incoming" ), GetStatusIncoming().c_str() );
+	wxString tooltips = wxString::Format( _T( "%-20s : %s\n%-20s  : %s\n%-20s 	: %s\n%-20s  : %s\n%-20s : %s" ), _( "Download Rate" ), GetStatusDownloadRate().c_str(), _( "Upload Rate" ), GetStatusUploadRate().c_str(), _( "Peers" ), GetStatusPeers().c_str(), _( "DHT Nodes" ), GetStatusDHT().c_str(), _( "Incoming" ), GetStatusIncoming().c_str() );
 	m_swashtrayicon->SetIcon( m_trayicon, tooltips );
 }
 

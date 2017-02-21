@@ -992,7 +992,7 @@ void BitTorrentSession::StartTorrent( shared_ptr<torrent_t>& t_torrent, bool for
     wxLogInfo( _T( "%s: Start %s\n" ), torrent->name.c_str(), force ? _T( "force" ) : _T( "" ) );
     torrent_handle& handle = torrent->handle;
 
-    if( !handle.is_valid() )
+    if( !handle.is_valid() || ((torrent->handle.save_path()).empty()))
     {
         AddTorrentSession( torrent );
     }
