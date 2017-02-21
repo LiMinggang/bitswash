@@ -56,7 +56,7 @@ public:
 	void SetStaticHandle(shared_ptr<torrent_t>& torrent) { m_pTorrent = torrent; }
 	void DeleteStaticHandle() { m_pTorrent.reset(); }
     virtual int GetItemColumnImage(long item, long columnid) const; /* override to get image for shown columns */
-    virtual void OnLeftClick(wxMouseEvent& event);
+    virtual void OnLeftDown(wxMouseEvent& event);
 protected:
 	// FileListCtrl variables
 
@@ -64,6 +64,7 @@ private:
 	wxString GetItemValue(long item, long columnid) const;
 	void ShowContextMenu(const wxPoint& pos);
 	void OnMenuPriority(wxCommandEvent &event);
+	void OnMenuOpenPath(wxCommandEvent &event);
 	shared_ptr<torrent_t> m_pTorrent;
 	wxImageList m_imageList;
     wxMenu m_contextmenu;

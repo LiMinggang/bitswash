@@ -21,6 +21,7 @@
 // Created by: lim k. c. <admin@bitswash.org>
 // Created on: Mon Feb  5 11:09:21 2007
 //
+#include <wx/utils.h> 
 
 #include "torrentinfo.h"
 #include "filelistctrl.h"
@@ -41,7 +42,8 @@ enum
  	FILELISTCTRL_MENU_PRIORITY4,
  	FILELISTCTRL_MENU_PRIORITY5,
  	FILELISTCTRL_MENU_PRIORITY6,
- 	FILELISTCTRL_MENU_PRIORITY7
+ 	FILELISTCTRL_MENU_PRIORITY7,
+	FILELISTCTRL_MENU_OPENPATH,
 };
 
 
@@ -54,7 +56,8 @@ BEGIN_EVENT_TABLE( FileListCtrl, SwashListCtrl )
  	EVT_MENU( FILELISTCTRL_MENU_PRIORITY5, FileListCtrl::OnMenuPriority )
  	EVT_MENU( FILELISTCTRL_MENU_PRIORITY6, FileListCtrl::OnMenuPriority )
  	EVT_MENU( FILELISTCTRL_MENU_PRIORITY7, FileListCtrl::OnMenuPriority )
- 	EVT_LEFT_DOWN(FileListCtrl::OnLeftClick)
+ 	EVT_MENU( FILELISTCTRL_MENU_OPENPATH,  FileListCtrl::OnMenuOpenPath )
+ 	EVT_LEFT_DOWN(FileListCtrl::OnLeftDown)
 END_EVENT_TABLE()
 // FileListCtrl
 
@@ -71,7 +74,7 @@ enum torrentlistcolumnid
 #ifndef __WXMSW__
 static SwashColumnItem filelistcols[] =
 {
-	{ id: FILELIST_COLUMN_SELECTED, name: _T( "" ), title: _T( "" ), tooltip: _T( "" ), width: 20, show: true },
+	{ id: FILELIST_COLUMN_SELECTED, name: _T( "" ), title: _T( "" ), tooltip: _T( "" ), width: 24, show: true },
  	{ id: FILELIST_COLUMN_FILE, name: _( "File" ), title: _( "File" ), tooltip: _( "Files in torrent" ), width: 315, show: true},
  	{ id: FILELIST_COLUMN_SIZE, name: _( "Size" ), title: _( "Size" ), tooltip: _( "File size" ), width: 88, show: true},
  	{ id: FILELIST_COLUMN_FILE, name: _( "Download" ), title: _( "Download" ), tooltip: _( "File priority" ), width: 88, show: true},
@@ -80,7 +83,7 @@ static SwashColumnItem filelistcols[] =
 #else
 static SwashColumnItem filelistcols[] =
 {
-	{ FILELIST_COLUMN_SELECTED, _T( "" ), _T( "" ), _T( "" ), 16, true },
+	{ FILELIST_COLUMN_SELECTED, _T( "" ), _T( "" ), _T( "" ), 24, true },
  	{ FILELIST_COLUMN_FILE,  _( "File" ), _( "File" ), _( "Files in torrent" ), 315, true},
  	{ FILELIST_COLUMN_SIZE, _( "Size" ), _( "Size" ), _( "File size" ), 88, true},
  	{ FILELIST_COLUMN_FILE, _( "Download" ),  _( "Download" ), _( "File priority" ), 88, true},
@@ -110,6 +113,8 @@ FileListCtrl::FileListCtrl( wxWindow *parent,
     m_contextmenu.Append( FILELISTCTRL_MENU_PRIORITY1, _( "Lowest Priority" ) );
     m_contextmenu.Append( FILELISTCTRL_MENU_PRIORITY4, _( "Normal Priority" ) );
     m_contextmenu.Append( FILELISTCTRL_MENU_PRIORITY7, _( "Highest Priority" ) );
+	m_contextmenu.AppendSeparator();
+    m_contextmenu.Append( FILELISTCTRL_MENU_OPENPATH, _( "Open containing folder" ) );
 }
 
 FileListCtrl::~FileListCtrl()
@@ -253,7 +258,7 @@ int FileListCtrl::GetItemColumnImage(long item, long columnid) const
 	return ret;
 }
 
-void FileListCtrl::OnLeftClick(wxMouseEvent& event)
+void FileListCtrl::OnLeftDown(wxMouseEvent& event)
 {
  	int flags;
  	long subitem = -1;
@@ -308,6 +313,56 @@ void FileListCtrl::OnLeftClick(wxMouseEvent& event)
 
 void FileListCtrl::ShowContextMenu( const wxPoint& pos )
 {
+	static int menuids[] = {
+		FILELISTCTRL_MENU_PRIORITY0,
+		FILELISTCTRL_MENU_PRIORITY1,
+		//FILELISTCTRL_MENU_PRIORITY2,
+		//FILELISTCTRL_MENU_PRIORITY3,
+		FILELISTCTRL_MENU_PRIORITY4,
+		//FILELISTCTRL_MENU_PRIORITY5,
+		//FILELISTCTRL_MENU_PRIORITY6,
+		FILELISTCTRL_MENU_PRIORITY7,
+	};
+
+	bool enable_openpath = false;
+	int disable_priority = FILELISTCTRL_MENU_PRIORITY0;
+	if(GetSelectedItemCount() == 1)
+	{
+		shared_ptr<torrent_t> pTorrent;
+		if( m_pTorrent )
+		{ pTorrent = m_pTorrent; }
+		else
+		{
+			MainFrame* pMainFrame = ( MainFrame* )wxGetApp().GetTopWindow();
+			pTorrent = pMainFrame->GetSelectedTorrent();
+		}
+ 		wxString filepath = pTorrent->config->GetDownloadPath();
+		{
+			enable_openpath = wxFileName::DirExists( filepath );
+			std::vector<int> & filespriority = pTorrent->config->GetFilesPriorities();
+			std::vector<int>::iterator file_it ;
+			
+			if( filespriority.size() != pTorrent->info->num_files() )
+			{
+				std::vector<int> deffilespriority( pTorrent->info->num_files(), BITTORRENT_FILE_NORMAL );
+				filespriority.swap( deffilespriority );
+			}
+			
+			int selectedfiles = GetFirstSelected();
+			
+			if( selectedfiles != -1 )
+			{
+				file_it = filespriority.begin() + selectedfiles;
+				disable_priority = (*file_it + FILELISTCTRL_MENU_PRIORITY0);
+			}
+		}
+	}
+	m_contextmenu.Enable(FILELISTCTRL_MENU_OPENPATH, enable_openpath);
+	for(int i = 0; i < (sizeof(menuids)/sizeof(menuids[0])); ++i)
+	{
+		m_contextmenu.Enable(menuids[i], (disable_priority != menuids[i]));
+	}
+
  	PopupMenu( &m_contextmenu, pos );
 }
 
@@ -354,5 +409,30 @@ void FileListCtrl::OnMenuPriority( wxCommandEvent& event )
 
  	wxGetApp().GetBitTorrentSession()->ConfigureTorrentFilesPriority( pTorrent );
  	Refresh( false );
+}
+
+void FileListCtrl::OnMenuOpenPath( wxCommandEvent& event )
+{
+ 	shared_ptr<torrent_t> pTorrent;
+
+ 	if( m_pTorrent )
+ 	{ pTorrent = m_pTorrent; }
+ 	else
+ 	{
+        MainFrame* pMainFrame = ( MainFrame* )wxGetApp().GetTopWindow();
+ 	    pTorrent = pMainFrame->GetSelectedTorrent();
+    }
+
+ 	if( pTorrent )
+ 	{
+ 		wxString filepath = pTorrent->config->GetDownloadPath();
+#if  defined(__WXMSW__) 
+		wxExecute(_T("Explorer ")+filepath, wxEXEC_ASYNC, NULL); 
+#elif defined(__APPLE__)
+		wxExecute(_T("/usr/bin/open "+filepath, wxEXEC_ASYNC, NULL);
+#elif defined(__WXGTK__)
+		wxLaunchDefaultBrowser(_T("file://")+filepath);
+#endif
+	}
 }
 
