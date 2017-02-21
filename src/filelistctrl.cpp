@@ -103,6 +103,13 @@ FileListCtrl::FileListCtrl( wxWindow *parent,
  	/*1*/m_imageList.Add(wxIcon(checked_xpm));
  	/*2*/m_imageList.Add(wxIcon(unchecked_dis_xpm));
  	/*3*/m_imageList.Add(wxIcon(checked_dis_xpm));
+    
+    /* XXX openfile */
+    m_contextmenu.Append( FILELISTCTRL_MENU_PRIORITY0, _( "Do not download" ) );
+    m_contextmenu.AppendSeparator();
+    m_contextmenu.Append( FILELISTCTRL_MENU_PRIORITY1, _( "Lowest Priority" ) );
+    m_contextmenu.Append( FILELISTCTRL_MENU_PRIORITY4, _( "Normal Priority" ) );
+    m_contextmenu.Append( FILELISTCTRL_MENU_PRIORITY7, _( "Highest Priority" ) );
 }
 
 FileListCtrl::~FileListCtrl()
@@ -111,9 +118,7 @@ FileListCtrl::~FileListCtrl()
 
 wxString FileListCtrl::GetItemValue( long item, long columnid ) const
 {
- 	FileListCtrl* pThis = const_cast<FileListCtrl*>( this );
- 	MainFrame* pMainFrame = ( MainFrame* )( wxGetApp().GetTopWindow() );
- 	wxString ret;
+ 	wxString ret(_T( "" ));
  	//XXX backward compatible
  	int nopriority = 0;
  	wxLogDebug( _T( "FileListCtrl column %ld of item %ld\n" ), columnid, item );
@@ -125,11 +130,12 @@ wxString FileListCtrl::GetItemValue( long item, long columnid ) const
  	}
  	else
  	{
+        MainFrame* pMainFrame = ( MainFrame* )( wxGetApp().GetTopWindow() );
  	 	pTorrent = pMainFrame->GetSelectedTorrent();
  	}
 
  	if( !pTorrent )
- 	{ return _T( "" ); }
+ 	{ return ret; }
 
  	libtorrent::torrent_handle h = pTorrent->handle;
  	libtorrent::file_entry f_entry;
@@ -172,7 +178,7 @@ wxString FileListCtrl::GetItemValue( long item, long columnid ) const
 
  	case FILELIST_COLUMN_DOWNLOAD:
  	 	if( nopriority )
- 	 	{ ret = priority[4]; }
+ 	 	{ ret = priority[BITTORRENT_FILE_NORMAL]; }
  	 	else
  	 	{ ret = priority[filespriority[item]]; }
 
@@ -187,7 +193,7 @@ wxString FileListCtrl::GetItemValue( long item, long columnid ) const
  	 	break;
 
  	default:
- 	 	ret = _T( "" );
+ 	 	break;
  	}
 
  	return ret;
@@ -198,8 +204,6 @@ int FileListCtrl::GetItemColumnImage(long item, long columnid) const
 	int ret = -1;
 	if(columnid == FILELIST_COLUMN_SELECTED)
 	{
-	 	FileListCtrl* pThis = const_cast<FileListCtrl*>( this );
-	 	MainFrame* pMainFrame = ( MainFrame* )( wxGetApp().GetTopWindow() );
 	 	//XXX backward compatible
 	 	int nopriority = 0;
 	 	wxLogDebug( _T( "FileListCtrl column %ld of item %ld\n" ), columnid, item );
@@ -211,6 +215,7 @@ int FileListCtrl::GetItemColumnImage(long item, long columnid) const
 	 	}
 	 	else
 	 	{
+            MainFrame* pMainFrame = ( MainFrame* )( wxGetApp().GetTopWindow() );
 	 	 	pTorrent = pMainFrame->GetSelectedTorrent();
 	 	}
 
@@ -234,7 +239,7 @@ int FileListCtrl::GetItemColumnImage(long item, long columnid) const
 			{
 			case FILELIST_COLUMN_SELECTED:
 
-				if (nopriority || filespriority[item] != 0)
+				if (nopriority || filespriority[item] != BITTORRENT_FILE_NONE)
 					ret = 1;
 				else
 					ret = 0;
@@ -262,8 +267,6 @@ void FileListCtrl::OnLeftClick(wxMouseEvent& event)
  	{
  	 	case wxLIST_HITTEST_ONITEMICON: /*FILELIST_COLUMN_SELECTED*/
  	 	 	{
- 	 		 	FileListCtrl* pThis = const_cast<FileListCtrl*>( this );
- 	 		 	MainFrame* pMainFrame = ( MainFrame* )( wxGetApp().GetTopWindow() );
  	 		 	//XXX backward compatible
  	 		 	int nopriority = 0;
  	 		 	shared_ptr<torrent_t> pTorrent;
@@ -274,6 +277,7 @@ void FileListCtrl::OnLeftClick(wxMouseEvent& event)
  	 		 	}
  	 		 	else
  	 		 	{
+                    MainFrame* pMainFrame = ( MainFrame* )( wxGetApp().GetTopWindow() );
  	 		 	 	pTorrent = pMainFrame->GetSelectedTorrent();
  	 		 	}
 
@@ -286,11 +290,11 @@ void FileListCtrl::OnLeftClick(wxMouseEvent& event)
 
  	 				if ((item < filespriority.size() ) && filespriority[item] != 0)
  	 				{
- 	 					filespriority[item] = 0;
+ 	 					filespriority[item] = BITTORRENT_FILE_NONE;
  	 				}
  	 				else
  	 				{
-	 					filespriority[item] = 4; /*Normal*/
+	 					filespriority[item] = BITTORRENT_FILE_NORMAL; /*Normal*/
  	 				}
                     Refresh(false);
                     return;
@@ -304,27 +308,22 @@ void FileListCtrl::OnLeftClick(wxMouseEvent& event)
 
 void FileListCtrl::ShowContextMenu( const wxPoint& pos )
 {
- 	wxMenu menu;
- 	/* XXX openfile */
- 	menu.Append( FILELISTCTRL_MENU_PRIORITY0, _( "Do not download" ) );
- 	menu.AppendSeparator();
- 	menu.Append( FILELISTCTRL_MENU_PRIORITY1, _( "Lowest Priority" ) );
- 	menu.Append( FILELISTCTRL_MENU_PRIORITY4, _( "Normal Priority" ) );
- 	menu.Append( FILELISTCTRL_MENU_PRIORITY7, _( "Highest Priority" ) );
- 	PopupMenu( &menu, pos );
+ 	PopupMenu( &m_contextmenu, pos );
 }
 
 /* update files priority to torrent config */
 void FileListCtrl::OnMenuPriority( wxCommandEvent& event )
 {
- 	MainFrame* pMainFrame = ( MainFrame* )wxGetApp().GetTopWindow();
  	int priority = event.GetId() - FILELISTCTRL_MENU_PRIORITY0;
  	shared_ptr<torrent_t> pTorrent;
 
  	if( m_pTorrent )
  	{ pTorrent = m_pTorrent; }
  	else
- 	{ pTorrent = pMainFrame->GetSelectedTorrent(); }
+ 	{
+        MainFrame* pMainFrame = ( MainFrame* )wxGetApp().GetTopWindow();
+ 	    pTorrent = pMainFrame->GetSelectedTorrent();
+    }
 
  	if( !pTorrent )
  	{ return; }
@@ -332,11 +331,11 @@ void FileListCtrl::OnMenuPriority( wxCommandEvent& event )
  	//XXX get some default priority definition
  	// Get existing priority from pTorrent->t_cfg;
  	std::vector<int> & filespriority = pTorrent->config->GetFilesPriorities();
- 	std::vector<int> deffilespriority( pTorrent->info->num_files(), 4 );
  	std::vector<int>::iterator file_it ;
 
  	if( filespriority.size() != pTorrent->info->num_files() )
  	{
+        std::vector<int> deffilespriority( pTorrent->info->num_files(), BITTORRENT_FILE_NORMAL );
  	 	filespriority.swap( deffilespriority );
  	}
 

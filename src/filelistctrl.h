@@ -64,9 +64,9 @@ private:
 	wxString GetItemValue(long item, long columnid) const;
 	void ShowContextMenu(const wxPoint& pos);
 	void OnMenuPriority(wxCommandEvent &event);
-
 	shared_ptr<torrent_t> m_pTorrent;
 	wxImageList m_imageList;
+    wxMenu m_contextmenu;
 
 	DECLARE_NO_COPY_CLASS(FileListCtrl)
 	DECLARE_EVENT_TABLE()

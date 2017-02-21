@@ -16,6 +16,7 @@
 #include "torrentconfig.h"
 #include "torrentsetting.h"
 #include "filelistctrl.h"
+
 class TorrentProperty: public wxDialog
 {
 	public:

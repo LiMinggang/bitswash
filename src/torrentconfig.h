@@ -26,11 +26,21 @@
 
 #include "configuration.h"
 
+enum {
+    BITTORRENT_FILE_NONE     = 0,
+    BITTORRENT_FILE_LOWEST   = 1,
+    BITTORRENT_FILE_RESERVE2 = 2,
+    BITTORRENT_FILE_RESERVE3 = 3,
+    BITTORRENT_FILE_NORMAL   = 4,
+    BITTORRENT_FILE_RESERVE5 = 5,
+    BITTORRENT_FILE_RESERVE6 = 6,
+    BITTORRENT_FILE_HIGHEST  = 7,
+};
+
 typedef struct {
 	double progress;
 	long total_download;
 	long total_upload;
-	
 } stats_t;
 
 /* 
@@ -109,11 +119,11 @@ private:
 	Configuration *m_maincfg;
 
 	int m_qindex;
-        wxString m_downloadpath;
+    wxString m_downloadpath;
 
 	//legacy
-        bool 	m_compactalloc;
-        libtorrent::storage_mode_t m_storagemode;
+    bool 	m_compactalloc;
+    libtorrent::storage_mode_t m_storagemode;
 
 	//per torrent settings
 	int m_torrent_state;
