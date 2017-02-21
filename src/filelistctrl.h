@@ -55,7 +55,9 @@ public:
 
 	void SetStaticHandle(shared_ptr<torrent_t>& torrent) { m_pTorrent = torrent; }
 	void DeleteStaticHandle() { m_pTorrent.reset(); }
-    int GetItemColumnImage(long item, long columnid) const; /* override to get image for shown columns */
+    virtual int GetItemColumnImage(long item, long columnid) const; /* override to get image for shown columns */
+    virtual void OnSelected(wxListEvent& event);
+	virtual void OnColClick(wxListEvent& event);
 protected:
 	// FileListCtrl variables
 

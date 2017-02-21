@@ -195,53 +195,115 @@ wxString FileListCtrl::GetItemValue( long item, long columnid ) const
 int FileListCtrl::GetItemColumnImage(long item, long columnid) const
 {
 	int ret = -1;
-    FileListCtrl* pThis = const_cast<FileListCtrl*>( this );
-    MainFrame* pMainFrame = ( MainFrame* )( wxGetApp().GetTopWindow() );
-    //XXX backward compatible
-    int nopriority = 0;
-    wxLogDebug( _T( "FileListCtrl column %ld of item %ld\n" ), columnid, item );
-    shared_ptr<torrent_t> pTorrent;
-
-    if( m_pTorrent )
-    {
-        pTorrent = m_pTorrent;
-    }
-    else
-    {
-        pTorrent = pMainFrame->GetSelectedTorrent();
-    }
-
-	if (pTorrent)
+	if(columnid == FILELIST_COLUMN_SELECTED)
 	{
-		libtorrent::torrent_handle h = pTorrent->handle;
-		libtorrent::file_entry f_entry;
-		libtorrent::torrent_info const& torrent_info = *(pTorrent->info);
-		std::vector<int> filespriority = pTorrent->config->GetFilesPriorities();
+	    FileListCtrl* pThis = const_cast<FileListCtrl*>( this );
+	    MainFrame* pMainFrame = ( MainFrame* )( wxGetApp().GetTopWindow() );
+	    //XXX backward compatible
+	    int nopriority = 0;
+	    wxLogDebug( _T( "FileListCtrl column %ld of item %ld\n" ), columnid, item );
+	    shared_ptr<torrent_t> pTorrent;
 
-		if (filespriority.size() != torrent_info.num_files())
+	    if( m_pTorrent )
+	    {
+	        pTorrent = m_pTorrent;
+	    }
+	    else
+	    {
+	        pTorrent = pMainFrame->GetSelectedTorrent();
+	    }
+
+		if (pTorrent)
 		{
-			nopriority = 1;
-		}
-		/*0--unchecked_xpm*/
-		/*1--checked_xpm*/
-		/*2--unchecked_dis_xpm*/
-		/*3--checked_dis_xpm*/
+			libtorrent::torrent_handle h = pTorrent->handle;
+			libtorrent::file_entry f_entry;
+			libtorrent::torrent_info const& torrent_info = *(pTorrent->info);
+			std::vector<int> filespriority = pTorrent->config->GetFilesPriorities();
 
-		switch (columnid)
-		{
-		case FILELIST_COLUMN_SELECTED:
+			if (filespriority.size() != torrent_info.num_files())
+			{
+				nopriority = 1;
+			}
+			/*0--unchecked_xpm*/
+			/*1--checked_xpm*/
+			/*2--unchecked_dis_xpm*/
+			/*3--checked_dis_xpm*/
 
-			if (nopriority || filespriority[item] != 0)
-				ret = 1;
-			else
-				ret = 0;
-			break;
+			switch (columnid)
+			{
+			case FILELIST_COLUMN_SELECTED:
 
-		default:
-			break;
+				if (nopriority || filespriority[item] != 0)
+					ret = 1;
+				else
+					ret = 0;
+				break;
+
+			default:
+				break;
+			}
 		}
 	}
 	return ret;
+}
+
+void FileListCtrl::OnColClick(wxListEvent& event)
+{
+}
+
+void FileListCtrl::OnSelected(wxListEvent& event)
+{
+    int item = event.GetIndex();
+	int col = event.GetColumn(  )  ;
+	if(col == FILELIST_COLUMN_SELECTED)
+	{
+	    FileListCtrl* pThis = const_cast<FileListCtrl*>( this );
+	    MainFrame* pMainFrame = ( MainFrame* )( wxGetApp().GetTopWindow() );
+	    //XXX backward compatible
+	    int nopriority = 0;
+	    wxLogDebug( _T( "FileListCtrl column %ld of item %ld\n" ), col, item );
+	    shared_ptr<torrent_t> pTorrent;
+
+	    if( m_pTorrent )
+	    {
+	        pTorrent = m_pTorrent;
+	    }
+	    else
+	    {
+	        pTorrent = pMainFrame->GetSelectedTorrent();
+	    }
+
+		if (pTorrent)
+		{
+			libtorrent::torrent_handle h = pTorrent->handle;
+			libtorrent::file_entry f_entry;
+			libtorrent::torrent_info const& torrent_info = *(pTorrent->info);
+			std::vector<int> filespriority = pTorrent->config->GetFilesPriorities();
+
+			if (filespriority.size() != torrent_info.num_files())
+			{
+				nopriority = 1;
+			}
+			/*0--unchecked_xpm*/
+			/*1--checked_xpm*/
+			/*2--unchecked_dis_xpm*/
+			/*3--checked_dis_xpm*/
+
+			switch (col)
+			{
+			case FILELIST_COLUMN_SELECTED:
+
+				if (nopriority || filespriority[item] != 0);
+				
+				break;
+
+			default:
+				break;
+			}
+		}
+	}
+
+	SwashListCtrl::OnSelected(event);
 }
 
 void FileListCtrl::ShowContextMenu( const wxPoint& pos )
