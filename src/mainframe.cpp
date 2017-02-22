@@ -437,7 +437,7 @@ wxMenuBar* MainFrame::CreateMainMenuBar()
 #define BITSWASH_TOOLBAR_FLAGS (wxAUI_TB_HORIZONTAL | wxAUI_TB_HORZ_LAYOUT | wxAUI_TB_PLAIN_BACKGROUND | wxAUI_TB_GRIPPER)
 void MainFrame::CreateToolBar()
 {
-	wxAuiToolBar* mainToolBar = new wxAuiToolBar( this, wxID_ANY, wxDefaultPosition, wxDefaultSize, BITSWASH_TOOLBAR_FLAGS );
+	wxAuiToolBar* mainToolBar = new wxAuiToolBar( this, wxID_ANY, wxDefaultPosition, wxSize( 392, 29 ), BITSWASH_TOOLBAR_FLAGS );
 	mainToolBar->SetToolBitmapSize( wxSize( 16, 16 ) );
 	mainToolBar->AddTool( ID_FILE_OPEN_TORRENT, _( "Open Torrent" ),
 						  wxBitmap( wxGetApp().GetAppIcon( BITSWASH_ICON_TORRENT_OPEN ) ), wxNullBitmap, wxITEM_NORMAL,
@@ -452,7 +452,7 @@ void MainFrame::CreateToolBar()
 									_( "Create torrent file" ), _( "Create torrent file to publish" ) );
 #endif
  	mainToolBar->Realize();
- 	wxAuiToolBar* torrentToolBar = new wxAuiToolBar( this, wxID_ANY, wxDefaultPosition, wxDefaultSize, BITSWASH_TOOLBAR_FLAGS );
+ 	wxAuiToolBar* torrentToolBar = new wxAuiToolBar( this, wxID_ANY, wxDefaultPosition, wxSize( 392, 29 ), BITSWASH_TOOLBAR_FLAGS );
  	torrentToolBar->SetToolBitmapSize( wxSize( 16, 16 ) );
  	torrentToolBar->AddTool( ID_TORRENT_START, _( "Queue" ),
  		  wxBitmap( wxGetApp().GetAppIcon( BITSWASH_ICON_TORRENT_START ) ), wxNullBitmap, wxITEM_NORMAL,
@@ -484,7 +484,7 @@ void MainFrame::CreateToolBar()
  		  wxBitmap( wxGetApp().GetAppIcon( BITSWASH_ICON_TORRENT_OPENDIR ) ), wxNullBitmap, wxITEM_NORMAL,
  		  _( "Open destination directory" ), _( "Open destination downloaded directory" ), 0);
  	torrentToolBar->Realize();
- 	wxAuiToolBar* miscToolBar = new wxAuiToolBar( this, wxID_ANY, wxDefaultPosition, wxDefaultSize, BITSWASH_TOOLBAR_FLAGS );
+ 	wxAuiToolBar* miscToolBar = new wxAuiToolBar( this, wxID_ANY, wxDefaultPosition, wxSize( 392, 29 ), BITSWASH_TOOLBAR_FLAGS );
  	miscToolBar->SetToolBitmapSize( wxSize( 16, 16 ) );
  	miscToolBar->AddTool( ID_OPTIONS_PREFERENCES, _( "Preference" ),
  		  wxBitmap( wxGetApp().GetAppIcon( BITSWASH_ICON_OPTION_PREFERENCE ) ), wxNullBitmap, wxITEM_NORMAL,
