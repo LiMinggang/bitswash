@@ -276,7 +276,7 @@ void TorrentListCtrl::ShowContextMenu(const wxPoint& pos)
 		m_torrentmenu = pMainFrame->GetNewTorrentMenu();
 	}
 
-	pMainFrame->TorrentOperationMenu(m_torrentmenu, ( GetSelectedItemCount() > 0 ));
+	pMainFrame->TorrentOperationMenu(m_torrentmenu);
 
 	PopupMenu(m_torrentmenu, pos);
 }

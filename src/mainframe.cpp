@@ -306,11 +306,19 @@ void MainFrame::OnQuit( wxCommandEvent& event )
 void MainFrame::OnMenuTorrentOpenDir( wxCommandEvent& event )
 {
 	shared_ptr<torrent_t> pTorrent = GetSelectedTorrent();
-	if( pTorrent == NULL )
-		return;
+	if( pTorrent )
+	{
 	//XXX windows might needs special treatment here!
-	wxString loc = _T( "file://" ) + pTorrent->config->GetDownloadPath();
-	SystemOpenURL( loc );
+#if  defined(__WXMSW__) 
+		wxExecute(_T("Explorer ")+pTorrent->config->GetDownloadPath(), wxEXEC_ASYNC, NULL); 
+#elif defined(__APPLE__)
+		wxExecute(_T("/usr/bin/open "+pTorrent->config->GetDownloadPath(), wxEXEC_ASYNC, NULL);
+#elif defined(__WXGTK__)
+		wxString loc = _T( "file://" ) + pTorrent->config->GetDownloadPath();
+		//SystemOpenURL( loc );
+		wxLaunchDefaultBrowser(_T("file://")+filepath);
+#endif
+	}
 }
 
 void MainFrame::OnAbout( wxCommandEvent& event )
@@ -845,32 +853,102 @@ void MainFrame::UpdateSelectedTorrent()
 	m_torrentinfo->UpdateTorrentInfo( true );
 }
 
-void MainFrame::TorrentOperationMenu( wxMenu* torrentmenu, bool enabled )
+void MainFrame::TorrentOperationMenu( wxMenu* torrentmenu )
 {
 	//wxLogMessage(_T("TorrentOperationMenu enabled %d\n"), enabled);
 	/* TODO: Check state to enable certain menu only */
 	/* TODO: enable/disable toolbar too */
-	if( !enabled )
+	static int menuids[] = {
+		ID_TORRENT_START,
+		ID_TORRENT_FORCE_START,
+		ID_TORRENT_PAUSE,
+		ID_TORRENT_STOP,
+		
+		ID_TORRENT_OPENDIR,
+		ID_TORRENT_PROPERTIES,
+		ID_TORRENT_REMOVE,
+		ID_TORRENT_REMOVEDATA,
+	};
+	
+	bool menu_status[] = {
+		false,
+		false,
+		false,
+		false,
+
+		false,
+		false,
+		false,
+		false,
+	};
+
+	wxASSERT((sizeof(menuids)/sizeof(menuids[0])) == (sizeof(menu_status)/sizeof(menu_status[0])));
+
+	int selected = m_torrentlistctrl->GetSelectedItemCount();
+	if(selected > 0)
 	{
-		torrentmenu->Enable( ID_TORRENT_START, false );
-		torrentmenu->Enable( ID_TORRENT_PAUSE, false );
-		torrentmenu->Enable( ID_TORRENT_STOP, false );
-		torrentmenu->Enable( ID_TORRENT_OPENDIR, false );
-		torrentmenu->Enable( ID_TORRENT_PROPERTIES, false );
-		torrentmenu->Enable( ID_TORRENT_REMOVE, false );
-		torrentmenu->Enable( ID_TORRENT_REMOVEDATA, false );
+		if(selected == 1)
+		{
+			shared_ptr<torrent_t> pTorrent = GetSelectedTorrent();
+			if( pTorrent )
+			{
+				int state = pTorrent->config->GetTorrentState();
+				switch(state)
+				{
+					case TORRENT_STATE_STOP:
+						{
+							menu_status[0] = true;
+							menu_status[1] = true;
+							break;
+						}
+					case TORRENT_STATE_START:
+					case TORRENT_STATE_FORCE_START:
+						{
+							menu_status[2] = true;
+							menu_status[3] = true;
+							break;
+						}
+					case TORRENT_STATE_QUEUE:
+						{
+							menu_status[0] = true;
+							menu_status[1] = true;
+							menu_status[2] = true;
+							menu_status[3] = true;
+							break;
+						}
+					case TORRENT_STATE_PAUSE:
+						menu_status[0] = true;
+						menu_status[1] = true;
+						menu_status[3] = true;
+						break;
+					default:
+						break;
+				}
+				menu_status[4] = true;
+				menu_status[5] = true;
+				menu_status[6] = true;
+				menu_status[7] = true;
+			}
+			else
+			{
+				for(int i = 0; i < (sizeof(menu_status)/sizeof(menu_status[0])); ++i)
+				{
+					menu_status[i] = true;
+				}
+				/*
+				ID_TORRENT_OPENDIR,
+				ID_TORRENT_PROPERTIES,
+				*/
+				menu_status[5] = false;
+				menu_status[6] = false;
+			}
+		}
 	}
-	else
+
+	for(int i = 0; i < (sizeof(menuids)/sizeof(menuids[0])); ++i)
 	{
-		torrentmenu->Enable( ID_TORRENT_START, true );
-		torrentmenu->Enable( ID_TORRENT_PAUSE, true );
-		torrentmenu->Enable( ID_TORRENT_STOP, true );
-		torrentmenu->Enable( ID_TORRENT_OPENDIR, true );
-		torrentmenu->Enable( ID_TORRENT_PROPERTIES, true );
-		torrentmenu->Enable( ID_TORRENT_REMOVE, true );
-		torrentmenu->Enable( ID_TORRENT_REMOVEDATA, true );
+		torrentmenu->Enable( menuids[i], menu_status[i] );
 	}
-	//wxLogMessage(_T("TorrentOperationMenu enabled %d\n"), enabled);
 }
 
 void MainFrame::OnUpdateUI_MenuTorrent(wxUpdateUIEvent& event)
@@ -926,7 +1004,7 @@ void MainFrame::OnMenuOpen( wxMenuEvent& event )
 	wxMenu* openmenu = event.GetMenu();
 	if( openmenu == m_torrentmenu )
 	{
-		TorrentOperationMenu( m_torrentmenu, m_torrentlistctrl->GetSelectedItemCount() > 0 );
+		TorrentOperationMenu( m_torrentmenu );
 	}
 }
 
