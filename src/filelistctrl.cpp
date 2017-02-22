@@ -357,6 +357,11 @@ void FileListCtrl::ShowContextMenu( const wxPoint& pos )
 			}
 		}
 	}
+	else
+	{
+		disable_priority = FILELISTCTRL_MENU_PRIORITY7 + 1000;
+	}
+
 	m_contextmenu.Enable(FILELISTCTRL_MENU_OPENPATH, enable_openpath);
 	for(int i = 0; i < (sizeof(menuids)/sizeof(menuids[0])); ++i)
 	{

@@ -39,7 +39,9 @@
 #include <libtorrent/alert_types.hpp>
 #include <libtorrent/create_torrent.hpp>
 //plugins
-#include <libtorrent/extensions/metadata_transfer.hpp>
+#include <libtorrent/extensions/ut_metadata.hpp>
+#include <libtorrent/extensions/ut_pex.hpp>
+#include <libtorrent/extensions/smart_ban.hpp>
 #include <libtorrent/extensions/ut_pex.hpp>
 
 #include "functions.h"
@@ -327,10 +329,11 @@ void BitTorrentSession::StartExtensions()
      * restart is needed
      */
     if( m_config->GetEnableMetadata() )
-    { m_libbtsession->add_extension( &libtorrent::create_metadata_plugin ); }
+    { m_libbtsession->add_extension( &libtorrent::create_ut_metadata_plugin ); }
 
     if( m_config->GetEnablePex() )
     { m_libbtsession->add_extension( &libtorrent::create_ut_pex_plugin ); }
+	m_libbtsession->add_extension(&libtorrent::create_smart_ban_plugin);
 }
 
 void BitTorrentSession::StartUpnp()
