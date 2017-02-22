@@ -849,7 +849,8 @@ void BitTorrentSession::SaveTorrentResumeData( shared_ptr<torrent_t>& torrent )
     wxLogDebug( _T( "%s: SaveTorrentResumeData\n" ), torrent->name.c_str() );
     wxString fastresumefile = wxGetApp().SaveTorrentsPath() + wxGetApp().PathSeparator() + torrent->hash + _T( ".fastresume" );
     //new api, write to disk in save_resume_data_alert
-    torrent->handle.save_resume_data();
+    if(torrent->handle.has_metadata())
+        torrent->handle.save_resume_data();
 #if 0
     entry data = torrent->handle.write_resume_data();
     std::ofstream out( ( const char* )fastresumefile.mb_str( wxConvFile ), std::ios_base::binary );
