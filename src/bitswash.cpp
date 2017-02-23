@@ -34,6 +34,273 @@
 #include <wx/filename.h>
 #include <wx/url.h>
 #include <wx/cmdline.h>
+#include <wx/mstream.h>
+
+#include "../icons/bitswash.h"
+#include "../icons/bitswash_256x256.h"
+//#include "../icons/exit.h"
+#include "../icons/option_preference.h"
+#include "../icons/settingconnection.h"
+#include "../icons/settingextension.h"
+#include "../icons/settinggeneral.h"
+#include "../icons/settingtorrent.h"
+#include "../icons/torrent_create.h"
+#include "../icons/torrent_move_down.h"
+#include "../icons/torrent_move_up.h"
+#include "../icons/torrent_open.h"
+#include "../icons/torrent_open_dir.h"
+#include "../icons/torrent_open_url.h"
+#include "../icons/torrent_pause.h"
+#include "../icons/torrent_properties.h"
+#include "../icons/torrent_remove.h"
+#include "../icons/torrent_remove_data.h"
+#include "../icons/torrent_start.h"
+#include "../icons/torrent_stop.h"
+
+#include "../icons/flags/ad.h"
+#include "../icons/flags/ae.h"
+#include "../icons/flags/af.h"
+#include "../icons/flags/ag.h"
+#include "../icons/flags/ai.h"
+#include "../icons/flags/al.h"
+#include "../icons/flags/am.h"
+#include "../icons/flags/an.h"
+#include "../icons/flags/ao.h"
+#include "../icons/flags/ar.h"
+#include "../icons/flags/as.h"
+#include "../icons/flags/at.h"
+#include "../icons/flags/au.h"
+#include "../icons/flags/aw.h"
+#include "../icons/flags/ax.h"
+#include "../icons/flags/az.h"
+#include "../icons/flags/ba.h"
+#include "../icons/flags/bb.h"
+#include "../icons/flags/bd.h"
+#include "../icons/flags/be.h"
+#include "../icons/flags/bf.h"
+#include "../icons/flags/bg.h"
+#include "../icons/flags/bh.h"
+#include "../icons/flags/bi.h"
+#include "../icons/flags/bj.h"
+#include "../icons/flags/bm.h"
+#include "../icons/flags/bn.h"
+#include "../icons/flags/bo.h"
+#include "../icons/flags/br.h"
+#include "../icons/flags/bs.h"
+#include "../icons/flags/bt.h"
+#include "../icons/flags/bv.h"
+#include "../icons/flags/bw.h"
+#include "../icons/flags/by.h"
+#include "../icons/flags/bz.h"
+#include "../icons/flags/ca.h"
+#include "../icons/flags/cc.h"
+#include "../icons/flags/cd.h"
+#include "../icons/flags/cf.h"
+#include "../icons/flags/cg.h"
+#include "../icons/flags/ch.h"
+#include "../icons/flags/ci.h"
+#include "../icons/flags/ck.h"
+#include "../icons/flags/cl.h"
+#include "../icons/flags/cm.h"
+#include "../icons/flags/cn.h"
+#include "../icons/flags/co.h"
+#include "../icons/flags/cr.h"
+#include "../icons/flags/cs.h"
+#include "../icons/flags/cu.h"
+#include "../icons/flags/cv.h"
+#include "../icons/flags/cx.h"
+#include "../icons/flags/cy.h"
+#include "../icons/flags/cz.h"
+#include "../icons/flags/de.h"
+#include "../icons/flags/dj.h"
+#include "../icons/flags/dk.h"
+#include "../icons/flags/dm.h"
+#include "../icons/flags/do.h"
+#include "../icons/flags/dz.h"
+#include "../icons/flags/ec.h"
+#include "../icons/flags/ee.h"
+#include "../icons/flags/eg.h"
+#include "../icons/flags/eh.h"
+#include "../icons/flags/er.h"
+#include "../icons/flags/es.h"
+#include "../icons/flags/et.h"
+#include "../icons/flags/eu.h"
+#include "../icons/flags/fi.h"
+#include "../icons/flags/fj.h"
+#include "../icons/flags/fk.h"
+#include "../icons/flags/fm.h"
+#include "../icons/flags/fo.h"
+#include "../icons/flags/fr.h"
+#include "../icons/flags/ga.h"
+#include "../icons/flags/gb.h"
+#include "../icons/flags/gd.h"
+#include "../icons/flags/ge.h"
+#include "../icons/flags/gf.h"
+#include "../icons/flags/gh.h"
+#include "../icons/flags/gi.h"
+#include "../icons/flags/gl.h"
+#include "../icons/flags/gm.h"
+#include "../icons/flags/gn.h"
+#include "../icons/flags/gp.h"
+#include "../icons/flags/gq.h"
+#include "../icons/flags/gr.h"
+#include "../icons/flags/gs.h"
+#include "../icons/flags/gt.h"
+#include "../icons/flags/gu.h"
+#include "../icons/flags/gw.h"
+#include "../icons/flags/gy.h"
+#include "../icons/flags/hk.h"
+#include "../icons/flags/hm.h"
+#include "../icons/flags/hn.h"
+#include "../icons/flags/hr.h"
+#include "../icons/flags/ht.h"
+#include "../icons/flags/hu.h"
+#include "../icons/flags/id.h"
+#include "../icons/flags/ie.h"
+#include "../icons/flags/il.h"
+#include "../icons/flags/in.h"
+#include "../icons/flags/io.h"
+#include "../icons/flags/iq.h"
+#include "../icons/flags/ir.h"
+#include "../icons/flags/is.h"
+#include "../icons/flags/it.h"
+#include "../icons/flags/jm.h"
+#include "../icons/flags/jo.h"
+#include "../icons/flags/jp.h"
+#include "../icons/flags/ke.h"
+#include "../icons/flags/kg.h"
+#include "../icons/flags/kh.h"
+#include "../icons/flags/ki.h"
+#include "../icons/flags/km.h"
+#include "../icons/flags/kn.h"
+#include "../icons/flags/kp.h"
+#include "../icons/flags/kr.h"
+#include "../icons/flags/kw.h"
+#include "../icons/flags/ky.h"
+#include "../icons/flags/kz.h"
+#include "../icons/flags/la.h"
+#include "../icons/flags/lb.h"
+#include "../icons/flags/lc.h"
+#include "../icons/flags/li.h"
+#include "../icons/flags/lk.h"
+#include "../icons/flags/lr.h"
+#include "../icons/flags/ls.h"
+#include "../icons/flags/lt.h"
+#include "../icons/flags/lu.h"
+#include "../icons/flags/lv.h"
+#include "../icons/flags/ly.h"
+#include "../icons/flags/ma.h"
+#include "../icons/flags/mc.h"
+#include "../icons/flags/md.h"
+#include "../icons/flags/me.h"
+#include "../icons/flags/mg.h"
+#include "../icons/flags/mh.h"
+#include "../icons/flags/mk.h"
+#include "../icons/flags/ml.h"
+#include "../icons/flags/mm.h"
+#include "../icons/flags/mn.h"
+#include "../icons/flags/mo.h"
+#include "../icons/flags/mp.h"
+#include "../icons/flags/mq.h"
+#include "../icons/flags/mr.h"
+#include "../icons/flags/ms.h"
+#include "../icons/flags/mt.h"
+#include "../icons/flags/mu.h"
+#include "../icons/flags/mv.h"
+#include "../icons/flags/mw.h"
+#include "../icons/flags/mx.h"
+#include "../icons/flags/my.h"
+#include "../icons/flags/mz.h"
+#include "../icons/flags/na.h"
+#include "../icons/flags/nc.h"
+#include "../icons/flags/ne.h"
+#include "../icons/flags/nf.h"
+#include "../icons/flags/ng.h"
+#include "../icons/flags/ni.h"
+#include "../icons/flags/nl.h"
+#include "../icons/flags/no.h"
+#include "../icons/flags/np.h"
+#include "../icons/flags/nr.h"
+#include "../icons/flags/nu.h"
+#include "../icons/flags/nz.h"
+#include "../icons/flags/om.h"
+#include "../icons/flags/pa.h"
+#include "../icons/flags/pe.h"
+#include "../icons/flags/pf.h"
+#include "../icons/flags/pg.h"
+#include "../icons/flags/ph.h"
+#include "../icons/flags/pk.h"
+#include "../icons/flags/pl.h"
+#include "../icons/flags/pm.h"
+#include "../icons/flags/pn.h"
+#include "../icons/flags/pr.h"
+#include "../icons/flags/ps.h"
+#include "../icons/flags/pt.h"
+#include "../icons/flags/pw.h"
+#include "../icons/flags/py.h"
+#include "../icons/flags/qa.h"
+#include "../icons/flags/re.h"
+#include "../icons/flags/ro.h"
+#include "../icons/flags/rs.h"
+#include "../icons/flags/ru.h"
+#include "../icons/flags/rw.h"
+#include "../icons/flags/sa.h"
+#include "../icons/flags/sb.h"
+#include "../icons/flags/sc.h"
+#include "../icons/flags/sd.h"
+#include "../icons/flags/se.h"
+#include "../icons/flags/sg.h"
+#include "../icons/flags/sh.h"
+#include "../icons/flags/si.h"
+#include "../icons/flags/sj.h"
+#include "../icons/flags/sk.h"
+#include "../icons/flags/sl.h"
+#include "../icons/flags/sm.h"
+#include "../icons/flags/sn.h"
+#include "../icons/flags/so.h"
+#include "../icons/flags/sr.h"
+#include "../icons/flags/st.h"
+#include "../icons/flags/sv.h"
+#include "../icons/flags/sy.h"
+#include "../icons/flags/sz.h"
+#include "../icons/flags/tc.h"
+#include "../icons/flags/td.h"
+#include "../icons/flags/tf.h"
+#include "../icons/flags/tg.h"
+#include "../icons/flags/th.h"
+#include "../icons/flags/tj.h"
+#include "../icons/flags/tk.h"
+#include "../icons/flags/tl.h"
+#include "../icons/flags/tm.h"
+#include "../icons/flags/tn.h"
+#include "../icons/flags/to.h"
+#include "../icons/flags/tr.h"
+#include "../icons/flags/tt.h"
+#include "../icons/flags/tv.h"
+#include "../icons/flags/tw.h"
+#include "../icons/flags/tz.h"
+#include "../icons/flags/ua.h"
+#include "../icons/flags/ug.h"
+#include "../icons/flags/um.h"
+#include "../icons/flags/un.h"
+#include "../icons/flags/us.h"
+#include "../icons/flags/uy.h"
+#include "../icons/flags/uz.h"
+#include "../icons/flags/va.h"
+#include "../icons/flags/vc.h"
+#include "../icons/flags/ve.h"
+#include "../icons/flags/vg.h"
+#include "../icons/flags/vi.h"
+#include "../icons/flags/vn.h"
+#include "../icons/flags/vu.h"
+#include "../icons/flags/wf.h"
+#include "../icons/flags/ws.h"
+#include "../icons/flags/ye.h"
+#include "../icons/flags/yt.h"
+#include "../icons/flags/za.h"
+#include "../icons/flags/zm.h"
+#include "../icons/flags/zw.h"
+
 
 #include "bitswash.h"
 #include "mainframe.h"
@@ -108,275 +375,280 @@ static struct AppIcons_t
 {
 	enum appicon_id id;
 	wxImage *image;
-	wxString filename;
+	const unsigned char * filebuf;
+	size_t filesize;
 } AppIcons[] =
 {
-	{ BITSWASH_ICON_APP, NULL, _T( "bitswash.png" ) },
-	{ BITSWASH_ICON_APP256, NULL, _T( "bitswash_256x256.png" ) },
-	{ BITSWASH_ICON_TORRENT_OPEN, NULL, _T( "torrent_open.png" ) },
-	{ BITSWASH_ICON_TORRENT_CREATE, NULL, _T( "torrent_create.png" ) },
-	{ BITSWASH_ICON_TORRENT_OPENURL, NULL, _T( "torrent_open_url.png" ) },
-	{ BITSWASH_ICON_TORRENT_OPENDIR, NULL, _T( "torrent_open_dir.png" ) },
-	{ BITSWASH_ICON_TORRENT_START, NULL, _T( "torrent_start.png" ) },
-	{ BITSWASH_ICON_TORRENT_PAUSE, NULL, _T( "torrent_pause.png" ) },
-	{ BITSWASH_ICON_TORRENT_STOP, NULL, _T( "torrent_stop.png" ) },
-	{ BITSWASH_ICON_TORRENT_PROPERTIES, NULL, _T( "torrent_properties.png" ) },
-	{ BITSWASH_ICON_TORRENT_REMOVE, NULL, _T( "torrent_remove.png" ) },
-	{ BITSWASH_ICON_TORRENT_REMOVEDATA, NULL, _T( "torrent_remove_data.png" ) },
-	{ BITSWASH_ICON_TORRENT_MOVEUP, NULL, _T( "torrent_move_up.png" ) },
-	{ BITSWASH_ICON_TORRENT_MOVEDOWN, NULL, _T( "torrent_move_down.png" ) },
-	{ BITSWASH_ICON_OPTION_PREFERENCE, NULL, _T( "option_preference.png" ) },
-	{ BITSWASH_ICON_MAX, NULL, _T( "" ) }
+	{ BITSWASH_ICON_APP, NULL, &bitswash_bin[0], sizeof(bitswash_bin)/sizeof(bitswash_bin[0])},
+	{ BITSWASH_ICON_APP256, NULL, &bitswash_256x256_bin[0], sizeof(bitswash_256x256_bin)/sizeof(bitswash_256x256_bin[0])},
+	{ BITSWASH_ICON_TORRENT_OPEN, NULL, &torrent_open_bin[0], sizeof(torrent_open_bin)/sizeof(torrent_open_bin[0])},
+	{ BITSWASH_ICON_TORRENT_CREATE, NULL, &torrent_create_bin[0], sizeof(torrent_create_bin)/sizeof(torrent_create_bin[0])},
+	{ BITSWASH_ICON_TORRENT_OPENURL, NULL, &torrent_open_url_bin[0], sizeof(torrent_open_url_bin)/sizeof(torrent_open_url_bin[0])},
+	{ BITSWASH_ICON_TORRENT_OPENDIR, NULL, &torrent_open_dir_bin[0], sizeof(torrent_open_dir_bin)/sizeof(torrent_open_dir_bin[0])},
+	{ BITSWASH_ICON_TORRENT_START, NULL, &torrent_start_bin[0], sizeof(torrent_start_bin)/sizeof(torrent_start_bin[0])},
+	{ BITSWASH_ICON_TORRENT_PAUSE, NULL, &torrent_pause_bin[0], sizeof(torrent_pause_bin)/sizeof(torrent_pause_bin[0])},
+	{ BITSWASH_ICON_TORRENT_STOP, NULL, &torrent_stop_bin[0], sizeof(torrent_stop_bin)/sizeof(torrent_stop_bin[0])},
+	{ BITSWASH_ICON_TORRENT_PROPERTIES, NULL, &torrent_properties_bin[0], sizeof(torrent_properties_bin)/sizeof(torrent_properties_bin[0])},
+	{ BITSWASH_ICON_TORRENT_REMOVE, NULL, &torrent_remove_bin[0], sizeof(torrent_remove_bin)/sizeof(torrent_remove_bin[0])},
+	{ BITSWASH_ICON_TORRENT_REMOVEDATA, NULL, &torrent_remove_data_bin[0], sizeof(torrent_remove_data_bin)/sizeof(torrent_remove_data_bin[0])},
+	{ BITSWASH_ICON_TORRENT_MOVEUP, NULL, &torrent_move_up_bin[0], sizeof(torrent_move_up_bin)/sizeof(torrent_move_up_bin[0])},
+	{ BITSWASH_ICON_TORRENT_MOVEDOWN, NULL, &torrent_move_down_bin[0], sizeof(torrent_move_down_bin)/sizeof(torrent_move_down_bin[0])},
+	{ BITSWASH_ICON_OPTION_PREFERENCE, NULL, &option_preference_bin[0], sizeof(option_preference_bin)/sizeof(option_preference_bin[0])},
+	{ BITSWASH_ICON_MAX, NULL, NULL, 0 }
 };
 
 static struct CountryFlags_t
 {
 	const wxChar code[4];
 	wxString name;
+    const unsigned char * filebuf;
+    size_t filesize;
 	int imgidx;             /* index in the imagelist */
 } CountryFlags[] =
 {
-	{ _T( "--" ), _( "Unknown" ) },
-	{ _T( "AF" ), _( "Afghanistan" ) },
-	{ _T( "AL" ), _( "Albania" ) },
-	{ _T( "DZ" ), _( "Algeria" ) },
-	{ _T( "AS" ), _( "American Samoa" ) },
-	{ _T( "AD" ), _( "Andorra" ) },
-	{ _T( "AO" ), _( "Angola" ) },
-	{ _T( "AI" ), _( "Anguilla" ) },
-	{ _T( "AG" ), _( "Antigua and Barbuda" ) },
-	{ _T( "AR" ), _( "Argentina" ) },
-	{ _T( "AM" ), _( "Armenia" ) },
-	{ _T( "AW" ), _( "Aruba" ) },
-	{ _T( "AU" ), _( "Australia" ) },
-	{ _T( "AT" ), _( "Austria" ) },
-	{ _T( "AZ" ), _( "Azerbaijan" ) },
-	{ _T( "BS" ), _( "Bahamas" ) },
-	{ _T( "BH" ), _( "Bahrain" ) },
-	{ _T( "BD" ), _( "Bangladesh" ) },
-	{ _T( "BB" ), _( "Barbados" ) },
-	{ _T( "BY" ), _( "Belarus" ) },
-	{ _T( "BE" ), _( "Belgium" ) },
-	{ _T( "BZ" ), _( "Belize" ) },
-	{ _T( "BJ" ), _( "Benin" ) },
-	{ _T( "BM" ), _( "Bermuda" ) },
-	{ _T( "BT" ), _( "Bhutan" ) },
-	{ _T( "BO" ), _( "Bolivia" ) },
-	{ _T( "BA" ), _( "Bosnia and Herzegovina" ) },
-	{ _T( "BW" ), _( "Botswana" ) },
-	{ _T( "BV" ), _( "Bouvet Island Bouvetoya" ) },
-	{ _T( "BR" ), _( "Brazil" ) },
-	{ _T( "IO" ), _( "British Indian Ocean Territory Chagos Archipelago" ) },
-	{ _T( "VG" ), _( "British Virgin Islands" ) },
-	{ _T( "BN" ), _( "Brunei Darussalam" ) },
-	{ _T( "BG" ), _( "Bulgaria" ) },
-	{ _T( "BF" ), _( "Burkina Faso" ) },
-	{ _T( "BI" ), _( "Burundi" ) },
-	{ _T( "KH" ), _( "Cambodia" ) },
-	{ _T( "CM" ), _( "Cameroon" ) },
-	{ _T( "CA" ), _( "Canada" ) },
-	{ _T( "CV" ), _( "Cape Verde" ) },
-	{ _T( "KY" ), _( "Cayman Islands" ) },
-	{ _T( "CF" ), _( "Central African Republic" ) },
-	{ _T( "TD" ), _( "Chad" ) },
-	{ _T( "CL" ), _( "Chile" ) },
-	{ _T( "CN" ), _( "China" ) },
-	{ _T( "CX" ), _( "Christmas Island" ) },
-	{ _T( "CC" ), _( "Cocos Keeling Islands" ) },
-	{ _T( "CO" ), _( "Colombia" ) },
-	{ _T( "KM" ), _( "Comoros" ) },
-	{ _T( "CD" ), _( "Congo" ) },
-	{ _T( "CG" ), _( "Congo" ) },
-	{ _T( "CK" ), _( "Cook Islands" ) },
-	{ _T( "CR" ), _( "Costa Rica" ) },
-	{ _T( "CI" ), _( "Cote D'Ivoire" ) },
-	{ _T( "CU" ), _( "Cuba" ) },
-	{ _T( "CY" ), _( "Cyprus" ) },
-	{ _T( "CZ" ), _( "Czech Republic" ) },
-	{ _T( "DK" ), _( "Denmark" ) },
-	{ _T( "DJ" ), _( "Djibouti" ) },
-	{ _T( "DM" ), _( "Dominica" ) },
-	{ _T( "DO" ), _( "Dominican Republic" ) },
-	{ _T( "EC" ), _( "Ecuador" ) },
-	{ _T( "EG" ), _( "Egypt" ) },
-	{ _T( "SV" ), _( "El Salvador" ) },
-	{ _T( "GQ" ), _( "Equatorial Guinea" ) },
-	{ _T( "ER" ), _( "Eritrea" ) },
-	{ _T( "EE" ), _( "Estonia" ) },
-	{ _T( "ET" ), _( "Ethiopia" ) },
-	{ _T( "EU" ), _( "Europe" ) },
-	{ _T( "FO" ), _( "Faeroe Islands" ) },
-	{ _T( "FK" ), _( "Falkland Islands Malvinas" ) },
-	{ _T( "FJ" ), _( "Fiji" ) },
-	{ _T( "FI" ), _( "Finland" ) },
-	{ _T( "FR" ), _( "France" ) },
-	{ _T( "GF" ), _( "French Guiana" ) },
-	{ _T( "PF" ), _( "French Polynesia" ) },
-	{ _T( "TF" ), _( "French Southern Territories" ) },
-	{ _T( "GA" ), _( "Gabon" ) },
-	{ _T( "GM" ), _( "Gambia" ) },
-	{ _T( "GE" ), _( "Georgia" ) },
-	{ _T( "DE" ), _( "Germany" ) },
-	{ _T( "GH" ), _( "Ghana" ) },
-	{ _T( "GI" ), _( "Gibraltar" ) },
-	{ _T( "GR" ), _( "Greece" ) },
-	{ _T( "GL" ), _( "Greenland" ) },
-	{ _T( "GD" ), _( "Grenada" ) },
-	{ _T( "GP" ), _( "Guadaloupe" ) },
-	{ _T( "GU" ), _( "Guam" ) },
-	{ _T( "GT" ), _( "Guatemala" ) },
-	{ _T( "GN" ), _( "Guinea" ) },
-	{ _T( "GW" ), _( "Guinea-Bissau" ) },
-	{ _T( "GY" ), _( "Guyana" ) },
-	{ _T( "HT" ), _( "Haiti" ) },
-	{ _T( "HM" ), _( "Heard and McDonald Islands" ) },
-	{ _T( "VA" ), _( "Holy See Vatican City State" ) },
-	{ _T( "HN" ), _( "Honduras" ) },
-	{ _T( "HK" ), _( "Hong Kong" ) },
-	{ _T( "HR" ), _( "Hrvatska Croatia" ) },
-	{ _T( "HU" ), _( "Hungary" ) },
-	{ _T( "IS" ), _( "Iceland" ) },
-	{ _T( "IN" ), _( "India" ) },
-	{ _T( "ID" ), _( "Indonesia" ) },
-	{ _T( "IR" ), _( "Iran" ) },
-	{ _T( "IQ" ), _( "Iraq" ) },
-	{ _T( "IE" ), _( "Ireland" ) },
-	{ _T( "IL" ), _( "Israel" ) },
-	{ _T( "IT" ), _( "Italy" ) },
-	{ _T( "JM" ), _( "Jamaica" ) },
-	{ _T( "JP" ), _( "Japan" ) },
-	{ _T( "JO" ), _( "Jordan" ) },
-	{ _T( "KZ" ), _( "Kazakhstan" ) },
-	{ _T( "KE" ), _( "Kenya" ) },
-	{ _T( "KI" ), _( "Kiribati" ) },
-	{ _T( "KP" ), _( "Korea" ) },
-	{ _T( "KR" ), _( "Korea" ) },
-	{ _T( "KW" ), _( "Kuwait" ) },
-	{ _T( "KG" ), _( "Kyrgyz Republic" ) },
-	{ _T( "LA" ), _( "Lao People's Democratic Republic" ) },
-	{ _T( "LV" ), _( "Latvia" ) },
-	{ _T( "LB" ), _( "Lebanon" ) },
-	{ _T( "LS" ), _( "Lesotho" ) },
-	{ _T( "LR" ), _( "Liberia" ) },
-	{ _T( "LY" ), _( "Libyan Arab Jamahiriya" ) },
-	{ _T( "LI" ), _( "Liechtenstein" ) },
-	{ _T( "LT" ), _( "Lithuania" ) },
-	{ _T( "LU" ), _( "Luxembourg" ) },
-	{ _T( "MO" ), _( "Macao" ) },
-	{ _T( "MK" ), _( "Macedonia" ) },
-	{ _T( "MG" ), _( "Madagascar" ) },
-	{ _T( "MW" ), _( "Malawi" ) },
-	{ _T( "MY" ), _( "Malaysia" ) },
-	{ _T( "MV" ), _( "Maldives" ) },
-	{ _T( "ML" ), _( "Mali" ) },
-	{ _T( "MT" ), _( "Malta" ) },
-	{ _T( "MH" ), _( "Marshall Islands" ) },
-	{ _T( "MQ" ), _( "Martinique" ) },
-	{ _T( "MR" ), _( "Mauritania" ) },
-	{ _T( "MU" ), _( "Mauritius" ) },
-	{ _T( "YT" ), _( "Mayotte" ) },
-	{ _T( "MX" ), _( "Mexico" ) },
-	{ _T( "FM" ), _( "Micronesia" ) },
-	{ _T( "MD" ), _( "Moldova" ) },
-	{ _T( "MC" ), _( "Monaco" ) },
-	{ _T( "MN" ), _( "Mongolia" ) },
-	{ _T( "MS" ), _( "Montserrat" ) },
-	{ _T( "MA" ), _( "Morocco" ) },
-	{ _T( "MZ" ), _( "Mozambique" ) },
-	{ _T( "MM" ), _( "Myanmar" ) },
-	{ _T( "NA" ), _( "Namibia" ) },
-	{ _T( "NR" ), _( "Nauru" ) },
-	{ _T( "NP" ), _( "Nepal" ) },
-	{ _T( "AN" ), _( "Netherlands Antilles" ) },
-	{ _T( "NL" ), _( "Netherlands" ) },
-	{ _T( "NC" ), _( "New Caledonia" ) },
-	{ _T( "NZ" ), _( "New Zealand" ) },
-	{ _T( "NI" ), _( "Nicaragua" ) },
-	{ _T( "NE" ), _( "Niger" ) },
-	{ _T( "NG" ), _( "Nigeria" ) },
-	{ _T( "NU" ), _( "Niue" ) },
-	{ _T( "NF" ), _( "Norfolk Island" ) },
-	{ _T( "MP" ), _( "Northern Mariana Islands" ) },
-	{ _T( "NO" ), _( "Norway" ) },
-	{ _T( "OM" ), _( "Oman" ) },
-	{ _T( "PK" ), _( "Pakistan" ) },
-	{ _T( "PW" ), _( "Palau" ) },
-	{ _T( "PS" ), _( "Palestinian Territory" ) },
-	{ _T( "PA" ), _( "Panama" ) },
-	{ _T( "PG" ), _( "Papua New Guinea" ) },
-	{ _T( "PY" ), _( "Paraguay" ) },
-	{ _T( "PE" ), _( "Peru" ) },
-	{ _T( "PH" ), _( "Philippines" ) },
-	{ _T( "PN" ), _( "Pitcairn Island" ) },
-	{ _T( "PL" ), _( "Poland" ) },
-	{ _T( "PT" ), _( "Portugal" ) },
-	{ _T( "PR" ), _( "Puerto Rico" ) },
-	{ _T( "QA" ), _( "Qatar" ) },
-	{ _T( "RE" ), _( "Reunion" ) },
-	{ _T( "RO" ), _( "Romania" ) },
-	{ _T( "RU" ), _( "Russian Federation" ) },
-	{ _T( "RW" ), _( "Rwanda" ) },
-	{ _T( "SH" ), _( "St. Helena" ) },
-	{ _T( "KN" ), _( "St. Kitts and Nevis" ) },
-	{ _T( "LC" ), _( "St. Lucia" ) },
-	{ _T( "PM" ), _( "St. Pierre and Miquelon" ) },
-	{ _T( "VC" ), _( "St. Vincent and the Grenadines" ) },
-	{ _T( "WS" ), _( "Samoa" ) },
-	{ _T( "SM" ), _( "San Marino" ) },
-	{ _T( "ST" ), _( "Sao Tome and Principe" ) },
-	{ _T( "SA" ), _( "Saudi Arabia" ) },
-	{ _T( "SN" ), _( "Senegal" ) },
-	{ _T( "CS" ), _( "Serbia and Montenegro" ) },
-	{ _T( "SC" ), _( "Seychelles" ) },
-	{ _T( "SL" ), _( "Sierra Leone" ) },
-	{ _T( "SG" ), _( "Singapore" ) },
-	{ _T( "SK" ), _( "Slovakia Slovak Republic" ) },
-	{ _T( "SI" ), _( "Slovenia" ) },
-	{ _T( "SB" ), _( "Solomon Islands" ) },
-	{ _T( "SO" ), _( "Somalia" ) },
-	{ _T( "ZA" ), _( "South Africa" ) },
-	{ _T( "GS" ), _( "South Georgia and the South Sandwich Islands" ) },
-	{ _T( "ES" ), _( "Spain" ) },
-	{ _T( "LK" ), _( "Sri Lanka" ) },
-	{ _T( "SD" ), _( "Sudan" ) },
-	{ _T( "SR" ), _( "Suriname" ) },
-	{ _T( "SJ" ), _( "Svalbard & Jan Mayen Islands" ) },
-	{ _T( "SZ" ), _( "Swaziland" ) },
-	{ _T( "SE" ), _( "Sweden" ) },
-	{ _T( "CH" ), _( "Switzerland" ) },
-	{ _T( "SY" ), _( "Syrian Arab Republic" ) },
-	{ _T( "TW" ), _( "Taiwan" ) },
-	{ _T( "TJ" ), _( "Tajikistan" ) },
-	{ _T( "TZ" ), _( "Tanzania" ) },
-	{ _T( "TH" ), _( "Thailand" ) },
-	{ _T( "TL" ), _( "Timor-Leste" ) },
-	{ _T( "TG" ), _( "Togo" ) },
-	{ _T( "TK" ), _( "Tokelau Tokelau Islands" ) },
-	{ _T( "TO" ), _( "Tonga" ) },
-	{ _T( "TT" ), _( "Trinidad and Tobago" ) },
-	{ _T( "TN" ), _( "Tunisia" ) },
-	{ _T( "TR" ), _( "Turkey" ) },
-	{ _T( "TM" ), _( "Turkmenistan" ) },
-	{ _T( "TC" ), _( "Turks and Caicos Islands" ) },
-	{ _T( "TV" ), _( "Tuvalu" ) },
-	{ _T( "VI" ), _( "US Virgin Islands" ) },
-	{ _T( "UG" ), _( "Uganda" ) },
-	{ _T( "UA" ), _( "Ukraine" ) },
-	{ _T( "AE" ), _( "United Arab Emirates" ) },
-	{ _T( "GB" ), _( "United Kingdom of Great Britain & N. Ireland" ) },
-	{ _T( "UM" ), _( "United States Minor Outlying Islands" ) },
-	{ _T( "US" ), _( "United States of America" ) },
-	{ _T( "UY" ), _( "Uruguay" ) },
-	{ _T( "UZ" ), _( "Uzbekistan" ) },
-	{ _T( "VU" ), _( "Vanuatu" ) },
-	{ _T( "VE" ), _( "Venezuela" ) },
-	{ _T( "VN" ), _( "Viet Nam" ) },
-	{ _T( "WF" ), _( "Wallis and Futuna Islands" ) },
-	{ _T( "EH" ), _( "Western Sahara" ) },
-	{ _T( "YE" ), _( "Yemen" ) },
-	{ _T( "ZM" ), _( "Zambia" ) },
-	{ _T( "ZW" ), _( "Zimbabwe" ) },
-	{ _T( "" ), _T( "" )}
+	{ _T( "--" ), _( "Unknown" ), &ad_bin[0], sizeof(ad_bin)/sizeof(ad_bin[0]), -1,},
+	{ _T( "AF" ), _( "Afghanistan" ), &ae_bin[0], sizeof(ae_bin)/sizeof(ae_bin[0]), -1,},
+	{ _T( "AL" ), _( "Albania" ), &af_bin[0], sizeof(af_bin)/sizeof(af_bin[0]), -1,},
+	{ _T( "DZ" ), _( "Algeria" ), &ag_bin[0], sizeof(ag_bin)/sizeof(ag_bin[0]), -1,},
+	{ _T( "AS" ), _( "American Samoa" ), &ai_bin[0], sizeof(ai_bin)/sizeof(ai_bin[0]), -1,},
+	{ _T( "AD" ), _( "Andorra" ), &al_bin[0], sizeof(al_bin)/sizeof(al_bin[0]), -1,},
+	{ _T( "AO" ), _( "Angola" ), &am_bin[0], sizeof(am_bin)/sizeof(am_bin[0]), -1,},
+	{ _T( "AI" ), _( "Anguilla" ), &an_bin[0], sizeof(an_bin)/sizeof(an_bin[0]), -1,},
+	{ _T( "AG" ), _( "Antigua and Barbuda" ), &ao_bin[0], sizeof(ao_bin)/sizeof(ao_bin[0]), -1,},
+	{ _T( "AR" ), _( "Argentina" ), &ar_bin[0], sizeof(ar_bin)/sizeof(ar_bin[0]), -1,},
+	{ _T( "AM" ), _( "Armenia" ), &as_bin[0], sizeof(as_bin)/sizeof(as_bin[0]), -1,},
+	{ _T( "AW" ), _( "Aruba" ), &at_bin[0], sizeof(at_bin)/sizeof(at_bin[0]), -1,},
+	{ _T( "AU" ), _( "Australia" ), &au_bin[0], sizeof(au_bin)/sizeof(au_bin[0]), -1,},
+	{ _T( "AT" ), _( "Austria" ), &aw_bin[0], sizeof(aw_bin)/sizeof(aw_bin[0]), -1,},
+	{ _T( "AZ" ), _( "Azerbaijan" ), &ax_bin[0], sizeof(ax_bin)/sizeof(ax_bin[0]), -1,},
+	{ _T( "BS" ), _( "Bahamas" ), &az_bin[0], sizeof(az_bin)/sizeof(az_bin[0]), -1,},
+	{ _T( "BH" ), _( "Bahrain" ), &ba_bin[0], sizeof(ba_bin)/sizeof(ba_bin[0]), -1,},
+	{ _T( "BD" ), _( "Bangladesh" ), &bb_bin[0], sizeof(bb_bin)/sizeof(bb_bin[0]), -1,},
+	{ _T( "BB" ), _( "Barbados" ), &bd_bin[0], sizeof(bd_bin)/sizeof(bd_bin[0]), -1,},
+	{ _T( "BY" ), _( "Belarus" ), &be_bin[0], sizeof(be_bin)/sizeof(be_bin[0]), -1,},
+	{ _T( "BE" ), _( "Belgium" ), &bf_bin[0], sizeof(bf_bin)/sizeof(bf_bin[0]), -1,},
+	{ _T( "BZ" ), _( "Belize" ), &bg_bin[0], sizeof(bg_bin)/sizeof(bg_bin[0]), -1,},
+	{ _T( "BJ" ), _( "Benin" ), &bh_bin[0], sizeof(bh_bin)/sizeof(bh_bin[0]), -1,},
+	{ _T( "BM" ), _( "Bermuda" ), &bi_bin[0], sizeof(bi_bin)/sizeof(bi_bin[0]), -1,},
+	{ _T( "BT" ), _( "Bhutan" ), &bj_bin[0], sizeof(bj_bin)/sizeof(bj_bin[0]), -1,},
+	{ _T( "BO" ), _( "Bolivia" ), &bm_bin[0], sizeof(bm_bin)/sizeof(bm_bin[0]), -1,},
+	{ _T( "BA" ), _( "Bosnia and Herzegovina" ), &bn_bin[0], sizeof(bn_bin)/sizeof(bn_bin[0]), -1,},
+	{ _T( "BW" ), _( "Botswana" ), &bo_bin[0], sizeof(bo_bin)/sizeof(bo_bin[0]), -1,},
+	{ _T( "BV" ), _( "Bouvet Island Bouvetoya" ), &br_bin[0], sizeof(br_bin)/sizeof(br_bin[0]), -1,},
+	{ _T( "BR" ), _( "Brazil" ), &bs_bin[0], sizeof(bs_bin)/sizeof(bs_bin[0]), -1,},
+	{ _T( "IO" ), _( "British Indian Ocean Territory Chagos Archipelago" ), &bt_bin[0], sizeof(bt_bin)/sizeof(bt_bin[0]), -1,},
+	{ _T( "VG" ), _( "British Virgin Islands" ), &bv_bin[0], sizeof(bv_bin)/sizeof(bv_bin[0]), -1,},
+	{ _T( "BN" ), _( "Brunei Darussalam" ), &bw_bin[0], sizeof(bw_bin)/sizeof(bw_bin[0]), -1,},
+	{ _T( "BG" ), _( "Bulgaria" ), &by_bin[0], sizeof(by_bin)/sizeof(by_bin[0]), -1,},
+	{ _T( "BF" ), _( "Burkina Faso" ), &bz_bin[0], sizeof(bz_bin)/sizeof(bz_bin[0]), -1,},
+	{ _T( "BI" ), _( "Burundi" ), &ca_bin[0], sizeof(ca_bin)/sizeof(ca_bin[0]), -1,},
+	{ _T( "KH" ), _( "Cambodia" ), &cc_bin[0], sizeof(cc_bin)/sizeof(cc_bin[0]), -1,},
+	{ _T( "CM" ), _( "Cameroon" ), &cd_bin[0], sizeof(cd_bin)/sizeof(cd_bin[0]), -1,},
+	{ _T( "CA" ), _( "Canada" ), &cf_bin[0], sizeof(cf_bin)/sizeof(cf_bin[0]), -1,},
+	{ _T( "CV" ), _( "Cape Verde" ), &cg_bin[0], sizeof(cg_bin)/sizeof(cg_bin[0]), -1,},
+	{ _T( "KY" ), _( "Cayman Islands" ), &ch_bin[0], sizeof(ch_bin)/sizeof(ch_bin[0]), -1,},
+	{ _T( "CF" ), _( "Central African Republic" ), &ci_bin[0], sizeof(ci_bin)/sizeof(ci_bin[0]), -1,},
+	{ _T( "TD" ), _( "Chad" ), &ck_bin[0], sizeof(ck_bin)/sizeof(ck_bin[0]), -1,},
+	{ _T( "CL" ), _( "Chile" ), &cl_bin[0], sizeof(cl_bin)/sizeof(cl_bin[0]), -1,},
+	{ _T( "CN" ), _( "China" ), &cm_bin[0], sizeof(cm_bin)/sizeof(cm_bin[0]), -1,},
+	{ _T( "CX" ), _( "Christmas Island" ), &cn_bin[0], sizeof(cn_bin)/sizeof(cn_bin[0]), -1,},
+	{ _T( "CC" ), _( "Cocos Keeling Islands" ), &co_bin[0], sizeof(co_bin)/sizeof(co_bin[0]), -1,},
+	{ _T( "CO" ), _( "Colombia" ), &cr_bin[0], sizeof(cr_bin)/sizeof(cr_bin[0]), -1,},
+	{ _T( "KM" ), _( "Comoros" ), &cs_bin[0], sizeof(cs_bin)/sizeof(cs_bin[0]), -1,},
+	{ _T( "CD" ), _( "Congo" ), &cu_bin[0], sizeof(cu_bin)/sizeof(cu_bin[0]), -1,},
+	{ _T( "CG" ), _( "Congo" ), &cv_bin[0], sizeof(cv_bin)/sizeof(cv_bin[0]), -1,},
+	{ _T( "CK" ), _( "Cook Islands" ), &cx_bin[0], sizeof(cx_bin)/sizeof(cx_bin[0]), -1,},
+	{ _T( "CR" ), _( "Costa Rica" ), &cy_bin[0], sizeof(cy_bin)/sizeof(cy_bin[0]), -1,},
+	{ _T( "CI" ), _( "Cote D'Ivoire" ), &cz_bin[0], sizeof(cz_bin)/sizeof(cz_bin[0]), -1,},
+	{ _T( "CU" ), _( "Cuba" ), &de_bin[0], sizeof(de_bin)/sizeof(de_bin[0]), -1,},
+	{ _T( "CY" ), _( "Cyprus" ), &dj_bin[0], sizeof(dj_bin)/sizeof(dj_bin[0]), -1,},
+	{ _T( "CZ" ), _( "Czech Republic" ), &dk_bin[0], sizeof(dk_bin)/sizeof(dk_bin[0]), -1,},
+	{ _T( "DK" ), _( "Denmark" ), &dm_bin[0], sizeof(dm_bin)/sizeof(dm_bin[0]), -1,},
+	{ _T( "DJ" ), _( "Djibouti" ), &do_bin[0], sizeof(do_bin)/sizeof(do_bin[0]), -1,},
+	{ _T( "DM" ), _( "Dominica" ), &dz_bin[0], sizeof(dz_bin)/sizeof(dz_bin[0]), -1,},
+	{ _T( "DO" ), _( "Dominican Republic" ), &ec_bin[0], sizeof(ec_bin)/sizeof(ec_bin[0]), -1,},
+	{ _T( "EC" ), _( "Ecuador" ), &ee_bin[0], sizeof(ee_bin)/sizeof(ee_bin[0]), -1,},
+	{ _T( "EG" ), _( "Egypt" ), &eg_bin[0], sizeof(eg_bin)/sizeof(eg_bin[0]), -1,},
+	{ _T( "SV" ), _( "El Salvador" ), &eh_bin[0], sizeof(eh_bin)/sizeof(eh_bin[0]), -1,},
+	{ _T( "GQ" ), _( "Equatorial Guinea" ), &er_bin[0], sizeof(er_bin)/sizeof(er_bin[0]), -1,},
+	{ _T( "ER" ), _( "Eritrea" ), &es_bin[0], sizeof(es_bin)/sizeof(es_bin[0]), -1,},
+	{ _T( "EE" ), _( "Estonia" ), &et_bin[0], sizeof(et_bin)/sizeof(et_bin[0]), -1,},
+	{ _T( "ET" ), _( "Ethiopia" ), &eu_bin[0], sizeof(eu_bin)/sizeof(eu_bin[0]), -1,},
+	{ _T( "EU" ), _( "Europe" ), &fi_bin[0], sizeof(fi_bin)/sizeof(fi_bin[0]), -1,},
+	{ _T( "FO" ), _( "Faeroe Islands" ), &fj_bin[0], sizeof(fj_bin)/sizeof(fj_bin[0]), -1,},
+	{ _T( "FK" ), _( "Falkland Islands Malvinas" ), &fk_bin[0], sizeof(fk_bin)/sizeof(fk_bin[0]), -1,},
+	{ _T( "FJ" ), _( "Fiji" ), &fm_bin[0], sizeof(fm_bin)/sizeof(fm_bin[0]), -1,},
+	{ _T( "FI" ), _( "Finland" ), &fo_bin[0], sizeof(fo_bin)/sizeof(fo_bin[0]), -1,},
+	{ _T( "FR" ), _( "France" ), &fr_bin[0], sizeof(fr_bin)/sizeof(fr_bin[0]), -1,},
+	{ _T( "GF" ), _( "French Guiana" ), &ga_bin[0], sizeof(ga_bin)/sizeof(ga_bin[0]), -1,},
+	{ _T( "PF" ), _( "French Polynesia" ), &gb_bin[0], sizeof(gb_bin)/sizeof(gb_bin[0]), -1,},
+	{ _T( "TF" ), _( "French Southern Territories" ), &gd_bin[0], sizeof(gd_bin)/sizeof(gd_bin[0]), -1,},
+	{ _T( "GA" ), _( "Gabon" ), &ge_bin[0], sizeof(ge_bin)/sizeof(ge_bin[0]), -1,},
+	{ _T( "GM" ), _( "Gambia" ), &gf_bin[0], sizeof(gf_bin)/sizeof(gf_bin[0]), -1,},
+	{ _T( "GE" ), _( "Georgia" ), &gh_bin[0], sizeof(gh_bin)/sizeof(gh_bin[0]), -1,},
+	{ _T( "DE" ), _( "Germany" ), &gi_bin[0], sizeof(gi_bin)/sizeof(gi_bin[0]), -1,},
+	{ _T( "GH" ), _( "Ghana" ), &gl_bin[0], sizeof(gl_bin)/sizeof(gl_bin[0]), -1,},
+	{ _T( "GI" ), _( "Gibraltar" ), &gm_bin[0], sizeof(gm_bin)/sizeof(gm_bin[0]), -1,},
+	{ _T( "GR" ), _( "Greece" ), &gn_bin[0], sizeof(gn_bin)/sizeof(gn_bin[0]), -1,},
+	{ _T( "GL" ), _( "Greenland" ), &gp_bin[0], sizeof(gp_bin)/sizeof(gp_bin[0]), -1,},
+	{ _T( "GD" ), _( "Grenada" ), &gq_bin[0], sizeof(gq_bin)/sizeof(gq_bin[0]), -1,},
+	{ _T( "GP" ), _( "Guadaloupe" ), &gr_bin[0], sizeof(gr_bin)/sizeof(gr_bin[0]), -1,},
+	{ _T( "GU" ), _( "Guam" ), &gs_bin[0], sizeof(gs_bin)/sizeof(gs_bin[0]), -1,},
+	{ _T( "GT" ), _( "Guatemala" ), &gt_bin[0], sizeof(gt_bin)/sizeof(gt_bin[0]), -1,},
+	{ _T( "GN" ), _( "Guinea" ), &gu_bin[0], sizeof(gu_bin)/sizeof(gu_bin[0]), -1,},
+	{ _T( "GW" ), _( "Guinea-Bissau" ), &gw_bin[0], sizeof(gw_bin)/sizeof(gw_bin[0]), -1,},
+	{ _T( "GY" ), _( "Guyana" ), &gy_bin[0], sizeof(gy_bin)/sizeof(gy_bin[0]), -1,},
+	{ _T( "HT" ), _( "Haiti" ), &hk_bin[0], sizeof(hk_bin)/sizeof(hk_bin[0]), -1,},
+	{ _T( "HM" ), _( "Heard and McDonald Islands" ), &hm_bin[0], sizeof(hm_bin)/sizeof(hm_bin[0]), -1,},
+	{ _T( "VA" ), _( "Holy See Vatican City State" ), &hn_bin[0], sizeof(hn_bin)/sizeof(hn_bin[0]), -1,},
+	{ _T( "HN" ), _( "Honduras" ), &hr_bin[0], sizeof(hr_bin)/sizeof(hr_bin[0]), -1,},
+	{ _T( "HK" ), _( "Hong Kong" ), &ht_bin[0], sizeof(ht_bin)/sizeof(ht_bin[0]), -1,},
+	{ _T( "HR" ), _( "Hrvatska Croatia" ), &hu_bin[0], sizeof(hu_bin)/sizeof(hu_bin[0]), -1,},
+	{ _T( "HU" ), _( "Hungary" ), &id_bin[0], sizeof(id_bin)/sizeof(id_bin[0]), -1,},
+	{ _T( "IS" ), _( "Iceland" ), &ie_bin[0], sizeof(ie_bin)/sizeof(ie_bin[0]), -1,},
+	{ _T( "IN" ), _( "India" ), &il_bin[0], sizeof(il_bin)/sizeof(il_bin[0]), -1,},
+	{ _T( "ID" ), _( "Indonesia" ), &in_bin[0], sizeof(in_bin)/sizeof(in_bin[0]), -1,},
+	{ _T( "IR" ), _( "Iran" ), &io_bin[0], sizeof(io_bin)/sizeof(io_bin[0]), -1,},
+	{ _T( "IQ" ), _( "Iraq" ), &iq_bin[0], sizeof(iq_bin)/sizeof(iq_bin[0]), -1,},
+	{ _T( "IE" ), _( "Ireland" ), &ir_bin[0], sizeof(ir_bin)/sizeof(ir_bin[0]), -1,},
+	{ _T( "IL" ), _( "Israel" ), &is_bin[0], sizeof(is_bin)/sizeof(is_bin[0]), -1,},
+	{ _T( "IT" ), _( "Italy" ), &it_bin[0], sizeof(it_bin)/sizeof(it_bin[0]), -1,},
+	{ _T( "JM" ), _( "Jamaica" ), &jm_bin[0], sizeof(jm_bin)/sizeof(jm_bin[0]), -1,},
+	{ _T( "JP" ), _( "Japan" ), &jo_bin[0], sizeof(jo_bin)/sizeof(jo_bin[0]), -1,},
+	{ _T( "JO" ), _( "Jordan" ), &jp_bin[0], sizeof(jp_bin)/sizeof(jp_bin[0]), -1,},
+	{ _T( "KZ" ), _( "Kazakhstan" ), &ke_bin[0], sizeof(ke_bin)/sizeof(ke_bin[0]), -1,},
+	{ _T( "KE" ), _( "Kenya" ), &kg_bin[0], sizeof(kg_bin)/sizeof(kg_bin[0]), -1,},
+	{ _T( "KI" ), _( "Kiribati" ), &kh_bin[0], sizeof(kh_bin)/sizeof(kh_bin[0]), -1,},
+	{ _T( "KP" ), _( "Korea" ), &ki_bin[0], sizeof(ki_bin)/sizeof(ki_bin[0]), -1,},
+	{ _T( "KR" ), _( "Korea" ), &km_bin[0], sizeof(km_bin)/sizeof(km_bin[0]), -1,},
+	{ _T( "KW" ), _( "Kuwait" ), &kn_bin[0], sizeof(kn_bin)/sizeof(kn_bin[0]), -1,},
+	{ _T( "KG" ), _( "Kyrgyz Republic" ), &kp_bin[0], sizeof(kp_bin)/sizeof(kp_bin[0]), -1,},
+	{ _T( "LA" ), _( "Lao People's Democratic Republic" ), &kr_bin[0], sizeof(kr_bin)/sizeof(kr_bin[0]), -1,},
+	{ _T( "LV" ), _( "Latvia" ), &kw_bin[0], sizeof(kw_bin)/sizeof(kw_bin[0]), -1,},
+	{ _T( "LB" ), _( "Lebanon" ), &ky_bin[0], sizeof(ky_bin)/sizeof(ky_bin[0]), -1,},
+	{ _T( "LS" ), _( "Lesotho" ), &kz_bin[0], sizeof(kz_bin)/sizeof(kz_bin[0]), -1,},
+	{ _T( "LR" ), _( "Liberia" ), &la_bin[0], sizeof(la_bin)/sizeof(la_bin[0]), -1,},
+	{ _T( "LY" ), _( "Libyan Arab Jamahiriya" ), &lb_bin[0], sizeof(lb_bin)/sizeof(lb_bin[0]), -1,},
+	{ _T( "LI" ), _( "Liechtenstein" ), &lc_bin[0], sizeof(lc_bin)/sizeof(lc_bin[0]), -1,},
+	{ _T( "LT" ), _( "Lithuania" ), &li_bin[0], sizeof(li_bin)/sizeof(li_bin[0]), -1,},
+	{ _T( "LU" ), _( "Luxembourg" ), &lk_bin[0], sizeof(lk_bin)/sizeof(lk_bin[0]), -1,},
+	{ _T( "MO" ), _( "Macao" ), &lr_bin[0], sizeof(lr_bin)/sizeof(lr_bin[0]), -1,},
+	{ _T( "MK" ), _( "Macedonia" ), &ls_bin[0], sizeof(ls_bin)/sizeof(ls_bin[0]), -1,},
+	{ _T( "MG" ), _( "Madagascar" ), &lt_bin[0], sizeof(lt_bin)/sizeof(lt_bin[0]), -1,},
+	{ _T( "MW" ), _( "Malawi" ), &lu_bin[0], sizeof(lu_bin)/sizeof(lu_bin[0]), -1,},
+	{ _T( "MY" ), _( "Malaysia" ), &lv_bin[0], sizeof(lv_bin)/sizeof(lv_bin[0]), -1,},
+	{ _T( "MV" ), _( "Maldives" ), &ly_bin[0], sizeof(ly_bin)/sizeof(ly_bin[0]), -1,},
+	{ _T( "ML" ), _( "Mali" ), &ma_bin[0], sizeof(ma_bin)/sizeof(ma_bin[0]), -1,},
+	{ _T( "MT" ), _( "Malta" ), &mc_bin[0], sizeof(mc_bin)/sizeof(mc_bin[0]), -1,},
+	{ _T( "MH" ), _( "Marshall Islands" ), &md_bin[0], sizeof(md_bin)/sizeof(md_bin[0]), -1,},
+	{ _T( "MQ" ), _( "Martinique" ), &me_bin[0], sizeof(me_bin)/sizeof(me_bin[0]), -1,},
+	{ _T( "MR" ), _( "Mauritania" ), &mg_bin[0], sizeof(mg_bin)/sizeof(mg_bin[0]), -1,},
+	{ _T( "MU" ), _( "Mauritius" ), &mh_bin[0], sizeof(mh_bin)/sizeof(mh_bin[0]), -1,},
+	{ _T( "YT" ), _( "Mayotte" ), &mk_bin[0], sizeof(mk_bin)/sizeof(mk_bin[0]), -1,},
+	{ _T( "MX" ), _( "Mexico" ), &ml_bin[0], sizeof(ml_bin)/sizeof(ml_bin[0]), -1,},
+	{ _T( "FM" ), _( "Micronesia" ), &mm_bin[0], sizeof(mm_bin)/sizeof(mm_bin[0]), -1,},
+	{ _T( "MD" ), _( "Moldova" ), &mn_bin[0], sizeof(mn_bin)/sizeof(mn_bin[0]), -1,},
+	{ _T( "MC" ), _( "Monaco" ), &mo_bin[0], sizeof(mo_bin)/sizeof(mo_bin[0]), -1,},
+	{ _T( "MN" ), _( "Mongolia" ), &mp_bin[0], sizeof(mp_bin)/sizeof(mp_bin[0]), -1,},
+	{ _T( "MS" ), _( "Montserrat" ), &mq_bin[0], sizeof(mq_bin)/sizeof(mq_bin[0]), -1,},
+	{ _T( "MA" ), _( "Morocco" ), &mr_bin[0], sizeof(mr_bin)/sizeof(mr_bin[0]), -1,},
+	{ _T( "MZ" ), _( "Mozambique" ), &ms_bin[0], sizeof(ms_bin)/sizeof(ms_bin[0]), -1,},
+	{ _T( "MM" ), _( "Myanmar" ), &mt_bin[0], sizeof(mt_bin)/sizeof(mt_bin[0]), -1,},
+	{ _T( "NA" ), _( "Namibia" ), &mu_bin[0], sizeof(mu_bin)/sizeof(mu_bin[0]), -1,},
+	{ _T( "NR" ), _( "Nauru" ), &mv_bin[0], sizeof(mv_bin)/sizeof(mv_bin[0]), -1,},
+	{ _T( "NP" ), _( "Nepal" ), &mw_bin[0], sizeof(mw_bin)/sizeof(mw_bin[0]), -1,},
+	{ _T( "AN" ), _( "Netherlands Antilles" ), &mx_bin[0], sizeof(mx_bin)/sizeof(mx_bin[0]), -1,},
+	{ _T( "NL" ), _( "Netherlands" ), &my_bin[0], sizeof(my_bin)/sizeof(my_bin[0]), -1,},
+	{ _T( "NC" ), _( "New Caledonia" ), &mz_bin[0], sizeof(mz_bin)/sizeof(mz_bin[0]), -1,},
+	{ _T( "NZ" ), _( "New Zealand" ), &na_bin[0], sizeof(na_bin)/sizeof(na_bin[0]), -1,},
+	{ _T( "NI" ), _( "Nicaragua" ), &nc_bin[0], sizeof(nc_bin)/sizeof(nc_bin[0]), -1,},
+	{ _T( "NE" ), _( "Niger" ), &ne_bin[0], sizeof(ne_bin)/sizeof(ne_bin[0]), -1,},
+	{ _T( "NG" ), _( "Nigeria" ), &nf_bin[0], sizeof(nf_bin)/sizeof(nf_bin[0]), -1,},
+	{ _T( "NU" ), _( "Niue" ), &ng_bin[0], sizeof(ng_bin)/sizeof(ng_bin[0]), -1,},
+	{ _T( "NF" ), _( "Norfolk Island" ), &ni_bin[0], sizeof(ni_bin)/sizeof(ni_bin[0]), -1,},
+	{ _T( "MP" ), _( "Northern Mariana Islands" ), &nl_bin[0], sizeof(nl_bin)/sizeof(nl_bin[0]), -1,},
+	{ _T( "NO" ), _( "Norway" ), &no_bin[0], sizeof(no_bin)/sizeof(no_bin[0]), -1,},
+	{ _T( "OM" ), _( "Oman" ), &np_bin[0], sizeof(np_bin)/sizeof(np_bin[0]), -1,},
+	{ _T( "PK" ), _( "Pakistan" ), &nr_bin[0], sizeof(nr_bin)/sizeof(nr_bin[0]), -1,},
+	{ _T( "PW" ), _( "Palau" ), &nu_bin[0], sizeof(nu_bin)/sizeof(nu_bin[0]), -1,},
+	{ _T( "PS" ), _( "Palestinian Territory" ), &nz_bin[0], sizeof(nz_bin)/sizeof(nz_bin[0]), -1,},
+	{ _T( "PA" ), _( "Panama" ), &om_bin[0], sizeof(om_bin)/sizeof(om_bin[0]), -1,},
+	{ _T( "PG" ), _( "Papua New Guinea" ), &pa_bin[0], sizeof(pa_bin)/sizeof(pa_bin[0]), -1,},
+	{ _T( "PY" ), _( "Paraguay" ), &pe_bin[0], sizeof(pe_bin)/sizeof(pe_bin[0]), -1,},
+	{ _T( "PE" ), _( "Peru" ), &pf_bin[0], sizeof(pf_bin)/sizeof(pf_bin[0]), -1,},
+	{ _T( "PH" ), _( "Philippines" ), &pg_bin[0], sizeof(pg_bin)/sizeof(pg_bin[0]), -1,},
+	{ _T( "PN" ), _( "Pitcairn Island" ), &ph_bin[0], sizeof(ph_bin)/sizeof(ph_bin[0]), -1,},
+	{ _T( "PL" ), _( "Poland" ), &pk_bin[0], sizeof(pk_bin)/sizeof(pk_bin[0]), -1,},
+	{ _T( "PT" ), _( "Portugal" ), &pl_bin[0], sizeof(pl_bin)/sizeof(pl_bin[0]), -1,},
+	{ _T( "PR" ), _( "Puerto Rico" ), &pm_bin[0], sizeof(pm_bin)/sizeof(pm_bin[0]), -1,},
+	{ _T( "QA" ), _( "Qatar" ), &pn_bin[0], sizeof(pn_bin)/sizeof(pn_bin[0]), -1,},
+	{ _T( "RE" ), _( "Reunion" ), &pr_bin[0], sizeof(pr_bin)/sizeof(pr_bin[0]), -1,},
+	{ _T( "RO" ), _( "Romania" ), &ps_bin[0], sizeof(ps_bin)/sizeof(ps_bin[0]), -1,},
+	{ _T( "RU" ), _( "Russian Federation" ), &pt_bin[0], sizeof(pt_bin)/sizeof(pt_bin[0]), -1,},
+	{ _T( "RW" ), _( "Rwanda" ), &pw_bin[0], sizeof(pw_bin)/sizeof(pw_bin[0]), -1,},
+	{ _T( "SH" ), _( "St. Helena" ), &py_bin[0], sizeof(py_bin)/sizeof(py_bin[0]), -1,},
+	{ _T( "KN" ), _( "St. Kitts and Nevis" ), &qa_bin[0], sizeof(qa_bin)/sizeof(qa_bin[0]), -1,},
+	{ _T( "LC" ), _( "St. Lucia" ), &re_bin[0], sizeof(re_bin)/sizeof(re_bin[0]), -1,},
+	{ _T( "PM" ), _( "St. Pierre and Miquelon" ), &ro_bin[0], sizeof(ro_bin)/sizeof(ro_bin[0]), -1,},
+	{ _T( "VC" ), _( "St. Vincent and the Grenadines" ), &rs_bin[0], sizeof(rs_bin)/sizeof(rs_bin[0]), -1,},
+	{ _T( "WS" ), _( "Samoa" ), &ru_bin[0], sizeof(ru_bin)/sizeof(ru_bin[0]), -1,},
+	{ _T( "SM" ), _( "San Marino" ), &rw_bin[0], sizeof(rw_bin)/sizeof(rw_bin[0]), -1,},
+	{ _T( "ST" ), _( "Sao Tome and Principe" ), &sa_bin[0], sizeof(sa_bin)/sizeof(sa_bin[0]), -1,},
+	{ _T( "SA" ), _( "Saudi Arabia" ), &sb_bin[0], sizeof(sb_bin)/sizeof(sb_bin[0]), -1,},
+	{ _T( "SN" ), _( "Senegal" ), &sc_bin[0], sizeof(sc_bin)/sizeof(sc_bin[0]), -1,},
+	{ _T( "CS" ), _( "Serbia and Montenegro" ), &sd_bin[0], sizeof(sd_bin)/sizeof(sd_bin[0]), -1,},
+	{ _T( "SC" ), _( "Seychelles" ), &se_bin[0], sizeof(se_bin)/sizeof(se_bin[0]), -1,},
+	{ _T( "SL" ), _( "Sierra Leone" ), &sg_bin[0], sizeof(sg_bin)/sizeof(sg_bin[0]), -1,},
+	{ _T( "SG" ), _( "Singapore" ), &sh_bin[0], sizeof(sh_bin)/sizeof(sh_bin[0]), -1,},
+	{ _T( "SK" ), _( "Slovakia Slovak Republic" ), &si_bin[0], sizeof(si_bin)/sizeof(si_bin[0]), -1,},
+	{ _T( "SI" ), _( "Slovenia" ), &sj_bin[0], sizeof(sj_bin)/sizeof(sj_bin[0]), -1,},
+	{ _T( "SB" ), _( "Solomon Islands" ), &sk_bin[0], sizeof(sk_bin)/sizeof(sk_bin[0]), -1,},
+	{ _T( "SO" ), _( "Somalia" ), &sl_bin[0], sizeof(sl_bin)/sizeof(sl_bin[0]), -1,},
+	{ _T( "ZA" ), _( "South Africa" ), &sm_bin[0], sizeof(sm_bin)/sizeof(sm_bin[0]), -1,},
+	{ _T( "GS" ), _( "South Georgia and the South Sandwich Islands" ), &sn_bin[0], sizeof(sn_bin)/sizeof(sn_bin[0]), -1,},
+	{ _T( "ES" ), _( "Spain" ), &so_bin[0], sizeof(so_bin)/sizeof(so_bin[0]), -1,},
+	{ _T( "LK" ), _( "Sri Lanka" ), &sr_bin[0], sizeof(sr_bin)/sizeof(sr_bin[0]), -1,},
+	{ _T( "SD" ), _( "Sudan" ), &st_bin[0], sizeof(st_bin)/sizeof(st_bin[0]), -1,},
+	{ _T( "SR" ), _( "Suriname" ), &sv_bin[0], sizeof(sv_bin)/sizeof(sv_bin[0]), -1,},
+	{ _T( "SJ" ), _( "Svalbard & Jan Mayen Islands" ), &sy_bin[0], sizeof(sy_bin)/sizeof(sy_bin[0]), -1,},
+	{ _T( "SZ" ), _( "Swaziland" ), &sz_bin[0], sizeof(sz_bin)/sizeof(sz_bin[0]), -1,},
+	{ _T( "SE" ), _( "Sweden" ), &tc_bin[0], sizeof(tc_bin)/sizeof(tc_bin[0]), -1,},
+	{ _T( "CH" ), _( "Switzerland" ), &td_bin[0], sizeof(td_bin)/sizeof(td_bin[0]), -1,},
+	{ _T( "SY" ), _( "Syrian Arab Republic" ), &tf_bin[0], sizeof(tf_bin)/sizeof(tf_bin[0]), -1,},
+	{ _T( "TW" ), _( "Taiwan" ), &tg_bin[0], sizeof(tg_bin)/sizeof(tg_bin[0]), -1,},
+	{ _T( "TJ" ), _( "Tajikistan" ), &th_bin[0], sizeof(th_bin)/sizeof(th_bin[0]), -1,},
+	{ _T( "TZ" ), _( "Tanzania" ), &tj_bin[0], sizeof(tj_bin)/sizeof(tj_bin[0]), -1,},
+	{ _T( "TH" ), _( "Thailand" ), &tk_bin[0], sizeof(tk_bin)/sizeof(tk_bin[0]), -1,},
+	{ _T( "TL" ), _( "Timor-Leste" ), &tl_bin[0], sizeof(tl_bin)/sizeof(tl_bin[0]), -1,},
+	{ _T( "TG" ), _( "Togo" ), &tm_bin[0], sizeof(tm_bin)/sizeof(tm_bin[0]), -1,},
+	{ _T( "TK" ), _( "Tokelau Tokelau Islands" ), &tn_bin[0], sizeof(tn_bin)/sizeof(tn_bin[0]), -1,},
+	{ _T( "TO" ), _( "Tonga" ), &to_bin[0], sizeof(to_bin)/sizeof(to_bin[0]), -1,},
+	{ _T( "TT" ), _( "Trinidad and Tobago" ), &tr_bin[0], sizeof(tr_bin)/sizeof(tr_bin[0]), -1,},
+	{ _T( "TN" ), _( "Tunisia" ), &tt_bin[0], sizeof(tt_bin)/sizeof(tt_bin[0]), -1,},
+	{ _T( "TR" ), _( "Turkey" ), &tv_bin[0], sizeof(tv_bin)/sizeof(tv_bin[0]), -1,},
+	{ _T( "TM" ), _( "Turkmenistan" ), &tw_bin[0], sizeof(tw_bin)/sizeof(tw_bin[0]), -1,},
+	{ _T( "TC" ), _( "Turks and Caicos Islands" ), &tz_bin[0], sizeof(tz_bin)/sizeof(tz_bin[0]), -1,},
+	{ _T( "TV" ), _( "Tuvalu" ), &ua_bin[0], sizeof(ua_bin)/sizeof(ua_bin[0]), -1,},
+	{ _T( "VI" ), _( "US Virgin Islands" ), &ug_bin[0], sizeof(ug_bin)/sizeof(ug_bin[0]), -1,},
+	{ _T( "UG" ), _( "Uganda" ), &um_bin[0], sizeof(um_bin)/sizeof(um_bin[0]), -1,},
+	{ _T( "UA" ), _( "Ukraine" ), &us_bin[0], sizeof(us_bin)/sizeof(us_bin[0]), -1,},
+	{ _T( "AE" ), _( "United Arab Emirates" ), &uy_bin[0], sizeof(uy_bin)/sizeof(uy_bin[0]), -1,},
+	{ _T( "GB" ), _( "United Kingdom of Great Britain & N. Ireland" ), &uz_bin[0], sizeof(uz_bin)/sizeof(uz_bin[0]), -1,},
+	{ _T( "UM" ), _( "United States Minor Outlying Islands" ), &va_bin[0], sizeof(va_bin)/sizeof(va_bin[0]), -1,},
+	{ _T( "US" ), _( "United States of America" ), &vc_bin[0], sizeof(vc_bin)/sizeof(vc_bin[0]), -1,},
+	{ _T( "UY" ), _( "Uruguay" ), &ve_bin[0], sizeof(ve_bin)/sizeof(ve_bin[0]), -1,},
+	{ _T( "UZ" ), _( "Uzbekistan" ), &vg_bin[0], sizeof(vg_bin)/sizeof(vg_bin[0]), -1,},
+	{ _T( "VU" ), _( "Vanuatu" ), &vi_bin[0], sizeof(vi_bin)/sizeof(vi_bin[0]), -1,},
+	{ _T( "VE" ), _( "Venezuela" ), &vn_bin[0], sizeof(vn_bin)/sizeof(vn_bin[0]), -1,},
+	{ _T( "VN" ), _( "Viet Nam" ), &vu_bin[0], sizeof(vu_bin)/sizeof(vu_bin[0]), -1,},
+	{ _T( "WF" ), _( "Wallis and Futuna Islands" ), &wf_bin[0], sizeof(wf_bin)/sizeof(wf_bin[0]), -1,},
+	{ _T( "EH" ), _( "Western Sahara" ), &ws_bin[0], sizeof(ws_bin)/sizeof(ws_bin[0]), -1,},
+	{ _T( "YE" ), _( "Yemen" ), &ye_bin[0], sizeof(ye_bin)/sizeof(ye_bin[0]), -1,},
+	{ _T( "YT" ), _( "Mayotte" ), &yt_bin[0], sizeof(yt_bin)/sizeof(yt_bin[0]), -1,},
+	{ _T( "ZA" ), _( "South Africa" ), &za_bin[0], sizeof(za_bin)/sizeof(za_bin[0]), -1,},
+	{ _T( "ZM" ), _( "Zambia" ), &zm_bin[0], sizeof(zm_bin)/sizeof(zm_bin[0]), -1,},
+	{ _T( "ZW" ), _( "Zimbabwe" ), &zw_bin[0], sizeof(zw_bin)/sizeof(zw_bin[0]), -1,},
+	{ _T( "" ), _T( "" ), 0, 0, -1}
 };
 
 std::map<wxString, int> CountryCodeIndexMap;
@@ -635,6 +907,12 @@ void BitSwash::LoadFlags()
 			CountryFlags[i].imgidx = emptyidx;
 			continue;
 		}
+
+        
+        wxMemoryInputStream stream(CountryFlags[i].filebuf, CountryFlags[i].filesize);
+        wxImage flags( stream );
+        CountryFlags[i].imgidx = m_imglist_ctryflags->Add( wxBitmap( flags ) );
+#if 0
 		wxString filename = wxString::Format( _T( "%s%c%s%s" ), m_flagspath.c_str(), dirsep, wxString( CountryFlags[i].code ).Lower().c_str(), _T( ".png" ) );
 		wxImage flags;
 		if( ( flags.LoadFile( filename ) ) )
@@ -646,6 +924,7 @@ void BitSwash::LoadFlags()
 			wxLogWarning( _T( "%s Flags %s not found \n" ), CountryFlags[i].name.c_str(), CountryFlags[i].code );
 			CountryFlags[i].imgidx = -1;
 		}
+#endif
 	}
 }
 
@@ -675,27 +954,23 @@ void BitSwash::LoadSettingIcons()
 	int i;
 	wxChar dirsep = wxFileName::GetPathSeparator( wxPATH_NATIVE );
 	wxImage empty( 16, 16, true );
-	wxImage flags;
 	m_imglist_settingicons = new wxImageList( 16, 16, false );
-	static const wxChar* settingfiles[] =
+	static struct 
+    {
+        const unsigned char * filebuf;
+        size_t filesize;
+    } settingfiles[] =
 	{
-		_T( "settinggeneral.png" ),
-		_T( "settingconnection.png" ),
-		_T( "settingtorrent.png" ),
-		_T( "settingextension.png" )
+		&settinggeneral_bin[0], sizeof(settinggeneral_bin)/sizeof(settinggeneral_bin[0]),
+		&settingconnection_bin[0], sizeof(settingconnection_bin)/sizeof(settingconnection_bin[0]),
+		&settingtorrent_bin[0], sizeof(settingtorrent_bin)/sizeof(settingtorrent_bin[0]),
+		&settingextension_bin[0], sizeof(settingextension_bin)/sizeof(settingextension_bin[0]),
 	};
 	for( i = 0; i < 4; i++ )
 	{
-		wxString filename = wxString::Format( _T( "%s%c%s" ), m_iconspath.c_str(), dirsep,  settingfiles[i] );
-		if( ( flags.LoadFile( filename ) ) )
-		{
-			m_imglist_settingicons->Add( wxBitmap( flags ) );
-		}
-		else
-		{
-			m_imglist_settingicons->Add( wxBitmap( empty ) );
-			wxLogWarning( _T( "Configuration icon %s not found \n" ), filename.c_str() );
-		}
+        wxMemoryInputStream stream(settingfiles[i].filebuf, settingfiles[i].filesize);
+        wxImage flags(stream);
+        m_imglist_settingicons->Add( wxBitmap( flags ) );
 	}
 }
 
@@ -745,23 +1020,15 @@ void BitSwash::SetLogLevel()
 	wxLog::SetLogLevel( wx_loglevel );
 }
 
-
 void BitSwash::LoadIcons()
 {
 	int i;
 	wxChar dirsep = wxFileName::GetPathSeparator( wxPATH_NATIVE );
+
 	for( i = 0; i < BITSWASH_ICON_MAX; ++i )
 	{
-		wxString filename = m_iconspath + dirsep + AppIcons[i].filename ;
-		wxImage icon;
-		if( wxFileExists( filename ) )
-		{
-			AppIcons[i].image = new wxImage( filename );
-		}
-		else
-		{
-			wxLogWarning( _T( "Icon file %s not found \n" ), filename.c_str() );
-		}
+        wxMemoryInputStream stream(AppIcons[i].filebuf, AppIcons[i].filesize);
+        AppIcons[i].image = new wxImage( stream );
 	}
 }
 
