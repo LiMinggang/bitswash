@@ -270,15 +270,18 @@ wxString TorrentListCtrl::GetItemValue(long item, long columnid) const
 #if USE_CONTEXT_MENU
 void TorrentListCtrl::ShowContextMenu(const wxPoint& pos)
 {
-	MainFrame* pMainFrame = (MainFrame*) wxGetApp().GetTopWindow();
-	if(!m_torrentmenu)
+	if(GetSelectedItemCount() > 0)
 	{
-		m_torrentmenu = pMainFrame->GetNewTorrentMenu();
+		MainFrame* pMainFrame = (MainFrame*) wxGetApp().GetTopWindow();
+		if(!m_torrentmenu)
+		{
+			m_torrentmenu = pMainFrame->GetNewTorrentMenu();
+		}
+
+		pMainFrame->TorrentOperationMenu(m_torrentmenu);
+
+		PopupMenu(m_torrentmenu, pos);
 	}
-
-	pMainFrame->TorrentOperationMenu(m_torrentmenu);
-
-	PopupMenu(m_torrentmenu, pos);
 }
 #endif
 

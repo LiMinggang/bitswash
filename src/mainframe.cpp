@@ -97,13 +97,9 @@ BEGIN_EVENT_TABLE( MainFrame, wxFrame )
 	EVT_MENU( ID_VIEW_STATUS, MainFrame::OnMenuViewStatusBar )
 	EVT_MENU( ID_VIEW_TOOLBAR, MainFrame::OnMenuViewToolbar )
 	EVT_MENU( ID_TORRENT_START, MainFrame::OnMenuTorrentStart )
-	EVT_UPDATE_UI( ID_TORRENT_START, MainFrame::OnUpdateUI_MenuTorrent )
 	EVT_MENU( ID_TORRENT_FORCE_START, MainFrame::OnMenuTorrentStart )
-	EVT_UPDATE_UI( ID_TORRENT_FORCE_START, MainFrame::OnUpdateUI_MenuTorrent )
 	EVT_MENU( ID_TORRENT_PAUSE, MainFrame::OnMenuTorrentPause )
-	EVT_UPDATE_UI( ID_TORRENT_PAUSE, MainFrame::OnUpdateUI_MenuTorrent )
 	EVT_MENU( ID_TORRENT_STOP, MainFrame::OnMenuTorrentStop )
-	EVT_UPDATE_UI( ID_TORRENT_STOP, MainFrame::OnUpdateUI_MenuTorrent )
 	EVT_MENU( ID_TORRENT_PROPERTIES, MainFrame::OnMenuTorrentProperties )
 	EVT_MENU( ID_TORRENT_REMOVE, MainFrame::OnMenuTorrentRemove )
 	EVT_MENU( ID_TORRENT_REMOVEDATA, MainFrame::OnMenuTorrentRemoveData )
@@ -118,6 +114,18 @@ BEGIN_EVENT_TABLE( MainFrame, wxFrame )
 	EVT_MENU( ID_HELP_ABOUT, MainFrame::OnAbout )
 	EVT_MENU_OPEN( MainFrame::OnMenuOpen )
 
+	EVT_UPDATE_UI( ID_TORRENT_START, MainFrame::OnUpdateUI_MenuTorrent )
+	EVT_UPDATE_UI( ID_TORRENT_START, MainFrame::OnUpdateUI_MenuTorrent )
+	EVT_UPDATE_UI( ID_TORRENT_FORCE_START, MainFrame::OnUpdateUI_MenuTorrent )
+	EVT_UPDATE_UI( ID_TORRENT_PAUSE, MainFrame::OnUpdateUI_MenuTorrent )
+	EVT_UPDATE_UI( ID_TORRENT_STOP, MainFrame::OnUpdateUI_MenuTorrent )
+	
+	EVT_UPDATE_UI( ID_TORRENT_MOVEUP, MainFrame::OnUpdateUI_MenuTorrent )
+	EVT_UPDATE_UI( ID_TORRENT_MOVEDOWN, MainFrame::OnUpdateUI_MenuTorrent )
+	EVT_UPDATE_UI( ID_TORRENT_REANNOUNCE, MainFrame::OnUpdateUI_MenuTorrent )
+	EVT_UPDATE_UI( ID_TORRENT_RECHECK, MainFrame::OnUpdateUI_MenuTorrent )
+	EVT_UPDATE_UI( ID_TORRENT_OPENDIR, MainFrame::OnUpdateUI_MenuTorrent )
+	
 	EVT_SIZE( MainFrame::OnSize )
 	EVT_MOVE( MainFrame::OnMove )
 	EVT_TIMER( ID_TIMER_GUI_UPDATE, MainFrame::OnRefreshTimer )
@@ -864,6 +872,8 @@ void MainFrame::TorrentOperationMenu( wxMenu* torrentmenu )
 		ID_TORRENT_PAUSE,
 		ID_TORRENT_STOP,
 		
+        ID_TORRENT_MOVEUP,
+        ID_TORRENT_MOVEDOWN,
 		ID_TORRENT_OPENDIR,
 		ID_TORRENT_PROPERTIES,
 		ID_TORRENT_REMOVE,
@@ -871,15 +881,17 @@ void MainFrame::TorrentOperationMenu( wxMenu* torrentmenu )
 	};
 	
 	bool menu_status[] = {
-		false,
-		false,
-		false,
-		false,
+		true,
+		true,
+		true,
+		true,
 
-		false,
-		false,
-		false,
-		false,
+		true,
+		true,
+		true,
+		true,
+		true,
+		true,
 	};
 
 	wxASSERT((sizeof(menuids)/sizeof(menuids[0])) == (sizeof(menu_status)/sizeof(menu_status[0])));
@@ -897,58 +909,52 @@ void MainFrame::TorrentOperationMenu( wxMenu* torrentmenu )
 				{
 					case TORRENT_STATE_STOP:
 						{
-							menu_status[0] = true;
-							menu_status[1] = true;
+							menu_status[2] = false;
+							menu_status[3] = false;
 							break;
 						}
 					case TORRENT_STATE_START:
 					case TORRENT_STATE_FORCE_START:
 						{
-							menu_status[2] = true;
-							menu_status[3] = true;
+							menu_status[0] = false;
+							menu_status[1] = false;
 							break;
 						}
 					case TORRENT_STATE_QUEUE:
 						{
-							menu_status[0] = true;
-							menu_status[1] = true;
-							menu_status[2] = true;
-							menu_status[3] = true;
+							menu_status[0] = false;
 							break;
 						}
 					case TORRENT_STATE_PAUSE:
-						menu_status[0] = true;
-						menu_status[1] = true;
-						menu_status[3] = true;
+						menu_status[2] = false;
 						break;
 					default:
 						break;
 				}
-				menu_status[4] = true;
-				menu_status[5] = true;
-				menu_status[6] = true;
-				menu_status[7] = true;
 			}
 			else
 			{
-				for(int i = 0; i < (sizeof(menu_status)/sizeof(menu_status[0])); ++i)
-				{
-					menu_status[i] = true;
-				}
 				/*
 				ID_TORRENT_OPENDIR,
 				ID_TORRENT_PROPERTIES,
 				*/
-				menu_status[5] = false;
-				menu_status[6] = false;
+				menu_status[7] = false;
+				menu_status[8] = false;
 			}
+		}
+		for(int i = 0; i < (sizeof(menuids)/sizeof(menuids[0])); ++i)
+		{
+			torrentmenu->Enable( menuids[i], menu_status[i] );
+		}
+	}
+	else
+	{
+		for(int i = 0; i < (sizeof(menuids)/sizeof(menuids[0])); ++i)
+		{
+			torrentmenu->Enable( menuids[i], false );
 		}
 	}
 
-	for(int i = 0; i < (sizeof(menuids)/sizeof(menuids[0])); ++i)
-	{
-		torrentmenu->Enable( menuids[i], menu_status[i] );
-	}
 }
 
 void MainFrame::OnUpdateUI_MenuTorrent(wxUpdateUIEvent& event)
