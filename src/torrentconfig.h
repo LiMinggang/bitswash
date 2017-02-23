@@ -26,24 +26,26 @@
 
 #include "configuration.h"
 
-enum {
-    BITTORRENT_FILE_NONE     = 0,
-    BITTORRENT_FILE_LOWEST   = 1,
-    BITTORRENT_FILE_RESERVE2 = 2,
-    BITTORRENT_FILE_RESERVE3 = 3,
-    BITTORRENT_FILE_NORMAL   = 4,
-    BITTORRENT_FILE_RESERVE5 = 5,
-    BITTORRENT_FILE_RESERVE6 = 6,
-    BITTORRENT_FILE_HIGHEST  = 7,
+enum
+{
+	BITTORRENT_FILE_NONE     = 0,
+	BITTORRENT_FILE_LOWEST   = 1,
+	BITTORRENT_FILE_RESERVE2 = 2,
+	BITTORRENT_FILE_RESERVE3 = 3,
+	BITTORRENT_FILE_NORMAL   = 4,
+	BITTORRENT_FILE_RESERVE5 = 5,
+	BITTORRENT_FILE_RESERVE6 = 6,
+	BITTORRENT_FILE_HIGHEST  = 7,
 };
 
-typedef struct {
+typedef struct
+{
 	double progress;
 	long total_download;
 	long total_upload;
 } stats_t;
 
-/* 
+/*
  * STOP - torrent not added into libtorrent
  * START - torrent is downloading/seeding
  * QUEUE - torrent is in libtorrent, but paused, started if criteria met
@@ -51,7 +53,8 @@ typedef struct {
  * FORCE_START - torrent is forced into start mode
  */
 
-enum torrent_state {
+enum torrent_state
+{
 	TORRENT_STATE_STOP = 0,
 	TORRENT_STATE_START = 1,
 	TORRENT_STATE_QUEUE = 2, // when torrent is in queue, it's in the libtorrent
@@ -61,9 +64,9 @@ enum torrent_state {
 
 class TorrentConfig : public wxFileConfig
 {
-    public:
-        TorrentConfig(const wxString& TorrentName);
-        ~TorrentConfig();
+public:
+	TorrentConfig( const wxString& TorrentName );
+	~TorrentConfig();
 
 	void Save();
 	void Load();
@@ -73,39 +76,39 @@ class TorrentConfig : public wxFileConfig
 	int GetQIndex() { return m_qindex; }
 	void SetQIndex( int qindex ) { m_qindex = qindex; }
 	const wxString GetDownloadPath() { return m_downloadpath; }
-	void SetDownloadPath(wxString path) { m_downloadpath = path; }
+	void SetDownloadPath( wxString path ) { m_downloadpath = path; }
 
 	bool GetTorrentCompactAlloc() { return m_compactalloc; }
-	void SetTorrentCompactAlloc(bool compactalloc) { m_compactalloc = compactalloc; } 
-	
+	void SetTorrentCompactAlloc( bool compactalloc ) { m_compactalloc = compactalloc; }
+
 	libtorrent::storage_mode_t GetTorrentStorageMode() { return m_storagemode; }
-	void SetTorrentStorageMode(libtorrent::storage_mode_t storagemode) { m_storagemode = storagemode; }
+	void SetTorrentStorageMode( libtorrent::storage_mode_t storagemode ) { m_storagemode = storagemode; }
 
 	int GetTorrentState() { return m_torrent_state; }
-	void SetTorrentState(int state) { m_torrent_state = state;}
+	void SetTorrentState( int state ) { m_torrent_state = state;}
 
 	int GetTorrentRatio() { return m_torrent_ratio; }
-	void SetTorrentRatio(int ratio) { m_torrent_ratio = ratio;}
+	void SetTorrentRatio( int ratio ) { m_torrent_ratio = ratio;}
 
 	int GetTorrentUploadLimit() { return m_torrent_upload_limit; }
-	void SetTorrentUploadLimit(int upload_limit) { m_torrent_upload_limit = upload_limit;}
-		
+	void SetTorrentUploadLimit( int upload_limit ) { m_torrent_upload_limit = upload_limit;}
+
 	int GetTorrentDownloadLimit() { return m_torrent_download_limit; }
-	void SetTorrentDownloadLimit(int download_limit) { m_torrent_download_limit = download_limit;}
+	void SetTorrentDownloadLimit( int download_limit ) { m_torrent_download_limit = download_limit;}
 
 	int GetTorrentMaxUploads() { return m_torrent_max_uploads; }
-	void SetTorrentMaxUploads(int uploads) { m_torrent_max_uploads = uploads;}
+	void SetTorrentMaxUploads( int uploads ) { m_torrent_max_uploads = uploads;}
 
 	int GetTorrentMaxConnections() { return m_torrent_max_connections; }
-	void SetTorrentMaxConnections(int connections) { m_torrent_max_connections = connections;}
+	void SetTorrentMaxConnections( int connections ) { m_torrent_max_connections = connections;}
 
 	stats_t& GetTorrentStats() { return m_torrent_stats; }
-	void SetTorrentStats(stats_t& stats) { m_torrent_stats = stats;}
+	void SetTorrentStats( stats_t& stats ) { m_torrent_stats = stats;}
 
 	std::vector<int>& GetFilesPriorities() { return m_files_priority ;}
-	void SetFilesPriority(std::vector<int>& files);
+	void SetFilesPriority( std::vector<int>& files );
 	std::vector<libtorrent::announce_entry>& GetTrackersURL() { return m_trackers_url;}
-	void  SetTrackersURL(std::vector<libtorrent::announce_entry>& trackers) ;
+	void  SetTrackersURL( std::vector<libtorrent::announce_entry>& trackers ) ;
 	void WriteFilesPriority();
 	void ReadFilesPriority();
 	void WriteTrackersUrl();
@@ -119,16 +122,16 @@ private:
 	Configuration *m_maincfg;
 
 	int m_qindex;
-    wxString m_downloadpath;
+	wxString m_downloadpath;
 
 	//legacy
-    bool 	m_compactalloc;
-    libtorrent::storage_mode_t m_storagemode;
+	bool    m_compactalloc;
+	libtorrent::storage_mode_t m_storagemode;
 
 	//per torrent settings
 	int m_torrent_state;
 	int m_torrent_ratio; //torrent 150/100 (float in libtorrent)
-	int m_torrent_upload_limit; 
+	int m_torrent_upload_limit;
 	int m_torrent_download_limit;
 	int m_torrent_max_uploads;
 	int m_torrent_max_connections;

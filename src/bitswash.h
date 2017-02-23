@@ -47,7 +47,7 @@
 #define RESOURCE_DIR _T("icons")
 #define BITSWASH_HOMEPAGE _T("http://www.bitswash.org")
 #define BITSWASH_HELP_URL _T("http://www.bitswash.org/forum")
-#define BITSWASH_GUIVERSION 2
+#define BITSWASH_GUIVERSION 3
 //
 //1 - gui versioning introduced
 //2 - tracker list ctrl added
