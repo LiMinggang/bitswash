@@ -7,13 +7,15 @@ Fix: No mutex for multithreading
 Fix: Class members were not initialized
 Fix: Memory leak in ShowPreferences
 Fix: Use shared_ptr to replace torrent_t* to fix a lot of memory leak
-Fix: Lots of bugs
+Fix: Show/Hide bug of SwashListCtrl
+Fix: Lots of bugs fixed
 New: 64bits build
 New: Run at Windows startup
 New: Crash handler
 New: Single instance(IPC support)
 New: Open torrent at command line
 New: Merge trackers/seeds if add the same torrent again
+New: Packing all icons to the binary(no icon directory needed anymore)
 Upgrade libtorrent to 1.0.11
 Upgrade boost to 1.62
 Upgrade openssl to 1.1.0d
