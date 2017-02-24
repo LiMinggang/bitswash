@@ -1,2 +1,16 @@
-Bitswash is a cross platform bittorrent client built on wxWidgets and libtorrent. It supports multiple torrents downloading, automatic queue management, and protocol encryption, peer exchange, upnp, natpmp, lsd ip and file filter etc.
+                        =================================
+                                  Bitswash
+                        =================================
+About:
+-----
+Bitswash is a cross platform bittorrent client built on wxWidgets and libtorrent.
+It supports multiple torrents downloading, automatic queue management, and
+protocol encryption, peer exchange, upnp, natpmp, lsd ip and file filter etc.
 
+Currently supported Languages:
+    English
+    Chinese Simplified (zh_CN)
+    Chinese Traditional(zh_TW)
+    German(de_DE)
+    Russian(ru_RU)
+    Norwegian(nb_NO)
