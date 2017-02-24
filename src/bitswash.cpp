@@ -803,33 +803,9 @@ bool BitSwash::OnInit()
 		bool b = wxFileName::Mkdir( m_logpath );
 		if( !b ) wxLogError( _T( "Failed to create directory " ) + m_logpath );
 	}
-#ifndef __WXMSW__
-	m_iconspath =  wxString::FromAscii( PREFIX ) + _T( "/share/bitswash/" ) + RESOURCE_DIR;
-#else
-	m_iconspath = wxFileName::GetCwd() + dirsep +  _T( "icons" );
-#endif
+
 	wxInitAllImageHandlers();
-	if( !wxFileName::DirExists( m_iconspath ) )
-	{
-		m_iconspath = wxFileName::GetCwd() + _T( "/../icons" );
-		if( ! wxFileName::DirExists( m_iconspath ) )
-		{
-			wxLogError( _T( "Failed to locate icons %s directory " ), m_iconspath.c_str() );
-		}
-	}
-#ifndef __WXMSW__
-	m_flagspath =  wxString::FromAscii( PREFIX ) + _T( "/share/bitswash/" ) + RESOURCE_DIR + dirsep + _T( "flags" );
-#else
-	m_flagspath = wxFileName::GetCwd() + dirsep + _T( "icons" ) + dirsep + _T( "flags" );
-#endif
-	if( !wxFileName::DirExists( m_flagspath ) )
-	{
-		m_flagspath = wxFileName::GetCwd() + _T( "/../icons/flags" );
-		if( ! wxFileName::DirExists( m_flagspath ) )
-		{
-			wxLogError( _T( "Failed to locate flags %s directory " ), m_flagspath.c_str() );
-		}
-	}
+
 	LoadIcons();
 	LoadFlags();
 	LoadSettingIcons();
@@ -953,7 +929,7 @@ void BitSwash::LoadSettingIcons()
 		&settingtorrent_bin[0], sizeof(settingtorrent_bin)/sizeof(settingtorrent_bin[0]),
 		&settingextension_bin[0], sizeof(settingextension_bin)/sizeof(settingextension_bin[0]),
 	};
-	for( i = 0; i < 4; i++ )
+	for( i = 0; i < sizeof(settingfiles)/sizeof(settingfiles[0]); i++ )
 	{
         wxMemoryInputStream stream(settingfiles[i].filebuf, settingfiles[i].filesize);
         wxImage flags(stream);

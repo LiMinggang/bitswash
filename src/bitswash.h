@@ -125,8 +125,6 @@ public:
 	wxString DataPath() { return m_datapath ;}
 	wxString ConfigPath() { return m_configpath ;}
 	wxString SaveTorrentsPath() { return m_savetorrentspath ;}
-	wxString IconsPath() { return m_iconspath ; }
-	wxString FlagsPath() { return m_flagspath ; }
 	wxString DHTStatePath() { return m_dhtstatepath ;} 
 	wxString UserAgent() { return wxString::Format(_T("%s %s"), APPNAME, BITSWASH_VERSION );}
 	wxString LogPath() { return m_logpath; }
@@ -157,8 +155,6 @@ private:
 	wxString m_datapath;
 	wxString m_configpath;
 	wxString m_savetorrentspath;
-	wxString m_iconspath;
-	wxString m_flagspath;
 	wxString m_dhtstatepath;
 	wxString m_logpath;
 
