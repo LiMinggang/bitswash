@@ -897,7 +897,8 @@ void BitTorrentSession::SaveAllTorrent()
 		}
 
 		if( magneturifile.IsOpened() )
-		{
+		{
+
 			magneturifile.Clear();
 			for( size_t i = 0; i < counts; ++i )
 			{
@@ -999,7 +1000,8 @@ shared_ptr<torrent_t> BitTorrentSession::LoadMagnetUri( MagnetUri& magneturi )
 		torrent->handle.resolve_countries( true );
 		torrent->isvalid = AddTorrent( torrent );
 		if(torrent->isvalid && !torrent->handle.has_metadata())
-		{
+		{
+
 			torrent->magneturi = magneturi.url();
 			m_torrent_handle_map.insert(std::pair<libtorrent::torrent_handle, shared_ptr<torrent_t> >(torrent->handle, torrent));
 		}

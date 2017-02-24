@@ -127,14 +127,14 @@ wxString TorrentListCtrl::GetItemValue( long item, long columnid ) const
 
 	static const wxChar *state_str[] =
 	{
-		_( "queued" ),
-		_( "checking" ),
-		_( "downloading meta data" ),
-		_( "downloading" ),
-		_( "finished" ),
-		_( "seeding" ),
-		_( "allocating" ),
-		_( "checking resume data" )
+		_( "Queued" ),
+		_( "Checking" ),
+		_( "Downloading meta data" ),
+		_( "Downloading" ),
+		_( "Finished" ),
+		_( "Seeding" ),
+		_( "Allocating" ),
+		_( "Checking resume data" )
 	};
 	wxString ret;
 
