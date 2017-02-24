@@ -6,750 +6,748 @@
 #, fuzzy
 msgid ""
 msgstr ""
-"Project-Id-Version: 0.0.6\n"
+"Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2017-02-24 21:33+0800\n"
-"PO-Revision-Date: 2007-11-19 20:10+0800\n"
-"Last-Translator: Osipov Igor <oival@yandex.ru>\n"
-"Language-Team: RUSSIAN <LL@li.org>\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
 "Language: \n"
 "MIME-Version: 1.0\n"
-"Content-Type: text/plain; charset=UTF8\n"
+"Content-Type: text/plain; charset=CHARSET\n"
 "Content-Transfer-Encoding: 8bit\n"
 
 #: ../src/bitswash.cpp:144
 msgid "Unknown"
-msgstr "Неизвестно"
+msgstr ""
 
 #: ../src/bitswash.cpp:145
 msgid "Andorra"
-msgstr "Андорра"
+msgstr ""
 
 #: ../src/bitswash.cpp:146
 msgid "United Arab Emirates"
-msgstr "Объединённые Арабские Эмираты"
+msgstr ""
 
 #: ../src/bitswash.cpp:147
 msgid "Afghanistan"
-msgstr "Афганистан"
+msgstr ""
 
 #: ../src/bitswash.cpp:148
 msgid "Antigua and Barbuda"
-msgstr "Антигуа и Барбуда"
+msgstr ""
 
 #: ../src/bitswash.cpp:149
 msgid "Anguilla"
-msgstr "Ангилья"
+msgstr ""
 
 #: ../src/bitswash.cpp:150
 msgid "Albania"
-msgstr "Албания"
+msgstr ""
 
 #: ../src/bitswash.cpp:151
 msgid "Armenia"
-msgstr "Армения"
+msgstr ""
 
 #: ../src/bitswash.cpp:152
 msgid "Netherlands Antilles"
-msgstr "Netherlands Antilles"
+msgstr ""
 
 #: ../src/bitswash.cpp:153
 msgid "Angola"
-msgstr "Ангола"
+msgstr ""
 
 #: ../src/bitswash.cpp:154
 msgid "Argentina"
-msgstr "Аргентина"
+msgstr ""
 
 #: ../src/bitswash.cpp:155
 msgid "American Samoa"
-msgstr "Американское Самоа"
+msgstr ""
 
 #: ../src/bitswash.cpp:156
 msgid "Austria"
-msgstr "Австрия"
+msgstr ""
 
 #: ../src/bitswash.cpp:157
 msgid "Australia"
-msgstr "Австралия"
+msgstr ""
 
 #: ../src/bitswash.cpp:158
-#, fuzzy
 msgid "Aland Islands"
-msgstr "Каймановы Острова"
+msgstr ""
 
 #: ../src/bitswash.cpp:159
 msgid "Aruba"
-msgstr "Аруба"
+msgstr ""
 
 #: ../src/bitswash.cpp:160
 msgid "Azerbaijan"
-msgstr "Азербайджан"
+msgstr ""
 
 #: ../src/bitswash.cpp:161
 msgid "Bosnia and Herzegovina"
-msgstr "Босния и Герцеговина"
+msgstr ""
 
 #: ../src/bitswash.cpp:162
 msgid "Barbados"
-msgstr "Барбадос"
+msgstr ""
 
 #: ../src/bitswash.cpp:163
 msgid "Bangladesh"
-msgstr "Бангладеш"
+msgstr ""
 
 #: ../src/bitswash.cpp:164
 msgid "Belgium"
-msgstr "Бельгия"
+msgstr ""
 
 #: ../src/bitswash.cpp:165
 msgid "Burkina Faso"
-msgstr "Буркина Фасо"
+msgstr ""
 
 #: ../src/bitswash.cpp:166
 msgid "Bulgaria"
-msgstr "Болгария"
+msgstr ""
 
 #: ../src/bitswash.cpp:167
 msgid "Bahrain"
-msgstr "Бахрейн"
+msgstr ""
 
 #: ../src/bitswash.cpp:168
 msgid "Burundi"
-msgstr "Бурунди"
+msgstr ""
 
 #: ../src/bitswash.cpp:169
 msgid "Benin"
-msgstr "Бенин"
+msgstr ""
 
 #: ../src/bitswash.cpp:170
 msgid "Bermuda"
-msgstr "Бермуды"
+msgstr ""
 
 #: ../src/bitswash.cpp:171
 msgid "Brunei Darussalam"
-msgstr "Бруней"
+msgstr ""
 
 #: ../src/bitswash.cpp:172
 msgid "Bolivia"
-msgstr "Боливия"
+msgstr ""
 
 #: ../src/bitswash.cpp:173
 msgid "Brazil"
-msgstr "Бразилия"
+msgstr ""
 
 #: ../src/bitswash.cpp:174
 msgid "Bahamas"
-msgstr "Багамы"
+msgstr ""
 
 #: ../src/bitswash.cpp:175
 msgid "Bhutan"
-msgstr "Бутан"
+msgstr ""
 
 #: ../src/bitswash.cpp:176
 msgid "Bouvet Island Bouvetoya"
-msgstr "Bouvet Island Bouvetoya"
+msgstr ""
 
 #: ../src/bitswash.cpp:177
 msgid "Botswana"
-msgstr "Ботсвана"
+msgstr ""
 
 #: ../src/bitswash.cpp:178
 msgid "Belarus"
-msgstr "Беларусь"
+msgstr ""
 
 #: ../src/bitswash.cpp:179
 msgid "Belize"
-msgstr "Белиз"
+msgstr ""
 
 #: ../src/bitswash.cpp:180
 msgid "Canada"
-msgstr "Канада"
+msgstr ""
 
 #: ../src/bitswash.cpp:181
 msgid "Cocos Keeling Islands"
-msgstr "Cocos Keeling Islands"
+msgstr ""
 
 #: ../src/bitswash.cpp:182 ../src/bitswash.cpp:184
 msgid "Congo"
-msgstr "Конго"
+msgstr ""
 
 #: ../src/bitswash.cpp:183
 msgid "Central African Republic"
-msgstr "Центральная Африканская Республика"
+msgstr ""
 
 #: ../src/bitswash.cpp:185
 msgid "Switzerland"
-msgstr "Швейцария"
+msgstr ""
 
 #: ../src/bitswash.cpp:186
 msgid "Cote D'Ivoire"
-msgstr "Кот-д’Ивуар"
+msgstr ""
 
 #: ../src/bitswash.cpp:187
 msgid "Cook Islands"
-msgstr "Острова Кука"
+msgstr ""
 
 #: ../src/bitswash.cpp:188
 msgid "Chile"
-msgstr "Чили"
+msgstr ""
 
 #: ../src/bitswash.cpp:189
 msgid "Cameroon"
-msgstr "Камерун"
+msgstr ""
 
 #: ../src/bitswash.cpp:190
 msgid "China"
-msgstr "Китай"
+msgstr ""
 
 #: ../src/bitswash.cpp:191
 msgid "Colombia"
-msgstr "Колумбия"
+msgstr ""
 
 #: ../src/bitswash.cpp:192
 msgid "Costa Rica"
-msgstr "Коста Рика"
+msgstr ""
 
 #: ../src/bitswash.cpp:193
 msgid "Serbia and Montenegro"
-msgstr "Сербия и Черногория"
+msgstr ""
 
 #: ../src/bitswash.cpp:194
 msgid "Cuba"
-msgstr "Куба"
+msgstr ""
 
 #: ../src/bitswash.cpp:195
 msgid "Cape Verde"
-msgstr "Кабо-Верде"
+msgstr ""
 
 #: ../src/bitswash.cpp:196
 msgid "Christmas Island"
-msgstr "Christmas Island"
+msgstr ""
 
 #: ../src/bitswash.cpp:197
 msgid "Cyprus"
-msgstr "Кипр"
+msgstr ""
 
 #: ../src/bitswash.cpp:198
 msgid "Czech Republic"
-msgstr "Чехия"
+msgstr ""
 
 #: ../src/bitswash.cpp:199
 msgid "Germany"
-msgstr "Германия"
+msgstr ""
 
 #: ../src/bitswash.cpp:200
 msgid "Djibouti"
-msgstr "Джибути"
+msgstr ""
 
 #: ../src/bitswash.cpp:201
 msgid "Denmark"
-msgstr "Дания"
+msgstr ""
 
 #: ../src/bitswash.cpp:202
 msgid "Dominica"
-msgstr "Доминика"
+msgstr ""
 
 #: ../src/bitswash.cpp:203
 msgid "Dominican Republic"
-msgstr "Доминиканская Республика"
+msgstr ""
 
 #: ../src/bitswash.cpp:204
 msgid "Algeria"
-msgstr "Алжир"
+msgstr ""
 
 #: ../src/bitswash.cpp:205
 msgid "Ecuador"
-msgstr "Эквадор"
+msgstr ""
 
 #: ../src/bitswash.cpp:206
 msgid "Estonia"
-msgstr "Эстония"
+msgstr ""
 
 #: ../src/bitswash.cpp:207
 msgid "Egypt"
-msgstr "Египет"
+msgstr ""
 
 #: ../src/bitswash.cpp:208
 msgid "Western Sahara"
-msgstr "Западная Сахара"
+msgstr ""
 
 #: ../src/bitswash.cpp:209
 msgid "Eritrea"
-msgstr "Эретрея"
+msgstr ""
 
 #: ../src/bitswash.cpp:210
 msgid "Spain"
-msgstr "Испания"
+msgstr ""
 
 #: ../src/bitswash.cpp:211
 msgid "Ethiopia"
-msgstr "Эфиопия"
+msgstr ""
 
 #: ../src/bitswash.cpp:212
 msgid "Europe"
-msgstr "Европа"
+msgstr ""
 
 #: ../src/bitswash.cpp:213
 msgid "Finland"
-msgstr "Финляндия"
+msgstr ""
 
 #: ../src/bitswash.cpp:214
 msgid "Fiji"
-msgstr "Фиджи"
+msgstr ""
 
 #: ../src/bitswash.cpp:215
 msgid "Falkland Islands Malvinas"
-msgstr "Falkland Islands Malvinas"
+msgstr ""
 
 #: ../src/bitswash.cpp:216
 msgid "Micronesia"
-msgstr "Микронезия"
+msgstr ""
 
 #: ../src/bitswash.cpp:217
 msgid "Faeroe Islands"
-msgstr "Фарэрские Острова"
+msgstr ""
 
 #: ../src/bitswash.cpp:218
 msgid "France"
-msgstr "Франция"
+msgstr ""
 
 #: ../src/bitswash.cpp:219
 msgid "Gabon"
-msgstr "Габон"
+msgstr ""
 
 #: ../src/bitswash.cpp:220
 msgid "United Kingdom of Great Britain & N. Ireland"
-msgstr "Великобритания"
+msgstr ""
 
 #: ../src/bitswash.cpp:221
 msgid "Grenada"
-msgstr "Гренада"
+msgstr ""
 
 #: ../src/bitswash.cpp:222
 msgid "Georgia"
-msgstr "Грузия"
+msgstr ""
 
 #: ../src/bitswash.cpp:223
 msgid "French Guiana"
-msgstr "Французская Гвиана"
+msgstr ""
 
 #: ../src/bitswash.cpp:224
 msgid "Ghana"
-msgstr "Гана"
+msgstr ""
 
 #: ../src/bitswash.cpp:225
 msgid "Gibraltar"
-msgstr "Гибралтар"
+msgstr ""
 
 #: ../src/bitswash.cpp:226
 msgid "Greenland"
-msgstr "Гренландия"
+msgstr ""
 
 #: ../src/bitswash.cpp:227
 msgid "Gambia"
-msgstr "Гамбия"
+msgstr ""
 
 #: ../src/bitswash.cpp:228
 msgid "Guinea"
-msgstr "Гвинея"
+msgstr ""
 
 #: ../src/bitswash.cpp:229
 msgid "Guadaloupe"
-msgstr "Гваделупа"
+msgstr ""
 
 #: ../src/bitswash.cpp:230
 msgid "Equatorial Guinea"
-msgstr "Экваториальная Гвинея"
+msgstr ""
 
 #: ../src/bitswash.cpp:231
 msgid "Greece"
-msgstr "Греция"
+msgstr ""
 
 #: ../src/bitswash.cpp:232
 msgid "South Georgia and the South Sandwich Islands"
-msgstr "Южная Грузия и Южные Острова Сэндвича"
+msgstr ""
 
 #: ../src/bitswash.cpp:233
 msgid "Guatemala"
-msgstr "Гватемала"
+msgstr ""
 
 #: ../src/bitswash.cpp:234
 msgid "Guam"
-msgstr "Гуам"
+msgstr ""
 
 #: ../src/bitswash.cpp:235
 msgid "Guinea-Bissau"
-msgstr "Гвинея-Биссау"
+msgstr ""
 
 #: ../src/bitswash.cpp:236
 msgid "Guyana"
-msgstr "Гуана"
+msgstr ""
 
 #: ../src/bitswash.cpp:237
 msgid "Hong Kong"
-msgstr "Гон Конг"
+msgstr ""
 
 #: ../src/bitswash.cpp:238
 msgid "Heard and McDonald Islands"
-msgstr "Heard and McDonald Islands"
+msgstr ""
 
 #: ../src/bitswash.cpp:239
 msgid "Honduras"
-msgstr "Гондурас"
+msgstr ""
 
 #: ../src/bitswash.cpp:240
 msgid "Hrvatska Croatia"
-msgstr "Хорватия"
+msgstr ""
 
 #: ../src/bitswash.cpp:241
 msgid "Haiti"
-msgstr "Гаити"
+msgstr ""
 
 #: ../src/bitswash.cpp:242
 msgid "Hungary"
-msgstr "Венгрия"
+msgstr ""
 
 #: ../src/bitswash.cpp:243
 msgid "Indonesia"
-msgstr "Индонезия"
+msgstr ""
 
 #: ../src/bitswash.cpp:244
 msgid "Ireland"
-msgstr "Ирландия"
+msgstr ""
 
 #: ../src/bitswash.cpp:245
 msgid "Israel"
-msgstr "Израиль"
+msgstr ""
 
 #: ../src/bitswash.cpp:246
 msgid "India"
-msgstr "Индия"
+msgstr ""
 
 #: ../src/bitswash.cpp:247
 msgid "British Indian Ocean Territory Chagos Archipelago"
-msgstr "British Indian Ocean Territory Chagos Archipelago"
+msgstr ""
 
 #: ../src/bitswash.cpp:248
 msgid "Iraq"
-msgstr "Ирак"
+msgstr ""
 
 #: ../src/bitswash.cpp:249
 msgid "Iran"
-msgstr "Иран"
+msgstr ""
 
 #: ../src/bitswash.cpp:250
 msgid "Iceland"
-msgstr "Исландия"
+msgstr ""
 
 #: ../src/bitswash.cpp:251
 msgid "Italy"
-msgstr "Италия"
+msgstr ""
 
 #: ../src/bitswash.cpp:252
 msgid "Jamaica"
-msgstr "Ямайка"
+msgstr ""
 
 #: ../src/bitswash.cpp:253
 msgid "Jordan"
-msgstr "Иордан"
+msgstr ""
 
 #: ../src/bitswash.cpp:254
 msgid "Japan"
-msgstr "Япония"
+msgstr ""
 
 #: ../src/bitswash.cpp:255
 msgid "Kenya"
-msgstr "Кения"
+msgstr ""
 
 #: ../src/bitswash.cpp:256
 msgid "Kyrgyz Republic"
-msgstr "Киргизия"
+msgstr ""
 
 #: ../src/bitswash.cpp:257
 msgid "Cambodia"
-msgstr "Cambodia"
+msgstr ""
 
 #: ../src/bitswash.cpp:258
 msgid "Kiribati"
-msgstr "Кирибати"
+msgstr ""
 
 #: ../src/bitswash.cpp:259
 msgid "Comoros"
-msgstr "Коморские острова"
+msgstr ""
 
 #: ../src/bitswash.cpp:260
 msgid "St. Kitts and Nevis"
-msgstr "St. Kitts and Nevis"
+msgstr ""
 
 #: ../src/bitswash.cpp:261 ../src/bitswash.cpp:262
 msgid "Korea"
-msgstr "Корея"
+msgstr ""
 
 #: ../src/bitswash.cpp:263
 msgid "Kuwait"
-msgstr "Кувейт"
+msgstr ""
 
 #: ../src/bitswash.cpp:264
 msgid "Cayman Islands"
-msgstr "Каймановы Острова"
+msgstr ""
 
 #: ../src/bitswash.cpp:265
 msgid "Kazakhstan"
-msgstr "Казахстан"
+msgstr ""
 
 #: ../src/bitswash.cpp:266
 msgid "Lao People's Democratic Republic"
-msgstr "Лаос"
+msgstr ""
 
 #: ../src/bitswash.cpp:267
 msgid "Lebanon"
-msgstr "Lebanon"
+msgstr ""
 
 #: ../src/bitswash.cpp:268
 msgid "St. Lucia"
-msgstr "St. Lucia"
+msgstr ""
 
 #: ../src/bitswash.cpp:269
 msgid "Liechtenstein"
-msgstr "Лихтенштейн"
+msgstr ""
 
 #: ../src/bitswash.cpp:270
 msgid "Sri Lanka"
-msgstr "Шри Ланка"
+msgstr ""
 
 #: ../src/bitswash.cpp:271
 msgid "Liberia"
-msgstr "Либерия"
+msgstr ""
 
 #: ../src/bitswash.cpp:272
 msgid "Lesotho"
-msgstr "Лесото"
+msgstr ""
 
 #: ../src/bitswash.cpp:273
 msgid "Lithuania"
-msgstr "Lithuania"
+msgstr ""
 
 #: ../src/bitswash.cpp:274
 msgid "Luxembourg"
-msgstr "Люксембург"
+msgstr ""
 
 #: ../src/bitswash.cpp:275
 msgid "Latvia"
-msgstr "Латвия"
+msgstr ""
 
 #: ../src/bitswash.cpp:276
 msgid "Libyan Arab Jamahiriya"
-msgstr "Libyan Arab Jamahiriya"
+msgstr ""
 
 #: ../src/bitswash.cpp:277
 msgid "Morocco"
-msgstr "Морокко"
+msgstr ""
 
 #: ../src/bitswash.cpp:278
 msgid "Monaco"
-msgstr "Монако"
+msgstr ""
 
 #: ../src/bitswash.cpp:279
 msgid "Moldova"
-msgstr "Молдова"
+msgstr ""
 
 #: ../src/bitswash.cpp:280
-#, fuzzy
 msgid "Montenegro"
-msgstr "Сербия и Черногория"
+msgstr ""
 
 #: ../src/bitswash.cpp:281
 msgid "Madagascar"
-msgstr "Мадагаскар"
+msgstr ""
 
 #: ../src/bitswash.cpp:282
 msgid "Marshall Islands"
-msgstr "Маршаловы острова"
+msgstr ""
 
 #: ../src/bitswash.cpp:283
 msgid "Macedonia"
-msgstr "Македония"
+msgstr ""
 
 #: ../src/bitswash.cpp:284
 msgid "Mali"
-msgstr "Мали"
+msgstr ""
 
 #: ../src/bitswash.cpp:285
 msgid "Myanmar"
-msgstr "Мьянмар"
+msgstr ""
 
 #: ../src/bitswash.cpp:286
 msgid "Mongolia"
-msgstr "Монголия"
+msgstr ""
 
 #: ../src/bitswash.cpp:287
 msgid "Macao"
-msgstr "Макао"
+msgstr ""
 
 #: ../src/bitswash.cpp:288
 msgid "Northern Mariana Islands"
-msgstr "Северные Марианские острова"
+msgstr ""
 
 #: ../src/bitswash.cpp:289
 msgid "Martinique"
-msgstr "Мартиника"
+msgstr ""
 
 #: ../src/bitswash.cpp:290
 msgid "Mauritania"
-msgstr "Муритания"
+msgstr ""
 
 #: ../src/bitswash.cpp:291
 msgid "Montserrat"
-msgstr "Монтсеррат"
+msgstr ""
 
 #: ../src/bitswash.cpp:292
 msgid "Malta"
-msgstr "Мальта"
+msgstr ""
 
 #: ../src/bitswash.cpp:293
 msgid "Mauritius"
-msgstr "Маврикий"
+msgstr ""
 
 #: ../src/bitswash.cpp:294
 msgid "Maldives"
-msgstr "Мальдивы"
+msgstr ""
 
 #: ../src/bitswash.cpp:295
 msgid "Malawi"
-msgstr "Малави"
+msgstr ""
 
 #: ../src/bitswash.cpp:296
 msgid "Mexico"
-msgstr "Мексика"
+msgstr ""
 
 #: ../src/bitswash.cpp:297
 msgid "Malaysia"
-msgstr "Малазия"
+msgstr ""
 
 #: ../src/bitswash.cpp:298
 msgid "Mozambique"
-msgstr "Мозамбик"
+msgstr ""
 
 #: ../src/bitswash.cpp:299
 msgid "Namibia"
-msgstr "Намибия"
+msgstr ""
 
 #: ../src/bitswash.cpp:300
 msgid "New Caledonia"
-msgstr "# Новая Каледония"
+msgstr ""
 
 #: ../src/bitswash.cpp:301
 msgid "Niger"
-msgstr "Нигер"
+msgstr ""
 
 #: ../src/bitswash.cpp:302
 msgid "Norfolk Island"
-msgstr "Остров Норфолк"
+msgstr ""
 
 #: ../src/bitswash.cpp:303
 msgid "Nigeria"
-msgstr "Нигерия"
+msgstr ""
 
 #: ../src/bitswash.cpp:304
 msgid "Nicaragua"
-msgstr "Никарагуа"
+msgstr ""
 
 #: ../src/bitswash.cpp:305
 msgid "Netherlands"
-msgstr "Нидерланды"
+msgstr ""
 
 #: ../src/bitswash.cpp:306
 msgid "Norway"
-msgstr "Норвегия"
+msgstr ""
 
 #: ../src/bitswash.cpp:307
 msgid "Nepal"
-msgstr "Непал"
+msgstr ""
 
 #: ../src/bitswash.cpp:308
 msgid "Nauru"
-msgstr "Науру"
+msgstr ""
 
 #: ../src/bitswash.cpp:309
 msgid "Niue"
-msgstr "Ниуэ"
+msgstr ""
 
 #: ../src/bitswash.cpp:310
 msgid "New Zealand"
-msgstr "Новая Зеландия"
+msgstr ""
 
 #: ../src/bitswash.cpp:311
 msgid "Oman"
-msgstr "Оман"
+msgstr ""
 
 #: ../src/bitswash.cpp:312
 msgid "Panama"
-msgstr "Панама"
+msgstr ""
 
 #: ../src/bitswash.cpp:313
 msgid "Peru"
-msgstr "Перу"
+msgstr ""
 
 #: ../src/bitswash.cpp:314
 msgid "French Polynesia"
-msgstr "Французская Полинезия"
+msgstr ""
 
 #: ../src/bitswash.cpp:315
 msgid "Papua New Guinea"
-msgstr "Папуа и Новая Гвинея"
+msgstr ""
 
 #: ../src/bitswash.cpp:316
 msgid "Philippines"
-msgstr "Филипины"
+msgstr ""
 
 #: ../src/bitswash.cpp:317
 msgid "Pakistan"
-msgstr "Пакистан"
+msgstr ""
 
 #: ../src/bitswash.cpp:318
 msgid "Poland"
-msgstr "Gjkmif"
+msgstr ""
 
 #: ../src/bitswash.cpp:319
 msgid "St. Pierre and Miquelon"
-msgstr "St. Pierre and Miquelon"
+msgstr ""
 
 #: ../src/bitswash.cpp:320
 msgid "Pitcairn Island"
-msgstr "Острова Питкэрн"
+msgstr ""
 
 #: ../src/bitswash.cpp:321
 msgid "Puerto Rico"
-msgstr "Пуэрто Рико"
+msgstr ""
 
 #: ../src/bitswash.cpp:322
 msgid "Palestinian Territory"
-msgstr "Палестина"
+msgstr ""
 
 #: ../src/bitswash.cpp:323
 msgid "Portugal"
-msgstr "Португалия"
+msgstr ""
 
 #: ../src/bitswash.cpp:324
 msgid "Palau"
-msgstr "Палау"
+msgstr ""
 
 #: ../src/bitswash.cpp:325
 msgid "Paraguay"
-msgstr "Парагвай"
+msgstr ""
 
 #: ../src/bitswash.cpp:326
 msgid "Qatar"
-msgstr "Катар"
+msgstr ""
 
 #: ../src/bitswash.cpp:327
 msgid "Reunion"
-msgstr "Воссоздать"
+msgstr ""
 
 #: ../src/bitswash.cpp:328
 msgid "Romania"
-msgstr "Румыния"
+msgstr ""
 
 #: ../src/bitswash.cpp:329
 msgid "Serbia"
@@ -757,231 +755,231 @@ msgstr ""
 
 #: ../src/bitswash.cpp:330
 msgid "Russian Federation"
-msgstr "Россия"
+msgstr ""
 
 #: ../src/bitswash.cpp:331
 msgid "Rwanda"
-msgstr "Рванда"
+msgstr ""
 
 #: ../src/bitswash.cpp:332
 msgid "Saudi Arabia"
-msgstr "Сайдовская Аравия"
+msgstr ""
 
 #: ../src/bitswash.cpp:333
 msgid "Solomon Islands"
-msgstr "Соломоновы Острова"
+msgstr ""
 
 #: ../src/bitswash.cpp:334
 msgid "Seychelles"
-msgstr "Сейшелы"
+msgstr ""
 
 #: ../src/bitswash.cpp:335
 msgid "Sudan"
-msgstr "Судан"
+msgstr ""
 
 #: ../src/bitswash.cpp:336
 msgid "Sweden"
-msgstr "Швеция"
+msgstr ""
 
 #: ../src/bitswash.cpp:337
 msgid "Singapore"
-msgstr "Сингапур"
+msgstr ""
 
 #: ../src/bitswash.cpp:338
 msgid "St. Helena"
-msgstr "Св. Елена"
+msgstr ""
 
 #: ../src/bitswash.cpp:339
 msgid "Slovenia"
-msgstr "Словения"
+msgstr ""
 
 #: ../src/bitswash.cpp:340
 msgid "Svalbard & Jan Mayen Islands"
-msgstr "Svalbard & Jan Mayen Islands"
+msgstr ""
 
 #: ../src/bitswash.cpp:341
 msgid "Slovakia Slovak Republic"
-msgstr "Словакия"
+msgstr ""
 
 #: ../src/bitswash.cpp:342
 msgid "Sierra Leone"
-msgstr "Сьерра Леоне"
+msgstr ""
 
 #: ../src/bitswash.cpp:343
 msgid "San Marino"
-msgstr "Сан Марино"
+msgstr ""
 
 #: ../src/bitswash.cpp:344
 msgid "Senegal"
-msgstr "Сенегал"
+msgstr ""
 
 #: ../src/bitswash.cpp:345
 msgid "Somalia"
-msgstr "Сомали"
+msgstr ""
 
 #: ../src/bitswash.cpp:346
 msgid "Suriname"
-msgstr "Суринам"
+msgstr ""
 
 #: ../src/bitswash.cpp:347
 msgid "Sao Tome and Principe"
-msgstr "Сан-Томе и Принсипи"
+msgstr ""
 
 #: ../src/bitswash.cpp:348
 msgid "El Salvador"
-msgstr "Сальвадор"
+msgstr ""
 
 #: ../src/bitswash.cpp:349
 msgid "Syrian Arab Republic"
-msgstr "Сирия"
+msgstr ""
 
 #: ../src/bitswash.cpp:350
 msgid "Swaziland"
-msgstr "Свазиленд"
+msgstr ""
 
 #: ../src/bitswash.cpp:351
 msgid "Turks and Caicos Islands"
-msgstr "Turks and Caicos Islands"
+msgstr ""
 
 #: ../src/bitswash.cpp:352
 msgid "Chad"
-msgstr "Чад"
+msgstr ""
 
 #: ../src/bitswash.cpp:353
 msgid "French Southern Territories"
-msgstr "Южные Территории Франции"
+msgstr ""
 
 #: ../src/bitswash.cpp:354
 msgid "Togo"
-msgstr "Того"
+msgstr ""
 
 #: ../src/bitswash.cpp:355
 msgid "Thailand"
-msgstr "Тайланд"
+msgstr ""
 
 #: ../src/bitswash.cpp:356
 msgid "Tajikistan"
-msgstr "Таджикистан"
+msgstr ""
 
 #: ../src/bitswash.cpp:357
 msgid "Tokelau Tokelau Islands"
-msgstr "Tokelau Tokelau Islands"
+msgstr ""
 
 #: ../src/bitswash.cpp:358
 msgid "Timor-Leste"
-msgstr "Тимур"
+msgstr ""
 
 #: ../src/bitswash.cpp:359
 msgid "Turkmenistan"
-msgstr "Туркменистан"
+msgstr ""
 
 #: ../src/bitswash.cpp:360
 msgid "Tunisia"
-msgstr "Тунис"
+msgstr ""
 
 #: ../src/bitswash.cpp:361
 msgid "Tonga"
-msgstr "Тонга"
+msgstr ""
 
 #: ../src/bitswash.cpp:362
 msgid "Turkey"
-msgstr "Турция"
+msgstr ""
 
 #: ../src/bitswash.cpp:363
 msgid "Trinidad and Tobago"
-msgstr "Тринидад и Тобаго"
+msgstr ""
 
 #: ../src/bitswash.cpp:364
 msgid "Tuvalu"
-msgstr "Tuvalu"
+msgstr ""
 
 #: ../src/bitswash.cpp:365
 msgid "Taiwan"
-msgstr "Тайвань"
+msgstr ""
 
 #: ../src/bitswash.cpp:366
 msgid "Tanzania"
-msgstr "Танзания"
+msgstr ""
 
 #: ../src/bitswash.cpp:367
 msgid "Ukraine"
-msgstr "Украина"
+msgstr ""
 
 #: ../src/bitswash.cpp:368
 msgid "Uganda"
-msgstr "Уганда"
+msgstr ""
 
 #: ../src/bitswash.cpp:369
 msgid "United States Minor Outlying Islands"
-msgstr "United States Minor Outlying Islands"
+msgstr ""
 
 #: ../src/bitswash.cpp:370
 msgid "United States of America"
-msgstr "United States of America"
+msgstr ""
 
 #: ../src/bitswash.cpp:371
 msgid "Uruguay"
-msgstr "Уругвай"
+msgstr ""
 
 #: ../src/bitswash.cpp:372
 msgid "Uzbekistan"
-msgstr "Узбекистан"
+msgstr ""
 
 #: ../src/bitswash.cpp:373
 msgid "Holy See Vatican City State"
-msgstr "Holy See Vatican City State"
+msgstr ""
 
 #: ../src/bitswash.cpp:374
 msgid "St. Vincent and the Grenadines"
-msgstr "St. Vincent and the Grenadines"
+msgstr ""
 
 #: ../src/bitswash.cpp:375
 msgid "Venezuela"
-msgstr "Венесуэлла"
+msgstr ""
 
 #: ../src/bitswash.cpp:376
 msgid "British Virgin Islands"
-msgstr "British Virgin Islands"
+msgstr ""
 
 #: ../src/bitswash.cpp:377
 msgid "US Virgin Islands"
-msgstr "Острова Вирджинии"
+msgstr ""
 
 #: ../src/bitswash.cpp:378
 msgid "Viet Nam"
-msgstr "Вьетнам"
+msgstr ""
 
 #: ../src/bitswash.cpp:379
 msgid "Vanuatu"
-msgstr "Вануату"
+msgstr ""
 
 #: ../src/bitswash.cpp:380
 msgid "Wallis and Futuna Islands"
-msgstr "Wallis and Futuna Islands"
+msgstr ""
 
 #: ../src/bitswash.cpp:381
 msgid "Samoa"
-msgstr "Самоэ"
+msgstr ""
 
 #: ../src/bitswash.cpp:382
 msgid "Yemen"
-msgstr "Йемен"
+msgstr ""
 
 #: ../src/bitswash.cpp:383
 msgid "Mayotte"
-msgstr "Майотта"
+msgstr ""
 
 #: ../src/bitswash.cpp:384
 msgid "South Africa"
-msgstr "ЮАР"
+msgstr ""
 
 #: ../src/bitswash.cpp:385
 msgid "Zambia"
-msgstr "Замбия"
+msgstr ""
 
 #: ../src/bitswash.cpp:386
 msgid "Zimbabwe"
-msgstr "Зимбабве"
+msgstr ""
 
 #: ../src/bittorrentsession.cpp:473 ../src/torrentsetting.cpp:162
 #: ../src/torrentsetting.cpp:187
@@ -991,9 +989,8 @@ msgstr ""
 #: ../src/bittorrentsession.cpp:477 ../src/bittorrentsession.cpp:486
 #: ../src/torrentsetting.cpp:163 ../src/torrentsetting.cpp:190
 #: ../src/torrentsetting.cpp:196
-#, fuzzy
 msgid "Sparse"
-msgstr "пауза"
+msgstr ""
 
 #: ../src/bittorrentsession.cpp:481 ../src/torrentsetting.cpp:164
 #: ../src/torrentsetting.cpp:193
@@ -1002,169 +999,166 @@ msgstr ""
 
 #: ../src/connectionsetting.cpp:56
 msgid "Ports Setting"
-msgstr "Настройки Портов"
+msgstr ""
 
 #: ../src/connectionsetting.cpp:68
 msgid "Port Range (TCP):"
-msgstr "Диапазон Портов (TCP):"
+msgstr ""
 
 #: ../src/connectionsetting.cpp:75
 msgid "to"
-msgstr "в"
+msgstr ""
 
 #: ../src/connectionsetting.cpp:89
 msgid "Enable DHT, Port (UDP):"
-msgstr "Включить DHT，Порт (UDP):"
+msgstr ""
 
 #: ../src/connectionsetting.cpp:110
 msgid "Limits"
-msgstr "Ограничения"
+msgstr ""
 
 #: ../src/connectionsetting.cpp:122 ../src/torrentsetting.cpp:203
 msgid "Download Rate Limit:"
-msgstr "Ограничение загрузки:"
+msgstr ""
 
 #: ../src/connectionsetting.cpp:130 ../src/torrentsetting.cpp:211
 msgid "Upload Rate Limit:"
-msgstr "Ограничение Раздачи:"
+msgstr ""
 
 #: ../src/connectionsetting.cpp:137 ../src/torrentsetting.cpp:218
 msgid "Maximum Connections:"
-msgstr "Максимум Соединений"
+msgstr ""
 
 #: ../src/connectionsetting.cpp:144 ../src/torrentsetting.cpp:225
 msgid "Maximum Upload Slots:"
-msgstr "Максимальное Количество Раздач"
+msgstr ""
 
 #: ../src/connectionsetting.cpp:152
 msgid "Maximum Half Open Connections:"
-msgstr "Максимамльное Количество Открытых Соединений:"
+msgstr ""
 
 #: ../src/extensionsetting.cpp:64 ../src/swashsetting.cpp:74
 msgid "Extensions"
-msgstr "Расширения"
+msgstr ""
 
-# ?????
 #: ../src/extensionsetting.cpp:72
 msgid "Enable Metadata"
-msgstr "Активировать Метаданные"
+msgstr ""
 
 #: ../src/extensionsetting.cpp:75
 msgid "Enable Peer Exchange"
-msgstr "Разрешить Обмен Пирами"
+msgstr ""
 
 #: ../src/extensionsetting.cpp:83
 msgid "Protocol Encryption"
-msgstr "Шифрование Протокола"
+msgstr ""
 
 #: ../src/extensionsetting.cpp:91
 msgid "Enable Encryption"
-msgstr "Включить Шифрование"
+msgstr ""
 
 #: ../src/extensionsetting.cpp:94
 msgid "Accept Unencrypted Peer"
-msgstr "Принимать шифрованные соединения"
+msgstr ""
 
 #: ../src/extensionsetting.cpp:103
 msgid "NAT Service"
-msgstr "Слажба NAT"
+msgstr ""
 
 #: ../src/extensionsetting.cpp:111
 msgid "Enable UPnP"
-msgstr "Включить UPnP"
+msgstr ""
 
 #: ../src/extensionsetting.cpp:114
 msgid "Enable NAT Port Mapping"
-msgstr "Включить Переадресацию NAT Port Mapping"
+msgstr ""
 
 #: ../src/extensionsetting.cpp:117
 msgid "Enable Local Service Discovery"
-msgstr "Enable Local Service Discovery"
+msgstr ""
 
 #: ../src/filelistctrl.cpp:78 ../src/filelistctrl.cpp:87
 msgid "File"
-msgstr "Файл"
+msgstr ""
 
 #: ../src/filelistctrl.cpp:78 ../src/filelistctrl.cpp:87
 msgid "Files in torrent"
-msgstr "Файлы в торренте"
+msgstr ""
 
 #: ../src/filelistctrl.cpp:79 ../src/filelistctrl.cpp:88
 #: ../src/torrentlistctrl.cpp:57 ../src/torrentlistctrl.cpp:74
 msgid "Size"
-msgstr "Размер"
+msgstr ""
 
 #: ../src/filelistctrl.cpp:79 ../src/filelistctrl.cpp:88
 msgid "File size"
-msgstr "Размер Файла"
+msgstr ""
 
 #: ../src/filelistctrl.cpp:80 ../src/filelistctrl.cpp:89
 msgid "Download"
-msgstr "Загрузить"
+msgstr ""
 
 #: ../src/filelistctrl.cpp:80 ../src/filelistctrl.cpp:89
 msgid "File priority"
-msgstr "Приоритет файла"
+msgstr ""
 
 #: ../src/filelistctrl.cpp:81 ../src/filelistctrl.cpp:90
 #: ../src/peerlistctrl.cpp:67 ../src/peerlistctrl.cpp:82
 #: ../src/torrentlistctrl.cpp:58 ../src/torrentlistctrl.cpp:75
 msgid "Progress"
-msgstr "Прогресс"
+msgstr ""
 
 #: ../src/filelistctrl.cpp:81 ../src/filelistctrl.cpp:90
 msgid "File download progress"
-msgstr "Прогресс загрузки файла"
+msgstr ""
 
 #: ../src/filelistctrl.cpp:111
 msgid "Do not download"
-msgstr "Не загружать"
+msgstr ""
 
 #: ../src/filelistctrl.cpp:113
 msgid "Lowest Priority"
-msgstr "Низкий Приоритет"
+msgstr ""
 
 #: ../src/filelistctrl.cpp:114
 msgid "Normal Priority"
-msgstr "Нормальный Приоритет"
+msgstr ""
 
-# ?????
 #: ../src/filelistctrl.cpp:115
 msgid "Highest Priority"
-msgstr "Наивысший Приоритет"
+msgstr ""
 
 #: ../src/filelistctrl.cpp:117
-#, fuzzy
 msgid "Open containing folder"
-msgstr "Открыть торрент-файл"
+msgstr ""
 
 #: ../src/filelistctrl.cpp:159
 msgid "No"
-msgstr "Нет"
+msgstr ""
 
 #: ../src/filelistctrl.cpp:160
 msgid "Lowest"
-msgstr "Низкий"
+msgstr ""
 
 #: ../src/filelistctrl.cpp:163
 msgid "Normal"
-msgstr "Норма"
+msgstr ""
 
 #: ../src/filelistctrl.cpp:166
 msgid "Higest"
-msgstr "Higest"
+msgstr ""
 
 #: ../src/generalsetting.cpp:63 ../src/swashsetting.cpp:71
 msgid "General"
-msgstr "Главное"
+msgstr ""
 
 #: ../src/generalsetting.cpp:74
 msgid "Maximum Running Job:"
-msgstr "Максимальное Количество Активных Заданий:"
+msgstr ""
 
 #: ../src/generalsetting.cpp:82
 msgid "Exclude seeding"
-msgstr "Запретить сидирование"
+msgstr ""
 
 #: ../src/generalsetting.cpp:89
 msgid "Run at Windows startup"
@@ -1176,874 +1170,859 @@ msgstr ""
 
 #: ../src/generalsetting.cpp:116
 msgid "GUI"
-msgstr "GUI"
+msgstr ""
 
 #: ../src/generalsetting.cpp:127
-#, fuzzy
 msgid "Refresh Timer (s):"
-msgstr "Обновлять Таймер (ms):"
+msgstr ""
 
 #: ../src/generalsetting.cpp:136
 msgid "Enable Systray Icon"
-msgstr "Значёк в Системном Трее"
+msgstr ""
 
 #: ../src/generalsetting.cpp:141
 msgid "Minimize to Systray"
-msgstr "Свернуть в Трей"
+msgstr ""
 
 #: ../src/generalsetting.cpp:157 ../src/torrentinfo.cpp:74
 msgid "Log"
-msgstr "Лог"
+msgstr ""
 
 #: ../src/generalsetting.cpp:168
 msgid "Log Severity:"
-msgstr "Настройки Лога"
+msgstr ""
 
 #: ../src/generalsetting.cpp:171 ../src/loggerctrl.cpp:77
 msgid "Debug"
-msgstr "Отладка"
+msgstr ""
 
 #: ../src/generalsetting.cpp:171 ../src/loggerctrl.cpp:77
 #: ../src/summarypane.cpp:82
 msgid "Info"
-msgstr "Инфо"
+msgstr ""
 
 #: ../src/generalsetting.cpp:171 ../src/loggerctrl.cpp:77
 msgid "Warning"
-msgstr "Предупреждение"
+msgstr ""
 
 #: ../src/generalsetting.cpp:171 ../src/loggerctrl.cpp:77
 msgid "Critical"
-msgstr "Критическое"
+msgstr ""
 
 #: ../src/generalsetting.cpp:171 ../src/loggerctrl.cpp:77
 msgid "Fatal"
-msgstr "Крушение"
+msgstr ""
 
 #: ../src/generalsetting.cpp:171 ../src/loggerctrl.cpp:77
 msgid "None"
-msgstr "Нет"
+msgstr ""
 
 #: ../src/generalsetting.cpp:180
 msgid "Maximum Lines:"
-msgstr "Максимальное Количество Линий:"
+msgstr ""
 
 #: ../src/generalsetting.cpp:183
 msgid "line"
-msgstr "линия"
+msgstr ""
 
 #: ../src/generalsetting.cpp:187
 msgid "Log to File:"
-msgstr "Записать Лог в Файл:"
+msgstr ""
 
 #: ../src/loggerctrl.cpp:75
 msgid "Severity"
-msgstr "Строгость"
+msgstr ""
 
 #: ../src/loggerctrl.cpp:82
 msgid "Log to File"
-msgstr "Записать Лог в Файл"
+msgstr ""
 
 #: ../src/loggerctrl.cpp:85
 msgid "Clear Log"
-msgstr "Очестить Лог"
+msgstr ""
 
 #: ../src/loggerctrl.cpp:87
 msgid "Pause Log"
-msgstr "Приостановить Лог"
+msgstr ""
 
 #: ../src/mainframe.cpp:301
 msgid "Categories"
-msgstr "Категории"
+msgstr ""
 
 #: ../src/mainframe.cpp:303
 msgid "All"
-msgstr "Все"
+msgstr ""
 
 #: ../src/mainframe.cpp:304
 msgid "Downloads"
-msgstr "Загрузки"
+msgstr ""
 
 #: ../src/mainframe.cpp:305
 msgid "Seeds"
-msgstr "Сиды"
+msgstr ""
 
 #: ../src/mainframe.cpp:389 ../src/swashtrayicon.cpp:102
 msgid "&Open Torrent\tCtrl+O"
-msgstr "Открыть Торрент(&O)\tCtrl+O"
+msgstr ""
 
 #: ../src/mainframe.cpp:389 ../src/mainframe.cpp:473
 #: ../src/swashtrayicon.cpp:102
 msgid "Open Torrent"
-msgstr "Открыть Торрент"
+msgstr ""
 
 #: ../src/mainframe.cpp:391 ../src/swashtrayicon.cpp:103
 msgid "Open &URL\tCtrl+U"
-msgstr "Открыть URL(&U)\tCtrl+U"
+msgstr ""
 
 #: ../src/mainframe.cpp:391 ../src/mainframe.cpp:476
 #: ../src/swashtrayicon.cpp:103
 msgid "Open URL"
-msgstr "Открыть URL"
+msgstr ""
 
 #: ../src/mainframe.cpp:397
 msgid "E&xit\tAlt-F4"
-msgstr "Выход(&x)\tAlt-F4"
+msgstr ""
 
 #: ../src/mainframe.cpp:397 ../src/mainframe.cpp:529
 msgid "Exit Bitswash"
-msgstr "Выйти из Bitswash"
+msgstr ""
 
 #: ../src/mainframe.cpp:399
 msgid "&File"
-msgstr "Файл(&F)"
+msgstr ""
 
 #: ../src/mainframe.cpp:401
 msgid "View &Toolbar"
-msgstr "Показать Панель Инструментов(&T)"
+msgstr ""
 
 #: ../src/mainframe.cpp:401
 msgid "View Toolbar"
-msgstr "Показать Панель Инструментов"
+msgstr ""
 
 #: ../src/mainframe.cpp:402
 msgid "View &Status"
-msgstr "Показать Статуса(&S)"
+msgstr ""
 
 #: ../src/mainframe.cpp:402
 msgid "View Status"
-msgstr "Показать Статус"
+msgstr ""
 
 #: ../src/mainframe.cpp:404
 msgid "&View"
-msgstr "Вид(&V)"
+msgstr ""
 
 #: ../src/mainframe.cpp:406
 msgid "&Torrent"
-msgstr "Торрент(&T)"
+msgstr ""
 
 #: ../src/mainframe.cpp:408 ../src/swashtrayicon.cpp:105
 msgid "Prefere&nce\tCtrl+F"
-msgstr "Настройки(&P)\t(Ctrl+P)"
+msgstr ""
 
 #: ../src/mainframe.cpp:408 ../src/mainframe.cpp:520
 #: ../src/swashtrayicon.cpp:105
 msgid "Preference"
-msgstr "Настройки"
+msgstr ""
 
 #: ../src/mainframe.cpp:414
 msgid "System Language"
-msgstr "Язык Системы"
+msgstr ""
 
 #: ../src/mainframe.cpp:456
 msgid "&Language"
-msgstr "Язык(&L)"
+msgstr ""
 
 #: ../src/mainframe.cpp:456
 msgid "Language"
-msgstr "Язык"
+msgstr ""
 
 #: ../src/mainframe.cpp:457
 msgid "&Options"
-msgstr "Настройки(&O)"
+msgstr ""
 
 #: ../src/mainframe.cpp:459
 msgid "&Help\tF1"
-msgstr "Помощь(&H)\tF1"
+msgstr ""
 
 #: ../src/mainframe.cpp:459
 msgid "Help"
-msgstr "Помощь"
+msgstr ""
 
 #: ../src/mainframe.cpp:461
 msgid "Home&page"
-msgstr "Домашняя страница(&p)"
+msgstr ""
 
 #: ../src/mainframe.cpp:461 ../src/mainframe.cpp:523
 msgid "Homepage"
-msgstr "Домашняя страница"
+msgstr ""
 
 #: ../src/mainframe.cpp:462
 msgid "&About"
-msgstr "О программе(&A)"
+msgstr ""
 
 #: ../src/mainframe.cpp:462
 msgid "About"
-msgstr "О программе"
+msgstr ""
 
 #: ../src/mainframe.cpp:463
 msgid "&Help"
-msgstr "Помощь(&H)"
+msgstr ""
 
 #: ../src/mainframe.cpp:475
 msgid "Open torrent file"
-msgstr "Открыть торрент-файл"
+msgstr ""
 
 #: ../src/mainframe.cpp:478
 msgid "Open torrent from url"
-msgstr "Открыть торрент из url"
+msgstr ""
 
 #: ../src/mainframe.cpp:478
 msgid "Open torrent from URL"
-msgstr "Открыть торрент из URL"
+msgstr ""
 
 #: ../src/mainframe.cpp:481
 msgid "Create Torrent"
-msgstr "Создать Торрент"
+msgstr ""
 
 #: ../src/mainframe.cpp:483
 msgid "Create torrent file"
-msgstr "Создать торрент-файл"
+msgstr ""
 
 #: ../src/mainframe.cpp:483
 msgid "Create torrent file to publish"
-msgstr "Создать торрент-файл для раздачи"
+msgstr ""
 
 #: ../src/mainframe.cpp:488
 msgid "Queue"
-msgstr "Очередь"
+msgstr ""
 
 #: ../src/mainframe.cpp:490
 msgid "Queue torrent"
-msgstr "Очередь торрентов"
+msgstr ""
 
 #: ../src/mainframe.cpp:491
 msgid "Pause"
-msgstr "Пауза"
+msgstr ""
 
 #: ../src/mainframe.cpp:493
 msgid "Pause download"
-msgstr "Приостановить закачку"
+msgstr ""
 
 #: ../src/mainframe.cpp:493
 msgid "Pause downlaoding"
-msgstr "Приоставить скачивание"
+msgstr ""
 
 #: ../src/mainframe.cpp:494
 msgid "stop"
-msgstr "стоп"
+msgstr ""
 
 #: ../src/mainframe.cpp:496
 msgid "Stop download"
-msgstr "Остановить закачку"
+msgstr ""
 
 #: ../src/mainframe.cpp:496
 msgid "Stop downlaoding"
-msgstr "Остановить загрузку"
+msgstr ""
 
 #: ../src/mainframe.cpp:498 ../src/trackerlistctrl.cpp:141
 msgid "Delete"
-msgstr "Удаление"
+msgstr ""
 
 #: ../src/mainframe.cpp:500
 msgid "Delete torrent file"
-msgstr "Удалить торрент-файл"
+msgstr ""
 
 #: ../src/mainframe.cpp:501
 msgid "Delete Data"
-msgstr "Удалить Файлы"
+msgstr ""
 
 #: ../src/mainframe.cpp:503
 msgid "Delete torrent file and downloaded data"
-msgstr "Удалить торрент-файл и скаченные файлы"
+msgstr ""
 
 #: ../src/mainframe.cpp:505
 msgid "Move Up"
-msgstr "Вверх"
+msgstr ""
 
 #: ../src/mainframe.cpp:508 ../src/mainframe.cpp:1678
 msgid "Move torrent up"
-msgstr "Поднять торрент вверх"
+msgstr ""
 
 #: ../src/mainframe.cpp:508
 msgid "Move torrent up in the queue position"
-msgstr "Поднять торрент выше в очереди"
+msgstr ""
 
 #: ../src/mainframe.cpp:509
 msgid "Move Down"
-msgstr "Вниз"
+msgstr ""
 
 #: ../src/mainframe.cpp:512 ../src/mainframe.cpp:1681
 msgid "Move torrent down"
-msgstr "Опустить торрент ниже"
+msgstr ""
 
 #: ../src/mainframe.cpp:512
 msgid "Move torrent down in the queue position"
-msgstr "Опустить торрент ниже в очереди"
+msgstr ""
 
 #: ../src/mainframe.cpp:514
 msgid "Open"
-msgstr "Открыть"
+msgstr ""
 
 #: ../src/mainframe.cpp:516
 msgid "Open destination directory"
-msgstr "Указать папку назначения"
+msgstr ""
 
 #: ../src/mainframe.cpp:516
 msgid "Open destination downloaded directory"
-msgstr "Указать папку сохранения"
+msgstr ""
 
 #: ../src/mainframe.cpp:522
 msgid "Program settings"
-msgstr "Настройки программы"
+msgstr ""
 
 #: ../src/mainframe.cpp:522
 msgid "Set user preference"
-msgstr "Установить настройки профиля"
+msgstr ""
 
 #: ../src/mainframe.cpp:525
 msgid "Bitswash homepage"
-msgstr "Сайт Bitswash"
+msgstr ""
 
 #: ../src/mainframe.cpp:525
 msgid "Visit Bitswash homepage"
-msgstr "Посетить сайт Bitswash"
+msgstr ""
 
 #: ../src/mainframe.cpp:527
 msgid "Exit"
-msgstr "Выход"
+msgstr ""
 
 #: ../src/mainframe.cpp:667
 msgid "Open Torrent(s)..."
-msgstr "Открыть Торрент(ы)..."
+msgstr ""
 
 #: ../src/mainframe.cpp:1286
 msgid "torrents"
-msgstr "торренты"
+msgstr ""
 
 #: ../src/mainframe.cpp:1288
 msgid "torrent"
-msgstr "торрент"
+msgstr ""
 
 #: ../src/mainframe.cpp:1291
 msgid " and data"
-msgstr " и данные"
+msgstr ""
 
 #: ../src/mainframe.cpp:1293
 msgid "Confirm remove "
-msgstr "Подтвердите удаление"
+msgstr ""
 
 #: ../src/mainframe.cpp:1294
 msgid "Confirm Remove"
-msgstr "Подтвердите удаление"
+msgstr ""
 
 #: ../src/mainframe.cpp:1601
 msgid "Ok"
-msgstr "Ок"
+msgstr ""
 
 #: ../src/mainframe.cpp:1602
 msgid "Error"
-msgstr "Ошибка"
+msgstr ""
 
 #: ../src/mainframe.cpp:1608
 msgid "Download Rate"
-msgstr "Приоритет загрузки"
+msgstr ""
 
 #: ../src/mainframe.cpp:1608
 msgid "Upload Rate"
-msgstr "Ограничение Раздачи"
+msgstr ""
 
 #: ../src/mainframe.cpp:1608 ../src/torrentinfo.cpp:65
 #: ../src/torrentlistctrl.cpp:61 ../src/torrentlistctrl.cpp:78
 msgid "Peers"
-msgstr "Пиры"
+msgstr ""
 
 #: ../src/mainframe.cpp:1608
 msgid "DHT Nodes"
-msgstr "Сообщения DHT"
+msgstr ""
 
 #: ../src/mainframe.cpp:1608
 msgid "Incoming"
-msgstr "Вхидящий"
+msgstr ""
 
 #: ../src/mainframe.cpp:1664
 msgid "&Queue Torrent\tCtrl+S"
-msgstr "Добавить Торрент в Очередь(&Q)\tCtrl+S"
+msgstr ""
 
 #: ../src/mainframe.cpp:1664
 msgid "Queue Download"
-msgstr "Очередь Загрузки"
+msgstr ""
 
 #: ../src/mainframe.cpp:1666
 msgid "&Force Start Torrent\tCtrl+Alt+S"
-msgstr "Форсированный Запуск Торрента(&F)"
+msgstr ""
 
 #: ../src/mainframe.cpp:1666
 msgid "Force Torrent Download"
-msgstr "Форсировать Закачку"
+msgstr ""
 
 #: ../src/mainframe.cpp:1668
 msgid "&Pause Torrent\tCtrl+P"
-msgstr "Пауза(&P)\tCtrl-P"
+msgstr ""
 
 #: ../src/mainframe.cpp:1668
 msgid "Pause Download"
-msgstr "Приостановть Загрузку"
+msgstr ""
 
 #: ../src/mainframe.cpp:1670
 msgid "St&op Torrent\tCtrl+T"
-msgstr "Остановить Торрент(&t)\tCtrl+T"
+msgstr ""
 
 #: ../src/mainframe.cpp:1670
 msgid "Stop Download"
-msgstr "Остановить Закачку"
+msgstr ""
 
 #: ../src/mainframe.cpp:1673
 msgid "&Remove Torrent"
-msgstr "Удалить Торрент(&R)"
+msgstr ""
 
 #: ../src/mainframe.cpp:1673
 msgid "Delete Torrent"
-msgstr "Удалить Торрент"
+msgstr ""
 
 #: ../src/mainframe.cpp:1675
 msgid "Remove Torrent and &Data"
-msgstr "Удалить Торрент и Файлы(&D)"
+msgstr ""
 
 #: ../src/mainframe.cpp:1675
 msgid "Delete Torrent and Data"
-msgstr "Удалить Торрент и Файлы"
+msgstr ""
 
 #: ../src/mainframe.cpp:1678
 msgid "Move &Up\tAlt+UP"
-msgstr "Вверх(&U)"
+msgstr ""
 
 #: ../src/mainframe.cpp:1681
 msgid "Move Do&wn\tAlt+DOWN"
-msgstr "Вниз(&w)"
+msgstr ""
 
 #: ../src/mainframe.cpp:1685
 msgid "Re&announce Torrent"
-msgstr "Повторить Торрент(&a)"
+msgstr ""
 
 #: ../src/mainframe.cpp:1685
 msgid "Force Reannounce Torrent"
-msgstr "Принудительно повторить торрент"
+msgstr ""
 
 #: ../src/mainframe.cpp:1687
-#, fuzzy
 msgid "Force Re&check Torrent"
-msgstr "Принудительно повторить торрент"
+msgstr ""
 
 #: ../src/mainframe.cpp:1687
-#, fuzzy
 msgid "Force Recheck Torrent"
-msgstr "Принудительно повторить торрент"
+msgstr ""
 
 #: ../src/mainframe.cpp:1688
 msgid "Open &Directory"
-msgstr "Открыть папку(&D)"
+msgstr ""
 
 #: ../src/mainframe.cpp:1688
 msgid "Open downloaded directory"
-msgstr "Открыть папку сохранения"
+msgstr ""
 
 #: ../src/mainframe.cpp:1690
 msgid "Propert&ies"
-msgstr "Свойства(&i)"
+msgstr ""
 
 #: ../src/mainframe.cpp:1690
 msgid "Torrent Properties"
-msgstr "Свойства Торрента"
+msgstr ""
 
 #: ../src/peerlistctrl.cpp:57 ../src/peerlistctrl.cpp:72
 msgid "IP"
-msgstr "IP"
+msgstr ""
 
 #: ../src/peerlistctrl.cpp:57 ../src/peerlistctrl.cpp:72
 msgid "Client IP address"
-msgstr "IP адрес клиента"
+msgstr ""
 
 #: ../src/peerlistctrl.cpp:58 ../src/peerlistctrl.cpp:73
 msgid "Country"
-msgstr "Страна"
+msgstr ""
 
 #: ../src/peerlistctrl.cpp:58 ../src/peerlistctrl.cpp:73
 msgid "Client country"
-msgstr "Страна клиента"
+msgstr ""
 
 #: ../src/peerlistctrl.cpp:59 ../src/peerlistctrl.cpp:74
 msgid "Type"
-msgstr "Тип"
+msgstr ""
 
 #: ../src/peerlistctrl.cpp:59 ../src/peerlistctrl.cpp:74
 msgid "Peer type"
-msgstr "Тип пира"
+msgstr ""
 
 #: ../src/peerlistctrl.cpp:60 ../src/peerlistctrl.cpp:75
 #: ../src/torrentinfo.cpp:62 ../src/torrentlistctrl.cpp:56
 #: ../src/torrentlistctrl.cpp:73
 msgid "Status"
-msgstr "Статус"
+msgstr ""
 
 #: ../src/peerlistctrl.cpp:60 ../src/peerlistctrl.cpp:75
 msgid "Peer status"
-msgstr "Статус пира"
+msgstr ""
 
 #: ../src/peerlistctrl.cpp:61 ../src/peerlistctrl.cpp:76
 msgid "Client"
-msgstr "Клиент"
+msgstr ""
 
 #: ../src/peerlistctrl.cpp:61 ../src/peerlistctrl.cpp:76
 msgid "Client name"
-msgstr "Название клиента"
+msgstr ""
 
 #: ../src/peerlistctrl.cpp:62 ../src/peerlistctrl.cpp:77
 msgid "Flags"
-msgstr "Флаги"
+msgstr ""
 
 #: ../src/peerlistctrl.cpp:62 ../src/peerlistctrl.cpp:77
 msgid "Peer flags"
-msgstr "Флаги пира"
+msgstr ""
 
 #: ../src/peerlistctrl.cpp:63 ../src/peerlistctrl.cpp:78
 #: ../src/torrentlistctrl.cpp:59 ../src/torrentlistctrl.cpp:76
 msgid "Download Speed"
-msgstr "Скорость скачивания"
+msgstr ""
 
 #: ../src/peerlistctrl.cpp:64 ../src/peerlistctrl.cpp:79
 #: ../src/torrentlistctrl.cpp:60 ../src/torrentlistctrl.cpp:77
 msgid "Upload Speed"
-msgstr "Скорость отдачи"
+msgstr ""
 
 #: ../src/peerlistctrl.cpp:65 ../src/peerlistctrl.cpp:80
 #: ../src/torrentlistctrl.cpp:62 ../src/torrentlistctrl.cpp:79
 msgid "Downloaded"
-msgstr "Загружено"
+msgstr ""
 
 #: ../src/peerlistctrl.cpp:65 ../src/peerlistctrl.cpp:80
 #: ../src/torrentlistctrl.cpp:62 ../src/torrentlistctrl.cpp:79
 msgid "Total bytes downloaded"
-msgstr "Всего байт загружено"
+msgstr ""
 
 #: ../src/peerlistctrl.cpp:66 ../src/peerlistctrl.cpp:81
 #: ../src/torrentlistctrl.cpp:63 ../src/torrentlistctrl.cpp:80
 msgid "Uploaded"
-msgstr "Отдано"
+msgstr ""
 
 #: ../src/peerlistctrl.cpp:66 ../src/peerlistctrl.cpp:81
 #: ../src/torrentlistctrl.cpp:63 ../src/torrentlistctrl.cpp:80
 msgid "Total bytes uploaded"
-msgstr "Всего байт отдано"
+msgstr ""
 
 #: ../src/peerlistctrl.cpp:119
 msgid "(T)"
-msgstr "(T)"
+msgstr ""
 
 #: ../src/peerlistctrl.cpp:120
 msgid "(D)"
-msgstr "(D)"
+msgstr ""
 
 #: ../src/peerlistctrl.cpp:121
 msgid "(P)"
-msgstr "(P)"
+msgstr ""
 
 #: ../src/peerlistctrl.cpp:122
 msgid "(L)"
-msgstr "(L)"
+msgstr ""
 
 #: ../src/peerlistctrl.cpp:123
 msgid "(R)"
-msgstr "(R)"
+msgstr ""
 
 #: ../src/peerlistctrl.cpp:146
 msgid "Seed"
-msgstr "Сид"
+msgstr ""
 
 #: ../src/peerlistctrl.cpp:146
 msgid "Peer"
-msgstr "Пир"
+msgstr ""
 
 #: ../src/peerlistctrl.cpp:151
 msgid "Handshaking"
-msgstr "Рукопожатие"
+msgstr ""
 
 #: ../src/peerlistctrl.cpp:155
 msgid "Connecting"
-msgstr "Соединение"
+msgstr ""
 
 #: ../src/peerlistctrl.cpp:159 ../src/torrentlistctrl.cpp:130
 msgid "Queued"
-msgstr "В очереди"
+msgstr ""
 
 #: ../src/peerlistctrl.cpp:163
 msgid "Local"
-msgstr "Локальный"
+msgstr ""
 
 #: ../src/peerlistctrl.cpp:166
 msgid "Remote"
-msgstr "Удалённо"
+msgstr ""
 
 #: ../src/summarypane.cpp:151 ../src/torrentproperty.cpp:71
 msgid "Comment:"
-msgstr "Комментарий:"
+msgstr ""
 
 #: ../src/summarypane.cpp:169
 msgid "Tracker"
-msgstr "Трэкер"
+msgstr ""
 
 #: ../src/summarypane.cpp:318
 #, c-format
 msgid "Save As: %s"
-msgstr "Сохранить как: %s"
+msgstr ""
 
 #: ../src/summarypane.cpp:324
 #, c-format
 msgid "Size: %s"
-msgstr "Размер: %s"
+msgstr ""
 
 #: ../src/summarypane.cpp:330
 #, c-format
 msgid "Pieces: %s"
-msgstr "Кусочки: %s"
+msgstr ""
 
 #: ../src/summarypane.cpp:336
 #, c-format
 msgid "Hash: %s"
-msgstr "Хэш: %s"
+msgstr ""
 
 #: ../src/summarypane.cpp:342
 #, c-format
 msgid "Peers: %s"
-msgstr "Пиры: %s"
+msgstr ""
 
 #: ../src/summarypane.cpp:348
 #, c-format
 msgid "Seeds: %s"
-msgstr "Сиды: %s"
+msgstr ""
 
 #: ../src/summarypane.cpp:354
 #, c-format
 msgid "Download Speed: %s"
-msgstr "Скорость скачивания: %s"
+msgstr ""
 
 #: ../src/summarypane.cpp:360
 #, c-format
 msgid "Upload Speed: %s"
-msgstr "Скорость отдачи: %s"
+msgstr ""
 
 #: ../src/summarypane.cpp:366
 #, c-format
 msgid "Download Rate Limit: %s"
-msgstr "Ограничение загрузки: %s"
+msgstr ""
 
 #: ../src/summarypane.cpp:372
 #, c-format
 msgid "Upload Rate Limit: %s"
-msgstr "Ограничение Раздачи: %s"
+msgstr ""
 
 #: ../src/summarypane.cpp:378
 #, c-format
 msgid "Downloaded: %s"
-msgstr "Загружено: %s"
+msgstr ""
 
 #: ../src/summarypane.cpp:384
 #, c-format
 msgid "Uploaded: %s"
-msgstr "Отдано: %s"
+msgstr ""
 
 #: ../src/summarypane.cpp:390
 #, c-format
 msgid "Share Ratio: %s"
-msgstr "Поделиться Ратио: %s"
+msgstr ""
 
 #: ../src/summarypane.cpp:399
 #, c-format
 msgid "%s"
-msgstr "%s"
+msgstr ""
 
 #: ../src/summarypane.cpp:405
 #, c-format
 msgid "Tracker URL: %s"
-msgstr "URL Трэкера: %s"
+msgstr ""
 
 #: ../src/summarypane.cpp:411
 #, c-format
 msgid "Status: %s"
-msgstr "Статус: %s"
+msgstr ""
 
 #: ../src/summarypane.cpp:417
 #, c-format
 msgid "Next Update: %s"
-msgstr "Следующее Обновление:%s"
+msgstr ""
 
 #: ../src/summarypane.cpp:423
 #, c-format
 msgid "DHT Status: %s"
-msgstr "Статус DHT: %s"
+msgstr ""
 
 #: ../src/swashlistctrl.cpp:374
 msgid "Show/Hide"
-msgstr "Показать/Спрятать"
+msgstr ""
 
 #: ../src/swashsetting.cpp:72
 msgid "Connections"
-msgstr "Соединения"
+msgstr ""
 
 #: ../src/swashsetting.cpp:73
 msgid "Torrents"
-msgstr "Торренты"
+msgstr ""
 
 #: ../src/swashstatbar.cpp:61
 #, c-format
 msgid "Peers: %s DHT: %s"
-msgstr "Пиры: %s DHT: %s"
+msgstr ""
 
 #: ../src/swashtrayicon.cpp:99
 msgid "&Restore"
-msgstr "Развернуть(&R)"
+msgstr ""
 
 #: ../src/swashtrayicon.cpp:100
 msgid "&Hide Taskbar Icon"
-msgstr "Свернуть в трей(&H)"
+msgstr ""
 
 #: ../src/swashtrayicon.cpp:109
 msgid "E&xit"
-msgstr "Выход(&E)"
+msgstr ""
 
 #: ../src/torrentinfo.cpp:67 ../src/torrentproperty.cpp:95
 msgid "Files"
-msgstr "Файлы"
+msgstr ""
 
 #: ../src/torrentinfo.cpp:70
-#, fuzzy
 msgid "Trackers"
-msgstr "Трэкер"
+msgstr ""
 
 #: ../src/torrentlistctrl.cpp:54 ../src/torrentlistctrl.cpp:71
 msgid "Index"
-msgstr "Индекс"
+msgstr ""
 
 #: ../src/torrentlistctrl.cpp:54 ../src/torrentlistctrl.cpp:71
 msgid "Queue Index"
-msgstr "Индекс Очереди"
+msgstr ""
 
 #: ../src/torrentlistctrl.cpp:55 ../src/torrentlistctrl.cpp:72
 msgid "Torrent"
-msgstr "Торрент"
+msgstr ""
 
 #: ../src/torrentlistctrl.cpp:55 ../src/torrentlistctrl.cpp:72
 msgid "Torrent name"
-msgstr "Название Торрента"
+msgstr ""
 
 #: ../src/torrentlistctrl.cpp:56 ../src/torrentlistctrl.cpp:73
 msgid "Torrent status"
-msgstr "Статус Торрента"
+msgstr ""
 
 #: ../src/torrentlistctrl.cpp:57 ../src/torrentlistctrl.cpp:74
 msgid "Torrent size"
-msgstr "Размер Торрента"
+msgstr ""
 
 #: ../src/torrentlistctrl.cpp:61 ../src/torrentlistctrl.cpp:78
 msgid "Number or peers"
-msgstr "Количество пиров"
+msgstr ""
 
 #: ../src/torrentlistctrl.cpp:64 ../src/torrentlistctrl.cpp:81
 msgid "Copies"
-msgstr "Копии"
+msgstr ""
 
 #: ../src/torrentlistctrl.cpp:64 ../src/torrentlistctrl.cpp:81
 msgid "Number of copies in swarm"
-msgstr "Количество копий в общем"
+msgstr ""
 
 #: ../src/torrentlistctrl.cpp:65 ../src/torrentlistctrl.cpp:82
 msgid "Time Left"
-msgstr "Времени прошло"
+msgstr ""
 
 #: ../src/torrentlistctrl.cpp:65 ../src/torrentlistctrl.cpp:82
 msgid "Estimated time left to finish"
-msgstr "Предположительное время до завершения"
+msgstr ""
 
 #: ../src/torrentlistctrl.cpp:66
-#, fuzzy
 msgid "Ratio"
-msgstr "Приоритет Сидирования"
+msgstr ""
 
 #: ../src/torrentlistctrl.cpp:66 ../src/torrentlistctrl.cpp:83
 msgid "Share Ratio"
-msgstr "Поделиться Ратио"
+msgstr ""
 
 #: ../src/torrentlistctrl.cpp:66 ../src/torrentlistctrl.cpp:83
 msgid "Upload/Download ratio"
-msgstr "Ратио Загрузки/Отдачи"
+msgstr ""
 
 #: ../src/torrentlistctrl.cpp:131
-#, fuzzy
 msgid "Checking"
-msgstr "проверка"
+msgstr ""
 
 #: ../src/torrentlistctrl.cpp:132
-#, fuzzy
 msgid "Downloading meta data"
-msgstr "загрузка мета данных"
+msgstr ""
 
 #: ../src/torrentlistctrl.cpp:133
-#, fuzzy
 msgid "Downloading"
-msgstr "загрузка"
+msgstr ""
 
 #: ../src/torrentlistctrl.cpp:134
-#, fuzzy
 msgid "Finished"
-msgstr "закончено"
+msgstr ""
 
 #: ../src/torrentlistctrl.cpp:135
-#, fuzzy
 msgid "Seeding"
-msgstr "сидирование"
+msgstr ""
 
 #: ../src/torrentlistctrl.cpp:136
-#, fuzzy
 msgid "Allocating"
-msgstr "расположение"
+msgstr ""
 
 #: ../src/torrentlistctrl.cpp:137
 msgid "Checking resume data"
 msgstr ""
 
 #: ../src/torrentlistctrl.cpp:154
-#, fuzzy
 msgid "Queueing"
-msgstr "Очередь"
+msgstr ""
 
 #: ../src/torrentlistctrl.cpp:159
 msgid "Stopped"
 msgstr ""
 
 #: ../src/torrentlistctrl.cpp:166
-#, fuzzy
 msgid "Paused"
-msgstr "Пауза"
+msgstr ""
 
 #: ../src/torrentlistctrl.cpp:173
-#, fuzzy
 msgid "Error!"
-msgstr "Ошибка"
+msgstr ""
 
 #: ../src/torrentlistctrl.cpp:268
 msgid "inf"
-msgstr "инфо"
+msgstr ""
 
 #: ../src/torrentproperty.cpp:51
-#, fuzzy
 msgid "Torrent Setting"
-msgstr "Настройки Торрента"
+msgstr ""
 
 #: ../src/torrentproperty.cpp:58
 msgid "Torrent Info"
-msgstr "Онформация о Торренте"
+msgstr ""
 
 #: ../src/torrentproperty.cpp:65
 msgid "Name:"
-msgstr "Название:"
+msgstr ""
 
 #: ../src/torrentproperty.cpp:79
 msgid "Size:"
-msgstr "Размер:"
+msgstr ""
 
 #: ../src/torrentproperty.cpp:99
 msgid "Settings"
-msgstr "Настройки"
+msgstr ""
 
 #: ../src/torrentproperty.cpp:104
 msgid "Select None"
@@ -2058,25 +2037,24 @@ msgid "OK"
 msgstr ""
 
 #: ../src/torrentproperty.cpp:111
-#, fuzzy
 msgid "Cancel"
-msgstr "Франция"
+msgstr ""
 
 #: ../src/torrentsetting.cpp:61
 msgid "Torrent Settings"
-msgstr "Настройки Торрента"
+msgstr ""
 
 #: ../src/torrentsetting.cpp:73
 msgid "Save:"
-msgstr "Сохранить:"
+msgstr ""
 
 #: ../src/torrentsetting.cpp:105
 msgid "Start Torrent"
-msgstr "Запустить Торрент"
+msgstr ""
 
 #: ../src/torrentsetting.cpp:130
 msgid "Do not prompt for torrent settings."
-msgstr "Не запрашивать настройки торрента"
+msgstr ""
 
 #: ../src/torrentsetting.cpp:157
 msgid "Storage Allocation Mode:"
@@ -2084,30 +2062,27 @@ msgstr ""
 
 #: ../src/torrentsetting.cpp:232
 msgid "Seed Ratio"
-msgstr "Приоритет Сидирования"
+msgstr ""
 
 #: ../src/torrentsetting.cpp:318
 msgid "Choose default download directory"
-msgstr "Выберите директорию для сохранения по умолчанию"
+msgstr ""
 
 #: ../src/trackerlistctrl.cpp:52 ../src/trackerlistctrl.cpp:57
-#, fuzzy
 msgid "URL"
-msgstr "URL:"
+msgstr ""
 
 #: ../src/trackerlistctrl.cpp:52 ../src/trackerlistctrl.cpp:57
-#, fuzzy
 msgid "Torrent Tracker URL"
-msgstr "URL Трэкера: %s"
+msgstr ""
 
 #: ../src/trackerlistctrl.cpp:139
 msgid "Add"
 msgstr ""
 
 #: ../src/trackerlistctrl.cpp:140
-#, fuzzy
 msgid "Edit"
-msgstr "Выход"
+msgstr ""
 
 #: ../src/trackerlistctrl.cpp:189
 msgid ""
@@ -2120,60 +2095,21 @@ msgid "Enter a new tracker address"
 msgstr ""
 
 #: ../src/trackerlistctrl.cpp:224
-#, fuzzy
 msgid "Edit tracker\n"
-msgstr "Трэкер"
+msgstr ""
 
 #: ../src/trackerlistctrl.cpp:225
 msgid "Edit tracker address"
 msgstr ""
 
 #: ../src/trackerlistctrl.cpp:254
-#, fuzzy
 msgid "Confirm remove tracker "
-msgstr "Подтвердите удаление"
+msgstr ""
 
 #: ../src/trackerlistctrl.cpp:255
-#, fuzzy
 msgid "Confirm remove tracker"
-msgstr "Подтвердите удаление"
+msgstr ""
 
 #: ../src/urldialog.cpp:46
 msgid "URL:"
-msgstr "URL:"
-
-#~ msgid "connecting"
-#~ msgstr "соединение"
-
-#~ msgid "pause"
-#~ msgstr "пауза"
-
-#~ msgid "queue"
-#~ msgstr "очередь"
-
-#~ msgid "queued"
-#~ msgstr "в очереди"
-
-#~ msgid "Compact allocation"
-#~ msgstr "Краткое содержание"
-
-#~ msgid "Level"
-#~ msgstr "Уровень"
-
-#~ msgid "Log Level"
-#~ msgstr "Уровень Логирования"
-
-#~ msgid "Log message"
-#~ msgstr "Сообщение Лога"
-
-#~ msgid "Log source"
-#~ msgstr "Источник Лога"
-
-#~ msgid "Message"
-#~ msgstr "Сообщение"
-
-#~ msgid "Source"
-#~ msgstr "Источник"
-
-#~ msgid "Time"
-#~ msgstr "Время"
+msgstr ""

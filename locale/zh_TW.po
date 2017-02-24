@@ -9,115 +9,2096 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2008-06-05 12:00-0400\n"
+"POT-Creation-Date: 2017-02-24 21:33+0800\n"
 "PO-Revision-Date: 2008-06-06 21:24+0800\n"
 "Last-Translator: Aaron Wang Shi <aarons.wang@gmail.com>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: \n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-#: ../src/mainframe.cpp:1229
+#: ../src/bitswash.cpp:144
+msgid "Unknown"
+msgstr "未知"
+
+#: ../src/bitswash.cpp:145
+msgid "Andorra"
+msgstr "Andorra"
+
+#: ../src/bitswash.cpp:146
+msgid "United Arab Emirates"
+msgstr "United Arab Emirates"
+
+#: ../src/bitswash.cpp:147
+msgid "Afghanistan"
+msgstr "Afghanistan"
+
+#: ../src/bitswash.cpp:148
+msgid "Antigua and Barbuda"
+msgstr "Antigua and Barbuda"
+
+#: ../src/bitswash.cpp:149
+msgid "Anguilla"
+msgstr "Anguilla"
+
+#: ../src/bitswash.cpp:150
+msgid "Albania"
+msgstr "Albania"
+
+#: ../src/bitswash.cpp:151
+msgid "Armenia"
+msgstr "Armenia"
+
+#: ../src/bitswash.cpp:152
+msgid "Netherlands Antilles"
+msgstr "Netherlands Antilles"
+
+#: ../src/bitswash.cpp:153
+msgid "Angola"
+msgstr "Angola"
+
+#: ../src/bitswash.cpp:154
+msgid "Argentina"
+msgstr "Argentina"
+
+#: ../src/bitswash.cpp:155
+msgid "American Samoa"
+msgstr "American Samoa"
+
+#: ../src/bitswash.cpp:156
+msgid "Austria"
+msgstr "Austria"
+
+#: ../src/bitswash.cpp:157
+msgid "Australia"
+msgstr "Australia"
+
+#: ../src/bitswash.cpp:158
+#, fuzzy
+msgid "Aland Islands"
+msgstr "Cayman Islands"
+
+#: ../src/bitswash.cpp:159
+msgid "Aruba"
+msgstr "Aruba"
+
+#: ../src/bitswash.cpp:160
+msgid "Azerbaijan"
+msgstr "Azerbaijan"
+
+#: ../src/bitswash.cpp:161
+msgid "Bosnia and Herzegovina"
+msgstr "Bosnia and Herzegovina"
+
+#: ../src/bitswash.cpp:162
+msgid "Barbados"
+msgstr "Barbados"
+
+#: ../src/bitswash.cpp:163
+msgid "Bangladesh"
+msgstr "Bangladesh"
+
+#: ../src/bitswash.cpp:164
+msgid "Belgium"
+msgstr "Belgium"
+
+#: ../src/bitswash.cpp:165
+msgid "Burkina Faso"
+msgstr "Burkina Faso"
+
+#: ../src/bitswash.cpp:166
+msgid "Bulgaria"
+msgstr "Bulgaria"
+
+#: ../src/bitswash.cpp:167
+msgid "Bahrain"
+msgstr "Bahrain"
+
+#: ../src/bitswash.cpp:168
+msgid "Burundi"
+msgstr "Burundi"
+
+#: ../src/bitswash.cpp:169
+msgid "Benin"
+msgstr "Benin"
+
+#: ../src/bitswash.cpp:170
+msgid "Bermuda"
+msgstr "Bermuda"
+
+#: ../src/bitswash.cpp:171
+msgid "Brunei Darussalam"
+msgstr "Brunei Darussalam"
+
+#: ../src/bitswash.cpp:172
+msgid "Bolivia"
+msgstr "Bolivia"
+
+#: ../src/bitswash.cpp:173
+msgid "Brazil"
+msgstr "Brazil"
+
+#: ../src/bitswash.cpp:174
+msgid "Bahamas"
+msgstr "Bahamas"
+
+#: ../src/bitswash.cpp:175
+msgid "Bhutan"
+msgstr "Bhutan"
+
+#: ../src/bitswash.cpp:176
+msgid "Bouvet Island Bouvetoya"
+msgstr "Bouvet Island Bouvetoya"
+
+#: ../src/bitswash.cpp:177
+msgid "Botswana"
+msgstr "Botswana"
+
+#: ../src/bitswash.cpp:178
+msgid "Belarus"
+msgstr "Belarus"
+
+#: ../src/bitswash.cpp:179
+msgid "Belize"
+msgstr "Belize"
+
+#: ../src/bitswash.cpp:180
+msgid "Canada"
+msgstr "Canada"
+
+#: ../src/bitswash.cpp:181
+msgid "Cocos Keeling Islands"
+msgstr "Cocos Keeling Islands"
+
+#: ../src/bitswash.cpp:182 ../src/bitswash.cpp:184
+msgid "Congo"
+msgstr "Congo"
+
+#: ../src/bitswash.cpp:183
+msgid "Central African Republic"
+msgstr "Central African Republic"
+
+#: ../src/bitswash.cpp:185
+msgid "Switzerland"
+msgstr "Switzerland"
+
+#: ../src/bitswash.cpp:186
+msgid "Cote D'Ivoire"
+msgstr "Cote D'Ivoire"
+
+#: ../src/bitswash.cpp:187
+msgid "Cook Islands"
+msgstr "Cook Islands"
+
+#: ../src/bitswash.cpp:188
+msgid "Chile"
+msgstr "Chile"
+
+#: ../src/bitswash.cpp:189
+msgid "Cameroon"
+msgstr "Cameroon"
+
+#: ../src/bitswash.cpp:190
+msgid "China"
+msgstr "China"
+
+#: ../src/bitswash.cpp:191
+msgid "Colombia"
+msgstr "Colombia"
+
+#: ../src/bitswash.cpp:192
+msgid "Costa Rica"
+msgstr "Costa Rica"
+
+#: ../src/bitswash.cpp:193
+msgid "Serbia and Montenegro"
+msgstr "Serbia and Montenegro"
+
+#: ../src/bitswash.cpp:194
+msgid "Cuba"
+msgstr "Cuba"
+
+#: ../src/bitswash.cpp:195
+msgid "Cape Verde"
+msgstr "Cape Verde"
+
+#: ../src/bitswash.cpp:196
+msgid "Christmas Island"
+msgstr "Christmas Island"
+
+#: ../src/bitswash.cpp:197
+msgid "Cyprus"
+msgstr "Cyprus"
+
+#: ../src/bitswash.cpp:198
+msgid "Czech Republic"
+msgstr "Czech Republic"
+
+#: ../src/bitswash.cpp:199
+msgid "Germany"
+msgstr "Germany"
+
+#: ../src/bitswash.cpp:200
+msgid "Djibouti"
+msgstr "Djibouti"
+
+#: ../src/bitswash.cpp:201
+msgid "Denmark"
+msgstr "Denmark"
+
+#: ../src/bitswash.cpp:202
+msgid "Dominica"
+msgstr "Dominica"
+
+#: ../src/bitswash.cpp:203
+msgid "Dominican Republic"
+msgstr "Dominican Republic"
+
+#: ../src/bitswash.cpp:204
+msgid "Algeria"
+msgstr "Algeria"
+
+#: ../src/bitswash.cpp:205
+msgid "Ecuador"
+msgstr "Ecuador"
+
+#: ../src/bitswash.cpp:206
+msgid "Estonia"
+msgstr "Estonia"
+
+#: ../src/bitswash.cpp:207
+msgid "Egypt"
+msgstr "Egypt"
+
+#: ../src/bitswash.cpp:208
+msgid "Western Sahara"
+msgstr "Western Sahara"
+
+#: ../src/bitswash.cpp:209
+msgid "Eritrea"
+msgstr "Eritrea"
+
+#: ../src/bitswash.cpp:210
+msgid "Spain"
+msgstr "Spain"
+
+#: ../src/bitswash.cpp:211
+msgid "Ethiopia"
+msgstr "Ethiopia"
+
+#: ../src/bitswash.cpp:212
+msgid "Europe"
+msgstr "Europe"
+
+#: ../src/bitswash.cpp:213
+msgid "Finland"
+msgstr "Finland"
+
+#: ../src/bitswash.cpp:214
+msgid "Fiji"
+msgstr "Fiji"
+
+#: ../src/bitswash.cpp:215
+msgid "Falkland Islands Malvinas"
+msgstr "Falkland Islands Malvinas"
+
+#: ../src/bitswash.cpp:216
+msgid "Micronesia"
+msgstr "Micronesia"
+
+#: ../src/bitswash.cpp:217
+msgid "Faeroe Islands"
+msgstr "Faeroe Islands"
+
+#: ../src/bitswash.cpp:218
+msgid "France"
+msgstr "France"
+
+#: ../src/bitswash.cpp:219
+msgid "Gabon"
+msgstr "Gabon"
+
+#: ../src/bitswash.cpp:220
+msgid "United Kingdom of Great Britain & N. Ireland"
+msgstr "United Kingdom of Great Britain & N. Ireland"
+
+#: ../src/bitswash.cpp:221
+msgid "Grenada"
+msgstr "Grenada"
+
+#: ../src/bitswash.cpp:222
+msgid "Georgia"
+msgstr "Georgia"
+
+#: ../src/bitswash.cpp:223
+msgid "French Guiana"
+msgstr "French Guiana"
+
+#: ../src/bitswash.cpp:224
+msgid "Ghana"
+msgstr "Ghana"
+
+#: ../src/bitswash.cpp:225
+msgid "Gibraltar"
+msgstr "Gibraltar"
+
+#: ../src/bitswash.cpp:226
+msgid "Greenland"
+msgstr "Greenland"
+
+#: ../src/bitswash.cpp:227
+msgid "Gambia"
+msgstr "Gambia"
+
+#: ../src/bitswash.cpp:228
+msgid "Guinea"
+msgstr "Guinea"
+
+#: ../src/bitswash.cpp:229
+msgid "Guadaloupe"
+msgstr "Guadaloupe"
+
+#: ../src/bitswash.cpp:230
+msgid "Equatorial Guinea"
+msgstr "Equatorial Guinea"
+
+#: ../src/bitswash.cpp:231
+msgid "Greece"
+msgstr "Greece"
+
+#: ../src/bitswash.cpp:232
+msgid "South Georgia and the South Sandwich Islands"
+msgstr "South Georgia and the South Sandwich Islands"
+
+#: ../src/bitswash.cpp:233
+msgid "Guatemala"
+msgstr "Guatemala"
+
+#: ../src/bitswash.cpp:234
+msgid "Guam"
+msgstr "Guam"
+
+#: ../src/bitswash.cpp:235
+msgid "Guinea-Bissau"
+msgstr "Guinea-Bissau"
+
+#: ../src/bitswash.cpp:236
+msgid "Guyana"
+msgstr "Guyana"
+
+#: ../src/bitswash.cpp:237
+msgid "Hong Kong"
+msgstr "Hong Kong"
+
+#: ../src/bitswash.cpp:238
+msgid "Heard and McDonald Islands"
+msgstr "Heard and McDonald Islands"
+
+#: ../src/bitswash.cpp:239
+msgid "Honduras"
+msgstr "Honduras"
+
+#: ../src/bitswash.cpp:240
+msgid "Hrvatska Croatia"
+msgstr "Hrvatska Croatia"
+
+#: ../src/bitswash.cpp:241
+msgid "Haiti"
+msgstr "Haiti"
+
+#: ../src/bitswash.cpp:242
+msgid "Hungary"
+msgstr "Hungary"
+
+#: ../src/bitswash.cpp:243
+msgid "Indonesia"
+msgstr "Indonesia"
+
+#: ../src/bitswash.cpp:244
+msgid "Ireland"
+msgstr "Ireland"
+
+#: ../src/bitswash.cpp:245
+msgid "Israel"
+msgstr "Israel"
+
+#: ../src/bitswash.cpp:246
+msgid "India"
+msgstr "India"
+
+#: ../src/bitswash.cpp:247
+msgid "British Indian Ocean Territory Chagos Archipelago"
+msgstr "British Indian Ocean Territory Chagos Archipelago"
+
+#: ../src/bitswash.cpp:248
+msgid "Iraq"
+msgstr "Iraq"
+
+#: ../src/bitswash.cpp:249
+msgid "Iran"
+msgstr "Iran"
+
+#: ../src/bitswash.cpp:250
+msgid "Iceland"
+msgstr "Iceland"
+
+#: ../src/bitswash.cpp:251
+msgid "Italy"
+msgstr "Italy"
+
+#: ../src/bitswash.cpp:252
+msgid "Jamaica"
+msgstr "Jamaica"
+
+#: ../src/bitswash.cpp:253
+msgid "Jordan"
+msgstr "Jordan"
+
+#: ../src/bitswash.cpp:254
+msgid "Japan"
+msgstr "Japan"
+
+#: ../src/bitswash.cpp:255
+msgid "Kenya"
+msgstr "Kenya"
+
+#: ../src/bitswash.cpp:256
+msgid "Kyrgyz Republic"
+msgstr "Kyrgyz Republic"
+
+#: ../src/bitswash.cpp:257
+msgid "Cambodia"
+msgstr "Cambodia"
+
+#: ../src/bitswash.cpp:258
+msgid "Kiribati"
+msgstr "Kiribati"
+
+#: ../src/bitswash.cpp:259
+msgid "Comoros"
+msgstr "Comoros"
+
+#: ../src/bitswash.cpp:260
+msgid "St. Kitts and Nevis"
+msgstr "St. Kitts and Nevis"
+
+#: ../src/bitswash.cpp:261 ../src/bitswash.cpp:262
+msgid "Korea"
+msgstr "Korea"
+
+#: ../src/bitswash.cpp:263
+msgid "Kuwait"
+msgstr "Kuwait"
+
+#: ../src/bitswash.cpp:264
+msgid "Cayman Islands"
+msgstr "Cayman Islands"
+
+#: ../src/bitswash.cpp:265
+msgid "Kazakhstan"
+msgstr "Kazakhstan"
+
+#: ../src/bitswash.cpp:266
+msgid "Lao People's Democratic Republic"
+msgstr "Lao People's Democratic Republic"
+
+#: ../src/bitswash.cpp:267
+msgid "Lebanon"
+msgstr "Lebanon"
+
+#: ../src/bitswash.cpp:268
+msgid "St. Lucia"
+msgstr "St. Lucia"
+
+#: ../src/bitswash.cpp:269
+msgid "Liechtenstein"
+msgstr "Liechtenstein"
+
+#: ../src/bitswash.cpp:270
+msgid "Sri Lanka"
+msgstr "Sri Lanka"
+
+#: ../src/bitswash.cpp:271
+msgid "Liberia"
+msgstr "Liberia"
+
+#: ../src/bitswash.cpp:272
+msgid "Lesotho"
+msgstr "Lesotho"
+
+#: ../src/bitswash.cpp:273
+msgid "Lithuania"
+msgstr "Lithuania"
+
+#: ../src/bitswash.cpp:274
+msgid "Luxembourg"
+msgstr "Luxembourg"
+
+#: ../src/bitswash.cpp:275
+msgid "Latvia"
+msgstr "Latvia"
+
+#: ../src/bitswash.cpp:276
+msgid "Libyan Arab Jamahiriya"
+msgstr "Libyan Arab Jamahiriya"
+
+#: ../src/bitswash.cpp:277
+msgid "Morocco"
+msgstr "Morocco"
+
+#: ../src/bitswash.cpp:278
+msgid "Monaco"
+msgstr "Monaco"
+
+#: ../src/bitswash.cpp:279
+msgid "Moldova"
+msgstr "Moldova"
+
+#: ../src/bitswash.cpp:280
+#, fuzzy
+msgid "Montenegro"
+msgstr "Serbia and Montenegro"
+
+#: ../src/bitswash.cpp:281
+msgid "Madagascar"
+msgstr "Madagascar"
+
+#: ../src/bitswash.cpp:282
+msgid "Marshall Islands"
+msgstr "Marshall Islands"
+
+#: ../src/bitswash.cpp:283
+msgid "Macedonia"
+msgstr "Macedonia"
+
+#: ../src/bitswash.cpp:284
+msgid "Mali"
+msgstr "Mali"
+
+#: ../src/bitswash.cpp:285
+msgid "Myanmar"
+msgstr "Myanmar"
+
+#: ../src/bitswash.cpp:286
+msgid "Mongolia"
+msgstr "Mongolia"
+
+#: ../src/bitswash.cpp:287
+msgid "Macao"
+msgstr "Macao"
+
+#: ../src/bitswash.cpp:288
+msgid "Northern Mariana Islands"
+msgstr "Northern Mariana Islands"
+
+#: ../src/bitswash.cpp:289
+msgid "Martinique"
+msgstr "Martinique"
+
+#: ../src/bitswash.cpp:290
+msgid "Mauritania"
+msgstr "Mauritania"
+
+#: ../src/bitswash.cpp:291
+msgid "Montserrat"
+msgstr "Montserrat"
+
+#: ../src/bitswash.cpp:292
+msgid "Malta"
+msgstr "Malta"
+
+#: ../src/bitswash.cpp:293
+msgid "Mauritius"
+msgstr "Mauritius"
+
+#: ../src/bitswash.cpp:294
+msgid "Maldives"
+msgstr "Maldives"
+
+#: ../src/bitswash.cpp:295
+msgid "Malawi"
+msgstr "Malawi"
+
+#: ../src/bitswash.cpp:296
+msgid "Mexico"
+msgstr "Mexico"
+
+#: ../src/bitswash.cpp:297
+msgid "Malaysia"
+msgstr "Malaysia"
+
+#: ../src/bitswash.cpp:298
+msgid "Mozambique"
+msgstr "Mozambique"
+
+#: ../src/bitswash.cpp:299
+msgid "Namibia"
+msgstr "Namibia"
+
+#: ../src/bitswash.cpp:300
+msgid "New Caledonia"
+msgstr "New Caledonia"
+
+#: ../src/bitswash.cpp:301
+msgid "Niger"
+msgstr "Niger"
+
+#: ../src/bitswash.cpp:302
+msgid "Norfolk Island"
+msgstr "Norfolk Island"
+
+#: ../src/bitswash.cpp:303
+msgid "Nigeria"
+msgstr "Nigeria"
+
+#: ../src/bitswash.cpp:304
+msgid "Nicaragua"
+msgstr "Nicaragua"
+
+#: ../src/bitswash.cpp:305
+msgid "Netherlands"
+msgstr "Netherlands"
+
+#: ../src/bitswash.cpp:306
+msgid "Norway"
+msgstr "Norway"
+
+#: ../src/bitswash.cpp:307
+msgid "Nepal"
+msgstr "Nepal"
+
+#: ../src/bitswash.cpp:308
+msgid "Nauru"
+msgstr "Nauru"
+
+#: ../src/bitswash.cpp:309
+msgid "Niue"
+msgstr "Niue"
+
+#: ../src/bitswash.cpp:310
+msgid "New Zealand"
+msgstr "New Zealand"
+
+#: ../src/bitswash.cpp:311
+msgid "Oman"
+msgstr "Oman"
+
+#: ../src/bitswash.cpp:312
+msgid "Panama"
+msgstr "Panama"
+
+#: ../src/bitswash.cpp:313
+msgid "Peru"
+msgstr "Peru"
+
+#: ../src/bitswash.cpp:314
+msgid "French Polynesia"
+msgstr "French Polynesia"
+
+#: ../src/bitswash.cpp:315
+msgid "Papua New Guinea"
+msgstr "Papua New Guinea"
+
+#: ../src/bitswash.cpp:316
+msgid "Philippines"
+msgstr "Philippines"
+
+#: ../src/bitswash.cpp:317
+msgid "Pakistan"
+msgstr "Pakistan"
+
+#: ../src/bitswash.cpp:318
+msgid "Poland"
+msgstr "Poland"
+
+#: ../src/bitswash.cpp:319
+msgid "St. Pierre and Miquelon"
+msgstr "St. Pierre and Miquelon"
+
+#: ../src/bitswash.cpp:320
+msgid "Pitcairn Island"
+msgstr "Pitcairn Island"
+
+#: ../src/bitswash.cpp:321
+msgid "Puerto Rico"
+msgstr "Puerto Rico"
+
+#: ../src/bitswash.cpp:322
+msgid "Palestinian Territory"
+msgstr "Palestinian Territory"
+
+#: ../src/bitswash.cpp:323
+msgid "Portugal"
+msgstr "Portugal"
+
+#: ../src/bitswash.cpp:324
+msgid "Palau"
+msgstr "Palau"
+
+#: ../src/bitswash.cpp:325
+msgid "Paraguay"
+msgstr "Paraguay"
+
+#: ../src/bitswash.cpp:326
+msgid "Qatar"
+msgstr "Qatar"
+
+#: ../src/bitswash.cpp:327
+msgid "Reunion"
+msgstr "Reunion"
+
+#: ../src/bitswash.cpp:328
+msgid "Romania"
+msgstr "Romania"
+
+#: ../src/bitswash.cpp:329
+msgid "Serbia"
+msgstr ""
+
+#: ../src/bitswash.cpp:330
+msgid "Russian Federation"
+msgstr "Russian Federation"
+
+#: ../src/bitswash.cpp:331
+msgid "Rwanda"
+msgstr "Rwanda"
+
+#: ../src/bitswash.cpp:332
+msgid "Saudi Arabia"
+msgstr "Saudi Arabia"
+
+#: ../src/bitswash.cpp:333
+msgid "Solomon Islands"
+msgstr "Solomon Islands"
+
+#: ../src/bitswash.cpp:334
+msgid "Seychelles"
+msgstr "Seychelles"
+
+#: ../src/bitswash.cpp:335
+msgid "Sudan"
+msgstr "Sudan"
+
+#: ../src/bitswash.cpp:336
+msgid "Sweden"
+msgstr "Sweden"
+
+#: ../src/bitswash.cpp:337
+msgid "Singapore"
+msgstr "Singapore"
+
+#: ../src/bitswash.cpp:338
+msgid "St. Helena"
+msgstr "St. Helena"
+
+#: ../src/bitswash.cpp:339
+msgid "Slovenia"
+msgstr "Slovenia"
+
+#: ../src/bitswash.cpp:340
+msgid "Svalbard & Jan Mayen Islands"
+msgstr "Svalbard & Jan Mayen Islands"
+
+#: ../src/bitswash.cpp:341
+msgid "Slovakia Slovak Republic"
+msgstr "Slovakia Slovak Republic"
+
+#: ../src/bitswash.cpp:342
+msgid "Sierra Leone"
+msgstr "Sierra Leone"
+
+#: ../src/bitswash.cpp:343
+msgid "San Marino"
+msgstr "San Marino"
+
+#: ../src/bitswash.cpp:344
+msgid "Senegal"
+msgstr "Senegal"
+
+#: ../src/bitswash.cpp:345
+msgid "Somalia"
+msgstr "Somalia"
+
+#: ../src/bitswash.cpp:346
+msgid "Suriname"
+msgstr "Suriname"
+
+#: ../src/bitswash.cpp:347
+msgid "Sao Tome and Principe"
+msgstr "Sao Tome and Principe"
+
+#: ../src/bitswash.cpp:348
+msgid "El Salvador"
+msgstr "El Salvador"
+
+#: ../src/bitswash.cpp:349
+msgid "Syrian Arab Republic"
+msgstr "Syrian Arab Republic"
+
+#: ../src/bitswash.cpp:350
+msgid "Swaziland"
+msgstr "Swaziland"
+
+#: ../src/bitswash.cpp:351
+msgid "Turks and Caicos Islands"
+msgstr "Turks and Caicos Islands"
+
+#: ../src/bitswash.cpp:352
+msgid "Chad"
+msgstr "Chad"
+
+#: ../src/bitswash.cpp:353
+msgid "French Southern Territories"
+msgstr "French Southern Territories"
+
+#: ../src/bitswash.cpp:354
+msgid "Togo"
+msgstr "Togo"
+
+#: ../src/bitswash.cpp:355
+msgid "Thailand"
+msgstr "Thailand"
+
+#: ../src/bitswash.cpp:356
+msgid "Tajikistan"
+msgstr "Tajikistan"
+
+#: ../src/bitswash.cpp:357
+msgid "Tokelau Tokelau Islands"
+msgstr "Tokelau Tokelau Islands"
+
+#: ../src/bitswash.cpp:358
+msgid "Timor-Leste"
+msgstr "Timor-Leste"
+
+#: ../src/bitswash.cpp:359
+msgid "Turkmenistan"
+msgstr "Turkmenistan"
+
+#: ../src/bitswash.cpp:360
+msgid "Tunisia"
+msgstr "Tunisia"
+
+#: ../src/bitswash.cpp:361
+msgid "Tonga"
+msgstr "Tonga"
+
+#: ../src/bitswash.cpp:362
+msgid "Turkey"
+msgstr "Turkey"
+
+#: ../src/bitswash.cpp:363
+msgid "Trinidad and Tobago"
+msgstr "Trinidad and Tobago"
+
+#: ../src/bitswash.cpp:364
+msgid "Tuvalu"
+msgstr "Tuvalu"
+
+#: ../src/bitswash.cpp:365
+msgid "Taiwan"
+msgstr "Taiwan"
+
+#: ../src/bitswash.cpp:366
+msgid "Tanzania"
+msgstr "Tanzania"
+
+#: ../src/bitswash.cpp:367
+msgid "Ukraine"
+msgstr "Ukraine"
+
+#: ../src/bitswash.cpp:368
+msgid "Uganda"
+msgstr "Uganda"
+
+#: ../src/bitswash.cpp:369
+msgid "United States Minor Outlying Islands"
+msgstr "United States Minor Outlying Islands"
+
+#: ../src/bitswash.cpp:370
+msgid "United States of America"
+msgstr "United States of America"
+
+#: ../src/bitswash.cpp:371
+msgid "Uruguay"
+msgstr "Uruguay"
+
+#: ../src/bitswash.cpp:372
+msgid "Uzbekistan"
+msgstr "Uzbekistan"
+
+#: ../src/bitswash.cpp:373
+msgid "Holy See Vatican City State"
+msgstr "Holy See Vatican City State"
+
+#: ../src/bitswash.cpp:374
+msgid "St. Vincent and the Grenadines"
+msgstr "St. Vincent and the Grenadines"
+
+#: ../src/bitswash.cpp:375
+msgid "Venezuela"
+msgstr "Venezuela"
+
+#: ../src/bitswash.cpp:376
+msgid "British Virgin Islands"
+msgstr "British Virgin Islands"
+
+#: ../src/bitswash.cpp:377
+msgid "US Virgin Islands"
+msgstr "US Virgin Islands"
+
+#: ../src/bitswash.cpp:378
+msgid "Viet Nam"
+msgstr "Viet Nam"
+
+#: ../src/bitswash.cpp:379
+msgid "Vanuatu"
+msgstr "Vanuatu"
+
+#: ../src/bitswash.cpp:380
+msgid "Wallis and Futuna Islands"
+msgstr "Wallis and Futuna Islands"
+
+#: ../src/bitswash.cpp:381
+msgid "Samoa"
+msgstr "Samoa"
+
+#: ../src/bitswash.cpp:382
+msgid "Yemen"
+msgstr "Yemen"
+
+#: ../src/bitswash.cpp:383
+msgid "Mayotte"
+msgstr "Mayotte"
+
+#: ../src/bitswash.cpp:384
+msgid "South Africa"
+msgstr "South Africa"
+
+#: ../src/bitswash.cpp:385
+msgid "Zambia"
+msgstr "Zambia"
+
+#: ../src/bitswash.cpp:386
+msgid "Zimbabwe"
+msgstr "Zimbabwe"
+
+#: ../src/bittorrentsession.cpp:473 ../src/torrentsetting.cpp:162
+#: ../src/torrentsetting.cpp:187
+msgid "Full"
+msgstr "完全分配"
+
+#: ../src/bittorrentsession.cpp:477 ../src/bittorrentsession.cpp:486
+#: ../src/torrentsetting.cpp:163 ../src/torrentsetting.cpp:190
+#: ../src/torrentsetting.cpp:196
+msgid "Sparse"
+msgstr "稀疏"
+
+#: ../src/bittorrentsession.cpp:481 ../src/torrentsetting.cpp:164
+#: ../src/torrentsetting.cpp:193
+msgid "Compact"
+msgstr "緊湊分配"
+
+#: ../src/connectionsetting.cpp:56
+msgid "Ports Setting"
+msgstr "端口設定"
+
+#: ../src/connectionsetting.cpp:68
+msgid "Port Range (TCP):"
+msgstr "端口範圍(TCP)："
+
+#: ../src/connectionsetting.cpp:75
+msgid "to"
+msgstr "到"
+
+#: ../src/connectionsetting.cpp:89
+msgid "Enable DHT, Port (UDP):"
+msgstr "允許DHT網絡，端口(UDP)："
+
+#: ../src/connectionsetting.cpp:110
+msgid "Limits"
+msgstr "限制"
+
+#: ../src/connectionsetting.cpp:122 ../src/torrentsetting.cpp:203
+msgid "Download Rate Limit:"
+msgstr "下載速率限制："
+
+#: ../src/connectionsetting.cpp:130 ../src/torrentsetting.cpp:211
+msgid "Upload Rate Limit:"
+msgstr "上傳速率限制："
+
+#: ../src/connectionsetting.cpp:137 ../src/torrentsetting.cpp:218
+msgid "Maximum Connections:"
+msgstr "最大連接數："
+
+#: ../src/connectionsetting.cpp:144 ../src/torrentsetting.cpp:225
+msgid "Maximum Upload Slots:"
+msgstr "最大上傳通道："
+
+#: ../src/connectionsetting.cpp:152
+msgid "Maximum Half Open Connections:"
+msgstr "最大半開連接："
+
+#: ../src/extensionsetting.cpp:64 ../src/swashsetting.cpp:74
+msgid "Extensions"
+msgstr "擴展"
+
+#: ../src/extensionsetting.cpp:72
+msgid "Enable Metadata"
+msgstr "允許Metadata頭"
+
+#: ../src/extensionsetting.cpp:75
+msgid "Enable Peer Exchange"
+msgstr "允許對等連接交换"
+
+#: ../src/extensionsetting.cpp:83
+msgid "Protocol Encryption"
+msgstr "協議加密"
+
+#: ../src/extensionsetting.cpp:91
+msgid "Enable Encryption"
+msgstr "允許加密"
+
+#: ../src/extensionsetting.cpp:94
+msgid "Accept Unencrypted Peer"
+msgstr "允許未加密的對等連接"
+
+#: ../src/extensionsetting.cpp:103
+msgid "NAT Service"
+msgstr "NAT服務"
+
+#: ../src/extensionsetting.cpp:111
+msgid "Enable UPnP"
+msgstr "允許UPnP"
+
+#: ../src/extensionsetting.cpp:114
+msgid "Enable NAT Port Mapping"
+msgstr "允許NAT端口映射"
+
+#: ../src/extensionsetting.cpp:117
+msgid "Enable Local Service Discovery"
+msgstr "允許本地服務探尋"
+
+#: ../src/filelistctrl.cpp:78 ../src/filelistctrl.cpp:87
+msgid "File"
+msgstr "文件(&F)"
+
+#: ../src/filelistctrl.cpp:78 ../src/filelistctrl.cpp:87
+msgid "Files in torrent"
+msgstr "打開種子"
+
+#: ../src/filelistctrl.cpp:79 ../src/filelistctrl.cpp:88
+#: ../src/torrentlistctrl.cpp:57 ../src/torrentlistctrl.cpp:74
+msgid "Size"
+msgstr "大小"
+
+#: ../src/filelistctrl.cpp:79 ../src/filelistctrl.cpp:88
+msgid "File size"
+msgstr "文件大小"
+
+#: ../src/filelistctrl.cpp:80 ../src/filelistctrl.cpp:89
+msgid "Download"
+msgstr "下載"
+
+#: ../src/filelistctrl.cpp:80 ../src/filelistctrl.cpp:89
+msgid "File priority"
+msgstr "最高優先級"
+
+#: ../src/filelistctrl.cpp:81 ../src/filelistctrl.cpp:90
+#: ../src/peerlistctrl.cpp:67 ../src/peerlistctrl.cpp:82
+#: ../src/torrentlistctrl.cpp:58 ../src/torrentlistctrl.cpp:75
+msgid "Progress"
+msgstr "進度"
+
+#: ../src/filelistctrl.cpp:81 ../src/filelistctrl.cpp:90
+msgid "File download progress"
+msgstr "文件下載進度"
+
+#: ../src/filelistctrl.cpp:111
+msgid "Do not download"
+msgstr "不下載"
+
+#: ../src/filelistctrl.cpp:113
+msgid "Lowest Priority"
+msgstr "最低優先級"
+
+#: ../src/filelistctrl.cpp:114
+msgid "Normal Priority"
+msgstr "普通優先級"
+
+#: ../src/filelistctrl.cpp:115
+msgid "Highest Priority"
+msgstr "最高優先級"
+
+#: ../src/filelistctrl.cpp:117
+#, fuzzy
+msgid "Open containing folder"
+msgstr "打開torrent文件"
+
+#: ../src/filelistctrl.cpp:159
+msgid "No"
+msgstr "否"
+
+#: ../src/filelistctrl.cpp:160
+msgid "Lowest"
+msgstr "最低"
+
+#: ../src/filelistctrl.cpp:163
+msgid "Normal"
+msgstr "普通"
+
+#: ../src/filelistctrl.cpp:166
+msgid "Higest"
+msgstr "最高"
+
+#: ../src/generalsetting.cpp:63 ../src/swashsetting.cpp:71
+msgid "General"
+msgstr "一般設置"
+
+#: ../src/generalsetting.cpp:74
+msgid "Maximum Running Job:"
+msgstr "最大同時活動任務："
+
+#: ../src/generalsetting.cpp:82
+msgid "Exclude seeding"
+msgstr "做種中"
+
+#: ../src/generalsetting.cpp:89
+msgid "Run at Windows startup"
+msgstr ""
+
+#: ../src/generalsetting.cpp:98
+msgid "Save Fastresume every (s):"
+msgstr "保存快速恢復每隔（秒）："
+
+#: ../src/generalsetting.cpp:116
+msgid "GUI"
+msgstr "圖形用户界面"
+
+#: ../src/generalsetting.cpp:127
+msgid "Refresh Timer (s):"
+msgstr "刷新計時(ms)："
+
+#: ../src/generalsetting.cpp:136
+msgid "Enable Systray Icon"
+msgstr "允許托盤圖標"
+
+#: ../src/generalsetting.cpp:141
+msgid "Minimize to Systray"
+msgstr "最小化到系統托盤"
+
+#: ../src/generalsetting.cpp:157 ../src/torrentinfo.cpp:74
+msgid "Log"
+msgstr "日志"
+
+#: ../src/generalsetting.cpp:168
+msgid "Log Severity:"
+msgstr "日志級彆："
+
+#: ../src/generalsetting.cpp:171 ../src/loggerctrl.cpp:77
+msgid "Debug"
+msgstr "Debug"
+
+#: ../src/generalsetting.cpp:171 ../src/loggerctrl.cpp:77
+#: ../src/summarypane.cpp:82
+msgid "Info"
+msgstr "信息"
+
+#: ../src/generalsetting.cpp:171 ../src/loggerctrl.cpp:77
+msgid "Warning"
+msgstr "警告"
+
+#: ../src/generalsetting.cpp:171 ../src/loggerctrl.cpp:77
+msgid "Critical"
+msgstr "關鍵"
+
+#: ../src/generalsetting.cpp:171 ../src/loggerctrl.cpp:77
+msgid "Fatal"
+msgstr "致命"
+
+#: ../src/generalsetting.cpp:171 ../src/loggerctrl.cpp:77
+msgid "None"
+msgstr "無"
+
+#: ../src/generalsetting.cpp:180
+msgid "Maximum Lines:"
+msgstr "最大連綫："
+
+#: ../src/generalsetting.cpp:183
+msgid "line"
+msgstr "連綫"
+
+#: ../src/generalsetting.cpp:187
+msgid "Log to File:"
+msgstr "保存日志到文件："
+
+#: ../src/loggerctrl.cpp:75
+msgid "Severity"
+msgstr "嚴格"
+
+#: ../src/loggerctrl.cpp:82
+msgid "Log to File"
+msgstr "保存日志到文件"
+
+#: ../src/loggerctrl.cpp:85
+msgid "Clear Log"
+msgstr "清除日志"
+
+#: ../src/loggerctrl.cpp:87
+msgid "Pause Log"
+msgstr "暫停記録日志"
+
+#: ../src/mainframe.cpp:301
+msgid "Categories"
+msgstr "分類"
+
+#: ../src/mainframe.cpp:303
+msgid "All"
+msgstr "全部"
+
+#: ../src/mainframe.cpp:304
+msgid "Downloads"
+msgstr "下載"
+
+#: ../src/mainframe.cpp:305
+msgid "Seeds"
+msgstr "做種"
+
+#: ../src/mainframe.cpp:389 ../src/swashtrayicon.cpp:102
+msgid "&Open Torrent\tCtrl+O"
+msgstr "打開種子(&O)\tCtrl+O"
+
+#: ../src/mainframe.cpp:389 ../src/mainframe.cpp:473
+#: ../src/swashtrayicon.cpp:102
+msgid "Open Torrent"
+msgstr "打開種子"
+
+#: ../src/mainframe.cpp:391 ../src/swashtrayicon.cpp:103
+msgid "Open &URL\tCtrl+U"
+msgstr "打開URL(&U)\tCtrl+U"
+
+#: ../src/mainframe.cpp:391 ../src/mainframe.cpp:476
+#: ../src/swashtrayicon.cpp:103
+msgid "Open URL"
+msgstr "打開 URL"
+
+#: ../src/mainframe.cpp:397
+msgid "E&xit\tAlt-F4"
+msgstr "退出(&x)\tAlt-F4"
+
+#: ../src/mainframe.cpp:397 ../src/mainframe.cpp:529
+msgid "Exit Bitswash"
+msgstr "退出Bitswash"
+
+#: ../src/mainframe.cpp:399
+msgid "&File"
+msgstr "文件(&F)"
+
+#: ../src/mainframe.cpp:401
+msgid "View &Toolbar"
+msgstr "顯示工具欄(&T)"
+
+#: ../src/mainframe.cpp:401
+msgid "View Toolbar"
+msgstr "顯示工具欄"
+
+#: ../src/mainframe.cpp:402
+msgid "View &Status"
+msgstr "顯示狀態欄(&S)"
+
+#: ../src/mainframe.cpp:402
+msgid "View Status"
+msgstr "顯示狀態欄"
+
+#: ../src/mainframe.cpp:404
+msgid "&View"
+msgstr "視圖(&V)"
+
+#: ../src/mainframe.cpp:406
+msgid "&Torrent"
+msgstr "種子(&T)"
+
+#: ../src/mainframe.cpp:408 ../src/swashtrayicon.cpp:105
+msgid "Prefere&nce\tCtrl+F"
+msgstr "首選項(&P)\tCtrl+F"
+
+#: ../src/mainframe.cpp:408 ../src/mainframe.cpp:520
+#: ../src/swashtrayicon.cpp:105
+msgid "Preference"
+msgstr "首選項"
+
+#: ../src/mainframe.cpp:414
+msgid "System Language"
+msgstr "系統語言"
+
+#: ../src/mainframe.cpp:456
+msgid "&Language"
+msgstr "語言(&L)"
+
+#: ../src/mainframe.cpp:456
+msgid "Language"
+msgstr "語言"
+
+#: ../src/mainframe.cpp:457
+msgid "&Options"
+msgstr "選項(&O)"
+
+#: ../src/mainframe.cpp:459
+msgid "&Help\tF1"
+msgstr "幫助(&H)\tF1"
+
+#: ../src/mainframe.cpp:459
+msgid "Help"
+msgstr "幫助"
+
+#: ../src/mainframe.cpp:461
+msgid "Home&page"
+msgstr "軟件主頁(&p)"
+
+#: ../src/mainframe.cpp:461 ../src/mainframe.cpp:523
+msgid "Homepage"
+msgstr "軟件主頁"
+
+#: ../src/mainframe.cpp:462
+msgid "&About"
+msgstr "關于(&A)"
+
+#: ../src/mainframe.cpp:462
+msgid "About"
+msgstr "關于"
+
+#: ../src/mainframe.cpp:463
+msgid "&Help"
+msgstr "幫助(&H)"
+
+#: ../src/mainframe.cpp:475
+msgid "Open torrent file"
+msgstr "打開torrent文件"
+
+#: ../src/mainframe.cpp:478
+msgid "Open torrent from url"
+msgstr "從url打開torrent文件"
+
+#: ../src/mainframe.cpp:478
+msgid "Open torrent from URL"
+msgstr "從URL打開torrent文件"
+
+#: ../src/mainframe.cpp:481
+msgid "Create Torrent"
+msgstr "創建種子"
+
+#: ../src/mainframe.cpp:483
+msgid "Create torrent file"
+msgstr "創建種子文件"
+
+#: ../src/mainframe.cpp:483
+msgid "Create torrent file to publish"
+msgstr "創建并發布種子"
+
+#: ../src/mainframe.cpp:488
+msgid "Queue"
+msgstr "排隊中"
+
+#: ../src/mainframe.cpp:490
+msgid "Queue torrent"
+msgstr "排隊種子"
+
+#: ../src/mainframe.cpp:491
+msgid "Pause"
+msgstr "暫停"
+
+#: ../src/mainframe.cpp:493
+msgid "Pause download"
+msgstr "暫停下載"
+
+#: ../src/mainframe.cpp:493
+msgid "Pause downlaoding"
+msgstr "暫停正在進行的下載"
+
+#: ../src/mainframe.cpp:494
+msgid "stop"
+msgstr "停止"
+
+#: ../src/mainframe.cpp:496
+msgid "Stop download"
+msgstr "停止下載"
+
+#: ../src/mainframe.cpp:496
+msgid "Stop downlaoding"
+msgstr "停止正在進行的下載"
+
+#: ../src/mainframe.cpp:498 ../src/trackerlistctrl.cpp:141
+msgid "Delete"
+msgstr "删除"
+
+#: ../src/mainframe.cpp:500
+msgid "Delete torrent file"
+msgstr "删除種子文件"
+
+#: ../src/mainframe.cpp:501
+msgid "Delete Data"
+msgstr "删除下載數據"
+
+#: ../src/mainframe.cpp:503
+msgid "Delete torrent file and downloaded data"
+msgstr "删除種子文件和已下載的數據"
+
+#: ../src/mainframe.cpp:505
+msgid "Move Up"
+msgstr "上移"
+
+#: ../src/mainframe.cpp:508 ../src/mainframe.cpp:1678
+msgid "Move torrent up"
+msgstr "上移種子"
+
+#: ../src/mainframe.cpp:508
+msgid "Move torrent up in the queue position"
+msgstr "上移種子在隊列中的位置"
+
+#: ../src/mainframe.cpp:509
+msgid "Move Down"
+msgstr "下移"
+
+#: ../src/mainframe.cpp:512 ../src/mainframe.cpp:1681
+msgid "Move torrent down"
+msgstr "下移種子"
+
+#: ../src/mainframe.cpp:512
+msgid "Move torrent down in the queue position"
+msgstr "下移種子在隊列中的位置"
+
+#: ../src/mainframe.cpp:514
+msgid "Open"
+msgstr "打開"
+
+#: ../src/mainframe.cpp:516
+msgid "Open destination directory"
+msgstr "打開目標文件夾"
+
+#: ../src/mainframe.cpp:516
+msgid "Open destination downloaded directory"
+msgstr "打開目標下載文件夾"
+
+#: ../src/mainframe.cpp:522
+msgid "Program settings"
+msgstr "程序設定"
+
+#: ../src/mainframe.cpp:522
+msgid "Set user preference"
+msgstr "設定用户參數"
+
+#: ../src/mainframe.cpp:525
+msgid "Bitswash homepage"
+msgstr "Bitswash主頁"
+
+#: ../src/mainframe.cpp:525
+msgid "Visit Bitswash homepage"
+msgstr "訪問Bitswash主頁"
+
+#: ../src/mainframe.cpp:527
+msgid "Exit"
+msgstr "退出"
+
+#: ../src/mainframe.cpp:667
+msgid "Open Torrent(s)..."
+msgstr "打開種子"
+
+#: ../src/mainframe.cpp:1286
+msgid "torrents"
+msgstr "種子"
+
+#: ../src/mainframe.cpp:1288
+msgid "torrent"
+msgstr "種子"
+
+#: ../src/mainframe.cpp:1291
 msgid " and data"
 msgstr " 及數据"
 
-#: ../src/summarypane.cpp:396
+#: ../src/mainframe.cpp:1293
+msgid "Confirm remove "
+msgstr "確認移除"
+
+#: ../src/mainframe.cpp:1294
+msgid "Confirm Remove"
+msgstr "確認移除"
+
+#: ../src/mainframe.cpp:1601
+msgid "Ok"
+msgstr "確認"
+
+#: ../src/mainframe.cpp:1602
+msgid "Error"
+msgstr "錯誤"
+
+#: ../src/mainframe.cpp:1608
+msgid "Download Rate"
+msgstr "下載速率"
+
+#: ../src/mainframe.cpp:1608
+msgid "Upload Rate"
+msgstr "上傳速率"
+
+#: ../src/mainframe.cpp:1608 ../src/torrentinfo.cpp:65
+#: ../src/torrentlistctrl.cpp:61 ../src/torrentlistctrl.cpp:78
+msgid "Peers"
+msgstr "對等連接"
+
+#: ../src/mainframe.cpp:1608
+msgid "DHT Nodes"
+msgstr "DHT節點"
+
+#: ../src/mainframe.cpp:1608
+msgid "Incoming"
+msgstr "進入"
+
+#: ../src/mainframe.cpp:1664
+msgid "&Queue Torrent\tCtrl+S"
+msgstr "排隊作種(&Q)\tCtrl+S"
+
+#: ../src/mainframe.cpp:1664
+msgid "Queue Download"
+msgstr "排隊下載"
+
+#: ../src/mainframe.cpp:1666
+msgid "&Force Start Torrent\tCtrl+Alt+S"
+msgstr "强制初始作種(&F)\tCtrl+Alt+S"
+
+#: ../src/mainframe.cpp:1666
+msgid "Force Torrent Download"
+msgstr "强制下載種子"
+
+#: ../src/mainframe.cpp:1668
+msgid "&Pause Torrent\tCtrl+P"
+msgstr "暫停作種(&P)\tCtrl-P"
+
+#: ../src/mainframe.cpp:1668
+msgid "Pause Download"
+msgstr "暫停下載"
+
+#: ../src/mainframe.cpp:1670
+msgid "St&op Torrent\tCtrl+T"
+msgstr "停止作種(&t)\tCtrl-T"
+
+#: ../src/mainframe.cpp:1670
+msgid "Stop Download"
+msgstr "停止下載"
+
+#: ../src/mainframe.cpp:1673
+msgid "&Remove Torrent"
+msgstr "移除種子(&R)"
+
+#: ../src/mainframe.cpp:1673
+msgid "Delete Torrent"
+msgstr "删除種子"
+
+#: ../src/mainframe.cpp:1675
+msgid "Remove Torrent and &Data"
+msgstr "移除種子和下載文件(&D)"
+
+#: ../src/mainframe.cpp:1675
+msgid "Delete Torrent and Data"
+msgstr "删除種子和下載文件"
+
+#: ../src/mainframe.cpp:1678
+msgid "Move &Up\tAlt+UP"
+msgstr "上移(&U)\tAlt+UP"
+
+#: ../src/mainframe.cpp:1681
+msgid "Move Do&wn\tAlt+DOWN"
+msgstr "下移(&w)\tAlt+DOWN"
+
+#: ../src/mainframe.cpp:1685
+msgid "Re&announce Torrent"
+msgstr "重新發布種子(&a)"
+
+#: ../src/mainframe.cpp:1685
+msgid "Force Reannounce Torrent"
+msgstr "强制重新發布種子"
+
+#: ../src/mainframe.cpp:1687
+msgid "Force Re&check Torrent"
+msgstr "强制重新檢查種子"
+
+#: ../src/mainframe.cpp:1687
+msgid "Force Recheck Torrent"
+msgstr "强制重新檢查種子"
+
+#: ../src/mainframe.cpp:1688
+msgid "Open &Directory"
+msgstr "打開目録(&D)"
+
+#: ../src/mainframe.cpp:1688
+msgid "Open downloaded directory"
+msgstr "打開下載目録"
+
+#: ../src/mainframe.cpp:1690
+msgid "Propert&ies"
+msgstr "屬性(&i)"
+
+#: ../src/mainframe.cpp:1690
+msgid "Torrent Properties"
+msgstr "種子屬性"
+
+#: ../src/peerlistctrl.cpp:57 ../src/peerlistctrl.cpp:72
+msgid "IP"
+msgstr "IP"
+
+#: ../src/peerlistctrl.cpp:57 ../src/peerlistctrl.cpp:72
+msgid "Client IP address"
+msgstr "客戶端IP地址"
+
+#: ../src/peerlistctrl.cpp:58 ../src/peerlistctrl.cpp:73
+msgid "Country"
+msgstr "國家"
+
+#: ../src/peerlistctrl.cpp:58 ../src/peerlistctrl.cpp:73
+msgid "Client country"
+msgstr "客户端國家"
+
+#: ../src/peerlistctrl.cpp:59 ../src/peerlistctrl.cpp:74
+msgid "Type"
+msgstr "類型"
+
+#: ../src/peerlistctrl.cpp:59 ../src/peerlistctrl.cpp:74
+msgid "Peer type"
+msgstr "對等連接"
+
+#: ../src/peerlistctrl.cpp:60 ../src/peerlistctrl.cpp:75
+#: ../src/torrentinfo.cpp:62 ../src/torrentlistctrl.cpp:56
+#: ../src/torrentlistctrl.cpp:73
+msgid "Status"
+msgstr "狀態"
+
+#: ../src/peerlistctrl.cpp:60 ../src/peerlistctrl.cpp:75
+msgid "Peer status"
+msgstr "對等狀態"
+
+#: ../src/peerlistctrl.cpp:61 ../src/peerlistctrl.cpp:76
+msgid "Client"
+msgstr "客户端"
+
+#: ../src/peerlistctrl.cpp:61 ../src/peerlistctrl.cpp:76
+msgid "Client name"
+msgstr "客户端名字"
+
+#: ../src/peerlistctrl.cpp:62 ../src/peerlistctrl.cpp:77
+msgid "Flags"
+msgstr "標志位"
+
+#: ../src/peerlistctrl.cpp:62 ../src/peerlistctrl.cpp:77
+msgid "Peer flags"
+msgstr "對等連接"
+
+#: ../src/peerlistctrl.cpp:63 ../src/peerlistctrl.cpp:78
+#: ../src/torrentlistctrl.cpp:59 ../src/torrentlistctrl.cpp:76
+msgid "Download Speed"
+msgstr "下載速度"
+
+#: ../src/peerlistctrl.cpp:64 ../src/peerlistctrl.cpp:79
+#: ../src/torrentlistctrl.cpp:60 ../src/torrentlistctrl.cpp:77
+msgid "Upload Speed"
+msgstr "上傳速度"
+
+#: ../src/peerlistctrl.cpp:65 ../src/peerlistctrl.cpp:80
+#: ../src/torrentlistctrl.cpp:62 ../src/torrentlistctrl.cpp:79
+msgid "Downloaded"
+msgstr "已下載"
+
+#: ../src/peerlistctrl.cpp:65 ../src/peerlistctrl.cpp:80
+#: ../src/torrentlistctrl.cpp:62 ../src/torrentlistctrl.cpp:79
+msgid "Total bytes downloaded"
+msgstr "開始下載"
+
+#: ../src/peerlistctrl.cpp:66 ../src/peerlistctrl.cpp:81
+#: ../src/torrentlistctrl.cpp:63 ../src/torrentlistctrl.cpp:80
+msgid "Uploaded"
+msgstr "已上傳"
+
+#: ../src/peerlistctrl.cpp:66 ../src/peerlistctrl.cpp:81
+#: ../src/torrentlistctrl.cpp:63 ../src/torrentlistctrl.cpp:80
+msgid "Total bytes uploaded"
+msgstr "總上傳字節"
+
+#: ../src/peerlistctrl.cpp:119
+msgid "(T)"
+msgstr "(T)"
+
+#: ../src/peerlistctrl.cpp:120
+msgid "(D)"
+msgstr "(D)"
+
+#: ../src/peerlistctrl.cpp:121
+msgid "(P)"
+msgstr "(P)"
+
+#: ../src/peerlistctrl.cpp:122
+msgid "(L)"
+msgstr "(L)"
+
+#: ../src/peerlistctrl.cpp:123
+msgid "(R)"
+msgstr "(R)"
+
+#: ../src/peerlistctrl.cpp:146
+msgid "Seed"
+msgstr "做種"
+
+#: ../src/peerlistctrl.cpp:146
+msgid "Peer"
+msgstr "對等連接"
+
+#: ../src/peerlistctrl.cpp:151
+msgid "Handshaking"
+msgstr "握手中"
+
+#: ../src/peerlistctrl.cpp:155
+msgid "Connecting"
+msgstr "連接中"
+
+#: ../src/peerlistctrl.cpp:159 ../src/torrentlistctrl.cpp:130
+msgid "Queued"
+msgstr "排隊中"
+
+#: ../src/peerlistctrl.cpp:163
+msgid "Local"
+msgstr "本地"
+
+#: ../src/peerlistctrl.cpp:166
+msgid "Remote"
+msgstr "遠程"
+
+#: ../src/summarypane.cpp:151 ../src/torrentproperty.cpp:71
+msgid "Comment:"
+msgstr "注釋："
+
+#: ../src/summarypane.cpp:169
+msgid "Tracker"
+msgstr "Tracker服務器"
+
+#: ../src/summarypane.cpp:318
+#, c-format
+msgid "Save As: %s"
+msgstr "另存為：%s"
+
+#: ../src/summarypane.cpp:324
+#, c-format
+msgid "Size: %s"
+msgstr "大小：%s"
+
+#: ../src/summarypane.cpp:330
+#, c-format
+msgid "Pieces: %s"
+msgstr "分塊數：%s"
+
+#: ../src/summarypane.cpp:336
+#, c-format
+msgid "Hash: %s"
+msgstr "Hash值：%s"
+
+#: ../src/summarypane.cpp:342
+#, c-format
+msgid "Peers: %s"
+msgstr "對等連接：%s"
+
+#: ../src/summarypane.cpp:348
+#, c-format
+msgid "Seeds: %s"
+msgstr "種子：%s"
+
+#: ../src/summarypane.cpp:354
+#, c-format
+msgid "Download Speed: %s"
+msgstr "下載速度：%s"
+
+#: ../src/summarypane.cpp:360
+#, c-format
+msgid "Upload Speed: %s"
+msgstr "上傳速度：%s"
+
+#: ../src/summarypane.cpp:366
+#, c-format
+msgid "Download Rate Limit: %s"
+msgstr "下載速率限制：%s"
+
+#: ../src/summarypane.cpp:372
+#, c-format
+msgid "Upload Rate Limit: %s"
+msgstr "上傳速率限制：%s"
+
+#: ../src/summarypane.cpp:378
+#, c-format
+msgid "Downloaded: %s"
+msgstr "已下載：%s"
+
+#: ../src/summarypane.cpp:384
+#, c-format
+msgid "Uploaded: %s"
+msgstr "已上傳：%s"
+
+#: ../src/summarypane.cpp:390
+#, c-format
+msgid "Share Ratio: %s"
+msgstr "分享率：%s"
+
+#: ../src/summarypane.cpp:399
 #, c-format
 msgid "%s"
 msgstr "%s"
 
-#: ../src/mainframe.cpp:545
-msgid "&About"
-msgstr "關于(&A)"
+#: ../src/summarypane.cpp:405
+#, c-format
+msgid "Tracker URL: %s"
+msgstr "Tracker服務器URL： %s"
 
-#: ../src/mainframe.cpp:433
-msgid "&File"
-msgstr "文件(&F)"
+#: ../src/summarypane.cpp:411
+#, c-format
+msgid "Status: %s"
+msgstr "狀態：%s"
 
-#: ../src/mainframe.cpp:448
-msgid "&Force Start Torrent\tCtrl+Alt+S"
-msgstr "强制初始作種(&F)\tCtrl+Alt+S"
+#: ../src/summarypane.cpp:417
+#, c-format
+msgid "Next Update: %s"
+msgstr "下次更新：%s"
 
-#: ../src/mainframe.cpp:547
-msgid "&Help"
-msgstr "幫助(&H)"
+#: ../src/summarypane.cpp:423
+#, c-format
+msgid "DHT Status: %s"
+msgstr "顯示狀態欄：%s"
 
-#: ../src/mainframe.cpp:542
-msgid "&Help\tF1"
-msgstr "幫助(&H)\tF1"
+#: ../src/swashlistctrl.cpp:374
+msgid "Show/Hide"
+msgstr "隱藏/顯示"
 
-#: ../src/swashtrayicon.cpp:100
-msgid "&Hide Taskbar Icon"
-msgstr "隱藏工具欄圖標(&H)"
+#: ../src/swashsetting.cpp:72
+msgid "Connections"
+msgstr "連接"
 
-#: ../src/mainframe.cpp:537
-msgid "&Language"
-msgstr "語言(&L)"
+#: ../src/swashsetting.cpp:73
+msgid "Torrents"
+msgstr "種子"
 
-#: ../src/swashtrayicon.cpp:102
-#: ../src/mainframe.cpp:420
-msgid "&Open Torrent\tCtrl+O"
-msgstr "打開種子(&O)\tCtrl+O"
-
-#: ../src/mainframe.cpp:539
-msgid "&Options"
-msgstr "選項(&O)"
-
-#: ../src/mainframe.cpp:451
-msgid "&Pause Torrent\tCtrl+P"
-msgstr "暫停作種(&P)\tCtrl-P"
-
-#: ../src/mainframe.cpp:445
-msgid "&Queue Torrent\tCtrl+S"
-msgstr "排隊作種(&Q)\tCtrl+S"
-
-#: ../src/mainframe.cpp:458
-msgid "&Remove Torrent"
-msgstr "移除種子(&R)"
+#: ../src/swashstatbar.cpp:61
+#, c-format
+msgid "Peers: %s DHT: %s"
+msgstr "對等連接：%s DHT：%s"
 
 #: ../src/swashtrayicon.cpp:99
 msgid "&Restore"
 msgstr "恢復(&R)"
 
-#: ../src/mainframe.cpp:486
-msgid "&Torrent"
-msgstr "種子(&T)"
+#: ../src/swashtrayicon.cpp:100
+msgid "&Hide Taskbar Icon"
+msgstr "隱藏工具欄圖標(&H)"
 
-#: ../src/mainframe.cpp:442
-msgid "&View"
-msgstr "視圖(&V)"
+#: ../src/swashtrayicon.cpp:109
+msgid "E&xit"
+msgstr "退出(&x)"
 
-#: ../src/peerlistctrl.cpp:122
-msgid "(D)"
-msgstr "(D)"
+#: ../src/torrentinfo.cpp:67 ../src/torrentproperty.cpp:95
+msgid "Files"
+msgstr "文件"
 
-#: ../src/peerlistctrl.cpp:124
-msgid "(L)"
-msgstr "(L)"
+#: ../src/torrentinfo.cpp:70
+msgid "Trackers"
+msgstr "Tracker服務器"
 
-#: ../src/peerlistctrl.cpp:123
-msgid "(P)"
-msgstr "(P)"
+#: ../src/torrentlistctrl.cpp:54 ../src/torrentlistctrl.cpp:71
+msgid "Index"
+msgstr "索引"
 
-#: ../src/peerlistctrl.cpp:125
-msgid "(R)"
-msgstr "(R)"
+#: ../src/torrentlistctrl.cpp:54 ../src/torrentlistctrl.cpp:71
+msgid "Queue Index"
+msgstr "排隊中"
 
-#: ../src/peerlistctrl.cpp:121
-msgid "(T)"
-msgstr "(T)"
+#: ../src/torrentlistctrl.cpp:55 ../src/torrentlistctrl.cpp:72
+msgid "Torrent"
+msgstr "種子"
 
-#: ../src/mainframe.cpp:545
-msgid "About"
-msgstr "關于"
+#: ../src/torrentlistctrl.cpp:55 ../src/torrentlistctrl.cpp:72
+msgid "Torrent name"
+msgstr "移除種子"
 
-#: ../src/extensionsetting.cpp:113
-msgid "Accept Unencrypted Peer"
-msgstr "允許未加密的對等連接"
+#: ../src/torrentlistctrl.cpp:56 ../src/torrentlistctrl.cpp:73
+msgid "Torrent status"
+msgstr "移除種子"
+
+#: ../src/torrentlistctrl.cpp:57 ../src/torrentlistctrl.cpp:74
+msgid "Torrent size"
+msgstr "種子大小"
+
+#: ../src/torrentlistctrl.cpp:61 ../src/torrentlistctrl.cpp:78
+msgid "Number or peers"
+msgstr "對等連接數"
+
+#: ../src/torrentlistctrl.cpp:64 ../src/torrentlistctrl.cpp:81
+msgid "Copies"
+msgstr "健康度"
+
+#: ../src/torrentlistctrl.cpp:64 ../src/torrentlistctrl.cpp:81
+msgid "Number of copies in swarm"
+msgstr "健康度"
+
+#: ../src/torrentlistctrl.cpp:65 ../src/torrentlistctrl.cpp:82
+msgid "Time Left"
+msgstr "剩餘時間"
+
+#: ../src/torrentlistctrl.cpp:65 ../src/torrentlistctrl.cpp:82
+msgid "Estimated time left to finish"
+msgstr "估計剩余時間"
+
+#: ../src/torrentlistctrl.cpp:66
+msgid "Ratio"
+msgstr "分享率"
+
+#: ../src/torrentlistctrl.cpp:66 ../src/torrentlistctrl.cpp:83
+msgid "Share Ratio"
+msgstr "分享率：%s"
+
+#: ../src/torrentlistctrl.cpp:66 ../src/torrentlistctrl.cpp:83
+msgid "Upload/Download ratio"
+msgstr "上下載速率"
+
+#: ../src/torrentlistctrl.cpp:131
+#, fuzzy
+msgid "Checking"
+msgstr "檢查中"
+
+#: ../src/torrentlistctrl.cpp:132
+#, fuzzy
+msgid "Downloading meta data"
+msgstr "正在下載meta數據"
+
+#: ../src/torrentlistctrl.cpp:133
+#, fuzzy
+msgid "Downloading"
+msgstr "下載中"
+
+#: ../src/torrentlistctrl.cpp:134
+#, fuzzy
+msgid "Finished"
+msgstr "已完成"
+
+#: ../src/torrentlistctrl.cpp:135
+#, fuzzy
+msgid "Seeding"
+msgstr "做種中"
+
+#: ../src/torrentlistctrl.cpp:136
+#, fuzzy
+msgid "Allocating"
+msgstr "分配中"
+
+#: ../src/torrentlistctrl.cpp:137
+msgid "Checking resume data"
+msgstr ""
+
+#: ../src/torrentlistctrl.cpp:154
+#, fuzzy
+msgid "Queueing"
+msgstr "排隊中"
+
+#: ../src/torrentlistctrl.cpp:159
+#, fuzzy
+msgid "Stopped"
+msgstr "停止"
+
+#: ../src/torrentlistctrl.cpp:166
+#, fuzzy
+msgid "Paused"
+msgstr "暫停"
+
+#: ../src/torrentlistctrl.cpp:173
+#, fuzzy
+msgid "Error!"
+msgstr "錯誤"
+
+#: ../src/torrentlistctrl.cpp:268
+msgid "inf"
+msgstr "無窮"
+
+#: ../src/torrentproperty.cpp:51
+#, fuzzy
+msgid "Torrent Setting"
+msgstr "程序設定"
+
+#: ../src/torrentproperty.cpp:58
+msgid "Torrent Info"
+msgstr "移除種子"
+
+#: ../src/torrentproperty.cpp:65
+msgid "Name:"
+msgstr "名字："
+
+#: ../src/torrentproperty.cpp:79
+msgid "Size:"
+msgstr "大小："
+
+#: ../src/torrentproperty.cpp:99
+msgid "Settings"
+msgstr "程序設定"
+
+#: ../src/torrentproperty.cpp:104
+msgid "Select None"
+msgstr ""
+
+#: ../src/torrentproperty.cpp:106
+msgid "Select All"
+msgstr ""
+
+#: ../src/torrentproperty.cpp:108
+msgid "OK"
+msgstr ""
+
+#: ../src/torrentproperty.cpp:111
+#, fuzzy
+msgid "Cancel"
+msgstr "France"
+
+#: ../src/torrentsetting.cpp:61
+msgid "Torrent Settings"
+msgstr "程序設定"
+
+#: ../src/torrentsetting.cpp:73
+msgid "Save:"
+msgstr "保存："
+
+#: ../src/torrentsetting.cpp:105
+msgid "Start Torrent"
+msgstr "初始作種"
+
+#: ../src/torrentsetting.cpp:130
+msgid "Do not prompt for torrent settings."
+msgstr "取消提示torrent設置。"
+
+#: ../src/torrentsetting.cpp:157
+msgid "Storage Allocation Mode:"
+msgstr "存儲分配模式："
+
+#: ../src/torrentsetting.cpp:232
+msgid "Seed Ratio"
+msgstr "分享率"
+
+#: ../src/torrentsetting.cpp:318
+msgid "Choose default download directory"
+msgstr "選擇默認下載文件夾"
+
+#: ../src/trackerlistctrl.cpp:52 ../src/trackerlistctrl.cpp:57
+msgid "URL"
+msgstr "URL:"
+
+#: ../src/trackerlistctrl.cpp:52 ../src/trackerlistctrl.cpp:57
+msgid "Torrent Tracker URL"
+msgstr "Tracker服務器URL： %s"
 
 #: ../src/trackerlistctrl.cpp:139
 msgid "Add"
 msgstr "添加"
+
+#: ../src/trackerlistctrl.cpp:140
+msgid "Edit"
+msgstr "編輯"
 
 #: ../src/trackerlistctrl.cpp:189
 msgid ""
@@ -127,454 +2108,9 @@ msgstr ""
 "添加tracker服務器\n"
 "請輸入新tracker地址"
 
-#: ../src/bitswash.cpp:76
-msgid "Afghanistan"
-msgstr "Afghanistan"
-
-#: ../src/bitswash.cpp:77
-msgid "Albania"
-msgstr "Albania"
-
-#: ../src/bitswash.cpp:78
-msgid "Algeria"
-msgstr "Algeria"
-
-#: ../src/mainframe.cpp:301
-msgid "All"
-msgstr "全部"
-
-#: ../src/bitswash.cpp:79
-msgid "American Samoa"
-msgstr "American Samoa"
-
-#: ../src/bitswash.cpp:80
-msgid "Andorra"
-msgstr "Andorra"
-
-#: ../src/bitswash.cpp:81
-msgid "Angola"
-msgstr "Angola"
-
-#: ../src/bitswash.cpp:82
-msgid "Anguilla"
-msgstr "Anguilla"
-
-#: ../src/bitswash.cpp:83
-msgid "Antigua and Barbuda"
-msgstr "Antigua and Barbuda"
-
-#: ../src/bitswash.cpp:84
-msgid "Argentina"
-msgstr "Argentina"
-
-#: ../src/bitswash.cpp:85
-msgid "Armenia"
-msgstr "Armenia"
-
-#: ../src/bitswash.cpp:86
-msgid "Aruba"
-msgstr "Aruba"
-
-#: ../src/bitswash.cpp:87
-msgid "Australia"
-msgstr "Australia"
-
-#: ../src/bitswash.cpp:88
-msgid "Austria"
-msgstr "Austria"
-
-#: ../src/bitswash.cpp:89
-msgid "Azerbaijan"
-msgstr "Azerbaijan"
-
-#: ../src/bitswash.cpp:90
-msgid "Bahamas"
-msgstr "Bahamas"
-
-#: ../src/bitswash.cpp:91
-msgid "Bahrain"
-msgstr "Bahrain"
-
-#: ../src/bitswash.cpp:92
-msgid "Bangladesh"
-msgstr "Bangladesh"
-
-#: ../src/bitswash.cpp:93
-msgid "Barbados"
-msgstr "Barbados"
-
-#: ../src/bitswash.cpp:94
-msgid "Belarus"
-msgstr "Belarus"
-
-#: ../src/bitswash.cpp:95
-msgid "Belgium"
-msgstr "Belgium"
-
-#: ../src/bitswash.cpp:96
-msgid "Belize"
-msgstr "Belize"
-
-#: ../src/bitswash.cpp:97
-msgid "Benin"
-msgstr "Benin"
-
-#: ../src/bitswash.cpp:98
-msgid "Bermuda"
-msgstr "Bermuda"
-
-#: ../src/bitswash.cpp:99
-msgid "Bhutan"
-msgstr "Bhutan"
-
-#: ../src/mainframe.cpp:633
-msgid "Bitswash homepage"
-msgstr "Bitswash主頁"
-
-#: ../src/bitswash.cpp:100
-msgid "Bolivia"
-msgstr "Bolivia"
-
-#: ../src/bitswash.cpp:101
-msgid "Bosnia and Herzegovina"
-msgstr "Bosnia and Herzegovina"
-
-#: ../src/bitswash.cpp:102
-msgid "Botswana"
-msgstr "Botswana"
-
-#: ../src/bitswash.cpp:103
-msgid "Bouvet Island Bouvetoya"
-msgstr "Bouvet Island Bouvetoya"
-
-#: ../src/bitswash.cpp:104
-msgid "Brazil"
-msgstr "Brazil"
-
-#: ../src/bitswash.cpp:105
-msgid "British Indian Ocean Territory Chagos Archipelago"
-msgstr "British Indian Ocean Territory Chagos Archipelago"
-
-#: ../src/bitswash.cpp:106
-msgid "British Virgin Islands"
-msgstr "British Virgin Islands"
-
-#: ../src/bitswash.cpp:107
-msgid "Brunei Darussalam"
-msgstr "Brunei Darussalam"
-
-#: ../src/bitswash.cpp:108
-msgid "Bulgaria"
-msgstr "Bulgaria"
-
-#: ../src/bitswash.cpp:109
-msgid "Burkina Faso"
-msgstr "Burkina Faso"
-
-#: ../src/bitswash.cpp:110
-msgid "Burundi"
-msgstr "Burundi"
-
-#: ../src/bitswash.cpp:111
-msgid "Cambodia"
-msgstr "Cambodia"
-
-#: ../src/bitswash.cpp:112
-msgid "Cameroon"
-msgstr "Cameroon"
-
-#: ../src/bitswash.cpp:113
-msgid "Canada"
-msgstr "Canada"
-
-#: ../src/bitswash.cpp:114
-msgid "Cape Verde"
-msgstr "Cape Verde"
-
-#: ../src/mainframe.cpp:298
-msgid "Categories"
-msgstr "分類"
-
-#: ../src/bitswash.cpp:115
-msgid "Cayman Islands"
-msgstr "Cayman Islands"
-
-#: ../src/bitswash.cpp:116
-msgid "Central African Republic"
-msgstr "Central African Republic"
-
-#: ../src/bitswash.cpp:117
-msgid "Chad"
-msgstr "Chad"
-
-#: ../src/bitswash.cpp:118
-msgid "Chile"
-msgstr "Chile"
-
-#: ../src/bitswash.cpp:119
-msgid "China"
-msgstr "China"
-
-#: ../src/torrentsetting.cpp:318
-msgid "Choose default download directory"
-msgstr "選擇默認下載文件夾"
-
-#: ../src/bitswash.cpp:120
-msgid "Christmas Island"
-msgstr "Christmas Island"
-
-#: ../src/loggerctrl.cpp:101
-msgid "Clear Log"
-msgstr "清除日志"
-
-#: ../src/peerlistctrl.cpp:61
-#: ../src/peerlistctrl.cpp:76
-msgid "Client"
-msgstr "客户端"
-
-#: ../src/peerlistctrl.cpp:57
-#: ../src/peerlistctrl.cpp:72
-msgid "Client IP address"
-msgstr "客戶端IP地址"
-
-#: ../src/peerlistctrl.cpp:58
-#: ../src/peerlistctrl.cpp:73
-msgid "Client country"
-msgstr "客户端國家"
-
-#: ../src/peerlistctrl.cpp:61
-#: ../src/peerlistctrl.cpp:76
-msgid "Client name"
-msgstr "客户端名字"
-
-#: ../src/bitswash.cpp:121
-msgid "Cocos Keeling Islands"
-msgstr "Cocos Keeling Islands"
-
-#: ../src/bitswash.cpp:122
-msgid "Colombia"
-msgstr "Colombia"
-
-#: ../src/summarypane.cpp:151
-#: ../src/torrentproperty.cpp:99
-msgid "Comment:"
-msgstr "注釋："
-
-#: ../src/bitswash.cpp:123
-msgid "Comoros"
-msgstr "Comoros"
-
-#: ../src/bittorrentsession.cpp:463
-#: ../src/torrentsetting.cpp:164
-#: ../src/torrentsetting.cpp:193
-msgid "Compact"
-msgstr "緊湊分配"
-
-#: ../src/mainframe.cpp:1232
-msgid "Confirm Remove"
-msgstr "確認移除"
-
-#: ../src/mainframe.cpp:1231
-msgid "Confirm remove "
-msgstr "確認移除"
-
-#: ../src/trackerlistctrl.cpp:255
-msgid "Confirm remove tracker"
-msgstr "確認移除tracker"
-
-#: ../src/trackerlistctrl.cpp:254
-msgid "Confirm remove tracker "
-msgstr "確認移除tracker"
-
-#: ../src/bitswash.cpp:124
-#: ../src/bitswash.cpp:125
-msgid "Congo"
-msgstr "Congo"
-
-#: ../src/peerlistctrl.cpp:157
-msgid "Connecting"
-msgstr "連接中"
-
-#: ../src/swashsetting.cpp:72
-msgid "Connections"
-msgstr "連接"
-
-#: ../src/bitswash.cpp:126
-msgid "Cook Islands"
-msgstr "Cook Islands"
-
-#: ../src/torrentlistctrl.cpp:63
-#: ../src/torrentlistctrl.cpp:80
-msgid "Copies"
-msgstr "健康度"
-
-#: ../src/bitswash.cpp:127
-msgid "Costa Rica"
-msgstr "Costa Rica"
-
-#: ../src/bitswash.cpp:128
-msgid "Cote D'Ivoire"
-msgstr "Cote D'Ivoire"
-
-#: ../src/peerlistctrl.cpp:58
-#: ../src/peerlistctrl.cpp:73
-msgid "Country"
-msgstr "國家"
-
-#: ../src/mainframe.cpp:570
-msgid "Create Torrent"
-msgstr "創建種子"
-
-#: ../src/mainframe.cpp:572
-msgid "Create torrent file"
-msgstr "創建種子文件"
-
-#: ../src/mainframe.cpp:572
-msgid "Create torrent file to publish"
-msgstr "創建并發布種子"
-
-#: ../src/loggerctrl.cpp:86
-#: ../src/generalsetting.cpp:163
-msgid "Critical"
-msgstr "關鍵"
-
-#: ../src/bitswash.cpp:129
-msgid "Cuba"
-msgstr "Cuba"
-
-#: ../src/bitswash.cpp:130
-msgid "Cyprus"
-msgstr "Cyprus"
-
-#: ../src/bitswash.cpp:131
-msgid "Czech Republic"
-msgstr "Czech Republic"
-
-#: ../src/mainframe.cpp:1557
-msgid "DHT Nodes"
-msgstr "DHT節點"
-
-#: ../src/summarypane.cpp:420
-#, c-format
-msgid "DHT Status: %s"
-msgstr "顯示狀態欄：%s"
-
-#: ../src/loggerctrl.cpp:86
-#: ../src/generalsetting.cpp:163
-msgid "Debug"
-msgstr "Debug"
-
-#: ../src/trackerlistctrl.cpp:141
-#: ../src/mainframe.cpp:595
-msgid "Delete"
-msgstr "删除"
-
-#: ../src/mainframe.cpp:599
-msgid "Delete Data"
-msgstr "删除下載數據"
-
-#: ../src/mainframe.cpp:458
-msgid "Delete Torrent"
-msgstr "删除種子"
-
-#: ../src/mainframe.cpp:461
-msgid "Delete Torrent and Data"
-msgstr "删除種子和下載文件"
-
-#: ../src/mainframe.cpp:597
-msgid "Delete torrent file"
-msgstr "删除種子文件"
-
-#: ../src/mainframe.cpp:601
-msgid "Delete torrent file and downloaded data"
-msgstr "删除種子文件和已下載的數據"
-
-#: ../src/bitswash.cpp:132
-msgid "Denmark"
-msgstr "Denmark"
-
-#: ../src/bitswash.cpp:133
-msgid "Djibouti"
-msgstr "Djibouti"
-
-#: ../src/filelistctrl.cpp:196
-msgid "Do not download"
-msgstr "不下載"
-
-#: ../src/torrentsetting.cpp:130
-msgid "Do not prompt for torrent settings."
-msgstr "取消提示torrent設置。"
-
-#: ../src/bitswash.cpp:134
-msgid "Dominica"
-msgstr "Dominica"
-
-#: ../src/bitswash.cpp:135
-msgid "Dominican Republic"
-msgstr "Dominican Republic"
-
-#: ../src/filelistctrl.cpp:67
-#: ../src/filelistctrl.cpp:75
-msgid "Download"
-msgstr "下載"
-
-#: ../src/mainframe.cpp:1557
-msgid "Download Rate"
-msgstr "下載速率"
-
-#: ../src/connectionsetting.cpp:122
-#: ../src/torrentsetting.cpp:203
-msgid "Download Rate Limit:"
-msgstr "下載速率限制："
-
-#: ../src/summarypane.cpp:363
-#, c-format
-msgid "Download Rate Limit: %s"
-msgstr "下載速率限制：%s"
-
-#: ../src/torrentlistctrl.cpp:58
-#: ../src/torrentlistctrl.cpp:75
-#: ../src/peerlistctrl.cpp:63
-#: ../src/peerlistctrl.cpp:78
-msgid "Download Speed"
-msgstr "下載速度"
-
-#: ../src/summarypane.cpp:351
-#, c-format
-msgid "Download Speed: %s"
-msgstr "下載速度：%s"
-
-#: ../src/torrentlistctrl.cpp:61
-#: ../src/torrentlistctrl.cpp:78
-#: ../src/peerlistctrl.cpp:65
-#: ../src/peerlistctrl.cpp:80
-msgid "Downloaded"
-msgstr "已下載"
-
-#: ../src/summarypane.cpp:375
-#, c-format
-msgid "Downloaded: %s"
-msgstr "已下載：%s"
-
-#: ../src/mainframe.cpp:302
-msgid "Downloads"
-msgstr "下載"
-
-#: ../src/swashtrayicon.cpp:109
-msgid "E&xit"
-msgstr "退出(&x)"
-
-#: ../src/mainframe.cpp:431
-msgid "E&xit\tAlt-F4"
-msgstr "退出(&x)\tAlt-F4"
-
-#: ../src/bitswash.cpp:136
-msgid "Ecuador"
-msgstr "Ecuador"
-
-#: ../src/trackerlistctrl.cpp:140
-msgid "Edit"
-msgstr "編輯"
+#: ../src/trackerlistctrl.cpp:190
+msgid "Enter a new tracker address"
+msgstr "輸入新tracker地址"
 
 #: ../src/trackerlistctrl.cpp:224
 msgid "Edit tracker\n"
@@ -584,1628 +2120,97 @@ msgstr "編輯Tracker\n"
 msgid "Edit tracker address"
 msgstr "編輯tracker地址"
 
-#: ../src/bitswash.cpp:137
-msgid "Egypt"
-msgstr "Egypt"
-
-#: ../src/bitswash.cpp:138
-msgid "El Salvador"
-msgstr "El Salvador"
-
-#: ../src/connectionsetting.cpp:89
-msgid "Enable DHT, Port (UDP):"
-msgstr "允許DHT網絡，端口(UDP)："
-
-#: ../src/extensionsetting.cpp:108
-msgid "Enable Encryption"
-msgstr "允許加密"
-
-#: ../src/extensionsetting.cpp:148
-msgid "Enable Local Service Discovery"
-msgstr "允許本地服務探尋"
-
-#: ../src/extensionsetting.cpp:79
-msgid "Enable Metadata"
-msgstr "允許Metadata頭"
-
-#: ../src/extensionsetting.cpp:143
-msgid "Enable NAT Port Mapping"
-msgstr "允許NAT端口映射"
-
-#: ../src/extensionsetting.cpp:84
-msgid "Enable Peer Exchange"
-msgstr "允許對等連接交换"
-
-#: ../src/generalsetting.cpp:128
-msgid "Enable Systray Icon"
-msgstr "允許托盤圖標"
-
-#: ../src/extensionsetting.cpp:138
-msgid "Enable UPnP"
-msgstr "允許UPnP"
-
-#: ../src/trackerlistctrl.cpp:190
-msgid "Enter a new tracker address"
-msgstr "輸入新tracker地址"
-
-#: ../src/bitswash.cpp:139
-msgid "Equatorial Guinea"
-msgstr "Equatorial Guinea"
-
-#: ../src/bitswash.cpp:140
-msgid "Eritrea"
-msgstr "Eritrea"
-
-#: ../src/mainframe.cpp:1549
-msgid "Error"
-msgstr "錯誤"
-
-#: ../src/torrentlistctrl.cpp:64
-#: ../src/torrentlistctrl.cpp:81
-msgid "Estimated time left to finish"
-msgstr "估計剩余時間"
-
-#: ../src/bitswash.cpp:141
-msgid "Estonia"
-msgstr "Estonia"
-
-#: ../src/bitswash.cpp:142
-msgid "Ethiopia"
-msgstr "Ethiopia"
-
-#: ../src/bitswash.cpp:143
-msgid "Europe"
-msgstr "Europe"
-
-#: ../src/generalsetting.cpp:82
-msgid "Exclude seeding"
-msgstr "做種中"
-
-#: ../src/mainframe.cpp:638
-msgid "Exit"
-msgstr "退出"
-
-#: ../src/mainframe.cpp:431
-#: ../src/mainframe.cpp:640
-msgid "Exit Bitswash"
-msgstr "退出Bitswash"
-
-#: ../src/extensionsetting.cpp:68
-#: ../src/swashsetting.cpp:74
-msgid "Extensions"
-msgstr "擴展"
-
-#: ../src/bitswash.cpp:144
-msgid "Faeroe Islands"
-msgstr "Faeroe Islands"
-
-#: ../src/bitswash.cpp:145
-msgid "Falkland Islands Malvinas"
-msgstr "Falkland Islands Malvinas"
-
-#: ../src/loggerctrl.cpp:86
-#: ../src/generalsetting.cpp:163
-msgid "Fatal"
-msgstr "致命"
-
-#: ../src/bitswash.cpp:146
-msgid "Fiji"
-msgstr "Fiji"
-
-#: ../src/filelistctrl.cpp:65
-#: ../src/filelistctrl.cpp:73
-msgid "File"
-msgstr "文件(&F)"
-
-#: ../src/filelistctrl.cpp:68
-#: ../src/filelistctrl.cpp:76
-msgid "File download progress"
-msgstr "文件下載進度"
-
-#: ../src/filelistctrl.cpp:67
-#: ../src/filelistctrl.cpp:75
-msgid "File priority"
-msgstr "最高優先級"
-
-#: ../src/filelistctrl.cpp:66
-#: ../src/filelistctrl.cpp:74
-msgid "File size"
-msgstr "文件大小"
-
-#: ../src/torrentproperty.cpp:129
-#: ../src/torrentinfo.cpp:67
-msgid "Files"
-msgstr "文件"
-
-#: ../src/filelistctrl.cpp:65
-#: ../src/filelistctrl.cpp:73
-msgid "Files in torrent"
-msgstr "打開種子"
-
-#: ../src/bitswash.cpp:147
-msgid "Finland"
-msgstr "Finland"
-
-#: ../src/peerlistctrl.cpp:62
-#: ../src/peerlistctrl.cpp:77
-msgid "Flags"
-msgstr "標志位"
-
-#: ../src/mainframe.cpp:478
-msgid "Force Re&check Torrent"
-msgstr "强制重新檢查種子"
-
-#: ../src/mainframe.cpp:475
-msgid "Force Reannounce Torrent"
-msgstr "强制重新發布種子"
-
-#: ../src/mainframe.cpp:478
-msgid "Force Recheck Torrent"
-msgstr "强制重新檢查種子"
-
-#: ../src/mainframe.cpp:448
-msgid "Force Torrent Download"
-msgstr "强制下載種子"
-
-#: ../src/bitswash.cpp:148
-msgid "France"
-msgstr "France"
-
-#: ../src/bitswash.cpp:149
-msgid "French Guiana"
-msgstr "French Guiana"
-
-#: ../src/bitswash.cpp:150
-msgid "French Polynesia"
-msgstr "French Polynesia"
-
-#: ../src/bitswash.cpp:151
-msgid "French Southern Territories"
-msgstr "French Southern Territories"
-
-#: ../src/bittorrentsession.cpp:457
-#: ../src/torrentsetting.cpp:162
-#: ../src/torrentsetting.cpp:187
-msgid "Full"
-msgstr "完全分配"
-
-#: ../src/generalsetting.cpp:108
-msgid "GUI"
-msgstr "圖形用户界面"
-
-#: ../src/bitswash.cpp:152
-msgid "Gabon"
-msgstr "Gabon"
-
-#: ../src/bitswash.cpp:153
-msgid "Gambia"
-msgstr "Gambia"
-
-#: ../src/generalsetting.cpp:63
-#: ../src/swashsetting.cpp:71
-msgid "General"
-msgstr "一般設置"
-
-#: ../src/bitswash.cpp:154
-msgid "Georgia"
-msgstr "Georgia"
-
-#: ../src/bitswash.cpp:155
-msgid "Germany"
-msgstr "Germany"
-
-#: ../src/bitswash.cpp:156
-msgid "Ghana"
-msgstr "Ghana"
-
-#: ../src/bitswash.cpp:157
-msgid "Gibraltar"
-msgstr "Gibraltar"
-
-#: ../src/bitswash.cpp:158
-msgid "Greece"
-msgstr "Greece"
-
-#: ../src/bitswash.cpp:159
-msgid "Greenland"
-msgstr "Greenland"
-
-#: ../src/bitswash.cpp:160
-msgid "Grenada"
-msgstr "Grenada"
-
-#: ../src/bitswash.cpp:161
-msgid "Guadaloupe"
-msgstr "Guadaloupe"
-
-#: ../src/bitswash.cpp:162
-msgid "Guam"
-msgstr "Guam"
-
-#: ../src/bitswash.cpp:163
-msgid "Guatemala"
-msgstr "Guatemala"
-
-#: ../src/bitswash.cpp:164
-msgid "Guinea"
-msgstr "Guinea"
-
-#: ../src/bitswash.cpp:165
-msgid "Guinea-Bissau"
-msgstr "Guinea-Bissau"
-
-#: ../src/bitswash.cpp:166
-msgid "Guyana"
-msgstr "Guyana"
-
-#: ../src/bitswash.cpp:167
-msgid "Haiti"
-msgstr "Haiti"
-
-#: ../src/peerlistctrl.cpp:153
-msgid "Handshaking"
-msgstr "握手中"
-
-#: ../src/summarypane.cpp:333
-#, c-format
-msgid "Hash: %s"
-msgstr "Hash值：%s"
-
-#: ../src/bitswash.cpp:168
-msgid "Heard and McDonald Islands"
-msgstr "Heard and McDonald Islands"
-
-#: ../src/mainframe.cpp:542
-msgid "Help"
-msgstr "幫助"
-
-#: ../src/filelistctrl.cpp:148
-msgid "Higest"
-msgstr "最高"
-
-#: ../src/filelistctrl.cpp:200
-msgid "Highest Priority"
-msgstr "最高優先級"
-
-#: ../src/bitswash.cpp:169
-msgid "Holy See Vatican City State"
-msgstr "Holy See Vatican City State"
-
-#: ../src/mainframe.cpp:544
-msgid "Home&page"
-msgstr "軟件主頁(&p)"
-
-#: ../src/mainframe.cpp:544
-#: ../src/mainframe.cpp:631
-msgid "Homepage"
-msgstr "軟件主頁"
-
-#: ../src/bitswash.cpp:170
-msgid "Honduras"
-msgstr "Honduras"
-
-#: ../src/bitswash.cpp:171
-msgid "Hong Kong"
-msgstr "Hong Kong"
-
-#: ../src/bitswash.cpp:172
-msgid "Hrvatska Croatia"
-msgstr "Hrvatska Croatia"
-
-#: ../src/bitswash.cpp:173
-msgid "Hungary"
-msgstr "Hungary"
-
-#: ../src/peerlistctrl.cpp:57
-#: ../src/peerlistctrl.cpp:72
-msgid "IP"
-msgstr "IP"
-
-#: ../src/bitswash.cpp:174
-msgid "Iceland"
-msgstr "Iceland"
-
-#: ../src/mainframe.cpp:1557
-msgid "Incoming"
-msgstr "進入"
-
-#: ../src/torrentlistctrl.cpp:53
-#: ../src/torrentlistctrl.cpp:70
-msgid "Index"
-msgstr "索引"
-
-#: ../src/bitswash.cpp:175
-msgid "India"
-msgstr "India"
-
-#: ../src/bitswash.cpp:176
-msgid "Indonesia"
-msgstr "Indonesia"
-
-#: ../src/loggerctrl.cpp:86
-#: ../src/generalsetting.cpp:163
-#: ../src/summarypane.cpp:82
-msgid "Info"
-msgstr "信息"
-
-#: ../src/bitswash.cpp:177
-msgid "Iran"
-msgstr "Iran"
-
-#: ../src/bitswash.cpp:178
-msgid "Iraq"
-msgstr "Iraq"
-
-#: ../src/bitswash.cpp:179
-msgid "Ireland"
-msgstr "Ireland"
-
-#: ../src/bitswash.cpp:180
-msgid "Israel"
-msgstr "Israel"
-
-#: ../src/bitswash.cpp:181
-msgid "Italy"
-msgstr "Italy"
-
-#: ../src/bitswash.cpp:182
-msgid "Jamaica"
-msgstr "Jamaica"
-
-#: ../src/bitswash.cpp:183
-msgid "Japan"
-msgstr "Japan"
-
-#: ../src/bitswash.cpp:184
-msgid "Jordan"
-msgstr "Jordan"
-
-#: ../src/bitswash.cpp:185
-msgid "Kazakhstan"
-msgstr "Kazakhstan"
-
-#: ../src/bitswash.cpp:186
-msgid "Kenya"
-msgstr "Kenya"
-
-#: ../src/bitswash.cpp:187
-msgid "Kiribati"
-msgstr "Kiribati"
-
-#: ../src/bitswash.cpp:188
-#: ../src/bitswash.cpp:189
-msgid "Korea"
-msgstr "Korea"
-
-#: ../src/bitswash.cpp:190
-msgid "Kuwait"
-msgstr "Kuwait"
-
-#: ../src/bitswash.cpp:191
-msgid "Kyrgyz Republic"
-msgstr "Kyrgyz Republic"
-
-#: ../src/mainframe.cpp:537
-msgid "Language"
-msgstr "語言"
-
-#: ../src/bitswash.cpp:192
-msgid "Lao People's Democratic Republic"
-msgstr "Lao People's Democratic Republic"
-
-#: ../src/bitswash.cpp:193
-msgid "Latvia"
-msgstr "Latvia"
-
-#: ../src/bitswash.cpp:194
-msgid "Lebanon"
-msgstr "Lebanon"
-
-#: ../src/bitswash.cpp:195
-msgid "Lesotho"
-msgstr "Lesotho"
-
-#: ../src/bitswash.cpp:196
-msgid "Liberia"
-msgstr "Liberia"
-
-#: ../src/bitswash.cpp:197
-msgid "Libyan Arab Jamahiriya"
-msgstr "Libyan Arab Jamahiriya"
-
-#: ../src/bitswash.cpp:198
-msgid "Liechtenstein"
-msgstr "Liechtenstein"
-
-#: ../src/connectionsetting.cpp:110
-msgid "Limits"
-msgstr "限制"
-
-#: ../src/bitswash.cpp:199
-msgid "Lithuania"
-msgstr "Lithuania"
-
-#: ../src/peerlistctrl.cpp:165
-msgid "Local"
-msgstr "本地"
-
-#: ../src/generalsetting.cpp:149
-#: ../src/torrentinfo.cpp:74
-msgid "Log"
-msgstr "日志"
-
-#: ../src/generalsetting.cpp:160
-msgid "Log Severity:"
-msgstr "日志級彆："
-
-#: ../src/loggerctrl.cpp:96
-msgid "Log to File"
-msgstr "保存日志到文件"
-
-#: ../src/generalsetting.cpp:179
-msgid "Log to File:"
-msgstr "保存日志到文件："
-
-#: ../src/filelistctrl.cpp:142
-msgid "Lowest"
-msgstr "最低"
-
-#: ../src/filelistctrl.cpp:198
-msgid "Lowest Priority"
-msgstr "最低優先級"
-
-#: ../src/bitswash.cpp:200
-msgid "Luxembourg"
-msgstr "Luxembourg"
-
-#: ../src/bitswash.cpp:201
-msgid "Macao"
-msgstr "Macao"
-
-#: ../src/bitswash.cpp:202
-msgid "Macedonia"
-msgstr "Macedonia"
-
-#: ../src/bitswash.cpp:203
-msgid "Madagascar"
-msgstr "Madagascar"
-
-#: ../src/bitswash.cpp:204
-msgid "Malawi"
-msgstr "Malawi"
-
-#: ../src/bitswash.cpp:205
-msgid "Malaysia"
-msgstr "Malaysia"
-
-#: ../src/bitswash.cpp:206
-msgid "Maldives"
-msgstr "Maldives"
-
-#: ../src/bitswash.cpp:207
-msgid "Mali"
-msgstr "Mali"
-
-#: ../src/bitswash.cpp:208
-msgid "Malta"
-msgstr "Malta"
-
-#: ../src/bitswash.cpp:209
-msgid "Marshall Islands"
-msgstr "Marshall Islands"
-
-#: ../src/bitswash.cpp:210
-msgid "Martinique"
-msgstr "Martinique"
-
-#: ../src/bitswash.cpp:211
-msgid "Mauritania"
-msgstr "Mauritania"
-
-#: ../src/bitswash.cpp:212
-msgid "Mauritius"
-msgstr "Mauritius"
-
-#: ../src/connectionsetting.cpp:137
-#: ../src/torrentsetting.cpp:218
-msgid "Maximum Connections:"
-msgstr "最大連接數："
-
-#: ../src/connectionsetting.cpp:152
-msgid "Maximum Half Open Connections:"
-msgstr "最大半開連接："
-
-#: ../src/generalsetting.cpp:172
-msgid "Maximum Lines:"
-msgstr "最大連綫："
-
-#: ../src/generalsetting.cpp:74
-msgid "Maximum Running Job:"
-msgstr "最大同時活動任務："
-
-#: ../src/connectionsetting.cpp:144
-#: ../src/torrentsetting.cpp:225
-msgid "Maximum Upload Slots:"
-msgstr "最大上傳通道："
-
-#: ../src/bitswash.cpp:213
-msgid "Mayotte"
-msgstr "Mayotte"
-
-#: ../src/bitswash.cpp:214
-msgid "Mexico"
-msgstr "Mexico"
-
-#: ../src/bitswash.cpp:215
-msgid "Micronesia"
-msgstr "Micronesia"
-
-#: ../src/generalsetting.cpp:133
-msgid "Minimize to Systray"
-msgstr "最小化到系統托盤"
-
-#: ../src/bitswash.cpp:216
-msgid "Moldova"
-msgstr "Moldova"
-
-#: ../src/bitswash.cpp:217
-msgid "Monaco"
-msgstr "Monaco"
-
-#: ../src/bitswash.cpp:218
-msgid "Mongolia"
-msgstr "Mongolia"
-
-#: ../src/bitswash.cpp:219
-msgid "Montserrat"
-msgstr "Montserrat"
-
-#: ../src/bitswash.cpp:220
-msgid "Morocco"
-msgstr "Morocco"
-
-#: ../src/mainframe.cpp:465
-msgid "Move &Up\tAlt+UP"
-msgstr "上移(&U)\tAlt+UP"
-
-#: ../src/mainframe.cpp:469
-msgid "Move Do&wn\tAlt+DOWN"
-msgstr "下移(&w)\tAlt+DOWN"
-
-#: ../src/mainframe.cpp:610
-msgid "Move Down"
-msgstr "下移"
-
-#: ../src/mainframe.cpp:605
-msgid "Move Up"
-msgstr "上移"
-
-#: ../src/mainframe.cpp:469
-#: ../src/mainframe.cpp:613
-msgid "Move torrent down"
-msgstr "下移種子"
-
-#: ../src/mainframe.cpp:613
-msgid "Move torrent down in the queue position"
-msgstr "下移種子在隊列中的位置"
-
-#: ../src/mainframe.cpp:465
-#: ../src/mainframe.cpp:608
-msgid "Move torrent up"
-msgstr "上移種子"
-
-#: ../src/mainframe.cpp:608
-msgid "Move torrent up in the queue position"
-msgstr "上移種子在隊列中的位置"
-
-#: ../src/bitswash.cpp:221
-msgid "Mozambique"
-msgstr "Mozambique"
-
-#: ../src/bitswash.cpp:222
-msgid "Myanmar"
-msgstr "Myanmar"
-
-#: ../src/extensionsetting.cpp:127
-msgid "NAT Service"
-msgstr "NAT服務"
-
-#: ../src/torrentproperty.cpp:89
-msgid "Name:"
-msgstr "名字："
-
-#: ../src/bitswash.cpp:223
-msgid "Namibia"
-msgstr "Namibia"
-
-#: ../src/bitswash.cpp:224
-msgid "Nauru"
-msgstr "Nauru"
-
-#: ../src/bitswash.cpp:225
-msgid "Nepal"
-msgstr "Nepal"
-
-#: ../src/bitswash.cpp:227
-msgid "Netherlands"
-msgstr "Netherlands"
-
-#: ../src/bitswash.cpp:226
-msgid "Netherlands Antilles"
-msgstr "Netherlands Antilles"
-
-#: ../src/bitswash.cpp:228
-msgid "New Caledonia"
-msgstr "New Caledonia"
-
-#: ../src/bitswash.cpp:229
-msgid "New Zealand"
-msgstr "New Zealand"
-
-#: ../src/summarypane.cpp:414
-#, c-format
-msgid "Next Update: %s"
-msgstr "下次更新：%s"
-
-#: ../src/bitswash.cpp:230
-msgid "Nicaragua"
-msgstr "Nicaragua"
-
-#: ../src/bitswash.cpp:231
-msgid "Niger"
-msgstr "Niger"
-
-#: ../src/bitswash.cpp:232
-msgid "Nigeria"
-msgstr "Nigeria"
-
-#: ../src/bitswash.cpp:233
-msgid "Niue"
-msgstr "Niue"
-
-#: ../src/filelistctrl.cpp:141
-msgid "No"
-msgstr "否"
-
-#: ../src/loggerctrl.cpp:86
-#: ../src/generalsetting.cpp:163
-msgid "None"
-msgstr "無"
-
-#: ../src/bitswash.cpp:234
-msgid "Norfolk Island"
-msgstr "Norfolk Island"
-
-#: ../src/filelistctrl.cpp:145
-msgid "Normal"
-msgstr "普通"
-
-#: ../src/filelistctrl.cpp:199
-msgid "Normal Priority"
-msgstr "普通優先級"
-
-#: ../src/bitswash.cpp:235
-msgid "Northern Mariana Islands"
-msgstr "Northern Mariana Islands"
-
-#: ../src/bitswash.cpp:236
-msgid "Norway"
-msgstr "Norway"
-
-#: ../src/torrentlistctrl.cpp:63
-#: ../src/torrentlistctrl.cpp:80
-msgid "Number of copies in swarm"
-msgstr "健康度"
-
-#: ../src/torrentlistctrl.cpp:60
-#: ../src/torrentlistctrl.cpp:77
-msgid "Number or peers"
-msgstr "對等連接數"
-
-#: ../src/mainframe.cpp:1548
-msgid "Ok"
-msgstr "確認"
-
-#: ../src/bitswash.cpp:237
-msgid "Oman"
-msgstr "Oman"
-
-#: ../src/mainframe.cpp:617
-msgid "Open"
-msgstr "打開"
-
-#: ../src/mainframe.cpp:480
-msgid "Open &Directory"
-msgstr "打開目録(&D)"
-
-#: ../src/swashtrayicon.cpp:103
-#: ../src/mainframe.cpp:423
-msgid "Open &URL\tCtrl+U"
-msgstr "打開URL(&U)\tCtrl+U"
-
-#: ../src/swashtrayicon.cpp:102
-#: ../src/mainframe.cpp:420
-#: ../src/mainframe.cpp:559
-msgid "Open Torrent"
-msgstr "打開種子"
-
-#: ../src/mainframe.cpp:761
-msgid "Open Torrent(s)..."
-msgstr "打開種子"
-
-#: ../src/swashtrayicon.cpp:103
-#: ../src/mainframe.cpp:423
-#: ../src/mainframe.cpp:563
-msgid "Open URL"
-msgstr "打開 URL"
-
-#: ../src/mainframe.cpp:619
-msgid "Open destination directory"
-msgstr "打開目標文件夾"
-
-#: ../src/mainframe.cpp:619
-msgid "Open destination downloaded directory"
-msgstr "打開目標下載文件夾"
-
-#: ../src/mainframe.cpp:480
-msgid "Open downloaded directory"
-msgstr "打開下載目録"
-
-#: ../src/mainframe.cpp:561
-msgid "Open torrent file"
-msgstr "打開torrent文件"
-
-#: ../src/mainframe.cpp:565
-msgid "Open torrent from URL"
-msgstr "從URL打開torrent文件"
-
-#: ../src/mainframe.cpp:565
-msgid "Open torrent from url"
-msgstr "從url打開torrent文件"
-
-#: ../src/bitswash.cpp:238
-msgid "Pakistan"
-msgstr "Pakistan"
-
-#: ../src/bitswash.cpp:239
-msgid "Palau"
-msgstr "Palau"
-
-#: ../src/bitswash.cpp:240
-msgid "Palestinian Territory"
-msgstr "Palestinian Territory"
-
-#: ../src/bitswash.cpp:241
-msgid "Panama"
-msgstr "Panama"
-
-#: ../src/bitswash.cpp:242
-msgid "Papua New Guinea"
-msgstr "Papua New Guinea"
-
-#: ../src/bitswash.cpp:243
-msgid "Paraguay"
-msgstr "Paraguay"
-
-#: ../src/mainframe.cpp:585
-msgid "Pause"
-msgstr "暫停"
-
-#: ../src/mainframe.cpp:451
-msgid "Pause Download"
-msgstr "暫停下載"
-
-#: ../src/loggerctrl.cpp:105
-msgid "Pause Log"
-msgstr "暫停記録日志"
-
-#: ../src/mainframe.cpp:587
-msgid "Pause downlaoding"
-msgstr "暫停正在進行的下載"
-
-#: ../src/mainframe.cpp:587
-msgid "Pause download"
-msgstr "暫停下載"
-
-#: ../src/peerlistctrl.cpp:148
-msgid "Peer"
-msgstr "對等連接"
-
-#: ../src/peerlistctrl.cpp:62
-#: ../src/peerlistctrl.cpp:77
-msgid "Peer flags"
-msgstr "對等連接"
-
-#: ../src/peerlistctrl.cpp:60
-#: ../src/peerlistctrl.cpp:75
-msgid "Peer status"
-msgstr "對等狀態"
-
-#: ../src/peerlistctrl.cpp:59
-#: ../src/peerlistctrl.cpp:74
-msgid "Peer type"
-msgstr "對等連接"
-
-#: ../src/torrentlistctrl.cpp:60
-#: ../src/torrentlistctrl.cpp:77
-#: ../src/mainframe.cpp:1557
-#: ../src/torrentinfo.cpp:65
-msgid "Peers"
-msgstr "對等連接"
-
-#: ../src/summarypane.cpp:339
-#, c-format
-msgid "Peers: %s"
-msgstr "對等連接：%s"
-
-#: ../src/swashstatbar.cpp:61
-#, c-format
-msgid "Peers: %s DHT: %s"
-msgstr "對等連接：%s DHT：%s"
-
-#: ../src/bitswash.cpp:244
-msgid "Peru"
-msgstr "Peru"
-
-#: ../src/bitswash.cpp:245
-msgid "Philippines"
-msgstr "Philippines"
-
-#: ../src/summarypane.cpp:327
-#, c-format
-msgid "Pieces: %s"
-msgstr "分塊數：%s"
-
-#: ../src/bitswash.cpp:246
-msgid "Pitcairn Island"
-msgstr "Pitcairn Island"
-
-#: ../src/bitswash.cpp:247
-msgid "Poland"
-msgstr "Poland"
-
-#: ../src/connectionsetting.cpp:68
-msgid "Port Range (TCP):"
-msgstr "端口範圍(TCP)："
-
-#: ../src/connectionsetting.cpp:56
-msgid "Ports Setting"
-msgstr "端口設定"
-
-#: ../src/bitswash.cpp:248
-msgid "Portugal"
-msgstr "Portugal"
-
-#: ../src/swashtrayicon.cpp:105
-#: ../src/mainframe.cpp:489
-msgid "Prefere&nce\tCtrl+F"
-msgstr "首選項(&P)\tCtrl+F"
-
-#: ../src/swashsetting.h:57
-#: ../src/swashtrayicon.cpp:105
-#: ../src/mainframe.cpp:489
-#: ../src/mainframe.cpp:626
-msgid "Preference"
-msgstr "首選項"
-
-#: ../src/mainframe.cpp:628
-msgid "Program settings"
-msgstr "程序設定"
-
-#: ../src/filelistctrl.cpp:68
-#: ../src/filelistctrl.cpp:76
-#: ../src/torrentlistctrl.cpp:57
-#: ../src/torrentlistctrl.cpp:74
-#: ../src/peerlistctrl.cpp:67
-#: ../src/peerlistctrl.cpp:82
-msgid "Progress"
-msgstr "進度"
-
-#: ../src/mainframe.cpp:483
-msgid "Propert&ies"
-msgstr "屬性(&i)"
-
-#: ../src/extensionsetting.cpp:97
-msgid "Protocol Encryption"
-msgstr "協議加密"
-
-#: ../src/bitswash.cpp:249
-msgid "Puerto Rico"
-msgstr "Puerto Rico"
-
-#: ../src/bitswash.cpp:250
-msgid "Qatar"
-msgstr "Qatar"
-
-#: ../src/mainframe.cpp:581
-msgid "Queue"
-msgstr "排隊中"
-
-#: ../src/mainframe.cpp:445
-msgid "Queue Download"
-msgstr "排隊下載"
-
-#: ../src/torrentlistctrl.cpp:53
-#: ../src/torrentlistctrl.cpp:70
-msgid "Queue Index"
-msgstr "排隊中"
-
-#: ../src/mainframe.cpp:583
-msgid "Queue torrent"
-msgstr "排隊種子"
-
-#: ../src/peerlistctrl.cpp:161
-msgid "Queued"
-msgstr "排隊中"
-
-#: ../src/mainframe.cpp:475
-msgid "Re&announce Torrent"
-msgstr "重新發布種子(&a)"
-
-#: ../src/generalsetting.cpp:119
-msgid "Refresh Timer (s):"
-msgstr "刷新計時(ms)："
-
-#: ../src/peerlistctrl.cpp:167
-msgid "Remote"
-msgstr "遠程"
-
-#: ../src/mainframe.cpp:461
-msgid "Remove Torrent and &Data"
-msgstr "移除種子和下載文件(&D)"
-
-#: ../src/bitswash.cpp:251
-msgid "Reunion"
-msgstr "Reunion"
-
-#: ../src/bitswash.cpp:252
-msgid "Romania"
-msgstr "Romania"
-
-#: ../src/bitswash.cpp:253
-msgid "Russian Federation"
-msgstr "Russian Federation"
-
-#: ../src/bitswash.cpp:254
-msgid "Rwanda"
-msgstr "Rwanda"
-
-#: ../src/bitswash.cpp:260
-msgid "Samoa"
-msgstr "Samoa"
-
-#: ../src/bitswash.cpp:261
-msgid "San Marino"
-msgstr "San Marino"
-
-#: ../src/bitswash.cpp:262
-msgid "Sao Tome and Principe"
-msgstr "Sao Tome and Principe"
-
-#: ../src/bitswash.cpp:263
-msgid "Saudi Arabia"
-msgstr "Saudi Arabia"
-
-#: ../src/summarypane.cpp:315
-#, c-format
-msgid "Save As: %s"
-msgstr "另存為：%s"
-
-#: ../src/generalsetting.cpp:90
-msgid "Save Fastresume every (s):"
-msgstr "保存快速恢復每隔（秒）："
-
-#: ../src/torrentsetting.cpp:73
-msgid "Save:"
-msgstr "保存："
-
-#: ../src/peerlistctrl.cpp:148
-msgid "Seed"
-msgstr "做種"
-
-#: ../src/torrentsetting.cpp:232
-msgid "Seed Ratio"
-msgstr "分享率"
-
-#: ../src/mainframe.cpp:303
-msgid "Seeds"
-msgstr "做種"
-
-#: ../src/summarypane.cpp:345
-#, c-format
-msgid "Seeds: %s"
-msgstr "種子：%s"
-
-#: ../src/bitswash.cpp:264
-msgid "Senegal"
-msgstr "Senegal"
-
-#: ../src/bitswash.cpp:265
-msgid "Serbia and Montenegro"
-msgstr "Serbia and Montenegro"
-
-#: ../src/mainframe.cpp:628
-msgid "Set user preference"
-msgstr "設定用户參數"
-
-#: ../src/torrentproperty.cpp:133
-msgid "Settings"
-msgstr "程序設定"
-
-#: ../src/loggerctrl.cpp:83
-msgid "Severity"
-msgstr "嚴格"
-
-#: ../src/bitswash.cpp:266
-msgid "Seychelles"
-msgstr "Seychelles"
-
-#: ../src/torrentlistctrl.cpp:65
-#: ../src/torrentlistctrl.cpp:82
-msgid "Share Ratio"
-msgstr "分享率：%s"
-
-#: ../src/summarypane.cpp:387
-#, c-format
-msgid "Share Ratio: %s"
-msgstr "分享率：%s"
-
-#: ../src/swashlistctrl.cpp:367
-msgid "Show/Hide"
-msgstr "隱藏/顯示"
-
-#: ../src/bitswash.cpp:267
-msgid "Sierra Leone"
-msgstr "Sierra Leone"
-
-#: ../src/bitswash.cpp:268
-msgid "Singapore"
-msgstr "Singapore"
-
-#: ../src/filelistctrl.cpp:66
-#: ../src/filelistctrl.cpp:74
-#: ../src/torrentlistctrl.cpp:56
-#: ../src/torrentlistctrl.cpp:73
-msgid "Size"
-msgstr "大小"
-
-#: ../src/torrentproperty.cpp:111
-msgid "Size:"
-msgstr "大小："
-
-#: ../src/summarypane.cpp:321
-#, c-format
-msgid "Size: %s"
-msgstr "大小：%s"
-
-#: ../src/bitswash.cpp:269
-msgid "Slovakia Slovak Republic"
-msgstr "Slovakia Slovak Republic"
-
-#: ../src/bitswash.cpp:270
-msgid "Slovenia"
-msgstr "Slovenia"
-
-#: ../src/bitswash.cpp:271
-msgid "Solomon Islands"
-msgstr "Solomon Islands"
-
-#: ../src/bitswash.cpp:272
-msgid "Somalia"
-msgstr "Somalia"
-
-#: ../src/bitswash.cpp:273
-msgid "South Africa"
-msgstr "South Africa"
-
-#: ../src/bitswash.cpp:274
-msgid "South Georgia and the South Sandwich Islands"
-msgstr "South Georgia and the South Sandwich Islands"
-
-#: ../src/bitswash.cpp:275
-msgid "Spain"
-msgstr "Spain"
-
-#: ../src/bittorrentsession.cpp:460
-#: ../src/bittorrentsession.cpp:467
-#: ../src/torrentsetting.cpp:163
-#: ../src/torrentsetting.cpp:190
-#: ../src/torrentsetting.cpp:196
-msgid "Sparse"
-msgstr "稀疏"
-
-#: ../src/bitswash.cpp:276
-msgid "Sri Lanka"
-msgstr "Sri Lanka"
-
-#: ../src/mainframe.cpp:454
-msgid "St&op Torrent\tCtrl+T"
-msgstr "停止作種(&t)\tCtrl-T"
-
-#: ../src/bitswash.cpp:255
-msgid "St. Helena"
-msgstr "St. Helena"
-
-#: ../src/bitswash.cpp:256
-msgid "St. Kitts and Nevis"
-msgstr "St. Kitts and Nevis"
-
-#: ../src/bitswash.cpp:257
-msgid "St. Lucia"
-msgstr "St. Lucia"
-
-#: ../src/bitswash.cpp:258
-msgid "St. Pierre and Miquelon"
-msgstr "St. Pierre and Miquelon"
-
-#: ../src/bitswash.cpp:259
-msgid "St. Vincent and the Grenadines"
-msgstr "St. Vincent and the Grenadines"
-
-#: ../src/torrentsetting.cpp:105
-msgid "Start Torrent"
-msgstr "初始作種"
-
-#: ../src/torrentlistctrl.cpp:55
-#: ../src/torrentlistctrl.cpp:72
-#: ../src/torrentinfo.cpp:62
-#: ../src/peerlistctrl.cpp:60
-#: ../src/peerlistctrl.cpp:75
-msgid "Status"
-msgstr "狀態"
-
-#: ../src/summarypane.cpp:408
-#, c-format
-msgid "Status: %s"
-msgstr "狀態：%s"
-
-#: ../src/mainframe.cpp:454
-msgid "Stop Download"
-msgstr "停止下載"
-
-#: ../src/mainframe.cpp:591
-msgid "Stop downlaoding"
-msgstr "停止正在進行的下載"
-
-#: ../src/mainframe.cpp:591
-msgid "Stop download"
-msgstr "停止下載"
-
-#: ../src/torrentsetting.cpp:157
-msgid "Storage Allocation Mode:"
-msgstr "存儲分配模式："
-
-#: ../src/bitswash.cpp:277
-msgid "Sudan"
-msgstr "Sudan"
-
-#: ../src/bitswash.cpp:278
-msgid "Suriname"
-msgstr "Suriname"
-
-#: ../src/bitswash.cpp:279
-msgid "Svalbard & Jan Mayen Islands"
-msgstr "Svalbard & Jan Mayen Islands"
-
-#: ../src/bitswash.cpp:280
-msgid "Swaziland"
-msgstr "Swaziland"
-
-#: ../src/bitswash.cpp:281
-msgid "Sweden"
-msgstr "Sweden"
-
-#: ../src/bitswash.cpp:282
-msgid "Switzerland"
-msgstr "Switzerland"
-
-#: ../src/bitswash.cpp:283
-msgid "Syrian Arab Republic"
-msgstr "Syrian Arab Republic"
-
-#: ../src/mainframe.cpp:498
-msgid "System Language"
-msgstr "系統語言"
-
-#: ../src/bitswash.cpp:284
-msgid "Taiwan"
-msgstr "Taiwan"
-
-#: ../src/bitswash.cpp:285
-msgid "Tajikistan"
-msgstr "Tajikistan"
-
-#: ../src/bitswash.cpp:286
-msgid "Tanzania"
-msgstr "Tanzania"
-
-#: ../src/bitswash.cpp:287
-msgid "Thailand"
-msgstr "Thailand"
-
-#: ../src/torrentlistctrl.cpp:64
-#: ../src/torrentlistctrl.cpp:81
-msgid "Time Left"
-msgstr "剩餘時間"
-
-#: ../src/bitswash.cpp:288
-msgid "Timor-Leste"
-msgstr "Timor-Leste"
-
-#: ../src/bitswash.cpp:289
-msgid "Togo"
-msgstr "Togo"
-
-#: ../src/bitswash.cpp:290
-msgid "Tokelau Tokelau Islands"
-msgstr "Tokelau Tokelau Islands"
-
-#: ../src/bitswash.cpp:291
-msgid "Tonga"
-msgstr "Tonga"
-
-#: ../src/torrentlistctrl.cpp:54
-#: ../src/torrentlistctrl.cpp:71
-msgid "Torrent"
-msgstr "種子"
-
-#: ../src/torrentproperty.cpp:77
-msgid "Torrent Info"
-msgstr "移除種子"
-
-#: ../src/mainframe.cpp:483
-msgid "Torrent Properties"
-msgstr "種子屬性"
-
-#: ../src/torrentsetting.cpp:61
-msgid "Torrent Settings"
-msgstr "程序設定"
-
-#: ../src/trackerlistctrl.cpp:52
-#: ../src/trackerlistctrl.cpp:57
-msgid "Torrent Tracker URL"
-msgstr "Tracker服務器URL： %s"
-
-#: ../src/torrentlistctrl.cpp:54
-#: ../src/torrentlistctrl.cpp:71
-msgid "Torrent name"
-msgstr "移除種子"
-
-#: ../src/torrentlistctrl.cpp:56
-#: ../src/torrentlistctrl.cpp:73
-msgid "Torrent size"
-msgstr "種子大小"
-
-#: ../src/torrentlistctrl.cpp:55
-#: ../src/torrentlistctrl.cpp:72
-msgid "Torrent status"
-msgstr "移除種子"
-
-#: ../src/swashsetting.cpp:73
-msgid "Torrents"
-msgstr "種子"
-
-#: ../src/torrentlistctrl.cpp:61
-#: ../src/torrentlistctrl.cpp:78
-#: ../src/peerlistctrl.cpp:65
-#: ../src/peerlistctrl.cpp:80
-msgid "Total bytes downloaded"
-msgstr "開始下載"
-
-#: ../src/torrentlistctrl.cpp:62
-#: ../src/torrentlistctrl.cpp:79
-#: ../src/peerlistctrl.cpp:66
-#: ../src/peerlistctrl.cpp:81
-msgid "Total bytes uploaded"
-msgstr "總上傳字節"
-
-#: ../src/summarypane.cpp:169
-msgid "Tracker"
-msgstr "Tracker服務器"
-
-#: ../src/summarypane.cpp:402
-#, c-format
-msgid "Tracker URL: %s"
-msgstr "Tracker服務器URL： %s"
-
-#: ../src/torrentinfo.cpp:70
-msgid "Trackers"
-msgstr "Tracker服務器"
-
-#: ../src/bitswash.cpp:292
-msgid "Trinidad and Tobago"
-msgstr "Trinidad and Tobago"
-
-#: ../src/bitswash.cpp:293
-msgid "Tunisia"
-msgstr "Tunisia"
-
-#: ../src/bitswash.cpp:294
-msgid "Turkey"
-msgstr "Turkey"
-
-#: ../src/bitswash.cpp:295
-msgid "Turkmenistan"
-msgstr "Turkmenistan"
-
-#: ../src/bitswash.cpp:296
-msgid "Turks and Caicos Islands"
-msgstr "Turks and Caicos Islands"
-
-#: ../src/bitswash.cpp:297
-msgid "Tuvalu"
-msgstr "Tuvalu"
-
-#: ../src/peerlistctrl.cpp:59
-#: ../src/peerlistctrl.cpp:74
-msgid "Type"
-msgstr "類型"
-
-#: ../src/trackerlistctrl.cpp:52
-#: ../src/trackerlistctrl.cpp:57
-msgid "URL"
-msgstr "URL:"
+#: ../src/trackerlistctrl.cpp:254
+msgid "Confirm remove tracker "
+msgstr "確認移除tracker"
+
+#: ../src/trackerlistctrl.cpp:255
+msgid "Confirm remove tracker"
+msgstr "確認移除tracker"
 
 #: ../src/urldialog.cpp:46
 msgid "URL:"
 msgstr "URL:"
 
-#: ../src/bitswash.cpp:298
-msgid "US Virgin Islands"
-msgstr "US Virgin Islands"
+#~ msgid "connecting"
+#~ msgstr "連接中"
 
-#: ../src/bitswash.cpp:299
-msgid "Uganda"
-msgstr "Uganda"
+#~ msgid "pause"
+#~ msgstr "暫停"
 
-#: ../src/bitswash.cpp:300
-msgid "Ukraine"
-msgstr "Ukraine"
+#~ msgid "queue"
+#~ msgstr "排隊"
 
-#: ../src/bitswash.cpp:301
-msgid "United Arab Emirates"
-msgstr "United Arab Emirates"
-
-#: ../src/bitswash.cpp:302
-msgid "United Kingdom of Great Britain & N. Ireland"
-msgstr "United Kingdom of Great Britain & N. Ireland"
-
-#: ../src/bitswash.cpp:303
-msgid "United States Minor Outlying Islands"
-msgstr "United States Minor Outlying Islands"
-
-#: ../src/bitswash.cpp:304
-msgid "United States of America"
-msgstr "United States of America"
-
-#: ../src/bitswash.cpp:75
-msgid "Unknown"
-msgstr "未知"
-
-#: ../src/mainframe.cpp:1557
-msgid "Upload Rate"
-msgstr "上傳速率"
-
-#: ../src/connectionsetting.cpp:130
-#: ../src/torrentsetting.cpp:211
-msgid "Upload Rate Limit:"
-msgstr "上傳速率限制："
-
-#: ../src/summarypane.cpp:369
-#, c-format
-msgid "Upload Rate Limit: %s"
-msgstr "上傳速率限制：%s"
-
-#: ../src/torrentlistctrl.cpp:59
-#: ../src/torrentlistctrl.cpp:76
-#: ../src/peerlistctrl.cpp:64
-#: ../src/peerlistctrl.cpp:79
-msgid "Upload Speed"
-msgstr "上傳速度"
-
-#: ../src/summarypane.cpp:357
-#, c-format
-msgid "Upload Speed: %s"
-msgstr "上傳速度：%s"
-
-#: ../src/torrentlistctrl.cpp:65
-#: ../src/torrentlistctrl.cpp:82
-msgid "Upload/Download ratio"
-msgstr "上下載速率"
-
-#: ../src/torrentlistctrl.cpp:62
-#: ../src/torrentlistctrl.cpp:79
-#: ../src/peerlistctrl.cpp:66
-#: ../src/peerlistctrl.cpp:81
-msgid "Uploaded"
-msgstr "已上傳"
-
-#: ../src/summarypane.cpp:381
-#, c-format
-msgid "Uploaded: %s"
-msgstr "已上傳：%s"
-
-#: ../src/bitswash.cpp:305
-msgid "Uruguay"
-msgstr "Uruguay"
-
-#: ../src/bitswash.cpp:306
-msgid "Uzbekistan"
-msgstr "Uzbekistan"
-
-#: ../src/bitswash.cpp:307
-msgid "Vanuatu"
-msgstr "Vanuatu"
-
-#: ../src/bitswash.cpp:308
-msgid "Venezuela"
-msgstr "Venezuela"
-
-#: ../src/bitswash.cpp:309
-msgid "Viet Nam"
-msgstr "Viet Nam"
-
-#: ../src/mainframe.cpp:438
-msgid "View &Status"
-msgstr "顯示狀態欄(&S)"
-
-#: ../src/mainframe.cpp:436
-msgid "View &Toolbar"
-msgstr "顯示工具欄(&T)"
-
-#: ../src/mainframe.cpp:438
-msgid "View Status"
-msgstr "顯示狀態欄"
-
-#: ../src/mainframe.cpp:436
-msgid "View Toolbar"
-msgstr "顯示工具欄"
-
-#: ../src/mainframe.cpp:633
-msgid "Visit Bitswash homepage"
-msgstr "訪問Bitswash主頁"
-
-#: ../src/bitswash.cpp:310
-msgid "Wallis and Futuna Islands"
-msgstr "Wallis and Futuna Islands"
-
-#: ../src/loggerctrl.cpp:86
-#: ../src/generalsetting.cpp:163
-msgid "Warning"
-msgstr "警告"
-
-#: ../src/bitswash.cpp:311
-msgid "Western Sahara"
-msgstr "Western Sahara"
-
-#: ../src/bitswash.cpp:312
-msgid "Yemen"
-msgstr "Yemen"
-
-#: ../src/bitswash.cpp:313
-msgid "Zambia"
-msgstr "Zambia"
-
-#: ../src/bitswash.cpp:314
-msgid "Zimbabwe"
-msgstr "Zimbabwe"
-
-#: ../src/torrentlistctrl.cpp:144
-msgid "allocating"
-msgstr "分配中"
-
-#: ../src/torrentlistctrl.cpp:138
-msgid "checking"
-msgstr "檢查中"
-
-#: ../src/torrentlistctrl.cpp:139
-msgid "connecting"
-msgstr "連接中"
-
-#: ../src/torrentlistctrl.cpp:141
-msgid "downloading"
-msgstr "下載中"
-
-#: ../src/torrentlistctrl.cpp:140
-msgid "downloading meta data"
-msgstr "正在下載meta數據"
-
-#: ../src/torrentlistctrl.cpp:142
-msgid "finished"
-msgstr "已完成"
-
-#: ../src/torrentlistctrl.cpp:255
-msgid "inf"
-msgstr "無窮"
-
-#: ../src/generalsetting.cpp:175
-msgid "line"
-msgstr "連綫"
-
-#: ../src/torrentlistctrl.cpp:172
-msgid "pause"
-msgstr "暫停"
-
-#: ../src/torrentlistctrl.cpp:160
-msgid "queue"
-msgstr "排隊"
-
-#: ../src/torrentlistctrl.cpp:137
-msgid "queued"
-msgstr "排隊中"
-
-#: ../src/torrentlistctrl.cpp:143
-msgid "seeding"
-msgstr "做種中"
-
-#: ../src/torrentlistctrl.cpp:165
-#: ../src/mainframe.cpp:589
-msgid "stop"
-msgstr "停止"
-
-#: ../src/connectionsetting.cpp:75
-msgid "to"
-msgstr "到"
-
-#: ../src/mainframe.cpp:1226
-msgid "torrent"
-msgstr "種子"
-
-#: ../src/mainframe.cpp:1224
-msgid "torrents"
-msgstr "種子"
+#~ msgid "queued"
+#~ msgstr "排隊中"
 
 #, fuzzy
 #~ msgid "Category"
 #~ msgstr "分類"
+
 #~ msgid "Compact allocation"
 #~ msgstr "使用緊凑的存儲分配"
+
 #~ msgid "2"
 #~ msgstr "2"
+
 #~ msgid "3"
 #~ msgstr "3"
+
 #~ msgid "5"
 #~ msgstr "5"
+
 #~ msgid "6"
 #~ msgstr "6"
+
 #~ msgid "Confirm remove torrent?"
 #~ msgstr "確認移除種子？"
+
 #~ msgid "Down"
 #~ msgstr "下移"
-#~ msgid "Ratio"
-#~ msgstr "分享率"
+
 #~ msgid "Start"
 #~ msgstr "開始"
+
 #~ msgid "Start Download"
 #~ msgstr "開始下載"
+
 #~ msgid "Start downloading files"
 #~ msgstr "開始下載的文件"
-#~ msgid "Stop"
-#~ msgstr "停止"
+
 #~ msgid "Up"
 #~ msgstr "上移"
 
 #, fuzzy
 #~ msgid "About "
 #~ msgstr "關于"
+
 #~ msgid "Developed by "
 #~ msgstr "開發"
+
 #~ msgid "Documentation by "
 #~ msgstr "文檔撰寫"
+
 #~ msgid "Graphics art by "
 #~ msgstr "圖形制作"
+
 #~ msgid "Translations by "
 #~ msgstr "翻譯"
+
 #~ msgid "All Torrents"
 #~ msgstr "全部種子"
+
 #~ msgid "&Preferences\t(Ctrl+P)"
 #~ msgstr "參數選擇(&P)\t(Ctrl+P)"
+
 #~ msgid "Main ToolBar"
 #~ msgstr "顯示工具欄"
+
 #~ msgid "Miscellanous"
 #~ msgstr "雜項"
+
 #~ msgid "Torrent Information"
 #~ msgstr "移除種子"
+
 #~ msgid "Torrent ToolBar"
 #~ msgstr "顯示工具欄"
-

@@ -36,7 +36,7 @@
 #include <wx/cmdline.h>
 #include <wx/mstream.h>
 
-#include "incons.h"
+#include "icons.h"
 #include "bitswash.h"
 #include "mainframe.h"
 #include "functions.h"

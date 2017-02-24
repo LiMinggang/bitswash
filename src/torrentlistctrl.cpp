@@ -145,7 +145,7 @@ wxString TorrentListCtrl::GetItemValue( long item, long columnid ) const
 		break;
 
 	case TORRENTLIST_COLUMN_TORRENT:
-		ret = wxString( wxConvUTF8.cMB2WC( torrentinfo.name().c_str() ) );
+		ret = wxString((torrentinfo.name().empty())?torrent->name:wxConvUTF8.cMB2WC( torrentinfo.name().c_str() ) );
 		break;
 
 	case TORRENTLIST_COLUMN_STATUS:
