@@ -7,6 +7,7 @@ Fix: No mutex for multithreading
 Fix: Class members were not initialized
 Fix: Memory leak in ShowPreferences
 Fix: Use shared_ptr to replace torrent_t* to fix a lot of memory leak
+Fix: Lots of bugs
 New: 64bits build
 New: Run at Windows startup
 New: Crash handler

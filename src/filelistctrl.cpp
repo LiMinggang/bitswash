@@ -74,7 +74,7 @@ enum torrentlistcolumnid
 #ifndef __WXMSW__
 static SwashColumnItem filelistcols[] =
 {
-	{ id: FILELIST_COLUMN_SELECTED, name: _T( "" ), title: _T( "" ), tooltip: _T( "" ), width: 24, show: true },
+	{ id: FILELIST_COLUMN_SELECTED, name: _T( "Indicator" ), title: _T( "" ), tooltip: _T( "" ), width: 24, show: true },
  	{ id: FILELIST_COLUMN_FILE, name: _( "File" ), title: _( "File" ), tooltip: _( "Files in torrent" ), width: 315, show: true},
  	{ id: FILELIST_COLUMN_SIZE, name: _( "Size" ), title: _( "Size" ), tooltip: _( "File size" ), width: 88, show: true},
  	{ id: FILELIST_COLUMN_FILE, name: _( "Download" ), title: _( "Download" ), tooltip: _( "File priority" ), width: 88, show: true},
@@ -83,7 +83,7 @@ static SwashColumnItem filelistcols[] =
 #else
 static SwashColumnItem filelistcols[] =
 {
-	{ FILELIST_COLUMN_SELECTED, _T( "" ), _T( "" ), _T( "" ), 24, true },
+	{ FILELIST_COLUMN_SELECTED, _T( "Indicator" ), _T( "" ), _T( "" ), 24, true },
  	{ FILELIST_COLUMN_FILE,  _( "File" ), _( "File" ), _( "Files in torrent" ), 315, true},
  	{ FILELIST_COLUMN_SIZE, _( "Size" ), _( "Size" ), _( "File size" ), 88, true},
  	{ FILELIST_COLUMN_FILE, _( "Download" ),  _( "Download" ), _( "File priority" ), 88, true},
