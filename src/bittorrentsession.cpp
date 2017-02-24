@@ -62,7 +62,6 @@ struct BTQueueSortAsc
 	bool operator()( const shared_ptr<torrent_t>& torrent_start, const shared_ptr<torrent_t>& torrent_end ) {
 		return torrent_start->config->GetQIndex() < torrent_end->config->GetQIndex();
 	}
-
 };
 
 struct BTQueueSortDsc
@@ -70,7 +69,6 @@ struct BTQueueSortDsc
 	bool operator()( const shared_ptr<torrent_t>& torrent_start, const shared_ptr<torrent_t>& torrent_end ) {
 		return torrent_start->config->GetQIndex() > torrent_end->config->GetQIndex();
 	}
-
 };
 
 using namespace libtorrent;
@@ -696,6 +694,8 @@ void BitTorrentSession::ScanTorrentsDirectory( const wxString& dirname )
 	wxASSERT( m_libbtsession != NULL );
 	wxDir torrents_dir( dirname );
 	wxString filename;
+	wxString fullpath;
+	shared_ptr<torrent_t> torrent;
 
 	if( !torrents_dir.IsOpened() )
 	{
@@ -707,14 +707,36 @@ void BitTorrentSession::ScanTorrentsDirectory( const wxString& dirname )
 
 	while( cont )
 	{
-		wxString fullpath = dirname + wxGetApp().PathSeparator() + filename;
+		fullpath = dirname + wxGetApp().PathSeparator() + filename;
 		wxLogDebug( _T( "Saved Torrent: %s\n" ), fullpath.c_str() );
-		shared_ptr<torrent_t> torrent( ParseTorrent( fullpath ) );
+		torrent =  ParseTorrent( fullpath );
 
 		if( torrent->isvalid )
 		{ AddTorrent( torrent ); }
 
 		cont = torrents_dir.GetNext( &filename );
+	}
+
+	filename = wxGetApp().SaveTorrentsPath() + wxGetApp().PathSeparator() + APPBINNAME + _T( ".magneturi" );
+	wxTextFile magneturifile( filename );
+	if( magneturifile.Exists() )
+	{
+		magneturifile.Open( wxConvFile );
+
+		if( magneturifile.IsOpened() )
+		{
+			wxString url;
+			for ( url = magneturifile.GetFirstLine(); !magneturifile.Eof(); url = magneturifile.GetNextLine() )
+			{
+				if(!url.IsEmpty())
+				{
+					MagnetUri magnetUri( url );
+
+					if( magnetUri.isValid() )
+						torrent = LoadMagnetUri( magnetUri );
+				}
+			}
+		}
 	}
 
 	{
@@ -773,6 +795,7 @@ void BitTorrentSession::SaveAllTorrent()
 	/* take this opportunity to sync torrent index back to zero */
 	int idx = 0;
 	int num_outstanding_resume_data = 0;
+	wxArrayString magneturi;
 
 	for( torrents_t::iterator i = m_torrent_queue.begin();
 			i != m_torrent_queue.end();
@@ -787,6 +810,12 @@ void BitTorrentSession::SaveAllTorrent()
 				( !( ( torrent->handle.status() ).need_save_resume ) ) || \
 				torrent->config->GetTorrentState() == TORRENT_STATE_STOP )
 		{
+			if((!torrent->magneturi.IsEmpty()) && torrent->handle.is_valid()
+				&& !torrent->handle.has_metadata())
+			{
+				magneturi.Add(torrent->magneturi);
+			}
+
 			continue;
 		}
 
@@ -806,8 +835,8 @@ void BitTorrentSession::SaveAllTorrent()
 		m_libbtsession->pop_alerts( &alerts );
 		std::string now = timestamp();
 
-		for( std::deque<alert*>::iterator i = alerts.begin()
-											  , end( alerts.end() ); i != end; ++i )
+		for( std::deque<alert*>::iterator i = alerts.begin(),
+			end( alerts.end() ); i != end; ++i )
 		{
 			// make sure to delete each alert
 			std::auto_ptr<alert> a( *i );
@@ -848,6 +877,32 @@ void BitTorrentSession::SaveAllTorrent()
 			std::ofstream out( ( const char* )resumefile.mb_str( wxConvFile ), std::ios_base::binary );
 			out.unsetf( std::ios_base::skipws );
 			bencode( std::ostream_iterator<char>( out ), *rd->resume_data );
+		}
+	}
+
+	// save dead magnet uri
+	size_t counts = magneturi.GetCount();
+	if(counts > 0)
+	{
+		wxString filename = wxGetApp().SaveTorrentsPath() + wxGetApp().PathSeparator() + APPBINNAME + _T( ".magneturi" );
+		wxTextFile magneturifile( filename );
+		if( !magneturifile.Exists() )
+		{
+			magneturifile.Create();
+			magneturifile.Open();
+		}
+		else
+		{
+			magneturifile.Open( wxConvFile );
+		}
+
+		if( magneturifile.IsOpened() )
+		{
+			magneturifile.Clear();
+			for( size_t i = 0; i < counts; ++i )
+			{
+				magneturifile.AddLine( magneturi[i] );
+			}
 		}
 	}
 }
@@ -943,6 +998,11 @@ shared_ptr<torrent_t> BitTorrentSession::LoadMagnetUri( MagnetUri& magneturi )
 		torrent->config->SetTorrentState( TORRENT_STATE_START );
 		torrent->handle.resolve_countries( true );
 		torrent->isvalid = AddTorrent( torrent );
+		if(torrent->isvalid && !torrent->handle.has_metadata())
+		{
+			torrent->magneturi = magneturi.url();
+			m_torrent_handle_map.insert(std::pair<libtorrent::torrent_handle, shared_ptr<torrent_t> >(torrent->handle, torrent));
+		}
 	}
 	catch( std::exception &e )
 	{
@@ -1524,15 +1584,15 @@ void BitTorrentSession::GetTorrentLog()
 		}
 		else if( peer_ban_alert* p = dynamic_cast<peer_ban_alert*>( a.get() ) )
 		{
-			event_string << _T( "peer: (" ) << p->ip.address().to_string() << _T( ")" ) << a->message();
+			event_string << _T( "Peer: (" ) << p->ip.address().to_string() << _T( ")" ) << a->message();
 		}
 		else if( peer_error_alert* p = dynamic_cast<peer_error_alert*>( a.get() ) )
 		{
-			event_string << _T( "peer: " ) << identify_client( p->pid ) << _T( ": " ) << a->message();
+			event_string << _T( "Peer: " ) << identify_client( p->pid ) << _T( ": " ) << a->message();
 		}
 		else if( peer_blocked_alert* p = dynamic_cast<peer_blocked_alert*>( a.get() ) )
 		{
-			event_string << _T( "peer: (" ) << p->ip.to_string() << _T( ")" ) << a->message();
+			event_string << _T( "Peer: (" ) << p->ip.to_string() << _T( ")" ) << a->message();
 		}
 		else if( invalid_request_alert* p = dynamic_cast<invalid_request_alert*>( a.get() ) )
 		{
@@ -1540,15 +1600,15 @@ void BitTorrentSession::GetTorrentLog()
 		}
 		else if( tracker_warning_alert* p = dynamic_cast<tracker_warning_alert*>( a.get() ) )
 		{
-			event_string << _T( "tracker: " ) << p->message();
+			event_string << _T( "Tracker: " ) << p->message();
 		}
 		else if( tracker_reply_alert* p = dynamic_cast<tracker_reply_alert*>( a.get() ) )
 		{
-			event_string << _T( "tracker:" ) << p->message() << _T( " (" ) << p->num_peers << _T( ")" );
+			event_string << _T( "Tracker:" ) << p->message() << _T( " (" ) << p->num_peers << _T( ")" );
 		}
 		else if( url_seed_alert* p = dynamic_cast<url_seed_alert*>( a.get() ) )
 		{
-			event_string << _T( "web seed '" ) << p->url << _T( "': " ) << p->message();
+			event_string << _T( "Web seed '" ) << p->url << _T( "': " ) << p->message();
 		}
 		else if( peer_blocked_alert* p = dynamic_cast<peer_blocked_alert*>( a.get() ) )
 		{
@@ -1556,23 +1616,23 @@ void BitTorrentSession::GetTorrentLog()
 		}
 		else if( listen_failed_alert* p = dynamic_cast<listen_failed_alert*>( a.get() ) )
 		{
-			event_string << _T( "listen failed: " ) << p->message();
+			event_string << _T( "Listen failed: " ) << p->message();
 		}
 		else if( portmap_error_alert* p = dynamic_cast<portmap_error_alert*>( a.get() ) )
 		{
-			event_string << _T( "portmap error: " ) << p->message();
+			event_string << _T( "Portmap error: " ) << p->message();
 		}
 		else if( portmap_alert* p = dynamic_cast<portmap_alert*>( a.get() ) )
 		{
-			event_string << _T( "portmap: " ) << p->message();
+			event_string << _T( "Portmap: " ) << p->message();
 		}
 		else if( tracker_announce_alert* p = dynamic_cast<tracker_announce_alert*>( a.get() ) )
 		{
-			event_string << _T( "tracker: " ) << p->message();
+			event_string << _T( "Tracker: " ) << p->message();
 		}
 		else if( file_error_alert* p = dynamic_cast<file_error_alert*>( a.get() ) )
 		{
-			event_string << _T( "file error: " ) << p->message();
+			event_string << _T( "File error: " ) << p->message();
 		}
 		else if( tracker_reply_alert* p = dynamic_cast<tracker_reply_alert*>( a.get() ) )
 		{
@@ -1584,27 +1644,35 @@ void BitTorrentSession::GetTorrentLog()
 		}
 		else if( url_seed_alert* p = dynamic_cast<url_seed_alert*>( a.get() ) )
 		{
-			event_string << _T( "url-seed: " ) << p->message();
+			event_string << _T( "Url-seed: " ) << p->message();
 		}
 		else if( hash_failed_alert* p = dynamic_cast<hash_failed_alert*>( a.get() ) )
 		{
-			event_string << _T( "hash: " ) << p->message();
+			event_string << _T( "Hash: " ) << p->message();
 		}
 		else if( metadata_failed_alert* p = dynamic_cast<metadata_failed_alert*>( a.get() ) )
 		{
-			event_string << _T( "metadata: " ) << p->message();
+			event_string << _T( "Metadata: " ) << p->message();
 		}
 		else if( metadata_received_alert* p = dynamic_cast<metadata_received_alert*>( a.get() ) )
 		{
-			event_string << _T( "metadata: " ) << p->message();
+			event_string << _T( "Metadata: " ) << p->message();
+
+			torrent_handle_map::iterator it = m_torrent_handle_map.find(p->handle);
+			if(it != m_torrent_handle_map.end())
+			{
+				wxString torrent_backup = wxGetApp().SaveTorrentsPath() + wxGetApp().PathSeparator() + it->second->hash + _T( ".torrent" );
+				SaveTorrent(it->second, torrent_backup );
+				m_torrent_handle_map.erase(it);
+			}
 		}
 		else if( fastresume_rejected_alert* p = dynamic_cast<fastresume_rejected_alert*>( a.get() ) )
 		{
-			event_string << _T( "fastresume: " ) << p->message();
+			event_string << _T( "Fastresume: " ) << p->message();
 		}
 		else if( fastresume_rejected_alert* p = dynamic_cast<fastresume_rejected_alert*>( a.get() ) )
 		{
-			event_string << _T( "fastresume: " ) << p->message();
+			event_string << _T( "Fastresume: " ) << p->message();
 		}
 		else if( save_resume_data_alert *p = dynamic_cast<save_resume_data_alert*>( a.get() ) )
 		{
@@ -1633,6 +1701,7 @@ void BitTorrentSession::GetTorrentLog()
 		//
 		event_string << _T( '\n' ) << _T( '\0' );
 
+		event_string.Replace(_T("%"), _T("%%"));
 		if( a->severity() == alert::fatal )
 		{
 			wxLogError( event_string );

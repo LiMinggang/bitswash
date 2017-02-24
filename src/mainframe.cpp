@@ -771,9 +771,6 @@ void MainFrame::OpenTorrentUrl()
 							wxString torrent_backup = wxGetApp().SaveTorrentsPath() + wxGetApp().PathSeparator() + torrent->hash + _T( ".torrent" );
 							m_btsession->SaveTorrent( torrent, torrent_backup );
 						}
-
-						TorrentListIsValid( false );
-						UpdateUI();
 					}
 					else
 					{

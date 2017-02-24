@@ -51,6 +51,7 @@ typedef struct torrent_handle_t {
 
 	wxString name;
 	wxString hash;
+    wxString magneturi;
 	libtorrent::torrent_handle handle;
 	boost::intrusive_ptr<libtorrent::torrent_info> info;
 	shared_ptr<TorrentConfig> config;
@@ -60,6 +61,7 @@ typedef struct torrent_handle_t {
 /* watch out the s after torrent */
 typedef std::vector<shared_ptr<torrent_t> > torrents_t;
 typedef std::map<wxString, int> torrents_map;
+typedef std::map<libtorrent::torrent_handle, shared_ptr<torrent_t> > torrent_handle_map;
 
 class BitTorrentSession : public wxThread
 {
@@ -127,6 +129,7 @@ private:
 	wxMutex m_torrent_queue_lock;
 	torrents_t m_torrent_queue;
 	torrents_map m_torrent_map;
+    torrent_handle_map m_torrent_handle_map;
 
 	wxApp* m_pParent;
 	Configuration* m_config;
