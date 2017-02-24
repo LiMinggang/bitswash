@@ -1,21 +1,2 @@
-0.0.7
-Fix: Crash on startup if no icons
-Fix: Crash on timer
-Fix: Lots of GUI issue in configuration dialog
-Fix: Adjust flag image to 16*11
-Fix: No mutex for multithreading
-Fix: Class members were not initialized
-Fix: Memory leak in ShowPreferences
-Fix: Use shared_ptr to replace torrent_t* to fix a lot of memory leak
-Fix: Show/Hide bug of SwashListCtrl
-Fix: Lots of bugs fixed
-New: 64bits build
-New: Run at Windows startup
-New: Crash handler
-New: Single instance(IPC support)
-New: Open torrent at command line
-New: Merge trackers/seeds if add the same torrent again
-New: Packing all icons to the binary(no icon directory needed anymore)
-Upgrade libtorrent to 1.0.11
-Upgrade boost to 1.62
-Upgrade openssl to 1.1.0d
+Bitswash is a cross platform bittorrent client built on wxWidgets and libtorrent. It supports multiple torrents downloading, automatic queue management, and protocol encryption, peer exchange, upnp, natpmp, lsd ip and file filter etc.
+
