@@ -1,0 +1,141 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<wxsmith>
+	<object class="wxDialog" name="TorrentProperty">
+		<title>Torrent Setting</title>
+		<centered>1</centered>
+		<size>218,262</size>
+		<id_arg>0</id_arg>
+		<handler function="OnFocus" entry="EVT_SET_FOCUS" />
+		<object class="wxFlexGridSizer" variable="m_torrentsettings_sizer" member="no">
+			<cols>1</cols>
+			<vgap>3</vgap>
+			<hgap>3</hgap>
+			<object class="sizeritem">
+				<object class="wxPanel" name="ID_PANEL1" variable="m_pane_info" member="yes">
+					<bg>wxSYS_COLOUR_ACTIVECAPTION</bg>
+					<object class="wxBoxSizer" variable="m_pane_boxsizer" member="no">
+						<orient>wxVERTICAL</orient>
+						<object class="sizeritem">
+							<object class="wxStaticText" name="ID_STATICTEXT1" variable="m_pane_label_info" member="yes">
+								<label>Torrent Info</label>
+							</object>
+							<flag>wxALL|wxEXPAND</flag>
+							<border>5</border>
+							<option>1</option>
+						</object>
+					</object>
+				</object>
+				<flag>wxALL|wxEXPAND</flag>
+				<border>5</border>
+				<option>1</option>
+			</object>
+			<object class="sizeritem">
+				<object class="wxFlexGridSizer" variable="fgSizer11" member="no">
+					<cols>2</cols>
+					<vgap>2</vgap>
+					<hgap>2</hgap>
+					<object class="sizeritem">
+						<object class="wxStaticText" name="ID_STATICTEXT2" variable="m_label_name" member="yes">
+							<label>Name:</label>
+						</object>
+						<flag>wxALL|wxALIGN_LEFT|wxALIGN_CENTER_VERTICAL</flag>
+						<border>5</border>
+					</object>
+					<object class="sizeritem">
+						<object class="wxStaticText" name="ID_STATICTEXT3" variable="m_label_torrentname" member="yes">
+							<label>Label</label>
+						</object>
+						<flag>wxALL|wxEXPAND</flag>
+						<border>5</border>
+					</object>
+					<object class="sizeritem">
+						<object class="wxStaticText" name="ID_STATICTEXT4" variable="m_label_comment" member="yes">
+							<label>Comment:</label>
+						</object>
+						<flag>wxALL|wxALIGN_LEFT|wxALIGN_CENTER_VERTICAL</flag>
+						<border>5</border>
+						<option>1</option>
+					</object>
+					<object class="sizeritem">
+						<object class="wxTextCtrl" name="ID_TEXTCTRL1" variable="m_text_torrentcomment" member="yes">
+							<value>Text</value>
+							<style>wxTE_MULTILINE|wxTE_READONLY|wxTE_AUTO_URL</style>
+						</object>
+						<flag>wxALL|wxEXPAND</flag>
+						<border>5</border>
+						<option>1</option>
+					</object>
+					<object class="sizeritem">
+						<object class="wxStaticText" name="ID_STATICTEXT5" variable="m_label_size" member="yes">
+							<label>Size:</label>
+						</object>
+						<flag>wxALL|wxALIGN_LEFT|wxALIGN_CENTER_VERTICAL</flag>
+						<border>5</border>
+						<option>1</option>
+					</object>
+					<object class="sizeritem">
+						<object class="wxStaticText" name="ID_STATICTEXT6" variable="m_label_torrentsize" member="yes">
+							<label>Label</label>
+						</object>
+						<flag>wxALL|wxEXPAND</flag>
+						<border>5</border>
+						<option>1</option>
+					</object>
+				</object>
+				<flag>wxALL|wxEXPAND</flag>
+				<border>5</border>
+			</object>
+			<object class="sizeritem">
+				<object class="wxNotebook" name="ID_NOTEBOOK1" variable="m_notebook_property" member="yes">
+					<object class="notebookpage">
+						<object class="wxPanel" name="ID_PANEL2" variable="Panel1" member="yes" />
+						<label>Files</label>
+					</object>
+					<object class="notebookpage">
+						<object class="wxPanel" name="ID_PANEL3" variable="Panel2" member="yes" />
+						<label>Settings</label>
+					</object>
+				</object>
+				<flag>wxALL|wxEXPAND</flag>
+				<border>5</border>
+				<option>1</option>
+			</object>
+			<object class="sizeritem">
+				<object class="wxBoxSizer" variable="BoxSizer1" member="no">
+					<object class="sizeritem">
+						<object class="wxButton" name="ID_BUTTONSELECTNONE" variable="ButtonSelectNone" member="no">
+							<label>Select None</label>
+						</object>
+						<flag>wxALL|wxALIGN_CENTER_HORIZONTAL|wxALIGN_CENTER_VERTICAL</flag>
+						<border>5</border>
+					</object>
+					<object class="sizeritem">
+						<object class="wxButton" name="ID_BUTTONSELECTALL" variable="ButtonSelectAll" member="no">
+							<label>Select All</label>
+						</object>
+						<flag>wxALL|wxALIGN_CENTER_HORIZONTAL|wxALIGN_CENTER_VERTICAL</flag>
+						<border>5</border>
+					</object>
+					<object class="sizeritem">
+						<object class="wxButton" name="wxID_OK" variable="ButtonOK" member="no">
+							<label>OK</label>
+							<default>1</default>
+						</object>
+						<flag>wxALL|wxALIGN_CENTER_HORIZONTAL|wxALIGN_CENTER_VERTICAL</flag>
+						<border>5</border>
+					</object>
+					<object class="sizeritem">
+						<object class="wxButton" name="wxID_CANCEL" variable="ButtonCancel" member="no">
+							<label>Cancel</label>
+						</object>
+						<flag>wxALL|wxALIGN_CENTER_HORIZONTAL|wxALIGN_CENTER_VERTICAL</flag>
+						<border>5</border>
+					</object>
+				</object>
+				<flag>wxALL|wxALIGN_CENTER_HORIZONTAL|wxALIGN_CENTER_VERTICAL</flag>
+				<border>5</border>
+				<option>1</option>
+			</object>
+		</object>
+	</object>
+</wxsmith>
