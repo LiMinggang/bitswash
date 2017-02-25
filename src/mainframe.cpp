@@ -1623,7 +1623,7 @@ void MainFrame::ShowSystray( bool show )
 		m_swashtrayicon = new SwashTrayIcon( this );
 
 		if( !m_swashtrayicon->SetIcon( m_trayicon, wxT( "Bitswash" ) ) )
-		{ wxMessageBox( wxT( "Could not set icon." ) ); }
+		{ wxMessageBox( _( "Could not set icon." ) ); }
 
 		SetIcon( m_frameicon );
 	}
