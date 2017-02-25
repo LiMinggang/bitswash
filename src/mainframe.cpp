@@ -823,77 +823,80 @@ void MainFrame::UpdateUI()
 {
 	wxASSERT( m_btsession );
 
-	if( !TorrentListIsValid() )
+	if(this->IsShown())
 	{
-		//int t = 0;
-		//torrents_t *torrentqueue = m_btsession->GetTorrentQueue();
-		///torrents_t::const_iterator torrent_it = torrentqueue->begin();
-		/* XXX more filtering/sorting */
-		m_btsession->GetTorrentQueue( m_torrentlistitems );
-		TorrentListIsValid( true );
-		wxLogDebug( _T( "Refreshing torrent list size %s\n" ), ( wxLongLong( m_torrentlistitems.size() ).ToString() ).c_str() );
-		m_torrentlistctrl->SetItemCount( m_torrentlistitems.size() );
-	}
-
-	if( m_torrentlistitems.size() > 0 )
-	{
-		const SwashListCtrl::itemlist_t selecteditems = m_torrentlistctrl->GetSelectedItems();
-
-		/* selected more than 1 item in the torrent list */
-		if( selecteditems.size() > 0 )
+		if( !TorrentListIsValid() )
 		{
-			libtorrent::torrent_handle &torrent_handle = m_torrentlistitems[selecteditems[0]]->handle;
-			libtorrent::torrent_info const& torrent_info = *m_torrentlistitems[selecteditems[0]]->info;
-			wxLogDebug( _T( "MainFrame: list size %s selected items %s\n" ), ( wxLongLong( m_torrentlistitems.size() ).ToString() ).c_str(), ( wxLongLong( selecteditems.size() ).ToString() ).c_str() );
+			//int t = 0;
+			//torrents_t *torrentqueue = m_btsession->GetTorrentQueue();
+			///torrents_t::const_iterator torrent_it = torrentqueue->begin();
+			/* XXX more filtering/sorting */
+			m_btsession->GetTorrentQueue( m_torrentlistitems );
+			TorrentListIsValid( true );
+			wxLogDebug( _T( "Refreshing torrent list size %s\n" ), ( wxLongLong( m_torrentlistitems.size() ).ToString() ).c_str() );
+			m_torrentlistctrl->SetItemCount( m_torrentlistitems.size() );
+		}
 
-			/* if torrent is started in libtorrent */
-			if( torrent_handle.is_valid() )
+		if( m_torrentlistitems.size() > 0 )
+		{
+			const SwashListCtrl::itemlist_t selecteditems = m_torrentlistctrl->GetSelectedItems();
+
+			/* selected more than 1 item in the torrent list */
+			if( selecteditems.size() > 0 )
 			{
-				/* get peer list */
-				{
-					torrent_handle.get_peer_info( m_peerlistitems );
-					m_peerlistctrl->SetItemCount( m_peerlistitems.size() );
+				libtorrent::torrent_handle &torrent_handle = m_torrentlistitems[selecteditems[0]]->handle;
+				libtorrent::torrent_info const& torrent_info = *m_torrentlistitems[selecteditems[0]]->info;
+				wxLogDebug( _T( "MainFrame: list size %s selected items %s\n" ), ( wxLongLong( m_torrentlistitems.size() ).ToString() ).c_str(), ( wxLongLong( selecteditems.size() ).ToString() ).c_str() );
 
-					if( m_peerlistitems.size() > 0 )
-					{
-						m_peerlistctrl->UpdateSwashList();
-					}
-				}
-			}
-
-			/* get files list */
-			{
-				//m_filelistctrl->SetStaticHandle(m_torrentlistitems[selecteditems[0]]);
-				m_filelistctrl->SetItemCount( torrent_info.num_files() );
-			}
-			{
-				m_trackerlistctrl->SetStaticHandle( m_torrentlistitems[selecteditems[0]] );
-
+				/* if torrent is started in libtorrent */
 				if( torrent_handle.is_valid() )
 				{
-					m_trackerlistctrl->SetItemCount( torrent_handle.trackers().size() );
+					/* get peer list */
+					{
+						torrent_handle.get_peer_info( m_peerlistitems );
+						m_peerlistctrl->SetItemCount( m_peerlistitems.size() );
+
+						if( m_peerlistitems.size() > 0 )
+						{
+							m_peerlistctrl->UpdateSwashList();
+						}
+					}
 				}
-				else
+
+				/* get files list */
 				{
-					m_trackerlistctrl->SetItemCount( m_torrentlistitems[selecteditems[0]]->config->GetTrackersURL().size() );
+					//m_filelistctrl->SetStaticHandle(m_torrentlistitems[selecteditems[0]]);
+					m_filelistctrl->SetItemCount( torrent_info.num_files() );
 				}
+				{
+					m_trackerlistctrl->SetStaticHandle( m_torrentlistitems[selecteditems[0]] );
+
+					if( torrent_handle.is_valid() )
+					{
+						m_trackerlistctrl->SetItemCount( torrent_handle.trackers().size() );
+					}
+					else
+					{
+						m_trackerlistctrl->SetItemCount( m_torrentlistitems[selecteditems[0]]->config->GetTrackersURL().size() );
+					}
+				}
+				m_summarypane->UpdateSummary();
 			}
-			m_summarypane->UpdateSummary();
+			else
+			{
+				m_torrentlistctrl->Select( 0, true );
+			}
+
+			m_torrentlistctrl->UpdateSwashList();
 		}
 		else
 		{
-			m_torrentlistctrl->Select( 0, true );
+			m_torrentlistctrl->SetItemCount( 0 );
 		}
 
-		m_torrentlistctrl->UpdateSwashList();
+		m_torrentinfo->UpdateTorrentInfo( false );
+		UpdateStatusBar();
 	}
-	else
-	{
-		m_torrentlistctrl->SetItemCount( 0 );
-	}
-
-	m_torrentinfo->UpdateTorrentInfo( false );
-	UpdateStatusBar();
 
 	if( m_config->GetUseSystray() )
 	{ UpdateTrayInfo(); }
@@ -1563,7 +1566,6 @@ void MainFrame::OnMenuOptionLanguage( wxCommandEvent& event )
 		}
 	}
 }
-
 
 void MainFrame::UpdateStatusBar()
 {
