@@ -639,7 +639,7 @@ void MainFrame::AddTorrent( wxString filename, bool usedefault )
 		}
 		else
 		{
-			int answer = wxMessageBox( "Torrent Exists. Do you want to update trackers/seeds from the torrent?", "Confirm", wxYES_NO, this );
+			int answer = wxMessageBox( _("Torrent Exists. Do you want to update trackers/seeds from the torrent?"), _("Confirm"), wxYES_NO, this );
 
 			if( answer == wxYES )
 			{
@@ -782,7 +782,7 @@ void MainFrame::OpenTorrentUrl()
 				}
 				else
 				{
-					int answer = wxMessageBox( "Torrent Exists. Do you want to update trackers/seeds from the torrent?", "Confirm", wxYES_NO, this );
+					int answer = wxMessageBox( _("Torrent Exists. Do you want to update trackers/seeds from the torrent?"), _("Confirm"), wxYES_NO, this );
 
 					if( answer == wxYES )
 					{
@@ -899,18 +899,14 @@ void MainFrame::UpdateUI()
 		}
 
 		m_torrentinfo->UpdateTorrentInfo( false );
+		m_torrentlistctrl->Refresh(false);
 		UpdateStatusBar();
-		need_refresh = true;
 	}
 
 	if( m_config->GetUseSystray() )
 	{
 		UpdateTrayInfo();
-		need_refresh = true;
 	}
-
-	if(need_refresh)
-		Refresh( false );
 }
 
 void MainFrame::UpdateSelectedTorrent()
@@ -1616,10 +1612,9 @@ wxString MainFrame::GetStatusIncoming()
 
 void MainFrame::UpdateTrayInfo()
 {
-	wxString tooltips = wxString::Format( _T( "%-20s : %s\n%-20s  : %s\n%-20s 	: %s\n%-20s  : %s\n%-20s : %s" ), _( "Download Rate" ), GetStatusDownloadRate().c_str(), _( "Upload Rate" ), GetStatusUploadRate().c_str(), _( "Peers" ), GetStatusPeers().c_str(), _( "DHT Nodes" ), GetStatusDHT().c_str(), _( "Incoming" ), GetStatusIncoming().c_str() );
+	wxString tooltips = wxString::Format( _T( "%-15s : %s\n%-15s   : %s\n%-15s       : %s\n%-15s  : %s\n%-15s     : %s" ), _( "Download Rate" ), GetStatusDownloadRate().c_str(), _( "Upload Rate" ), GetStatusUploadRate().c_str(), _( "Peers          " ), GetStatusPeers().c_str(), _( "DHT Nodes" ), GetStatusDHT().c_str(), _( "Incoming" ), GetStatusIncoming().c_str() );
 	m_swashtrayicon->SetIcon( m_trayicon, tooltips );
 }
-
 
 void MainFrame::ShowSystray( bool show )
 {

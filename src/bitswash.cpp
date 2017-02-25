@@ -423,7 +423,7 @@ bool BitSwash::OnInit()
 
 		if( !m_AppServer->Create( g_BitSwashServerStr ) )
 		{
-			wxLogDebug( wxGetTranslation(wxT( "Failed to create an IPC service." ) ));
+			wxLogDebug( wxGetTranslation(_( "Failed to create an IPC service." ) ));
 		}
 	}
 	else
@@ -455,7 +455,7 @@ bool BitSwash::OnInit()
 		}
 		else
 		{
-			wxMessageBox( wxGetTranslation(wxT( "Sorry, the existing instance may be too busy too respond.\nPlease close any open dialogs and retry." )),
+			wxMessageBox( wxGetTranslation(_( "Sorry, the existing instance may be too busy too respond.\nPlease close any open dialogs and retry." )),
 						   APPNAME, wxICON_INFORMATION | wxOK );
 		}
 

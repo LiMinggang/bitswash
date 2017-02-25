@@ -81,7 +81,7 @@ MagnetUri::MagnetUri(const wxString &source)
     if (source.IsEmpty()) return;
 
 	size_t len = source.size();
-	wxString tmp = source.Lower();
+	wxString tmp = source.Left(20).Lower();
     if (tmp.StartsWith(_T("bc://bt/"))) {
         m_url = bcLinkToMagnet(source);
     }
