@@ -771,6 +771,9 @@ void MainFrame::OpenTorrentUrl()
 							wxString torrent_backup = wxGetApp().SaveTorrentsPath() + wxGetApp().PathSeparator() + torrent->hash + _T( ".torrent" );
 							m_btsession->SaveTorrent( torrent, torrent_backup );
 						}
+						
+						TorrentListIsValid( false );
+						UpdateUI();
 					}
 					else
 					{
@@ -822,8 +825,9 @@ void MainFrame::OnListItemClick( long item )
 void MainFrame::UpdateUI()
 {
 	wxASSERT( m_btsession );
+	bool need_refresh = false;
 
-	if(this->IsShown())
+	if(this->IsShown() && !this->IsIconized())
 	{
 		if( !TorrentListIsValid() )
 		{
@@ -896,12 +900,17 @@ void MainFrame::UpdateUI()
 
 		m_torrentinfo->UpdateTorrentInfo( false );
 		UpdateStatusBar();
+		need_refresh = true;
 	}
 
 	if( m_config->GetUseSystray() )
-	{ UpdateTrayInfo(); }
+	{
+		UpdateTrayInfo();
+		need_refresh = true;
+	}
 
-	Refresh( false );
+	if(need_refresh)
+		Refresh( false );
 }
 
 void MainFrame::UpdateSelectedTorrent()
