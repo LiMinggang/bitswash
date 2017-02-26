@@ -1046,14 +1046,23 @@ void MainFrame::OnUpdateUI_MenuTorrent( wxUpdateUIEvent& event )
 				{
 					for( size_t i = 0; i < total; ++i )
 					{
-						torrent_state = ( m_torrentlistitems[selecteditems[i]] )->config->GetTorrentState();
-
+						shared_ptr<torrent_t> torrent = m_torrentlistitems[selecteditems[i]];
+						torrent_state = torrent->config->GetTorrentState();
 						if( ID_TORRENT_START == menuId )
 						{
 							if( torrent_state != TORRENT_STATE_START && torrent_state != TORRENT_STATE_FORCE_START )
 							{
 								enable = true;
 								break;
+							}
+							else
+							{
+								libtorrent::torrent_handle &torrenthandle = torrent->handle;
+								if(( torrenthandle.status().paused ))
+								{
+									enable = true;
+									break;
+								}
 							}
 						}
 						else
@@ -1612,7 +1621,7 @@ wxString MainFrame::GetStatusIncoming()
 
 void MainFrame::UpdateTrayInfo()
 {
-	wxString tooltips = wxString::Format( _T( "%-15s : %s\n%-15s   : %s\n%-15s       : %s\n%-15s  : %s\n%-15s     : %s" ), _( "Download Rate" ), GetStatusDownloadRate().c_str(), _( "Upload Rate" ), GetStatusUploadRate().c_str(), _( "Peers          " ), GetStatusPeers().c_str(), _( "DHT Nodes" ), GetStatusDHT().c_str(), _( "Incoming" ), GetStatusIncoming().c_str() );
+	wxString tooltips = wxString::Format(_T("%-20s : %s\n%-20s : %s\n%-20s : %s\n%-20s : %s\n%-20s : %s"), _("Download Rate"), GetStatusDownloadRate().c_str(), _("Upload Rate"), GetStatusUploadRate().c_str(), _("Peers"), GetStatusPeers().c_str(), _("DHT Nodes"), GetStatusDHT().c_str(), _("Incoming"), GetStatusIncoming().c_str());
 	m_swashtrayicon->SetIcon( m_trayicon, tooltips );
 }
 
