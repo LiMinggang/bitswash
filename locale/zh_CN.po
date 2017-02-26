@@ -7,14 +7,14 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2017-02-24 21:33+0800\n"
-"PO-Revision-Date: 2017-02-24 21:40+0800\n"
+"POT-Creation-Date: 2017-02-26 16:54+0800\n"
+"PO-Revision-Date: 2017-02-26 17:08+0800\n"
 "Last-Translator: Aaron Wang Shi <aarons.wang@gmail.com>\n"
+"Language-Team: \n"
 "Language: zh_CN\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Language-Team: \n"
 "X-Generator: Poedit 1.8.11\n"
 
 #: ../src/bitswash.cpp:144
@@ -751,7 +751,7 @@ msgstr "Romania"
 
 #: ../src/bitswash.cpp:329
 msgid "Serbia"
-msgstr ""
+msgstr "Serbia"
 
 #: ../src/bitswash.cpp:330
 msgid "Russian Federation"
@@ -980,6 +980,18 @@ msgstr "Zambia"
 #: ../src/bitswash.cpp:386
 msgid "Zimbabwe"
 msgstr "Zimbabwe"
+
+#: ../src/bitswash.cpp:426
+msgid "Failed to create an IPC service."
+msgstr "创建IPC服务失败"
+
+#: ../src/bitswash.cpp:458
+msgid ""
+"Sorry, the existing instance may be too busy too respond.\n"
+"Please close any open dialogs and retry."
+msgstr ""
+"对不起，正在运行的实例可能正忙而无法响应。\n"
+"请关闭一打开的对话框再重试。"
 
 #: ../src/bittorrentsession.cpp:473 ../src/torrentsetting.cpp:162
 #: ../src/torrentsetting.cpp:187
@@ -1444,7 +1456,7 @@ msgstr "删除种子文件和已下载的数据"
 msgid "Move Up"
 msgstr "上移"
 
-#: ../src/mainframe.cpp:508 ../src/mainframe.cpp:1678
+#: ../src/mainframe.cpp:508 ../src/mainframe.cpp:1693
 msgid "Move torrent up"
 msgstr "上移种子"
 
@@ -1456,7 +1468,7 @@ msgstr "上移种子在队列中的位置"
 msgid "Move Down"
 msgstr "下移"
 
-#: ../src/mainframe.cpp:512 ../src/mainframe.cpp:1681
+#: ../src/mainframe.cpp:512 ../src/mainframe.cpp:1696
 msgid "Move torrent down"
 msgstr "下移种子"
 
@@ -1496,144 +1508,156 @@ msgstr "访问Bitswash主页"
 msgid "Exit"
 msgstr "退出"
 
+#: ../src/mainframe.cpp:642 ../src/mainframe.cpp:785
+msgid "Torrent Exists. Do you want to update trackers/seeds from the torrent?"
+msgstr "Torrent已存在。你打算从当前trorrent里更新tracker或种子么？"
+
+#: ../src/mainframe.cpp:642 ../src/mainframe.cpp:785
+msgid "Confirm"
+msgstr "确认"
+
 #: ../src/mainframe.cpp:667
 msgid "Open Torrent(s)..."
 msgstr "打开种子"
 
-#: ../src/mainframe.cpp:1286
+#: ../src/mainframe.cpp:1303
 msgid "torrents"
 msgstr "种子"
 
-#: ../src/mainframe.cpp:1288
+#: ../src/mainframe.cpp:1305
 msgid "torrent"
 msgstr "种子"
 
-#: ../src/mainframe.cpp:1291
+#: ../src/mainframe.cpp:1308
 msgid " and data"
 msgstr " 及数据"
 
-#: ../src/mainframe.cpp:1293
+#: ../src/mainframe.cpp:1310
 msgid "Confirm remove "
 msgstr "确认移除"
 
-#: ../src/mainframe.cpp:1294
+#: ../src/mainframe.cpp:1311
 msgid "Confirm Remove"
 msgstr "确认移除"
 
-#: ../src/mainframe.cpp:1601
+#: ../src/mainframe.cpp:1617
 msgid "Ok"
 msgstr "确认"
 
-#: ../src/mainframe.cpp:1602
+#: ../src/mainframe.cpp:1618
 msgid "Error"
 msgstr "错误"
 
-#: ../src/mainframe.cpp:1608
+#: ../src/mainframe.cpp:1624
 msgid "Download Rate"
 msgstr "下载速率"
 
-#: ../src/mainframe.cpp:1608
+#: ../src/mainframe.cpp:1624
 msgid "Upload Rate"
 msgstr "上传速率"
 
-#: ../src/mainframe.cpp:1608 ../src/torrentinfo.cpp:65
+#: ../src/mainframe.cpp:1624 ../src/torrentinfo.cpp:65
 #: ../src/torrentlistctrl.cpp:61 ../src/torrentlistctrl.cpp:78
 msgid "Peers"
 msgstr "对等连接"
 
-#: ../src/mainframe.cpp:1608
+#: ../src/mainframe.cpp:1624
 msgid "DHT Nodes"
 msgstr "DHT节点"
 
-#: ../src/mainframe.cpp:1608
+#: ../src/mainframe.cpp:1624
 msgid "Incoming"
 msgstr "进入"
 
-#: ../src/mainframe.cpp:1664
+#: ../src/mainframe.cpp:1635
+msgid "Could not set icon."
+msgstr "不能设置Icon"
+
+#: ../src/mainframe.cpp:1679
 msgid "&Queue Torrent\tCtrl+S"
 msgstr "排队作种(&Q)\tCtrl+S"
 
-#: ../src/mainframe.cpp:1664
+#: ../src/mainframe.cpp:1679
 msgid "Queue Download"
 msgstr "排队下载"
 
-#: ../src/mainframe.cpp:1666
+#: ../src/mainframe.cpp:1681
 msgid "&Force Start Torrent\tCtrl+Alt+S"
-msgstr "强制初始作种(&F)\tCtrl+Alt+S"
+msgstr "强制开始Torrent(&F)\tCtrl+Alt+S"
 
-#: ../src/mainframe.cpp:1666
+#: ../src/mainframe.cpp:1681
 msgid "Force Torrent Download"
 msgstr "强制开始下载"
 
-#: ../src/mainframe.cpp:1668
+#: ../src/mainframe.cpp:1683
 msgid "&Pause Torrent\tCtrl+P"
 msgstr "暂停作种(&P)\tCtrl-P"
 
-#: ../src/mainframe.cpp:1668
+#: ../src/mainframe.cpp:1683
 msgid "Pause Download"
 msgstr "暂停下载"
 
-#: ../src/mainframe.cpp:1670
+#: ../src/mainframe.cpp:1685
 msgid "St&op Torrent\tCtrl+T"
 msgstr "停止作种(&t)\tCtrl-T"
 
-#: ../src/mainframe.cpp:1670
+#: ../src/mainframe.cpp:1685
 msgid "Stop Download"
 msgstr "停止下载"
 
-#: ../src/mainframe.cpp:1673
+#: ../src/mainframe.cpp:1688
 msgid "&Remove Torrent"
 msgstr "移除种子(&R)"
 
-#: ../src/mainframe.cpp:1673
+#: ../src/mainframe.cpp:1688
 msgid "Delete Torrent"
 msgstr "删除种子"
 
-#: ../src/mainframe.cpp:1675
+#: ../src/mainframe.cpp:1690
 msgid "Remove Torrent and &Data"
 msgstr "移除种子和下载文件(&D)"
 
-#: ../src/mainframe.cpp:1675
+#: ../src/mainframe.cpp:1690
 msgid "Delete Torrent and Data"
 msgstr "删除种子和下载文件"
 
-#: ../src/mainframe.cpp:1678
+#: ../src/mainframe.cpp:1693
 msgid "Move &Up\tAlt+UP"
 msgstr "上移(&U)\tAlt+UP"
 
-#: ../src/mainframe.cpp:1681
+#: ../src/mainframe.cpp:1696
 msgid "Move Do&wn\tAlt+DOWN"
 msgstr "下移(&w)\tAlt+DOWN"
 
-#: ../src/mainframe.cpp:1685
+#: ../src/mainframe.cpp:1700
 msgid "Re&announce Torrent"
 msgstr "重新发布种子(&a)"
 
-#: ../src/mainframe.cpp:1685
+#: ../src/mainframe.cpp:1700
 msgid "Force Reannounce Torrent"
 msgstr "强制重新发布种子"
 
-#: ../src/mainframe.cpp:1687
+#: ../src/mainframe.cpp:1702
 msgid "Force Re&check Torrent"
 msgstr "强制重新检查种子"
 
-#: ../src/mainframe.cpp:1687
+#: ../src/mainframe.cpp:1702
 msgid "Force Recheck Torrent"
 msgstr "强制重新检查种子"
 
-#: ../src/mainframe.cpp:1688
+#: ../src/mainframe.cpp:1703
 msgid "Open &Directory"
 msgstr "打开目录(&D)"
 
-#: ../src/mainframe.cpp:1688
+#: ../src/mainframe.cpp:1703
 msgid "Open downloaded directory"
 msgstr "打开下载目录"
 
-#: ../src/mainframe.cpp:1690
+#: ../src/mainframe.cpp:1705
 msgid "Propert&ies"
 msgstr "属性(&i)"
 
-#: ../src/mainframe.cpp:1690
+#: ../src/mainframe.cpp:1705
 msgid "Torrent Properties"
 msgstr "种子属性"
 

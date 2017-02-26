@@ -116,7 +116,6 @@ BEGIN_EVENT_TABLE( MainFrame, wxFrame )
 	EVT_MENU_OPEN( MainFrame::OnMenuOpen )
 
 	EVT_UPDATE_UI( ID_TORRENT_START, MainFrame::OnUpdateUI_MenuTorrent )
-	EVT_UPDATE_UI( ID_TORRENT_START, MainFrame::OnUpdateUI_MenuTorrent )
 	EVT_UPDATE_UI( ID_TORRENT_FORCE_START, MainFrame::OnUpdateUI_MenuTorrent )
 	EVT_UPDATE_UI( ID_TORRENT_PAUSE, MainFrame::OnUpdateUI_MenuTorrent )
 	EVT_UPDATE_UI( ID_TORRENT_STOP, MainFrame::OnUpdateUI_MenuTorrent )
@@ -959,7 +958,6 @@ void MainFrame::TorrentOperationMenu( wxMenu* torrentmenu )
 			if( pTorrent )
 			{
 				int state = pTorrent->config->GetTorrentState();
-
 				switch( state )
 				{
 				case TORRENT_STATE_STOP:
@@ -972,8 +970,11 @@ void MainFrame::TorrentOperationMenu( wxMenu* torrentmenu )
 				case TORRENT_STATE_START:
 				case TORRENT_STATE_FORCE_START:
 					{
-						menu_status[0] = false;
-						menu_status[1] = false;
+						if(!( pTorrent->handle.status().paused ))
+						{
+							menu_status[0] = false;
+							menu_status[1] = false;
+						}
 						break;
 					}
 
