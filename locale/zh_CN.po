@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2017-02-26 16:54+0800\n"
-"PO-Revision-Date: 2017-02-26 17:08+0800\n"
+"PO-Revision-Date: 2017-02-26 20:39+0800\n"
 "Last-Translator: Aaron Wang Shi <aarons.wang@gmail.com>\n"
 "Language-Team: \n"
 "Language: zh_CN\n"
@@ -1567,7 +1567,7 @@ msgstr "DHT节点"
 
 #: ../src/mainframe.cpp:1624
 msgid "Incoming"
-msgstr "进入"
+msgstr "接入"
 
 #: ../src/mainframe.cpp:1635
 msgid "Could not set icon."

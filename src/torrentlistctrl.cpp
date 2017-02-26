@@ -37,6 +37,7 @@ enum torrentlistcolumnid
 	TORRENTLIST_COLUMN_TORRENT,
 	TORRENTLIST_COLUMN_STATUS,
 	TORRENTLIST_COLUMN_SIZE,
+	TORRENTLIST_COLUMN_SELECTEDSIZE,
 	TORRENTLIST_COLUMN_PROGRESS,
 	TORRENTLIST_COLUMN_DOWNSPEED,
 	TORRENTLIST_COLUMN_UPSPEED,
@@ -55,6 +56,7 @@ static SwashColumnItem torrentlistcols[] =
 	{ id: TORRENTLIST_COLUMN_ORRENT, name: _( "Torrent" ), title: _( "Torrent" ), tooltip: _( "Torrent name" ), width: 256, show: true },
 	{ id: TORRENTLIST_COLUMN_STATUS, name: _( "Status" ), title: _( "Status" ), tooltip: _( "Torrent status" ), width: 60, show: true },
 	{ id: TORRENTLIST_COLUMN_SIZE, name: _( "Size" ), title: _( "Size" ), tooltip: _( "Torrent size" ), width: 80, show: true },
+	{ id: TORRENTLIST_COLUMN_SELECTEDSIZE, name: _( "Selected Size" ), title: _( "Selected Size" ), tooltip: _( "Selected file size" ), width: 80, show: true },
 	{ id: TORRENTLIST_COLUMN_PROGRESS, name: _( "Progress" ), title: _( "Progress" ), tooltip: _( "Progress" ), width: 68, show: true },
 	{ id: TORRENTLIST_COLUMN_DOWNSPEED, name: _( "Download Speed" ), title: _( "Download Speed" ), tooltip: _( "Download Speed" ), width: 80, show: true },
 	{ id: TORRENTLIST_COLUMN_UPSPEED, name: _( "Upload Speed" ), title: _( "Upload Speed" ), tooltip: _( "Upload Speed" ), width: 80, show: true },
@@ -72,6 +74,7 @@ static SwashColumnItem torrentlistcols[] =
 	{  TORRENTLIST_COLUMN_TORRENT,  _( "Torrent" ),  _( "Torrent" ), _( "Torrent name" ),  256,  true },
 	{  TORRENTLIST_COLUMN_STATUS,  _( "Status" ),  _( "Status" ), _( "Torrent status" ),  60,  true },
 	{  TORRENTLIST_COLUMN_SIZE,  _( "Size" ),  _( "Size" ), _( "Torrent size" ),  80,  true },
+	{  TORRENTLIST_COLUMN_SELECTEDSIZE, _( "Selected Size" ), _( "Selected Size" ), _( "Selected file size" ), 80, true },
 	{  TORRENTLIST_COLUMN_PROGRESS,  _( "Progress" ),  _( "Progress" ), _( "Progress" ),  68,  true },
 	{  TORRENTLIST_COLUMN_DOWNSPEED,  _( "Download Speed" ),  _( "Download Speed" ), _( "Download Speed" ),  128,  true },
 	{  TORRENTLIST_COLUMN_UPSPEED,  _( "Upload Speed" ),  _( "Upload Speed" ), _( "Upload Speed" ),  128,  true },
@@ -179,11 +182,12 @@ wxString TorrentListCtrl::GetItemValue( long item, long columnid ) const
 	case TORRENTLIST_COLUMN_SIZE:
 		ret = HumanReadableByte( ( wxDouble ) torrentinfo.total_size() );
 		break;
-
-	case TORRENTLIST_COLUMN_DOWNLOADED:
-		ret = HumanReadableByte( ( wxDouble ) torrentstats.total_download );
+	case TORRENTLIST_COLUMN_SELECTEDSIZE:
+		ret = HumanReadableByte( ( wxDouble ) torrentinfo.total_size() );
 		break;
-
+	case TORRENTLIST_COLUMN_DOWNLOADED:
+		ret = HumanReadableByte( ( wxDouble ) torrent->config->GetSelectedSize() );
+		break;
 	case TORRENTLIST_COLUMN_UPLOADED:
 		ret = HumanReadableByte( ( wxDouble ) torrentstats.total_upload );
 		break;

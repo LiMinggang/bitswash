@@ -413,6 +413,20 @@ void FileListCtrl::OnMenuPriority( wxCommandEvent& event )
  	{ pTorrent->config->Save(); }
 
  	wxGetApp().GetBitTorrentSession()->ConfigureTorrentFilesPriority( pTorrent );
+	libtorrent::file_entry f_entry;
+	long total_selected = 0;
+	libtorrent::torrent_info const& torrentinfo = *(pTorrent->info);
+
+	for(size_t i = 0; i < filespriority.size(); ++i)
+	{
+		if(filespriority.at(i) != 0)
+		{
+			f_entry = torrentinfo.file_at( i );
+			total_selected += f_entry.size;
+		}
+	}
+
+	pTorrent->config->SetSelectedSize(total_selected);
  	Refresh( false );
 }
 

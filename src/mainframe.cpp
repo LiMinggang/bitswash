@@ -1622,7 +1622,13 @@ wxString MainFrame::GetStatusIncoming()
 
 void MainFrame::UpdateTrayInfo()
 {
-	wxString tooltips = wxString::Format(_T("%-20s : %s\n%-20s : %s\n%-20s : %s\n%-20s : %s\n%-20s : %s"), _("Download Rate"), GetStatusDownloadRate().c_str(), _("Upload Rate"), GetStatusUploadRate().c_str(), _("Peers"), GetStatusPeers().c_str(), _("DHT Nodes"), GetStatusDHT().c_str(), _("Incoming"), GetStatusIncoming().c_str());
+	wxString tooltips = wxString::Format(_T("%s %s\n%-20s : %s\n%-20s : %s\n%-20s : %s\n%-20s : %s\n%-20s : %s"),
+		APPNAME, BITSWASH_VERSION,
+		_("Download Rate"), GetStatusDownloadRate().c_str(),
+		_("Upload Rate"), GetStatusUploadRate().c_str(),
+		_("Peers"), GetStatusPeers().c_str(),
+		_("DHT Nodes"), GetStatusDHT().c_str(),
+		_("Incoming"), GetStatusIncoming().c_str());
 	m_swashtrayicon->SetIcon( m_trayicon, tooltips );
 }
 

@@ -52,6 +52,7 @@ TorrentConfig::TorrentConfig( const wxString& TorrentName )
 	m_torrentname = TorrentName;
 	wxLogDebug( _T( "Init TorrentConfig %s" ), m_configfile.c_str() );
 	m_cfg =  new wxFileConfig( ( wxInputStream & )fis );
+	m_selected_file_size = 0;
 	//m_cfg = (wxConfig*)wxConfig::Get(m_appname);
 	Load();
 }
