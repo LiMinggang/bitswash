@@ -176,9 +176,7 @@ void TrackerListCtrl::ShowContextMenu(const wxPoint& pos)
 /* update files priority to torrent config */
 void TrackerListCtrl::OnMenuEdit(wxCommandEvent& event)
 {
-
 	TrackerListCtrl* pThis = const_cast<TrackerListCtrl*>(this);
-	MainFrame* pMainFrame = (MainFrame*)wxGetApp().GetTopWindow();
 
 	//int cmd = event.GetId() - TRACKERLISTCTRL_MENU_ADD;
 	int cmd = event.GetId(); 
@@ -188,7 +186,10 @@ void TrackerListCtrl::OnMenuEdit(wxCommandEvent& event)
 	if (m_pTorrent)
 		pTorrent = m_pTorrent;
 	else
+	{
+		MainFrame* pMainFrame = (MainFrame*)wxGetApp().GetTopWindow();
 		pTorrent = pMainFrame->GetSelectedTorrent();
+	}
 
 	if (!pTorrent)
 		return;
@@ -207,7 +208,6 @@ void TrackerListCtrl::OnMenuEdit(wxCommandEvent& event)
 	wxLogDebug(_T("edit tracker no %d, cmd %d\n"), item, cmd);
 
 	std::vector<libtorrent::announce_entry>& trackers = pTorrent->config->GetTrackersURL();
-
 
 	switch(cmd)
 	{
