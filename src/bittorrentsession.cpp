@@ -1671,6 +1671,12 @@ void BitTorrentSession::GetTorrentLog()
 				wxString torrent_backup = wxGetApp().SaveTorrentsPath() + wxGetApp().PathSeparator() + it->second->hash + _T( ".torrent" );
 				SaveTorrent(it->second, torrent_backup );
 				m_torrent_handle_map.erase(it);
+				
+				if( it->second->config->GetTrackersURL().size() <= 0 )
+				{
+					std::vector<libtorrent::announce_entry> trackers = p->handle.trackers();
+					it->second->config->SetTrackersURL( trackers );
+				}
 			}
 		}
 		else if( fastresume_rejected_alert* p = dynamic_cast<fastresume_rejected_alert*>( a.get() ) )
@@ -1683,7 +1689,7 @@ void BitTorrentSession::GetTorrentLog()
 		}
 		else if( save_resume_data_alert *p = dynamic_cast<save_resume_data_alert*>( a.get() ) )
 		{
-			torrent_handle h = p->handle;
+			torrent_handle& h = p->handle;
 
 			if( p->resume_data )
 			{

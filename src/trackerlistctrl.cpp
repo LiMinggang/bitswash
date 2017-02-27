@@ -22,6 +22,7 @@
 // Created on: Wed Mar 19 23:57:27 EDT 2008
 //
 
+#include <wx/clipbrd.h>
 #include "torrentinfo.h"
 #include "trackerlistctrl.h"
 #include "functions.h"
@@ -31,6 +32,7 @@ enum
 	TRACKERLISTCTRL_MENU_ADD= 10000,
 	TRACKERLISTCTRL_MENU_EDIT ,
 	TRACKERLISTCTRL_MENU_DELETE,
+	TRACKERLISTCTRL_MENU_COPY,
 };
 
 
@@ -38,6 +40,7 @@ BEGIN_EVENT_TABLE(TrackerListCtrl, SwashListCtrl)
 	EVT_MENU(TRACKERLISTCTRL_MENU_ADD, TrackerListCtrl::OnMenuEdit)
 	EVT_MENU(TRACKERLISTCTRL_MENU_EDIT, TrackerListCtrl::OnMenuEdit)
 	EVT_MENU(TRACKERLISTCTRL_MENU_DELETE, TrackerListCtrl::OnMenuEdit)
+	EVT_MENU(TRACKERLISTCTRL_MENU_COPY, TrackerListCtrl::OnMenuEdit)
 END_EVENT_TABLE()
 // TrackerListCtrl
 
@@ -95,10 +98,8 @@ wxString TrackerListCtrl::GetItemValue(long item, long columnid) const
 		pTorrent = pMainFrame->GetSelectedTorrent();
 	}
 
-	if (pTorrent== NULL)
+	if (!pTorrent)
 		return _T("");
-
-	libtorrent::torrent_handle &h = pTorrent->handle;
 
  	libtorrent::torrent_info const& t_info= *(pTorrent->info);
 
@@ -137,6 +138,7 @@ void TrackerListCtrl::ShowContextMenu(const wxPoint& pos)
 
 	/* XXX openfile */
     menu.Append(TRACKERLISTCTRL_MENU_ADD, _("Add"));
+    menu.Append(TRACKERLISTCTRL_MENU_COPY, _("Copy"));
     menu.Append(TRACKERLISTCTRL_MENU_EDIT, _("Edit"));
     menu.Append(TRACKERLISTCTRL_MENU_DELETE, _("Delete"));
 
@@ -161,7 +163,7 @@ void TrackerListCtrl::OnMenuEdit(wxCommandEvent& event)
 	else
 		pTorrent = pMainFrame->GetSelectedTorrent();
 
-	if (pTorrent == NULL)
+	if (!pTorrent)
 		return;
 
 	int item = GetFirstSelected();
@@ -174,11 +176,10 @@ void TrackerListCtrl::OnMenuEdit(wxCommandEvent& event)
 	}
 
  	libtorrent::torrent_info const& t_info = *(pTorrent->info);
-	libtorrent::torrent_handle &h = pTorrent->handle;
 
 	wxLogDebug(_T("edit tracker no %d, cmd %d\n"), item, cmd);
 
-	std::vector<libtorrent::announce_entry> trackers = pTorrent->config->GetTrackersURL();
+	std::vector<libtorrent::announce_entry>& trackers = pTorrent->config->GetTrackersURL();
 
 
 	switch(cmd)
@@ -200,7 +201,7 @@ void TrackerListCtrl::OnMenuEdit(wxCommandEvent& event)
 				trackers.push_back(e);
 				wxLogDebug(_T("Add new tracker %s tier %d, trackers.size %d\n"), newtrackerurl.c_str(), e.tier , trackers.size()) ;
 				
-				pTorrent->config->SetTrackersURL(trackers);
+				//pTorrent->config->SetTrackersURL(trackers);
 				pTorrent->config->Save();
 
 				pThis->SetItemCount(trackers.size());
@@ -234,15 +235,14 @@ void TrackerListCtrl::OnMenuEdit(wxCommandEvent& event)
 					std::string tmpurl(returl.mb_str(wxConvUTF8));
 					tracker_it->url = tmpurl;
 
-					pTorrent->config->SetTrackersURL(trackers);
+					//pTorrent->config->SetTrackersURL(trackers);
 					pTorrent->config->Save();
 
 					refreshtrk = true;
 				}
 			}
-
-		}
 			break;
+		}
 		case TRACKERLISTCTRL_MENU_DELETE:
 		{
 			if ((item < 0) || (item >= trackers.size()))
@@ -259,10 +259,34 @@ void TrackerListCtrl::OnMenuEdit(wxCommandEvent& event)
 			{
 				trackers.erase(tracker_it);
 
-				pTorrent->config->SetTrackersURL(trackers);
+				//pTorrent->config->SetTrackersURL(trackers);
 				pTorrent->config->Save();
 
 				refreshtrk = true;
+			}
+			break;
+		}
+		case TRACKERLISTCTRL_MENU_COPY:
+		{
+			wxString trackerurls;
+			if(wxTheClipboard)
+			{
+				do {
+					if ((item < 0) || (item >= trackers.size()))
+						return;
+
+					std::vector<libtorrent::announce_entry>::iterator tracker_it = trackers.begin() + item;
+					libtorrent::announce_entry tracker= trackers.at(item);
+					trackerurls += wxString(wxConvUTF8.cMB2WC(tracker.url.c_str())) + _T("\n");
+
+				} while((item = GetNextSelected(item)) != -1);
+
+				if( wxTheClipboard->Open() )
+				{
+					wxTheClipboard->SetData( new wxTextDataObject( trackerurls ) );
+					wxTheClipboard->Flush();
+					wxTheClipboard->Close();
+				}
 			}
 			break;
 		}

@@ -36,7 +36,7 @@
 
 #include "bittorrentsession.h"
 #include "configuration.h"
-#ifndef __WXMSW__
+#if 0//ndef __WXMSW__
 #include "version.h"
 #else
 #include "version_win.h"
