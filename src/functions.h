@@ -22,7 +22,7 @@
 #include <wx/string.h>
 
 wxString HumanReadableByte(wxDouble byte);
-wxString HumanReadableTime(wxDouble second);
+wxString HumanReadableTime(unsigned long second);
 int RemoveDirectory(wxString path);
 int MoveDirectory(wxString path);
 int CopyDirectory(wxString frompath, wxString topath);

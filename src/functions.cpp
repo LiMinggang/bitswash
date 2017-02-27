@@ -37,8 +37,10 @@
 #include "functions.h"
 
 #define MAX_UNITS 5
+#define MAX_TIME_UNITS 5
 
 static wxChar units[MAX_UNITS][2] = { _T(""), _T("K"), _T("M"), _T("G"), _T("T") };
+static wxChar timetunits[MAX_TIME_UNITS][2] = { _T(""), _T("S"), _T("M"), _T("H"), _T("D") };
 
 wxString HumanReadableByte(wxDouble byte) 
 {
@@ -69,10 +71,21 @@ wxString HumanReadableByte(wxDouble byte)
 
 }
 
-wxString HumanReadableTime(wxDouble second) 
+wxString HumanReadableTime(unsigned long second) 
 {
-	//XXX format time	
-	return _T("TODO");
+	//XXX format time?
+	unsigned long min = 60, hour = 3600, day = 3600*24;
+	unsigned int days, hours, mins, secs;
+	days = second/day;
+	hours = (second%day)/hour;
+	mins = (second%hour)/min;
+	secs = (second%min);
+	wxString time;
+	if(days) time << days << _("Days");
+	if(hours) time << hours << _("Hours");
+	if(mins) time << mins << _("Minutes");
+	if(secs) time << secs << _("Seconds");
+	return time;
 }
 
 int RemoveDirectory(wxString path) {

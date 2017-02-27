@@ -47,17 +47,23 @@ END_EVENT_TABLE()
 
 enum torrentlistcolumnid {
 	TRACKERLIST_COLUMN_URL = 0,
+	TRACKERLIST_COLUMN_STATUS,
+	TRACKERLIST_COLUMN_NEXT_ANNOUNCE,
 };
 
 #ifndef __WXMSW__
 static SwashColumnItem trackerlistcols[] = 
 {
 	{ id: TRACKERLIST_COLUMN_URL, name: _T("URL"), title: _("URL"), tooltip:_("Torrent Tracker URL"), width: 450, show: true},
+	{ id: TRACKERLIST_COLUMN_STATUS, name: _T("Status"), title: _("Status"), tooltip:_("Torrent Tracker Status"), width: 100, show: true},
+	{ id: TRACKERLIST_COLUMN_NEXT_ANNOUNCE, name: _T("Next Announce Time"), title: _("Next Announce Time"), tooltip:_("Torrent Tracker Next Announce Time"), width: 100, show: true},
 };
 #else
 static SwashColumnItem trackerlistcols[] = 
 {
-	{  TRACKERLIST_COLUMN_URL,  _T("URL"),  _("URL"), _("Torrent Tracker URL"),  450,  true},
+	{ TRACKERLIST_COLUMN_URL,  _T("URL"),  _("URL"), _("Torrent Tracker URL"),  450,  true},
+	{ TRACKERLIST_COLUMN_STATUS,  _T("Status"), _("Status"), _("Torrent Tracker Status"), 100, true},
+	{ TRACKERLIST_COLUMN_NEXT_ANNOUNCE, _T("Next Announce Time"), _("Next Announce Time"), _("Torrent Tracker Next Announce Time"), 100, true},
 };
 #endif
 TrackerListCtrl::TrackerListCtrl(wxWindow *parent,
@@ -120,9 +126,30 @@ wxString TrackerListCtrl::GetItemValue(long item, long columnid) const
 	switch(columnid)
 	{
 		case TRACKERLIST_COLUMN_URL:
+		{
 			t_name = wxString(wxConvUTF8.cMB2WC(tracker.url.c_str()));
 			ret = t_name;
 			break;
+		}
+		case TRACKERLIST_COLUMN_STATUS:
+		{
+			if(tracker.verified)
+			{
+				if(tracker.is_working()) ret = _("Working");
+				else ret = wxString(tracker.last_error.message());
+			}
+			else
+				ret = _("Not connected");
+			break;
+		}
+		case TRACKERLIST_COLUMN_NEXT_ANNOUNCE:
+		{
+ 			if(tracker.verified && tracker.is_working())
+				ret = HumanReadableTime(tracker.next_announce_in());
+			else
+				ret = _T("N/A");
+			break;
+		}
 		default:
 			ret = _T("");
 	
