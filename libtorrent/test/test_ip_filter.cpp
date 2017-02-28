@@ -34,7 +34,9 @@ POSSIBILITY OF SUCH DAMAGE.
 #include <boost/utility.hpp>
 
 #include "test.hpp"
+#include "settings.hpp"
 #include "libtorrent/socket_io.hpp"
+#include "libtorrent/session.hpp"
 
 /*
 
@@ -43,7 +45,7 @@ IPv4 addresses. Maybe it should be extended to IPv6 as well,
 but the actual code is just a template, so it is probably
 pretty safe to assume that as long as it works for IPv4 it
 also works for IPv6.
-	
+
 */
 
 using namespace libtorrent;
@@ -79,19 +81,29 @@ void test_rules_invariant(std::vector<ip_range<T> > const& r, ip_filter const& f
 		TEST_CHECK(r.front().first == IP("::0"));
 		TEST_CHECK(r.back().last == IP("ffff:ffff:ffff:ffff:ffff:ffff:ffff:ffff"));
 	}
-	
-	iterator i = r.begin();
-	iterator j = boost::next(i);
+
 	for (iterator i(r.begin()), j(boost::next(r.begin()))
 		, end(r.end()); j != end; ++j, ++i)
 	{
-		TEST_CHECK(f.access(i->last) == i->flags);
-		TEST_CHECK(f.access(j->first) == j->flags);
+		TEST_EQUAL(f.access(i->last), int(i->flags));
+		TEST_EQUAL(f.access(j->first), int(j->flags));
 		TEST_CHECK(detail::plus_one(i->last.to_bytes()) == j->first.to_bytes());
 	}
 }
 
-int test_main()
+TORRENT_TEST(session_get_ip_filter)
+{
+	using namespace libtorrent;
+	session ses(settings());
+	ip_filter const& ipf = ses.get_ip_filter();
+#if TORRENT_USE_IPV6
+	TEST_EQUAL(boost::get<0>(ipf.export_filter()).size(), 1);
+#else
+	TEST_EQUAL(ipf.export_filter().size(), 1);
+#endif
+}
+
+TORRENT_TEST(ip_filter)
 {
 	using namespace libtorrent;
 
@@ -105,7 +117,7 @@ int test_main()
 		, {IP4("1.0.0.0"), IP4("3.0.0.0"), ip_filter::blocked}
 		, {IP4("3.0.0.1"), IP4("255.255.255.255"), 0}
 	};
-	
+
 	{
 		ip_filter f;
 		f.add_rule(IP("1.0.0.0"), IP("2.0.0.0"), ip_filter::blocked);
@@ -122,7 +134,7 @@ int test_main()
 		TEST_CHECK(std::equal(range.begin(), range.end(), expected1, &compare<address_v4>));
 
 	}
-	
+
 	// **** test joining of ranges at the start ****
 
 	{
@@ -140,7 +152,7 @@ int test_main()
 		TEST_CHECK(range.size() == 3);
 		TEST_CHECK(std::equal(range.begin(), range.end(), expected1, &compare<address_v4>));
 
-	}	
+	}
 
 
 	// **** test joining of overlapping ranges at the start ****
@@ -160,7 +172,7 @@ int test_main()
 		TEST_CHECK(range.size() == 3);
 		TEST_CHECK(std::equal(range.begin(), range.end(), expected1, &compare<address_v4>));
 
-	}	
+	}
 
 
 	// **** test joining of overlapping ranges at the end ****
@@ -180,7 +192,7 @@ int test_main()
 		TEST_CHECK(range.size() == 3);
 		TEST_CHECK(std::equal(range.begin(), range.end(), expected1, &compare<address_v4>));
 
-	}	
+	}
 
 
 	// **** test joining of multiple overlapping ranges 1 ****
@@ -193,7 +205,7 @@ int test_main()
 		f.add_rule(IP("7.0.0.0"), IP("8.0.0.0"), ip_filter::blocked);
 
 		f.add_rule(IP("1.0.1.0"), IP("9.0.0.0"), ip_filter::blocked);
-		
+
 #if TORRENT_USE_IPV6
 		range = boost::get<0>(f.export_filter());
 #else
@@ -208,10 +220,10 @@ int test_main()
 			, {IP4("1.0.0.0"), IP4("9.0.0.0"), ip_filter::blocked}
 			, {IP4("9.0.0.1"), IP4("255.255.255.255"), 0}
 		};
-	
+
 		TEST_CHECK(std::equal(range.begin(), range.end(), expected, &compare<address_v4>));
 
-	}	
+	}
 
 	// **** test joining of multiple overlapping ranges 2 ****
 
@@ -238,7 +250,7 @@ int test_main()
 			, {IP4("0.0.1.0"), IP4("8.0.0.0"), ip_filter::blocked}
 			, {IP4("8.0.0.1"), IP4("255.255.255.255"), 0}
 		};
-	
+
 		TEST_CHECK(std::equal(range.begin(), range.end(), expected, &compare<address_v4>));
 
 	}
@@ -253,7 +265,7 @@ int test_main()
 		, {IP6("1::"), IP6("3::"), ip_filter::blocked}
 		, {IP6("3::1"), IP6("ffff:ffff:ffff:ffff:ffff:ffff:ffff:ffff"), 0}
 	};
-	
+
 	{
 		ip_filter f;
 		f.add_rule(IP("2::1"), IP("3::"), ip_filter::blocked);
@@ -263,10 +275,10 @@ int test_main()
 		range = boost::get<1>(f.export_filter());
 		test_rules_invariant(range, f);
 
-		TEST_CHECK(range.size() == 3);
+		TEST_EQUAL(range.size(), 3);
 		TEST_CHECK(std::equal(range.begin(), range.end(), expected2, &compare<address_v6>));
 
-	}	
+	}
 #endif
 
 	port_filter pf;
@@ -287,7 +299,5 @@ int test_main()
 	TEST_CHECK(pf.access(301) == 0);
 	TEST_CHECK(pf.access(6881) == 0);
 	TEST_CHECK(pf.access(65535) == 0);
-
-	return 0;
 }
 

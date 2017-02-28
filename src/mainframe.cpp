@@ -57,6 +57,7 @@
 #include <libtorrent/session_settings.hpp>
 #include <libtorrent/identify_client.hpp>
 #include <libtorrent/alert_types.hpp>
+#include <libtorrent/session_status.hpp>
 
 //plugins
 #include <libtorrent/extensions/metadata_transfer.hpp>

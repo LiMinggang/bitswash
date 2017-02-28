@@ -30,6 +30,7 @@
 #include <wx/wx.h>
 #include <wx/listctrl.h>
 #include <libtorrent/torrent_handle.hpp>
+#include <libtorrent/torrent_status.hpp>
 
 #include "swashlistctrl.h"
 #include "bitswash.h"

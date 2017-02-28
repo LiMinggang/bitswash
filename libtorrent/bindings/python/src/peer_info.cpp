@@ -4,33 +4,35 @@
 
 #include <libtorrent/peer_info.hpp>
 #include <libtorrent/bitfield.hpp>
-#include <boost/python.hpp>
+#include "boost_python.hpp"
 #include <boost/python/iterator.hpp>
 
 using namespace boost::python;
 using namespace libtorrent;
 
-int get_last_active(peer_info const& pi)
+boost::int64_t get_last_active(peer_info const& pi)
 {
     return total_seconds(pi.last_active);
 }
 
-int get_last_request(peer_info const& pi)
+boost::int64_t get_last_request(peer_info const& pi)
 {
     return total_seconds(pi.last_request);
 }
 
-int get_download_queue_time(peer_info const& pi)
+boost::int64_t get_download_queue_time(peer_info const& pi)
 {
     return total_seconds(pi.download_queue_time);
 }
 
+#ifndef TORRENT_NO_DEPRECATE
 #ifndef TORRENT_DISABLE_RESOLVE_COUNTRIES
 str get_country(peer_info const& pi)
 {
     return str(pi.country, 2);
 }
 #endif
+#endif // TORRENT_NO_DEPRECATE
 
 tuple get_local_endpoint(peer_info const& pi)
 {
@@ -70,8 +72,11 @@ void bind_peer_info()
         .def_readonly("total_upload", &peer_info::total_upload)
         .def_readonly("pid", &peer_info::pid)
         .add_property("pieces", get_pieces)
+#ifndef TORRENT_NO_DEPRECATE
         .def_readonly("upload_limit", &peer_info::upload_limit)
         .def_readonly("download_limit", &peer_info::download_limit)
+        .def_readonly("load_balancing", &peer_info::load_balancing)
+#endif
         .add_property("last_request", get_last_request)
         .add_property("last_active", get_last_active)
         .add_property("download_queue_time", get_download_queue_time)
@@ -82,13 +87,11 @@ void bind_peer_info()
         .def_readonly("receive_buffer_size", &peer_info::receive_buffer_size)
         .def_readonly("used_receive_buffer", &peer_info::used_receive_buffer)
         .def_readonly("num_hashfails", &peer_info::num_hashfails)
+#ifndef TORRENT_NO_DEPRECATE
 #ifndef TORRENT_DISABLE_RESOLVE_COUNTRIES
         .add_property("country", get_country)
 #endif
-#ifndef TORRENT_DISABLE_GEO_IP
-        .def_readonly("inet_as_name", &peer_info::inet_as_name)
-        .def_readonly("inet_as", &peer_info::inet_as)
-#endif
+#endif // TORRENT_NO_DEPRECATE
         .def_readonly("download_queue_length", &peer_info::download_queue_length)
         .def_readonly("upload_queue_length", &peer_info::upload_queue_length)
         .def_readonly("failcount", &peer_info::failcount)
@@ -121,7 +124,9 @@ void bind_peer_info()
     pi.attr("local_connection") = (int)peer_info::local_connection;
     pi.attr("handshake") = (int)peer_info::handshake;
     pi.attr("connecting") = (int)peer_info::connecting;
+#ifndef TORRENT_NO_DEPRECATE
     pi.attr("queued") = (int)peer_info::queued;
+#endif
     pi.attr("on_parole") = (int)peer_info::on_parole;
     pi.attr("seed") = (int)peer_info::seed;
     pi.attr("optimistic_unchoke") = (int)peer_info::optimistic_unchoke;

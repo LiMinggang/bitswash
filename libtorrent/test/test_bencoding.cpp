@@ -31,10 +31,13 @@ POSSIBILITY OF SUCH DAMAGE.
 */
 
 #include "libtorrent/bencode.hpp"
-#include "libtorrent/lazy_entry.hpp"
-#include <boost/lexical_cast.hpp>
+
 #include <iostream>
 #include <cstring>
+
+#ifndef TORRENT_NO_DEPRECATE
+#include "libtorrent/lazy_entry.hpp"
+#endif
 
 #include "test.hpp"
 
@@ -55,55 +58,85 @@ entry decode(std::string const& str)
 	return bdecode(str.begin(), str.end());
 }
 
-int test_main()
+TORRENT_TEST(strings)
 {
-	using namespace libtorrent;
+	entry e("spam");
+	TEST_CHECK(encode(e) == "4:spam");
+	TEST_CHECK(decode(encode(e)) == e);
+}
 
-	// ** strings **
-	{	
-		entry e("spam");
-		TEST_CHECK(encode(e) == "4:spam");
-		TEST_CHECK(decode(encode(e)) == e);
-	}
+TORRENT_TEST(integers)
+{
+	entry e(3);
+	TEST_CHECK(encode(e) == "i3e");
+	TEST_CHECK(decode(encode(e)) == e);
+}
 
-	// ** integers **
-	{
-		entry e(3);
-		TEST_CHECK(encode(e) == "i3e");
-		TEST_CHECK(decode(encode(e)) == e);
-	}
+TORRENT_TEST(integers2)
+{
+	entry e(-3);
+	TEST_CHECK(encode(e) == "i-3e");
+	TEST_CHECK(decode(encode(e)) == e);
+}
 
-	{
-		entry e(-3);
-		TEST_CHECK(encode(e) == "i-3e");
-		TEST_CHECK(decode(encode(e)) == e);
-	}
+TORRENT_TEST(integers3)
+{
+	entry e(int(0));
+	TEST_CHECK(encode(e) == "i0e");
+	TEST_CHECK(decode(encode(e)) == e);
+}
 
-	{
-		entry e(int(0));
-		TEST_CHECK(encode(e) == "i0e");
-		TEST_CHECK(decode(encode(e)) == e);
-	}
+TORRENT_TEST(lists)
+{
+	entry::list_type l;
+	l.push_back(entry("spam"));
+	l.push_back(entry("eggs"));
+	entry e(l);
+	TEST_CHECK(encode(e) == "l4:spam4:eggse");
+	TEST_CHECK(decode(encode(e)) == e);
+}
 
-	// ** lists **
-	{
-		entry::list_type l;
-		l.push_back(entry("spam"));
-		l.push_back(entry("eggs"));
-		entry e(l);
-		TEST_CHECK(encode(e) == "l4:spam4:eggse");
-		TEST_CHECK(decode(encode(e)) == e);
-	}
+TORRENT_TEST(dictionaries)
+{
+	entry e(entry::dictionary_t);
+	e["spam"] = entry("eggs");
+	e["cow"] = entry("moo");
+	TEST_CHECK(encode(e) == "d3:cow3:moo4:spam4:eggse");
+	TEST_CHECK(decode(encode(e)) == e);
+}
 
-	// ** dictionaries **
-	{
-		entry e(entry::dictionary_t);
-		e["spam"] = entry("eggs");
-		e["cow"] = entry("moo");
-		TEST_CHECK(encode(e) == "d3:cow3:moo4:spam4:eggse");
-		TEST_CHECK(decode(encode(e)) == e);
-	}
+TORRENT_TEST(preformatted)
+{
+	entry e(entry::preformatted_t);
+	char const str[] = "foobar";
+	e.preformatted().assign(str, str + sizeof(str)-1);
+	TEST_EQUAL(encode(e), "foobar");
+}
 
+TORRENT_TEST(preformatted_node)
+{
+	entry e(entry::dictionary_t);
+	char const str[] = "foobar";
+	e["info"] = entry::preformatted_type(str, str + sizeof(str)-1);
+	TEST_EQUAL(encode(e), "d4:infofoobare");
+}
+
+TORRENT_TEST(undefined_node)
+{
+	entry e(entry::undefined_t);
+	TEST_EQUAL(encode(e), "0:");
+}
+
+TORRENT_TEST(undefined_node2)
+{
+	entry e(entry::dictionary_t);
+	e["info"] = entry(entry::undefined_t);
+	TEST_EQUAL(encode(e), "d4:info0:e");
+}
+
+#ifndef TORRENT_NO_DEPRECATE
+TORRENT_TEST(lazy_entry)
+{
 	{
 		char b[] = "i12453e";
 		lazy_entry e;
@@ -117,7 +150,7 @@ int test_main()
 		TEST_CHECK(e.type() == lazy_entry::int_t);
 		TEST_CHECK(e.int_value() == 12453);
 	}
-	
+
 	{
 		char b[] = "26:abcdefghijklmnopqrstuvwxyz";
 		lazy_entry e;
@@ -254,25 +287,25 @@ int test_main()
 	// test invalid encoding
 	{
 		unsigned char buf[] =
-			{ 0x64	, 0x31	, 0x3a	, 0x61	, 0x64	, 0x32	, 0x3a	, 0x69
-			, 0x64	, 0x32	, 0x30	, 0x3a	, 0x2a	, 0x21	, 0x19	, 0x89
-			, 0x9f	, 0xcd	, 0x5f	, 0xc9	, 0xbc	, 0x80	, 0xc1	, 0x76
-			, 0xfe	, 0xe0	, 0xc6	, 0x84	, 0x2d	, 0xf6	, 0xfc	, 0xb8
-			, 0x39	, 0x3a	, 0x69	, 0x6e	, 0x66	, 0x6f	, 0x5f	, 0x68
-			, 0x61	, 0xae	, 0x68	, 0x32	, 0x30	, 0x3a	, 0x14	, 0x78
-			, 0xd5	, 0xb0	, 0xdc	, 0xf6	, 0x82	, 0x42	, 0x32	, 0xa0
-			, 0xd6	, 0x88	, 0xeb	, 0x48	, 0x57	, 0x01	, 0x89	, 0x40
-			, 0x4e	, 0xbc	, 0x65	, 0x31	, 0x3a	, 0x71	, 0x39	, 0x3a
-			, 0x67	, 0x65	, 0x74	, 0x5f	, 0x70	, 0x65	, 0x65	, 0x72
-			, 0x78	, 0xff	, 0x3a	, 0x74	, 0x38	, 0x3a	, 0xaa	, 0xd4
-			, 0xa1	, 0x88	, 0x7a	, 0x8d	, 0xc3	, 0xd6	, 0x31	, 0x3a
-			, 0x79	, 0x31	, 0xae	, 0x71	, 0x65	, 0};
+			{ 0x64, 0x31, 0x3a, 0x61, 0x64, 0x32, 0x3a, 0x69
+			, 0x64, 0x32, 0x30, 0x3a, 0x2a, 0x21, 0x19, 0x89
+			, 0x9f, 0xcd, 0x5f, 0xc9, 0xbc, 0x80, 0xc1, 0x76
+			, 0xfe, 0xe0, 0xc6, 0x84, 0x2d, 0xf6, 0xfc, 0xb8
+			, 0x39, 0x3a, 0x69, 0x6e, 0x66, 0x6f, 0x5f, 0x68
+			, 0x61, 0xae, 0x68, 0x32, 0x30, 0x3a, 0x14, 0x78
+			, 0xd5, 0xb0, 0xdc, 0xf6, 0x82, 0x42, 0x32, 0xa0
+			, 0xd6, 0x88, 0xeb, 0x48, 0x57, 0x01, 0x89, 0x40
+			, 0x4e, 0xbc, 0x65, 0x31, 0x3a, 0x71, 0x39, 0x3a
+			, 0x67, 0x65, 0x74, 0x5f, 0x70, 0x65, 0x65, 0x72
+			, 0x78, 0xff, 0x3a, 0x74, 0x38, 0x3a, 0xaa, 0xd4
+			, 0xa1, 0x88, 0x7a, 0x8d, 0xc3, 0xd6, 0x31, 0x3a
+			, 0x79, 0x31, 0xae, 0x71, 0x65, 0};
 
 		printf("%s\n", buf);
 		lazy_entry e;
 		error_code ec;
 		int ret = lazy_bdecode((char*)buf, (char*)buf + sizeof(buf), e, ec);
-		TEST_CHECK(ret == -1);	
+		TEST_CHECK(ret == -1);
 	}
 
 	// test the depth limit
@@ -347,7 +380,7 @@ int test_main()
 		int ret = lazy_bdecode(b, b + sizeof(b)-1, e, ec, NULL);
 		TEST_CHECK(ret != 0);
 		printf("%s\n", print_entry(e).c_str());
-		TEST_EQUAL(ec, error_code(bdecode_errors::expected_string
+		TEST_EQUAL(ec, error_code(bdecode_errors::expected_digit
 			, get_bdecode_category()));
 	}
 
@@ -386,7 +419,7 @@ int test_main()
 		int ret = lazy_bdecode(b, b + sizeof(b)-1, e, ec, NULL);
 		TEST_CHECK(ret != 0);
 		printf("%s\n", print_entry(e).c_str());
-		TEST_EQUAL(ec, error_code(bdecode_errors::expected_string
+		TEST_EQUAL(ec, error_code(bdecode_errors::expected_digit
 			, get_bdecode_category()));
 	}
 
@@ -471,7 +504,7 @@ int test_main()
 		TEST_EQUAL(ps.len, 6);
 
 		ps = e.dict_find_pstr("foobar2");
-		TEST_EQUAL(ps.ptr, NULL);
+		TEST_EQUAL(ps.ptr, static_cast<char const*>(0));
 		TEST_EQUAL(ps.len, 0);
 	}
 
@@ -491,14 +524,63 @@ int test_main()
 		TEST_EQUAL(ps.len, 6);
 
 		ps = e.list_pstr_at(1);
-		TEST_EQUAL(ps.ptr, NULL);
+		TEST_EQUAL(ps.ptr, static_cast<char const*>(0));
 		TEST_EQUAL(ps.len, 0);
 	}
 
 	{
-		unsigned char buf[] = { 0x44	, 0x91	, 0x3a };
+		unsigned char buf[] = { 0x44, 0x91, 0x3a };
 		entry ent = bdecode(buf, buf + sizeof(buf));
 		TEST_CHECK(ent == entry());
+	}
+
+	{
+		std::string buf;
+		buf += "l";
+		for (int i = 0; i < 1000; ++i)
+		{
+			char tmp[20];
+			snprintf(tmp, sizeof(tmp), "i%de", i);
+			buf += tmp;
+		}
+		buf += "e";
+
+		lazy_entry e;
+		error_code ec;
+		int ret = lazy_bdecode((char*)&buf[0], (char*)&buf[0] + buf.size(), e, ec);
+		TEST_EQUAL(ret, 0);
+		TEST_EQUAL(e.type(), lazy_entry::list_t);
+		TEST_EQUAL(e.list_size(), 1000);
+		for (int i = 0; i < 1000; ++i)
+		{
+			TEST_EQUAL(e.list_int_value_at(i), i);
+		}
+	}
+
+	{
+		std::string buf;
+		buf += "d";
+		for (int i = 0; i < 1000; ++i)
+		{
+			char tmp[30];
+			snprintf(tmp, sizeof(tmp), "4:%04di%de", i, i);
+			buf += tmp;
+		}
+		buf += "e";
+
+		printf("%s\n", buf.c_str());
+		lazy_entry e;
+		error_code ec;
+		int ret = lazy_bdecode((char*)&buf[0], (char*)&buf[0] + buf.size(), e, ec);
+		TEST_EQUAL(ret, 0);
+		TEST_EQUAL(e.type(), lazy_entry::dict_t);
+		TEST_EQUAL(e.dict_size(), 1000);
+		for (int i = 0; i < 1000; ++i)
+		{
+			char tmp[30];
+			snprintf(tmp, sizeof(tmp), "%04d", i);
+			TEST_EQUAL(e.dict_find_int_value(tmp), i);
+		}
 	}
 
 	// test parse_int
@@ -517,7 +599,7 @@ int test_main()
 		boost::int64_t val = 0;
 		bdecode_errors::error_code_enum ec;
 		char const* e = parse_int(b, b + sizeof(b)-1, 'e', val, ec);
-		TEST_EQUAL(ec, bdecode_errors::expected_string);
+		TEST_EQUAL(ec, bdecode_errors::expected_digit);
 		TEST_EQUAL(e, b + 1);
 	}
 
@@ -527,6 +609,7 @@ int test_main()
 		bdecode_errors::error_code_enum ec;
 		char const* e = parse_int(b, b + sizeof(b)-1, ':', val, ec);
 		TEST_CHECK(ec == bdecode_errors::overflow);
+		TEST_EQUAL(e, b + 18);
 	}
 
 	{
@@ -535,22 +618,28 @@ int test_main()
 		bdecode_errors::error_code_enum ec;
 		char const* e = parse_int(b, b + sizeof(b)-1, ':', val, ec);
 		TEST_CHECK(ec == bdecode_errors::expected_colon);
+		TEST_EQUAL(e, b + 3);
 	}
 
 	{
-		entry e(entry::preformatted_t);
-		char const str[] = "foobar";
-		e.preformatted().assign(str, str + sizeof(str)-1);
-		TEST_EQUAL(encode(e), "foobar");
-	}
+		char const* b[] = {
+			"d1:a1919191010:11111",
+			"d2143289344:a4:aaaae",
+			"d214328934114:a4:aaaae",
+			"d9205357638345293824:a4:aaaae",
+			"d1:a9205357638345293824:11111",
+		};
 
-	{
-		entry e(entry::dictionary_t);
-		char const str[] = "foobar";
-		e["info"] = entry::preformatted_type(str, str + sizeof(str)-1);
-		TEST_EQUAL(encode(e), "d4:infofoobare");
+		for (int i = 0; i < int(sizeof(b)/sizeof(b[0])); ++i)
+		{
+			lazy_entry e;
+			error_code ec;
+			int ret = lazy_bdecode(b[i], b[i] + strlen(b[i]), e, ec, NULL);
+			TEST_EQUAL(ret, -1);
+			TEST_CHECK(ec == error_code(bdecode_errors::unexpected_eof));
+			printf("%s\n", print_entry(e).c_str());
+		}
 	}
-
-	return 0;
 }
+#endif // TORRENT_NO_DEPRECATE
 

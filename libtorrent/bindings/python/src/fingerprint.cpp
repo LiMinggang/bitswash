@@ -3,13 +3,16 @@
 // file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
 
 #include <libtorrent/fingerprint.hpp>
-#include <boost/python.hpp>
+#include "boost_python.hpp"
 
 void bind_fingerprint()
 {
     using namespace boost::python;
     using namespace libtorrent;
 
+    def("generate_fingerprint", &generate_fingerprint);
+
+#ifndef TORRENT_NO_DEPRECATE
     class_<fingerprint>("fingerprint", no_init)
         .def(
             init<char const*,int,int,int,int>(
@@ -23,5 +26,6 @@ void bind_fingerprint()
         .def_readonly("revision_version", &fingerprint::revision_version)
         .def_readonly("tag_version", &fingerprint::tag_version)
         ;
+#endif
 }
 

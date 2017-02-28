@@ -33,6 +33,8 @@ POSSIBILITY OF SUCH DAMAGE.
 #ifndef TORRENT_LAZY_ENTRY_HPP_INCLUDED
 #define TORRENT_LAZY_ENTRY_HPP_INCLUDED
 
+#ifndef TORRENT_NO_DEPRECATE
+
 #include <utility>
 #include <vector>
 #include <string>
@@ -41,6 +43,7 @@ POSSIBILITY OF SUCH DAMAGE.
 #include "libtorrent/config.hpp"
 #include "libtorrent/assert.hpp"
 #include "libtorrent/error_code.hpp"
+#include "libtorrent/bdecode.hpp" // for error codes
 
 namespace libtorrent
 {
@@ -50,9 +53,8 @@ namespace libtorrent
 	// 
 	// .. _bencoded: http://wiki.theory.org/index.php/BitTorrentSpecification
 	// 
-	// Whenever possible, ``lazy_bdecode()`` should be preferred over ``bdecode()``.
-	// It is more efficient and more secure. It supports having constraints on the
-	// amount of memory is consumed by the parser.
+	// The lazy bdecoder and lazy_entry has been deprecated in favour of
+	// bdecode_node and its corresponding bdecode() function.
 	// 
 	// *lazy* refers to the fact that it doesn't copy any actual data out of the
 	// bencoded buffer. It builds a tree of ``lazy_entry`` which has pointers into
@@ -79,6 +81,7 @@ namespace libtorrent
 	// in case the function fails. ``error_pos`` is an optional pointer to an int,
 	// which will be set to the byte offset into the buffer where an error occurred,
 	// in case the function fails.
+	TORRENT_DEPRECATED
 	TORRENT_EXPORT int lazy_bdecode(char const* start, char const* end
 		, lazy_entry& ret, error_code& ec, int* error_pos = 0
 		, int depth_limit = 1000, int item_limit = 1000000);
@@ -86,9 +89,9 @@ namespace libtorrent
 #ifndef TORRENT_NO_DEPRECATE
 	// for backwards compatibility, does not report error code
 	// deprecated in 0.16
-	TORRENT_DEPRECATED_PREFIX
+	TORRENT_DEPRECATED
 	TORRENT_EXPORT int lazy_bdecode(char const* start, char const* end
-		, lazy_entry& ret, int depth_limit = 1000, int item_limit = 1000000) TORRENT_DEPRECATED;
+		, lazy_entry& ret, int depth_limit = 1000, int item_limit = 1000000);
 #endif
 
 	// this is a string that is not NULL-terminated. Instead it
@@ -142,13 +145,13 @@ namespace libtorrent
 		};
 
 		// internal
-		lazy_entry() : m_begin(0), m_len(0), m_size(0), m_capacity(0), m_type(none_t)
-		{ m_data.start = 0; }
+		lazy_entry() : m_begin(0), m_len(0), m_size(0), m_type(none_t)
+		{ m_data.start = NULL; }
 
 		// tells you which specific type this lazy entry has.
 		// See entry_type_t. The type determines which subset of
 		// member functions are valid to use.
-		entry_type_t type() const { return (entry_type_t)m_type; }
+		entry_type_t type() const { return entry_type_t(m_type); }
 
 		// start points to the first decimal digit
 		// length is the number of digits
@@ -213,7 +216,6 @@ namespace libtorrent
 			TORRENT_ASSERT(m_type == none_t);
 			m_type = dict_t;
 			m_size = 0;
-			m_capacity = 0;
 			m_begin = begin;
 		}
 
@@ -241,7 +243,8 @@ namespace libtorrent
 		// if this is a dictionary, look for a key ``name`` whose value
 		// is an int. If such key exist, return a pointer to its value,
 		// otherwise NULL.
-		boost::int64_t dict_find_int_value(char const* name, boost::int64_t default_val = 0) const;
+		boost::int64_t dict_find_int_value(char const* name
+			, boost::int64_t default_val = 0) const;
 		lazy_entry const* dict_find_int(char const* name) const;
 
 		// these functions require that ``this`` is a dictionary.
@@ -272,7 +275,6 @@ namespace libtorrent
 			TORRENT_ASSERT(m_type == none_t);
 			m_type = list_t;
 			m_size = 0;
-			m_capacity = 0;
 			m_begin = begin;
 		}
 
@@ -285,7 +287,7 @@ namespace libtorrent
 		{
 			TORRENT_ASSERT(m_type == list_t);
 			TORRENT_ASSERT(i < int(m_size));
-			return &m_data.list[i];
+			return &m_data.list[i+1];
 		}
 		lazy_entry const* list_at(int i) const
 		{ return const_cast<lazy_entry*>(this)->list_at(i); }
@@ -327,9 +329,8 @@ namespace libtorrent
 		// internal: releases ownership of any memory allocated
 		void release()
 		{
-			m_data.start = 0;
+			m_data.start = NULL;
 			m_size = 0;
-			m_capacity = 0;
 			m_type = none_t;
 		}
 
@@ -348,19 +349,23 @@ namespace libtorrent
 			boost::uint32_t tmp = e.m_type;
 			e.m_type = m_type;
 			m_type = tmp;
-			tmp = e.m_capacity;
-			e.m_capacity = m_capacity;
-			m_capacity = tmp;
+			tmp = e.m_size;
+			e.m_size = m_size;
+			m_size = tmp;
 			swap(m_data.start, e.m_data.start);
-			swap(m_size, e.m_size);
 			swap(m_begin, e.m_begin);
 			swap(m_len, e.m_len);
 		}
 
 	private:
 
+		int capacity() const;
+
 		union data_t
 		{
+			// for the dict and list arrays, the first item is not part
+			// of the array. Instead its m_len member indicates the capacity
+			// of the allocation
 			lazy_dict_entry* dict;
 			lazy_entry* list;
 			char const* start;
@@ -369,14 +374,13 @@ namespace libtorrent
 		// used for dictionaries and lists to record the range
 		// in the original buffer they are based on
 		char const* m_begin;
+
 		// the number of bytes this entry extends in the
-		// bencoded byffer
+		// bencoded buffer
 		boost::uint32_t m_len;
 
 		// if list or dictionary, the number of items
-		boost::uint32_t m_size;
-		// if list or dictionary, allocated number of items
-		boost::uint32_t m_capacity:29;
+		boost::uint32_t m_size:29;
 		// element type (dict, list, int, string)
 		boost::uint32_t m_type:3;
 
@@ -391,63 +395,20 @@ namespace libtorrent
 		lazy_entry val;
 	};
 
-	// print the bencoded structure in a human-readable format to a stting
+	// print the bencoded structure in a human-readable format to a string
 	// that's returned.
+	TORRENT_DEPRECATED
 	TORRENT_EXPORT std::string print_entry(lazy_entry const& e
 		, bool single_line = false, int indent = 0);
 
-	// get the ``error_category`` for bdecode errors
-	TORRENT_EXPORT boost::system::error_category& get_bdecode_category();
-
-	namespace bdecode_errors
-	{
-		// libtorrent uses boost.system's ``error_code`` class to represent errors. libtorrent has
-		// its own error category get_bdecode_category() whith the error codes defined by error_code_enum.
-		enum error_code_enum
-		{
-			// Not an error
-			no_error = 0,
-			// expected string in bencoded string
-			expected_string,
-			// expected colon in bencoded string
-			expected_colon,
-			// unexpected end of file in bencoded string
-			unexpected_eof,
-			// expected value (list, dict, int or string) in bencoded string
-			expected_value,
-			// bencoded recursion depth limit exceeded
-			depth_exceeded,
-			// bencoded item count limit exceeded
-			limit_exceeded,
-			// integer overflow
-			overflow,
-
-			// the number of error codes
-			error_code_max
-		};
-
-		// hidden
-		TORRENT_EXPORT boost::system::error_code make_error_code(error_code_enum e);
-	}
-
+	// defined in bdecode.cpp
 	TORRENT_EXTRA_EXPORT char const* parse_int(char const* start
 		, char const* end, char delimiter, boost::int64_t& val
 		, bdecode_errors::error_code_enum& ec);
 
 }
 
-#if BOOST_VERSION >= 103500
-
-namespace boost { namespace system {
-
-	template<> struct is_error_code_enum<libtorrent::bdecode_errors::error_code_enum>
-	{ static const bool value = true; };
-
-	template<> struct is_error_condition_enum<libtorrent::bdecode_errors::error_code_enum>
-	{ static const bool value = true; };
-} }
-
-#endif
+#endif // TORRENT_NO_DEPRECATE
 
 #endif
 

@@ -30,7 +30,7 @@ POSSIBILITY OF SUCH DAMAGE.
 
 */
 
-#include "libtorrent/policy.hpp"
+#include "libtorrent/peer_list.hpp"
 #include "libtorrent/hasher.hpp"
 #include "libtorrent/broadcast_socket.hpp" // for supports_ipv6()
 #include <boost/crc.hpp>
@@ -46,7 +46,7 @@ boost::uint32_t hash_buffer(char const* buf, int len)
 	return crc.checksum();
 }
 
-int test_main()
+TORRENT_TEST(peer_priority)
 {
 
 	// when the IP is the same, we hash the ports, sorted
@@ -94,7 +94,7 @@ int test_main()
 			tcp::endpoint(address::from_string("ffff:ffff:ffff:ffff::1"), 0x4d2)
 			, tcp::endpoint(address::from_string("ffff:ffff:ffff:ffff::1"), 0x12c));
 		TEST_EQUAL(p, hash_buffer("\x01\x2c\x04\xd2", 4));
-        
+
 		// these IPs don't belong to the same /32, so apply the full mask
 		// 0xffffffff55555555
 		p = peer_priority(
@@ -104,7 +104,5 @@ int test_main()
 			"\xff\xff\x0f\xff\x55\x55\x55\x55\x00\x00\x00\x00\x00\x00\x00\x01"
 			"\xff\xff\xff\xff\x55\x55\x55\x55\x00\x00\x00\x00\x00\x00\x00\x01", 32));
 	}
-	
-	return 0;
 }
 

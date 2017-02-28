@@ -41,8 +41,6 @@ int main()
 {
 	io_service ios;
 	error_code ec;
-	address local = guess_local_address(ios);
-	printf("Local address: %s\n", local.to_string(ec).c_str());
 
 	address def_gw = get_default_gateway(ios, ec);
 	if (ec)

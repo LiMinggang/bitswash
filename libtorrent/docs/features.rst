@@ -3,7 +3,7 @@ libtorrent manual
 =================
 
 :Author: Arvid Norberg, arvid@libtorrent.org
-:Version: 1.0.11
+:Version: 1.1.2
 
 .. contents:: Table of contents
   :depth: 2
@@ -21,7 +21,7 @@ the library.
 features
 ========
 
-libtorrent is under active development. It is an ongoing project. Its
+libtorrent is an ongoing project under active development. Its
 current state supports and includes the following features:
 
 extensions
@@ -59,20 +59,22 @@ extensions
 disk management
 ---------------
 
-* uses a separate disk I/O thread to not have the disk ever block on network or
-  client interaction. (see threads_).
+* can use multipled disk I/O threads to not have the disk block network or
+  client interaction.
+* supports verifying the SHA-1 hash of pieces in multiple threads, to take
+  advantage of multi core machines.
 * supports files > 2 gigabytes.
-* fast resume support, a way to get rid of the costly piece check at the
+* fast resume support, a way to avoid the costly piece check at the
   start of a resumed torrent. Saves the storage state, piece_picker state
-  as well as all local peers in a separate fast-resume file.
+  as well as all local peers in a fast-resume file.
 * has an adjustable read and write disk cache for improved disk throughput.
 * queues torrents for file check, instead of checking all of them in parallel.
 * does not have any requirements on the piece order in a torrent that it
   resumes. This means it can resume a torrent downloaded by any client.
 * seed mode, where the files on disk are assumed to be complete, and each
   piece's hash is verified the first time it is requested.
-
-.. _threads: manualref.html#threads
+* implements an ARC disk cache, tuned for performing well under bittorrent work
+  loads
 
 network
 -------
@@ -127,7 +129,7 @@ disk caching
 ------------
 
 All disk I/O in libtorrent is done asynchronously to the network thread, by the
-disk io thread. When a block is read, the disk io thread reads all subsequent
+disk io threads. When a block is read, the disk io thread reads all subsequent
 blocks from that piece into the read cache, assuming that the peer requesting
 the block will also request more blocks from the same piece. This decreases the
 number of syscalls for reading data. It also decreases delay from seeking.
@@ -152,62 +154,6 @@ The disk caching algorithm is configurable between 'LRU' and 'largest contiguous
 The largest contiguous algorithm is the default and flushes the largest contiguous
 block of buffers, instead of flushing all blocks belonging to the piece which was
 written to least recently.
-
-For version 0.15 a lot of work went into optimizing the cache algorithm, trying
-to increase the cache hit rate and utilization. The graph to the left shows the
-memory utilization in 0.14. This cache is a straight forward, fairly naive, implementation.
-Every block read will also read all subsequent blocks in that piece into the cache.
-Whenever we need more space, the entire oldest piece is evicted from the cache. Caching
-writes always takes presedence over the read cache. Whenever a piece is fully downloaded,
-it is flushed to disk.
-
-.. image:: disk_buffer_before_optimization.png
-	:width: 49%
-
-.. image:: disk_buffer.png
-	:width: 49%
-
-The left graph shows the problem of evicting entire pieces at a time, and waiting until
-an entire piece is downloaded until flushing it. These graphs were generated for a torrent
-with fairly large pieces. This means that granularity was poor in 0.14, since it only
-dealt with entire pieces. In 0.15, the granularity problem has been fixed by evicting one
-block at a time from the read cache. This maximizes the read cache utilization. The write
-cache is also flushed when a sufficient number of contiguous blocks have been downloaded
-for a piece, which is not tied to the piece size anymore. This way the cache scales a lot
-better with piece sizes.
-
-The graph to the right shows the same download but with the new optimized disk cache
-algorithm. It clearly shows an increased utilization, which means higher read hit rates
-or smaller caches with maintained hit rate.
-
-high performance disk subsystem
--------------------------------
-
-In some circumstances, the disk cache may not suffice to provide maximum performance.
-One such example is high performance seeding, to a large number of peers, over a fast
-up-link. In such a case, the amount of RAM may simply not be enough to cache disk
-reads. When there's not enough RAM to cache disk reads, the disk throughput  would
-typically degrade to perform as poorly as with no cache at all, with the majority
-of the time spent waiting for the disk head to seek.
-
-To solve this problem, libtorrent sorts read requests by their physical offset on the
-disk. They are processed by having the disk read head sweep back and forth over the drive.
-
-This makes libtorrent very suitable for large scale, high-throughput seeding.
-
-.. image:: disk_access_no_elevator.png
-	:width: 49%
-
-.. image:: disk_access_elevator.png
-	:width: 49%
-
-These plots illustrates the physical disk offset for reads over time. The left plot
-is of a run where disk operation re-ordering is turned off and the righ is when it's
-turned on. The right one has a relatively smooth sine wave shape whereas the left
-one is more random and involves much longer seeks back and forth over the disk.
-
-True physical disk offset queries are only supported on newer linux kernels, Mac OS X and
-Windows 2000 and up.
 
 network buffers
 ---------------

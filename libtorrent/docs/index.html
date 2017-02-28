@@ -29,10 +29,10 @@
 <body>
 <div class="document">
     <div id="container">
-    <table id="header">
+    <a href="index.html"><table id="header">
     <tr><td id="orange"></td>
     <td id="logo">libtorrent</td></tr>
-    </table>
+    </table></a>
     <div id="main">
 
 <table class="docinfo" frame="void" rules="none">
@@ -42,19 +42,19 @@
 <tr><th class="docinfo-name">Author:</th>
 <td>Arvid Norberg, <a class="last reference external" href="mailto:arvid&#64;libtorrent.org">arvid&#64;libtorrent.org</a></td></tr>
 <tr><th class="docinfo-name">Version:</th>
-<td>1.0.11</td></tr>
+<td>1.1.2</td></tr>
 </tbody>
 </table>
 <div id="librarySidebar"><ul class="simple">
 <li><a class="reference external" href="https://github.com/arvidn/libtorrent/releases">download</a></li>
-<li><a class="reference external" href="https://sourceforge.net/projects/libtorrent/files/py-libtorrent/">download python binding</a></li>
 <li><a class="reference external" href="features.html">features</a></li>
-<li><a class="reference external" href="contributing.html">contributing</a></li>
-<li><a class="reference external" href="building.html">building libtorrent</a></li>
+<li><a class="reference external" href="tutorial.html">tutorial</a></li>
 <li><a class="reference external" href="examples.html">examples</a></li>
-<li><a class="reference external" href="manual-ref.html">library overview</a></li>
-<li><a class="reference external" href="reference.html">reference documentation</a></li>
-<li><a class="reference external" href="troubleshooting.html">troubleshooting issues</a></li>
+<li><a class="reference external" href="manual-ref.html">overview</a></li>
+<li><a class="reference external" href="reference.html">documentation</a></li>
+<li><a class="reference external" href="contributing.html">contributing</a></li>
+<li><a class="reference external" href="building.html">building</a></li>
+<li><a class="reference external" href="troubleshooting.html">troubleshooting</a></li>
 <li><a class="reference external" href="tuning.html">tuning</a></li>
 <li><a class="reference external" href="client_test.png">screenshot</a></li>
 <li><a class="reference external" href="http://lists.sourceforge.net/lists/listinfo/libtorrent-discuss">mailing list</a> (<a class="reference external" href="http://dir.gmane.org/gmane.network.bit-torrent.libtorrent">archive</a>)</li>
@@ -80,8 +80,10 @@
 <hr class="docutils" />
 <p>Bindings</p>
 <ul class="simple">
-<li><a class="reference external" href="http://libtorrent-ruby.rubyforge.org/">ruby bindings</a></li>
-<li><a class="reference external" href="python_binding.html">python bindings</a></li>
+<li><a class="reference external" href="python_binding.html">python</a></li>
+<li><a class="reference external" href="https://github.com/frostwire/frostwire-jlibtorrent/">java</a></li>
+<li><a class="reference external" href="https://github.com/steeve/libtorrent-go">go</a></li>
+<li><a class="reference external" href="https://github.com/fanatid/node-libtorrent">node</a></li>
 </ul>
 <hr class="docutils" />
 <ul class="simple">
@@ -101,15 +103,36 @@ the library.</p>
 <li>to be memory efficient</li>
 <li>to be very easy to use</li>
 </ul>
-<div class="section" id="donate">
-<h2>Donate</h2>
-<p>Support the development of libtorrent</p>
+<div class="section" id="getting-started">
+<h2>Getting started</h2>
+<p>The <a class="reference external" href="tutorial.html">tutorial</a> is an introduction to using libtorrent (C++). Also see the
+<a class="reference external" href="reference.html">reference documentation</a>.</p>
+</div>
+<div class="section" id="contribute">
+<h2>Contribute</h2>
+<p>If your organization use libtorrent, please consider supporting its development.
+See the <a class="reference internal" href="#contribute">contribute</a> page for other ways to help out.</p>
+<span style="display:inline-block">
 <a class="FlattrButton" style="display:none;" href="http://libtorrent.org"></a>
 <noscript><a href="https://flattr.com/thing/95662/libtorrent" target="_blank">
-<img src="http://api.flattr.com/button/flattr-badge-large.png" alt="Flattr this" title="Flattr this" border="0" /></a></noscript></div>
-<div class="section" id="feedback">
-<h2>Feedback</h2>
-<p>There's a <a class="reference external" href="http://lists.sourceforge.net/lists/listinfo/libtorrent-discuss">mailing list</a>, general libtorrent discussion.</p>
+<img src="http://api.flattr.com/button/flattr-badge-large.png" alt="Flattr this" title="Flattr this" border="0" /></a></noscript>
+</span>
+
+<span style="display:inline-block">
+<form action="https://www.paypal.com/cgi-bin/webscr" method="post" target="_top">
+<input type="hidden" name="cmd" value="_donations">
+<input type="hidden" name="business" value="ZNR45WU2PP5W2">
+<input type="hidden" name="lc" value="US">
+<input type="hidden" name="item_name" value="libtorrent">
+<input type="hidden" name="currency_code" value="USD">
+<input type="hidden" name="bn" value="PP-DonationsBF:btn_donate_LG.gif:NonHosted">
+<input type="image" src="https://www.paypalobjects.com/webstatic/en_US/i/buttons/pp-acceptance-medium.png" border="0" name="submit" alt="PayPal - The safer, easier way to pay online!">
+<img alt="" border="0" src="https://www.paypalobjects.com/en_US/i/scr/pixel.gif" width="1" height="1">
+</form>
+</span></div>
+<div class="section" id="support">
+<h2>Support</h2>
+<p>Please direct questions to the <a class="reference external" href="http://lists.sourceforge.net/lists/listinfo/libtorrent-discuss">mailing list</a>, general libtorrent discussion.</p>
 <p>You can usually find me as hydri in <tt class="docutils literal">#libtorrent</tt> on <tt class="docutils literal">irc.freenode.net</tt>.</p>
 </div>
 <div class="section" id="license">
@@ -125,8 +148,8 @@ list or posted to the <a class="reference external" href="https://github.com/arv
 </div>
 <div class="section" id="acknowledgements">
 <h2>Acknowledgements</h2>
-<p>Written by Arvid Norberg. Copyright © 2003-2015</p>
-<p>Contributions by Magnus Jonsson, Daniel Wallin and Cory Nelson</p>
+<p>Written by Arvid Norberg. Copyright © 2003-2016</p>
+<p>Contributions by Steven Siloti, Magnus Jonsson, Daniel Wallin and Cory Nelson</p>
 <p>Thanks to Reimond Retz for bugfixes, suggestions and testing</p>
 <p>Thanks to <a class="reference external" href="http://www.cs.umu.se">Umeå University</a> for providing development and test hardware.</p>
 <p>Project is hosted by <a class="reference external" href="https://www.github.com/arvidn/libtorrent">github</a>.</p>

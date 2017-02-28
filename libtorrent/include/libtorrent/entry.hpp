@@ -58,31 +58,37 @@ POSSIBILITY OF SUCH DAMAGE.
  *
  */
 
+#include "libtorrent/config.hpp"
+
+#include "libtorrent/aux_/disable_warnings_push.hpp"
 
 #include <map>
 #include <list>
 #include <string>
-#include <vector>
 #include <stdexcept>
-
-#include "libtorrent/size_type.hpp"
-#include "libtorrent/config.hpp"
-#include "libtorrent/assert.hpp"
-#include "libtorrent/error_code.hpp"
-#include "libtorrent/max.hpp"
-
+#include <boost/cstdint.hpp>
+#include <boost/config.hpp>
 #if TORRENT_USE_IOSTREAM
 #include <iosfwd>
 #endif
 
+#include "libtorrent/aux_/disable_warnings_pop.hpp"
+
+#include "libtorrent/assert.hpp"
+#include "libtorrent/error_code.hpp"
+#include "libtorrent/max.hpp"
+
 namespace libtorrent
 {
+#ifndef TORRENT_NO_DEPRECATE
 	struct lazy_entry;
+#endif
+	struct bdecode_node;
 
 	// thrown by any accessor function of entry if the accessor
 	// function requires a type different than the actual type
 	// of the entry object.
-	struct TORRENT_EXPORT type_error: std::runtime_error
+	struct type_error : std::runtime_error
 	{
 		// internal
 		type_error(const char* error): std::runtime_error(error) {}
@@ -101,7 +107,7 @@ namespace libtorrent
 		typedef std::map<std::string, entry> dictionary_type;
 		typedef std::string string_type;
 		typedef std::list<entry> list_type;
-		typedef size_type integer_type;
+		typedef boost::int64_t integer_type;
 		typedef std::vector<char> preformatted_type;
 
 		// the types an entry can have
@@ -143,10 +149,13 @@ namespace libtorrent
 		// hidden
 		bool operator==(entry const& e) const;
 		bool operator!=(entry const& e) const { return !(*this == e); }
-		
+
 		// copies the structure of the right hand side into this
 		// entry.
+#ifndef TORRENT_NO_DEPRECATE
 		void operator=(lazy_entry const&);
+#endif
+		void operator=(bdecode_node const&);
 		void operator=(entry const&);
 		void operator=(dictionary_type const&);
 		void operator=(string_type const&);
@@ -226,7 +235,7 @@ namespace libtorrent
 		// The const version of ``operator[]`` will only return a reference to an
 		// existing element at the given key. If the key is not found, it will
 		// throw ``libtorrent::type_error``.
- 		entry& operator[](char const* key);
+		entry& operator[](char const* key);
 		entry& operator[](std::string const& key);
 #ifndef BOOST_NO_EXCEPTIONS
 		const entry& operator[](char const* key) const;
@@ -289,11 +298,17 @@ namespace libtorrent
 
 	public:
 		// in debug mode this is set to false by bdecode to indicate that the
-		// program has not yet queried the type of this entry, and sould not
+		// program has not yet queried the type of this entry, and should not
 		// assume that it has a certain type. This is asserted in the accessor
 		// functions. This does not apply if exceptions are used.
 		mutable boost::uint8_t m_type_queried:1;
 	};
+
+	namespace detail
+	{
+		TORRENT_EXPORT char const* integer_to_str(char* buf, int size
+			, entry::integer_type val);
+	}
 
 #if TORRENT_USE_IOSTREAM
 	// prints the bencoded structure to the ostream as a JSON-style structure.
@@ -306,10 +321,9 @@ namespace libtorrent
 
 #ifndef BOOST_NO_EXCEPTIONS
 	// internal
-	inline void throw_type_error()
+	TORRENT_NO_RETURN inline void throw_type_error()
 	{
-		throw libtorrent_exception(error_code(errors::invalid_entry_type
-			, get_libtorrent_category()));
+		throw libtorrent_exception(errors::invalid_entry_type);
 	}
 #endif
 

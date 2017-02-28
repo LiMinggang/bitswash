@@ -35,6 +35,7 @@ POSSIBILITY OF SUCH DAMAGE.
 #include "setup_transfer.hpp"
 #include "libtorrent/create_torrent.hpp"
 #include "libtorrent/alert_types.hpp"
+#include "libtorrent/torrent_info.hpp"
 
 enum flags_t
 {
@@ -45,6 +46,7 @@ enum flags_t
 void test_read_piece(int flags)
 {
 	using namespace libtorrent;
+	namespace lt = libtorrent;
 
 	fprintf(stderr, "==== TEST READ PIECE =====\n");
 
@@ -61,12 +63,12 @@ void test_read_piece(int flags)
 	create_directory(combine_path("tmp1_read_piece", "test_torrent"), ec);
 	if (ec) fprintf(stderr, "ERROR: creating directory test_torrent: (%d) %s\n"
 		, ec.value(), ec.message().c_str());
-	
+
 	file_storage fs;
 	std::srand(10);
 	int piece_size = 0x4000;
 
-	static const int file_sizes[] ={ 100000, 10000 };
+	static const int file_sizes[] = { 100000, 10000 };
 
 	create_random_files(combine_path("tmp1_read_piece", "test_torrent")
 		, file_sizes, 2);
@@ -81,15 +83,29 @@ void test_read_piece(int flags)
 
 	std::vector<char> buf;
 	bencode(std::back_inserter(buf), t.generate());
-	boost::intrusive_ptr<torrent_info> ti(new torrent_info(&buf[0], buf.size(), ec));
+	boost::shared_ptr<torrent_info> ti(new torrent_info(&buf[0], buf.size(), ec));
 
 	fprintf(stderr, "generated torrent: %s tmp1_read_piece/test_torrent\n"
 		, to_hex(ti->info_hash().to_string()).c_str());
 
-	session ses(fingerprint("LT", 0, 1, 0, 0), std::make_pair(48000, 49000), "0.0.0.0", 0);
-	ses.set_alert_mask(alert::all_categories);
+	const int mask = alert::all_categories
+		& ~(alert::progress_notification
+			| alert::performance_warning
+			| alert::stats_notification);
+
+	settings_pack sett;
+	sett.set_bool(settings_pack::enable_lsd, false);
+	sett.set_bool(settings_pack::enable_natpmp, false);
+	sett.set_bool(settings_pack::enable_upnp, false);
+	sett.set_bool(settings_pack::enable_dht, false);
+	sett.set_int(settings_pack::alert_mask, mask);
+	sett.set_str(settings_pack::listen_interfaces, "0.0.0.0:48000");
+	sett.set_int(settings_pack::alert_mask, alert::all_categories);
+	lt::session ses(sett);
 
 	add_torrent_params p;
+	p.flags &= ~add_torrent_params::flag_paused;
+	p.flags &= ~add_torrent_params::flag_auto_managed;
 	p.save_path = "tmp1_read_piece";
 	p.ti = ti;
 	if (flags & seed_mode)
@@ -98,8 +114,8 @@ void test_read_piece(int flags)
 	TEST_CHECK(!ec);
 	TEST_CHECK(tor1.is_valid());
 
-	std::auto_ptr<alert> a = wait_for_alert(ses, torrent_finished_alert::alert_type, "ses");
-	TEST_CHECK(a.get());
+	alert const* a = wait_for_alert(ses, torrent_finished_alert::alert_type, "ses");
+	TEST_CHECK(a);
 
 	TEST_CHECK(tor1.status().is_seeding);
 
@@ -114,10 +130,10 @@ void test_read_piece(int flags)
 
 	a = wait_for_alert(ses, read_piece_alert::alert_type, "ses");
 
-	TEST_CHECK(a.get());
-	if (a.get())
+	TEST_CHECK(a);
+	if (a)
 	{
-		read_piece_alert* rp = alert_cast<read_piece_alert>(a.get());
+		read_piece_alert const* rp = alert_cast<read_piece_alert>(a);
 		TEST_CHECK(rp);
 		if (rp)
 		{
@@ -130,11 +146,18 @@ void test_read_piece(int flags)
 		, ec.value(), ec.message().c_str());
 }
 
-int test_main()
+TORRENT_TEST(read_piece)
 {
 	test_read_piece(0);
+}
+
+TORRENT_TEST(seed_mode)
+{
 	test_read_piece(seed_mode);
+}
+
+TORRENT_TEST(time_critical)
+{
 	test_read_piece(time_critical);
-	return 0;
 }
 

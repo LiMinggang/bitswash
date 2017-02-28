@@ -53,13 +53,13 @@ int touch_file(std::string const& filename, int size)
 	if (!f.open(filename, file::write_only, ec)) return -1;
 	if (ec) return -1;
 	file::iovec_t b = {&v[0], v.size()};
-	size_type written = f.writev(0, &b, 1, ec);
+	boost::int64_t written = f.writev(0, &b, 1, ec);
 	if (written != int(v.size())) return -3;
 	if (ec) return -3;
 	return 0;
 }
 
-void test_create_directory()
+TORRENT_TEST(create_directory)
 {
 	error_code ec;
 	create_directory("__foobar__", ec);
@@ -75,7 +75,7 @@ void test_create_directory()
 	TEST_CHECK(!ec);
 }
 
-void test_stat()
+TORRENT_TEST(file_status)
 {
 	error_code ec;
 
@@ -97,21 +97,18 @@ void test_stat()
 	TEST_CHECK(!ec);
 
 	int diff = int(st2.mtime - st1.mtime);
-	fprintf(stderr, "timestamp difference: %d seconds. expected approx. 3 seconds\n"
+	fprintf(stdout, "timestamp difference: %d seconds. expected approx. 3 seconds\n"
 		, diff);
 
 	TEST_CHECK(diff >= 2 && diff <= 4);
 }
 
-int test_main()
+TORRENT_TEST(directory)
 {
-	test_create_directory();
-	test_stat();
-
 	error_code ec;
 
 	create_directory("file_test_dir", ec);
-	if (ec) fprintf(stderr, "create_directory: %s\n", ec.message().c_str());
+	if (ec) fprintf(stdout, "create_directory: %s\n", ec.message().c_str());
 	TEST_CHECK(!ec);
 
 	std::string cwd = current_working_directory();
@@ -126,7 +123,7 @@ int test_main()
 		std::string f = i.file();
 		TEST_CHECK(files.count(f) == 0);
 		files.insert(f);
-		fprintf(stderr, " %s\n", f.c_str());
+		fprintf(stdout, " %s\n", f.c_str());
 	}
 
 	TEST_CHECK(files.count("abc") == 1);
@@ -143,15 +140,18 @@ int test_main()
 		std::string f = i.file();
 		TEST_CHECK(files.count(f) == 0);
 		files.insert(f);
-		fprintf(stderr, " %s\n", f.c_str());
+		fprintf(stdout, " %s\n", f.c_str());
 	}
 
 	remove_all("file_test_dir", ec);
-	if (ec) fprintf(stderr, "remove_all: %s\n", ec.message().c_str());
+	if (ec) fprintf(stdout, "remove_all: %s\n", ec.message().c_str());
 	remove_all("file_test_dir2", ec);
-	if (ec) fprintf(stderr, "remove_all: %s\n", ec.message().c_str());
+	if (ec) fprintf(stdout, "remove_all: %s\n", ec.message().c_str());
+}
 
-	// test path functions
+// test path functions
+TORRENT_TEST(paths)
+{
 	TEST_EQUAL(combine_path("test1/", "test2"), "test1/test2");
 	TEST_EQUAL(combine_path("test1", "."), "test1");
 	TEST_EQUAL(combine_path(".", "test1"), "test1");
@@ -242,9 +242,11 @@ int test_main()
 #endif
 
 	TEST_EQUAL(complete("."), current_working_directory());
+}
 
-	// test split_string
-
+// test split_string
+TORRENT_TEST(split_string)
+{
 	char const* tags[10];
 	char tags_str[] = "  this  is\ta test\t string\x01to be split  and it cannot "
 		"extend over the limit of elements \t";
@@ -274,28 +276,119 @@ int test_main()
 	test = "1.2.3/_";
 	replace_extension(test, "txt");
 	TEST_EQUAL(test, "1.2.3/_.txt");
+}
 
-
-	// file class
+// file class
+TORRENT_TEST(file)
+{
+	error_code ec;
 	file f;
 #if TORRENT_USE_UNC_PATHS || !defined WIN32
 	TEST_CHECK(f.open("con", file::read_write, ec));
 #else
 	TEST_CHECK(f.open("test_file", file::read_write, ec));
 #endif
-	TEST_CHECK(!ec);
-	if (ec) fprintf(stderr, "%s\n", ec.message().c_str());
+	if (ec)
+		fprintf(stdout, "open failed: [%s] %s\n", ec.category().name(), ec.message().c_str());
+	TEST_EQUAL(ec, error_code());
+	if (ec) fprintf(stdout, "%s\n", ec.message().c_str());
 	file::iovec_t b = {(void*)"test", 4};
-	TEST_CHECK(f.writev(0, &b, 1, ec) == 4);
+	TEST_EQUAL(f.writev(0, &b, 1, ec), 4);
+	if (ec)
+		fprintf(stdout, "writev failed: [%s] %s\n", ec.category().name(), ec.message().c_str());
 	TEST_CHECK(!ec);
 	char test_buf[5] = {0};
 	b.iov_base = test_buf;
 	b.iov_len = 4;
-	TEST_CHECK(f.readv(0, &b, 1, ec) == 4);
-	TEST_CHECK(!ec);
+	TEST_EQUAL(f.readv(0, &b, 1, ec), 4);
+	if (ec)
+		fprintf(stdout, "readv failed: [%s] %s\n", ec.category().name(), ec.message().c_str());
+	TEST_EQUAL(ec, error_code());
 	TEST_CHECK(strcmp(test_buf, "test") == 0);
 	f.close();
+}
 
-	return 0;
+TORRENT_TEST(hard_link)
+{
+	// try to create a hard link to see what happens
+	// first create a regular file to then add another link to.
+
+	// create a file, write some stuff to it, create a hard link to that file,
+	// read that file and assert we get the same stuff we wrote to the first file
+	error_code ec;
+	file f;
+	TEST_CHECK(f.open("original_file", file::read_write, ec));
+	if (ec)
+		fprintf(stdout, "open failed: [%s] %s\n", ec.category().name(), ec.message().c_str());
+	TEST_EQUAL(ec, error_code());
+
+	file::iovec_t b = {(void*)"abcdefghijklmnopqrstuvwxyz", 26};
+	TEST_EQUAL(f.writev(0, &b, 1, ec), 26);
+	if (ec)
+		fprintf(stdout, "writev failed: [%s] %s\n", ec.category().name(), ec.message().c_str());
+	TEST_EQUAL(ec, error_code());
+	f.close();
+
+	hard_link("original_file", "second_link", ec);
+
+	if (ec)
+		fprintf(stdout, "hard_link failed: [%s] %s\n", ec.category().name(), ec.message().c_str());
+	TEST_EQUAL(ec, error_code());
+
+
+	TEST_CHECK(f.open("second_link", file::read_write, ec));
+	if (ec)
+		fprintf(stdout, "open failed: [%s] %s\n", ec.category().name(), ec.message().c_str());
+	TEST_EQUAL(ec, error_code());
+
+	char test_buf[27] = {0};
+	b.iov_base = test_buf;
+	b.iov_len = 27;
+	TEST_EQUAL(f.readv(0, &b, 1, ec), 26);
+	if (ec)
+		fprintf(stdout, "readv failed: [%s] %s\n", ec.category().name(), ec.message().c_str());
+	TEST_EQUAL(ec, error_code());
+	TEST_CHECK(strcmp(test_buf, "abcdefghijklmnopqrstuvwxyz") == 0);
+	f.close();
+
+	remove("original_file", ec);
+	if (ec)
+		fprintf(stdout, "remove failed: [%s] %s\n", ec.category().name(), ec.message().c_str());
+
+	remove("second_link", ec);
+	if (ec)
+		fprintf(stdout, "remove failed: [%s] %s\n", ec.category().name(), ec.message().c_str());
+}
+
+TORRENT_TEST(coalesce_buffer)
+{
+	error_code ec;
+	file f;
+	TEST_CHECK(f.open("test_file", file::read_write, ec));
+	if (ec)
+		fprintf(stdout, "open failed: [%s] %s\n", ec.category().name(), ec.message().c_str());
+	TEST_EQUAL(ec, error_code());
+	if (ec) fprintf(stdout, "%s\n", ec.message().c_str());
+	file::iovec_t b[2] = {{(void*)"test", 4}, {(void*)"foobar", 6}};
+	TEST_EQUAL(f.writev(0, b, 2, ec, file::coalesce_buffers), 4 + 6);
+	if (ec)
+		fprintf(stdout, "writev failed: [%s] %s\n", ec.category().name(), ec.message().c_str());
+	TEST_CHECK(!ec);
+	char test_buf1[5] = {0};
+	char test_buf2[7] = {0};
+	b[0].iov_base = test_buf1;
+	b[0].iov_len = 4;
+	b[1].iov_base = test_buf2;
+	b[1].iov_len = 6;
+	TEST_EQUAL(f.readv(0, b, 2, ec), 4 + 6);
+	if (ec)
+	{
+		fprintf(stdout, "readv failed: [%s] %s\n"
+			, ec.category().name(), ec.message().c_str());
+	}
+	TEST_EQUAL(ec, error_code());
+	TEST_CHECK(strcmp(test_buf1, "test") == 0);
+	TEST_CHECK(strcmp(test_buf2, "foobar") == 0);
+	f.close();
 }
 

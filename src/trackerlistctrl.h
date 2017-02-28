@@ -32,6 +32,7 @@
 
 
 #include <libtorrent/torrent_handle.hpp>
+#include <libtorrent/announce_entry.hpp>
 
 
 

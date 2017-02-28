@@ -1,3 +1,5 @@
+#!/usr/bin/env python
+
 import sys
 
 # to use this script, first run 'sample' to sample your libtorrent based process
@@ -54,6 +56,9 @@ for l in f:
 	print output
 
 	if 'invariant_checker_impl' in fun: fold = indentation
+	if 'free_multiple_buffers' in fun: fold = indentation
+	if 'libtorrent::condition::wait' in fun: fold = indentation
+	if 'allocate_buffer' in fun: fold = indentation
 	if '::find_POD' in fun: fold = indentation
 	if 'SHA1_Update' in fun: fold = indentation
 	if 'boost::detail::function::basic_vtable' in fun: fold = indentation
@@ -65,6 +70,8 @@ for l in f:
 	if 'mp_exptmod' == fun: fold = indentation
 	if '::check_invariant()' in fun: fold = indentation
 	if 'libtorrent::condition::wait' in fun: fold = indentation
+	if '_sigtramp' in fun: fold = indentation
+	if 'time_now_hires' in fun: fold = indentation
 	if 'libtorrent::sleep' in fun: fold = indentation
 	if 'puts' == fun: fold = indentation
 	if 'boost::asio::basic_stream_socket' in fun: fold = indentation
@@ -89,7 +96,8 @@ for l in f:
 	if 'BN_mod_exp' == fun: fold = indentation
 	if 'BN_CTX_free' == fun: fold = indentation
 	if 'cerror' == fun: fold = indentation
-	
+	if '0xffffffff' == fun: fold = indentation
+
 list = []
 for k in fun_samples:
 	list.append((fun_samples[k], k))

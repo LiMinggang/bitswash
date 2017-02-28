@@ -79,6 +79,9 @@
  * 2.3  21 Jan 2013     - Check for invalid code length codes in dynamic blocks
  */
 
+// this whole file is just preserved and warnings are suppressed
+#include "libtorrent/aux_/disable_warnings_push.hpp"
+
 #include <setjmp.h>             /* for setjmp(), longjmp(), and jmp_buf */
 #include <string.h>             /* for NULL */
 #include "libtorrent/puff.hpp"             /* prototype for puff() */
@@ -703,6 +706,7 @@ local int dynamic(struct state *s)
     index = 0;
     while (index < nlen + ndist) {
         int symbol;             /* decoded value */
+        int len;                /* last length to repeat */
 
         symbol = decode(s, &lencode);
         if (symbol < 0)
@@ -710,8 +714,7 @@ local int dynamic(struct state *s)
         if (symbol < 16)                /* length in 0..15 */
             lengths[index++] = symbol;
         else {                          /* repeat instruction */
-            int len = 0;                /* last length to repeat */
-                                        /* assume repeating zeros */
+            len = 0;                    /* assume repeating zeros */
             if (symbol == 16) {         /* repeat last length 3..6 times */
                 if (index == 0)
                     return -5;          /* no last length! */

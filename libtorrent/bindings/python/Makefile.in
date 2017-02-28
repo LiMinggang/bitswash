@@ -91,9 +91,10 @@ target_triplet = @target@
 subdir = bindings/python
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
 am__aclocal_m4_deps = $(top_srcdir)/m4/ax_boost_base.m4 \
+	$(top_srcdir)/m4/ax_boost_chrono.m4 \
 	$(top_srcdir)/m4/ax_boost_python.m4 \
+	$(top_srcdir)/m4/ax_boost_random.m4 \
 	$(top_srcdir)/m4/ax_boost_system.m4 \
-	$(top_srcdir)/m4/ax_check_geoip.m4 \
 	$(top_srcdir)/m4/ax_check_openssl.m4 \
 	$(top_srcdir)/m4/ax_pthread.m4 \
 	$(top_srcdir)/m4/ax_python_devel.m4 \
@@ -129,7 +130,7 @@ am__can_run_installinfo = \
   esac
 am__tagged_files = $(HEADERS) $(SOURCES) $(TAGS_FILES) $(LISP)
 am__DIST_COMMON = $(srcdir)/Makefile.in $(srcdir)/compile_flags.in \
-	$(srcdir)/link_flags.in
+	$(srcdir)/link_flags.in ltmain.sh
 DISTFILES = $(DIST_COMMON) $(DIST_SOURCES) $(TEXINFOS) $(EXTRA_DIST)
 ACLOCAL = @ACLOCAL@
 AMTAR = @AMTAR@
@@ -139,9 +140,11 @@ AUTOCONF = @AUTOCONF@
 AUTOHEADER = @AUTOHEADER@
 AUTOMAKE = @AUTOMAKE@
 AWK = @AWK@
+BOOST_CHRONO_LIB = @BOOST_CHRONO_LIB@
 BOOST_CPPFLAGS = @BOOST_CPPFLAGS@
 BOOST_LDFLAGS = @BOOST_LDFLAGS@
 BOOST_PYTHON_LIB = @BOOST_PYTHON_LIB@
+BOOST_RANDOM_LIB = @BOOST_RANDOM_LIB@
 BOOST_SYSTEM_LIB = @BOOST_SYSTEM_LIB@
 CC = @CC@
 CCDEPMODE = @CCDEPMODE@
@@ -166,8 +169,6 @@ ECHO_T = @ECHO_T@
 EGREP = @EGREP@
 EXEEXT = @EXEEXT@
 FGREP = @FGREP@
-GEOIP_CFLAGS = @GEOIP_CFLAGS@
-GEOIP_LIBS = @GEOIP_LIBS@
 GREP = @GREP@
 ICONV_LIBS = @ICONV_LIBS@
 INSTALL = @INSTALL@
@@ -214,6 +215,7 @@ PTHREAD_CFLAGS = @PTHREAD_CFLAGS@
 PTHREAD_LIBS = @PTHREAD_LIBS@
 PYTHON = @PYTHON@
 PYTHON_CPPFLAGS = @PYTHON_CPPFLAGS@
+PYTHON_CXXFLAGS = @PYTHON_CXXFLAGS@
 PYTHON_EXEC_PREFIX = @PYTHON_EXEC_PREFIX@
 PYTHON_EXTRA_LDFLAGS = @PYTHON_EXTRA_LDFLAGS@
 PYTHON_EXTRA_LIBS = @PYTHON_EXTRA_LIBS@
@@ -313,6 +315,7 @@ EXTRA_DIST = \
   src/module.cpp            \
   src/optional.hpp          \
   src/peer_info.cpp         \
+  src/boost_python.hpp      \
   src/session.cpp           \
   src/session_settings.cpp  \
   src/string.cpp            \
@@ -437,8 +440,8 @@ maintainer-clean-generic:
 	@echo "This command is intended for maintainers to use"
 	@echo "it deletes files that may require special tools to rebuild."
 @ENABLE_PYTHON_BINDING_FALSE@install-exec-local:
-@ENABLE_PYTHON_BINDING_FALSE@uninstall-local:
 @ENABLE_PYTHON_BINDING_FALSE@clean-local:
+@ENABLE_PYTHON_BINDING_FALSE@uninstall-local:
 clean: clean-am
 
 clean-am: clean-generic clean-libtool clean-local mostlyclean-am

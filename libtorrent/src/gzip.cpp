@@ -95,20 +95,27 @@ namespace libtorrent
 		return msgs[ev];
 	}
 
-	boost::system::error_category& get_gzip_category()
+	boost::system::error_category& gzip_category()
 	{
-		static gzip_error_category gzip_category;
-		return gzip_category;
+		static gzip_error_category category;
+		return category;
 	}
+
+#ifndef TORRENT_NO_DEPRECATE
+	boost::system::error_category& get_gzip_category()
+	{ return gzip_category(); }
+#endif
 
 	namespace gzip_errors
 	{
 		boost::system::error_code make_error_code(error_code_enum e)
 		{
-			return boost::system::error_code(e, get_gzip_category());
+			return boost::system::error_code(e, gzip_category());
 		}
 	}
 
+	namespace
+	{
 	// returns -1 if gzip header is invalid or the header size in bytes
 	int gzip_header(const char* buf, int size)
 	{
@@ -116,6 +123,8 @@ namespace libtorrent
 
 		const unsigned char* buffer = reinterpret_cast<const unsigned char*>(buf);
 		const int total_size = size;
+
+		// gzip is defined in https://tools.ietf.org/html/rfc1952
 
 		// The zip header cannot be shorter than 10 bytes
 		if (size < 10 || buf == 0) return -1;
@@ -127,9 +136,14 @@ namespace libtorrent
 		int flags = buffer[3];
 
 		// check for reserved flag and make sure it's compressed with the correct metod
+		// we only support deflate
 		if (method != 8 || (flags & FRESERVED) != 0) return -1;
 
-		// skip time, xflags, OS code
+		// skip time, xflags, OS code. The first 10 bytes of the header:
+		// +---+---+---+---+---+---+---+---+---+---+
+		// |ID1|ID2|CM |FLG|     MTIME     |XFL|OS | (more-->)
+		// +---+---+---+---+---+---+---+---+---+---+
+
 		size -= 10;
 		buffer += 10;
 
@@ -182,6 +196,7 @@ namespace libtorrent
 
 		return total_size - size;
 	}
+	} // anonymous namespace
 
 	TORRENT_EXTRA_EXPORT void inflate_gzip(
 		char const* in
@@ -211,12 +226,13 @@ namespace libtorrent
 		{
 			TORRENT_TRY {
 				buffer.resize(destlen);
-			} TORRENT_CATCH(std::exception& e) {
+			} TORRENT_CATCH(std::exception&) {
 				ec = errors::no_memory;
 				return;
 			}
 
-			ret = puff((unsigned char*)&buffer[0], &destlen, (unsigned char*)in, &srclen);
+			ret = puff(reinterpret_cast<unsigned char*>(&buffer[0]), &destlen
+				, reinterpret_cast<const unsigned char*>(in), &srclen);
 
 			// if the destination buffer wasn't large enough, double its
 			// size and try again. Unless it's already at its max, in which
@@ -230,7 +246,7 @@ namespace libtorrent
 				}
 
 				destlen *= 2;
-				if (destlen > (unsigned int)maximum_size)
+				if (destlen > boost::uint32_t(maximum_size))
 					destlen = maximum_size;
 			}
 		} while (ret == 1);

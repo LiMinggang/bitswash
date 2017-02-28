@@ -33,13 +33,12 @@ POSSIBILITY OF SUCH DAMAGE.
 #include "libtorrent/upnp.hpp"
 #include "libtorrent/socket.hpp"
 #include "libtorrent/socket_io.hpp" // print_endpoint
-#include "libtorrent/connection_queue.hpp"
 #include "test.hpp"
 #include "setup_transfer.hpp"
 #include <fstream>
 #include <boost/bind.hpp>
 #include <boost/ref.hpp>
-#include <boost/intrusive_ptr.hpp>
+#include <boost/smart_ptr.hpp>
 #include <iostream>
 
 using namespace libtorrent;
@@ -47,17 +46,25 @@ using namespace libtorrent;
 broadcast_socket* sock = 0;
 int g_port = 0;
 
-char soap_add_response[] =
+char const* soap_add_response[] = {
 	"<s:Envelope xmlns:s=\"http://schemas.xmlsoap.org/soap/envelope/\" "
 	"s:encodingStyle=\"http://schemas.xmlsoap.org/soap/encoding/\">"
 	"<s:Body><u:AddPortMapping xmlns:u=\"urn:schemas-upnp-org:service:WANIPConnection:1\">"
-	"</u:AddPortMapping></s:Body></s:Envelope>";
+	"</u:AddPortMapping></s:Body></s:Envelope>",
+	"<s:Envelope xmlns:s=\"http://schemas.xmlsoap.org/soap/envelope/\" "
+	"s:encodingStyle=\"http://schemas.xmlsoap.org/soap/encoding/\">"
+	"<s:Body><u:AddPortMapping xmlns:u=\"urn:schemas-upnp-org:service:WANIPConnection:2\">"
+	"</u:AddPortMapping></s:Body></s:Envelope>"};
 
-char soap_delete_response[] =
+char const* soap_delete_response[] = {
 	"<s:Envelope xmlns:s=\"http://schemas.xmlsoap.org/soap/envelope/\" "
 	"s:encodingStyle=\"http://schemas.xmlsoap.org/soap/encoding/\">"
 	"<s:Body><u:DeletePortMapping xmlns:u=\"urn:schemas-upnp-org:service:WANIPConnection:1\">"
-	"</u:DeletePortMapping></s:Body></s:Envelope>";
+	"</u:DeletePortMapping></s:Body></s:Envelope>",
+	"<s:Envelope xmlns:s=\"http://schemas.xmlsoap.org/soap/envelope/\" "
+	"s:encodingStyle=\"http://schemas.xmlsoap.org/soap/encoding/\">"
+	"<s:Body><u:DeletePortMapping xmlns:u=\"urn:schemas-upnp-org:service:WANIPConnection:2\">"
+	"</u:DeletePortMapping></s:Body></s:Envelope>"};
 
 void incoming_msearch(udp::endpoint const& from, char* buffer
 	, int size)
@@ -112,18 +119,18 @@ struct callback_info
 
 std::list<callback_info> callbacks;
 
-void callback(int mapping, address const& ip, int port, error_code const& err)
+void callback(int mapping, address const& ip, int port, int protocol, error_code const& err)
 {
 	callback_info info = {mapping, port, err};
 	callbacks.push_back(info);
 	std::cerr << "mapping: " << mapping << ", port: " << port << ", IP: " << ip
-		<< ", error: \"" << err.message() << "\"\n";
+		<< ", proto: " << protocol << ", error: \"" << err.message() << "\"\n";
 }
 
-int run_upnp_test(char const* root_filename, char const* router_model, char const* control_name)
+void run_upnp_test(char const* root_filename, char const* router_model, char const* control_name, int igd_version)
 {
 	libtorrent::io_service ios;
-	
+
 	g_port = start_web_server();
 
 	std::vector<char> buf;
@@ -136,25 +143,26 @@ int run_upnp_test(char const* root_filename, char const* router_model, char cons
 	{
 		fprintf(stderr, "failed to open file 'upnp.xml': %s\n", strerror(errno));
 		TEST_CHECK(false);
-		return 1;
+		return;
 	}
 	fprintf(xml_file, &buf[0], g_port);
 	fclose(xml_file);
 
 	std::ofstream xml(control_name, std::ios::trunc);
-	xml.write(soap_add_response, sizeof(soap_add_response)-1);
+	xml.write(soap_add_response[igd_version-1], sizeof(soap_add_response[igd_version-1])-1);
 	xml.close();
 
-	sock = new broadcast_socket(udp::endpoint(address_v4::from_string("239.255.255.250"), 1900)
-		, &incoming_msearch);
+	sock = new broadcast_socket(udp::endpoint(address_v4::from_string("239.255.255.250")
+		, 1900));
 
-	sock->open(ios, ec);
+	sock->open(&incoming_msearch, ios, ec);
 
 	std::string user_agent = "test agent";
 
-	connection_queue cc(ios);
-	boost::intrusive_ptr<upnp> upnp_handler = new upnp(ios, cc, address_v4::from_string("127.0.0.1")
+	boost::shared_ptr<upnp> upnp_handler = boost::make_shared<upnp>(boost::ref(ios)
+		, address_v4::from_string("127.0.0.1")
 		, user_agent, &callback, &log_callback, false);
+	upnp_handler->start();
 	upnp_handler->discover_device();
 
 	for (int i = 0; i < 20; ++i)
@@ -197,7 +205,7 @@ int run_upnp_test(char const* root_filename, char const* router_model, char cons
 	TEST_EQUAL(std::count(callbacks.begin(), callbacks.end(), expected2), 1);
 
 	xml.open(control_name, std::ios::trunc);
-	xml.write(soap_delete_response, sizeof(soap_delete_response)-1);
+	xml.write(soap_delete_response[igd_version-1], sizeof(soap_delete_response[igd_version-1])-1);
 	xml.close();
 
 	upnp_handler->close();
@@ -225,13 +233,11 @@ int run_upnp_test(char const* root_filename, char const* router_model, char cons
 	callbacks.clear();
 
 	delete sock;
-	return 0;
 }
 
-int test_main()
+TORRENT_TEST(upnp)
 {
-	run_upnp_test(combine_path("..", "root1.xml").c_str(), "Xtreme N GIGABIT Router", "wipconn");
-	run_upnp_test(combine_path("..", "root2.xml").c_str(), "D-Link Router", "WANIPConnection");
-	return 0;
+	run_upnp_test(combine_path("..", "root1.xml").c_str(), "Xtreme N GIGABIT Router", "wipconn", 1);
+	run_upnp_test(combine_path("..", "root2.xml").c_str(), "D-Link Router", "WANIPConnection", 1);
+	run_upnp_test(combine_path("..", "root3.xml").c_str(), "D-Link Router", "WANIPConnection_2", 2);
 }
-

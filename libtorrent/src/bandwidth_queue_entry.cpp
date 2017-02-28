@@ -30,14 +30,19 @@ POSSIBILITY OF SUCH DAMAGE.
 
 */
 
+#include "libtorrent/aux_/disable_warnings_push.hpp"
+
 #include <boost/cstdint.hpp>
+
+#include "libtorrent/aux_/disable_warnings_pop.hpp"
+
 #include "libtorrent/bandwidth_queue_entry.hpp"
 #include <cstring>
 #include <algorithm>
 
 namespace libtorrent
 {
-	bw_request::bw_request(boost::intrusive_ptr<bandwidth_socket> const& pe
+	bw_request::bw_request(boost::shared_ptr<bandwidth_socket> const& pe
 		, int blk, int prio)
 		: peer(pe)
 		, priority(prio)

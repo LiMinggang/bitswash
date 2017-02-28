@@ -29,10 +29,10 @@
 <body>
 <div class="document" id="libtorrent-manual">
     <div id="container">
-    <table id="header">
+    <a href="index.html"><table id="header">
     <tr><td id="orange"></td>
     <td id="logo">libtorrent</td></tr>
-    </table>
+    </table></a>
     <div id="main">
 <h1 class="title">libtorrent manual</h1>
 <table class="docinfo" frame="void" rules="none">
@@ -42,7 +42,7 @@
 <tr><th class="docinfo-name">Author:</th>
 <td>Arvid Norberg, <a class="last reference external" href="mailto:arvid&#64;libtorrent.org">arvid&#64;libtorrent.org</a></td></tr>
 <tr><th class="docinfo-name">Version:</th>
-<td>1.0.11</td></tr>
+<td>1.1.2</td></tr>
 </tbody>
 </table>
 <div class="contents topic" id="table-of-contents">
@@ -57,16 +57,15 @@
 </li>
 <li><a class="reference internal" href="#highlighted-features" id="id7">highlighted features</a><ul>
 <li><a class="reference internal" href="#disk-caching" id="id8">disk caching</a></li>
-<li><a class="reference internal" href="#high-performance-disk-subsystem" id="id9">high performance disk subsystem</a></li>
-<li><a class="reference internal" href="#network-buffers" id="id10">network buffers</a></li>
-<li><a class="reference internal" href="#piece-picker" id="id11">piece picker</a></li>
-<li><a class="reference internal" href="#share-mode" id="id12">share mode</a></li>
-<li><a class="reference internal" href="#merkle-hash-tree-torrents" id="id13">merkle hash tree torrents</a></li>
-<li><a class="reference internal" href="#customizable-file-storage" id="id14">customizable file storage</a></li>
-<li><a class="reference internal" href="#easy-to-use-api" id="id15">easy to use API</a></li>
+<li><a class="reference internal" href="#network-buffers" id="id9">network buffers</a></li>
+<li><a class="reference internal" href="#piece-picker" id="id10">piece picker</a></li>
+<li><a class="reference internal" href="#share-mode" id="id11">share mode</a></li>
+<li><a class="reference internal" href="#merkle-hash-tree-torrents" id="id12">merkle hash tree torrents</a></li>
+<li><a class="reference internal" href="#customizable-file-storage" id="id13">customizable file storage</a></li>
+<li><a class="reference internal" href="#easy-to-use-api" id="id14">easy to use API</a></li>
 </ul>
 </li>
-<li><a class="reference internal" href="#portability" id="id16">portability</a></li>
+<li><a class="reference internal" href="#portability" id="id15">portability</a></li>
 </ul>
 </div>
 <div class="section" id="introduction">
@@ -79,7 +78,7 @@ the library.</p>
 </div>
 <div class="section" id="features">
 <h1>features</h1>
-<p>libtorrent is under active development. It is an ongoing project. Its
+<p>libtorrent is an ongoing project under active development. Its
 current state supports and includes the following features:</p>
 <div class="section" id="extensions">
 <h2>extensions</h2>
@@ -113,18 +112,22 @@ ratio rather than downloading the torrent.</li>
 <div class="section" id="disk-management">
 <h2>disk management</h2>
 <ul class="simple">
-<li>uses a separate disk I/O thread to not have the disk ever block on network or
-client interaction. (see <a class="reference external" href="manualref.html#threads">threads</a>).</li>
+<li>can use multipled disk I/O threads to not have the disk block network or
+client interaction.</li>
+<li>supports verifying the SHA-1 hash of pieces in multiple threads, to take
+advantage of multi core machines.</li>
 <li>supports files &gt; 2 gigabytes.</li>
-<li>fast resume support, a way to get rid of the costly piece check at the
+<li>fast resume support, a way to avoid the costly piece check at the
 start of a resumed torrent. Saves the storage state, piece_picker state
-as well as all local peers in a separate fast-resume file.</li>
+as well as all local peers in a fast-resume file.</li>
 <li>has an adjustable read and write disk cache for improved disk throughput.</li>
 <li>queues torrents for file check, instead of checking all of them in parallel.</li>
 <li>does not have any requirements on the piece order in a torrent that it
 resumes. This means it can resume a torrent downloaded by any client.</li>
 <li>seed mode, where the files on disk are assumed to be complete, and each
 piece's hash is verified the first time it is requested.</li>
+<li>implements an ARC disk cache, tuned for performing well under bittorrent work
+loads</li>
 </ul>
 </div>
 <div class="section" id="network">
@@ -163,7 +166,7 @@ magnitude faster than others.</li>
 <div class="section" id="disk-caching">
 <h2>disk caching</h2>
 <p>All disk I/O in libtorrent is done asynchronously to the network thread, by the
-disk io thread. When a block is read, the disk io thread reads all subsequent
+disk io threads. When a block is read, the disk io thread reads all subsequent
 blocks from that piece into the read cache, assuming that the peer requesting
 the block will also request more blocks from the same piece. This decreases the
 number of syscalls for reading data. It also decreases delay from seeking.</p>
@@ -183,46 +186,6 @@ limit, to save memory.</p>
 The largest contiguous algorithm is the default and flushes the largest contiguous
 block of buffers, instead of flushing all blocks belonging to the piece which was
 written to least recently.</p>
-<p>For version 0.15 a lot of work went into optimizing the cache algorithm, trying
-to increase the cache hit rate and utilization. The graph to the left shows the
-memory utilization in 0.14. This cache is a straight forward, fairly naive, implementation.
-Every block read will also read all subsequent blocks in that piece into the cache.
-Whenever we need more space, the entire oldest piece is evicted from the cache. Caching
-writes always takes presedence over the read cache. Whenever a piece is fully downloaded,
-it is flushed to disk.</p>
-<img alt="disk_buffer_before_optimization.png" src="disk_buffer_before_optimization.png" style="width: 49%;" />
-<img alt="disk_buffer.png" src="disk_buffer.png" style="width: 49%;" />
-<p>The left graph shows the problem of evicting entire pieces at a time, and waiting until
-an entire piece is downloaded until flushing it. These graphs were generated for a torrent
-with fairly large pieces. This means that granularity was poor in 0.14, since it only
-dealt with entire pieces. In 0.15, the granularity problem has been fixed by evicting one
-block at a time from the read cache. This maximizes the read cache utilization. The write
-cache is also flushed when a sufficient number of contiguous blocks have been downloaded
-for a piece, which is not tied to the piece size anymore. This way the cache scales a lot
-better with piece sizes.</p>
-<p>The graph to the right shows the same download but with the new optimized disk cache
-algorithm. It clearly shows an increased utilization, which means higher read hit rates
-or smaller caches with maintained hit rate.</p>
-</div>
-<div class="section" id="high-performance-disk-subsystem">
-<h2>high performance disk subsystem</h2>
-<p>In some circumstances, the disk cache may not suffice to provide maximum performance.
-One such example is high performance seeding, to a large number of peers, over a fast
-up-link. In such a case, the amount of RAM may simply not be enough to cache disk
-reads. When there's not enough RAM to cache disk reads, the disk throughput  would
-typically degrade to perform as poorly as with no cache at all, with the majority
-of the time spent waiting for the disk head to seek.</p>
-<p>To solve this problem, libtorrent sorts read requests by their physical offset on the
-disk. They are processed by having the disk read head sweep back and forth over the drive.</p>
-<p>This makes libtorrent very suitable for large scale, high-throughput seeding.</p>
-<img alt="disk_access_no_elevator.png" src="disk_access_no_elevator.png" style="width: 49%;" />
-<img alt="disk_access_elevator.png" src="disk_access_elevator.png" style="width: 49%;" />
-<p>These plots illustrates the physical disk offset for reads over time. The left plot
-is of a run where disk operation re-ordering is turned off and the righ is when it's
-turned on. The right one has a relatively smooth sine wave shape whereas the left
-one is more random and involves much longer seeks back and forth over the disk.</p>
-<p>True physical disk offset queries are only supported on newer linux kernels, Mac OS X and
-Windows 2000 and up.</p>
 </div>
 <div class="section" id="network-buffers">
 <h2>network buffers</h2>

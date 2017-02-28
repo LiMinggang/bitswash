@@ -35,47 +35,53 @@ POSSIBILITY OF SUCH DAMAGE.
 #include "libtorrent/address.hpp"
 #include "libtorrent/socket.hpp"
 #include "libtorrent/random.hpp"
-#include "libtorrent/broadcast_socket.hpp" // for is_any() etc.
+#include "libtorrent/socket_io.hpp"
+#include "libtorrent/aux_/session_impl.hpp"
+#include "libtorrent/broadcast_socket.hpp" // for supports_ipv6()
+#include "setup_transfer.hpp" // for rand_v4
 
 using namespace libtorrent;
 
-address rand_v4()
+bool cast_vote(ip_voter& ipv, address ext_ip, address voter)
 {
-	address_v4 ret;
-	do
+	bool new_ip = ipv.cast_vote(ext_ip, 1, voter);
+	fprintf(stdout, "%15s -> %-15s\n"
+		, print_address(voter).c_str()
+		, print_address(ext_ip).c_str());
+	if (new_ip)
 	{
-		ret = address_v4((rand() << 16 | rand()) & 0xffffffff);
-	} while (is_any(ret) || is_local(ret) || is_loopback(ret));
-	return ret;
-}
-
-udp::endpoint rand_ep()
-{
-	return udp::endpoint(rand_v4(), rand());
+		fprintf(stdout, "   \x1b[1mnew external IP: %s\x1b[0m\n"
+			, print_address(ipv.external_address()).c_str());
+	}
+	return new_ip;
 }
 
 // test the case where every time we get a new IP. Make sure
 // we don't flap
-void test_random()
+TORRENT_TEST(test_random)
 {
+	init_rand_address();
+
 	ip_voter ipv;
 
-	random_seed(100);
+	address_v4 addr1(address_v4::from_string("51.41.61.132"));
 
-	bool new_ip = ipv.cast_vote(rand_v4(), 1, rand_v4());
+	bool new_ip = cast_vote(ipv, addr1, rand_v4());
 	TEST_CHECK(new_ip);
+	TEST_CHECK(ipv.external_address() == addr1);
 	for (int i = 0; i < 1000; ++i)
 	{
-		new_ip = ipv.cast_vote(rand_v4(), 1, rand_v4());
+		new_ip = cast_vote(ipv, rand_v4(), rand_v4());
 		TEST_CHECK(!new_ip);
 	}
+	TEST_CHECK(ipv.external_address() == addr1);
 }
 
-void test_two_ips()
+TORRENT_TEST(two_ips)
 {
-	ip_voter ipv;
+	init_rand_address();
 
-	random_seed(100);
+	ip_voter ipv;
 
 	address_v4 addr1(address_v4::from_string("51.1.1.1"));
 	address_v4 addr2(address_v4::from_string("53.3.3.3"));
@@ -83,58 +89,128 @@ void test_two_ips()
 	// addr1 is the first address we see, which is the one we pick. Even though
 	// we'll have as many votes for addr2, we shouldn't flap, since addr2 never
 	// gets an overwhelming majority.
-	bool new_ip = ipv.cast_vote(addr1, 1, rand_v4());
+	bool new_ip = cast_vote(ipv, addr1, rand_v4());
 	TEST_CHECK(new_ip);
 	for (int i = 0; i < 1000; ++i)
 	{
-		new_ip = ipv.cast_vote(addr2, 1, rand_v4());
+		new_ip = cast_vote(ipv, addr2, rand_v4());
 		TEST_CHECK(!new_ip);
-		new_ip = ipv.cast_vote(rand_v4(), 1, rand_v4());
+		new_ip = cast_vote(ipv, rand_v4(), rand_v4());
 		TEST_CHECK(!new_ip);
-		new_ip = ipv.cast_vote(addr1, 1, rand_v4());
+		new_ip = cast_vote(ipv, addr1, rand_v4());
 		TEST_CHECK(!new_ip);
 
 		TEST_CHECK(ipv.external_address() == addr1);
 	}
 }
 
-void test_one_ip()
+TORRENT_TEST(one_ip)
 {
+	init_rand_address();
+
 	ip_voter ipv;
 
-	random_seed(100);
-
+	address_v4 start_addr(address_v4::from_string("93.12.63.174"));
 	address_v4 addr1(address_v4::from_string("51.1.1.1"));
 	address_v4 addr2(address_v4::from_string("53.3.3.3"));
 
-	bool new_ip = ipv.cast_vote(rand_v4(), 1, rand_v4());
+	bool new_ip = cast_vote(ipv, start_addr, rand_v4());
 	TEST_CHECK(new_ip);
-	bool switched_ip = false;
-	for (int i = 0; i < 1000; ++i)
+	TEST_CHECK(ipv.external_address() != addr1);
+	TEST_CHECK(ipv.external_address() == start_addr);
+	for (int i = 0; i < 30; ++i)
 	{
-		new_ip = ipv.cast_vote(addr2, 1, rand_v4());
-		TEST_CHECK(!new_ip);
-		new_ip = ipv.cast_vote(rand_v4(), 1, rand_v4());
-		TEST_CHECK(!new_ip);
-		new_ip = ipv.cast_vote(addr1, 1, rand_v4());
-		if (new_ip) switched_ip = true;
-		new_ip = ipv.cast_vote(addr1, 1, rand_v4());
-		if (new_ip) switched_ip = true;
+		new_ip = cast_vote(ipv, addr2, rand_v4());
+		if (new_ip) break;
+		new_ip = cast_vote(ipv, rand_v4(), rand_v4());
+		if (new_ip) break;
+		new_ip = cast_vote(ipv, addr1, rand_v4());
+		if (new_ip) break;
+		new_ip = cast_vote(ipv, addr1, rand_v4());
+		if (new_ip) break;
 
-		if (switched_ip)
-		{
-			TEST_CHECK(ipv.external_address() == addr1);
-		}
 	}
-	TEST_CHECK(switched_ip);
+
+	TEST_CHECK(ipv.external_address() == addr1);
+
+	for (int i = 0; i < 500; ++i)
+	{
+		new_ip = cast_vote(ipv, addr2, rand_v4());
+		TEST_CHECK(!new_ip);
+		new_ip = cast_vote(ipv, rand_v4(), rand_v4());
+		TEST_CHECK(!new_ip);
+		new_ip = cast_vote(ipv, addr1, rand_v4());
+		TEST_CHECK(!new_ip);
+		new_ip = cast_vote(ipv, addr1, rand_v4());
+		TEST_CHECK(!new_ip);
+	}
+
 	TEST_CHECK(ipv.external_address() == addr1);
 }
 
-int test_main()
+TORRENT_TEST(externa_ip_1)
 {
-	test_random();
-	test_two_ips();
-	test_one_ip();
-	return 0;
+	init_rand_address();
+
+	// test external ip voting
+	external_ip ipv1;
+
+	// test a single malicious node
+	// adds 50 legitimate responses from different peers
+	// and 50 malicious responses from the same peer
+	error_code ec;
+	address real_external = address_v4::from_string("5.5.5.5", ec);
+	TEST_CHECK(!ec);
+	address malicious = address_v4::from_string("4.4.4.4", ec);
+	TEST_CHECK(!ec);
+	for (int i = 0; i < 50; ++i)
+	{
+		ipv1.cast_vote(real_external, aux::session_impl::source_dht, rand_v4());
+		ipv1.cast_vote(rand_v4(), aux::session_impl::source_dht, malicious);
+	}
+	TEST_CHECK(ipv1.external_address(rand_v4()) == real_external);
+}
+
+TORRENT_TEST(externa_ip_2)
+{
+	init_rand_address();
+
+	external_ip ipv2;
+
+	// test a single malicious node
+	// adds 50 legitimate responses from different peers
+	// and 50 consistent malicious responses from the same peer
+	error_code ec;
+	address malicious = address_v4::from_string("4.4.4.4", ec);
+	TEST_CHECK(!ec);
+	address real_external1 = address_v4::from_string("5.5.5.5", ec);
+	TEST_CHECK(!ec);
+	address real_external2;
+#if TORRENT_USE_IPV6
+	if (supports_ipv6())
+	{
+		real_external2 = address_v6::from_string("2f80::", ec);
+		TEST_CHECK(!ec);
+	}
+#endif
+	malicious = address_v4::from_string("4.4.4.4", ec);
+	TEST_CHECK(!ec);
+	address malicious_external = address_v4::from_string("3.3.3.3", ec);
+	TEST_CHECK(!ec);
+	for (int i = 0; i < 50; ++i)
+	{
+		ipv2.cast_vote(real_external1, aux::session_impl::source_dht, rand_v4());
+#if TORRENT_USE_IPV6
+		if (supports_ipv6())
+			ipv2.cast_vote(real_external2, aux::session_impl::source_dht, rand_v6());
+#endif
+		ipv2.cast_vote(malicious_external, aux::session_impl::source_dht, malicious);
+	}
+	TEST_CHECK(ipv2.external_address(rand_v4()) == real_external1);
+#if TORRENT_USE_IPV6
+	if (supports_ipv6())
+		TEST_CHECK(ipv2.external_address(rand_v6()) == real_external2);
+#endif
+
 }
 

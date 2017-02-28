@@ -94,9 +94,10 @@ EXTRA_PROGRAMS = $(am__EXEEXT_1)
 subdir = examples
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
 am__aclocal_m4_deps = $(top_srcdir)/m4/ax_boost_base.m4 \
+	$(top_srcdir)/m4/ax_boost_chrono.m4 \
 	$(top_srcdir)/m4/ax_boost_python.m4 \
+	$(top_srcdir)/m4/ax_boost_random.m4 \
 	$(top_srcdir)/m4/ax_boost_system.m4 \
-	$(top_srcdir)/m4/ax_check_geoip.m4 \
 	$(top_srcdir)/m4/ax_check_openssl.m4 \
 	$(top_srcdir)/m4/ax_pthread.m4 \
 	$(top_srcdir)/m4/ax_python_devel.m4 \
@@ -111,21 +112,36 @@ DIST_COMMON = $(srcdir)/Makefile.am $(am__DIST_COMMON)
 mkinstalldirs = $(install_sh) -d
 CONFIG_CLEAN_FILES =
 CONFIG_CLEAN_VPATH_FILES =
-am__EXEEXT_1 = client_test$(EXEEXT) dump_torrent$(EXEEXT) \
-	make_torrent$(EXEEXT) simple_client$(EXEEXT) \
-	rss_reader$(EXEEXT) upnp_test$(EXEEXT) \
-	connection_tester$(EXEEXT)
+am__EXEEXT_1 = client_test$(EXEEXT) stats_counters$(EXEEXT) \
+	dump_torrent$(EXEEXT) make_torrent$(EXEEXT) \
+	simple_client$(EXEEXT) upnp_test$(EXEEXT) bt_get$(EXEEXT) \
+	bt_get2$(EXEEXT) connection_tester$(EXEEXT)
 am__installdirs = "$(DESTDIR)$(bindir)"
 PROGRAMS = $(bin_PROGRAMS)
-am_client_test_OBJECTS = client_test.$(OBJEXT)
-client_test_OBJECTS = $(am_client_test_OBJECTS)
-client_test_LDADD = $(LDADD)
-client_test_DEPENDENCIES =  \
-	$(top_builddir)/src/libtorrent-rasterbar.la
+am_bt_get_OBJECTS = bt_get-bt-get.$(OBJEXT)
+bt_get_OBJECTS = $(am_bt_get_OBJECTS)
+bt_get_LDADD = $(LDADD)
+bt_get_DEPENDENCIES = $(top_builddir)/src/libtorrent-rasterbar.la
 AM_V_lt = $(am__v_lt_@AM_V@)
 am__v_lt_ = $(am__v_lt_@AM_DEFAULT_V@)
 am__v_lt_0 = --silent
 am__v_lt_1 = 
+bt_get_LINK = $(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) \
+	$(LIBTOOLFLAGS) --mode=link $(CXXLD) $(bt_get_CXXFLAGS) \
+	$(CXXFLAGS) $(AM_LDFLAGS) $(LDFLAGS) -o $@
+am_bt_get2_OBJECTS = bt_get2-bt-get2.$(OBJEXT)
+bt_get2_OBJECTS = $(am_bt_get2_OBJECTS)
+bt_get2_LDADD = $(LDADD)
+bt_get2_DEPENDENCIES = $(top_builddir)/src/libtorrent-rasterbar.la
+bt_get2_LINK = $(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) \
+	$(LIBTOOLFLAGS) --mode=link $(CXXLD) $(bt_get2_CXXFLAGS) \
+	$(CXXFLAGS) $(AM_LDFLAGS) $(LDFLAGS) -o $@
+am_client_test_OBJECTS = client_test.$(OBJEXT) print.$(OBJEXT) \
+	session_view.$(OBJEXT) torrent_view.$(OBJEXT)
+client_test_OBJECTS = $(am_client_test_OBJECTS)
+client_test_LDADD = $(LDADD)
+client_test_DEPENDENCIES =  \
+	$(top_builddir)/src/libtorrent-rasterbar.la
 am_connection_tester_OBJECTS = connection_tester.$(OBJEXT)
 connection_tester_OBJECTS = $(am_connection_tester_OBJECTS)
 connection_tester_LDADD = $(LDADD)
@@ -141,14 +157,15 @@ make_torrent_OBJECTS = $(am_make_torrent_OBJECTS)
 make_torrent_LDADD = $(LDADD)
 make_torrent_DEPENDENCIES =  \
 	$(top_builddir)/src/libtorrent-rasterbar.la
-am_rss_reader_OBJECTS = rss_reader.$(OBJEXT)
-rss_reader_OBJECTS = $(am_rss_reader_OBJECTS)
-rss_reader_LDADD = $(LDADD)
-rss_reader_DEPENDENCIES = $(top_builddir)/src/libtorrent-rasterbar.la
 am_simple_client_OBJECTS = simple_client.$(OBJEXT)
 simple_client_OBJECTS = $(am_simple_client_OBJECTS)
 simple_client_LDADD = $(LDADD)
 simple_client_DEPENDENCIES =  \
+	$(top_builddir)/src/libtorrent-rasterbar.la
+am_stats_counters_OBJECTS = stats_counters.$(OBJEXT)
+stats_counters_OBJECTS = $(am_stats_counters_OBJECTS)
+stats_counters_LDADD = $(LDADD)
+stats_counters_DEPENDENCIES =  \
 	$(top_builddir)/src/libtorrent-rasterbar.la
 am_upnp_test_OBJECTS = upnp_test.$(OBJEXT)
 upnp_test_OBJECTS = $(am_upnp_test_OBJECTS)
@@ -188,13 +205,14 @@ AM_V_CXXLD = $(am__v_CXXLD_@AM_V@)
 am__v_CXXLD_ = $(am__v_CXXLD_@AM_DEFAULT_V@)
 am__v_CXXLD_0 = @echo "  CXXLD   " $@;
 am__v_CXXLD_1 = 
-SOURCES = $(client_test_SOURCES) $(connection_tester_SOURCES) \
+SOURCES = $(bt_get_SOURCES) $(bt_get2_SOURCES) $(client_test_SOURCES) \
+	$(connection_tester_SOURCES) $(dump_torrent_SOURCES) \
+	$(make_torrent_SOURCES) $(simple_client_SOURCES) \
+	$(stats_counters_SOURCES) $(upnp_test_SOURCES)
+DIST_SOURCES = $(bt_get_SOURCES) $(bt_get2_SOURCES) \
+	$(client_test_SOURCES) $(connection_tester_SOURCES) \
 	$(dump_torrent_SOURCES) $(make_torrent_SOURCES) \
-	$(rss_reader_SOURCES) $(simple_client_SOURCES) \
-	$(upnp_test_SOURCES)
-DIST_SOURCES = $(client_test_SOURCES) $(connection_tester_SOURCES) \
-	$(dump_torrent_SOURCES) $(make_torrent_SOURCES) \
-	$(rss_reader_SOURCES) $(simple_client_SOURCES) \
+	$(simple_client_SOURCES) $(stats_counters_SOURCES) \
 	$(upnp_test_SOURCES)
 am__can_run_installinfo = \
   case $$AM_UPDATE_INFO_DIR in \
@@ -231,9 +249,11 @@ AUTOCONF = @AUTOCONF@
 AUTOHEADER = @AUTOHEADER@
 AUTOMAKE = @AUTOMAKE@
 AWK = @AWK@
+BOOST_CHRONO_LIB = @BOOST_CHRONO_LIB@
 BOOST_CPPFLAGS = @BOOST_CPPFLAGS@
 BOOST_LDFLAGS = @BOOST_LDFLAGS@
 BOOST_PYTHON_LIB = @BOOST_PYTHON_LIB@
+BOOST_RANDOM_LIB = @BOOST_RANDOM_LIB@
 BOOST_SYSTEM_LIB = @BOOST_SYSTEM_LIB@
 CC = @CC@
 CCDEPMODE = @CCDEPMODE@
@@ -258,8 +278,6 @@ ECHO_T = @ECHO_T@
 EGREP = @EGREP@
 EXEEXT = @EXEEXT@
 FGREP = @FGREP@
-GEOIP_CFLAGS = @GEOIP_CFLAGS@
-GEOIP_LIBS = @GEOIP_LIBS@
 GREP = @GREP@
 ICONV_LIBS = @ICONV_LIBS@
 INSTALL = @INSTALL@
@@ -306,6 +324,7 @@ PTHREAD_CFLAGS = @PTHREAD_CFLAGS@
 PTHREAD_LIBS = @PTHREAD_LIBS@
 PYTHON = @PYTHON@
 PYTHON_CPPFLAGS = @PYTHON_CPPFLAGS@
+PYTHON_CXXFLAGS = @PYTHON_CXXFLAGS@
 PYTHON_EXEC_PREFIX = @PYTHON_EXEC_PREFIX@
 PYTHON_EXTRA_LDFLAGS = @PYTHON_EXTRA_LDFLAGS@
 PYTHON_EXTRA_LIBS = @PYTHON_EXTRA_LIBS@
@@ -385,31 +404,30 @@ top_builddir = @top_builddir@
 top_srcdir = @top_srcdir@
 example_programs = \
   client_test       \
+  stats_counters    \
   dump_torrent      \
   make_torrent      \
   simple_client     \
-  rss_reader        \
   upnp_test         \
+  bt_get            \
+  bt_get2           \
   connection_tester
 
-EXTRA_DIST = Jamfile CMakeLists.txt run_cmake.sh.in cmake/FindLibtorrentRasterbar.cmake
-client_test_SOURCES = client_test.cpp
-#client_test_LDADD = $(top_builddir)/src/libtorrent-rasterbar.la
+EXTRA_DIST = Jamfile CMakeLists.txt run_cmake.sh.in session_view.hpp torrent_view.hpp print.hpp cmake/FindLibtorrentRasterbar.cmake
+client_test_SOURCES = client_test.cpp print.cpp session_view.cpp torrent_view.cpp
+stats_counters_SOURCES = stats_counters.cpp
+bt_get_SOURCES = bt-get.cpp
+bt_get2_SOURCES = bt-get2.cpp
+bt_get_CXXFLAGS = -std=c++11
+bt_get2_CXXFLAGS = -std=c++11
 dump_torrent_SOURCES = dump_torrent.cpp
-#dump_torrent_LDADD = $(top_builddir)/src/libtorrent-rasterbar.la
 make_torrent_SOURCES = make_torrent.cpp
-#make_torrent_LDADD = $(top_builddir)/src/libtorrent-rasterbar.la
 simple_client_SOURCES = simple_client.cpp
-#simple_client_LDADD = $(top_builddir)/src/libtorrent-rasterbar.la
 connection_tester_SOURCES = connection_tester.cpp
-#connection_tester_LDADD = $(top_builddir)/src/libtorrent-rasterbar.la
-rss_reader_SOURCES = rss_reader.cpp
-#rss_reader_LDADD = $(top_builddir)/src/libtorrent-rasterbar.la
 upnp_test_SOURCES = upnp_test.cpp
-#upnp_test_LDADD = $(top_builddir)/src/libtorrent-rasterbar.la
 LDADD = $(top_builddir)/src/libtorrent-rasterbar.la
-AM_CPPFLAGS = -ftemplate-depth-50 -I$(top_srcdir)/include @DEBUGFLAGS@
-AM_LDFLAGS = @BOOST_SYSTEM_LIB@
+AM_CPPFLAGS = -ftemplate-depth-50 -I$(top_srcdir)/include @DEBUGFLAGS@ @OPENSSL_INCLUDES@
+AM_LDFLAGS = @BOOST_SYSTEM_LIB@ @BOOST_CHRONO_LIB@ @BOOST_RANDOM_LIB@ @OPENSSL_LDFLAGS@ @OPENSSL_LIBS@
 all: all-am
 
 .SUFFIXES:
@@ -493,6 +511,14 @@ clean-binPROGRAMS:
 	echo " rm -f" $$list; \
 	rm -f $$list
 
+bt_get$(EXEEXT): $(bt_get_OBJECTS) $(bt_get_DEPENDENCIES) $(EXTRA_bt_get_DEPENDENCIES) 
+	@rm -f bt_get$(EXEEXT)
+	$(AM_V_CXXLD)$(bt_get_LINK) $(bt_get_OBJECTS) $(bt_get_LDADD) $(LIBS)
+
+bt_get2$(EXEEXT): $(bt_get2_OBJECTS) $(bt_get2_DEPENDENCIES) $(EXTRA_bt_get2_DEPENDENCIES) 
+	@rm -f bt_get2$(EXEEXT)
+	$(AM_V_CXXLD)$(bt_get2_LINK) $(bt_get2_OBJECTS) $(bt_get2_LDADD) $(LIBS)
+
 client_test$(EXEEXT): $(client_test_OBJECTS) $(client_test_DEPENDENCIES) $(EXTRA_client_test_DEPENDENCIES) 
 	@rm -f client_test$(EXEEXT)
 	$(AM_V_CXXLD)$(CXXLINK) $(client_test_OBJECTS) $(client_test_LDADD) $(LIBS)
@@ -509,13 +535,13 @@ make_torrent$(EXEEXT): $(make_torrent_OBJECTS) $(make_torrent_DEPENDENCIES) $(EX
 	@rm -f make_torrent$(EXEEXT)
 	$(AM_V_CXXLD)$(CXXLINK) $(make_torrent_OBJECTS) $(make_torrent_LDADD) $(LIBS)
 
-rss_reader$(EXEEXT): $(rss_reader_OBJECTS) $(rss_reader_DEPENDENCIES) $(EXTRA_rss_reader_DEPENDENCIES) 
-	@rm -f rss_reader$(EXEEXT)
-	$(AM_V_CXXLD)$(CXXLINK) $(rss_reader_OBJECTS) $(rss_reader_LDADD) $(LIBS)
-
 simple_client$(EXEEXT): $(simple_client_OBJECTS) $(simple_client_DEPENDENCIES) $(EXTRA_simple_client_DEPENDENCIES) 
 	@rm -f simple_client$(EXEEXT)
 	$(AM_V_CXXLD)$(CXXLINK) $(simple_client_OBJECTS) $(simple_client_LDADD) $(LIBS)
+
+stats_counters$(EXEEXT): $(stats_counters_OBJECTS) $(stats_counters_DEPENDENCIES) $(EXTRA_stats_counters_DEPENDENCIES) 
+	@rm -f stats_counters$(EXEEXT)
+	$(AM_V_CXXLD)$(CXXLINK) $(stats_counters_OBJECTS) $(stats_counters_LDADD) $(LIBS)
 
 upnp_test$(EXEEXT): $(upnp_test_OBJECTS) $(upnp_test_DEPENDENCIES) $(EXTRA_upnp_test_DEPENDENCIES) 
 	@rm -f upnp_test$(EXEEXT)
@@ -527,12 +553,17 @@ mostlyclean-compile:
 distclean-compile:
 	-rm -f *.tab.c
 
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/bt_get-bt-get.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/bt_get2-bt-get2.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/client_test.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/connection_tester.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/dump_torrent.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/make_torrent.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/rss_reader.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/print.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/session_view.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/simple_client.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/stats_counters.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/torrent_view.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/upnp_test.Po@am__quote@
 
 .cpp.o:
@@ -555,6 +586,34 @@ distclean-compile:
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='$<' object='$@' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(LTCXXCOMPILE) -c -o $@ $<
+
+bt_get-bt-get.o: bt-get.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(bt_get_CXXFLAGS) $(CXXFLAGS) -MT bt_get-bt-get.o -MD -MP -MF $(DEPDIR)/bt_get-bt-get.Tpo -c -o bt_get-bt-get.o `test -f 'bt-get.cpp' || echo '$(srcdir)/'`bt-get.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/bt_get-bt-get.Tpo $(DEPDIR)/bt_get-bt-get.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='bt-get.cpp' object='bt_get-bt-get.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(bt_get_CXXFLAGS) $(CXXFLAGS) -c -o bt_get-bt-get.o `test -f 'bt-get.cpp' || echo '$(srcdir)/'`bt-get.cpp
+
+bt_get-bt-get.obj: bt-get.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(bt_get_CXXFLAGS) $(CXXFLAGS) -MT bt_get-bt-get.obj -MD -MP -MF $(DEPDIR)/bt_get-bt-get.Tpo -c -o bt_get-bt-get.obj `if test -f 'bt-get.cpp'; then $(CYGPATH_W) 'bt-get.cpp'; else $(CYGPATH_W) '$(srcdir)/bt-get.cpp'; fi`
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/bt_get-bt-get.Tpo $(DEPDIR)/bt_get-bt-get.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='bt-get.cpp' object='bt_get-bt-get.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(bt_get_CXXFLAGS) $(CXXFLAGS) -c -o bt_get-bt-get.obj `if test -f 'bt-get.cpp'; then $(CYGPATH_W) 'bt-get.cpp'; else $(CYGPATH_W) '$(srcdir)/bt-get.cpp'; fi`
+
+bt_get2-bt-get2.o: bt-get2.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(bt_get2_CXXFLAGS) $(CXXFLAGS) -MT bt_get2-bt-get2.o -MD -MP -MF $(DEPDIR)/bt_get2-bt-get2.Tpo -c -o bt_get2-bt-get2.o `test -f 'bt-get2.cpp' || echo '$(srcdir)/'`bt-get2.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/bt_get2-bt-get2.Tpo $(DEPDIR)/bt_get2-bt-get2.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='bt-get2.cpp' object='bt_get2-bt-get2.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(bt_get2_CXXFLAGS) $(CXXFLAGS) -c -o bt_get2-bt-get2.o `test -f 'bt-get2.cpp' || echo '$(srcdir)/'`bt-get2.cpp
+
+bt_get2-bt-get2.obj: bt-get2.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(bt_get2_CXXFLAGS) $(CXXFLAGS) -MT bt_get2-bt-get2.obj -MD -MP -MF $(DEPDIR)/bt_get2-bt-get2.Tpo -c -o bt_get2-bt-get2.obj `if test -f 'bt-get2.cpp'; then $(CYGPATH_W) 'bt-get2.cpp'; else $(CYGPATH_W) '$(srcdir)/bt-get2.cpp'; fi`
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/bt_get2-bt-get2.Tpo $(DEPDIR)/bt_get2-bt-get2.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='bt-get2.cpp' object='bt_get2-bt-get2.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(bt_get2_CXXFLAGS) $(CXXFLAGS) -c -o bt_get2-bt-get2.obj `if test -f 'bt-get2.cpp'; then $(CYGPATH_W) 'bt-get2.cpp'; else $(CYGPATH_W) '$(srcdir)/bt-get2.cpp'; fi`
 
 mostlyclean-libtool:
 	-rm -f *.lo
@@ -769,8 +828,6 @@ uninstall-am: uninstall-binPROGRAMS
 
 .PRECIOUS: Makefile
 
-#AM_LDFLAGS = $(LDFLAGS) @BOOST_SYSTEM_LIB@ @BOOST_FILESYSTEM_LIB@ @BOOST_THREAD_LIB@ @OPENSSL_LDFLAGS@ @OPENSSL_LIBS@
-#AM_LDFLAGS = @OPENSSL_LDFLAGS@
 
 # Tell versions [3.59,3.63) of GNU make to not export all variables.
 # Otherwise a system limit (for SysV at least) may be exceeded.

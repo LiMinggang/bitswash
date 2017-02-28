@@ -40,85 +40,168 @@ POSSIBILITY OF SUCH DAMAGE.
 #include "libtorrent/utf8.hpp"
 #include "libtorrent/ConvertUTF.h"
 
+
+#ifdef __clang__
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wunused-member-function"
+#endif
+
 namespace libtorrent
 {
-	utf8_conv_result_t utf8_wchar(const std::string &utf8, std::wstring &wide)
+	namespace
+	{
+		// ==== utf-8 -> wide ===
+		template<int width>
+		struct convert_to_wide
+		{
+			static utf8_conv_result_t convert(UTF8 const** src_start
+				, UTF8 const* src_end
+				, std::wstring& wide)
+			{
+				TORRENT_UNUSED(src_start);
+				TORRENT_UNUSED(src_end);
+				TORRENT_UNUSED(wide);
+				return source_illegal;
+			}
+		};
+
+		// ==== utf-8 -> utf-32 ===
+		template<>
+		struct convert_to_wide<4>
+		{
+			static utf8_conv_result_t convert(char const** src_start
+				, char const* src_end
+				, std::wstring& wide)
+			{
+				wchar_t* dst_start = &wide[0];
+				int ret = ConvertUTF8toUTF32(
+					reinterpret_cast<UTF8 const**>(src_start)
+					, reinterpret_cast<UTF8 const*>(src_end)
+					, reinterpret_cast<UTF32**>(&dst_start)
+					, reinterpret_cast<UTF32*>(dst_start + wide.size())
+					, lenientConversion);
+				if (ret == sourceIllegal)
+				{
+					// assume Latin-1
+					wide.clear();
+					std::copy(reinterpret_cast<boost::uint8_t const*>(*src_start)
+						,reinterpret_cast<boost::uint8_t const*>(src_end)
+						, std::back_inserter(wide));
+					return static_cast<utf8_conv_result_t>(ret);
+				}
+				wide.resize(dst_start - wide.c_str());
+				return static_cast<utf8_conv_result_t>(ret);
+			}
+		};
+
+		// ==== utf-8 -> utf-16 ===
+		template<>
+		struct convert_to_wide<2>
+		{
+			static utf8_conv_result_t convert(char const** src_start
+				, char const* src_end
+				, std::wstring& wide)
+			{
+				wchar_t* dst_start = &wide[0];
+				int ret = ConvertUTF8toUTF16(
+					reinterpret_cast<UTF8 const**>(src_start)
+					, reinterpret_cast<UTF8 const*>(src_end)
+					, reinterpret_cast<UTF16**>(&dst_start)
+					, reinterpret_cast<UTF16*>(dst_start + wide.size())
+					, lenientConversion);
+				if (ret == sourceIllegal)
+				{
+					// assume Latin-1
+					wide.clear();
+					std::copy(reinterpret_cast<boost::uint8_t const*>(*src_start)
+						, reinterpret_cast<boost::uint8_t const*>(src_end)
+						, std::back_inserter(wide));
+					return static_cast<utf8_conv_result_t>(ret);
+				}
+				wide.resize(dst_start - wide.c_str());
+				return static_cast<utf8_conv_result_t>(ret);
+			}
+		};
+
+		// ==== wide -> utf-8 ===
+		template<int width>
+		struct convert_from_wide
+		{
+			static utf8_conv_result_t convert(wchar_t const** src_start
+				, wchar_t const* src_end
+				, std::string& utf8)
+			{
+				TORRENT_UNUSED(src_start);
+				TORRENT_UNUSED(src_end);
+				TORRENT_UNUSED(utf8);
+				return source_illegal;
+			}
+		};
+
+		// ==== utf-32 -> utf-8 ===
+		template<>
+		struct convert_from_wide<4>
+		{
+			static utf8_conv_result_t convert(wchar_t const** src_start
+				, wchar_t const* src_end
+				, std::string& utf8)
+			{
+				char* dst_start = &utf8[0];
+				int ret = ConvertUTF32toUTF8(
+					reinterpret_cast<UTF32 const**>(src_start)
+					, reinterpret_cast<UTF32 const*>(src_end)
+					, reinterpret_cast<UTF8**>(&dst_start)
+					, reinterpret_cast<UTF8*>(dst_start + utf8.size())
+					, lenientConversion);
+				utf8.resize(dst_start - &utf8[0]);
+				return static_cast<utf8_conv_result_t>(ret);
+			}
+		};
+
+		// ==== utf-16 -> utf-8 ===
+		template<>
+		struct convert_from_wide<2>
+		{
+			static utf8_conv_result_t convert(wchar_t const** src_start
+				, wchar_t const* src_end
+				, std::string& utf8)
+			{
+				char* dst_start = &utf8[0];
+				int ret = ConvertUTF16toUTF8(
+					reinterpret_cast<UTF16 const**>(src_start)
+					, reinterpret_cast<UTF16 const*>(src_end)
+					, reinterpret_cast<UTF8**>(&dst_start)
+					, reinterpret_cast<UTF8*>(dst_start + utf8.size())
+					, lenientConversion);
+				utf8.resize(dst_start - &utf8[0]);
+				return static_cast<utf8_conv_result_t>(ret);
+			}
+		};
+	} // anonymous namespace
+
+	utf8_conv_result_t utf8_wchar(std::string const& utf8, std::wstring &wide)
 	{
 		// allocate space for worst-case
 		wide.resize(utf8.size());
-		wchar_t const* dst_start = wide.c_str();
 		char const* src_start = utf8.c_str();
-		ConversionResult ret;
-		if (sizeof(wchar_t) == sizeof(UTF32))
-		{
-			ret = ConvertUTF8toUTF32((const UTF8**)&src_start, (const UTF8*)src_start
-				+ utf8.size(), (UTF32**)&dst_start, (UTF32*)dst_start + wide.size()
-				, lenientConversion);
-			if (ret == sourceIllegal)
-			{
-				// assume Latin-1
-				wide.clear();
-				std::copy((boost::uint8_t const*)utf8.c_str()
-					, (boost::uint8_t const*)utf8.c_str() + utf8.size()
-					, std::back_inserter(wide));
-				return (utf8_conv_result_t)ret;
-			}
-			wide.resize(dst_start - wide.c_str());
-			return (utf8_conv_result_t)ret;
-		}
-		else if (sizeof(wchar_t) == sizeof(UTF16))
-		{
-			ret = ConvertUTF8toUTF16((const UTF8**)&src_start, (const UTF8*)src_start
-				+ utf8.size(), (UTF16**)&dst_start, (UTF16*)dst_start + wide.size()
-				, lenientConversion);
-			if (ret == sourceIllegal)
-			{
-				// assume Latin-1
-				wide.clear();
-				std::copy((boost::uint8_t const*)utf8.c_str()
-					, (boost::uint8_t const*)utf8.c_str() + utf8.size()
-					, std::back_inserter(wide));
-				return (utf8_conv_result_t)ret;
-			}
-			wide.resize(dst_start - wide.c_str());
-			return (utf8_conv_result_t)ret;
-		}
-		else
-		{
-			return source_illegal;
-		}
+		return convert_to_wide<sizeof(wchar_t)>::convert(
+			&src_start, src_start + utf8.size(), wide);
 	}
 
-	utf8_conv_result_t wchar_utf8(const std::wstring &wide, std::string &utf8)
+	utf8_conv_result_t wchar_utf8(std::wstring const& wide, std::string &utf8)
 	{
 		// allocate space for worst-case
 		utf8.resize(wide.size() * 6);
 		if (wide.empty()) return conversion_ok;
-		char* dst_start = &utf8[0];
 		wchar_t const* src_start = wide.c_str();
-		ConversionResult ret;
-		if (sizeof(wchar_t) == sizeof(UTF32))
-		{
-			ret = ConvertUTF32toUTF8((const UTF32**)&src_start, (const UTF32*)src_start
-				+ wide.size(), (UTF8**)&dst_start, (UTF8*)dst_start + utf8.size()
-				, lenientConversion);
-			utf8.resize(dst_start - &utf8[0]);
-			return (utf8_conv_result_t)ret;
-		}
-		else if (sizeof(wchar_t) == sizeof(UTF16))
-		{
-			ret = ConvertUTF16toUTF8((const UTF16**)&src_start, (const UTF16*)src_start
-				+ wide.size(), (UTF8**)&dst_start, (UTF8*)dst_start + utf8.size()
-				, lenientConversion);
-			utf8.resize(dst_start - &utf8[0]);
-			return (utf8_conv_result_t)ret;
-		}
-		else
-		{
-			return source_illegal;
-		}
+		return convert_from_wide<sizeof(wchar_t)>::convert(
+			&src_start, src_start + wide.size(), utf8);
 	}
 }
+
+#ifdef __clang__
+#pragma clang diagnostic pop
+#endif
 
 #endif
 

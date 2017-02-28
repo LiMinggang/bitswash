@@ -1422,9 +1422,10 @@ AC_SUBST([am__untar])
 ]) # _AM_PROG_TAR
 
 m4_include([m4/ax_boost_base.m4])
+m4_include([m4/ax_boost_chrono.m4])
 m4_include([m4/ax_boost_python.m4])
+m4_include([m4/ax_boost_random.m4])
 m4_include([m4/ax_boost_system.m4])
-m4_include([m4/ax_check_geoip.m4])
 m4_include([m4/ax_check_openssl.m4])
 m4_include([m4/ax_pthread.m4])
 m4_include([m4/ax_python_devel.m4])

@@ -36,14 +36,17 @@ POSSIBILITY OF SUCH DAMAGE.
 
 using namespace libtorrent;
 
-const int proxy = libtorrent::proxy_settings::none;
+const int proxy = libtorrent::settings_pack::none;
 
-int test_main()
-{
 #ifdef TORRENT_USE_OPENSSL
+TORRENT_TEST(web_seed_ssl)
+{
 	run_http_suite(proxy, "https", false);
+}
 #endif
+
+TORRENT_TEST(web_seed)
+{
 	run_http_suite(proxy, "http", false);
-	return 0;
 }
 

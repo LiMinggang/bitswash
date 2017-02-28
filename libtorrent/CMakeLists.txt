@@ -1,32 +1,41 @@
 cmake_minimum_required(VERSION 2.6)
 project(libtorrent)
 set (SOVERSION "8")
-set (VERSION "1.0.11")
+set (VERSION "1.1.2")
 
 set(sources
 	web_connection_base
 	alert
 	alert_manager
 	allocator
-	asio
+	announce_entry
 	assert
 	bandwidth_limit
 	bandwidth_manager
 	bandwidth_queue_entry
+	bdecode
+	bitfield
+	block_cache
 	bloom_filter
 	chained_buffer
-	connection_queue
+	choker
+	close_reason
+	cpuid
+	crc32c
 	create_torrent
 	disk_buffer_holder
 	entry
 	error_code
 	file_storage
+	file_progress
 	lazy_bdecode
 	escape_string
 	string_util
 	file
+	fingerprint
 	gzip
 	hasher
+	hex
 	http_connection
 	http_stream
 	http_parser
@@ -34,31 +43,52 @@ set(sources
 	identify_client
 	ip_filter
 	ip_voter
+	performance_counters
+	peer_class
+	peer_class_set
 	peer_connection
 	bt_peer_connection
 	web_peer_connection
 	http_seed_connection
+	peer_connection_handle
 	instantiate_connection
+	merkle
 	natpmp
+	part_file
 	packet_buffer
 	piece_picker
-	policy
+	platform_util
+	proxy_base
+	peer_list
 	puff
 	random
+	receive_buffer
+	request_blocks
+	resolve_links
+	resolver
 	rss
 	session
+	session_call
+	session_handle
 	session_impl
-	settings
+	session_settings
+	proxy_settings
+	session_stats
+	settings_pack
 	socket_io
-	socket_type  
+	socket_type
 	socks5_stream
 	stat
+	stat_cache
 	storage
 	time
 	timestamp_history
 	torrent
 	torrent_handle
 	torrent_info
+	torrent_peer
+	torrent_peer_allocator
+	torrent_status
 	tracker_manager
 	http_tracker_connection
 	utf8
@@ -67,9 +97,10 @@ set(sources
 	upnp
 	utp_socket_manager
 	utp_stream
-	logger
 	file_pool
 	lsd
+	disk_io_job
+	disk_job_pool
 	disk_buffer_pool
 	disk_io_thread
 	enum_net
@@ -79,6 +110,7 @@ set(sources
 	ConvertUTF
 	thread
 	xml_parse
+	version
 
 # -- extensions --
 	metadata_transfer
@@ -90,15 +122,19 @@ set(sources
 
 # -- kademlia --
 set(kademlia_sources
+	dht_storage
+	dos_blocker
 	dht_tracker
+	msg
 	node
+	node_entry
 	refresh
 	rpc_manager
 	find_data
+	put_data
 	node_id
 	routing_table
 	traversal_algorithm
-	logging
 	item
 	get_peers
 	get_item
@@ -125,14 +161,12 @@ option(static_runtime "build libtorrent with static runtime" OFF)
 option(tcmalloc "link against google performance tools tcmalloc" OFF)
 option(pool-allocators "Uses a pool allocator for disk and piece buffers" ON)
 option(encryption "link against openssl and enable encryption" ON)
-option(geoip "link against LGPL GeoIP code from Maxmind, to enable geoip database support" OFF)
 option(dht "enable support for Mainline DHT" ON)
 option(resolve-countries "enable support for resolving countries from peer IPs" ON)
 option(unicode "enable unicode support" ON)
 option(deprecated-functions "enable deprecated functions for backwards compatibility" ON)
 option(exceptions "build with exception support" ON)
 option(logging "build with logging" OFF)
-option(verbose-logging "build with verbose logging" OFF)
 option(build_tests "build tests" OFF)
 
 set(CMAKE_CONFIGURATION_TYPES Debug Release RelWithDebInfo)
@@ -154,10 +188,14 @@ if (build_tests)
 	add_definitions(-DTORRENT_EXPORT_EXTRA)
 endif (build_tests)
 
+find_package(Threads REQUIRED)
+
 include_directories(${includes})
 
+add_definitions(-DTORRENT_BUILDING_LIBRARY)
+
 if (encryption)
-	list(APPEND sources pe_crypto asio_ssl)
+	list(APPEND sources mpi pe_crypto)
 	if(NOT DEFINED OPENSSL_INCLUDE_DIR OR NOT DEFINED OPENSSL_LIBRARIES)
 		FIND_PACKAGE(OpenSSL REQUIRED)
 	endif()
@@ -168,11 +206,8 @@ else()
 	list(APPEND sources sha1)
 endif (encryption)
 
-if (logging)
-	add_definitions(-DTORRENT_LOGGING)
-endif()
-if (verbose-logging)
-	add_definitions(-DTORRENT_VERBOSE_LOGGING)
+if (NOT logging)
+	add_definitions(-DTORRENT_DISABLE_LOGGING)
 endif()
 
 foreach(s ${sources})
@@ -190,15 +225,14 @@ else()
 	add_definitions(-DTORRENT_DISABLE_DHT)
 endif()
 
-if(NOT MSVC)
-	set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -fvisibility=hidden")
-	set(CMAKE_CXX_FLAGS "${CMAKE_C_FLAGS} -fvisibility-inlines-hidden")
-endif()
-
 if (shared)
 	add_definitions(-DTORRENT_BUILDING_SHARED)
 	add_library(torrent-rasterbar SHARED ${sources2})
-else (shared)
+	if(NOT MSVC)
+		set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -fvisibility=hidden")
+		set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fvisibility=hidden -fvisibility-inlines-hidden")
+	endif()
+else()
 	if(static_runtime)
 		# fix /MT flag:
 		set(CompilerFlags
@@ -214,30 +248,31 @@ else (shared)
 		foreach(CompilerFlag ${CompilerFlags})
 			string(REPLACE "/MD" "/MT" ${CompilerFlag} "${${CompilerFlag}}")
 		endforeach()
+		set(Boost_USE_MULTITHREADED ON)
+
+		set(Boost_USE_STATIC_RUNTIME ON)
 	endif()
+	set(Boost_USE_STATIC_LIBS ON)
 	add_library(torrent-rasterbar STATIC ${sources2})
 endif()
 
 # Boost
 if(NOT DEFINED Boost_INCLUDE_DIR OR NOT DEFINED Boost_LIBRARIES)
-	FIND_PACKAGE( Boost COMPONENTS system thread date_time chrono)
+	FIND_PACKAGE(Boost REQUIRED COMPONENTS system chrono random)
 endif()
-include_directories(${Boost_INCLUDE_DIR})
-target_link_libraries(torrent-rasterbar ${Boost_LIBRARIES})
+include_directories(${Boost_INCLUDE_DIRS})
+target_link_libraries(torrent-rasterbar ${Boost_LIBRARIES} ${CMAKE_THREAD_LIBS_INIT})
 
 # this works around a bug in asio in boost-1.39
 #add_definitions(-DBOOST_ASIO_HASH_MAP_BUCKETS=1021  -D__USE_W32_SOCKETS -DWIN32_LEAN_AND_MEAN )
 
-if(NOT static_runtime)
-	add_definitions(-DBOOST_ASIO_DYN_LINK -DBOOST_DATE_TIME_DYN_LINK -DBOOST_THREAD_DYN_LINK -DBOOST_SYSTEM_DYN_LINK -DBOOST_CHRONO_DYN_LINK)
-else()
-	add_definitions(-DBOOST_ASIO_SEPARATE_COMPILATION)
-endif()
-
 if (WIN32)
-	target_link_libraries(torrent-rasterbar wsock32 ws2_32)
+	target_link_libraries(torrent-rasterbar wsock32 ws2_32 Iphlpapi)
 	add_definitions(-D_WIN32_WINNT=0x0600)
+	# prevent winsock1 to be included
+	add_definitions(-DWIN32_LEAN_AND_MEAN)
 	if (MSVC)
+		add_definitions(-DBOOST_ALL_NO_LIB)
 		set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /MP") # multicore compilation
 	endif()
 endif()
@@ -248,10 +283,6 @@ endif()
 
 if (NOT pool-allocators)
 	add_definitions(-DTORRENT_DISABLE_POOL_ALLOCATOR)
-endif()
-
-if (NOT geoip)
-	add_definitions(-DTORRENT_DISABLE_GEO_IP)
 endif()
 
 if (NOT resolve-countries)
@@ -290,17 +321,14 @@ if (MSVC)
 
 #$(SolutionDir)<toolset>msvc,<variant>release:<linkflags>/OPT:ICF=5
 #$(SolutionDir)<toolset>msvc,<variant>release:<linkflags>/OPT:REF
-else()
+elseif ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "Clang")
 	add_definitions(-Wno-c++11-extensions)
+	add_definitions(-fcolor-diagnostics)
 endif()
 
 add_definitions(-D_FILE_OFFSET_BITS=64)
 add_definitions(-DBOOST_EXCEPTION_DISABLE)
 add_definitions(-DBOOST_ASIO_ENABLE_CANCELIO)
-
-if("${CMAKE_CXX_COMPILER_ID}" STREQUAL "Clang")
-	add_definitions(-fcolor-diagnostics)
-endif()
 
 if (tcmalloc)
 	target_link_libraries(torrent-rasterbar tcmalloc)
@@ -340,22 +368,23 @@ configure_file(examples/run_cmake.sh.in examples/run_cmake.sh)
 
 # === build tests ===
 if(build_tests)
-	FILE(GLOB tests RELATIVE "${PROJECT_SOURCE_DIR}" "test/test_*.cpp")
-	add_library(test_common STATIC test/main.cpp test/setup_transfer.cpp
-		test/dht_server.cpp test/udp_tracker.cpp test/peer_server.cpp
-		test/web_seed_suite.cpp)
+	file(GLOB tests RELATIVE "${PROJECT_SOURCE_DIR}" "test/test_*.cpp")
+	list(REMOVE_ITEM tests "test/test_natpmp.cpp") # doesn't build at time of writing
+	list(REMOVE_ITEM tests "test/test_utils.cpp") # helper file, not a test
+
+	add_library(test_common OBJECT test/main.cpp test/test.cpp
+		test/setup_transfer.cpp test/dht_server.cpp test/udp_tracker.cpp
+		test/peer_server.cpp test/web_seed_suite.cpp test/swarm_suite.cpp
+		test/test_utils.cpp)
 	enable_testing()
 
 	foreach(s ${tests})
 		get_filename_component (sn ${s} NAME_WE)
-		add_executable(${sn} ${s})
-		target_link_libraries(${sn} torrent-rasterbar test_common)
+		add_executable(${sn} ${s} $<TARGET_OBJECTS:test_common>)
+		target_link_libraries(${sn} torrent-rasterbar)
 		add_test(${sn} ${s})
 	endforeach(s)
 
-#	add_executable(test_upnp test/test_upnp.cpp)
-#	target_link_libraries(test_upnp torrent-rasterbar)
-
-#	add_executable(test_natpmp test/test_natpmp.cpp)
-#	target_link_libraries(test_natpmp torrent-rasterbar)
+	add_executable(bdecode_benchmark test/bdecode_benchmark.cpp)
+	target_link_libraries(bdecode_benchmark torrent-rasterbar)
 endif()

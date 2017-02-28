@@ -36,18 +36,17 @@ POSSIBILITY OF SUCH DAMAGE.
 
 using namespace libtorrent;
 
-const int proxy = libtorrent::proxy_settings::socks5;
+const int proxy = libtorrent::settings_pack::socks5;
 
-int test_main()
+TORRENT_TEST(web_seed_socks5_no_peers_ssl)
 {
-	int ret = 0;
-	for (int url_seed = 0; url_seed < 2; ++url_seed)
-	{
 #ifdef TORRENT_USE_OPENSSL
-		run_http_suite(proxy, "https", url_seed, false, false, false, false, false);
+	run_http_suite(proxy, "https", false, false, false, false, false, false);
 #endif
-		run_http_suite(proxy, "http", url_seed, false, false, false, false, false);
-	}
-	return ret;
+}
+
+TORRENT_TEST(web_seed_socks5_no_peers)
+{
+	run_http_suite(proxy, "http", false, false, false, false, false, false);
 }
 

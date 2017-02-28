@@ -35,7 +35,7 @@ POSSIBILITY OF SUCH DAMAGE.
 #include "test.hpp"
 #include <iostream>
 
-char upnp_xml[] = 
+char upnp_xml[] =
 "<root>"
 "<specVersion>"
 "<major>1</major>"
@@ -233,35 +233,40 @@ char upnp_xml2[] =
 "</device>"
 "</root>";
 
+char upnp_xml3[] =
+"<s:Envelope xmlns:s=\"http://schemas.xmlsoap.org/soap/envelope/\""
+" s:encodingStyle=\"http://schemas.xmlsoap.org/soap/encoding/\">"
+"<s:Body>"
+"<s:Fault>"
+"<faultcode>s:Client</faultcode>"
+"<faultstring>UPnPError</faultstring>"
+"<detail>"
+"<UPnPErrorxmlns=\"urn:schemas-upnp-org:control-1-0\">"
+"<errorCode>402</errorCode>"
+"<errorDescription>Invalid Args</errorDescription>"
+"</UPnPError>"
+"</detail>"
+"</s:Fault>"
+"</s:Body>"
+"</s:Envelope>";
+
+char upnp_xml4[] =
+"<?xml version=\"1.0\"?>"
+"<s:Envelope"
+" xmlns:s=\"http://schemas.xmlsoap.org/soap/envelope/\""
+" s:encodingStyle=\"http://schemas.xmlsoap.org/soap/encoding/\">"
+"<s:Body>"
+"<u:GetExternalIPAddressResponse"
+" xmlns:u=\"urn:schemas-upnp-org:service:WANIPConnection:1\">"
+"<NewExternalIPAddress>123.10.20.30</NewExternalIPAddress>"
+"</u:GetExternalIPAddressResponse>"
+"</s:Body>"
+"</s:Envelope>";
+
 using namespace libtorrent;
 
-namespace libtorrent {
-
-struct parse_state
-{
-	parse_state(): in_service(false), service_type("") {}
-	void reset(char const* st)
-	{
-		in_service = false;
-		service_type = st;
-		tag_stack.clear();
-		control_url.clear();
-		model.clear();
-		url_base.clear();
-	}
-	bool in_service;
-	std::list<std::string> tag_stack;
-	std::string control_url;
-	char const* service_type;
-	std::string model;
-	std::string url_base;
-};
-
-	TORRENT_EXTRA_EXPORT void find_control_url(int type\
-		, char const* string, parse_state& state);
-}
-
-void parser_callback(std::string& out, int token, char const* s, char const* val)
+void parser_callback(std::string& out, int token, char const* s, int len
+	, char const* val, int val_len)
 {
 	switch (token)
 	{
@@ -276,144 +281,157 @@ void parser_callback(std::string& out, int token, char const* s, char const* val
 		case xml_tag_content: out += "T"; break;
 		default: TEST_CHECK(false);
 	}
-	out += s;
+	out.append(s, len);
 	if (token == xml_attribute)
 	{
-		TEST_CHECK(val != 0);
+		TEST_CHECK(val != NULL);
 		out += "V";
-		out += val;
+		out.append(val, val_len);
 	}
 	else
 	{
-		TEST_CHECK(val == 0);
+		TEST_CHECK(val == NULL);
 	}
 }
 
-int test_main()
+void test_parse(char const* in, char const* expected)
 {
-	// test upnp xml parser
+	std::string out;
+	xml_parse(in, in + strlen(in), boost::bind(&parser_callback
+		, boost::ref(out), _1, _2, _3, _4, _5));
+	fprintf(stdout, "in: %s\n     out: %s\nexpected: %s\n"
+		, in, out.c_str(), expected);
+	TEST_EQUAL(out, expected);
+}
 
+TORRENT_TEST(upnp_parser1)
+{
 	parse_state xml_s;
-	xml_s.reset("urn:schemas-upnp-org:service:WANIPConnection:1");
 	xml_parse(upnp_xml, upnp_xml + sizeof(upnp_xml)
-		, boost::bind(&find_control_url, _1, _2, boost::ref(xml_s)));
+		, boost::bind(&find_control_url, _1, _2, _3, boost::ref(xml_s)));
 
-	std::cerr << "namespace " << xml_s.service_type << std::endl;
-	std::cerr << "url_base: " << xml_s.url_base << std::endl;
-	std::cerr << "control_url: " << xml_s.control_url << std::endl;
-	std::cerr << "model: " << xml_s.model << std::endl;
-	TEST_CHECK(xml_s.url_base == "http://192.168.0.1:5678");
-	TEST_CHECK(xml_s.control_url == "/WANIPConnection");
-	TEST_CHECK(xml_s.model == "D-Link Router");
+	std::cout << "namespace " << xml_s.service_type << std::endl;
+	std::cout << "url_base: " << xml_s.url_base << std::endl;
+	std::cout << "control_url: " << xml_s.control_url << std::endl;
+	std::cout << "model: " << xml_s.model << std::endl;
+	TEST_EQUAL(xml_s.url_base, "http://192.168.0.1:5678");
+	TEST_EQUAL(xml_s.control_url, "/WANIPConnection");
+	TEST_EQUAL(xml_s.model, "D-Link Router");
+}
 
-	xml_s.reset("urn:schemas-upnp-org:service:WANPPPConnection:1");
+TORRENT_TEST(upnp_parser2)
+{
+	parse_state xml_s;
 	xml_parse(upnp_xml2, upnp_xml2 + sizeof(upnp_xml2)
-		, boost::bind(&find_control_url, _1, _2, boost::ref(xml_s)));
+		, boost::bind(&find_control_url, _1, _2, _3, boost::ref(xml_s)));
 
-	std::cerr << "namespace " << xml_s.service_type << std::endl;
-	std::cerr << "url_base: " << xml_s.url_base << std::endl;
-	std::cerr << "control_url: " << xml_s.control_url << std::endl;
-	std::cerr << "model: " << xml_s.model << std::endl;
-	TEST_CHECK(xml_s.url_base == "http://192.168.1.1:49152");
-	TEST_CHECK(xml_s.control_url == "/upnp/control/WANPPPConn1");
-	TEST_CHECK(xml_s.model == "Wireless-G ADSL Home Gateway");
+	std::cout << "namespace " << xml_s.service_type << std::endl;
+	std::cout << "url_base: " << xml_s.url_base << std::endl;
+	std::cout << "control_url: " << xml_s.control_url << std::endl;
+	std::cout << "model: " << xml_s.model << std::endl;
+	TEST_EQUAL(xml_s.url_base, "http://192.168.1.1:49152");
+	TEST_EQUAL(xml_s.control_url, "/upnp/control/WANPPPConn1");
+	TEST_EQUAL(xml_s.model, "Wireless-G ADSL Home Gateway");
+}
 
-	{
-		// test xml parser
-		char xml[] = "<a>foo<b/>bar</a>";
-		std::string out;
+TORRENT_TEST(upnp_parser3)
+{
+	error_code_parse_state xml_s;
+	xml_parse(upnp_xml3, upnp_xml3 + sizeof(upnp_xml3)
+		, boost::bind(&find_error_code, _1, _2, _3, boost::ref(xml_s)));
 
-		xml_parse(xml, xml + sizeof(xml) - 1, boost::bind(&parser_callback
-			, boost::ref(out), _1, _2, _3));
-		std::cerr << out << std::endl;
-		TEST_CHECK(out == "BaSfooEbSbarFa");
-	}
+	std::cout << "error_code " << xml_s.error_code << std::endl;
+	TEST_EQUAL(xml_s.error_code, 402);
+}
 
-	{
-		char xml[] = "<?xml version = \"1.0\"?><c x=\"1\" \t y=\"3\"/><d foo='bar'></d boo='foo'><!--comment-->";
-		std::string out;
+TORRENT_TEST(upnp_parser4)
+{
+	ip_address_parse_state xml_s;
+	xml_parse(upnp_xml4, upnp_xml4 + sizeof(upnp_xml4)
+		, boost::bind(&find_ip_address, _1, _2, _3, boost::ref(xml_s)));
 
-		xml_parse(xml, xml + sizeof(xml) - 1, boost::bind(&parser_callback
-			, boost::ref(out), _1, _2, _3));
-		std::cerr << out << std::endl;
-		TEST_CHECK(out == "DxmlAversionV1.0EcAxV1AyV3BdAfooVbarFdAbooVfooCcomment");
-	}
+	std::cout << "error_code " << xml_s.error_code << std::endl;
+	std::cout << "ip_address " << xml_s.ip_address << std::endl;
+	TEST_EQUAL(xml_s.error_code, -1);
+	TEST_EQUAL(xml_s.ip_address, "123.10.20.30");
+}
 
-	{
-		char xml[] = "<a f=1>foo</a f='b>";
-		std::string out;
+TORRENT_TEST(tags)
+{
+	test_parse("<a>foo<b/>bar</a>", "BaSfooEbSbarFa");
+}
 
-		xml_parse(xml, xml + sizeof(xml) - 1, boost::bind(&parser_callback
-			, boost::ref(out), _1, _2, _3));
-		std::cerr << out << std::endl;
-		TEST_CHECK(out == "BaPunquoted attribute valueSfooFaPmissing end quote on attribute");
-	}
+TORRENT_TEST(xml_tag_comment)
+{
+	test_parse("<?xml version = \"1.0\"?><c x=\"1\" \t y=\"3\"/><d foo='bar'></d boo='foo'><!--comment-->"
+		, "DxmlAversionV1.0EcAxV1AyV3BdAfooVbarFdAbooVfooCcomment");
+}
 
-	{
-		char xml[] = "<a  f>foo</a  v  >";
-		std::string out;
+TORRENT_TEST(empty_tag)
+{
+	test_parse("<foo/>", "Efoo");
+}
 
-		xml_parse(xml, xml + sizeof(xml) - 1, boost::bind(&parser_callback
-			, boost::ref(out), _1, _2, _3));
-		std::cerr << out << std::endl;
-		TEST_CHECK(out == "BaTfSfooFaTv  ");
-	}
+TORRENT_TEST(empty_tag_whitespace)
+{
+	test_parse("<foo  />", "Efoo");
+}
 
-	{
-		// test unterminated CDATA tags
-		char xml[] = "<![CDATA[foo";
-		std::string out;
+TORRENT_TEST(xml_tag_no_attribute)
+{
+	test_parse("<?xml?>", "Dxml");
+}
 
-		xml_parse(xml, xml + sizeof(xml) - 1, boost::bind(&parser_callback
-			, boost::ref(out), _1, _2, _3));
-		std::cerr << out << std::endl;
-		TEST_CHECK(out == "Punexpected end of file");
-	}
+TORRENT_TEST(xml_tag_no_attribute_whitespace)
+{
+	test_parse("<?xml  ?>", "Dxml");
+}
 
-	{
-		// test unterminated tags
-		char xml[] = "<foo";
-		std::string out;
+TORRENT_TEST(attribute_missing_qoute)
+{
+	test_parse("<a f=1>foo</a f='b>"
+		, "BaPunquoted attribute valueSfooFaPmissing end quote on attribute");
+}
 
-		xml_parse(xml, xml + sizeof(xml) - 1, boost::bind(&parser_callback
-			, boost::ref(out), _1, _2, _3));
-		std::cerr << out << std::endl;
-		TEST_CHECK(out == "Punexpected end of file");
-	}
+TORRENT_TEST(attribute_whitespace)
+{
+	test_parse("<a  f>foo</a  v  >", "BaTfSfooFaTv  ");
+}
 
-	{
-		// test unquoted attribute values
-		char xml[] = "<foo a=bar>";
-		std::string out;
+TORRENT_TEST(unterminated_cdata)
+{
+	// test unterminated CDATA tags
+	test_parse("<![CDATA[foo", "Punexpected end of file");
+}
 
-		xml_parse(xml, xml + sizeof(xml) - 1, boost::bind(&parser_callback
-			, boost::ref(out), _1, _2, _3));
-		std::cerr << out << std::endl;
-		TEST_CHECK(out == "BfooPunquoted attribute value");
-	}
+TORRENT_TEST(cdata)
+{
+	// test CDATA tag
+	test_parse("<![CDATA[verbatim tag that can have > and < in it]]>"
+		, "Sverbatim tag that can have > and < in it");
+}
 
-	{
-		// test unterminated attribute value
-		char xml[] = "<foo a=\"bar>";
-		std::string out;
+TORRENT_TEST(unterminated_tag)
+{
+	// test unterminated tags
+	test_parse("<foo", "Punexpected end of file");
+}
 
-		xml_parse(xml, xml + sizeof(xml) - 1, boost::bind(&parser_callback
-			, boost::ref(out), _1, _2, _3));
-		std::cerr << out << std::endl;
-		TEST_CHECK(out == "BfooPmissing end quote on attribute");
-	}
+TORRENT_TEST(unqouted_attribute_value)
+{
+	// test unquoted attribute values
+	test_parse("<foo a=bar>", "BfooPunquoted attribute value");
+}
 
-	{
-		// test unterminated tag
-		char xml[] = "<foo a=\"bar";
-		std::string out;
+TORRENT_TEST(unterminated_attribute)
+{
+	// test unterminated attribute value
+	test_parse("<foo a=\"bar>", "BfooPmissing end quote on attribute");
+}
 
-		xml_parse(xml, xml + sizeof(xml) - 1, boost::bind(&parser_callback
-			, boost::ref(out), _1, _2, _3));
-		std::cerr << out << std::endl;
-		TEST_CHECK(out == "Punexpected end of file");
-	}
-
-	return 0;
+TORRENT_TEST(unterminated_tag_with_attribute)
+{
+	// test unterminated tag
+	test_parse("<foo a=\"bar", "Punexpected end of file");
 }
 

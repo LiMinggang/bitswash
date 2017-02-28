@@ -54,30 +54,33 @@ namespace libtorrent
 #ifndef TORRENT_NO_DEPRECATE
 #ifndef BOOST_NO_EXCEPTIONS
 	// deprecated in 0.14
-	TORRENT_DEPRECATED_PREFIX
+	TORRENT_DEPRECATED
 	torrent_handle TORRENT_EXPORT add_magnet_uri(session& ses, std::string const& uri
 		, std::string const& save_path
 		, storage_mode_t storage_mode = storage_mode_sparse
 		, bool paused = false
 		, storage_constructor_type sc = default_storage_constructor
-		, void* userdata = 0) TORRENT_DEPRECATED;
+		, void* userdata = 0);
 
 	// deprecated in 0.16. Instead, pass in the magnet link as add_torrent_params::url
-	TORRENT_DEPRECATED_PREFIX
+	TORRENT_DEPRECATED
 	torrent_handle TORRENT_EXPORT add_magnet_uri(session& ses, std::string const& uri
-		, add_torrent_params p) TORRENT_DEPRECATED;
+		, add_torrent_params const& p);
 #endif
 
 	// deprecated in 0.16. Instead, pass in the magnet link as add_torrent_params::url
-	TORRENT_DEPRECATED_PREFIX
+	TORRENT_DEPRECATED
 	torrent_handle TORRENT_EXPORT add_magnet_uri(session& ses, std::string const& uri
-		, add_torrent_params p, error_code& ec) TORRENT_DEPRECATED;
+		, add_torrent_params const& p, error_code& ec);
 
 #endif
 
 	// This function parses out information from the magnet link and populates the
 	// add_torrent_params object.
 	TORRENT_EXPORT void parse_magnet_uri(std::string const& uri, add_torrent_params& p, error_code& ec);
+
+	// internal, delete when merge in master
+	TORRENT_EXTRA_EXPORT void parse_magnet_uri_peers(std::string const& uri, std::vector<tcp::endpoint>& peers);
 }
 
 #endif

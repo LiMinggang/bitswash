@@ -40,7 +40,7 @@ POSSIBILITY OF SUCH DAMAGE.
 using namespace libtorrent;
 using namespace libtorrent::detail;
 
-int test_main()
+TORRENT_TEST(socket_io)
 {
 	// test address_to_bytes
 	TEST_EQUAL(address_to_bytes(address_v4::from_string("10.11.12.13")), "\x0a\x0b\x0c\x0d");
@@ -86,12 +86,12 @@ int test_main()
 #endif
 
 	char const eplist[] = "l6:\x10\x05\x80\x01\x05\x39" "18:\x10\0\0\0\0\0\0\0\0\0\0\0\0\0\xff\xff\x05\x39" "e";
-	lazy_entry e;
+	bdecode_node e;
 	error_code ec;
-	lazy_bdecode(eplist, eplist + sizeof(eplist)-1, e, ec);
+	bdecode(eplist, eplist + sizeof(eplist)-1, e, ec);
 	TEST_CHECK(!ec);
 	std::vector<udp::endpoint> list;
-	read_endpoint_list<udp::endpoint>(&e, list);
+	read_endpoint_list<udp::endpoint>(e, list);
 
 #if TORRENT_USE_IPV6
 	TEST_EQUAL(list.size(), 2);
@@ -112,7 +112,60 @@ int test_main()
 	TEST_EQUAL(list.size(), 1);
 #endif
 	TEST_EQUAL(list[0], udp::endpoint(address_v4::from_string("16.5.128.1"), 1337));
-
-	return 0;
 }
 
+TORRENT_TEST(parse_invalid_ipv4_endpoint)
+{
+	error_code ec;
+	tcp::endpoint endp;
+
+	endp = parse_endpoint("127.0.0.1-4", ec);
+	TEST_CHECK(ec);
+	ec.clear();
+
+	endp = parse_endpoint("127.0.0.1", ec);
+	TEST_CHECK(ec);
+	ec.clear();
+
+	endp = parse_endpoint("127.0.0.1:", ec);
+	TEST_CHECK(ec);
+	ec.clear();
+
+	endp = parse_endpoint("127.0.0.1X", ec);
+	TEST_CHECK(ec);
+	ec.clear();
+
+	endp = parse_endpoint("127.0.0.1:4", ec);
+	TEST_CHECK(!ec);
+	TEST_EQUAL(endp, ep("127.0.0.1", 4));
+	ec.clear();
+}
+
+#if TORRENT_USE_IPV6
+TORRENT_TEST(parse_invalid_ipv6_endpoint)
+{
+	error_code ec;
+	tcp::endpoint endp;
+
+	endp = parse_endpoint("[::1]-4", ec);
+	TEST_CHECK(ec);
+	ec.clear();
+
+	endp = parse_endpoint("[::1]", ec);
+	TEST_CHECK(ec);
+	ec.clear();
+
+	endp = parse_endpoint("[::1]:", ec);
+	TEST_CHECK(ec);
+	ec.clear();
+
+	endp = parse_endpoint("[::1]X", ec);
+	TEST_CHECK(ec);
+	ec.clear();
+
+	endp = parse_endpoint("[::1]:4", ec);
+	TEST_CHECK(!ec);
+	TEST_EQUAL(endp, ep("::1", 4));
+	ec.clear();
+}
+#endif

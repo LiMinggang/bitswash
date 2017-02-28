@@ -2,11 +2,17 @@
 // subject to the Boost Software License, Version 1.0. (See accompanying
 // file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
 
-#include <boost/python.hpp>
+#include "boost_python.hpp"
 #include <boost/python/tuple.hpp>
+#include <boost/python/stl_iterator.hpp>
 #include <libtorrent/torrent_handle.hpp>
+#include <libtorrent/torrent_info.hpp>
+#include <libtorrent/torrent_status.hpp>
+#include <libtorrent/entry.hpp>
 #include <libtorrent/peer_info.hpp>
+#include "libtorrent/announce_entry.hpp"
 #include <libtorrent/storage.hpp>
+#include <libtorrent/file_pool.hpp>
 #include <boost/lexical_cast.hpp>
 #include "gil.hpp"
 
@@ -80,11 +86,11 @@ namespace
 
 list file_progress(torrent_handle& handle, int flags)
 {
-    std::vector<size_type> p;
+    std::vector<boost::int64_t> p;
 
     {
         allow_threading_guard guard;
-        boost::intrusive_ptr<const torrent_info> ti = handle.torrent_file();
+        boost::shared_ptr<const torrent_info> ti = handle.torrent_file();
         if (ti)
         {
            p.reserve(ti->num_files());
@@ -94,7 +100,7 @@ list file_progress(torrent_handle& handle, int flags)
 
     list result;
 
-    for (std::vector<size_type>::iterator i(p.begin()), e(p.end()); i != e; ++i)
+    for (std::vector<boost::int64_t>::iterator i(p.begin()), e(p.end()); i != e; ++i)
         result.append(*i);
 
     return result;
@@ -117,52 +123,44 @@ list get_peer_info(torrent_handle const& handle)
     return result;
 }
 
+namespace
+{
+   template <typename T>
+   T extract_fn(object o)
+   {
+      return boost::python::extract<T>(o);
+   }
+}
+
 void prioritize_pieces(torrent_handle& info, object o)
 {
-   std::vector<int> result;
-   try
+   stl_input_iterator<object> begin(o), end;
+   if (begin == end) return;
+
+   // determine which overload should be selected. the one taking a list of
+   // priorities or the one taking a list of piece -> priority mappings
+   bool const is_piece_list = extract<std::pair<int, int> >(*begin).check();
+
+   if (is_piece_list)
    {
-      object iter_obj = object( handle<>( PyObject_GetIter( o.ptr() ) ));
-      while( 1 )
-      {
-#if PY_MAJOR_VERSION >= 3
-         object obj = extract<object>( iter_obj.attr( "__next__" )() );
-#else
-         object obj = extract<object>( iter_obj.attr( "next" )() );
-#endif
-         result.push_back(extract<int const>( obj ));
-      }
+      std::vector<std::pair<int, int> > piece_list;
+      std::transform(begin, end, std::back_inserter(piece_list)
+         , &extract_fn<std::pair<int, int> >);
+      info.prioritize_pieces(piece_list);
    }
-   catch( error_already_set )
+   else
    {
-      PyErr_Clear();
-      info.prioritize_pieces(result);
-      return;
+      std::vector<int> priority_vector;
+      std::transform(begin, end, std::back_inserter(priority_vector)
+         , &extract_fn<int>);
+      info.prioritize_pieces(priority_vector);
    }
 }
 
 void prioritize_files(torrent_handle& info, object o)
 {
-   std::vector<int> result;
-   try
-   {
-      object iter_obj = object( handle<>( PyObject_GetIter( o.ptr() ) ));
-      while( 1 )
-      {
-#if PY_MAJOR_VERSION >= 3
-         object obj = extract<object>( iter_obj.attr( "__next__" )() );
-#else
-         object obj = extract<object>( iter_obj.attr( "next" )() );
-#endif
-         result.push_back(extract<int const>( obj ));
-      }
-   }
-   catch( error_already_set )
-   {
-      PyErr_Clear();
-      info.prioritize_files(result);
-      return;
-   }
+   stl_input_iterator<int const> begin(o), end;
+   info.prioritize_files(std::vector<int> (begin, end));
 }
 
 list file_priorities(torrent_handle& handle)
@@ -193,12 +191,6 @@ void dict_to_announce_entry(dict d, announce_entry& ae)
       ae.tier = extract<int>(d["tier"]);
    if (d.has_key("fail_limit"))
       ae.fail_limit = extract<int>(d["fail_limit"]);
-   if (d.has_key("source"))
-      ae.source = extract<int>(d["source"]);
-   if (d.has_key("verified"))
-      ae.verified = extract<int>(d["verified"]);
-   if (d.has_key("send_stats"))
-      ae.send_stats = extract<int>(d["send_stats"]);
 }
 
 void replace_trackers(torrent_handle& h, object trackers)
@@ -247,6 +239,17 @@ list trackers(torrent_handle& h)
     {
         dict d;
         d["url"] = i->url;
+        d["trackerid"] = i->trackerid;
+        d["message"] = i->message;
+        dict last_error;
+        last_error["value"] = i->last_error.value();
+        last_error["category"] = i->last_error.category().name();
+        d["last_error"] = last_error;
+        d["next_announce"] = i->next_announce;
+        d["min_announce"] = i->min_announce;
+        d["scrape_incomplete"] = i->scrape_incomplete;
+        d["scrape_complete"] = i->scrape_complete;
+        d["scrape_downloaded"] = i->scrape_downloaded;
         d["tier"] = i->tier;
         d["fail_limit"] = i->fail_limit;
         d["fails"] = i->fails;
@@ -317,22 +320,31 @@ void connect_peer(torrent_handle& th, tuple ip, int source)
     th.connect_peer(tuple_to_endpoint(ip), source);
 }
 
+std::vector<pool_file_status> file_status(torrent_handle const& h)
+{
+	std::vector<pool_file_status> ret;
+	h.file_status(ret);
+	return ret;
+}
+
 #ifndef TORRENT_NO_DEPRECATE
 #if BOOST_VERSION > 104200
 
-boost::intrusive_ptr<const torrent_info> get_torrent_info(torrent_handle const& h)
+boost::shared_ptr<const torrent_info> get_torrent_info(torrent_handle const& h)
 {
-	return boost::intrusive_ptr<const torrent_info>(&h.get_torrent_info());
+	allow_threading_guard guard;
+	return h.torrent_file();
 }
 
 #else
 
-boost::intrusive_ptr<torrent_info> get_torrent_info(torrent_handle const& h)
+boost::shared_ptr<torrent_info> get_torrent_info(torrent_handle const& h)
 {
-	// I can't figure out how to expose intrusive_ptr<const torrent_info>
+	// I can't figure out how to expose shared_ptr<const torrent_info>
 	// as well as supporting mutable instances. So, this hack is better
 	// than compilation errors. It seems to work on newer versions of boost though
-   return boost::intrusive_ptr<torrent_info>(const_cast<torrent_info*>(&h.get_torrent_info()));
+	allow_threading_guard guard;
+	return boost::const_pointer_cast<torrent_info>(h.torrent_file());
 }
 
 #endif
@@ -346,7 +358,8 @@ void set_peer_download_limit(torrent_handle& th, tuple const& ip, int limit)
 {
     th.set_peer_download_limit(tuple_to_endpoint(ip), limit);
 }
-#endif
+
+#endif // TORRENT_NO_DEPRECAE
 
 void add_piece(torrent_handle& th, int piece, char const *data, int flags)
 {
@@ -374,10 +387,13 @@ void bind_torrent_handle()
     void (torrent_handle::*rename_file1)(int, std::wstring const&) const = &torrent_handle::rename_file;
 #endif
 
+#ifndef TORRENT_NO_DEPRECATE
+    // deprecated in 1.1
 #ifndef TORRENT_DISABLE_RESOLVE_COUNTRIES
     bool (torrent_handle::*resolve_countries0)() const = &torrent_handle::resolve_countries;
     void (torrent_handle::*resolve_countries1)(bool) = &torrent_handle::resolve_countries;
 #endif
+#endif // TORRENT_NO_DEPRECATE
 
 #define _ allow_threads
 
@@ -403,6 +419,7 @@ void bind_torrent_handle()
         .def("is_valid", _(&torrent_handle::is_valid))
         .def("pause", _(&torrent_handle::pause), arg("flags") = 0)
         .def("resume", _(&torrent_handle::resume))
+        .def("stop_when_ready", _(&torrent_handle::stop_when_ready))
         .def("clear_error", _(&torrent_handle::clear_error))
         .def("set_priority", _(&torrent_handle::set_priority))
         .def("super_seeding", super_seeding1)
@@ -414,13 +431,14 @@ void bind_torrent_handle()
         .def("queue_position_top", _(&torrent_handle::queue_position_top))
         .def("queue_position_bottom", _(&torrent_handle::queue_position_bottom))
 
+        // deprecated
+#ifndef TORRENT_NO_DEPRECATE
+        // resolve countries deprecated in 1.1
 #ifndef TORRENT_DISABLE_RESOLVE_COUNTRIES
         .def("resolve_countries", _(resolve_countries0))
         .def("resolve_countries", _(resolve_countries1))
 #endif
-        // deprecated
-#ifndef TORRENT_NO_DEPRECATE
-        .def("get_torrent_info", get_torrent_info)
+        .def("get_torrent_info", &get_torrent_info)
         .def("super_seeding", super_seeding0)
         .def("filter_piece", _(&torrent_handle::filter_piece))
         .def("is_piece_filtered", _(&torrent_handle::is_piece_filtered))
@@ -439,6 +457,7 @@ void bind_torrent_handle()
         .def("set_piece_deadline", _(&torrent_handle::set_piece_deadline)
             , (arg("index"), arg("deadline"), arg("flags") = 0))
         .def("reset_piece_deadline", _(&torrent_handle::reset_piece_deadline), (arg("index")))
+        .def("clear_piece_deadlines", _(&torrent_handle::clear_piece_deadlines), (arg("index")))
         .def("piece_availability", &piece_availability)
         .def("piece_priority", _(piece_priority0))
         .def("piece_priority", _(piece_priority1))
@@ -448,14 +467,15 @@ void bind_torrent_handle()
         .def("file_priorities", &file_priorities)
         .def("file_priority", &file_prioritity0)
         .def("file_priority", &file_prioritity1)
+        .def("file_status", &::file_status)
         .def("save_resume_data", _(&torrent_handle::save_resume_data), arg("flags") = 0)
         .def("need_save_resume_data", _(&torrent_handle::need_save_resume_data))
         .def("force_reannounce", _(force_reannounce0)
-			  , (arg("seconds") = 0, arg("tracker_idx") = -1))
+            , (arg("seconds") = 0, arg("tracker_idx") = -1))
 #ifndef TORRENT_DISABLE_DHT
         .def("force_dht_announce", _(&torrent_handle::force_dht_announce))
 #endif
-        .def("scrape_tracker", _(&torrent_handle::scrape_tracker))
+        .def("scrape_tracker", _(&torrent_handle::scrape_tracker), arg("index") = -1)
         .def("set_upload_mode", _(&torrent_handle::set_upload_mode))
         .def("set_share_mode", _(&torrent_handle::set_share_mode))
         .def("flush_cache", &torrent_handle::flush_cache)
@@ -476,7 +496,9 @@ void bind_torrent_handle()
         .def("max_uploads", _(&torrent_handle::max_uploads))
         .def("set_max_connections", _(&torrent_handle::set_max_connections))
         .def("max_connections", _(&torrent_handle::max_connections))
+#ifndef TORRENT_NO_DEPRECATE
         .def("set_tracker_login", _(&torrent_handle::set_tracker_login))
+#endif
         .def("move_storage", _(move_storage0), (arg("path"), arg("flags") = 0))
         .def("info_hash", _(&torrent_handle::info_hash))
         .def("force_recheck", _(&torrent_handle::force_recheck))
@@ -488,16 +510,27 @@ void bind_torrent_handle()
 #endif
         ;
 
+    class_<pool_file_status>("pool_file_status")
+       .def_readonly("file_index", &pool_file_status::file_index)
+       .def_readonly("last_use", &pool_file_status::last_use)
+       .def_readonly("open_mode", &pool_file_status::open_mode)
+    ;
+
     enum_<torrent_handle::file_progress_flags_t>("file_progress_flags")
         .value("piece_granularity", torrent_handle::piece_granularity)
     ;
 
+    enum_<torrent_handle::flags_t>("add_piece_flags_t")
+        .value("overwrite_existing", torrent_handle::overwrite_existing)
+    ;
     enum_<torrent_handle::pause_flags_t>("pause_flags_t")
         .value("graceful_pause", torrent_handle::graceful_pause)
     ;
 
     enum_<torrent_handle::save_resume_flags_t>("save_resume_flags_t")
         .value("flush_disk_cache", torrent_handle::flush_disk_cache)
+        .value("save_info_dict", torrent_handle::save_info_dict)
+        .value("only_if_modified", torrent_handle::only_if_modified)
     ;
 
     enum_<torrent_handle::deadline_flags>("deadline_flags")

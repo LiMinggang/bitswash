@@ -31,6 +31,7 @@ POSSIBILITY OF SUCH DAMAGE.
 */
 
 #include "libtorrent/hasher.hpp"
+#include "libtorrent/sha1.hpp"
 
 namespace libtorrent
 {
@@ -125,12 +126,12 @@ namespace libtorrent
 #endif
 	}
 
-#ifdef TORRENT_USE_GCRYPT
 	hasher::~hasher()
 	{
+#ifdef TORRENT_USE_GCRYPT
 		gcry_md_close(m_context);
-	}
 #endif
+	}
 
 }
 

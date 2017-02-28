@@ -67,7 +67,7 @@ build variants, see `libtorrent build options`_.
 
 For example::
 
-	$ bjam dht-support=on boost=source release link=static
+	$ bjam dht-support=on link=static
 
 On Mac OS X, this will produce the following python module::
 
@@ -98,13 +98,12 @@ a list of entries.
 ``create_torrent::add_node()`` takes two arguments, one string and one integer,
 instead of a pair. The string is the address and the integer is the port.
 
-``session::set_settings()`` not only accepts a ``session_settings`` object, but also
-a dictionary with keys matching the names of the members of the ``session_settings`` struct.
-When calling ``set_settings``, the dictionary does not need to have every settings set,
-keys that are not present, are set to their default value.
+``session::apply_settings()`` accepts a dictionary with keys matching the names
+of settings in settings_pack.
+When calling ``apply_settings``, the dictionary does not need to have every settings set,
+keys that are not present are not updated.
 
-For backwards compatibility, ``session::settings()`` still returns a ``session_settings``
-struct. To get a python dictionary of the settings, call ``session::get_settings``.
+To get a python dictionary of the settings, call ``session::get_settings``.
 
 .. _`library reference`: reference.html
 
@@ -122,9 +121,9 @@ A very simple example usage of the module would be something like this::
 	e = lt.bdecode(open("test.torrent", 'rb').read())
 	info = lt.torrent_info(e)
 
-	params = { save_path: '.', \
-		storage_mode: lt.storage_mode_t.storage_mode_sparse, \
-		ti: info }
+	params = { 'save_path': '.', \
+		'storage_mode': lt.storage_mode_t.storage_mode_sparse, \
+		'ti': info }
 	h = ses.add_torrent(params)
 
 	s = h.status()

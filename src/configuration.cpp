@@ -136,7 +136,7 @@ void Configuration::Save()
 	m_cfg->Write( _T( "/Session/use_dht_as_fallback" ), m_use_dht_as_fallback );
 	m_cfg->Write( _T( "/Session/free_torrent_hashes" ), m_free_torrent_hashes );
 	//legacy
-	if( m_storagemode != libtorrent::storage_mode_compact )
+	//if( m_storagemode != libtorrent::storage_mode_compact )
 		m_compactalloc = false;
 	m_cfg->Write( _T( "/Torrent/compact_alloc" ), ( bool )m_compactalloc );
 	m_cfg->Write( _T( "/Torrent/storagemode" ), ( long )m_storagemode );
@@ -289,8 +289,8 @@ void Configuration::Load()
 	m_cfg->Read( _T( "/Session/free_torrent_hashes" ), &m_free_torrent_hashes, true );
 	//legacy
 	libtorrent::storage_mode_t defstoragemode = libtorrent::storage_mode_sparse;
-	if( m_compactalloc == true )
-		defstoragemode = libtorrent::storage_mode_compact;
+	/*if( m_compactalloc == true )
+		defstoragemode = libtorrent::storage_mode_compact;*/
 	m_storagemode = ( libtorrent::storage_mode_t ) m_cfg->Read( _T( "/Torrent/storagemode" ), ( long ) defstoragemode );
 	m_global_upload_limit = m_cfg->Read( _T( "/Torrent/global_upload_limit" ), -1 );
 	m_global_download_limit = m_cfg->Read( _T( "/Torrent/global_download_limit" ), -1 );

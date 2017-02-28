@@ -33,6 +33,7 @@ POSSIBILITY OF SUCH DAMAGE.
 #include "libtorrent/session.hpp"
 #include "libtorrent/alert_types.hpp"
 #include "libtorrent/create_torrent.hpp"
+#include "libtorrent/torrent_info.hpp"
 #include "setup_transfer.hpp"
 #include "test.hpp"
 
@@ -40,23 +41,28 @@ POSSIBILITY OF SUCH DAMAGE.
 #include <boost/tuple/tuple.hpp>
 
 using namespace libtorrent;
+namespace lt = libtorrent;
 using boost::tuples::ignore;
 
+namespace {
+
 template <class T>
-boost::intrusive_ptr<T> clone_ptr(boost::intrusive_ptr<T> const& ptr)
+boost::shared_ptr<T> clone_ptr(boost::shared_ptr<T> const& ptr)
 {
-	return boost::intrusive_ptr<T>(new T(*ptr));
+	return boost::shared_ptr<T>(new T(*ptr));
 }
 
 int peer_disconnects = 0;
 
-bool on_alert(alert* a)
+bool on_alert(alert const* a)
 {
 	if (alert_cast<peer_disconnected_alert>(a))
 		++peer_disconnects;
 
 	return false;
 }
+
+} // anonymous namespace
 
 void test_remap_files_gather(storage_mode_t storage_mode = storage_mode_sparse)
 {
@@ -70,8 +76,18 @@ void test_remap_files_gather(storage_mode_t storage_mode = storage_mode_sparse)
 	session_proxy p1;
 	session_proxy p2;
 
-	session ses1(fingerprint("LT", 0, 1, 0, 0), std::make_pair(48075, 49000), "0.0.0.0", 0, alert_mask);
-	session ses2(fingerprint("LT", 0, 1, 0, 0), std::make_pair(49075, 50000), "0.0.0.0", 0, alert_mask);
+	settings_pack sett;
+	sett.set_bool(settings_pack::enable_upnp, false);
+	sett.set_bool(settings_pack::enable_natpmp, false);
+	sett.set_bool(settings_pack::enable_lsd, false);
+	sett.set_bool(settings_pack::enable_dht, false);
+	sett.set_str(settings_pack::listen_interfaces, "0.0.0.0:48075");
+	sett.set_int(settings_pack::alert_mask, alert_mask);
+
+	lt::session ses1(sett);
+
+	sett.set_str(settings_pack::listen_interfaces, "0.0.0.0:49075");
+	lt::session ses2(sett);
 
 	torrent_handle tor1;
 	torrent_handle tor2;
@@ -108,8 +124,8 @@ void test_remap_files_gather(storage_mode_t storage_mode = storage_mode_sparse)
 	}
 	std::vector<char> buf;
 	bencode(std::back_inserter(buf), ct.generate());
-	boost::intrusive_ptr<torrent_info> t(new torrent_info(&buf[0], buf.size(), ec));
-	boost::intrusive_ptr<torrent_info> t2(new torrent_info(&buf[0], buf.size(), ec));
+	boost::shared_ptr<torrent_info> t(new torrent_info(&buf[0], buf.size(), ec));
+	boost::shared_ptr<torrent_info> t2(new torrent_info(&buf[0], buf.size(), ec));
 
 	// remap the files to a single one
 	file_storage st;
@@ -135,8 +151,8 @@ void test_remap_files_gather(storage_mode_t storage_mode = storage_mode_sparse)
 
 	for (int i = 0; i < 50; ++i)
 	{
-		print_alerts(ses1, "ses1", true, true, true, on_alert);
-		print_alerts(ses2, "ses2", true, true, true, on_alert);
+		print_alerts(ses1, "ses1", true, true, true, &on_alert);
+		print_alerts(ses2, "ses2", true, true, true, &on_alert);
 
 		torrent_status st1 = tor1.status();
 		torrent_status st2 = tor2.status();
@@ -178,7 +194,7 @@ void test_remap_files_gather(storage_mode_t storage_mode = storage_mode_sparse)
 
 	for (int i = 0; i < 50; ++i)
 	{
-		print_alerts(ses2, "ses2", true, true, true, on_alert);
+		print_alerts(ses2, "ses2", true, true, true, &on_alert);
 
 		torrent_status st2 = tor2.status();
 
@@ -221,15 +237,26 @@ void test_remap_files_scatter(storage_mode_t storage_mode = storage_mode_sparse)
 	session_proxy p1;
 	session_proxy p2;
 
-	session ses1(fingerprint("LT", 0, 1, 0, 0), std::make_pair(48075, 49000), "0.0.0.0", 0, alert_mask);
-	session ses2(fingerprint("LT", 0, 1, 0, 0), std::make_pair(49075, 50000), "0.0.0.0", 0, alert_mask);
+	settings_pack sett;
+	sett.set_bool(settings_pack::enable_upnp, false);
+	sett.set_bool(settings_pack::enable_natpmp, false);
+	sett.set_bool(settings_pack::enable_lsd, false);
+	sett.set_bool(settings_pack::enable_dht, false);
+	sett.set_str(settings_pack::listen_interfaces, "0.0.0.0:48075");
+	sett.set_int(settings_pack::alert_mask, alert_mask);
+
+	lt::session ses1(sett);
+
+	sett.set_str(settings_pack::listen_interfaces, "0.0.0.0:49075");
+	sett.set_int(settings_pack::alert_mask, alert_mask);
+	lt::session ses2(sett);
 
 	torrent_handle tor1;
 	torrent_handle tor2;
 
 	create_directory("tmp1_remap2", ec);
 	std::ofstream file("tmp1_remap2/temporary");
-	boost::intrusive_ptr<torrent_info> t = ::create_torrent(&file, 32 * 1024, 7);
+	boost::shared_ptr<torrent_info> t = ::create_torrent(&file, "temporary", 32 * 1024, 7);
 	file.close();
 
 	file_storage fs;
@@ -245,7 +272,7 @@ void test_remap_files_scatter(storage_mode_t storage_mode = storage_mode_sparse)
 	// add up exactly (in case the total size is not divisible by 10).
 	fs.add_file(name, t->total_size() - fs.total_size());
 
-	boost::intrusive_ptr<torrent_info> t2 = clone_ptr(t);
+	boost::shared_ptr<torrent_info> t2 = clone_ptr(t);
 
 	t2->remap_files(fs);
 
@@ -268,8 +295,8 @@ void test_remap_files_scatter(storage_mode_t storage_mode = storage_mode_sparse)
 
 	for (int i = 0; i < 50; ++i)
 	{
-		print_alerts(ses1, "ses1", true, true, true, on_alert);
-		print_alerts(ses2, "ses2", true, true, true, on_alert);
+		print_alerts(ses1, "ses1", true, true, true, &on_alert);
+		print_alerts(ses2, "ses2", true, true, true, &on_alert);
 
 		torrent_status st1 = tor1.status();
 		torrent_status st2 = tor2.status();
@@ -311,7 +338,7 @@ void test_remap_files_scatter(storage_mode_t storage_mode = storage_mode_sparse)
 
 	for (int i = 0; i < 50; ++i)
 	{
-		print_alerts(ses2, "ses2", true, true, true, on_alert);
+		print_alerts(ses2, "ses2", true, true, true, &on_alert);
 
 		torrent_status st2 = tor2.status();
 
@@ -352,8 +379,17 @@ void test_remap_files_prio(storage_mode_t storage_mode = storage_mode_sparse)
 	session_proxy p1;
 	session_proxy p2;
 
-	session ses1(fingerprint("LT", 0, 1, 0, 0), std::make_pair(48075, 49000), "0.0.0.0", 0, alert_mask);
-	session ses2(fingerprint("LT", 0, 1, 0, 0), std::make_pair(49075, 50000), "0.0.0.0", 0, alert_mask);
+	settings_pack sett;
+	sett.set_bool(settings_pack::enable_upnp, false);
+	sett.set_bool(settings_pack::enable_natpmp, false);
+	sett.set_bool(settings_pack::enable_lsd, false);
+	sett.set_bool(settings_pack::enable_dht, false);
+	sett.set_str(settings_pack::listen_interfaces, "0.0.0.0:48075");
+	sett.set_int(settings_pack::alert_mask, alert_mask);
+	lt::session ses1(sett);
+
+	sett.set_str(settings_pack::listen_interfaces, "0.0.0.0:49075");
+	lt::session ses2(sett);
 
 	torrent_handle tor1;
 	torrent_handle tor2;
@@ -374,7 +410,7 @@ void test_remap_files_prio(storage_mode_t storage_mode = storage_mode_sparse)
 
 	add_files(fs1, combine_path("tmp1_remap3", "test_torrent_dir"));
 	libtorrent::create_torrent ct(fs1, piece_size, 0x4000
-		, libtorrent::create_torrent::optimize);
+		, libtorrent::create_torrent::optimize_alignment);
 
 	// calculate the hash for all pieces
 	set_piece_hashes(ct, "tmp1_remap3", ec);
@@ -383,7 +419,7 @@ void test_remap_files_prio(storage_mode_t storage_mode = storage_mode_sparse)
 
 	std::vector<char> buf;
 	bencode(std::back_inserter(buf), ct.generate());
-	boost::intrusive_ptr<torrent_info> t(new torrent_info(&buf[0], buf.size(), ec));
+	boost::shared_ptr<torrent_info> t(new torrent_info(&buf[0], buf.size(), ec));
 
 	int num_new_files = 3;
 
@@ -400,7 +436,7 @@ void test_remap_files_prio(storage_mode_t storage_mode = storage_mode_sparse)
 	// add up exactly (in case the total size is not divisible by 10).
 	fs.add_file(name, t->total_size() - fs.total_size());
 
-	boost::intrusive_ptr<torrent_info> t2 = clone_ptr(t);
+	boost::shared_ptr<torrent_info> t2 = clone_ptr(t);
 
 	t2->remap_files(fs);
 
@@ -433,8 +469,8 @@ void test_remap_files_prio(storage_mode_t storage_mode = storage_mode_sparse)
 
 	for (int i = 0; i < 50; ++i)
 	{
-		print_alerts(ses1, "ses1", true, true, true, on_alert);
-		print_alerts(ses2, "ses2", true, true, true, on_alert);
+		print_alerts(ses1, "ses1", true, true, true, &on_alert);
+		print_alerts(ses2, "ses2", true, true, true, &on_alert);
 
 		torrent_status st1 = tor1.status();
 		torrent_status st2 = tor2.status();
@@ -480,39 +516,42 @@ void test_remap_files_prio(storage_mode_t storage_mode = storage_mode_sparse)
 	p2 = ses2.abort();
 }
 
-int test_main()
+using namespace libtorrent;
+
+TORRENT_TEST(remap_files)
 {
-	using namespace libtorrent;
+	test_remap_files_gather();
 
 	error_code ec;
 	remove_all("tmp1_remap", ec);
 	remove_all("tmp2_remap", ec);
-
-	test_remap_files_gather();
-	
-	remove_all("tmp1_remap", ec);
-	remove_all("tmp2_remap", ec);
 	remove_all("tmp1_remap2", ec);
 	remove_all("tmp2_remap2", ec);
+}
 
+TORRENT_TEST(scatter)
+{
 	test_remap_files_scatter();
-	
+
+	error_code ec;
 	remove_all("tmp1_remap", ec);
 	remove_all("tmp2_remap", ec);
 	remove_all("tmp1_remap2", ec);
 	remove_all("tmp2_remap2", ec);
 	remove_all("tmp1_remap3", ec);
 	remove_all("tmp2_remap3", ec);
+}
 
+TORRENT_TEST(prio)
+{
 	test_remap_files_prio();
-	
+
+	error_code ec;
 	remove_all("tmp1_remap", ec);
 	remove_all("tmp2_remap", ec);
 	remove_all("tmp1_remap2", ec);
 	remove_all("tmp2_remap2", ec);
 	remove_all("tmp1_remap3", ec);
 	remove_all("tmp2_remap3", ec);
-
-	return 0;
 }
 

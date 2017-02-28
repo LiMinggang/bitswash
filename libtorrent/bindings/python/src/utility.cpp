@@ -4,7 +4,7 @@
 
 #include <libtorrent/identify_client.hpp>
 #include <libtorrent/bencode.hpp>
-#include <boost/python.hpp>
+#include "boost_python.hpp"
 #include "bytes.hpp"
 
 using namespace boost::python;
@@ -58,12 +58,13 @@ struct bytes_from_python
     }
 };
 
-
+#ifndef TORRENT_NO_DEPRECATE
 object client_fingerprint_(peer_id const& id)
 {
     boost::optional<fingerprint> result = client_fingerprint(id);
     return result ? object(*result) : object();
 }
+#endif
 
 entry bdecode_(bytes const& data)
 {
@@ -83,8 +84,10 @@ void bind_utility()
     to_python_converter<bytes, bytes_to_python>();
     bytes_from_python();
 
+#ifndef TORRENT_NO_DEPRECATE
     def("identify_client", &libtorrent::identify_client);
     def("client_fingerprint", &client_fingerprint_);
+#endif
     def("bdecode", &bdecode_);
     def("bencode", &bencode_);
 }

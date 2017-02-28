@@ -33,30 +33,32 @@ POSSIBILITY OF SUCH DAMAGE.
 #include "libtorrent/entry.hpp"
 #include "libtorrent/bencode.hpp"
 #include "libtorrent/torrent_info.hpp"
-#include "libtorrent/lazy_entry.hpp"
+#include "libtorrent/announce_entry.hpp"
+#include "libtorrent/bdecode.hpp"
 #include "libtorrent/magnet_uri.hpp"
 
-int load_file(std::string const& filename, std::vector<char>& v, libtorrent::error_code& ec, int limit = 8000000)
+int load_file(std::string const& filename, std::vector<char>& v
+	, libtorrent::error_code& ec, int limit = 8000000)
 {
 	ec.clear();
 	FILE* f = fopen(filename.c_str(), "rb");
 	if (f == NULL)
 	{
-		ec.assign(errno, boost::system::get_generic_category());
+		ec.assign(errno, boost::system::system_category());
 		return -1;
 	}
 
 	int r = fseek(f, 0, SEEK_END);
 	if (r != 0)
 	{
-		ec.assign(errno, boost::system::get_generic_category());
+		ec.assign(errno, boost::system::system_category());
 		fclose(f);
 		return -1;
 	}
 	long s = ftell(f);
 	if (s < 0)
 	{
-		ec.assign(errno, boost::system::get_generic_category());
+		ec.assign(errno, boost::system::system_category());
 		fclose(f);
 		return -1;
 	}
@@ -70,7 +72,7 @@ int load_file(std::string const& filename, std::vector<char>& v, libtorrent::err
 	r = fseek(f, 0, SEEK_SET);
 	if (r != 0)
 	{
-		ec.assign(errno, boost::system::get_generic_category());
+		ec.assign(errno, boost::system::system_category());
 		fclose(f);
 		return -1;
 	}
@@ -85,7 +87,7 @@ int load_file(std::string const& filename, std::vector<char>& v, libtorrent::err
 	r = fread(&v[0], 1, v.size(), f);
 	if (r < 0)
 	{
-		ec.assign(errno, boost::system::get_generic_category());
+		ec.assign(errno, boost::system::system_category());
 		fclose(f);
 		return -1;
 	}
@@ -127,11 +129,11 @@ int main(int argc, char* argv[])
 		fprintf(stderr, "failed to load file: %s\n", ec.message().c_str());
 		return 1;
 	}
-	lazy_entry e;
+	bdecode_node e;
 	int pos = -1;
 	printf("decoding. recursion limit: %d total item count limit: %d\n"
 		, depth_limit, item_limit);
-	ret = lazy_bdecode(&buf[0], &buf[0] + buf.size(), e, ec, &pos
+	ret = bdecode(&buf[0], &buf[0] + buf.size(), e, ec, &pos
 		, depth_limit, item_limit);
 
 	printf("\n\n----- raw info -----\n\n%s\n", print_entry(e).c_str());
@@ -192,7 +194,7 @@ int main(int argc, char* argv[])
 	for (int i = 0; i < st.num_files(); ++i)
 	{
 		int first = st.map_file(i, 0, 0).piece;
-		int last = st.map_file(i, (std::max)(size_type(st.file_size(i))-1, size_type(0)), 0).piece;
+		int last = st.map_file(i, (std::max)(boost::int64_t(st.file_size(i))-1, boost::int64_t(0)), 0).piece;
 		int flags = st.file_flags(i);
 		printf(" %8" PRIx64 " %11" PRId64 " %c%c%c%c [ %5d, %5d ] %7u %s %s %s%s\n"
 			, st.file_offset(i)

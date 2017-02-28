@@ -1,19 +1,19 @@
 :Author: Arvid Norberg, arvid@libtorrent.org
-:Version: 1.0.11
+:Version: 1.1.2
 
 .. raw:: html
 
    <div id="librarySidebar">
 
 * download_
-* `download python binding`_
 * features_
-* contributing_
-* `building libtorrent`_
+* tutorial_
 * examples_
-* `library overview`_
-* `reference documentation`_
-* `troubleshooting issues`_
+* overview_
+* documentation_
+* contributing_
+* building_
+* troubleshooting_
 * `tuning`_
 * screenshot_
 * `mailing list`_ (archive_)
@@ -41,8 +41,10 @@ Extensions
 
 Bindings
 
-* `ruby bindings`_
-* `python bindings`_
+* python_
+* java_
+* go_
+* node_
 
 --------
 
@@ -58,14 +60,14 @@ libtorrent
 ==========
 
 .. _download: https://github.com/arvidn/libtorrent/releases
-.. _`download python binding`: https://sourceforge.net/projects/libtorrent/files/py-libtorrent/
 .. _features: features.html
+.. _tutorial: tutorial.html
 .. _contributing: contributing.html
-.. _`building libtorrent`: building.html
+.. _building: building.html
 .. _examples: examples.html
-.. _`library overview`: manual-ref.html
-.. _`reference documentation`: reference.html
-.. _`troubleshooting issues`: troubleshooting.html
+.. _overview: manual-ref.html
+.. _documentation: reference.html
+.. _troubleshooting: troubleshooting.html
 .. _`tuning`: tuning.html
 .. _screenshot: client_test.png
 .. _`uTP`: utp.html
@@ -85,8 +87,10 @@ libtorrent
 .. _`github page`: https://github.com/arvidn/libtorrent
 .. _blog: http://blog.libtorrent.org
 
-.. _`ruby bindings`: http://libtorrent-ruby.rubyforge.org/
-.. _`python bindings`: python_binding.html
+.. _java: https://github.com/frostwire/frostwire-jlibtorrent/
+.. _python: python_binding.html
+.. _go: https://github.com/steeve/libtorrent-go
+.. _node: https://github.com/fanatid/node-libtorrent
 
 .. _`Introduction, slides`: bittorrent.pdf
 
@@ -104,23 +108,46 @@ The main goals of libtorrent are:
 * to be memory efficient
 * to be very easy to use
 
+Getting started
+===============
 
-Donate
-======
+The tutorial_ is an introduction to using libtorrent (C++). Also see the
+`reference documentation`_.
 
-Support the development of libtorrent
+.. _`reference documentation`: reference.html
+
+Contribute
+==========
+
+If your organization use libtorrent, please consider supporting its development.
+See the contribute_ page for other ways to help out.
 
 .. raw:: html
-	
+
+	<span style="display:inline-block">
 	<a class="FlattrButton" style="display:none;" href="http://libtorrent.org"></a>
 	<noscript><a href="https://flattr.com/thing/95662/libtorrent" target="_blank">
 	<img src="http://api.flattr.com/button/flattr-badge-large.png" alt="Flattr this" title="Flattr this" border="0" /></a></noscript>
+	</span>
+	
+	<span style="display:inline-block">
+	<form action="https://www.paypal.com/cgi-bin/webscr" method="post" target="_top">
+	<input type="hidden" name="cmd" value="_donations">
+	<input type="hidden" name="business" value="ZNR45WU2PP5W2">
+	<input type="hidden" name="lc" value="US">
+	<input type="hidden" name="item_name" value="libtorrent">
+	<input type="hidden" name="currency_code" value="USD">
+	<input type="hidden" name="bn" value="PP-DonationsBF:btn_donate_LG.gif:NonHosted">
+	<input type="image" src="https://www.paypalobjects.com/webstatic/en_US/i/buttons/pp-acceptance-medium.png" border="0" name="submit" alt="PayPal - The safer, easier way to pay online!">
+	<img alt="" border="0" src="https://www.paypalobjects.com/en_US/i/scr/pixel.gif" width="1" height="1">
+	</form>
+	</span>
 
 
-Feedback
-========
+Support
+=======
 
-There's a `mailing list`__, general libtorrent discussion.
+Please direct questions to the `mailing list`__, general libtorrent discussion.
 
 __ http://lists.sourceforge.net/lists/listinfo/libtorrent-discuss
 
@@ -147,9 +174,9 @@ list or posted to the `bug tracker`_.
 Acknowledgements
 ================
 
-Written by Arvid Norberg. Copyright |copy| 2003-2015
+Written by Arvid Norberg. Copyright |copy| 2003-2016
 
-Contributions by Magnus Jonsson, Daniel Wallin and Cory Nelson
+Contributions by Steven Siloti, Magnus Jonsson, Daniel Wallin and Cory Nelson
 
 Thanks to Reimond Retz for bugfixes, suggestions and testing
 

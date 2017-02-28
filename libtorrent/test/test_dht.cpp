@@ -38,14 +38,17 @@ POSSIBILITY OF SUCH DAMAGE.
 #include "libtorrent/bencode.hpp"
 #include "libtorrent/socket_io.hpp" // for hash_address
 #include "libtorrent/broadcast_socket.hpp" // for supports_ipv6
-#include "libtorrent/alert_dispatcher.hpp"
+#include "libtorrent/performance_counters.hpp" // for counters
 #include "libtorrent/random.hpp"
+#include "libtorrent/ed25519.hpp"
 
 #include "libtorrent/kademlia/node_id.hpp"
 #include "libtorrent/kademlia/routing_table.hpp"
 #include "libtorrent/kademlia/item.hpp"
+#include "libtorrent/kademlia/dht_observer.hpp"
 #include "libtorrent/ed25519.hpp"
 #include <numeric>
+#include <cstdarg>
 
 #include "test.hpp"
 #include "setup_transfer.hpp"
@@ -63,7 +66,7 @@ using namespace libtorrent::dht;
 
 void nop() {}
 
-sha1_hash to_hash(char const* s)
+static sha1_hash to_hash(char const* s)
 {
 	sha1_hash ret;
 	from_hex(s, 40, (char*)&ret[0]);
@@ -88,28 +91,21 @@ void node_push_back(void* userdata, libtorrent::dht::node_entry const& n)
 	nv->push_back(n);
 }
 
-void nop(void* userdata, libtorrent::dht::node_entry const& n) {}
+static void nop(void* userdata, libtorrent::dht::node_entry const& n) {}
 
 std::list<std::pair<udp::endpoint, entry> > g_sent_packets;
 
 struct mock_socket : udp_socket_interface
 {
+	bool has_quota() { return true; }
 	bool send_packet(entry& msg, udp::endpoint const& ep, int flags)
 	{
+		// TODO: ideally the mock_socket would contain this queue of packets, to
+		// make tests independent
 		g_sent_packets.push_back(std::make_pair(ep, msg));
 		return true;
 	}
 };
-
-address rand_v4()
-{
-	return address_v4((rand() << 16 | rand()) & 0xffffffff);
-}
-
-udp::endpoint rand_ep()
-{
-	return udp::endpoint(rand_v4(), rand());
-}
 
 sha1_hash generate_next()
 {
@@ -134,86 +130,14 @@ find_packet(udp::endpoint ep)
 		, boost::bind(&std::pair<udp::endpoint, entry>::first, _1) == ep);
 }
 
-void lazy_from_entry(entry const& e, lazy_entry& l)
+void lazy_from_entry(entry const& e, bdecode_node& l)
 {
 	error_code ec;
 	static char inbuf[1500];
 	int len = bencode(inbuf, e);
-	int ret = lazy_bdecode(inbuf, inbuf + len, l, ec);
+	int ret = bdecode(inbuf, inbuf + len, l, ec);
 	TEST_CHECK(ret == 0);
 }
-
-void send_dht_request(node_impl& node, char const* msg, udp::endpoint const& ep
-	, lazy_entry* reply, char const* t = "10", char const* info_hash = 0
-	, char const* name = 0, std::string const token = std::string(), int port = 0
-	, char const* target = 0, entry const* value = 0
-	, bool scrape = false, bool seed = false
-	, std::string const key = std::string(), std::string const sig = std::string()
-	, int seq = -1, boost::int64_t cas = -1, sha1_hash const* nid = NULL
-	, char const* put_salt = NULL)
-{
-	// we're about to clear out the backing buffer
-	// for this lazy_entry, so we better clear it now
-	reply->clear();
-	entry e;
-	e["q"] = msg;
-	e["t"] = t;
-	e["y"] = "q";
-	entry::dictionary_type& a = e["a"].dict();
-	if (nid == NULL) a["id"] = generate_next().to_string();
-	else a["id"] = nid->to_string();
-	if (info_hash) a["info_hash"] = std::string(info_hash, 20);
-	if (name) a["n"] = name;
-	if (!token.empty()) a["token"] = token;
-	if (port) a["port"] = port;
-	if (target) a["target"] = std::string(target, 20);
-	if (value) a["v"] = *value;
-	if (!sig.empty()) a["sig"] = sig;
-	if (!key.empty()) a["k"] = key;
-	if (scrape) a["scrape"] = 1;
-	if (seed) a["seed"] = 1;
-	if (seq >= 0) a["seq"] = seq;
-	if (cas != -1) a["cas"] = cas;
-	if (put_salt) a["salt"] = put_salt;
-	char msg_buf[1500];
-	int size = bencode(msg_buf, e);
-#if defined TORRENT_DEBUG && TORRENT_USE_IOSTREAM
-// this yields a lot of output. too much
-//	std::cerr << "sending: " <<  e << "\n";
-#endif
-
-#ifdef TORRENT_USE_VALGRIND
-	VALGRIND_CHECK_MEM_IS_DEFINED(msg_buf, size);
-#endif
-
-	lazy_entry decoded;
-	error_code ec;
-	lazy_bdecode(msg_buf, msg_buf + size, decoded, ec);
-	if (ec) fprintf(stderr, "lazy_bdecode failed: %s\n", ec.message().c_str());
-
-	dht::msg m(decoded, ep);
-	node.incoming(m);
-
-	// by now the node should have invoked the send function and put the
-	// response in g_sent_packets
-
-	std::list<std::pair<udp::endpoint, entry> >::iterator i
-		= find_packet(ep);
-	if (i == g_sent_packets.end())
-	{
-		TEST_ERROR("not response from DHT node");
-		return;
-	}
-
-	lazy_from_entry(i->second, *reply);
-	g_sent_packets.erase(i);
-}
-
-namespace libtorrent { namespace dht { namespace detail
-{
-	// defined in node.cpp
-	void write_nodes_entry(entry& r, nodes_t const& nodes);
-} } }
 
 void write_peers(entry::dictionary_type& r, std::set<tcp::endpoint> const& peers)
 {
@@ -229,44 +153,139 @@ void write_peers(entry::dictionary_type& r, std::set<tcp::endpoint> const& peers
 	}
 }
 
-void send_dht_response(node_impl& node, lazy_entry const& request, udp::endpoint const& ep
-	, nodes_t const& nodes = nodes_t()
-	, std::string const token = std::string(), int port = 0
-	, std::set<tcp::endpoint> const& peers = std::set<tcp::endpoint>()
-	, char const* target = 0, entry const* value = 0
-	, std::string const key = std::string(), std::string const sig = std::string()
-	, int seq = -1, sha1_hash const* nid = NULL)
+struct msg_args
 {
+	msg_args& info_hash(char const* i)
+	{ if (i) a["info_hash"] = std::string(i, 20); return *this; }
+
+	msg_args& name(char const* n)
+	{ if (n) a["n"] = n; return *this; }
+
+	msg_args& token(std::string t)
+	{ a["token"] = t; return *this; }
+
+	msg_args& port(int p)
+	{ a["port"] = p; return *this; }
+
+	msg_args& target(char const* t)
+	{ if (t) a["target"] = std::string(t, 20); return *this; }
+
+	msg_args& value(entry const& v)
+	{ a["v"] = v; return *this; }
+
+	msg_args& scrape(bool s)
+	{ a["scrape"] = s ? 1 : 0; return *this; }
+
+	msg_args& seed(bool s)
+	{ a["seed"] = s ? 1 : 0; return *this; }
+
+	msg_args& key(std::string k)
+	{ a["k"] = k; return *this; }
+
+	msg_args& sig(std::string s)
+	{ a["sig"] = s; return *this; }
+
+	msg_args& seq(int s)
+	{ a["seq"] = s; return *this; }
+
+	msg_args& cas(boost::int64_t c)
+	{ a["cas"] = c; return *this; }
+
+	msg_args& nid(sha1_hash const& n)
+	{ a["id"] = n.to_string(); return *this; }
+
+	msg_args& salt(char const* s)
+	{ if (s) a["salt"] = s; return *this; }
+
+	msg_args& want(std::string w)
+	{ a["want"].list().push_back(w); return *this; }
+
+	msg_args& nodes(nodes_t const& n)
+	{ if (!n.empty()) dht::write_nodes_entry(a, n); return *this; }
+
+	msg_args& peers(std::set<tcp::endpoint> const& p)
+	{ if (!p.empty()) write_peers(a.dict(), p); return *this; }
+
+	entry a;
+};
+
+void send_dht_request(node& node, char const* msg, udp::endpoint const& ep
+	, bdecode_node* reply, msg_args const& args = msg_args()
+	, char const* t = "10", bool has_response = true)
+{
+	// we're about to clear out the backing buffer
+	// for this lazy_entry, so we better clear it now
+	reply->clear();
 	entry e;
-	e["y"] = "r";
-	e["t"] = request.dict_find_string_value("t");
-//	e["ip"] = endpoint_to_bytes(ep);
-	entry::dictionary_type& r = e["r"].dict();
-	if (nid == NULL) r["id"] = generate_next().to_string();
-	else r["id"] = nid->to_string();
-	if (!token.empty()) r["token"] = token;
-	if (port) r["p"] = port;
-	if (!nodes.empty()) dht::detail::write_nodes_entry(e["r"], nodes);
-	if (!peers.empty()) write_peers(r, peers);
-	if (value) r["v"] = *value;
-	if (!sig.empty()) r["sig"] = sig;
-	if (!key.empty()) r["k"] = key;
-	if (seq >= 0) r["seq"] = seq;
+	e["q"] = msg;
+	e["t"] = t;
+	e["y"] = "q";
+	e["a"] = args.a;
+	e["a"].dict().insert(std::make_pair("id", generate_next().to_string()));
 	char msg_buf[1500];
 	int size = bencode(msg_buf, e);
 #if defined TORRENT_DEBUG && TORRENT_USE_IOSTREAM
 // this yields a lot of output. too much
-//	std::cerr << "sending: " <<  e << "\n";
+//	std::cout << "sending: " <<  e << "\n";
 #endif
 
 #ifdef TORRENT_USE_VALGRIND
 	VALGRIND_CHECK_MEM_IS_DEFINED(msg_buf, size);
 #endif
 
-	lazy_entry decoded;
+	bdecode_node decoded;
 	error_code ec;
-	lazy_bdecode(msg_buf, msg_buf + size, decoded, ec);
-	if (ec) fprintf(stderr, "lazy_bdecode failed: %s\n", ec.message().c_str());
+	bdecode(msg_buf, msg_buf + size, decoded, ec);
+	if (ec) fprintf(stdout, "bdecode failed: %s\n", ec.message().c_str());
+
+	dht::msg m(decoded, ep);
+	node.incoming(m);
+
+	// If the request is supposed to get a response, by now the node should have 
+	// invoked the send function and put the response in g_sent_packets
+	std::list<std::pair<udp::endpoint, entry> >::iterator i = find_packet(ep);
+	if (has_response)
+	{
+		if (i == g_sent_packets.end())
+		{
+			TEST_ERROR("not response from DHT node");
+			return;
+		}
+
+		lazy_from_entry(i->second, *reply);
+		g_sent_packets.erase(i);
+
+		return;
+	}
+
+	// this request suppose won't be responsed.
+	if (i != g_sent_packets.end())
+	{
+		TEST_ERROR("shouldn't have response from DHT node");
+		return;
+	}
+}
+
+void send_dht_response(node& node, bdecode_node const& request, udp::endpoint const& ep
+	, msg_args const& args = msg_args())
+{
+	entry e;
+	e["y"] = "r";
+	e["t"] = request.dict_find_string_value("t");
+//	e["ip"] = endpoint_to_bytes(ep);
+	e["r"] = args.a;
+	e["r"].dict().insert(std::make_pair("id", generate_next().to_string()));
+	char msg_buf[1500];
+	int size = bencode(msg_buf, e);
+
+#ifdef TORRENT_USE_VALGRIND
+	VALGRIND_CHECK_MEM_IS_DEFINED(msg_buf, size);
+#endif
+
+	bdecode_node decoded;
+	error_code ec;
+	bdecode(msg_buf, msg_buf + size, decoded, ec);
+	if (ec) fprintf(stdout, "bdecode failed: %s\n", ec.message().c_str());
 
 	dht::msg m(decoded, ep);
 	node.incoming(m);
@@ -280,7 +299,7 @@ struct announce_item
 	sha1_hash target;
 	void gen()
 	{
-		num_peers = (rand() % 5) + 1;
+		num_peers = (rand() % 5) + 2;
 		ent["next"] = next.to_string();
 		ent["A"] = "a";
 		ent["B"] = "b";
@@ -293,7 +312,7 @@ struct announce_item
 	}
 };
 
-void announce_immutable_items(node_impl& node, udp::endpoint const* eps
+void announce_immutable_items(node& node, udp::endpoint const* eps
 	, announce_item const* items, int num_items)
 {
 	std::string token;
@@ -302,65 +321,71 @@ void announce_immutable_items(node_impl& node, udp::endpoint const* eps
 		for (int j = 0; j < num_items; ++j)
 		{
 			if ((i % items[j].num_peers) == 0) continue;
-			lazy_entry response;
-			send_dht_request(node, "get", eps[i], &response, "10", 0
-				, 0, no, 0, (char const*)&items[j].target[0]);
+			bdecode_node response;
+			send_dht_request(node, "get", eps[i], &response
+				, msg_args().target((char const*)&items[j].target[0]));
 			
 			key_desc_t desc[] =
 			{
-				{ "r", lazy_entry::dict_t, 0, key_desc_t::parse_children },
-					{ "id", lazy_entry::string_t, 20, 0},
-					{ "token", lazy_entry::string_t, 0, 0},
-					{ "ip", lazy_entry::string_t, 0, key_desc_t::optional | key_desc_t::last_child},
-				{ "y", lazy_entry::string_t, 1, 0},
+				{ "r", bdecode_node::dict_t, 0, key_desc_t::parse_children },
+					{ "id", bdecode_node::string_t, 20, 0},
+					{ "token", bdecode_node::string_t, 0, 0},
+					{ "ip", bdecode_node::string_t, 0, key_desc_t::optional | key_desc_t::last_child},
+				{ "y", bdecode_node::string_t, 1, 0},
 			};
 
-			lazy_entry const* parsed[6];
+			bdecode_node parsed[5];
 			char error_string[200];
 
-//			fprintf(stderr, "msg: %s\n", print_entry(response).c_str());
-			int ret = verify_message(&response, desc, parsed, 5, error_string, sizeof(error_string));
+//			fprintf(stdout, "msg: %s\n", print_entry(response).c_str());
+			int ret = verify_message(response, desc, parsed, error_string
+				, sizeof(error_string));
 			if (ret)
 			{
-				TEST_EQUAL(parsed[4]->string_value(), "r");
-				token = parsed[2]->string_value();
-//				fprintf(stderr, "got token: %s\n", token.c_str());
+				TEST_EQUAL(parsed[4].string_value(), "r");
+				token = parsed[2].string_value();
+//				fprintf(stdout, "got token: %s\n", token.c_str());
 			}
 			else
 			{
-				fprintf(stderr, "msg: %s\n", print_entry(response).c_str());
-				fprintf(stderr, "   invalid get response: %s\n", error_string);
+				fprintf(stdout, "msg: %s\n", print_entry(response).c_str());
+				fprintf(stdout, "   invalid get response: %s\n", error_string);
 				TEST_ERROR(error_string);
 			}
 
 			if (parsed[3])
 			{
 				address_v4::bytes_type b;
-				memcpy(&b[0], parsed[3]->string_ptr(), b.size());
+				memcpy(&b[0], parsed[3].string_ptr(), b.size());
 				address_v4 addr(b);
 				TEST_EQUAL(addr, eps[i].address());
 			}
 
-			send_dht_request(node, "put", eps[i], &response, "10", 0
-				, 0, token, 0, (char const*)&items[j].target[0], &items[j].ent);
+			send_dht_request(node, "put", eps[i], &response
+				, msg_args()
+					.token(token)
+					.target((char const*)&items[j].target[0])
+					.value(items[j].ent));
 
 			key_desc_t desc2[] =
 			{
-				{ "y", lazy_entry::string_t, 1, 0 }
+				{ "y", bdecode_node::string_t, 1, 0 }
 			};
 
-			ret = verify_message(&response, desc2, parsed, 1, error_string, sizeof(error_string));
+			bdecode_node parsed2[1];
+			ret = verify_message(response, desc2, parsed2, error_string
+				, sizeof(error_string));
 			if (ret)
 			{
-				if (parsed[0]->string_value() != "r")
-					fprintf(stderr, "msg: %s\n", print_entry(response).c_str());
+				if (parsed2[0].string_value() != "r")
+					fprintf(stdout, "msg: %s\n", print_entry(response).c_str());
 
-				TEST_EQUAL(parsed[0]->string_value(), "r");
+				TEST_EQUAL(parsed2[0].string_value(), "r");
 			}
 			else
 			{
-				fprintf(stderr, "msg: %s\n", print_entry(response).c_str());
-				fprintf(stderr, "   invalid put response: %s\n", error_string);
+				fprintf(stdout, "msg: %s\n", print_entry(response).c_str());
+				fprintf(stdout, "   invalid put response: %s\n", error_string);
 				TEST_ERROR(error_string);
 			}
 		}
@@ -369,47 +394,32 @@ void announce_immutable_items(node_impl& node, udp::endpoint const* eps
 	std::set<int> items_num;
 	for (int j = 0; j < num_items; ++j)
 	{
-		lazy_entry response;
-		send_dht_request(node, "get", eps[j], &response, "10", 0
-			, 0, no, 0, (char const*)&items[j].target[0]);
-		
+		bdecode_node response;
+		send_dht_request(node, "get", eps[j], &response
+			, msg_args().target((char const*)&items[j].target[0]));
+
 		key_desc_t desc[] =
 		{
-			{ "r", lazy_entry::dict_t, 0, key_desc_t::parse_children },
-				{ "v", lazy_entry::dict_t, 0, 0},
-				{ "id", lazy_entry::string_t, 20, key_desc_t::last_child},
-			{ "y", lazy_entry::string_t, 1, 0},
+			{ "r", bdecode_node::dict_t, 0, key_desc_t::parse_children },
+				{ "v", bdecode_node::dict_t, 0, 0},
+				{ "id", bdecode_node::string_t, 20, key_desc_t::last_child},
+			{ "y", bdecode_node::string_t, 1, 0},
 		};
 
-		lazy_entry const* parsed[4];
+		bdecode_node parsed[4];
 		char error_string[200];
 
-		int ret = verify_message(&response, desc, parsed, 4, error_string, sizeof(error_string));
+		int ret = verify_message(response, desc, parsed, error_string
+			, sizeof(error_string));
 		if (ret)
 		{
 			items_num.insert(items_num.begin(), j);
 		}
 	}
 
+	// TODO: check to make sure the "best" items are stored
 	TEST_EQUAL(items_num.size(), 4);
-
-	// items_num should contain 1,2 and 3
-	// #error this doesn't quite hold
-//	TEST_CHECK(items_num.find(1) != items_num.end());
-//	TEST_CHECK(items_num.find(2) != items_num.end());
-//	TEST_CHECK(items_num.find(3) != items_num.end());
 }
-
-struct print_alert : alert_dispatcher
-{
-	virtual bool post_alert(alert* a)
-	{
-		fprintf(stderr, "ALERT: %s\n", a->message().c_str());
-		delete a;
-		return true;
-	}
-};
-
 
 int sum_distance_exp(int s, node_entry const& e, node_id const& ref)
 {
@@ -427,83 +437,143 @@ std::vector<dht::item> g_got_items;
 dht::item g_put_item;
 int g_put_count;
 
-bool get_item_cb(dht::item& i)
+void get_mutable_item_cb(dht::item const& i, bool a)
+{
+	if (!a) return;
+	if (!i.empty())
+		g_got_items.push_back(i);
+}
+
+void put_mutable_item_data_cb(dht::item& i)
 {
 	if (!i.empty())
 		g_got_items.push_back(i);
-	if (!g_put_item.empty())
-	{
-		i = g_put_item;
-		g_put_count++;
-		return true;
-	}
-	return false;
+
+	TEST_CHECK(!g_put_item.empty());
+	i = g_put_item;
+	g_put_count++;
 }
 
-// TODO: 3 test obfuscated_get_peers
-int test_main()
+void put_mutable_item_cb(dht::item const&, int num, int expect)
 {
-	random_seed(total_microseconds(time_now_hires() - min_time()));
+	TEST_EQUAL(num, expect);
+}
 
+void get_immutable_item_cb(dht::item const& i)
+{
+	if (!i.empty())
+		g_got_items.push_back(i);
+}
+
+void put_immutable_item_cb(int num, int expect)
+{
+	TEST_EQUAL(num, expect);
+}
+
+struct obs : dht::dht_observer
+{
+	virtual void set_external_address(address const& addr
+		, address const& source) TORRENT_OVERRIDE
+	{}
+
+	virtual address external_address() TORRENT_OVERRIDE
+	{
+		return address_v4::from_string("236.0.0.1");
+	}
+	virtual void get_peers(sha1_hash const& ih) TORRENT_OVERRIDE {}
+	virtual void outgoing_get_peers(sha1_hash const& target
+		, sha1_hash const& sent_target, udp::endpoint const& ep) TORRENT_OVERRIDE {}
+	virtual void announce(sha1_hash const& ih, address const& addr, int port) TORRENT_OVERRIDE {}
+	virtual void log(dht_logger::module_t l, char const* fmt, ...) TORRENT_OVERRIDE
+	{
+		va_list v;
+		va_start(v, fmt);
+		char buf[1024];
+		vsnprintf(buf, sizeof(buf), fmt, v);
+		va_end(v);
+		m_log.push_back(buf);
+	}
+	virtual void log_packet(message_direction_t dir, char const* pkt, int len
+		, udp::endpoint node) TORRENT_OVERRIDE {}
+	virtual bool on_dht_request(char const* query, int query_len
+		, dht::msg const& request, entry& response) TORRENT_OVERRIDE { return false; }
+
+	std::vector<std::string> m_log;
+};
+
+dht_settings test_settings()
+{
 	dht_settings sett;
 	sett.max_torrents = 4;
 	sett.max_dht_items = 4;
 	sett.enforce_node_id = false;
-	address ext = address::from_string("236.0.0.1");
-	mock_socket s;
-	print_alert ad;
+	return sett;
+}
 
-	dht::node_impl node(&ad, &s, sett, node_id(0), ext, 0);
+// TODO: test obfuscated_get_peers
+// TODO: 2 split this test up into smaller test cases
+TORRENT_TEST(dht)
+{
+	dht_settings sett = test_settings();
+	mock_socket s;
+	obs observer;
+	counters cnt;
+	dht::node node(&s, sett, node_id(0), &observer, cnt);
 
 	// DHT should be running on port 48199 now
-	lazy_entry response;
-	lazy_entry const* parsed[11];
+	bdecode_node response;
 	char error_string[200];
 	bool ret;
 
 	// ====== ping ======
 	udp::endpoint source(address::from_string("10.0.0.1"), 20);
-	send_dht_request(node, "ping", source, &response, "10");
+	send_dht_request(node, "ping", source, &response);
 
 	dht::key_desc_t pong_desc[] = {
-		{"y", lazy_entry::string_t, 1, 0},
-		{"t", lazy_entry::string_t, 2, 0},
-		{"r", lazy_entry::dict_t, 0, key_desc_t::parse_children},
-			{"id", lazy_entry::string_t, 20, key_desc_t::last_child},
+		{"y", bdecode_node::string_t, 1, 0},
+		{"t", bdecode_node::string_t, 2, 0},
+		{"r", bdecode_node::dict_t, 0, key_desc_t::parse_children},
+			{"id", bdecode_node::string_t, 20, key_desc_t::last_child},
 	};
 
-	fprintf(stderr, "msg: %s\n", print_entry(response).c_str());
-	ret = dht::verify_message(&response, pong_desc, parsed, 4, error_string, sizeof(error_string));
+	bdecode_node pong_keys[4];
+
+	fprintf(stdout, "msg: %s\n", print_entry(response).c_str());
+	ret = dht::verify_message(response, pong_desc, pong_keys, error_string
+		, sizeof(error_string));
 	TEST_CHECK(ret);
 	if (ret)
 	{
-		TEST_CHECK(parsed[0]->string_value() == "r");
-		TEST_CHECK(parsed[1]->string_value() == "10");
+		TEST_CHECK(pong_keys[0].string_value() == "r");
+		TEST_CHECK(pong_keys[1].string_value() == "10");
 	}
 	else
 	{
-		fprintf(stderr, "   invalid ping response: %s\n", error_string);
+		fprintf(stdout, "   invalid ping response: %s\n", error_string);
 	}
 
 	// ====== invalid message ======
 
-	send_dht_request(node, "find_node", source, &response, "10");
+	send_dht_request(node, "find_node", source, &response);
 
 	dht::key_desc_t err_desc[] = {
-		{"y", lazy_entry::string_t, 1, 0},
-		{"e", lazy_entry::list_t, 2, 0}
+		{"y", bdecode_node::string_t, 1, 0},
+		{"e", bdecode_node::list_t, 2, 0}
 	};
 
-	fprintf(stderr, "msg: %s\n", print_entry(response).c_str());
-	ret = dht::verify_message(&response, err_desc, parsed, 2, error_string, sizeof(error_string));
+	bdecode_node err_keys[2];
+
+	fprintf(stdout, "msg: %s\n", print_entry(response).c_str());
+	ret = dht::verify_message(response, err_desc, err_keys, error_string
+		, sizeof(error_string));
 	TEST_CHECK(ret);
 	if (ret)
 	{
-		TEST_CHECK(parsed[0]->string_value() == "e");
-		if (parsed[1]->list_at(0)->type() == lazy_entry::int_t
-			&& parsed[1]->list_at(1)->type() == lazy_entry::string_t)
+		TEST_CHECK(err_keys[0].string_value() == "e");
+		if (err_keys[1].list_at(0).type() == bdecode_node::int_t
+			&& err_keys[1].list_at(1).type() == bdecode_node::string_t)
 		{
-			TEST_CHECK(parsed[1]->list_at(1)->string_value() == "missing 'target' key");
+			TEST_CHECK(err_keys[1].list_at(1).string_value() == "missing 'target' key");
 		}
 		else
 		{
@@ -512,118 +582,145 @@ int test_main()
 	}
 	else
 	{
-		fprintf(stderr, "   invalid error response: %s\n", error_string);
+		fprintf(stdout, "   invalid error response: %s\n", error_string);
 	}
 
 	// ====== get_peers ======
 
-	send_dht_request(node, "get_peers", source, &response, "10", "01010101010101010101");
+	send_dht_request(node, "get_peers", source, &response
+		, msg_args().info_hash("01010101010101010101"));
 
 	dht::key_desc_t peer1_desc[] = {
-		{"y", lazy_entry::string_t, 1, 0},
-		{"r", lazy_entry::dict_t, 0, key_desc_t::parse_children},
-			{"token", lazy_entry::string_t, 0, 0},
-			{"id", lazy_entry::string_t, 20, key_desc_t::last_child},
+		{"y", bdecode_node::string_t, 1, 0},
+		{"r", bdecode_node::dict_t, 0, key_desc_t::parse_children},
+			{"token", bdecode_node::string_t, 0, 0},
+			{"id", bdecode_node::string_t, 20, key_desc_t::last_child},
 	};
 
+	bdecode_node peer1_keys[4];
+
 	std::string token;
-	fprintf(stderr, "msg: %s\n", print_entry(response).c_str());
-	ret = dht::verify_message(&response, peer1_desc, parsed, 4, error_string, sizeof(error_string));
+	fprintf(stdout, "msg: %s\n", print_entry(response).c_str());
+	ret = dht::verify_message(response, peer1_desc, peer1_keys, error_string
+		, sizeof(error_string));
 	TEST_CHECK(ret);
 	if (ret)
 	{
-		TEST_CHECK(parsed[0]->string_value() == "r");
-		token = parsed[2]->string_value();
-//		fprintf(stderr, "got token: %s\n", token.c_str());
+		TEST_CHECK(peer1_keys[0].string_value() == "r");
+		token = peer1_keys[2].string_value();
+//		fprintf(stdout, "got token: %s\n", token.c_str());
 	}
 	else
 	{
-		fprintf(stderr, "msg: %s\n", print_entry(response).c_str());
-		fprintf(stderr, "   invalid get_peers response: %s\n", error_string);
+		fprintf(stdout, "msg: %s\n", print_entry(response).c_str());
+		fprintf(stdout, "   invalid get_peers response: %s\n", error_string);
 	}
 
 	// ====== announce ======
 
-	send_dht_request(node, "announce_peer", source, &response, "10", "01010101010101010101", "test", token, 8080);
+	send_dht_request(node, "announce_peer", source, &response
+		, msg_args()
+			.info_hash("01010101010101010101")
+			.name("test")
+			.token(token)
+			.port(8080));
+
 
 	dht::key_desc_t ann_desc[] = {
-		{"y", lazy_entry::string_t, 1, 0},
-		{"r", lazy_entry::dict_t, 0, key_desc_t::parse_children},
-			{"id", lazy_entry::string_t, 20, key_desc_t::last_child},
+		{"y", bdecode_node::string_t, 1, 0},
+		{"r", bdecode_node::dict_t, 0, key_desc_t::parse_children},
+			{"id", bdecode_node::string_t, 20, key_desc_t::last_child},
 	};
 
-	fprintf(stderr, "msg: %s\n", print_entry(response).c_str());
-	ret = dht::verify_message(&response, ann_desc, parsed, 3, error_string, sizeof(error_string));
+	bdecode_node ann_keys[3];
+
+	fprintf(stdout, "msg: %s\n", print_entry(response).c_str());
+	ret = dht::verify_message(response, ann_desc, ann_keys, error_string
+		, sizeof(error_string));
 	TEST_CHECK(ret);
 	if (ret)
 	{
-		TEST_CHECK(parsed[0]->string_value() == "r");
+		TEST_CHECK(ann_keys[0].string_value() == "r");
 	}
 	else
 	{
-		fprintf(stderr, "   invalid announce response: %s\n", error_string);
+		fprintf(stdout, "   invalid announce response: %s\n", error_string);
 	}
+
+	init_rand_address();
 
 	// announce from 100 random IPs and make sure scrape works
 	// 50 downloaders and 50 seeds
 	for (int i = 0; i < 100; ++i)
 	{
 		source = udp::endpoint(rand_v4(), 6000);
-		send_dht_request(node, "get_peers", source, &response, "10", "01010101010101010101");
-		ret = dht::verify_message(&response, peer1_desc, parsed, 4, error_string, sizeof(error_string));
+		send_dht_request(node, "get_peers", source, &response
+			, msg_args().info_hash("01010101010101010101"));
+
+		ret = dht::verify_message(response, peer1_desc, peer1_keys, error_string
+			, sizeof(error_string));
 
 		if (ret)
 		{
-			TEST_CHECK(parsed[0]->string_value() == "r");
-			token = parsed[2]->string_value();
-//			fprintf(stderr, "got token: %s\n", token.c_str());
+			TEST_CHECK(peer1_keys[0].string_value() == "r");
+			token = peer1_keys[2].string_value();
+//			fprintf(stdout, "got token: %s\n", token.c_str());
 		}
 		else
 		{
-			fprintf(stderr, "msg: %s\n", print_entry(response).c_str());
-			fprintf(stderr, "   invalid get_peers response: %s\n", error_string);
+			fprintf(stdout, "msg: %s\n", print_entry(response).c_str());
+			fprintf(stdout, "   invalid get_peers response: %s\n", error_string);
 		}
 		response.clear();
-		send_dht_request(node, "announce_peer", source, &response, "10", "01010101010101010101"
-			, "test", token, 8080, 0, 0, false, i >= 50);
+		send_dht_request(node, "announce_peer", source, &response
+			, msg_args()
+				.info_hash("01010101010101010101")
+				.name("test")
+				.token(token)
+				.port(8080)
+				.seed(i >= 50));
+
 		response.clear();
 	}
 
 	// ====== get_peers ======
 
-	send_dht_request(node, "get_peers", source, &response, "10", "01010101010101010101"
-		, 0, no, 0, 0, 0, true);
+	send_dht_request(node, "get_peers", source, &response
+		, msg_args().info_hash("01010101010101010101").scrape(true));
 
 	dht::key_desc_t peer2_desc[] = {
-		{"y", lazy_entry::string_t, 1, 0},
-		{"r", lazy_entry::dict_t, 0, key_desc_t::parse_children},
-			{"BFpe", lazy_entry::string_t, 256, 0},
-			{"BFsd", lazy_entry::string_t, 256, 0},
-			{"id", lazy_entry::string_t, 20, key_desc_t::last_child},
+		{"y", bdecode_node::string_t, 1, 0},
+		{"r", bdecode_node::dict_t, 0, key_desc_t::parse_children},
+			{"BFpe", bdecode_node::string_t, 256, 0},
+			{"BFsd", bdecode_node::string_t, 256, 0},
+			{"id", bdecode_node::string_t, 20, key_desc_t::last_child},
 	};
 
-	fprintf(stderr, "msg: %s\n", print_entry(response).c_str());
-	ret = dht::verify_message(&response, peer2_desc, parsed, 5, error_string, sizeof(error_string));
+	bdecode_node peer2_keys[5];
+
+	fprintf(stdout, "msg: %s\n", print_entry(response).c_str());
+	ret = dht::verify_message(response, peer2_desc, peer2_keys, error_string
+		, sizeof(error_string));
 	TEST_CHECK(ret);
 	if (ret)
 	{
-		TEST_CHECK(parsed[0]->string_value() == "r");
-		TEST_EQUAL(parsed[1]->dict_find_string_value("n"), "test");
+		TEST_CHECK(peer2_keys[0].string_value() == "r");
+		TEST_EQUAL(peer2_keys[1].dict_find_string_value("n"), "test");
 
 		bloom_filter<256> downloaders;
 		bloom_filter<256> seeds;
-		downloaders.from_string(parsed[2]->string_ptr());
-		seeds.from_string(parsed[3]->string_ptr());
+		downloaders.from_string(peer2_keys[2].string_ptr());
+		seeds.from_string(peer2_keys[3].string_ptr());
 
-		fprintf(stderr, "seeds: %f\n", seeds.size());
-		fprintf(stderr, "downloaders: %f\n", downloaders.size());
+		fprintf(stdout, "seeds: %f\n", seeds.size());
+		fprintf(stdout, "downloaders: %f\n", downloaders.size());
 
 		TEST_CHECK(fabs(seeds.size() - 50.f) <= 3.f);
 		TEST_CHECK(fabs(downloaders.size() - 50.f) <= 3.f);
 	}
 	else
 	{
-		fprintf(stderr, "   invalid get_peers response: %s\n", error_string);
+		fprintf(stdout, "   invalid get_peers response: %s\n", error_string);
 	}
 
 	// ====== test node ID testing =====
@@ -649,55 +746,68 @@ int test_main()
 	// http://libtorrent.org/dht_sec.html
 	source = udp::endpoint(address::from_string("124.31.75.21"), 1);
 	node_id nid = to_hash("5fbfbff10c5d6a4ec8a88e4c6ab4c28b95eee401");
-	send_dht_request(node, "find_node", source, &response, "10", 0, 0, std::string()
-		, 0, "0101010101010101010101010101010101010101", 0, false, false, std::string(), std::string(), -1, 0, &nid);
-
-	dht::key_desc_t nodes_desc[] = {
-		{"y", lazy_entry::string_t, 1, 0},
-		{"r", lazy_entry::dict_t, 0, key_desc_t::parse_children},
-			{"id", lazy_entry::string_t, 20, key_desc_t::last_child},
-	};
-
-	fprintf(stderr, "msg: %s\n", print_entry(response).c_str());
-	ret = dht::verify_message(&response, nodes_desc, parsed, 3, error_string, sizeof(error_string));
-	TEST_CHECK(ret);
-	if (ret)
-	{
-		TEST_CHECK(parsed[0]->string_value() == "r");
-	}
-	else
-	{
-		fprintf(stderr, "msg: %s\n", print_entry(response).c_str());
-		fprintf(stderr, "   invalid error response: %s\n", error_string);
-	}
 
 	// verify that we reject invalid node IDs
 	// this is now an invalid node-id for 'source'
 	nid[0] = 0x18;
-	send_dht_request(node, "find_node", source, &response, "10", 0, 0, std::string()
-		, 0, "0101010101010101010101010101010101010101", 0, false, false, std::string(), std::string(), -1, 0, &nid);
+	int nodes_num = node.size().get<0>();
+	send_dht_request(node, "find_node", source, &response
+		, msg_args().target("0101010101010101010101010101010101010101").nid(nid));
 
-	ret = dht::verify_message(&response, err_desc, parsed, 2, error_string, sizeof(error_string));
+	ret = dht::verify_message(response, err_desc, err_keys, error_string
+		, sizeof(error_string));
 	TEST_CHECK(ret);
 	if (ret)
 	{
-		TEST_CHECK(parsed[0]->string_value() == "e");
-		if (parsed[1]->list_at(0)->type() == lazy_entry::int_t
-			&& parsed[1]->list_at(1)->type() == lazy_entry::string_t)
+		TEST_CHECK(err_keys[0].string_value() == "e");
+		if (err_keys[1].list_at(0).type() == bdecode_node::int_t
+			&& err_keys[1].list_at(1).type() == bdecode_node::string_t)
 		{
-			TEST_CHECK(parsed[1]->list_at(1)->string_value() == "invalid node ID");
+			TEST_CHECK(err_keys[1].list_at(1).string_value() == "invalid node ID");
 		}
 		else
 		{
-			fprintf(stderr, "msg: %s\n", print_entry(response).c_str());
+			fprintf(stdout, "msg: %s\n", print_entry(response).c_str());
 			TEST_ERROR("invalid error response");
 		}
 	}
 	else
 	{
-		fprintf(stderr, "msg: %s\n", print_entry(response).c_str());
-		fprintf(stderr, "   invalid error response: %s\n", error_string);
+		fprintf(stdout, "msg: %s\n", print_entry(response).c_str());
+		fprintf(stdout, "   invalid error response: %s\n", error_string);
 	}
+
+	// a node with invalid node-id shouldn't be added to routing table.
+	TEST_EQUAL(node.size().get<0>(), nodes_num);
+
+	// now the node-id is valid.
+	nid[0] = 0x5f;
+	send_dht_request(node, "find_node", source, &response
+		, msg_args().target("0101010101010101010101010101010101010101").nid(nid));
+
+	dht::key_desc_t nodes_desc[] = {
+		{"y", bdecode_node::string_t, 1, 0},
+		{"r", bdecode_node::dict_t, 0, key_desc_t::parse_children},
+			{"id", bdecode_node::string_t, 20, key_desc_t::last_child},
+	};
+
+	bdecode_node nodes_keys[3];
+
+	fprintf(stdout, "msg: %s\n", print_entry(response).c_str());
+	ret = dht::verify_message(response, nodes_desc, nodes_keys, error_string
+		, sizeof(error_string));
+	TEST_CHECK(ret);
+	if (ret)
+	{
+		TEST_CHECK(nodes_keys[0].string_value() == "r");
+	}
+	else
+	{
+		fprintf(stdout, "msg: %s\n", print_entry(response).c_str());
+		fprintf(stdout, "   invalid error response: %s\n", error_string);
+	}
+	// node with valid node-id should be added to routing table.
+	TEST_EQUAL(node.size().get<0>(), nodes_num + 1);
 
 	sett.enforce_node_id = false;
 
@@ -729,8 +839,8 @@ int test_main()
 
 	// these are test vectors from BEP 33
 	// http://www.bittorrent.org/beps/bep_0033.html
-	fprintf(stderr, "test.size: %f\n", test.size());
-	fprintf(stderr, "%s\n", to_hex(test.to_string()).c_str());
+	fprintf(stdout, "test.size: %f\n", test.size());
+	fprintf(stdout, "%s\n", to_hex(test.to_string()).c_str());
 	if (supports_ipv6())
 	{
 		TEST_CHECK(fabs(test.size() - 1224.93f) < 0.001);
@@ -745,6 +855,8 @@ int test_main()
 	response.clear();
 
 	// ====== put ======
+
+	init_rand_address();
 
 	udp::endpoint eps[1000];
 
@@ -763,21 +875,25 @@ int test_main()
 		{ generate_next(), 8 }
 	};
 
-	for (int i = 0; i < sizeof(items)/sizeof(items[0]); ++i)
+	for (int i = 0; i < int(sizeof(items)/sizeof(items[0])); ++i)
 		items[i].gen();
 
 	announce_immutable_items(node, eps, items, sizeof(items)/sizeof(items[0]));
 
 	key_desc_t desc2[] =
 	{
-		{ "y", lazy_entry::string_t, 1, 0 }
+		{ "y", bdecode_node::string_t, 1, 0 }
 	};
+
+	bdecode_node desc2_keys[1];
 
 	key_desc_t desc_error[] =
 	{
-		{ "e", lazy_entry::list_t, 2, 0 },
-		{ "y", lazy_entry::string_t, 1, 0},
+		{ "e", bdecode_node::list_t, 2, 0 },
+		{ "y", bdecode_node::string_t, 1, 0},
 	};
+
+	bdecode_node desc_error_keys[2];
 
 	// ==== get / put mutable items ===
 
@@ -794,13 +910,13 @@ int test_main()
 	for (int with_salt = 0; with_salt < 2; ++with_salt)
 	{
 		seq = 4;
-		fprintf(stderr, "\nTEST GET/PUT%s \ngenerating ed25519 keys\n\n"
+		fprintf(stdout, "\nTEST GET/PUT%s \ngenerating ed25519 keys\n\n"
 			, with_salt ? " with-salt" : " no-salt");
 		unsigned char seed[32];
 		ed25519_create_seed(seed);
 
 		ed25519_create_keypair((unsigned char*)public_key, (unsigned char*)private_key, seed);
-		fprintf(stderr, "pub: %s priv: %s\n"
+		fprintf(stdout, "pub: %s priv: %s\n"
 			, to_hex(std::string(public_key, item_pk_len)).c_str()
 			, to_hex(std::string(private_key, item_sk_len)).c_str());
 
@@ -814,35 +930,37 @@ int test_main()
 		if (with_salt) h.update(salt.first, salt.second);
 		sha1_hash target_id = h.final();
 
-		fprintf(stderr, "target_id: %s\n"
+		fprintf(stdout, "target_id: %s\n"
 			, to_hex(target_id.to_string()).c_str());
 
-		send_dht_request(node, "get", source, &response, "10", 0
-			, 0, no, 0, (char*)&target_id[0]
-			, 0, false, false, std::string(), std::string());
+		send_dht_request(node, "get", source, &response
+			, msg_args().target((char*)&target_id[0]));
 
 		key_desc_t desc[] =
 		{
-			{ "r", lazy_entry::dict_t, 0, key_desc_t::parse_children },
-			{ "id", lazy_entry::string_t, 20, 0},
-			{ "token", lazy_entry::string_t, 0, 0},
-			{ "ip", lazy_entry::string_t, 0, key_desc_t::optional | key_desc_t::last_child},
-			{ "y", lazy_entry::string_t, 1, 0},
+			{ "r", bdecode_node::dict_t, 0, key_desc_t::parse_children },
+			{ "id", bdecode_node::string_t, 20, 0},
+			{ "token", bdecode_node::string_t, 0, 0},
+			{ "ip", bdecode_node::string_t, 0, key_desc_t::optional | key_desc_t::last_child},
+			{ "y", bdecode_node::string_t, 1, 0},
 		};
 
-		ret = verify_message(&response, desc, parsed, 5, error_string, sizeof(error_string));
+		bdecode_node desc_keys[5];
+
+		ret = verify_message(response, desc, desc_keys, error_string
+			, sizeof(error_string));
 		if (ret)
 		{
-			TEST_EQUAL(parsed[4]->string_value(), "r");
-			token = parsed[2]->string_value();
-			fprintf(stderr, "get response: %s\n"
+			TEST_EQUAL(desc_keys[4].string_value(), "r");
+			token = desc_keys[2].string_value();
+			fprintf(stdout, "get response: %s\n"
 				, print_entry(response).c_str());
-			fprintf(stderr, "got token: %s\n", to_hex(token).c_str());
+			fprintf(stdout, "got token: %s\n", to_hex(token).c_str());
 		}
 		else
 		{
-			fprintf(stderr, "msg: %s\n", print_entry(response).c_str());
-			fprintf(stderr, "   invalid get response: %s\n%s\n"
+			fprintf(stdout, "msg: %s\n", print_entry(response).c_str());
+			fprintf(stdout, "   invalid get response: %s\n%s\n"
 				, error_string, print_entry(response).c_str());
 			TEST_ERROR(error_string);
 		}
@@ -854,62 +972,69 @@ int test_main()
 		VALGRIND_CHECK_MEM_IS_DEFINED(signature, item_sig_len);
 #endif
 
-		send_dht_request(node, "put", source, &response, "10", 0
-			, 0, token, 0, 0, &items[0].ent, false, false
-			, std::string(public_key, item_pk_len)
-			, std::string(signature, item_sig_len), seq, -1, NULL, salt.first);
+		send_dht_request(node, "put", source, &response
+			, msg_args()
+				.token(token)
+				.value(items[0].ent)
+				.key(std::string(public_key, item_pk_len))
+				.sig(std::string(signature, item_sig_len))
+				.seq(seq)
+				.salt(salt.first));
 
-		ret = verify_message(&response, desc2, parsed, 1, error_string, sizeof(error_string));
+		ret = verify_message(response, desc2, desc2_keys, error_string
+			, sizeof(error_string));
 		if (ret)
 		{
-			fprintf(stderr, "put response: %s\n"
+			fprintf(stdout, "put response: %s\n"
 				, print_entry(response).c_str());
-			TEST_EQUAL(parsed[0]->string_value(), "r");
+			TEST_EQUAL(desc2_keys[0].string_value(), "r");
 		}
 		else
 		{
-			fprintf(stderr, "   invalid put response: %s\n%s\n"
+			fprintf(stdout, "   invalid put response: %s\n%s\n"
 				, error_string, print_entry(response).c_str());
 			TEST_ERROR(error_string);
 		}
 
-		send_dht_request(node, "get", source, &response, "10", 0
-			, 0, no, 0, (char*)&target_id[0]
-			, 0, false, false, std::string(), std::string());
+		send_dht_request(node, "get", source, &response
+			, msg_args().target((char*)&target_id[0]));
 
-		fprintf(stderr, "target_id: %s\n"
+		fprintf(stdout, "target_id: %s\n"
 			, to_hex(target_id.to_string()).c_str());
 
 		key_desc_t desc3[] =
 		{
-			{ "r", lazy_entry::dict_t, 0, key_desc_t::parse_children },
-			{ "id", lazy_entry::string_t, 20, 0},
-			{ "v", lazy_entry::none_t, 0, 0},
-			{ "seq", lazy_entry::int_t, 0, 0},
-			{ "sig", lazy_entry::string_t, 0, 0},
-			{ "ip", lazy_entry::string_t, 0, key_desc_t::optional | key_desc_t::last_child},
-			{ "y", lazy_entry::string_t, 1, 0},
+			{ "r", bdecode_node::dict_t, 0, key_desc_t::parse_children },
+			{ "id", bdecode_node::string_t, 20, 0},
+			{ "v", bdecode_node::none_t, 0, 0},
+			{ "seq", bdecode_node::int_t, 0, 0},
+			{ "sig", bdecode_node::string_t, 0, 0},
+			{ "ip", bdecode_node::string_t, 0, key_desc_t::optional | key_desc_t::last_child},
+			{ "y", bdecode_node::string_t, 1, 0},
 		};
 
-		ret = verify_message(&response, desc3, parsed, 7, error_string, sizeof(error_string));
+		bdecode_node desc3_keys[7];
+
+		ret = verify_message(response, desc3, desc3_keys, error_string
+			, sizeof(error_string));
 		if (ret == 0)
 		{
-			fprintf(stderr, "msg: %s\n", print_entry(response).c_str());
-			fprintf(stderr, "   invalid get response: %s\n%s\n"
+			fprintf(stdout, "msg: %s\n", print_entry(response).c_str());
+			fprintf(stdout, "   invalid get response: %s\n%s\n"
 				, error_string, print_entry(response).c_str());
 			TEST_ERROR(error_string);
 		}
 		else
 		{
-			fprintf(stderr, "get response: %s\n"
+			fprintf(stdout, "get response: %s\n"
 				, print_entry(response).c_str());
 			char value[1020];
 			char* ptr = value;
 			int value_len = bencode(ptr, items[0].ent);
-			TEST_EQUAL(value_len, parsed[2]->data_section().second);
-			TEST_CHECK(memcmp(parsed[2]->data_section().first, value, value_len) == 0);
+			TEST_EQUAL(value_len, desc3_keys[2].data_section().second);
+			TEST_CHECK(memcmp(desc3_keys[2].data_section().first, value, value_len) == 0);
 
-			TEST_EQUAL(seq, parsed[3]->int_value());
+			TEST_EQUAL(seq, desc3_keys[3].int_value());
 		}
 
 		// also test that invalid signatures fail!
@@ -923,52 +1048,55 @@ int test_main()
 		// break the signature
 		signature[2] ^= 0xaa;
 
-		fprintf(stderr, "PUT broken signature\n");
+		fprintf(stdout, "PUT broken signature\n");
 
 		TEST_CHECK(verify_mutable_item(itemv, salt, seq, public_key, signature) != 1);
 
-		send_dht_request(node, "put", source, &response, "10", 0
-			, 0, token, 0, 0, &items[0].ent, false, false
-			, std::string(public_key, item_pk_len)
-			, std::string(signature, item_sig_len), seq, -1, NULL, salt.first);
+		send_dht_request(node, "put", source, &response
+			, msg_args()
+				.token(token)
+				.value(items[0].ent)
+				.key(std::string(public_key, item_pk_len))
+				.sig(std::string(signature, item_sig_len))
+				.seq(seq)
+				.salt(salt.first));
 
-		ret = verify_message(&response, desc_error, parsed, 2, error_string, sizeof(error_string));
+		ret = verify_message(response, desc_error, desc_error_keys, error_string
+			, sizeof(error_string));
 		if (ret)
 		{
-			fprintf(stderr, "put response: %s\n", print_entry(response).c_str());
-			TEST_EQUAL(parsed[1]->string_value(), "e");
+			fprintf(stdout, "put response: %s\n", print_entry(response).c_str());
+			TEST_EQUAL(desc_error_keys[1].string_value(), "e");
 			// 206 is the code for invalid signature
-			TEST_EQUAL(parsed[0]->list_int_value_at(0), 206);
+			TEST_EQUAL(desc_error_keys[0].list_int_value_at(0), 206);
 		}
 		else
 		{
-			fprintf(stderr, "   invalid put response: %s\n%s\n"
+			fprintf(stdout, "   invalid put response: %s\n%s\n"
 				, error_string, print_entry(response).c_str());
 			TEST_ERROR(error_string);
 		}
 
 		// === test conditional get ===
 
-		send_dht_request(node, "get", source, &response, "10", 0
-			, 0, no, 0, (char*)&target_id[0]
-			, 0, false, false, std::string(), std::string(), seq-1);
+		send_dht_request(node, "get", source, &response
+			, msg_args().target((char*)&target_id[0]).seq(seq - 1));
 
 		{
-			lazy_entry const* r = response.dict_find_dict("r");
-			TEST_CHECK(r->dict_find("v"));
-			TEST_CHECK(r->dict_find("k"));
-			TEST_CHECK(r->dict_find("sig"));
+			bdecode_node r = response.dict_find_dict("r");
+			TEST_CHECK(r.dict_find("v"));
+			TEST_CHECK(r.dict_find("k"));
+			TEST_CHECK(r.dict_find("sig"));
 		}
 
-		send_dht_request(node, "get", source, &response, "10", 0
-			, 0, no, 0, (char*)&target_id[0]
-			, 0, false, false, std::string(), std::string(), seq);
+		send_dht_request(node, "get", source, &response
+			, msg_args().target((char*)&target_id[0]).seq(seq));
 
 		{
-			lazy_entry const* r = response.dict_find_dict("r");
-			TEST_CHECK(!r->dict_find("v"));
-			TEST_CHECK(!r->dict_find("k"));
-			TEST_CHECK(!r->dict_find("sig"));
+			bdecode_node r = response.dict_find_dict("r");
+			TEST_CHECK(!r.dict_find("v"));
+			TEST_CHECK(!r.dict_find("k"));
+			TEST_CHECK(!r.dict_find("sig"));
 		}
 
 		// === test CAS put ===
@@ -988,234 +1116,65 @@ int test_main()
 
 		TEST_CHECK(item_target_id(salt, public_key) == target_id);
 
-		fprintf(stderr, "PUT CAS 1\n");
+		fprintf(stdout, "PUT CAS 1\n");
 
-		send_dht_request(node, "put", source, &response, "10", 0
-			, 0, token, 0, 0, &items[1].ent, false, false
-			, std::string(public_key, item_pk_len)
-			, std::string(signature, item_sig_len), seq
-			, cas, NULL, salt.first);
+		send_dht_request(node, "put", source, &response
+			, msg_args()
+				.token(token)
+				.value(items[1].ent)
+				.key(std::string(public_key, item_pk_len))
+				.sig(std::string(signature, item_sig_len))
+				.seq(seq)
+				.cas(cas)
+				.salt(salt.first));
 
-		ret = verify_message(&response, desc2, parsed, 1, error_string, sizeof(error_string));
+		ret = verify_message(response, desc2, desc2_keys, error_string
+			, sizeof(error_string));
 		if (ret)
 		{
-			fprintf(stderr, "put response: %s\n"
+			fprintf(stdout, "put response: %s\n"
 				, print_entry(response).c_str());
-			TEST_EQUAL(parsed[0]->string_value(), "r");
+			TEST_EQUAL(desc2_keys[0].string_value(), "r");
 		}
 		else
 		{
-			fprintf(stderr, "   invalid put response: %s\n%s\n"
+			fprintf(stdout, "   invalid put response: %s\n%s\n"
 				, error_string, print_entry(response).c_str());
 			TEST_ERROR(error_string);
 		}
 
-		fprintf(stderr, "PUT CAS 2\n");
+		fprintf(stdout, "PUT CAS 2\n");
 
 		// put the same message again. This should fail because the
 		// CAS hash is outdated, it's not the hash of the value that's
 		// stored anymore
-		send_dht_request(node, "put", source, &response, "10", 0
-			, 0, token, 0, 0, &items[1].ent, false, false
-			, std::string(public_key, item_pk_len)
-			, std::string(signature, item_sig_len), seq
-			, cas, NULL, salt.first);
+		send_dht_request(node, "put", source, &response
+			, msg_args()
+				.token(token)
+				.value(items[1].ent)
+				.key(std::string(public_key, item_pk_len))
+				.sig(std::string(signature, item_sig_len))
+				.seq(seq)
+				.cas(cas)
+				.salt(salt.first));
 
-		ret = verify_message(&response, desc_error, parsed, 2, error_string, sizeof(error_string));
+		ret = verify_message(response, desc_error, desc_error_keys, error_string
+			, sizeof(error_string));
 		if (ret)
 		{
-			fprintf(stderr, "put response: %s\n"
+			fprintf(stdout, "put response: %s\n"
 				, print_entry(response).c_str());
-			TEST_EQUAL(parsed[1]->string_value(), "e");
+			TEST_EQUAL(desc_error_keys[1].string_value(), "e");
 			// 301 is the error code for CAS hash mismatch
-			TEST_EQUAL(parsed[0]->list_int_value_at(0), 301);
+			TEST_EQUAL(desc_error_keys[0].list_int_value_at(0), 301);
 		}
 		else
 		{
-			fprintf(stderr, "   invalid put response: %s\n%s\nExpected failure 301 (CAS hash mismatch)\n"
+			fprintf(stdout, "   invalid put response: %s\n%s\nExpected failure 301 (CAS hash mismatch)\n"
 				, error_string, print_entry(response).c_str());
 			TEST_ERROR(error_string);
 		}
 
-	}
-
-// test routing table
-
-	{
-		sett.extended_routing_table = false;
-		node_id id = to_hash("1234876923549721020394873245098347598635");
-		node_id diff = to_hash("15764f7459456a9453f8719b09547c11d5f34061");
-
-		routing_table tbl(id, 8, sett);
-
-		// insert 256 nodes evenly distributed across the ID space.
-		// we expect to fill the top 5 buckets
-		for (int i = 255; i >= 0; --i)
-		{
-			// test a node with the same IP:port changing ID
-			add_and_replace(id, diff);
-			// in order to make this node-load a bit more realistic, start from
-			// distant nodes and work our way in closer to the node id
-			// the routing table will reject nodes that are too imbalanced (if all
-			// nodes are very close to our ID and none are far away, it's
-			// suspicious).
-			id[0] ^= i;
-			tbl.node_seen(id, rand_ep(), 20 + (id[19] & 0xff));
-
-			// restore the first byte of the node ID
-			id[0] ^= i;
-
-#if defined TORRENT_DHT_VERBOSE_LOGGING || defined TORRENT_DEBUG
-			tbl.print_state(std::cerr);
-#endif
-		}
-		printf("num_active_buckets: %d\n", tbl.num_active_buckets());
-		// number of nodes per tree level (when adding 256 evenly distributed
-		// nodes):
-		// 0: 128
-		// 1: 64
-		// 2: 32
-		// 3: 16
-		// 4: 8
-		// i.e. no more than 5 levels
-		TEST_EQUAL(tbl.num_active_buckets(), 5);
-
-#if defined TORRENT_DHT_VERBOSE_LOGGING || defined TORRENT_DEBUG
-		tbl.print_state(std::cerr);
-#endif
-	}
-
-	{
-		sett.extended_routing_table = false;
-		node_id id = to_hash("1234876923549721020394873245098347598635");
-
-		routing_table tbl(id, 8, sett);
-
-		// insert nodes in the routing table that will force it to split
-		// and make sure we don't end up with a table completely out of balance
-		for (int i = 0; i < 32; ++i)
-		{
-			id[4] = i;
-			tbl.node_seen(id, rand_ep(), 20 + (id[19] & 0xff));
-		}
-		printf("num_active_buckets: %d\n", tbl.num_active_buckets());
-		TEST_EQUAL(tbl.num_active_buckets(), 2);
-
-#if defined TORRENT_DHT_VERBOSE_LOGGING || defined TORRENT_DEBUG
-		tbl.print_state(std::cerr);
-#endif
-	}
-
-	{
-		sett.extended_routing_table = true;
-		node_id id = to_hash("1234876923549721020394873245098347598635");
-		node_id diff = to_hash("15764f7459456a9453f8719b09547c11d5f34061");
-
-		routing_table tbl(id, 8, sett);
-		for (int i = 0; i < 256; ++i)
-		{
-			add_and_replace(id, diff);
-			id[0] = i;
-			tbl.node_seen(id, rand_ep(), 20 + (id[19] & 0xff));
-		}
-		TEST_EQUAL(tbl.num_active_buckets(), 6);
-
-#if defined TORRENT_DHT_VERBOSE_LOGGING || defined TORRENT_DEBUG
-		tbl.print_state(std::cerr);
-#endif
-	}
-
-	// test verify_message
-	const static key_desc_t msg_desc[] = {
-		{"A", lazy_entry::string_t, 4, 0},
-		{"B", lazy_entry::dict_t, 0, key_desc_t::optional | key_desc_t::parse_children},
-			{"B1", lazy_entry::string_t, 0, 0},
-			{"B2", lazy_entry::string_t, 0, key_desc_t::last_child},
-		{"C", lazy_entry::dict_t, 0, key_desc_t::optional | key_desc_t::parse_children},
-			{"C1", lazy_entry::string_t, 0, 0},
-			{"C2", lazy_entry::string_t, 0, key_desc_t::last_child},
-	};
-
-	lazy_entry const* msg_keys[7];
-
-	lazy_entry ent;
-
-	error_code ec;
-	char const test_msg[] = "d1:A4:test1:Bd2:B15:test22:B25:test3ee";
-	lazy_bdecode(test_msg, test_msg + sizeof(test_msg)-1, ent, ec);
-	fprintf(stderr, "%s\n", print_entry(ent).c_str());
-
-	ret = verify_message(&ent, msg_desc, msg_keys, 7, error_string, sizeof(error_string));
-	TEST_CHECK(ret);
-	TEST_CHECK(msg_keys[0]);
-	if (msg_keys[0]) TEST_EQUAL(msg_keys[0]->string_value(), "test");
-	TEST_CHECK(msg_keys[1]);
-	TEST_CHECK(msg_keys[2]);
-	if (msg_keys[2]) TEST_EQUAL(msg_keys[2]->string_value(), "test2");
-	TEST_CHECK(msg_keys[3]);
-	if (msg_keys[3]) TEST_EQUAL(msg_keys[3]->string_value(), "test3");
-	TEST_CHECK(msg_keys[4] == 0);
-	TEST_CHECK(msg_keys[5] == 0);
-	TEST_CHECK(msg_keys[6] == 0);
-
-	char const test_msg2[] = "d1:A4:test1:Cd2:C15:test22:C25:test3ee";
-	lazy_bdecode(test_msg2, test_msg2 + sizeof(test_msg2)-1, ent, ec);
-	fprintf(stderr, "%s\n", print_entry(ent).c_str());
-
-	ret = verify_message(&ent, msg_desc, msg_keys, 7, error_string, sizeof(error_string));
-	TEST_CHECK(ret);
-	TEST_CHECK(msg_keys[0]);
-	if (msg_keys[0]) TEST_EQUAL(msg_keys[0]->string_value(), "test");
-	TEST_CHECK(msg_keys[1] == 0);
-	TEST_CHECK(msg_keys[2] == 0);
-	TEST_CHECK(msg_keys[3] == 0);
-	TEST_CHECK(msg_keys[4]);
-	TEST_CHECK(msg_keys[5]);
-	if (msg_keys[5]) TEST_EQUAL(msg_keys[5]->string_value(), "test2");
-	TEST_CHECK(msg_keys[6]);
-	if (msg_keys[6]) TEST_EQUAL(msg_keys[6]->string_value(), "test3");
-
-
-	char const test_msg3[] = "d1:Cd2:C15:test22:C25:test3ee";
-	lazy_bdecode(test_msg3, test_msg3 + sizeof(test_msg3)-1, ent, ec);
-	fprintf(stderr, "%s\n", print_entry(ent).c_str());
-
-	ret = verify_message(&ent, msg_desc, msg_keys, 7, error_string, sizeof(error_string));
-	TEST_CHECK(!ret);
-	fprintf(stderr, "%s\n", error_string);
-	TEST_EQUAL(error_string, std::string("missing 'A' key"));
-
-	char const test_msg4[] = "d1:A6:foobare";
-	lazy_bdecode(test_msg4, test_msg4 + sizeof(test_msg4)-1, ent, ec);
-	fprintf(stderr, "%s\n", print_entry(ent).c_str());
-
-	ret = verify_message(&ent, msg_desc, msg_keys, 7, error_string, sizeof(error_string));
-	TEST_CHECK(!ret);
-	fprintf(stderr, "%s\n", error_string);
-	TEST_EQUAL(error_string, std::string("invalid value for 'A'"));
-
-	char const test_msg5[] = "d1:A4:test1:Cd2:C15:test2ee";
-	lazy_bdecode(test_msg5, test_msg5 + sizeof(test_msg5)-1, ent, ec);
-	fprintf(stderr, "%s\n", print_entry(ent).c_str());
-
-	ret = verify_message(&ent, msg_desc, msg_keys, 7, error_string, sizeof(error_string));
-	TEST_CHECK(!ret);
-	fprintf(stderr, "%s\n", error_string);
-	TEST_EQUAL(error_string, std::string("missing 'C2' key"));
-
-	// test empty strings [ { "":1 }, "" ]
-	char const test_msg6[] = "ld0:i1ee0:e";
-	lazy_bdecode(test_msg6, test_msg6 + sizeof(test_msg6)-1, ent, ec);
-	fprintf(stderr, "%s\n", print_entry(ent).c_str());
-	TEST_CHECK(ent.type() == lazy_entry::list_t);
-	if (ent.type() == lazy_entry::list_t)
-	{
-		TEST_CHECK(ent.list_size() == 2);
-		if (ent.list_size() == 2)
-		{
-			TEST_CHECK(ent.list_at(0)->dict_find_int_value("") == 1);
-			TEST_CHECK(ent.list_at(1)->string_value() == "");
-		}
 	}
 
 	// test node-id functions
@@ -1230,32 +1189,57 @@ int test_main()
 
 	// test kademlia functions
 
-	// this is a bit too expensive to do under valgrind
-#ifndef TORRENT_USE_VALGRIND
-	for (int i = 0; i < 160; i += 8)
-	{
-		for (int j = 0; j < 160; j += 8)
-		{
-			node_id a(0);
-			a[(159-i) / 8] = 1 << (i & 7);
-			node_id b(0);
-			b[(159-j) / 8] = 1 << (j & 7);
-			int dist = distance_exp(a, b);
+	// distance_exp
 
-			TEST_CHECK(dist >= 0 && dist < 160);
-			TEST_CHECK(dist == ((i == j)?0:(std::max)(i, j)));
+	TEST_EQUAL(distance_exp(
+			to_hash("ffffffffffffffffffffffffffffffffffffffff"),
+			to_hash("0000000000000000000000000000000000000000"))
+		, 159);
 
-			for (int k = 0; k < 160; k += 8)
-			{
-				node_id c(0);
-				c[(159-k) / 8] = 1 << (k & 7);
+	TEST_EQUAL(distance_exp(
+			to_hash("ffffffffffffffffffffffffffffffffffffffff"),
+			to_hash("7fffffffffffffffffffffffffffffffffffffff"))
+		, 159);
 
-				bool cmp = compare_ref(a, b, c);
-				TEST_CHECK(cmp == (distance(a, c) < distance(b, c)));
-			}
-		}
-	}
-#endif
+	TEST_EQUAL(distance_exp(
+			to_hash("ffffffffffffffffffffffffffffffffffffffff"),
+			to_hash("ffffffffffffffffffffffffffffffffffffffff"))
+		, 0);
+
+	TEST_EQUAL(distance_exp(
+			to_hash("ffffffffffffffffffffffffffffffffffffffff"),
+			to_hash("fffffffffffffffffffffffffffffffffffffffe"))
+		, 0);
+
+	TEST_EQUAL(distance_exp(
+			to_hash("8000000000000000000000000000000000000000"),
+			to_hash("fffffffffffffffffffffffffffffffffffffffe"))
+		, 158);
+
+	TEST_EQUAL(distance_exp(
+			to_hash("c000000000000000000000000000000000000000"),
+			to_hash("fffffffffffffffffffffffffffffffffffffffe"))
+		, 157);
+
+	TEST_EQUAL(distance_exp(
+			to_hash("e000000000000000000000000000000000000000"),
+			to_hash("fffffffffffffffffffffffffffffffffffffffe"))
+		, 156);
+
+	TEST_EQUAL(distance_exp(
+			to_hash("f000000000000000000000000000000000000000"),
+			to_hash("fffffffffffffffffffffffffffffffffffffffe"))
+		, 155);
+
+	TEST_EQUAL(distance_exp(
+			to_hash("f8f2340985723049587230495872304958703294"),
+			to_hash("f743589043r890f023980f90e203980d090c3840"))
+		, 155);
+
+	TEST_EQUAL(distance_exp(
+			to_hash("ffff740985723049587230495872304958703294"),
+			to_hash("ffff889043r890f023980f90e203980d090c3840"))
+		, 159 - 16);
 
 	{
 		// test kademlia routing table
@@ -1264,7 +1248,7 @@ int test_main()
 		//	s.restrict_routing_ips = false;
 		node_id id = to_hash("3123456789abcdef01232456789abcdef0123456");
 		const int bucket_size = 10;
-		dht::routing_table table(id, bucket_size, s);
+		dht::routing_table table(id, bucket_size, s, &observer);
 		std::vector<node_entry> nodes;
 		TEST_EQUAL(table.size().get<0>(), 0);
 
@@ -1352,6 +1336,8 @@ int test_main()
 
 		s.restrict_routing_ips = false;
 
+		init_rand_address();
+
 		add_and_replace(tmp, diff);
 		table.node_seen(id, udp::endpoint(rand_v4(), rand()), 10);
 
@@ -1367,8 +1353,8 @@ int test_main()
 		//#error test num_global_nodes
 		//#error test need_refresh
 
-#if defined TORRENT_DHT_VERBOSE_LOGGING || defined TORRENT_DEBUG
-		table.print_state(std::cerr);
+#if defined TORRENT_DEBUG
+		table.print_state(std::cout);
 #endif
 
 		table.for_each_node(node_push_back, nop, &nodes);
@@ -1452,7 +1438,7 @@ int test_main()
 			TEST_CHECK((id[2] & 0xf8) == (prefixes[i][2] & 0xf8));
 
 			TEST_CHECK(id[19] == rs[i]);
-			fprintf(stderr, "IP address: %s r: %d node ID: %s\n", ips[i]
+			fprintf(stdout, "IP address: %s r: %d node ID: %s\n", ips[i]
 				, rs[i], to_hex(id.to_string()).c_str());
 		}
 	}
@@ -1460,39 +1446,46 @@ int test_main()
 	// test traversal algorithms
 
 	dht::key_desc_t find_node_desc[] = {
-		{"y", lazy_entry::string_t, 1, 0},
-		{"t", lazy_entry::string_t, 2, 0},
-		{"q", lazy_entry::string_t, 9, 0},
-		{"a", lazy_entry::dict_t, 0, key_desc_t::parse_children},
-			{"id", lazy_entry::string_t, 20, 0},
-			{"target", lazy_entry::string_t, 20, key_desc_t::optional},
-			{"info_hash", lazy_entry::string_t, 20, key_desc_t::optional | key_desc_t::last_child},
+		{"y", bdecode_node::string_t, 1, 0},
+		{"t", bdecode_node::string_t, 2, 0},
+		{"q", bdecode_node::string_t, 9, 0},
+		{"a", bdecode_node::dict_t, 0, key_desc_t::parse_children},
+			{"id", bdecode_node::string_t, 20, 0},
+			{"target", bdecode_node::string_t, 20, key_desc_t::optional},
+			{"info_hash", bdecode_node::string_t, 20, key_desc_t::optional | key_desc_t::last_child},
 	};
+
+	bdecode_node find_node_keys[7];
 
 	dht::key_desc_t get_peers_desc[] = {
-		{"y", lazy_entry::string_t, 1, 0},
-		{"t", lazy_entry::string_t, 2, 0},
-		{"q", lazy_entry::string_t, 9, 0},
-		{"a", lazy_entry::dict_t, 0, key_desc_t::parse_children},
-			{"id", lazy_entry::string_t, 20, 0},
-			{"info_hash", lazy_entry::string_t, 20, key_desc_t::last_child},
+		{"y", bdecode_node::string_t, 1, 0},
+		{"t", bdecode_node::string_t, 2, 0},
+		{"q", bdecode_node::string_t, 9, 0},
+		{"a", bdecode_node::dict_t, 0, key_desc_t::parse_children},
+			{"id", bdecode_node::string_t, 20, 0},
+			{"info_hash", bdecode_node::string_t, 20, key_desc_t::last_child},
 	};
 
+	bdecode_node get_peers_keys[6];
+
 	dht::key_desc_t get_item_desc[] = {
-		{"y", lazy_entry::string_t, 1, 0},
-		{"t", lazy_entry::string_t, 2, 0},
-		{"q", lazy_entry::string_t, 3, 0},
-		{"a", lazy_entry::dict_t, 0, key_desc_t::parse_children},
-			{"id", lazy_entry::string_t, 20, 0},
-			{"target", lazy_entry::string_t, 20, key_desc_t::last_child},
+		{"y", bdecode_node::string_t, 1, 0},
+		{"t", bdecode_node::string_t, 2, 0},
+		{"q", bdecode_node::string_t, 3, 0},
+		{"a", bdecode_node::dict_t, 0, key_desc_t::parse_children},
+			{"id", bdecode_node::string_t, 20, 0},
+			{"target", bdecode_node::string_t, 20, key_desc_t::last_child},
 	};
+
+	bdecode_node get_item_keys[6];
+
 
 	// bootstrap
 
 	g_sent_packets.clear();
 	do
 	{
-		dht::node_impl node(&ad, &s, sett, node_id::min(), ext, 0);
+		dht::node node(&s, sett, (node_id::min)(), &observer, cnt);
 
 		udp::endpoint initial_node(address_v4::from_string("4.4.4.4"), 1234);
 		std::vector<udp::endpoint> nodesv;
@@ -1504,20 +1497,21 @@ int test_main()
 		TEST_EQUAL(g_sent_packets.front().first, initial_node);
 
 		lazy_from_entry(g_sent_packets.front().second, response);
-		ret = verify_message(&response, find_node_desc, parsed, 7, error_string, sizeof(error_string));
+		ret = verify_message(response, find_node_desc, find_node_keys, error_string
+			, sizeof(error_string));
 		if (ret)
 		{
-			TEST_EQUAL(parsed[0]->string_value(), "q");
-			TEST_CHECK(parsed[2]->string_value() == "find_node"
-				|| parsed[2]->string_value() == "get_peers");
+			TEST_EQUAL(find_node_keys[0].string_value(), "q");
+			TEST_CHECK(find_node_keys[2].string_value() == "find_node"
+				|| find_node_keys[2].string_value() == "get_peers");
 
-			if (parsed[0]->string_value() != "q"
-				|| (parsed[2]->string_value() != "find_node"
-					&& parsed[2]->string_value() != "get_peers")) break;
+			if (find_node_keys[0].string_value() != "q"
+				|| (find_node_keys[2].string_value() != "find_node"
+					&& find_node_keys[2].string_value() != "get_peers")) break;
 		}
 		else
 		{
-			fprintf(stderr, "   invalid find_node request: %s\n", print_entry(response).c_str());
+			fprintf(stdout, "   invalid find_node request: %s\n", print_entry(response).c_str());
 			TEST_ERROR(error_string);
 			break;
 		}
@@ -1526,25 +1520,26 @@ int test_main()
 		nodes_t nodes;
 		nodes.push_back(found_node);
 		g_sent_packets.clear();
-		send_dht_response(node, response, initial_node, nodes);
+		send_dht_response(node, response, initial_node, msg_args().nodes(nodes));
 
 		TEST_EQUAL(g_sent_packets.size(), 1);
 		if (g_sent_packets.empty()) break;
 		TEST_EQUAL(g_sent_packets.front().first, found_node);
 
 		lazy_from_entry(g_sent_packets.front().second, response);
-		ret = verify_message(&response, find_node_desc, parsed, 7, error_string, sizeof(error_string));
+		ret = verify_message(response, find_node_desc, find_node_keys, error_string
+			, sizeof(error_string));
 		if (ret)
 		{
-			TEST_EQUAL(parsed[0]->string_value(), "q");
-			TEST_CHECK(parsed[2]->string_value() == "find_node"
-				|| parsed[2]->string_value() == "get_peers");
-			if (parsed[0]->string_value() != "q" || (parsed[2]->string_value() != "find_node"
-					&& parsed[2]->string_value() == "get_peers")) break;
+			TEST_EQUAL(find_node_keys[0].string_value(), "q");
+			TEST_CHECK(find_node_keys[2].string_value() == "find_node"
+				|| find_node_keys[2].string_value() == "get_peers");
+			if (find_node_keys[0].string_value() != "q" || (find_node_keys[2].string_value() != "find_node"
+				&& find_node_keys[2].string_value() == "get_peers")) break;
 		}
 		else
 		{
-			fprintf(stderr, "   invalid find_node request: %s\n", print_entry(response).c_str());
+			fprintf(stdout, "   invalid find_node request: %s\n", print_entry(response).c_str());
 			TEST_ERROR(error_string);
 			break;
 		}
@@ -1562,7 +1557,7 @@ int test_main()
 	do
 	{
 		dht::node_id target = to_hash("1234876923549721020394873245098347598635");
-		dht::node_impl node(&ad, &s, sett, node_id::min(), ext, 0);
+		dht::node node(&s, sett, (node_id::min)(), &observer, cnt);
 
 		udp::endpoint initial_node(address_v4::from_string("4.4.4.4"), 1234);
 		node.m_table.add_node(initial_node);
@@ -1574,17 +1569,18 @@ int test_main()
 		TEST_EQUAL(g_sent_packets.front().first, initial_node);
 
 		lazy_from_entry(g_sent_packets.front().second, response);
-		ret = verify_message(&response, get_peers_desc, parsed, 6, error_string, sizeof(error_string));
+		ret = verify_message(response, get_peers_desc, get_peers_keys, error_string
+			, sizeof(error_string));
 		if (ret)
 		{
-			TEST_EQUAL(parsed[0]->string_value(), "q");
-			TEST_EQUAL(parsed[2]->string_value(), "get_peers");
-			TEST_EQUAL(parsed[5]->string_value(), target.to_string());
-			if (parsed[0]->string_value() != "q" || parsed[2]->string_value() != "get_peers") break;
+			TEST_EQUAL(get_peers_keys[0].string_value(), "q");
+			TEST_EQUAL(get_peers_keys[2].string_value(), "get_peers");
+			TEST_EQUAL(get_peers_keys[5].string_value(), target.to_string());
+			if (get_peers_keys[0].string_value() != "q" || get_peers_keys[2].string_value() != "get_peers") break;
 		}
 		else
 		{
-			fprintf(stderr, "   invalid get_peers request: %s\n", print_entry(response).c_str());
+			fprintf(stdout, "   invalid get_peers request: %s\n", print_entry(response).c_str());
 			TEST_ERROR(error_string);
 			break;
 		}
@@ -1599,24 +1595,26 @@ int test_main()
 		nodes.push_back(next_node);
 
 		g_sent_packets.clear();
-		send_dht_response(node, response, initial_node, nodes, "10", 1234, peers[0]);
+		send_dht_response(node, response, initial_node
+			, msg_args().nodes(nodes).token("10").port(1234).peers(peers[0]));
 
 		TEST_EQUAL(g_sent_packets.size(), 1);
 		if (g_sent_packets.empty()) break;
 		TEST_EQUAL(g_sent_packets.front().first, next_node);
 
 		lazy_from_entry(g_sent_packets.front().second, response);
-		ret = verify_message(&response, get_peers_desc, parsed, 6, error_string, sizeof(error_string));
+		ret = verify_message(response, get_peers_desc, get_peers_keys, error_string
+			, sizeof(error_string));
 		if (ret)
 		{
-			TEST_EQUAL(parsed[0]->string_value(), "q");
-			TEST_EQUAL(parsed[2]->string_value(), "get_peers");
-			TEST_EQUAL(parsed[5]->string_value(), target.to_string());
-			if (parsed[0]->string_value() != "q" || parsed[2]->string_value() != "get_peers") break;
+			TEST_EQUAL(get_peers_keys[0].string_value(), "q");
+			TEST_EQUAL(get_peers_keys[2].string_value(), "get_peers");
+			TEST_EQUAL(get_peers_keys[5].string_value(), target.to_string());
+			if (get_peers_keys[0].string_value() != "q" || get_peers_keys[2].string_value() != "get_peers") break;
 		}
 		else
 		{
-			fprintf(stderr, "   invalid get_peers request: %s\n", print_entry(response).c_str());
+			fprintf(stdout, "   invalid get_peers request: %s\n", print_entry(response).c_str());
 			TEST_ERROR(error_string);
 			break;
 		}
@@ -1626,12 +1624,13 @@ int test_main()
 		peers[1].insert(tcp::endpoint(address_v4::from_string("4.1.1.6"), 4116));
 
 		g_sent_packets.clear();
-		send_dht_response(node, response, next_node, nodes_t(), "11", 1234, peers[1]);
+		send_dht_response(node, response, next_node
+			, msg_args().token("11").port(1234).peers(peers[1]));
 
 		for (std::list<std::pair<udp::endpoint, entry> >::iterator i = g_sent_packets.begin()
 			, end(g_sent_packets.end()); i != end; ++i)
 		{
-//			fprintf(stderr, " %s:%d: %s\n", i->first.address().to_string(ec).c_str()
+//			fprintf(stdout, " %s:%d: %s\n", i->first.address().to_string(ec).c_str()
 //				, i->first.port(), i->second.to_string().c_str());
 			TEST_EQUAL(i->second["q"].string(), "announce_peer");
 		}
@@ -1653,36 +1652,37 @@ int test_main()
 	g_sent_packets.clear();
 	do
 	{
-		dht::node_impl node(&ad, &s, sett, node_id::min(), ext, 0);
+		dht::node node(&s, sett, (node_id::min)(), &observer, cnt);
 
 		udp::endpoint initial_node(address_v4::from_string("4.4.4.4"), 1234);
 		node.m_table.add_node(initial_node);
 
-		node.get_item(items[0].target, get_item_cb);
+		node.get_item(items[0].target, get_immutable_item_cb);
 
 		TEST_EQUAL(g_sent_packets.size(), 1);
 		if (g_sent_packets.empty()) break;
 		TEST_EQUAL(g_sent_packets.front().first, initial_node);
 
 		lazy_from_entry(g_sent_packets.front().second, response);
-		ret = verify_message(&response, get_item_desc, parsed, 6, error_string, sizeof(error_string));
+		ret = verify_message(response, get_item_desc, get_item_keys, error_string
+			, sizeof(error_string));
 		if (ret)
 		{
-			TEST_EQUAL(parsed[0]->string_value(), "q");
-			TEST_EQUAL(parsed[2]->string_value(), "get");
-			TEST_EQUAL(parsed[5]->string_value(), items[0].target.to_string());
-			if (parsed[0]->string_value() != "q" || parsed[2]->string_value() != "get") break;
+			TEST_EQUAL(get_item_keys[0].string_value(), "q");
+			TEST_EQUAL(get_item_keys[2].string_value(), "get");
+			TEST_EQUAL(get_item_keys[5].string_value(), items[0].target.to_string());
+			if (get_item_keys[0].string_value() != "q" || get_item_keys[2].string_value() != "get") break;
 		}
 		else
 		{
-			fprintf(stderr, "   invalid get request: %s\n", print_entry(response).c_str());
+			fprintf(stdout, "   invalid get request: %s\n", print_entry(response).c_str());
 			TEST_ERROR(error_string);
 			break;
 		}
 
 		g_sent_packets.clear();
-		send_dht_response(node, response, initial_node, nodes_t(), "10", 1234, std::set<tcp::endpoint>()
-			, NULL, &items[0].ent);
+		send_dht_response(node, response, initial_node
+			, msg_args().token("10").port(1234).value(items[0].ent));
 
 		TEST_CHECK(g_sent_packets.empty());
 		TEST_EQUAL(g_got_items.size(), 1);
@@ -1698,30 +1698,29 @@ int test_main()
 	g_sent_packets.clear();
 	do
 	{
-		dht::node_impl node(&ad, &s, sett, node_id::min(), ext, 0);
+		dht::node node(&s, sett, (node_id::min)(), &observer, cnt);
 
 		udp::endpoint initial_node(address_v4::from_string("4.4.4.4"), 1234);
 		node.m_table.add_node(initial_node);
 
-		sha1_hash target = hasher(public_key, item_pk_len).final();
-		node.get_item(target, get_item_cb);
+		node.get_item(public_key, std::string(), get_mutable_item_cb);
 
 		TEST_EQUAL(g_sent_packets.size(), 1);
 		if (g_sent_packets.empty()) break;
 		TEST_EQUAL(g_sent_packets.front().first, initial_node);
 
 		lazy_from_entry(g_sent_packets.front().second, response);
-		ret = verify_message(&response, get_item_desc, parsed, 6, error_string, sizeof(error_string));
+		ret = verify_message(response, get_item_desc, get_item_keys, error_string
+			, sizeof(error_string));
 		if (ret)
 		{
-			TEST_EQUAL(parsed[0]->string_value(), "q");
-			TEST_EQUAL(parsed[2]->string_value(), "get");
-			TEST_EQUAL(parsed[5]->string_value(), target.to_string());
-			if (parsed[0]->string_value() != "q" || parsed[2]->string_value() != "get") break;
+			TEST_EQUAL(get_item_keys[0].string_value(), "q");
+			TEST_EQUAL(get_item_keys[2].string_value(), "get");
+			if (get_item_keys[0].string_value() != "q" || get_item_keys[2].string_value() != "get") break;
 		}
 		else
 		{
-			fprintf(stderr, "   invalid get request: %s\n", print_entry(response).c_str());
+			fprintf(stdout, "   invalid get request: %s\n", print_entry(response).c_str());
 			TEST_ERROR(error_string);
 			break;
 		}
@@ -1730,8 +1729,14 @@ int test_main()
 
 		itemv.second = bencode(buffer, items[0].ent);
 		sign_mutable_item(itemv, empty_salt, seq, public_key, private_key, signature);
-		send_dht_response(node, response, initial_node, nodes_t(), "10", 1234, std::set<tcp::endpoint>()
-			, NULL, &items[0].ent, std::string(public_key, item_pk_len), std::string(signature, item_sig_len), seq);
+		send_dht_response(node, response, initial_node
+			, msg_args()
+				.token("10")
+				.port(1234)
+				.value(items[0].ent)
+				.key(std::string(public_key, item_pk_len))
+				.sig(std::string(signature, item_sig_len))
+				.seq(seq));
 
 		TEST_CHECK(g_sent_packets.empty());
 		TEST_EQUAL(g_got_items.size(), 1);
@@ -1740,200 +1745,337 @@ int test_main()
 		TEST_EQUAL(g_got_items.front().value(), items[0].ent);
 		TEST_CHECK(memcmp(g_got_items.front().pk().data(), public_key, item_pk_len) == 0);
 		TEST_CHECK(memcmp(g_got_items.front().sig().data(), signature, item_sig_len) == 0);
-		TEST_EQUAL(g_got_items.front().seq(), seq);
+		TEST_EQUAL(int(g_got_items.front().seq()), seq);
 		g_got_items.clear();
 
 	} while (false);
 
 	dht::key_desc_t put_immutable_item_desc[] = {
-		{"y", lazy_entry::string_t, 1, 0},
-		{"t", lazy_entry::string_t, 2, 0},
-		{"q", lazy_entry::string_t, 3, 0},
-		{"a", lazy_entry::dict_t, 0, key_desc_t::parse_children},
-			{"id", lazy_entry::string_t, 20, 0},
-			{"token", lazy_entry::string_t, 2, 0},
-			{"v", lazy_entry::none_t, 0, key_desc_t::last_child},
+		{"y", bdecode_node::string_t, 1, 0},
+		{"t", bdecode_node::string_t, 2, 0},
+		{"q", bdecode_node::string_t, 3, 0},
+		{"a", bdecode_node::dict_t, 0, key_desc_t::parse_children},
+			{"id", bdecode_node::string_t, 20, 0},
+			{"token", bdecode_node::string_t, 2, 0},
+			{"v", bdecode_node::none_t, 0, key_desc_t::last_child},
 	};
 
+	bdecode_node put_immutable_item_keys[7];
+
 	dht::key_desc_t put_mutable_item_desc[] = {
-		{"y", lazy_entry::string_t, 1, 0},
-		{"t", lazy_entry::string_t, 2, 0},
-		{"q", lazy_entry::string_t, 3, 0},
-		{"a", lazy_entry::dict_t, 0, key_desc_t::parse_children},
-			{"id", lazy_entry::string_t, 20, 0},
-			{"cas", lazy_entry::string_t, 20, key_desc_t::optional},
-			{"k", lazy_entry::string_t, item_pk_len, 0},
-			{"seq", lazy_entry::int_t, 0, 0},
-			{"sig", lazy_entry::string_t, item_sig_len, 0},
-			{"token", lazy_entry::string_t, 2, 0},
-			{"v", lazy_entry::none_t, 0, key_desc_t::last_child},
+		{"y", bdecode_node::string_t, 1, 0},
+		{"t", bdecode_node::string_t, 2, 0},
+		{"q", bdecode_node::string_t, 3, 0},
+		{"a", bdecode_node::dict_t, 0, key_desc_t::parse_children},
+			{"id", bdecode_node::string_t, 20, 0},
+			{"cas", bdecode_node::string_t, 20, key_desc_t::optional},
+			{"k", bdecode_node::string_t, item_pk_len, 0},
+			{"seq", bdecode_node::int_t, 0, 0},
+			{"sig", bdecode_node::string_t, item_sig_len, 0},
+			{"token", bdecode_node::string_t, 2, 0},
+			{"v", bdecode_node::none_t, 0, key_desc_t::last_child},
 	};
+
+	bdecode_node put_mutable_item_keys[11];
 
 	// immutable put
 	g_sent_packets.clear();
-	do
+	for (int loop = 0; loop < 9; loop++)
 	{
-		dht::node_impl node(&ad, &s, sett, node_id::min(), ext, 0);
-		enum { num_test_nodes = 2 };
+		// set the branching factor to k to make this a little easier
+		int old_branching = sett.search_branching;
+		sett.search_branching = 8;
+		dht::node node(&s, sett, (node_id::min)(), &observer, cnt);
+		enum { num_test_nodes = 8 };
 		node_entry nodes[num_test_nodes] =
-			{ node_entry(generate_next(), udp::endpoint(address_v4::from_string("4.4.4.4"), 1234))
-			, node_entry(generate_next(), udp::endpoint(address_v4::from_string("5.5.5.5"), 1235)) };
+			{ node_entry(items[0].target, udp::endpoint(address_v4::from_string("1.1.1.1"), 1231))
+			, node_entry(items[1].target, udp::endpoint(address_v4::from_string("2.2.2.2"), 1232))
+			, node_entry(items[2].target, udp::endpoint(address_v4::from_string("3.3.3.3"), 1233))
+			, node_entry(items[3].target, udp::endpoint(address_v4::from_string("4.4.4.4"), 1234))
+			, node_entry(items[4].target, udp::endpoint(address_v4::from_string("5.5.5.5"), 1235))
+			, node_entry(items[5].target, udp::endpoint(address_v4::from_string("6.6.6.6"), 1236))
+			, node_entry(items[6].target, udp::endpoint(address_v4::from_string("7.7.7.7"), 1237))
+			, node_entry(items[7].target, udp::endpoint(address_v4::from_string("8.8.8.8"), 1238)) };
 
 		for (int i = 0; i < num_test_nodes; ++i)
 			node.m_table.add_node(nodes[i]);
 
-		g_put_item.assign(items[0].ent);
-		node.get_item(items[0].target, get_item_cb);
+		entry put_data;
+		put_data = "Hello world";
+		std::string flat_data;
+		bencode(std::back_inserter(flat_data), put_data);
+		sha1_hash target = item_target_id(
+			std::pair<char const*, int>(flat_data.c_str(), flat_data.size()));
 
-		TEST_EQUAL(g_sent_packets.size(), num_test_nodes);
-		if (g_sent_packets.size() != num_test_nodes) break;
+		node.put_item(target, put_data, boost::bind(&put_immutable_item_cb, _1, loop));
 
-		for (int i = 0; i < num_test_nodes; ++i)
+		TEST_EQUAL(g_sent_packets.size(), 8);
+		if (g_sent_packets.size() != 8) break;
+
+		for (int i = 0; i < 8; ++i)
 		{
 			std::list<std::pair<udp::endpoint, entry> >::iterator packet = find_packet(nodes[i].ep());
 			TEST_CHECK(packet != g_sent_packets.end());
 			if (packet == g_sent_packets.end()) continue;
 
 			lazy_from_entry(packet->second, response);
-			ret = verify_message(&response, get_item_desc, parsed, 6, error_string, sizeof(error_string));
+			ret = verify_message(response, get_item_desc, get_item_keys, error_string
+				, sizeof(error_string));
 			if (!ret)
 			{
-				fprintf(stderr, "   invalid get request: %s\n", print_entry(response).c_str());
+				fprintf(stdout, "   invalid get request: %s\n", print_entry(response).c_str());
 				TEST_ERROR(error_string);
 				continue;
 			}
 			char t[10];
 			snprintf(t, sizeof(t), "%02d", i);
-			send_dht_response(node, response, nodes[i].ep(), nodes_t(), t, 1234,
-				std::set<tcp::endpoint>(), 0, 0, std::string(), std::string(), -1, &nodes[i].id);
+
+			msg_args args;
+			args.token(t).port(1234).nid(nodes[i].id).nodes(nodes_t(1, nodes[i]));
+			send_dht_response(node, response, nodes[i].ep(), args);
 			g_sent_packets.erase(packet);
 		}
 
-		TEST_EQUAL(g_put_count, 1);
-		TEST_EQUAL(g_sent_packets.size(), num_test_nodes);
-		if (g_sent_packets.size() != num_test_nodes) break;
+		TEST_EQUAL(g_sent_packets.size(), 8);
+		if (g_sent_packets.size() != 8) break;
 
-		itemv.second = bencode(buffer, items[0].ent);
+		itemv.second = bencode(buffer, put_data);
 
-		for (int i = 0; i < num_test_nodes; ++i)
+		for (int i = 0; i < 8; ++i)
 		{
 			std::list<std::pair<udp::endpoint, entry> >::iterator packet = find_packet(nodes[i].ep());
 			TEST_CHECK(packet != g_sent_packets.end());
 			if (packet == g_sent_packets.end()) continue;
 
 			lazy_from_entry(packet->second, response);
-			ret = verify_message(&response, put_immutable_item_desc, parsed, 7, error_string, sizeof(error_string));
+			ret = verify_message(response, put_immutable_item_desc, put_immutable_item_keys
+				, error_string, sizeof(error_string));
 			if (ret)
 			{
-				TEST_EQUAL(parsed[0]->string_value(), "q");
-				TEST_EQUAL(parsed[2]->string_value(), "put");
-				std::pair<const char*, int> v = parsed[6]->data_section();
-				TEST_EQUAL(v.second, itemv.second);
-				TEST_CHECK(memcmp(v.first, itemv.first, itemv.second) == 0);
+				TEST_EQUAL(put_immutable_item_keys[0].string_value(), "q");
+				TEST_EQUAL(put_immutable_item_keys[2].string_value(), "put");
+				std::pair<const char*, int>v = put_immutable_item_keys[6].data_section();
+				TEST_EQUAL(std::string(v.first, v.second), flat_data);
 				char t[10];
 				snprintf(t, sizeof(t), "%02d", i);
-				TEST_EQUAL(parsed[5]->string_value(), t);
-				if (parsed[0]->string_value() != "q" || parsed[2]->string_value() != "put") continue;
+				TEST_EQUAL(put_immutable_item_keys[5].string_value(), t);
+				if (put_immutable_item_keys[0].string_value() != "q"
+					|| put_immutable_item_keys[2].string_value() != "put") continue;
+
+				if (i < loop) send_dht_response(node, response, nodes[i].ep());
 			}
 			else
 			{
-				fprintf(stderr, "   invalid immutable put request: %s\n", print_entry(response).c_str());
+				fprintf(stdout, "   invalid immutable put request: %s\n", print_entry(response).c_str());
 				TEST_ERROR(error_string);
 				continue;
 			}
 		}
-
+		sett.search_branching = old_branching;
 		g_sent_packets.clear();
 		g_put_item.clear();
 		g_put_count = 0;
 
-	} while (false);
+	};
 
 	// mutable put
 	g_sent_packets.clear();
-	do
+	for (int loop = 0; loop < 9; loop++)
 	{
-		dht::node_impl node(&ad, &s, sett, node_id::min(), ext, 0);
-		enum { num_test_nodes = 2 };
+		// set the branching factor to k to make this a little easier
+		int old_branching = sett.search_branching;
+		sett.search_branching = 8;
+		dht::node node(&s, sett, (node_id::min)(), &observer, cnt);
+		enum { num_test_nodes = 8 };
 		node_entry nodes[num_test_nodes] =
-			{ node_entry(generate_next(), udp::endpoint(address_v4::from_string("4.4.4.4"), 1234))
-			, node_entry(generate_next(), udp::endpoint(address_v4::from_string("5.5.5.5"), 1235)) };
+			{ node_entry(items[0].target, udp::endpoint(address_v4::from_string("1.1.1.1"), 1231))
+			, node_entry(items[1].target, udp::endpoint(address_v4::from_string("2.2.2.2"), 1232))
+			, node_entry(items[2].target, udp::endpoint(address_v4::from_string("3.3.3.3"), 1233))
+			, node_entry(items[3].target, udp::endpoint(address_v4::from_string("4.4.4.4"), 1234))
+			, node_entry(items[4].target, udp::endpoint(address_v4::from_string("5.5.5.5"), 1235))
+			, node_entry(items[5].target, udp::endpoint(address_v4::from_string("6.6.6.6"), 1236))
+			, node_entry(items[6].target, udp::endpoint(address_v4::from_string("7.7.7.7"), 1237))
+			, node_entry(items[7].target, udp::endpoint(address_v4::from_string("8.8.8.8"), 1238)) };
 
 		for (int i = 0; i < num_test_nodes; ++i)
 			node.m_table.add_node(nodes[i]);
 
-		sha1_hash target = hasher(public_key, item_pk_len).final();
 		g_put_item.assign(items[0].ent, empty_salt, seq, public_key, private_key);
 		std::string sig(g_put_item.sig().data(), item_sig_len);
-		node.get_item(target, get_item_cb);
+		node.put_item(public_key, std::string()
+				, boost::bind(&put_mutable_item_cb, _1, _2, loop)
+				, put_mutable_item_data_cb);
 
-		TEST_EQUAL(g_sent_packets.size(), num_test_nodes);
-		if (g_sent_packets.size() != num_test_nodes) break;
+		TEST_EQUAL(g_sent_packets.size(), 8);
+		if (g_sent_packets.size() != 8) break;
 
-		for (int i = 0; i < num_test_nodes; ++i)
+		for (int i = 0; i < 8; ++i)
 		{
 			std::list<std::pair<udp::endpoint, entry> >::iterator packet = find_packet(nodes[i].ep());
 			TEST_CHECK(packet != g_sent_packets.end());
 			if (packet == g_sent_packets.end()) continue;
 
 			lazy_from_entry(packet->second, response);
-			ret = verify_message(&response, get_item_desc, parsed, 6, error_string, sizeof(error_string));
+			ret = verify_message(response, get_item_desc, get_item_keys, error_string
+				, sizeof(error_string));
 			if (!ret)
 			{
-				fprintf(stderr, "   invalid mutable put request: %s\n", print_entry(response).c_str());
+				fprintf(stdout, "   invalid get request: %s\n", print_entry(response).c_str());
 				TEST_ERROR(error_string);
 				continue;
 			}
 			char t[10];
 			snprintf(t, sizeof(t), "%02d", i);
-			send_dht_response(node, response, nodes[i].ep(), nodes_t(), t, 1234,
-				std::set<tcp::endpoint>(), 0, 0, std::string(), std::string(), -1, &nodes[i].id);
+
+			msg_args args;
+			args.token(t).port(1234).nid(nodes[i].id).nodes(nodes_t(1, nodes[i]));
+
+			send_dht_response(node, response, nodes[i].ep(), args);
 			g_sent_packets.erase(packet);
 		}
 
-		TEST_EQUAL(g_put_count, 1);
-		TEST_EQUAL(g_sent_packets.size(), num_test_nodes);
-		if (g_sent_packets.size() != num_test_nodes) break;
+		TEST_EQUAL(g_sent_packets.size(), 8);
+		if (g_sent_packets.size() != 8) break;
 
 		itemv.second = bencode(buffer, items[0].ent);
 
-		for (int i = 0; i < num_test_nodes; ++i)
+		for (int i = 0; i < 8; ++i)
 		{
 			std::list<std::pair<udp::endpoint, entry> >::iterator packet = find_packet(nodes[i].ep());
 			TEST_CHECK(packet != g_sent_packets.end());
 			if (packet == g_sent_packets.end()) continue;
 
 			lazy_from_entry(packet->second, response);
-			ret = verify_message(&response, put_mutable_item_desc, parsed, 11, error_string, sizeof(error_string));
+			ret = verify_message(response, put_mutable_item_desc, put_mutable_item_keys
+				, error_string, sizeof(error_string));
 			if (ret)
 			{
-				TEST_EQUAL(parsed[0]->string_value(), "q");
-				TEST_EQUAL(parsed[2]->string_value(), "put");
-				TEST_EQUAL(parsed[6]->string_value(), std::string(public_key, item_pk_len));
-				TEST_EQUAL(parsed[7]->int_value(), seq);
-				TEST_EQUAL(parsed[8]->string_value(), sig);
-				std::pair<const char*, int> v = parsed[10]->data_section();
+				TEST_EQUAL(put_mutable_item_keys[0].string_value(), "q");
+				TEST_EQUAL(put_mutable_item_keys[2].string_value(), "put");
+				TEST_EQUAL(put_mutable_item_keys[6].string_value(), std::string(public_key, item_pk_len));
+				TEST_EQUAL(put_mutable_item_keys[7].int_value(), seq);
+				TEST_EQUAL(put_mutable_item_keys[8].string_value(), sig);
+				std::pair<const char*, int> v = put_mutable_item_keys[10].data_section();
 				TEST_EQUAL(v.second, itemv.second);
 				TEST_CHECK(memcmp(v.first, itemv.first, itemv.second) == 0);
 				char t[10];
 				snprintf(t, sizeof(t), "%02d", i);
-				TEST_EQUAL(parsed[9]->string_value(), t);
-				if (parsed[0]->string_value() != "q" || parsed[2]->string_value() != "put") continue;
+				TEST_EQUAL(put_mutable_item_keys[9].string_value(), t);
+				if (put_mutable_item_keys[0].string_value() != "q"
+					|| put_mutable_item_keys[2].string_value() != "put") continue;
+
+				if (i < loop) send_dht_response(node, response, nodes[i].ep());
 			}
 			else
 			{
-				fprintf(stderr, "   invalid put request: %s\n", print_entry(response).c_str());
+				fprintf(stdout, "   invalid put request: %s\n", print_entry(response).c_str());
 				TEST_ERROR(error_string);
 				continue;
 			}
 		}
+		sett.search_branching = old_branching;
+		g_sent_packets.clear();
+		g_put_item.clear();
+		g_put_count = 0;
+	}
+
+	// verify that done() is only invoked once
+	// See PR 252
+	g_sent_packets.clear();
+	do
+	{
+		// set the branching factor to k to make this a little easier
+		int old_branching = sett.search_branching;
+		sett.search_branching = 8;
+		dht::node node(&s, sett, (node_id::min)(), &observer, cnt);
+		sha1_hash target = hasher(public_key, item_pk_len).final();
+		enum { num_test_nodes = 9 }; // we need K + 1 nodes to create the failing sequence
+		node_entry nodes[num_test_nodes] =
+			{ node_entry(target, udp::endpoint(address_v4::from_string("1.1.1.1"), 1231))
+			, node_entry(target, udp::endpoint(address_v4::from_string("2.2.2.2"), 1232))
+			, node_entry(target, udp::endpoint(address_v4::from_string("3.3.3.3"), 1233))
+			, node_entry(target, udp::endpoint(address_v4::from_string("4.4.4.4"), 1234))
+			, node_entry(target, udp::endpoint(address_v4::from_string("5.5.5.5"), 1235))
+			, node_entry(target, udp::endpoint(address_v4::from_string("6.6.6.6"), 1236))
+			, node_entry(target, udp::endpoint(address_v4::from_string("7.7.7.7"), 1237))
+			, node_entry(target, udp::endpoint(address_v4::from_string("8.8.8.8"), 1238))
+			, node_entry(target, udp::endpoint(address_v4::from_string("9.9.9.9"), 1239)) };
+
+		// invert the ith most significant byte so that the test nodes are
+		// progressivly closer to the target item
+		for (int i = 0; i < num_test_nodes; ++i)
+			nodes[i].id[i] = ~nodes[i].id[i];
+
+		// add the first k nodes to the subject's routing table
+		for (int i = 0; i < 8; ++i)
+			node.m_table.add_node(nodes[i]);
+
+		// kick off a mutable put request
+		g_put_item.assign(items[0].ent, empty_salt, seq, public_key, private_key);
+		node.put_item(public_key, std::string()
+			, boost::bind(&put_mutable_item_cb, _1, _2, 0)
+			, put_mutable_item_data_cb);
+		TEST_EQUAL(g_sent_packets.size(), 8);
+		if (g_sent_packets.size() != 8) break;
+
+		// first send responses for the k closest nodes
+		for (int i = 1;; ++i)
+		{
+			// once the k closest nodes have responded, send the final response
+			// from the farthest node, this shouldn't trigger a second call to
+			// get_item_cb
+			if (i == num_test_nodes) i = 0;
+
+			std::list<std::pair<udp::endpoint, entry> >::iterator packet = find_packet(nodes[i].ep());
+			TEST_CHECK(packet != g_sent_packets.end());
+			if (packet == g_sent_packets.end()) continue;
+
+			lazy_from_entry(packet->second, response);
+			ret = verify_message(response, get_item_desc, get_item_keys, error_string
+				, sizeof(error_string));
+			if (!ret)
+			{
+				fprintf(stdout, "   invalid get request: %s\n", print_entry(response).c_str());
+				TEST_ERROR(error_string);
+				continue;
+			}
+			char t[10];
+			snprintf(t, sizeof(t), "%02d", i);
+
+			msg_args args;
+			args.token(t).port(1234).nid(nodes[i].id);
+
+			// add the address of the closest node to the first response
+			if (i == 1)
+				args.nodes(nodes_t(1, nodes[8]));
+
+			send_dht_response(node, response, nodes[i].ep(), args);
+			g_sent_packets.erase(packet);
+
+			// once we've sent the response from the farthest node, we're done
+			if (i == 0) break;
+		}
+
+		TEST_EQUAL(g_put_count, 1);
+		// k nodes should now have outstanding put requests
+		TEST_EQUAL(g_sent_packets.size(), 8);
 
 		g_sent_packets.clear();
 		g_put_item.clear();
 		g_put_count = 0;
-
+		sett.search_branching = old_branching;
 	} while (false);
+}
 
+void get_test_keypair(char* public_key, char* private_key)
+{
+	from_hex("77ff84905a91936367c01360803104f92432fcd904a43511876df5cdf3e7e548", 64, public_key);
+	from_hex("e06d3183d14159228433ed599221b80bd0a5ce8352e4bdf0262f76786ef1c74d"
+		"b7e7a9fea2c0eb269d61e3b38e450a22e754941ac78479d6c54e1faf6037881d", 128, private_key);
+}
+
+TORRENT_TEST(signing_test1)
+{
 	// test vector 1
 
 	// test content
@@ -1941,9 +2083,12 @@ int test_main()
 	// test salt
 	std::pair<char const*, int> test_salt("foobar", 6);
 
-	from_hex("77ff84905a91936367c01360803104f92432fcd904a43511876df5cdf3e7e548", 64, public_key);
-	from_hex("e06d3183d14159228433ed599221b80bd0a5ce8352e4bdf0262f76786ef1c74d"
-		"b7e7a9fea2c0eb269d61e3b38e450a22e754941ac78479d6c54e1faf6037881d", 128, private_key);
+	char private_key[item_sk_len];
+	char public_key[item_pk_len];
+	get_test_keypair(public_key, private_key);
+	std::pair<char const*, int> empty_salt;
+
+	char signature[item_sig_len];
 
 	sign_mutable_item(test_content, empty_salt, 1, public_key
 		, private_key, signature);
@@ -1954,9 +2099,23 @@ int test_main()
 
 	sha1_hash target_id = item_target_id(empty_salt, public_key);
 	TEST_EQUAL(to_hex(target_id.to_string()), "4a533d47ec9c7d95b1ad75f576cffc641853b750");
+}
+
+TORRENT_TEST(signing_test2)
+{
+
+	char private_key[item_sk_len];
+	char public_key[item_pk_len];
+	get_test_keypair(public_key, private_key);
+
+	// test content
+	std::pair<char const*, int> test_content("12:Hello World!", 15);
+
+	char signature[item_sig_len];
+	// test salt
+	std::pair<char const*, int> test_salt("foobar", 6);
 
 	// test vector 2 (the keypair is the same as test 1)
-
 	sign_mutable_item(test_content, test_salt, 1, public_key
 		, private_key, signature);
 
@@ -1964,22 +2123,572 @@ int test_main()
 		, "6834284b6b24c3204eb2fea824d82f88883a3d95e8b4a21b8c0ded553d17d17d"
 		"df9a8a7104b1258f30bed3787e6cb896fca78c58f8e03b5f18f14951a87d9a08");
 
-	target_id = item_target_id(test_salt, public_key);
+	sha1_hash target_id = item_target_id(test_salt, public_key);
 	TEST_EQUAL(to_hex(target_id.to_string()), "411eba73b6f087ca51a3795d9c8c938d365e32c1");
-
-	// test vector 3
-
-	target_id = item_target_id(test_content);
-	TEST_EQUAL(to_hex(target_id.to_string()), "e5f96f6f38320f0f33959cb4d3d656452117aadb");
-
-	return 0;
 }
 
-#else
-
-int test_main()
+TORRENT_TEST(signing_test3)
 {
-	return 0;
+	// test vector 3
+
+	// test content
+	std::pair<char const*, int> test_content("12:Hello World!", 15);
+
+	sha1_hash target_id = item_target_id(test_content);
+	TEST_EQUAL(to_hex(target_id.to_string()), "e5f96f6f38320f0f33959cb4d3d656452117aadb");
+}
+
+// TODO: 2 split this up into smaller test cases
+TORRENT_TEST(verify_message)
+{
+	char error_string[200];
+
+	// test verify_message
+	static const key_desc_t msg_desc[] = {
+		{"A", bdecode_node::string_t, 4, 0},
+		{"B", bdecode_node::dict_t, 0, key_desc_t::optional | key_desc_t::parse_children},
+			{"B1", bdecode_node::string_t, 0, 0},
+			{"B2", bdecode_node::string_t, 0, key_desc_t::last_child},
+		{"C", bdecode_node::dict_t, 0, key_desc_t::optional | key_desc_t::parse_children},
+			{"C1", bdecode_node::string_t, 0, 0},
+			{"C2", bdecode_node::string_t, 0, key_desc_t::last_child},
+	};
+
+	bdecode_node msg_keys[7];
+
+	bdecode_node ent;
+
+	error_code ec;
+	char const test_msg[] = "d1:A4:test1:Bd2:B15:test22:B25:test3ee";
+	bdecode(test_msg, test_msg + sizeof(test_msg)-1, ent, ec);
+	fprintf(stdout, "%s\n", print_entry(ent).c_str());
+
+	bool ret = verify_message(ent, msg_desc, msg_keys, error_string
+		, sizeof(error_string));
+	TEST_CHECK(ret);
+	TEST_CHECK(msg_keys[0]);
+	if (msg_keys[0]) TEST_EQUAL(msg_keys[0].string_value(), "test");
+	TEST_CHECK(msg_keys[1]);
+	TEST_CHECK(msg_keys[2]);
+	if (msg_keys[2]) TEST_EQUAL(msg_keys[2].string_value(), "test2");
+	TEST_CHECK(msg_keys[3]);
+	if (msg_keys[3]) TEST_EQUAL(msg_keys[3].string_value(), "test3");
+	TEST_CHECK(!msg_keys[4]);
+	TEST_CHECK(!msg_keys[5]);
+	TEST_CHECK(!msg_keys[6]);
+
+	char const test_msg2[] = "d1:A4:test1:Cd2:C15:test22:C25:test3ee";
+	bdecode(test_msg2, test_msg2 + sizeof(test_msg2)-1, ent, ec);
+	fprintf(stdout, "%s\n", print_entry(ent).c_str());
+
+	ret = verify_message(ent, msg_desc, msg_keys, error_string
+		, sizeof(error_string));
+	TEST_CHECK(ret);
+	TEST_CHECK(msg_keys[0]);
+	if (msg_keys[0]) TEST_EQUAL(msg_keys[0].string_value(), "test");
+	TEST_CHECK(!msg_keys[1]);
+	TEST_CHECK(!msg_keys[2]);
+	TEST_CHECK(!msg_keys[3]);
+	TEST_CHECK(msg_keys[4]);
+	TEST_CHECK(msg_keys[5]);
+	if (msg_keys[5]) TEST_EQUAL(msg_keys[5].string_value(), "test2");
+	TEST_CHECK(msg_keys[6]);
+	if (msg_keys[6]) TEST_EQUAL(msg_keys[6].string_value(), "test3");
+
+
+	char const test_msg3[] = "d1:Cd2:C15:test22:C25:test3ee";
+	bdecode(test_msg3, test_msg3 + sizeof(test_msg3)-1, ent, ec);
+	fprintf(stdout, "%s\n", print_entry(ent).c_str());
+
+	ret = verify_message(ent, msg_desc, msg_keys, error_string
+		, sizeof(error_string));
+	TEST_CHECK(!ret);
+	fprintf(stdout, "%s\n", error_string);
+	TEST_EQUAL(error_string, std::string("missing 'A' key"));
+
+	char const test_msg4[] = "d1:A6:foobare";
+	bdecode(test_msg4, test_msg4 + sizeof(test_msg4)-1, ent, ec);
+	fprintf(stdout, "%s\n", print_entry(ent).c_str());
+
+	ret = verify_message(ent, msg_desc, msg_keys, error_string
+		, sizeof(error_string));
+	TEST_CHECK(!ret);
+	fprintf(stdout, "%s\n", error_string);
+	TEST_EQUAL(error_string, std::string("invalid value for 'A'"));
+
+	char const test_msg5[] = "d1:A4:test1:Cd2:C15:test2ee";
+	bdecode(test_msg5, test_msg5 + sizeof(test_msg5)-1, ent, ec);
+	fprintf(stdout, "%s\n", print_entry(ent).c_str());
+
+	ret = verify_message(ent, msg_desc, msg_keys, error_string
+		, sizeof(error_string));
+	TEST_CHECK(!ret);
+	fprintf(stdout, "%s\n", error_string);
+	TEST_EQUAL(error_string, std::string("missing 'C2' key"));
+
+	// test empty strings [ { "":1 }, "" ]
+	char const test_msg6[] = "ld0:i1ee0:e";
+	bdecode(test_msg6, test_msg6 + sizeof(test_msg6)-1, ent, ec);
+	fprintf(stdout, "%s\n", print_entry(ent).c_str());
+	TEST_CHECK(ent.type() == bdecode_node::list_t);
+	if (ent.type() == bdecode_node::list_t)
+	{
+		TEST_CHECK(ent.list_size() == 2);
+		if (ent.list_size() == 2)
+		{
+			TEST_CHECK(ent.list_at(0).dict_find_int_value("") == 1);
+			TEST_CHECK(ent.list_at(1).string_value() == "");
+		}
+	}
+}
+
+TORRENT_TEST(routing_table_uniform)
+{
+	// test routing table
+	dht_settings sett = test_settings();
+	obs observer;
+
+	sett.extended_routing_table = false;
+	node_id id = to_hash("1234876923549721020394873245098347598635");
+	node_id diff = to_hash("15764f7459456a9453f8719b09547c11d5f34061");
+
+	routing_table tbl(id, 8, sett, &observer);
+
+	// insert 256 nodes evenly distributed across the ID space.
+	// we expect to fill the top 5 buckets
+	for (int i = 255; i >= 0; --i)
+	{
+		// test a node with the same IP:port changing ID
+		add_and_replace(id, diff);
+		// in order to make this node-load a bit more realistic, start from
+		// distant nodes and work our way in closer to the node id
+		// the routing table will reject nodes that are too imbalanced (if all
+		// nodes are very close to our ID and none are far away, it's
+		// suspicious).
+		id[0] ^= i;
+		tbl.node_seen(id, rand_udp_ep(), 20 + (id[19] & 0xff));
+
+		// restore the first byte of the node ID
+		id[0] ^= i;
+	}
+	printf("num_active_buckets: %d\n", tbl.num_active_buckets());
+	// number of nodes per tree level (when adding 256 evenly distributed
+	// nodes):
+	// 0: 128
+	// 1: 64
+	// 2: 32
+	// 3: 16
+	// 4: 8
+	// i.e. no more than 5 levels
+	TEST_EQUAL(tbl.num_active_buckets(), 5);
+
+#if defined TORRENT_DHT_VERBOSE_LOGGING || defined TORRENT_DEBUG
+	tbl.print_state(std::cout);
+#endif
+}
+
+TORRENT_TEST(routing_table_balance)
+{
+	dht_settings sett = test_settings();
+	obs observer;
+
+	sett.extended_routing_table = false;
+	node_id id = to_hash("1234876923549721020394873245098347598635");
+
+	routing_table tbl(id, 8, sett, &observer);
+
+	// insert nodes in the routing table that will force it to split
+	// and make sure we don't end up with a table completely out of balance
+	for (int i = 0; i < 32; ++i)
+	{
+		id[4] = i;
+		tbl.node_seen(id, rand_udp_ep(), 20 + (id[19] & 0xff));
+	}
+	printf("num_active_buckets: %d\n", tbl.num_active_buckets());
+	TEST_EQUAL(tbl.num_active_buckets(), 2);
+
+#if defined TORRENT_DEBUG
+	tbl.print_state(std::cout);
+#endif
+}
+
+TORRENT_TEST(routing_table_extended)
+{
+	dht_settings sett = test_settings();
+	obs observer;
+	sett.extended_routing_table = true;
+	node_id id = to_hash("1234876923549721020394873245098347598635");
+	node_id diff = to_hash("15764f7459456a9453f8719b09547c11d5f34061");
+
+	// we can't add the nodes in straight 0,1,2,3 order. That way the routing
+	// table would get unbalanced and intermediate nodes would be dropped
+	std::vector<boost::uint8_t> node_id_prefix;
+	node_id_prefix.reserve(256);
+	for (int i = 0; i < 256; ++i) node_id_prefix.push_back(i);
+	std::random_shuffle(node_id_prefix.begin(), node_id_prefix.end());
+
+	routing_table tbl(id, 8, sett, &observer);
+	for (int i = 0; i < 256; ++i)
+	{
+		add_and_replace(id, diff);
+		id[0] = node_id_prefix[i];
+		tbl.node_seen(id, rand_udp_ep(), 20 + (id[19] & 0xff));
+	}
+	TEST_EQUAL(tbl.num_active_buckets(), 6);
+
+#if defined TORRENT_DEBUG
+	tbl.print_state(std::cout);
+#endif
+}
+
+void inserter(std::set<node_id>* nodes, node_entry const& ne)
+{
+	nodes->insert(nodes->begin(), ne.id);
+}
+
+TORRENT_TEST(routing_table_set_id)
+{
+	dht_settings sett = test_settings();
+	sett.enforce_node_id = false;
+	sett.extended_routing_table = false;
+	obs observer;
+	node_id id = to_hash("0000000000000000000000000000000000000000");
+
+	// we can't add the nodes in straight 0,1,2,3 order. That way the routing
+	// table would get unbalanced and intermediate nodes would be dropped
+	std::vector<boost::uint8_t> node_id_prefix;
+	node_id_prefix.reserve(256);
+	for (int i = 0; i < 256; ++i) node_id_prefix.push_back(i);
+	std::random_shuffle(node_id_prefix.begin(), node_id_prefix.end());
+	routing_table tbl(id, 8, sett, &observer);
+	for (int i = 0; i < 256; ++i)
+	{
+		id[0] = node_id_prefix[i];
+		tbl.node_seen(id, rand_udp_ep(), 20 + (id[19] & 0xff));
+	}
+	TEST_EQUAL(tbl.num_active_buckets(), 6);
+
+	std::set<node_id> original_nodes;
+	tbl.for_each_node(boost::bind(&inserter, &original_nodes, _1));
+
+#if defined TORRENT_DEBUG
+	tbl.print_state(std::cout);
+#endif
+
+	id = to_hash("ffffffffffffffffffffffffffffffffffffffff");
+
+	tbl.update_node_id(id);
+
+	TEST_CHECK(tbl.num_active_buckets() <= 4);
+	std::set<node_id> remaining_nodes;
+	tbl.for_each_node(boost::bind(&inserter, &remaining_nodes, _1));
+
+	std::set<node_id> intersection;
+	std::set_intersection(remaining_nodes.begin(), remaining_nodes.end()
+		, original_nodes.begin(), original_nodes.end()
+		, std::inserter(intersection, intersection.begin()));
+
+	// all remaining nodes also exist in the original nodes
+	TEST_EQUAL(intersection.size(), remaining_nodes.size());
+
+#if defined TORRENT_DEBUG
+	tbl.print_state(std::cout);
+#endif
+}
+
+
+TORRENT_TEST(read_only_node)
+{
+	dht_settings sett = test_settings();
+	sett.read_only = true;
+	mock_socket s;
+	obs observer;
+	counters cnt;
+
+	dht::node node(&s, sett, node_id(0), &observer, cnt);
+	udp::endpoint source(address::from_string("10.0.0.1"), 20);
+	bdecode_node response;
+	msg_args args;
+
+	// for incoming requests, read_only node won't response.
+	send_dht_request(node, "ping", source, &response, args, "10", false);
+	TEST_EQUAL(response.type(), bdecode_node::none_t);
+
+	args.target("01010101010101010101");
+	send_dht_request(node, "get", source, &response, args, "10", false);
+	TEST_EQUAL(response.type(), bdecode_node::none_t);
+
+	// also, the sender shouldn't be added to routing table.
+	TEST_EQUAL(node.size().get<0>(), 0);
+
+	// for outgoing requests, read_only node will add 'ro' key (value == 1)
+	// in top-level of request.
+	bdecode_node parsed[7];
+	char error_string[200];
+	udp::endpoint initial_node(address_v4::from_string("4.4.4.4"), 1234);
+	node.m_table.add_node(initial_node);
+	bdecode_node request;
+	sha1_hash target = generate_next();
+
+	node.get_item(target, get_immutable_item_cb);
+	TEST_EQUAL(g_sent_packets.size(), 1);
+	TEST_EQUAL(g_sent_packets.front().first, initial_node);
+
+	dht::key_desc_t get_item_desc[] = {
+		{"y", bdecode_node::string_t, 1, 0},
+		{"t", bdecode_node::string_t, 2, 0},
+		{"q", bdecode_node::string_t, 3, 0},
+		{"ro", bdecode_node::int_t, 4, key_desc_t::optional},
+		{"a", bdecode_node::dict_t, 0, key_desc_t::parse_children},
+			{"id", bdecode_node::string_t, 20, 0},
+			{"target", bdecode_node::string_t, 20, key_desc_t::last_child},
+	};
+
+	lazy_from_entry(g_sent_packets.front().second, request);
+	bool ret = verify_message(request, get_item_desc, parsed, error_string
+		, sizeof(error_string));
+
+	TEST_CHECK(ret);
+	TEST_EQUAL(parsed[3].int_value(), 1);
+
+	// should have one node now, which is 4.4.4.4:1234
+	TEST_EQUAL(node.size().get<0>(), 1);
+
+	// now, disable read_only, try again.
+	g_sent_packets.clear();
+	sett.read_only = false;
+
+	send_dht_request(node, "get", source, &response);
+	// sender should be added to routing table, there are 2 nodes now.
+	TEST_EQUAL(node.size().get<0>(), 2);
+
+	g_sent_packets.clear();
+	target = generate_next();
+	node.get_item(target, get_immutable_item_cb);
+
+	// since we have 2 nodes, we should have two packets.
+	TEST_EQUAL(g_sent_packets.size(), 2);
+
+	// both of them shouldn't have a 'ro' key.
+	lazy_from_entry(g_sent_packets.front().second, request);
+	ret = verify_message(request, get_item_desc, parsed, error_string
+		, sizeof(error_string));
+
+	TEST_CHECK(ret);
+	TEST_CHECK(!parsed[3]);
+
+	lazy_from_entry(g_sent_packets.back().second, request);
+	ret = verify_message(request, get_item_desc, parsed, error_string
+		, sizeof(error_string));
+
+	TEST_CHECK(ret);
+	TEST_CHECK(!parsed[3]);
+}
+
+TORRENT_TEST(invalid_error_msg)
+{
+	dht_settings sett = test_settings();
+	mock_socket s;
+	obs observer;
+	counters cnt;
+
+	dht::node node(&s, sett, node_id(0), &observer, cnt);
+	udp::endpoint source(address::from_string("10.0.0.1"), 20);
+
+	entry e;
+	e["y"] = "e";
+	e["e"].string() = "Malformed Error";
+	char msg_buf[1500];
+	int size = bencode(msg_buf, e);
+
+	bdecode_node decoded;
+	error_code ec;
+	bdecode(msg_buf, msg_buf + size, decoded, ec);
+	if (ec) fprintf(stdout, "bdecode failed: %s\n", ec.message().c_str());
+
+	dht::msg m(decoded, source);
+	node.incoming(m);
+
+	bool found = false;
+	for (int i = 0; i < int(observer.m_log.size()); ++i)
+	{
+		if (observer.m_log[i].find("INCOMING ERROR") != std::string::npos
+			&& observer.m_log[i].find("(malformed)") != std::string::npos)
+			found = true;
+
+		printf("%s\n", observer.m_log[i].c_str());
+	}
+
+	TEST_EQUAL(found, true);
+}
+
+TORRENT_TEST(rpc_invalid_error_msg)
+{
+	dht_settings sett = test_settings();
+	mock_socket s;
+	obs observer;
+	counters cnt;
+
+	dht::routing_table table(node_id(), 8, sett, &observer);
+	dht::rpc_manager rpc(node_id(), sett, table, &s, &observer);
+	dht::node node(&s, sett, node_id(0), &observer, cnt);
+
+	udp::endpoint source(address::from_string("10.0.0.1"), 20);
+
+	// we need this to create an entry for this transaction ID, otherwise the
+	// incoming message will just be dropped
+	entry req;
+	req["y"] = "q";
+	req["q"] = "bogus_query";
+	req["t"] = "\0\0\0\0";
+
+	g_sent_packets.clear();
+	boost::intrusive_ptr<traversal_algorithm> algo(new dht::traversal_algorithm(
+			node, node_id()));
+
+	observer_ptr o(new (rpc.allocate_observer()) null_observer(algo, source, node_id()));
+#if defined TORRENT_DEBUG || defined TORRENT_RELEASE_ASSERTS
+	o->m_in_constructor = false;
+#endif
+	rpc.invoke(req, source, o);
+
+	// here's the incoming (malformed) error message
+	entry err;
+	err["y"] = "e";
+	err["e"].string() = "Malformed Error";
+	err["t"] = g_sent_packets.begin()->second["t"].string();
+	char msg_buf[1500];
+	int size = bencode(msg_buf, err);
+
+	bdecode_node decoded;
+	error_code ec;
+	bdecode(msg_buf, msg_buf + size, decoded, ec);
+	if (ec) fprintf(stdout, "bdecode failed: %s\n", ec.message().c_str());
+
+	dht::msg m(decoded, source);
+	node_id nid;
+	rpc.incoming(m, &nid);
+
+	bool found = false;
+	for (int i = 0; i < int(observer.m_log.size()); ++i)
+	{
+		if (observer.m_log[i].find("reply with") != std::string::npos
+			&& observer.m_log[i].find("(malformed)") != std::string::npos
+			&& observer.m_log[i].find("error") != std::string::npos)
+			found = true;
+
+		printf("%s\n", observer.m_log[i].c_str());
+	}
+
+	TEST_EQUAL(found, true);
+}
+
+// test bucket distribution
+TORRENT_TEST(node_id_bucket_distribution)
+{
+	int nodes_per_bucket[160] = {0};
+	dht::node_id reference_id = generate_id(rand_v4());
+	int const num_samples = 100000;
+	for (int i = 0; i < num_samples; ++i)
+	{
+		dht::node_id nid = generate_id(rand_v4());
+		int const bucket = 159 - distance_exp(reference_id, nid);
+		++nodes_per_bucket[bucket];
+	}
+
+	for (int i = 0; i < 25; ++i)
+	{
+		printf("%3d ", nodes_per_bucket[i]);
+	}
+	printf("\n");
+
+	int expected = num_samples / 2;
+	for (int i = 0; i < 25; ++i)
+	{
+		TEST_CHECK(std::abs(nodes_per_bucket[i] - expected) < num_samples / 20);
+		expected /= 2;
+	}
+}
+
+TORRENT_TEST(dht_verify_node_address)
+{
+	obs observer;
+	// initial setup taken from dht test above
+	dht_settings s;
+	s.extended_routing_table = false;
+	node_id id = to_hash("3123456789abcdef01232456789abcdef0123456");
+	const int bucket_size = 10;
+	dht::routing_table table(id, bucket_size, s, &observer);
+	std::vector<node_entry> nodes;
+	TEST_EQUAL(table.size().get<0>(), 0);
+
+	node_id tmp = id;
+	node_id diff = to_hash("15764f7459456a9453f8719b09547c11d5f34061");
+
+	add_and_replace(tmp, diff);
+	table.node_seen(tmp, udp::endpoint(address::from_string("4.4.4.4"), 4), 10);
+	table.find_node(id, nodes, 0, 10);
+	TEST_EQUAL(table.size().get<0>(), 1);
+	TEST_EQUAL(nodes.size(), 1);
+
+	// incorrect data, wrong id
+	table.node_seen(to_hash("0123456789abcdef01232456789abcdef0123456")
+		, udp::endpoint(address::from_string("4.4.4.4"), 4), 10);
+	table.find_node(id, nodes, 0, 10);
+
+	TEST_EQUAL(table.size().get<0>(), 1);
+	TEST_EQUAL(nodes.size(), 1);
+
+	// incorrect data, wrong IP
+	table.node_seen(tmp
+		, udp::endpoint(address::from_string("4.4.4.6"), 4), 10);
+	table.find_node(id, nodes, 0, 10);
+
+	TEST_EQUAL(table.size().get<0>(), 1);
+	TEST_EQUAL(nodes.size(), 1);
+}
+
+TORRENT_TEST(routing_table_for_each)
+{
+	dht_settings sett = test_settings();
+	obs observer;
+
+	sett.extended_routing_table = false;
+	node_id id = to_hash("1234876923549721020394873245098347598635");
+
+	dht::routing_table tbl(id, 2, sett, &observer);
+
+	for (int i = 0; i < 32; ++i)
+	{
+		id[4] = i;
+		tbl.node_seen(id, rand_udp_ep(), 20 + (id[19] & 0xff));
+	}
+
+	int nodes;
+	int replacements;
+	boost::tie(nodes, replacements, boost::tuples::ignore) = tbl.size();
+
+	std::printf("num_active_buckets: %d\n", tbl.num_active_buckets());
+	std::printf("live nodes: %d\n", nodes);
+	std::printf("replacements: %d\n", replacements);
+
+	TEST_EQUAL(tbl.num_active_buckets(), 2);
+	TEST_EQUAL(nodes, 2);
+	TEST_EQUAL(replacements, 2);
+
+#if defined TORRENT_DEBUG
+	tbl.print_state(std::cout);
+#endif
+
+	std::vector<node_entry> v;
+	tbl.for_each_node(node_push_back, nop, &v);
+	TEST_EQUAL(v.size(), 2);
+	v.clear();
+	tbl.for_each_node(nop, node_push_back, &v);
+	TEST_EQUAL(v.size(), 2);
+	v.clear();
+	tbl.for_each_node(node_push_back, node_push_back, &v);
+	TEST_EQUAL(v.size(), 4);
 }
 
 #endif

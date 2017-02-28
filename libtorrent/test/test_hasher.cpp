@@ -31,8 +31,7 @@ POSSIBILITY OF SUCH DAMAGE.
 */
 
 #include "libtorrent/hasher.hpp"
-#include <boost/lexical_cast.hpp>
-#include "libtorrent/escape_string.hpp" // from_hex
+#include "libtorrent/hex.hpp" // from_hex
 
 #include "test.hpp"
 
@@ -60,7 +59,7 @@ char const* result_array[4] =
 };
 
 
-int test_main()
+TORRENT_TEST(hasher)
 {
 	using namespace libtorrent;
 
@@ -74,7 +73,5 @@ int test_main()
 		from_hex(result_array[test], 40, (char*)&result[0]);
 		TEST_CHECK(result == h.final());
 	}
-
-	return 0;
 }
 

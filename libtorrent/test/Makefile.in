@@ -90,14 +90,16 @@ POST_UNINSTALL = :
 build_triplet = @build@
 host_triplet = @host@
 target_triplet = @target@
-@ENABLE_TESTS_TRUE@check_PROGRAMS = $(am__EXEEXT_1)
-EXTRA_PROGRAMS = $(am__EXEEXT_1)
+@ENABLE_TESTS_TRUE@check_PROGRAMS = $(am__EXEEXT_1) $(am__EXEEXT_2)
+TESTS = $(am__EXEEXT_1)
+EXTRA_PROGRAMS = $(am__EXEEXT_1) $(am__EXEEXT_2)
 subdir = test
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
 am__aclocal_m4_deps = $(top_srcdir)/m4/ax_boost_base.m4 \
+	$(top_srcdir)/m4/ax_boost_chrono.m4 \
 	$(top_srcdir)/m4/ax_boost_python.m4 \
+	$(top_srcdir)/m4/ax_boost_random.m4 \
 	$(top_srcdir)/m4/ax_boost_system.m4 \
-	$(top_srcdir)/m4/ax_check_geoip.m4 \
 	$(top_srcdir)/m4/ax_check_openssl.m4 \
 	$(top_srcdir)/m4/ax_pthread.m4 \
 	$(top_srcdir)/m4/ax_python_devel.m4 \
@@ -115,46 +117,44 @@ CONFIG_CLEAN_FILES =
 CONFIG_CLEAN_VPATH_FILES =
 LTLIBRARIES = $(noinst_LTLIBRARIES)
 libtest_la_LIBADD =
-am_libtest_la_OBJECTS = main.lo setup_transfer.lo dht_server.lo \
-	udp_tracker.lo peer_server.lo web_seed_suite.lo
+am_libtest_la_OBJECTS = main.lo test.lo setup_transfer.lo \
+	dht_server.lo udp_tracker.lo peer_server.lo bittorrent_peer.lo \
+	make_torrent.lo web_seed_suite.lo swarm_suite.lo test_utils.lo \
+	settings.lo print_alerts.lo
 libtest_la_OBJECTS = $(am_libtest_la_OBJECTS)
 AM_V_lt = $(am__v_lt_@AM_V@)
 am__v_lt_ = $(am__v_lt_@AM_DEFAULT_V@)
 am__v_lt_0 = --silent
 am__v_lt_1 = 
 @ENABLE_TESTS_TRUE@am_libtest_la_rpath =
-am__EXEEXT_1 = test_bitfield$(EXEEXT) test_file$(EXEEXT) \
-	test_file_storage$(EXEEXT) test_privacy$(EXEEXT) \
-	test_priority$(EXEEXT) test_auto_unchoke$(EXEEXT) \
-	test_bandwidth_limiter$(EXEEXT) \
-	test_bdecode_performance$(EXEEXT) test_bencoding$(EXEEXT) \
-	test_buffer$(EXEEXT) test_checking$(EXEEXT) \
-	test_fast_extension$(EXEEXT) test_hasher$(EXEEXT) \
-	test_http_connection$(EXEEXT) test_ip_filter$(EXEEXT) \
-	test_ip_voter$(EXEEXT) test_dht$(EXEEXT) test_lsd$(EXEEXT) \
-	test_metadata_extension$(EXEEXT) test_pe_crypto$(EXEEXT) \
-	test_peer_priority$(EXEEXT) test_pex$(EXEEXT) \
-	test_piece_picker$(EXEEXT) test_xml$(EXEEXT) \
-	test_string$(EXEEXT) test_primitives$(EXEEXT) \
-	test_http_parser$(EXEEXT) test_magnet$(EXEEXT) \
-	test_packet_buffer$(EXEEXT) test_read_piece$(EXEEXT) \
-	test_resume$(EXEEXT) test_rss$(EXEEXT) test_ssl$(EXEEXT) \
-	test_storage$(EXEEXT) test_swarm$(EXEEXT) test_time$(EXEEXT) \
-	test_threads$(EXEEXT) test_torrent$(EXEEXT) \
-	test_torrent_info$(EXEEXT) test_torrent_parse$(EXEEXT) \
-	test_tracker$(EXEEXT) test_trackers_extension$(EXEEXT) \
-	test_transfer$(EXEEXT) test_create_torrent$(EXEEXT) \
-	test_upnp$(EXEEXT) enum_if$(EXEEXT) test_utp$(EXEEXT) \
-	test_session$(EXEEXT) test_web_seed$(EXEEXT) \
+am__EXEEXT_1 = test_primitives$(EXEEXT) test_recheck$(EXEEXT) \
+	test_stat_cache$(EXEEXT) test_file$(EXEEXT) \
+	test_privacy$(EXEEXT) test_priority$(EXEEXT) \
+	test_auto_unchoke$(EXEEXT) test_checking$(EXEEXT) \
+	test_fast_extension$(EXEEXT) test_http_connection$(EXEEXT) \
+	test_lsd$(EXEEXT) test_pe_crypto$(EXEEXT) test_pex$(EXEEXT) \
+	test_read_piece$(EXEEXT) test_receive_buffer$(EXEEXT) \
+	test_resume$(EXEEXT) test_ssl$(EXEEXT) \
+	test_stack_allocator$(EXEEXT) test_storage$(EXEEXT) \
+	test_time_critical$(EXEEXT) test_torrent$(EXEEXT) \
+	test_tracker$(EXEEXT) test_transfer$(EXEEXT) \
+	test_create_torrent$(EXEEXT) enum_if$(EXEEXT) \
+	test_utp$(EXEEXT) test_session$(EXEEXT) test_web_seed$(EXEEXT) \
 	test_web_seed_ban$(EXEEXT) test_web_seed_chunked$(EXEEXT) \
 	test_web_seed_http$(EXEEXT) test_web_seed_http_pw$(EXEEXT) \
 	test_web_seed_redirect$(EXEEXT) test_web_seed_socks4$(EXEEXT) \
 	test_web_seed_socks5$(EXEEXT) \
 	test_web_seed_socks5_no_peers$(EXEEXT) \
 	test_web_seed_socks5_pw$(EXEEXT) test_url_seed$(EXEEXT) \
-	test_remap_files$(EXEEXT) test_gzip$(EXEEXT) \
-	test_utf8$(EXEEXT) test_socket_io$(EXEEXT) \
-	test_sliding_average$(EXEEXT)
+	test_remap_files$(EXEEXT) test_enum_net$(EXEEXT) \
+	test_file_progress$(EXEEXT) test_linked_list$(EXEEXT) \
+	test_direct_dht$(EXEEXT) test_ed25519$(EXEEXT)
+am__EXEEXT_2 = bdecode_benchmark$(EXEEXT)
+am_bdecode_benchmark_OBJECTS = bdecode_benchmark.$(OBJEXT)
+bdecode_benchmark_OBJECTS = $(am_bdecode_benchmark_OBJECTS)
+bdecode_benchmark_LDADD = $(LDADD)
+bdecode_benchmark_DEPENDENCIES = libtest.la \
+	$(top_builddir)/src/libtorrent-rasterbar.la
 am_enum_if_OBJECTS = enum_if.$(OBJEXT)
 enum_if_OBJECTS = $(am_enum_if_OBJECTS)
 enum_if_LDADD = $(LDADD)
@@ -164,33 +164,6 @@ am_test_auto_unchoke_OBJECTS = test_auto_unchoke.$(OBJEXT)
 test_auto_unchoke_OBJECTS = $(am_test_auto_unchoke_OBJECTS)
 test_auto_unchoke_LDADD = $(LDADD)
 test_auto_unchoke_DEPENDENCIES = libtest.la \
-	$(top_builddir)/src/libtorrent-rasterbar.la
-am_test_bandwidth_limiter_OBJECTS = test_bandwidth_limiter.$(OBJEXT)
-test_bandwidth_limiter_OBJECTS = $(am_test_bandwidth_limiter_OBJECTS)
-test_bandwidth_limiter_LDADD = $(LDADD)
-test_bandwidth_limiter_DEPENDENCIES = libtest.la \
-	$(top_builddir)/src/libtorrent-rasterbar.la
-am_test_bdecode_performance_OBJECTS =  \
-	test_bdecode_performance.$(OBJEXT)
-test_bdecode_performance_OBJECTS =  \
-	$(am_test_bdecode_performance_OBJECTS)
-test_bdecode_performance_LDADD = $(LDADD)
-test_bdecode_performance_DEPENDENCIES = libtest.la \
-	$(top_builddir)/src/libtorrent-rasterbar.la
-am_test_bencoding_OBJECTS = test_bencoding.$(OBJEXT)
-test_bencoding_OBJECTS = $(am_test_bencoding_OBJECTS)
-test_bencoding_LDADD = $(LDADD)
-test_bencoding_DEPENDENCIES = libtest.la \
-	$(top_builddir)/src/libtorrent-rasterbar.la
-am_test_bitfield_OBJECTS = test_bitfield.$(OBJEXT)
-test_bitfield_OBJECTS = $(am_test_bitfield_OBJECTS)
-test_bitfield_LDADD = $(LDADD)
-test_bitfield_DEPENDENCIES = libtest.la \
-	$(top_builddir)/src/libtorrent-rasterbar.la
-am_test_buffer_OBJECTS = test_buffer.$(OBJEXT)
-test_buffer_OBJECTS = $(am_test_buffer_OBJECTS)
-test_buffer_LDADD = $(LDADD)
-test_buffer_DEPENDENCIES = libtest.la \
 	$(top_builddir)/src/libtorrent-rasterbar.la
 am_test_checking_OBJECTS = test_checking.$(OBJEXT)
 test_checking_OBJECTS = $(am_test_checking_OBJECTS)
@@ -202,10 +175,20 @@ test_create_torrent_OBJECTS = $(am_test_create_torrent_OBJECTS)
 test_create_torrent_LDADD = $(LDADD)
 test_create_torrent_DEPENDENCIES = libtest.la \
 	$(top_builddir)/src/libtorrent-rasterbar.la
-am_test_dht_OBJECTS = test_dht.$(OBJEXT)
-test_dht_OBJECTS = $(am_test_dht_OBJECTS)
-test_dht_LDADD = $(LDADD)
-test_dht_DEPENDENCIES = libtest.la \
+am_test_direct_dht_OBJECTS = test_direct_dht.$(OBJEXT)
+test_direct_dht_OBJECTS = $(am_test_direct_dht_OBJECTS)
+test_direct_dht_LDADD = $(LDADD)
+test_direct_dht_DEPENDENCIES = libtest.la \
+	$(top_builddir)/src/libtorrent-rasterbar.la
+am_test_ed25519_OBJECTS = test_ed25519.$(OBJEXT)
+test_ed25519_OBJECTS = $(am_test_ed25519_OBJECTS)
+test_ed25519_LDADD = $(LDADD)
+test_ed25519_DEPENDENCIES = libtest.la \
+	$(top_builddir)/src/libtorrent-rasterbar.la
+am_test_enum_net_OBJECTS = test_enum_net.$(OBJEXT)
+test_enum_net_OBJECTS = $(am_test_enum_net_OBJECTS)
+test_enum_net_LDADD = $(LDADD)
+test_enum_net_DEPENDENCIES = libtest.la \
 	$(top_builddir)/src/libtorrent-rasterbar.la
 am_test_fast_extension_OBJECTS = test_fast_extension.$(OBJEXT)
 test_fast_extension_OBJECTS = $(am_test_fast_extension_OBJECTS)
@@ -217,84 +200,59 @@ test_file_OBJECTS = $(am_test_file_OBJECTS)
 test_file_LDADD = $(LDADD)
 test_file_DEPENDENCIES = libtest.la \
 	$(top_builddir)/src/libtorrent-rasterbar.la
-am_test_file_storage_OBJECTS = test_file_storage.$(OBJEXT)
-test_file_storage_OBJECTS = $(am_test_file_storage_OBJECTS)
-test_file_storage_LDADD = $(LDADD)
-test_file_storage_DEPENDENCIES = libtest.la \
-	$(top_builddir)/src/libtorrent-rasterbar.la
-am_test_gzip_OBJECTS = test_gzip.$(OBJEXT)
-test_gzip_OBJECTS = $(am_test_gzip_OBJECTS)
-test_gzip_LDADD = $(LDADD)
-test_gzip_DEPENDENCIES = libtest.la \
-	$(top_builddir)/src/libtorrent-rasterbar.la
-am_test_hasher_OBJECTS = test_hasher.$(OBJEXT)
-test_hasher_OBJECTS = $(am_test_hasher_OBJECTS)
-test_hasher_LDADD = $(LDADD)
-test_hasher_DEPENDENCIES = libtest.la \
+am_test_file_progress_OBJECTS = test_file_progress.$(OBJEXT)
+test_file_progress_OBJECTS = $(am_test_file_progress_OBJECTS)
+test_file_progress_LDADD = $(LDADD)
+test_file_progress_DEPENDENCIES = libtest.la \
 	$(top_builddir)/src/libtorrent-rasterbar.la
 am_test_http_connection_OBJECTS = test_http_connection.$(OBJEXT)
 test_http_connection_OBJECTS = $(am_test_http_connection_OBJECTS)
 test_http_connection_LDADD = $(LDADD)
 test_http_connection_DEPENDENCIES = libtest.la \
 	$(top_builddir)/src/libtorrent-rasterbar.la
-am_test_http_parser_OBJECTS = test_http_parser.$(OBJEXT)
-test_http_parser_OBJECTS = $(am_test_http_parser_OBJECTS)
-test_http_parser_LDADD = $(LDADD)
-test_http_parser_DEPENDENCIES = libtest.la \
-	$(top_builddir)/src/libtorrent-rasterbar.la
-am_test_ip_filter_OBJECTS = test_ip_filter.$(OBJEXT)
-test_ip_filter_OBJECTS = $(am_test_ip_filter_OBJECTS)
-test_ip_filter_LDADD = $(LDADD)
-test_ip_filter_DEPENDENCIES = libtest.la \
-	$(top_builddir)/src/libtorrent-rasterbar.la
-am_test_ip_voter_OBJECTS = test_ip_voter.$(OBJEXT)
-test_ip_voter_OBJECTS = $(am_test_ip_voter_OBJECTS)
-test_ip_voter_LDADD = $(LDADD)
-test_ip_voter_DEPENDENCIES = libtest.la \
+am_test_linked_list_OBJECTS = test_linked_list.$(OBJEXT)
+test_linked_list_OBJECTS = $(am_test_linked_list_OBJECTS)
+test_linked_list_LDADD = $(LDADD)
+test_linked_list_DEPENDENCIES = libtest.la \
 	$(top_builddir)/src/libtorrent-rasterbar.la
 am_test_lsd_OBJECTS = test_lsd.$(OBJEXT)
 test_lsd_OBJECTS = $(am_test_lsd_OBJECTS)
 test_lsd_LDADD = $(LDADD)
 test_lsd_DEPENDENCIES = libtest.la \
 	$(top_builddir)/src/libtorrent-rasterbar.la
-am_test_magnet_OBJECTS = test_magnet.$(OBJEXT)
-test_magnet_OBJECTS = $(am_test_magnet_OBJECTS)
-test_magnet_LDADD = $(LDADD)
-test_magnet_DEPENDENCIES = libtest.la \
-	$(top_builddir)/src/libtorrent-rasterbar.la
-am_test_metadata_extension_OBJECTS =  \
-	test_metadata_extension.$(OBJEXT)
-test_metadata_extension_OBJECTS =  \
-	$(am_test_metadata_extension_OBJECTS)
-test_metadata_extension_LDADD = $(LDADD)
-test_metadata_extension_DEPENDENCIES = libtest.la \
-	$(top_builddir)/src/libtorrent-rasterbar.la
-am_test_packet_buffer_OBJECTS = test_packet_buffer.$(OBJEXT)
-test_packet_buffer_OBJECTS = $(am_test_packet_buffer_OBJECTS)
-test_packet_buffer_LDADD = $(LDADD)
-test_packet_buffer_DEPENDENCIES = libtest.la \
-	$(top_builddir)/src/libtorrent-rasterbar.la
 am_test_pe_crypto_OBJECTS = test_pe_crypto.$(OBJEXT)
 test_pe_crypto_OBJECTS = $(am_test_pe_crypto_OBJECTS)
 test_pe_crypto_LDADD = $(LDADD)
 test_pe_crypto_DEPENDENCIES = libtest.la \
-	$(top_builddir)/src/libtorrent-rasterbar.la
-am_test_peer_priority_OBJECTS = test_peer_priority.$(OBJEXT)
-test_peer_priority_OBJECTS = $(am_test_peer_priority_OBJECTS)
-test_peer_priority_LDADD = $(LDADD)
-test_peer_priority_DEPENDENCIES = libtest.la \
 	$(top_builddir)/src/libtorrent-rasterbar.la
 am_test_pex_OBJECTS = test_pex.$(OBJEXT)
 test_pex_OBJECTS = $(am_test_pex_OBJECTS)
 test_pex_LDADD = $(LDADD)
 test_pex_DEPENDENCIES = libtest.la \
 	$(top_builddir)/src/libtorrent-rasterbar.la
-am_test_piece_picker_OBJECTS = test_piece_picker.$(OBJEXT)
-test_piece_picker_OBJECTS = $(am_test_piece_picker_OBJECTS)
-test_piece_picker_LDADD = $(LDADD)
-test_piece_picker_DEPENDENCIES = libtest.la \
-	$(top_builddir)/src/libtorrent-rasterbar.la
-am_test_primitives_OBJECTS = test_primitives.$(OBJEXT)
+am_test_primitives_OBJECTS = test_primitives.$(OBJEXT) \
+	test_packet_buffer.$(OBJEXT) test_timestamp_history.$(OBJEXT) \
+	test_sha1_hash.$(OBJEXT) test_bloom_filter.$(OBJEXT) \
+	test_identify_client.$(OBJEXT) test_merkle.$(OBJEXT) \
+	test_alert_manager.$(OBJEXT) test_resolve_links.$(OBJEXT) \
+	test_crc32.$(OBJEXT) test_heterogeneous_queue.$(OBJEXT) \
+	test_ip_voter.$(OBJEXT) test_sliding_average.$(OBJEXT) \
+	test_socket_io.$(OBJEXT) test_random.$(OBJEXT) \
+	test_utf8.$(OBJEXT) test_gzip.$(OBJEXT) \
+	test_bitfield.$(OBJEXT) test_part_file.$(OBJEXT) \
+	test_peer_list.$(OBJEXT) test_torrent_info.$(OBJEXT) \
+	test_time.$(OBJEXT) test_file_storage.$(OBJEXT) \
+	test_peer_priority.$(OBJEXT) test_threads.$(OBJEXT) \
+	test_tailqueue.$(OBJEXT) test_bandwidth_limiter.$(OBJEXT) \
+	test_buffer.$(OBJEXT) test_piece_picker.$(OBJEXT) \
+	test_bencoding.$(OBJEXT) test_bdecode.$(OBJEXT) \
+	test_http_parser.$(OBJEXT) test_string.$(OBJEXT) \
+	test_magnet.$(OBJEXT) test_xml.$(OBJEXT) \
+	test_ip_filter.$(OBJEXT) test_hasher.$(OBJEXT) \
+	test_dht_storage.$(OBJEXT) test_dht.$(OBJEXT) \
+	test_block_cache.$(OBJEXT) test_peer_classes.$(OBJEXT) \
+	test_settings_pack.$(OBJEXT) test_fence.$(OBJEXT) \
+	test_dos_blocker.$(OBJEXT) test_upnp.$(OBJEXT)
 test_primitives_OBJECTS = $(am_test_primitives_OBJECTS)
 test_primitives_LDADD = $(LDADD)
 test_primitives_DEPENDENCIES = libtest.la \
@@ -314,6 +272,16 @@ test_read_piece_OBJECTS = $(am_test_read_piece_OBJECTS)
 test_read_piece_LDADD = $(LDADD)
 test_read_piece_DEPENDENCIES = libtest.la \
 	$(top_builddir)/src/libtorrent-rasterbar.la
+am_test_receive_buffer_OBJECTS = test_receive_buffer.$(OBJEXT)
+test_receive_buffer_OBJECTS = $(am_test_receive_buffer_OBJECTS)
+test_receive_buffer_LDADD = $(LDADD)
+test_receive_buffer_DEPENDENCIES = libtest.la \
+	$(top_builddir)/src/libtorrent-rasterbar.la
+am_test_recheck_OBJECTS = test_recheck.$(OBJEXT)
+test_recheck_OBJECTS = $(am_test_recheck_OBJECTS)
+test_recheck_LDADD = $(LDADD)
+test_recheck_DEPENDENCIES = libtest.la \
+	$(top_builddir)/src/libtorrent-rasterbar.la
 am_test_remap_files_OBJECTS = test_remap_files.$(OBJEXT)
 test_remap_files_OBJECTS = $(am_test_remap_files_OBJECTS)
 test_remap_files_LDADD = $(LDADD)
@@ -324,102 +292,55 @@ test_resume_OBJECTS = $(am_test_resume_OBJECTS)
 test_resume_LDADD = $(LDADD)
 test_resume_DEPENDENCIES = libtest.la \
 	$(top_builddir)/src/libtorrent-rasterbar.la
-am_test_rss_OBJECTS = test_rss.$(OBJEXT)
-test_rss_OBJECTS = $(am_test_rss_OBJECTS)
-test_rss_LDADD = $(LDADD)
-test_rss_DEPENDENCIES = libtest.la \
-	$(top_builddir)/src/libtorrent-rasterbar.la
 am_test_session_OBJECTS = test_session.$(OBJEXT)
 test_session_OBJECTS = $(am_test_session_OBJECTS)
 test_session_LDADD = $(LDADD)
 test_session_DEPENDENCIES = libtest.la \
-	$(top_builddir)/src/libtorrent-rasterbar.la
-am_test_sliding_average_OBJECTS = test_sliding_average.$(OBJEXT)
-test_sliding_average_OBJECTS = $(am_test_sliding_average_OBJECTS)
-test_sliding_average_LDADD = $(LDADD)
-test_sliding_average_DEPENDENCIES = libtest.la \
-	$(top_builddir)/src/libtorrent-rasterbar.la
-am_test_socket_io_OBJECTS = test_socket_io.$(OBJEXT)
-test_socket_io_OBJECTS = $(am_test_socket_io_OBJECTS)
-test_socket_io_LDADD = $(LDADD)
-test_socket_io_DEPENDENCIES = libtest.la \
 	$(top_builddir)/src/libtorrent-rasterbar.la
 am_test_ssl_OBJECTS = test_ssl.$(OBJEXT)
 test_ssl_OBJECTS = $(am_test_ssl_OBJECTS)
 test_ssl_LDADD = $(LDADD)
 test_ssl_DEPENDENCIES = libtest.la \
 	$(top_builddir)/src/libtorrent-rasterbar.la
+am_test_stack_allocator_OBJECTS = test_stack_allocator.$(OBJEXT)
+test_stack_allocator_OBJECTS = $(am_test_stack_allocator_OBJECTS)
+test_stack_allocator_LDADD = $(LDADD)
+test_stack_allocator_DEPENDENCIES = libtest.la \
+	$(top_builddir)/src/libtorrent-rasterbar.la
+am_test_stat_cache_OBJECTS = test_stat_cache.$(OBJEXT)
+test_stat_cache_OBJECTS = $(am_test_stat_cache_OBJECTS)
+test_stat_cache_LDADD = $(LDADD)
+test_stat_cache_DEPENDENCIES = libtest.la \
+	$(top_builddir)/src/libtorrent-rasterbar.la
 am_test_storage_OBJECTS = test_storage.$(OBJEXT)
 test_storage_OBJECTS = $(am_test_storage_OBJECTS)
 test_storage_LDADD = $(LDADD)
 test_storage_DEPENDENCIES = libtest.la \
 	$(top_builddir)/src/libtorrent-rasterbar.la
-am_test_string_OBJECTS = test_string.$(OBJEXT)
-test_string_OBJECTS = $(am_test_string_OBJECTS)
-test_string_LDADD = $(LDADD)
-test_string_DEPENDENCIES = libtest.la \
-	$(top_builddir)/src/libtorrent-rasterbar.la
-am_test_swarm_OBJECTS = test_swarm.$(OBJEXT)
-test_swarm_OBJECTS = $(am_test_swarm_OBJECTS)
-test_swarm_LDADD = $(LDADD)
-test_swarm_DEPENDENCIES = libtest.la \
-	$(top_builddir)/src/libtorrent-rasterbar.la
-am_test_threads_OBJECTS = test_threads.$(OBJEXT)
-test_threads_OBJECTS = $(am_test_threads_OBJECTS)
-test_threads_LDADD = $(LDADD)
-test_threads_DEPENDENCIES = libtest.la \
-	$(top_builddir)/src/libtorrent-rasterbar.la
-am_test_time_OBJECTS = test_time.$(OBJEXT)
-test_time_OBJECTS = $(am_test_time_OBJECTS)
-test_time_LDADD = $(LDADD)
-test_time_DEPENDENCIES = libtest.la \
+am_test_time_critical_OBJECTS = test_time_critical.$(OBJEXT)
+test_time_critical_OBJECTS = $(am_test_time_critical_OBJECTS)
+test_time_critical_LDADD = $(LDADD)
+test_time_critical_DEPENDENCIES = libtest.la \
 	$(top_builddir)/src/libtorrent-rasterbar.la
 am_test_torrent_OBJECTS = test_torrent.$(OBJEXT)
 test_torrent_OBJECTS = $(am_test_torrent_OBJECTS)
 test_torrent_LDADD = $(LDADD)
 test_torrent_DEPENDENCIES = libtest.la \
 	$(top_builddir)/src/libtorrent-rasterbar.la
-am_test_torrent_info_OBJECTS = test_torrent_info.$(OBJEXT)
-test_torrent_info_OBJECTS = $(am_test_torrent_info_OBJECTS)
-test_torrent_info_LDADD = $(LDADD)
-test_torrent_info_DEPENDENCIES = libtest.la \
-	$(top_builddir)/src/libtorrent-rasterbar.la
-am_test_torrent_parse_OBJECTS = test_torrent_parse.$(OBJEXT)
-test_torrent_parse_OBJECTS = $(am_test_torrent_parse_OBJECTS)
-test_torrent_parse_LDADD = $(LDADD)
-test_torrent_parse_DEPENDENCIES = libtest.la \
-	$(top_builddir)/src/libtorrent-rasterbar.la
 am_test_tracker_OBJECTS = test_tracker.$(OBJEXT)
 test_tracker_OBJECTS = $(am_test_tracker_OBJECTS)
 test_tracker_LDADD = $(LDADD)
 test_tracker_DEPENDENCIES = libtest.la \
-	$(top_builddir)/src/libtorrent-rasterbar.la
-am_test_trackers_extension_OBJECTS =  \
-	test_trackers_extension.$(OBJEXT)
-test_trackers_extension_OBJECTS =  \
-	$(am_test_trackers_extension_OBJECTS)
-test_trackers_extension_LDADD = $(LDADD)
-test_trackers_extension_DEPENDENCIES = libtest.la \
 	$(top_builddir)/src/libtorrent-rasterbar.la
 am_test_transfer_OBJECTS = test_transfer.$(OBJEXT)
 test_transfer_OBJECTS = $(am_test_transfer_OBJECTS)
 test_transfer_LDADD = $(LDADD)
 test_transfer_DEPENDENCIES = libtest.la \
 	$(top_builddir)/src/libtorrent-rasterbar.la
-am_test_upnp_OBJECTS = test_upnp.$(OBJEXT)
-test_upnp_OBJECTS = $(am_test_upnp_OBJECTS)
-test_upnp_LDADD = $(LDADD)
-test_upnp_DEPENDENCIES = libtest.la \
-	$(top_builddir)/src/libtorrent-rasterbar.la
 am_test_url_seed_OBJECTS = test_url_seed.$(OBJEXT)
 test_url_seed_OBJECTS = $(am_test_url_seed_OBJECTS)
 test_url_seed_LDADD = $(LDADD)
 test_url_seed_DEPENDENCIES = libtest.la \
-	$(top_builddir)/src/libtorrent-rasterbar.la
-am_test_utf8_OBJECTS = test_utf8.$(OBJEXT)
-test_utf8_OBJECTS = $(am_test_utf8_OBJECTS)
-test_utf8_LDADD = $(LDADD)
-test_utf8_DEPENDENCIES = libtest.la \
 	$(top_builddir)/src/libtorrent-rasterbar.la
 am_test_utp_OBJECTS = test_utp.$(OBJEXT)
 test_utp_OBJECTS = $(am_test_utp_OBJECTS)
@@ -480,11 +401,6 @@ test_web_seed_socks5_pw_OBJECTS =  \
 test_web_seed_socks5_pw_LDADD = $(LDADD)
 test_web_seed_socks5_pw_DEPENDENCIES = libtest.la \
 	$(top_builddir)/src/libtorrent-rasterbar.la
-am_test_xml_OBJECTS = test_xml.$(OBJEXT)
-test_xml_OBJECTS = $(am_test_xml_OBJECTS)
-test_xml_LDADD = $(LDADD)
-test_xml_DEPENDENCIES = libtest.la \
-	$(top_builddir)/src/libtorrent-rasterbar.la
 AM_V_P = $(am__v_P_@AM_V@)
 am__v_P_ = $(am__v_P_@AM_DEFAULT_V@)
 am__v_P_0 = false
@@ -519,76 +435,58 @@ AM_V_CXXLD = $(am__v_CXXLD_@AM_V@)
 am__v_CXXLD_ = $(am__v_CXXLD_@AM_DEFAULT_V@)
 am__v_CXXLD_0 = @echo "  CXXLD   " $@;
 am__v_CXXLD_1 = 
-SOURCES = $(libtest_la_SOURCES) $(enum_if_SOURCES) \
-	$(test_auto_unchoke_SOURCES) $(test_bandwidth_limiter_SOURCES) \
-	$(test_bdecode_performance_SOURCES) $(test_bencoding_SOURCES) \
-	$(test_bitfield_SOURCES) $(test_buffer_SOURCES) \
+SOURCES = $(libtest_la_SOURCES) $(bdecode_benchmark_SOURCES) \
+	$(enum_if_SOURCES) $(test_auto_unchoke_SOURCES) \
 	$(test_checking_SOURCES) $(test_create_torrent_SOURCES) \
-	$(test_dht_SOURCES) $(test_fast_extension_SOURCES) \
-	$(test_file_SOURCES) $(test_file_storage_SOURCES) \
-	$(test_gzip_SOURCES) $(test_hasher_SOURCES) \
-	$(test_http_connection_SOURCES) $(test_http_parser_SOURCES) \
-	$(test_ip_filter_SOURCES) $(test_ip_voter_SOURCES) \
-	$(test_lsd_SOURCES) $(test_magnet_SOURCES) \
-	$(test_metadata_extension_SOURCES) \
-	$(test_packet_buffer_SOURCES) $(test_pe_crypto_SOURCES) \
-	$(test_peer_priority_SOURCES) $(test_pex_SOURCES) \
-	$(test_piece_picker_SOURCES) $(test_primitives_SOURCES) \
+	$(test_direct_dht_SOURCES) $(test_ed25519_SOURCES) \
+	$(test_enum_net_SOURCES) $(test_fast_extension_SOURCES) \
+	$(test_file_SOURCES) $(test_file_progress_SOURCES) \
+	$(test_http_connection_SOURCES) $(test_linked_list_SOURCES) \
+	$(test_lsd_SOURCES) $(test_pe_crypto_SOURCES) \
+	$(test_pex_SOURCES) $(test_primitives_SOURCES) \
 	$(test_priority_SOURCES) $(test_privacy_SOURCES) \
-	$(test_read_piece_SOURCES) $(test_remap_files_SOURCES) \
-	$(test_resume_SOURCES) $(test_rss_SOURCES) \
-	$(test_session_SOURCES) $(test_sliding_average_SOURCES) \
-	$(test_socket_io_SOURCES) $(test_ssl_SOURCES) \
-	$(test_storage_SOURCES) $(test_string_SOURCES) \
-	$(test_swarm_SOURCES) $(test_threads_SOURCES) \
-	$(test_time_SOURCES) $(test_torrent_SOURCES) \
-	$(test_torrent_info_SOURCES) $(test_torrent_parse_SOURCES) \
-	$(test_tracker_SOURCES) $(test_trackers_extension_SOURCES) \
-	$(test_transfer_SOURCES) $(test_upnp_SOURCES) \
-	$(test_url_seed_SOURCES) $(test_utf8_SOURCES) \
-	$(test_utp_SOURCES) $(test_web_seed_SOURCES) \
-	$(test_web_seed_ban_SOURCES) $(test_web_seed_chunked_SOURCES) \
-	$(test_web_seed_http_SOURCES) $(test_web_seed_http_pw_SOURCES) \
+	$(test_read_piece_SOURCES) $(test_receive_buffer_SOURCES) \
+	$(test_recheck_SOURCES) $(test_remap_files_SOURCES) \
+	$(test_resume_SOURCES) $(test_session_SOURCES) \
+	$(test_ssl_SOURCES) $(test_stack_allocator_SOURCES) \
+	$(test_stat_cache_SOURCES) $(test_storage_SOURCES) \
+	$(test_time_critical_SOURCES) $(test_torrent_SOURCES) \
+	$(test_tracker_SOURCES) $(test_transfer_SOURCES) \
+	$(test_url_seed_SOURCES) $(test_utp_SOURCES) \
+	$(test_web_seed_SOURCES) $(test_web_seed_ban_SOURCES) \
+	$(test_web_seed_chunked_SOURCES) $(test_web_seed_http_SOURCES) \
+	$(test_web_seed_http_pw_SOURCES) \
 	$(test_web_seed_redirect_SOURCES) \
 	$(test_web_seed_socks4_SOURCES) \
 	$(test_web_seed_socks5_SOURCES) \
 	$(test_web_seed_socks5_no_peers_SOURCES) \
-	$(test_web_seed_socks5_pw_SOURCES) $(test_xml_SOURCES)
-DIST_SOURCES = $(libtest_la_SOURCES) $(enum_if_SOURCES) \
-	$(test_auto_unchoke_SOURCES) $(test_bandwidth_limiter_SOURCES) \
-	$(test_bdecode_performance_SOURCES) $(test_bencoding_SOURCES) \
-	$(test_bitfield_SOURCES) $(test_buffer_SOURCES) \
+	$(test_web_seed_socks5_pw_SOURCES)
+DIST_SOURCES = $(libtest_la_SOURCES) $(bdecode_benchmark_SOURCES) \
+	$(enum_if_SOURCES) $(test_auto_unchoke_SOURCES) \
 	$(test_checking_SOURCES) $(test_create_torrent_SOURCES) \
-	$(test_dht_SOURCES) $(test_fast_extension_SOURCES) \
-	$(test_file_SOURCES) $(test_file_storage_SOURCES) \
-	$(test_gzip_SOURCES) $(test_hasher_SOURCES) \
-	$(test_http_connection_SOURCES) $(test_http_parser_SOURCES) \
-	$(test_ip_filter_SOURCES) $(test_ip_voter_SOURCES) \
-	$(test_lsd_SOURCES) $(test_magnet_SOURCES) \
-	$(test_metadata_extension_SOURCES) \
-	$(test_packet_buffer_SOURCES) $(test_pe_crypto_SOURCES) \
-	$(test_peer_priority_SOURCES) $(test_pex_SOURCES) \
-	$(test_piece_picker_SOURCES) $(test_primitives_SOURCES) \
+	$(test_direct_dht_SOURCES) $(test_ed25519_SOURCES) \
+	$(test_enum_net_SOURCES) $(test_fast_extension_SOURCES) \
+	$(test_file_SOURCES) $(test_file_progress_SOURCES) \
+	$(test_http_connection_SOURCES) $(test_linked_list_SOURCES) \
+	$(test_lsd_SOURCES) $(test_pe_crypto_SOURCES) \
+	$(test_pex_SOURCES) $(test_primitives_SOURCES) \
 	$(test_priority_SOURCES) $(test_privacy_SOURCES) \
-	$(test_read_piece_SOURCES) $(test_remap_files_SOURCES) \
-	$(test_resume_SOURCES) $(test_rss_SOURCES) \
-	$(test_session_SOURCES) $(test_sliding_average_SOURCES) \
-	$(test_socket_io_SOURCES) $(test_ssl_SOURCES) \
-	$(test_storage_SOURCES) $(test_string_SOURCES) \
-	$(test_swarm_SOURCES) $(test_threads_SOURCES) \
-	$(test_time_SOURCES) $(test_torrent_SOURCES) \
-	$(test_torrent_info_SOURCES) $(test_torrent_parse_SOURCES) \
-	$(test_tracker_SOURCES) $(test_trackers_extension_SOURCES) \
-	$(test_transfer_SOURCES) $(test_upnp_SOURCES) \
-	$(test_url_seed_SOURCES) $(test_utf8_SOURCES) \
-	$(test_utp_SOURCES) $(test_web_seed_SOURCES) \
-	$(test_web_seed_ban_SOURCES) $(test_web_seed_chunked_SOURCES) \
-	$(test_web_seed_http_SOURCES) $(test_web_seed_http_pw_SOURCES) \
+	$(test_read_piece_SOURCES) $(test_receive_buffer_SOURCES) \
+	$(test_recheck_SOURCES) $(test_remap_files_SOURCES) \
+	$(test_resume_SOURCES) $(test_session_SOURCES) \
+	$(test_ssl_SOURCES) $(test_stack_allocator_SOURCES) \
+	$(test_stat_cache_SOURCES) $(test_storage_SOURCES) \
+	$(test_time_critical_SOURCES) $(test_torrent_SOURCES) \
+	$(test_tracker_SOURCES) $(test_transfer_SOURCES) \
+	$(test_url_seed_SOURCES) $(test_utp_SOURCES) \
+	$(test_web_seed_SOURCES) $(test_web_seed_ban_SOURCES) \
+	$(test_web_seed_chunked_SOURCES) $(test_web_seed_http_SOURCES) \
+	$(test_web_seed_http_pw_SOURCES) \
 	$(test_web_seed_redirect_SOURCES) \
 	$(test_web_seed_socks4_SOURCES) \
 	$(test_web_seed_socks5_SOURCES) \
 	$(test_web_seed_socks5_no_peers_SOURCES) \
-	$(test_web_seed_socks5_pw_SOURCES) $(test_xml_SOURCES)
+	$(test_web_seed_socks5_pw_SOURCES)
 am__can_run_installinfo = \
   case $$AM_UPDATE_INFO_DIR in \
     n|no|NO) false;; \
@@ -830,9 +728,11 @@ AUTOCONF = @AUTOCONF@
 AUTOHEADER = @AUTOHEADER@
 AUTOMAKE = @AUTOMAKE@
 AWK = @AWK@
+BOOST_CHRONO_LIB = @BOOST_CHRONO_LIB@
 BOOST_CPPFLAGS = @BOOST_CPPFLAGS@
 BOOST_LDFLAGS = @BOOST_LDFLAGS@
 BOOST_PYTHON_LIB = @BOOST_PYTHON_LIB@
+BOOST_RANDOM_LIB = @BOOST_RANDOM_LIB@
 BOOST_SYSTEM_LIB = @BOOST_SYSTEM_LIB@
 CC = @CC@
 CCDEPMODE = @CCDEPMODE@
@@ -857,8 +757,6 @@ ECHO_T = @ECHO_T@
 EGREP = @EGREP@
 EXEEXT = @EXEEXT@
 FGREP = @FGREP@
-GEOIP_CFLAGS = @GEOIP_CFLAGS@
-GEOIP_LIBS = @GEOIP_LIBS@
 GREP = @GREP@
 ICONV_LIBS = @ICONV_LIBS@
 INSTALL = @INSTALL@
@@ -905,6 +803,7 @@ PTHREAD_CFLAGS = @PTHREAD_CFLAGS@
 PTHREAD_LIBS = @PTHREAD_LIBS@
 PYTHON = @PYTHON@
 PYTHON_CPPFLAGS = @PYTHON_CPPFLAGS@
+PYTHON_CXXFLAGS = @PYTHON_CXXFLAGS@
 PYTHON_EXEC_PREFIX = @PYTHON_EXEC_PREFIX@
 PYTHON_EXTRA_LDFLAGS = @PYTHON_EXTRA_LDFLAGS@
 PYTHON_EXTRA_LIBS = @PYTHON_EXTRA_LIBS@
@@ -983,52 +882,34 @@ top_build_prefix = @top_build_prefix@
 top_builddir = @top_builddir@
 top_srcdir = @top_srcdir@
 AUTOMAKE_OPTIONS = subdir-objects
+benchmark_programs = \
+  bdecode_benchmark
+
 test_programs = \
-  test_bitfield              \
+  test_primitives            \
+  test_recheck               \
+  test_stat_cache            \
   test_file                  \
-  test_file_storage          \
   test_privacy               \
   test_priority              \
   test_auto_unchoke          \
-  test_bandwidth_limiter     \
-  test_bdecode_performance   \
-  test_bencoding             \
-  test_buffer                \
   test_checking              \
   test_fast_extension        \
-  test_hasher                \
   test_http_connection       \
-  test_ip_filter             \
-  test_ip_voter              \
-  test_dht                   \
   test_lsd                   \
-  test_metadata_extension    \
   test_pe_crypto             \
-  test_peer_priority         \
   test_pex                   \
-  test_piece_picker          \
-  test_xml                   \
-  test_string                \
-  test_primitives            \
-  test_http_parser           \
-  test_magnet                \
-  test_packet_buffer         \
   test_read_piece            \
+  test_receive_buffer        \
   test_resume                \
-  test_rss                   \
   test_ssl                   \
+  test_stack_allocator       \
   test_storage               \
-  test_swarm                 \
-  test_time                  \
-  test_threads               \
+  test_time_critical         \
   test_torrent               \
-  test_torrent_info          \
-  test_torrent_parse         \
   test_tracker               \
-  test_trackers_extension    \
   test_transfer              \
   test_create_torrent        \
-  test_upnp                  \
   enum_if                    \
   test_utp                   \
   test_session               \
@@ -1044,125 +925,171 @@ test_programs = \
   test_web_seed_socks5_pw    \
   test_url_seed              \
   test_remap_files           \
-  test_gzip                  \
-  test_utf8                  \
-  test_socket_io             \
-  test_sliding_average
+  test_enum_net              \
+  test_file_progress         \
+  test_linked_list           \
+  test_direct_dht            \
+  test_ed25519
 
 @ENABLE_TESTS_TRUE@noinst_LTLIBRARIES = libtest.la
-TESTS = $(check_PROGRAMS)
 EXTRA_DIST = Jamfile \
+  test_torrents/backslash_path.torrent \
   test_torrents/base.torrent \
+  test_torrents/creation_date.torrent \
+  test_torrents/duplicate_files.torrent \
+  test_torrents/duplicate_web_seeds.torrent \
+  test_torrents/empty_httpseed.torrent \
   test_torrents/empty_path.torrent \
-  test_torrents/parent_path.torrent \
+  test_torrents/empty_path_multi.torrent \
   test_torrents/hidden_parent_path.torrent \
+  test_torrents/httpseed.torrent \
+  test_torrents/invalid_file_size.torrent \
+  test_torrents/invalid_info.torrent \
+  test_torrents/invalid_name.torrent \
+  test_torrents/invalid_name2.torrent \
+  test_torrents/invalid_name3.torrent \
+  test_torrents/invalid_path_list.torrent \
+  test_torrents/invalid_piece_len.torrent \
+  test_torrents/invalid_pieces.torrent \
+  test_torrents/invalid_root_hash.torrent \
+  test_torrents/invalid_root_hash2.torrent \
+  test_torrents/invalid_symlink.torrent \
+  test_torrents/long_name.torrent \
+  test_torrents/missing_path_list.torrent \
+  test_torrents/missing_piece_len.torrent \
+  test_torrents/negative_file_size.torrent \
+  test_torrents/negative_piece_len.torrent \
+  test_torrents/negative_size.torrent \
+  test_torrents/no_creation_date.torrent \
+  test_torrents/no_name.torrent \
+  test_torrents/pad_file.torrent \
+  test_torrents/pad_file_no_path.torrent \
+  test_torrents/parent_path.torrent \
+  test_torrents/root_hash.torrent \
+  test_torrents/sample.torrent \
   test_torrents/single_multi_file.torrent \
   test_torrents/slash_path.torrent \
   test_torrents/slash_path2.torrent \
   test_torrents/slash_path3.torrent \
-  test_torrents/backslash_path.torrent \
+  test_torrents/string.torrent \
+  test_torrents/symlink1.torrent \
+  test_torrents/symlink_zero_size.torrent \
+  test_torrents/unaligned_pieces.torrent \
+  test_torrents/unordered.torrent \
   test_torrents/url_list.torrent \
   test_torrents/url_list2.torrent \
   test_torrents/url_list3.torrent \
-  test_torrents/httpseed.torrent \
-  test_torrents/empty_httpseed.torrent \
-  test_torrents/long_name.torrent \
-  test_torrents/whitespace_url.torrent \
-  test_torrents/duplicate_files.torrent \
-  test_torrents/invalid_piece_len.torrent \
-  test_torrents/missing_piece_len.torrent \
-  test_torrents/negative_piece_len.torrent \
-  test_torrents/no_name.torrent \
-  test_torrents/invalid_name.torrent \
-  test_torrents/invalid_name2.torrent \
-  test_torrents/invalid_name3.torrent \
-  test_torrents/invalid_info.torrent \
-  test_torrents/string.torrent \
-  test_torrents/negative_size.torrent \
-  test_torrents/negative_file_size.torrent \
-  test_torrents/pad_file.torrent \
-  test_torrents/invalid_path_list.torrent \
-  test_torrents/missing_path_list.torrent \
-  test_torrents/invalid_pieces.torrent \
-  test_torrents/unaligned_pieces.torrent \
-  test_torrents/creation_date.torrent \
-  test_torrents/no_creation_date.torrent \
-  test_torrents/symlink1.torrent \
   test_torrents/url_seed.torrent \
   test_torrents/url_seed_multi.torrent \
   test_torrents/url_seed_multi_space.torrent \
   test_torrents/url_seed_multi_space_nolist.torrent \
-  test_torrents/invalid_root_hash.torrent \
-  test_torrents/invalid_root_hash2.torrent \
-  test_torrents/root_hash.torrent \
-  test_torrents/invalid_file_size.torrent \
-  test_torrents/empty_path_multi.torrent \
-  test_torrents/duplicate_web_seeds.torrent \
-  eztv.xml \
-  kat.xml \
-  cb.xml \
-  mn.xml \
-  pb.xml \
-  upnp.xml \
+  test_torrents/whitespace_url.torrent \
+  mutable_test_torrents/test1.torrent \
+  mutable_test_torrents/test1_pad_files.torrent \
+  mutable_test_torrents/test1_single.torrent\
+  mutable_test_torrents/test1_single_padded.torrent \
+  mutable_test_torrents/test2.torrent \
+  mutable_test_torrents/test2_pad_files.torrent \
+  mutable_test_torrents/test3.torrent \
+  mutable_test_torrents/test3_pad_files.torrent \
   zeroes.gz \
+  corrupt.gz \
   utf8_test.txt \
-  test_natpmp.cpp
+  web_server.py \
+  socks.py \
+  http.py
 
 noinst_HEADERS = test.hpp setup_transfer.hpp dht_server.hpp \
-	peer_server.hpp udp_tracker.hpp web_seed_suite.hpp
+  peer_server.hpp udp_tracker.hpp web_seed_suite.hpp swarm_suite.hpp \
+  test_utils.hpp settings.hpp make_torrent.hpp bittorrent_peer.hpp \
+  print_alerts.hpp
 
 libtest_la_SOURCES = main.cpp \
+  test.cpp \
   setup_transfer.cpp \
   dht_server.cpp \
   udp_tracker.cpp \
   peer_server.cpp \
-  web_seed_suite.cpp
+  bittorrent_peer.cpp \
+  make_torrent.cpp \
+  web_seed_suite.cpp \
+  swarm_suite.cpp \
+  test_utils.cpp \
+  settings.cpp \
+  print_alerts.cpp
 
-test_bitfield_SOURCES = test_bitfield.cpp
+test_primitives_SOURCES = \
+  test_primitives.cpp \
+  test_packet_buffer.cpp \
+  test_timestamp_history.cpp \
+  test_sha1_hash.cpp \
+  test_bloom_filter.cpp \
+  test_identify_client.cpp \
+  test_merkle.cpp \
+  test_alert_manager.cpp \
+  test_resolve_links.cpp \
+  test_crc32.cpp \
+  test_heterogeneous_queue.cpp \
+  test_ip_voter.cpp \
+  test_sliding_average.cpp \
+  test_socket_io.cpp \
+  test_random.cpp \
+  test_utf8.cpp \
+  test_gzip.cpp \
+  test_bitfield.cpp \
+  test_part_file.cpp \
+  test_peer_list.cpp \
+  test_torrent_info.cpp \
+  test_time.cpp \
+  test_file_storage.cpp \
+  test_peer_priority.cpp \
+  test_threads.cpp \
+  test_tailqueue.cpp \
+  test_bandwidth_limiter.cpp \
+  test_buffer.cpp \
+  test_piece_picker.cpp \
+  test_bencoding.cpp \
+  test_bdecode.cpp \
+  test_http_parser.cpp \
+  test_string.cpp \
+  test_magnet.cpp \
+  test_xml.cpp \
+  test_ip_filter.cpp \
+  test_hasher.cpp \
+  test_dht_storage.cpp \
+  test_dht.cpp \
+  test_block_cache.cpp \
+  test_peer_classes.cpp \
+  test_settings_pack.cpp \
+  test_fence.cpp \
+  test_dos_blocker.cpp \
+  test_upnp.cpp
+
+bdecode_benchmark_SOURCES = bdecode_benchmark.cpp
+test_recheck_SOURCES = test_recheck.cpp
+test_stat_cache_SOURCES = test_stat_cache.cpp
 test_file_SOURCES = test_file.cpp
-test_file_storage_SOURCES = test_file_storage.cpp
 test_privacy_SOURCES = test_privacy.cpp
 test_priority_SOURCES = test_priority.cpp
 test_auto_unchoke_SOURCES = test_auto_unchoke.cpp
-test_bandwidth_limiter_SOURCES = test_bandwidth_limiter.cpp
-test_bdecode_performance_SOURCES = test_bdecode_performance.cpp
-test_dht_SOURCES = test_dht.cpp
-test_bencoding_SOURCES = test_bencoding.cpp
-test_buffer_SOURCES = test_buffer.cpp
 test_checking_SOURCES = test_checking.cpp
+test_enum_net_SOURCES = test_enum_net.cpp
 test_fast_extension_SOURCES = test_fast_extension.cpp
-test_hasher_SOURCES = test_hasher.cpp
 test_http_connection_SOURCES = test_http_connection.cpp
-test_ip_filter_SOURCES = test_ip_filter.cpp
-test_ip_voter_SOURCES = test_ip_voter.cpp
 test_lsd_SOURCES = test_lsd.cpp
-test_metadata_extension_SOURCES = test_metadata_extension.cpp
-test_peer_priority_SOURCES = test_peer_priority.cpp
 test_pe_crypto_SOURCES = test_pe_crypto.cpp
 test_pex_SOURCES = test_pex.cpp
-test_piece_picker_SOURCES = test_piece_picker.cpp
-test_xml_SOURCES = test_xml.cpp
-test_string_SOURCES = test_string.cpp
-test_primitives_SOURCES = test_primitives.cpp
-test_http_parser_SOURCES = test_http_parser.cpp
-test_magnet_SOURCES = test_magnet.cpp
-test_packet_buffer_SOURCES = test_packet_buffer.cpp
 test_read_piece_SOURCES = test_read_piece.cpp
+test_receive_buffer_SOURCES = test_receive_buffer.cpp
 test_storage_SOURCES = test_storage.cpp
-test_swarm_SOURCES = test_swarm.cpp
+test_time_critical_SOURCES = test_time_critical.cpp
 test_resume_SOURCES = test_resume.cpp
-test_rss_SOURCES = test_rss.cpp
+test_stack_allocator_SOURCES = test_stack_allocator.cpp
 test_ssl_SOURCES = test_ssl.cpp
-test_time_SOURCES = test_time.cpp
-test_threads_SOURCES = test_threads.cpp
 test_torrent_SOURCES = test_torrent.cpp
-test_torrent_info_SOURCES = test_torrent_info.cpp
-test_torrent_parse_SOURCES = test_torrent_parse.cpp
 test_tracker_SOURCES = test_tracker.cpp
-test_trackers_extension_SOURCES = test_trackers_extension.cpp
 test_transfer_SOURCES = test_transfer.cpp
 test_create_torrent_SOURCES = test_create_torrent.cpp
-test_upnp_SOURCES = test_upnp.cpp
 enum_if_SOURCES = enum_if.cpp
 test_utp_SOURCES = test_utp.cpp
 test_session_SOURCES = test_session.cpp
@@ -1178,15 +1105,17 @@ test_web_seed_socks5_no_peers_SOURCES = test_web_seed_socks5_no_peers.cpp
 test_web_seed_socks5_pw_SOURCES = test_web_seed_socks5_pw.cpp
 test_url_seed_SOURCES = test_url_seed.cpp
 test_remap_files_SOURCES = test_remap_files.cpp
-test_gzip_SOURCES = test_gzip.cpp
-test_utf8_SOURCES = test_utf8.cpp
-test_socket_io_SOURCES = test_socket_io.cpp
-test_sliding_average_SOURCES = test_sliding_average.cpp
+test_file_progress_SOURCES = test_file_progress.cpp
+test_linked_list_SOURCES = test_linked_list.cpp
+test_direct_dht_SOURCES = test_direct_dht.cpp
+test_ed25519_SOURCES = test_ed25519.cpp
 LDADD = libtest.la $(top_builddir)/src/libtorrent-rasterbar.la
 
 #AM_CXXFLAGS=-ftemplate-depth-50 -I$(top_srcdir)/include -I$(top_srcdir)/include/libtorrent @DEBUGFLAGS@ @PTHREAD_CFLAGS@
-AM_CPPFLAGS = -ftemplate-depth-50 -I$(top_srcdir)/include @DEBUGFLAGS@
-AM_LDFLAGS = @BOOST_SYSTEM_LIB@ @PTHREAD_LIBS@ @OPENSSL_LDFLAGS@ @OPENSSL_LIBS@
+AM_CPPFLAGS = -ftemplate-depth-50 -I$(top_srcdir)/include @DEBUGFLAGS@ @OPENSSL_INCLUDES@
+AM_LDFLAGS = @BOOST_SYSTEM_LIB@ @PTHREAD_LIBS@ @OPENSSL_LDFLAGS@ @OPENSSL_LIBS@ \
+	@BOOST_CHRONO_LIB@
+
 all: all-am
 
 .SUFFIXES:
@@ -1244,6 +1173,10 @@ clean-checkPROGRAMS:
 	echo " rm -f" $$list; \
 	rm -f $$list
 
+bdecode_benchmark$(EXEEXT): $(bdecode_benchmark_OBJECTS) $(bdecode_benchmark_DEPENDENCIES) $(EXTRA_bdecode_benchmark_DEPENDENCIES) 
+	@rm -f bdecode_benchmark$(EXEEXT)
+	$(AM_V_CXXLD)$(CXXLINK) $(bdecode_benchmark_OBJECTS) $(bdecode_benchmark_LDADD) $(LIBS)
+
 enum_if$(EXEEXT): $(enum_if_OBJECTS) $(enum_if_DEPENDENCIES) $(EXTRA_enum_if_DEPENDENCIES) 
 	@rm -f enum_if$(EXEEXT)
 	$(AM_V_CXXLD)$(CXXLINK) $(enum_if_OBJECTS) $(enum_if_LDADD) $(LIBS)
@@ -1251,26 +1184,6 @@ enum_if$(EXEEXT): $(enum_if_OBJECTS) $(enum_if_DEPENDENCIES) $(EXTRA_enum_if_DEP
 test_auto_unchoke$(EXEEXT): $(test_auto_unchoke_OBJECTS) $(test_auto_unchoke_DEPENDENCIES) $(EXTRA_test_auto_unchoke_DEPENDENCIES) 
 	@rm -f test_auto_unchoke$(EXEEXT)
 	$(AM_V_CXXLD)$(CXXLINK) $(test_auto_unchoke_OBJECTS) $(test_auto_unchoke_LDADD) $(LIBS)
-
-test_bandwidth_limiter$(EXEEXT): $(test_bandwidth_limiter_OBJECTS) $(test_bandwidth_limiter_DEPENDENCIES) $(EXTRA_test_bandwidth_limiter_DEPENDENCIES) 
-	@rm -f test_bandwidth_limiter$(EXEEXT)
-	$(AM_V_CXXLD)$(CXXLINK) $(test_bandwidth_limiter_OBJECTS) $(test_bandwidth_limiter_LDADD) $(LIBS)
-
-test_bdecode_performance$(EXEEXT): $(test_bdecode_performance_OBJECTS) $(test_bdecode_performance_DEPENDENCIES) $(EXTRA_test_bdecode_performance_DEPENDENCIES) 
-	@rm -f test_bdecode_performance$(EXEEXT)
-	$(AM_V_CXXLD)$(CXXLINK) $(test_bdecode_performance_OBJECTS) $(test_bdecode_performance_LDADD) $(LIBS)
-
-test_bencoding$(EXEEXT): $(test_bencoding_OBJECTS) $(test_bencoding_DEPENDENCIES) $(EXTRA_test_bencoding_DEPENDENCIES) 
-	@rm -f test_bencoding$(EXEEXT)
-	$(AM_V_CXXLD)$(CXXLINK) $(test_bencoding_OBJECTS) $(test_bencoding_LDADD) $(LIBS)
-
-test_bitfield$(EXEEXT): $(test_bitfield_OBJECTS) $(test_bitfield_DEPENDENCIES) $(EXTRA_test_bitfield_DEPENDENCIES) 
-	@rm -f test_bitfield$(EXEEXT)
-	$(AM_V_CXXLD)$(CXXLINK) $(test_bitfield_OBJECTS) $(test_bitfield_LDADD) $(LIBS)
-
-test_buffer$(EXEEXT): $(test_buffer_OBJECTS) $(test_buffer_DEPENDENCIES) $(EXTRA_test_buffer_DEPENDENCIES) 
-	@rm -f test_buffer$(EXEEXT)
-	$(AM_V_CXXLD)$(CXXLINK) $(test_buffer_OBJECTS) $(test_buffer_LDADD) $(LIBS)
 
 test_checking$(EXEEXT): $(test_checking_OBJECTS) $(test_checking_DEPENDENCIES) $(EXTRA_test_checking_DEPENDENCIES) 
 	@rm -f test_checking$(EXEEXT)
@@ -1280,9 +1193,17 @@ test_create_torrent$(EXEEXT): $(test_create_torrent_OBJECTS) $(test_create_torre
 	@rm -f test_create_torrent$(EXEEXT)
 	$(AM_V_CXXLD)$(CXXLINK) $(test_create_torrent_OBJECTS) $(test_create_torrent_LDADD) $(LIBS)
 
-test_dht$(EXEEXT): $(test_dht_OBJECTS) $(test_dht_DEPENDENCIES) $(EXTRA_test_dht_DEPENDENCIES) 
-	@rm -f test_dht$(EXEEXT)
-	$(AM_V_CXXLD)$(CXXLINK) $(test_dht_OBJECTS) $(test_dht_LDADD) $(LIBS)
+test_direct_dht$(EXEEXT): $(test_direct_dht_OBJECTS) $(test_direct_dht_DEPENDENCIES) $(EXTRA_test_direct_dht_DEPENDENCIES) 
+	@rm -f test_direct_dht$(EXEEXT)
+	$(AM_V_CXXLD)$(CXXLINK) $(test_direct_dht_OBJECTS) $(test_direct_dht_LDADD) $(LIBS)
+
+test_ed25519$(EXEEXT): $(test_ed25519_OBJECTS) $(test_ed25519_DEPENDENCIES) $(EXTRA_test_ed25519_DEPENDENCIES) 
+	@rm -f test_ed25519$(EXEEXT)
+	$(AM_V_CXXLD)$(CXXLINK) $(test_ed25519_OBJECTS) $(test_ed25519_LDADD) $(LIBS)
+
+test_enum_net$(EXEEXT): $(test_enum_net_OBJECTS) $(test_enum_net_DEPENDENCIES) $(EXTRA_test_enum_net_DEPENDENCIES) 
+	@rm -f test_enum_net$(EXEEXT)
+	$(AM_V_CXXLD)$(CXXLINK) $(test_enum_net_OBJECTS) $(test_enum_net_LDADD) $(LIBS)
 
 test_fast_extension$(EXEEXT): $(test_fast_extension_OBJECTS) $(test_fast_extension_DEPENDENCIES) $(EXTRA_test_fast_extension_DEPENDENCIES) 
 	@rm -f test_fast_extension$(EXEEXT)
@@ -1292,65 +1213,29 @@ test_file$(EXEEXT): $(test_file_OBJECTS) $(test_file_DEPENDENCIES) $(EXTRA_test_
 	@rm -f test_file$(EXEEXT)
 	$(AM_V_CXXLD)$(CXXLINK) $(test_file_OBJECTS) $(test_file_LDADD) $(LIBS)
 
-test_file_storage$(EXEEXT): $(test_file_storage_OBJECTS) $(test_file_storage_DEPENDENCIES) $(EXTRA_test_file_storage_DEPENDENCIES) 
-	@rm -f test_file_storage$(EXEEXT)
-	$(AM_V_CXXLD)$(CXXLINK) $(test_file_storage_OBJECTS) $(test_file_storage_LDADD) $(LIBS)
-
-test_gzip$(EXEEXT): $(test_gzip_OBJECTS) $(test_gzip_DEPENDENCIES) $(EXTRA_test_gzip_DEPENDENCIES) 
-	@rm -f test_gzip$(EXEEXT)
-	$(AM_V_CXXLD)$(CXXLINK) $(test_gzip_OBJECTS) $(test_gzip_LDADD) $(LIBS)
-
-test_hasher$(EXEEXT): $(test_hasher_OBJECTS) $(test_hasher_DEPENDENCIES) $(EXTRA_test_hasher_DEPENDENCIES) 
-	@rm -f test_hasher$(EXEEXT)
-	$(AM_V_CXXLD)$(CXXLINK) $(test_hasher_OBJECTS) $(test_hasher_LDADD) $(LIBS)
+test_file_progress$(EXEEXT): $(test_file_progress_OBJECTS) $(test_file_progress_DEPENDENCIES) $(EXTRA_test_file_progress_DEPENDENCIES) 
+	@rm -f test_file_progress$(EXEEXT)
+	$(AM_V_CXXLD)$(CXXLINK) $(test_file_progress_OBJECTS) $(test_file_progress_LDADD) $(LIBS)
 
 test_http_connection$(EXEEXT): $(test_http_connection_OBJECTS) $(test_http_connection_DEPENDENCIES) $(EXTRA_test_http_connection_DEPENDENCIES) 
 	@rm -f test_http_connection$(EXEEXT)
 	$(AM_V_CXXLD)$(CXXLINK) $(test_http_connection_OBJECTS) $(test_http_connection_LDADD) $(LIBS)
 
-test_http_parser$(EXEEXT): $(test_http_parser_OBJECTS) $(test_http_parser_DEPENDENCIES) $(EXTRA_test_http_parser_DEPENDENCIES) 
-	@rm -f test_http_parser$(EXEEXT)
-	$(AM_V_CXXLD)$(CXXLINK) $(test_http_parser_OBJECTS) $(test_http_parser_LDADD) $(LIBS)
-
-test_ip_filter$(EXEEXT): $(test_ip_filter_OBJECTS) $(test_ip_filter_DEPENDENCIES) $(EXTRA_test_ip_filter_DEPENDENCIES) 
-	@rm -f test_ip_filter$(EXEEXT)
-	$(AM_V_CXXLD)$(CXXLINK) $(test_ip_filter_OBJECTS) $(test_ip_filter_LDADD) $(LIBS)
-
-test_ip_voter$(EXEEXT): $(test_ip_voter_OBJECTS) $(test_ip_voter_DEPENDENCIES) $(EXTRA_test_ip_voter_DEPENDENCIES) 
-	@rm -f test_ip_voter$(EXEEXT)
-	$(AM_V_CXXLD)$(CXXLINK) $(test_ip_voter_OBJECTS) $(test_ip_voter_LDADD) $(LIBS)
+test_linked_list$(EXEEXT): $(test_linked_list_OBJECTS) $(test_linked_list_DEPENDENCIES) $(EXTRA_test_linked_list_DEPENDENCIES) 
+	@rm -f test_linked_list$(EXEEXT)
+	$(AM_V_CXXLD)$(CXXLINK) $(test_linked_list_OBJECTS) $(test_linked_list_LDADD) $(LIBS)
 
 test_lsd$(EXEEXT): $(test_lsd_OBJECTS) $(test_lsd_DEPENDENCIES) $(EXTRA_test_lsd_DEPENDENCIES) 
 	@rm -f test_lsd$(EXEEXT)
 	$(AM_V_CXXLD)$(CXXLINK) $(test_lsd_OBJECTS) $(test_lsd_LDADD) $(LIBS)
 
-test_magnet$(EXEEXT): $(test_magnet_OBJECTS) $(test_magnet_DEPENDENCIES) $(EXTRA_test_magnet_DEPENDENCIES) 
-	@rm -f test_magnet$(EXEEXT)
-	$(AM_V_CXXLD)$(CXXLINK) $(test_magnet_OBJECTS) $(test_magnet_LDADD) $(LIBS)
-
-test_metadata_extension$(EXEEXT): $(test_metadata_extension_OBJECTS) $(test_metadata_extension_DEPENDENCIES) $(EXTRA_test_metadata_extension_DEPENDENCIES) 
-	@rm -f test_metadata_extension$(EXEEXT)
-	$(AM_V_CXXLD)$(CXXLINK) $(test_metadata_extension_OBJECTS) $(test_metadata_extension_LDADD) $(LIBS)
-
-test_packet_buffer$(EXEEXT): $(test_packet_buffer_OBJECTS) $(test_packet_buffer_DEPENDENCIES) $(EXTRA_test_packet_buffer_DEPENDENCIES) 
-	@rm -f test_packet_buffer$(EXEEXT)
-	$(AM_V_CXXLD)$(CXXLINK) $(test_packet_buffer_OBJECTS) $(test_packet_buffer_LDADD) $(LIBS)
-
 test_pe_crypto$(EXEEXT): $(test_pe_crypto_OBJECTS) $(test_pe_crypto_DEPENDENCIES) $(EXTRA_test_pe_crypto_DEPENDENCIES) 
 	@rm -f test_pe_crypto$(EXEEXT)
 	$(AM_V_CXXLD)$(CXXLINK) $(test_pe_crypto_OBJECTS) $(test_pe_crypto_LDADD) $(LIBS)
 
-test_peer_priority$(EXEEXT): $(test_peer_priority_OBJECTS) $(test_peer_priority_DEPENDENCIES) $(EXTRA_test_peer_priority_DEPENDENCIES) 
-	@rm -f test_peer_priority$(EXEEXT)
-	$(AM_V_CXXLD)$(CXXLINK) $(test_peer_priority_OBJECTS) $(test_peer_priority_LDADD) $(LIBS)
-
 test_pex$(EXEEXT): $(test_pex_OBJECTS) $(test_pex_DEPENDENCIES) $(EXTRA_test_pex_DEPENDENCIES) 
 	@rm -f test_pex$(EXEEXT)
 	$(AM_V_CXXLD)$(CXXLINK) $(test_pex_OBJECTS) $(test_pex_LDADD) $(LIBS)
-
-test_piece_picker$(EXEEXT): $(test_piece_picker_OBJECTS) $(test_piece_picker_DEPENDENCIES) $(EXTRA_test_piece_picker_DEPENDENCIES) 
-	@rm -f test_piece_picker$(EXEEXT)
-	$(AM_V_CXXLD)$(CXXLINK) $(test_piece_picker_OBJECTS) $(test_piece_picker_LDADD) $(LIBS)
 
 test_primitives$(EXEEXT): $(test_primitives_OBJECTS) $(test_primitives_DEPENDENCIES) $(EXTRA_test_primitives_DEPENDENCIES) 
 	@rm -f test_primitives$(EXEEXT)
@@ -1368,6 +1253,14 @@ test_read_piece$(EXEEXT): $(test_read_piece_OBJECTS) $(test_read_piece_DEPENDENC
 	@rm -f test_read_piece$(EXEEXT)
 	$(AM_V_CXXLD)$(CXXLINK) $(test_read_piece_OBJECTS) $(test_read_piece_LDADD) $(LIBS)
 
+test_receive_buffer$(EXEEXT): $(test_receive_buffer_OBJECTS) $(test_receive_buffer_DEPENDENCIES) $(EXTRA_test_receive_buffer_DEPENDENCIES) 
+	@rm -f test_receive_buffer$(EXEEXT)
+	$(AM_V_CXXLD)$(CXXLINK) $(test_receive_buffer_OBJECTS) $(test_receive_buffer_LDADD) $(LIBS)
+
+test_recheck$(EXEEXT): $(test_recheck_OBJECTS) $(test_recheck_DEPENDENCIES) $(EXTRA_test_recheck_DEPENDENCIES) 
+	@rm -f test_recheck$(EXEEXT)
+	$(AM_V_CXXLD)$(CXXLINK) $(test_recheck_OBJECTS) $(test_recheck_LDADD) $(LIBS)
+
 test_remap_files$(EXEEXT): $(test_remap_files_OBJECTS) $(test_remap_files_DEPENDENCIES) $(EXTRA_test_remap_files_DEPENDENCIES) 
 	@rm -f test_remap_files$(EXEEXT)
 	$(AM_V_CXXLD)$(CXXLINK) $(test_remap_files_OBJECTS) $(test_remap_files_LDADD) $(LIBS)
@@ -1376,81 +1269,45 @@ test_resume$(EXEEXT): $(test_resume_OBJECTS) $(test_resume_DEPENDENCIES) $(EXTRA
 	@rm -f test_resume$(EXEEXT)
 	$(AM_V_CXXLD)$(CXXLINK) $(test_resume_OBJECTS) $(test_resume_LDADD) $(LIBS)
 
-test_rss$(EXEEXT): $(test_rss_OBJECTS) $(test_rss_DEPENDENCIES) $(EXTRA_test_rss_DEPENDENCIES) 
-	@rm -f test_rss$(EXEEXT)
-	$(AM_V_CXXLD)$(CXXLINK) $(test_rss_OBJECTS) $(test_rss_LDADD) $(LIBS)
-
 test_session$(EXEEXT): $(test_session_OBJECTS) $(test_session_DEPENDENCIES) $(EXTRA_test_session_DEPENDENCIES) 
 	@rm -f test_session$(EXEEXT)
 	$(AM_V_CXXLD)$(CXXLINK) $(test_session_OBJECTS) $(test_session_LDADD) $(LIBS)
-
-test_sliding_average$(EXEEXT): $(test_sliding_average_OBJECTS) $(test_sliding_average_DEPENDENCIES) $(EXTRA_test_sliding_average_DEPENDENCIES) 
-	@rm -f test_sliding_average$(EXEEXT)
-	$(AM_V_CXXLD)$(CXXLINK) $(test_sliding_average_OBJECTS) $(test_sliding_average_LDADD) $(LIBS)
-
-test_socket_io$(EXEEXT): $(test_socket_io_OBJECTS) $(test_socket_io_DEPENDENCIES) $(EXTRA_test_socket_io_DEPENDENCIES) 
-	@rm -f test_socket_io$(EXEEXT)
-	$(AM_V_CXXLD)$(CXXLINK) $(test_socket_io_OBJECTS) $(test_socket_io_LDADD) $(LIBS)
 
 test_ssl$(EXEEXT): $(test_ssl_OBJECTS) $(test_ssl_DEPENDENCIES) $(EXTRA_test_ssl_DEPENDENCIES) 
 	@rm -f test_ssl$(EXEEXT)
 	$(AM_V_CXXLD)$(CXXLINK) $(test_ssl_OBJECTS) $(test_ssl_LDADD) $(LIBS)
 
+test_stack_allocator$(EXEEXT): $(test_stack_allocator_OBJECTS) $(test_stack_allocator_DEPENDENCIES) $(EXTRA_test_stack_allocator_DEPENDENCIES) 
+	@rm -f test_stack_allocator$(EXEEXT)
+	$(AM_V_CXXLD)$(CXXLINK) $(test_stack_allocator_OBJECTS) $(test_stack_allocator_LDADD) $(LIBS)
+
+test_stat_cache$(EXEEXT): $(test_stat_cache_OBJECTS) $(test_stat_cache_DEPENDENCIES) $(EXTRA_test_stat_cache_DEPENDENCIES) 
+	@rm -f test_stat_cache$(EXEEXT)
+	$(AM_V_CXXLD)$(CXXLINK) $(test_stat_cache_OBJECTS) $(test_stat_cache_LDADD) $(LIBS)
+
 test_storage$(EXEEXT): $(test_storage_OBJECTS) $(test_storage_DEPENDENCIES) $(EXTRA_test_storage_DEPENDENCIES) 
 	@rm -f test_storage$(EXEEXT)
 	$(AM_V_CXXLD)$(CXXLINK) $(test_storage_OBJECTS) $(test_storage_LDADD) $(LIBS)
 
-test_string$(EXEEXT): $(test_string_OBJECTS) $(test_string_DEPENDENCIES) $(EXTRA_test_string_DEPENDENCIES) 
-	@rm -f test_string$(EXEEXT)
-	$(AM_V_CXXLD)$(CXXLINK) $(test_string_OBJECTS) $(test_string_LDADD) $(LIBS)
-
-test_swarm$(EXEEXT): $(test_swarm_OBJECTS) $(test_swarm_DEPENDENCIES) $(EXTRA_test_swarm_DEPENDENCIES) 
-	@rm -f test_swarm$(EXEEXT)
-	$(AM_V_CXXLD)$(CXXLINK) $(test_swarm_OBJECTS) $(test_swarm_LDADD) $(LIBS)
-
-test_threads$(EXEEXT): $(test_threads_OBJECTS) $(test_threads_DEPENDENCIES) $(EXTRA_test_threads_DEPENDENCIES) 
-	@rm -f test_threads$(EXEEXT)
-	$(AM_V_CXXLD)$(CXXLINK) $(test_threads_OBJECTS) $(test_threads_LDADD) $(LIBS)
-
-test_time$(EXEEXT): $(test_time_OBJECTS) $(test_time_DEPENDENCIES) $(EXTRA_test_time_DEPENDENCIES) 
-	@rm -f test_time$(EXEEXT)
-	$(AM_V_CXXLD)$(CXXLINK) $(test_time_OBJECTS) $(test_time_LDADD) $(LIBS)
+test_time_critical$(EXEEXT): $(test_time_critical_OBJECTS) $(test_time_critical_DEPENDENCIES) $(EXTRA_test_time_critical_DEPENDENCIES) 
+	@rm -f test_time_critical$(EXEEXT)
+	$(AM_V_CXXLD)$(CXXLINK) $(test_time_critical_OBJECTS) $(test_time_critical_LDADD) $(LIBS)
 
 test_torrent$(EXEEXT): $(test_torrent_OBJECTS) $(test_torrent_DEPENDENCIES) $(EXTRA_test_torrent_DEPENDENCIES) 
 	@rm -f test_torrent$(EXEEXT)
 	$(AM_V_CXXLD)$(CXXLINK) $(test_torrent_OBJECTS) $(test_torrent_LDADD) $(LIBS)
 
-test_torrent_info$(EXEEXT): $(test_torrent_info_OBJECTS) $(test_torrent_info_DEPENDENCIES) $(EXTRA_test_torrent_info_DEPENDENCIES) 
-	@rm -f test_torrent_info$(EXEEXT)
-	$(AM_V_CXXLD)$(CXXLINK) $(test_torrent_info_OBJECTS) $(test_torrent_info_LDADD) $(LIBS)
-
-test_torrent_parse$(EXEEXT): $(test_torrent_parse_OBJECTS) $(test_torrent_parse_DEPENDENCIES) $(EXTRA_test_torrent_parse_DEPENDENCIES) 
-	@rm -f test_torrent_parse$(EXEEXT)
-	$(AM_V_CXXLD)$(CXXLINK) $(test_torrent_parse_OBJECTS) $(test_torrent_parse_LDADD) $(LIBS)
-
 test_tracker$(EXEEXT): $(test_tracker_OBJECTS) $(test_tracker_DEPENDENCIES) $(EXTRA_test_tracker_DEPENDENCIES) 
 	@rm -f test_tracker$(EXEEXT)
 	$(AM_V_CXXLD)$(CXXLINK) $(test_tracker_OBJECTS) $(test_tracker_LDADD) $(LIBS)
-
-test_trackers_extension$(EXEEXT): $(test_trackers_extension_OBJECTS) $(test_trackers_extension_DEPENDENCIES) $(EXTRA_test_trackers_extension_DEPENDENCIES) 
-	@rm -f test_trackers_extension$(EXEEXT)
-	$(AM_V_CXXLD)$(CXXLINK) $(test_trackers_extension_OBJECTS) $(test_trackers_extension_LDADD) $(LIBS)
 
 test_transfer$(EXEEXT): $(test_transfer_OBJECTS) $(test_transfer_DEPENDENCIES) $(EXTRA_test_transfer_DEPENDENCIES) 
 	@rm -f test_transfer$(EXEEXT)
 	$(AM_V_CXXLD)$(CXXLINK) $(test_transfer_OBJECTS) $(test_transfer_LDADD) $(LIBS)
 
-test_upnp$(EXEEXT): $(test_upnp_OBJECTS) $(test_upnp_DEPENDENCIES) $(EXTRA_test_upnp_DEPENDENCIES) 
-	@rm -f test_upnp$(EXEEXT)
-	$(AM_V_CXXLD)$(CXXLINK) $(test_upnp_OBJECTS) $(test_upnp_LDADD) $(LIBS)
-
 test_url_seed$(EXEEXT): $(test_url_seed_OBJECTS) $(test_url_seed_DEPENDENCIES) $(EXTRA_test_url_seed_DEPENDENCIES) 
 	@rm -f test_url_seed$(EXEEXT)
 	$(AM_V_CXXLD)$(CXXLINK) $(test_url_seed_OBJECTS) $(test_url_seed_LDADD) $(LIBS)
-
-test_utf8$(EXEEXT): $(test_utf8_OBJECTS) $(test_utf8_DEPENDENCIES) $(EXTRA_test_utf8_DEPENDENCIES) 
-	@rm -f test_utf8$(EXEEXT)
-	$(AM_V_CXXLD)$(CXXLINK) $(test_utf8_OBJECTS) $(test_utf8_LDADD) $(LIBS)
 
 test_utp$(EXEEXT): $(test_utp_OBJECTS) $(test_utp_DEPENDENCIES) $(EXTRA_test_utp_DEPENDENCIES) 
 	@rm -f test_utp$(EXEEXT)
@@ -1496,72 +1353,100 @@ test_web_seed_socks5_pw$(EXEEXT): $(test_web_seed_socks5_pw_OBJECTS) $(test_web_
 	@rm -f test_web_seed_socks5_pw$(EXEEXT)
 	$(AM_V_CXXLD)$(CXXLINK) $(test_web_seed_socks5_pw_OBJECTS) $(test_web_seed_socks5_pw_LDADD) $(LIBS)
 
-test_xml$(EXEEXT): $(test_xml_OBJECTS) $(test_xml_DEPENDENCIES) $(EXTRA_test_xml_DEPENDENCIES) 
-	@rm -f test_xml$(EXEEXT)
-	$(AM_V_CXXLD)$(CXXLINK) $(test_xml_OBJECTS) $(test_xml_LDADD) $(LIBS)
-
 mostlyclean-compile:
 	-rm -f *.$(OBJEXT)
 
 distclean-compile:
 	-rm -f *.tab.c
 
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/bdecode_benchmark.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/bittorrent_peer.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/dht_server.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/enum_if.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/main.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/make_torrent.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/peer_server.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/print_alerts.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/settings.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/setup_transfer.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/swarm_suite.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/test.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/test_alert_manager.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/test_auto_unchoke.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/test_bandwidth_limiter.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/test_bdecode_performance.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/test_bdecode.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/test_bencoding.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/test_bitfield.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/test_block_cache.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/test_bloom_filter.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/test_buffer.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/test_checking.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/test_crc32.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/test_create_torrent.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/test_dht.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/test_dht_storage.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/test_direct_dht.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/test_dos_blocker.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/test_ed25519.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/test_enum_net.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/test_fast_extension.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/test_fence.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/test_file.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/test_file_progress.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/test_file_storage.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/test_gzip.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/test_hasher.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/test_heterogeneous_queue.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/test_http_connection.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/test_http_parser.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/test_identify_client.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/test_ip_filter.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/test_ip_voter.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/test_linked_list.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/test_lsd.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/test_magnet.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/test_metadata_extension.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/test_merkle.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/test_packet_buffer.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/test_part_file.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/test_pe_crypto.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/test_peer_classes.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/test_peer_list.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/test_peer_priority.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/test_pex.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/test_piece_picker.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/test_primitives.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/test_priority.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/test_privacy.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/test_random.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/test_read_piece.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/test_receive_buffer.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/test_recheck.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/test_remap_files.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/test_resolve_links.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/test_resume.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/test_rss.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/test_session.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/test_settings_pack.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/test_sha1_hash.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/test_sliding_average.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/test_socket_io.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/test_ssl.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/test_stack_allocator.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/test_stat_cache.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/test_storage.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/test_string.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/test_swarm.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/test_tailqueue.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/test_threads.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/test_time.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/test_time_critical.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/test_timestamp_history.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/test_torrent.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/test_torrent_info.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/test_torrent_parse.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/test_tracker.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/test_trackers_extension.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/test_transfer.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/test_upnp.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/test_url_seed.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/test_utf8.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/test_utils.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/test_utp.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/test_web_seed.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/test_web_seed_ban.Po@am__quote@
@@ -1800,9 +1685,23 @@ recheck: all $(check_PROGRAMS)
 	        am__force_recheck=am--force-recheck \
 	        TEST_LOGS="$$log_list"; \
 	exit $$?
-test_bitfield.log: test_bitfield$(EXEEXT)
-	@p='test_bitfield$(EXEEXT)'; \
-	b='test_bitfield'; \
+test_primitives.log: test_primitives$(EXEEXT)
+	@p='test_primitives$(EXEEXT)'; \
+	b='test_primitives'; \
+	$(am__check_pre) $(LOG_DRIVER) --test-name "$$f" \
+	--log-file $$b.log --trs-file $$b.trs \
+	$(am__common_driver_flags) $(AM_LOG_DRIVER_FLAGS) $(LOG_DRIVER_FLAGS) -- $(LOG_COMPILE) \
+	"$$tst" $(AM_TESTS_FD_REDIRECT)
+test_recheck.log: test_recheck$(EXEEXT)
+	@p='test_recheck$(EXEEXT)'; \
+	b='test_recheck'; \
+	$(am__check_pre) $(LOG_DRIVER) --test-name "$$f" \
+	--log-file $$b.log --trs-file $$b.trs \
+	$(am__common_driver_flags) $(AM_LOG_DRIVER_FLAGS) $(LOG_DRIVER_FLAGS) -- $(LOG_COMPILE) \
+	"$$tst" $(AM_TESTS_FD_REDIRECT)
+test_stat_cache.log: test_stat_cache$(EXEEXT)
+	@p='test_stat_cache$(EXEEXT)'; \
+	b='test_stat_cache'; \
 	$(am__check_pre) $(LOG_DRIVER) --test-name "$$f" \
 	--log-file $$b.log --trs-file $$b.trs \
 	$(am__common_driver_flags) $(AM_LOG_DRIVER_FLAGS) $(LOG_DRIVER_FLAGS) -- $(LOG_COMPILE) \
@@ -1810,13 +1709,6 @@ test_bitfield.log: test_bitfield$(EXEEXT)
 test_file.log: test_file$(EXEEXT)
 	@p='test_file$(EXEEXT)'; \
 	b='test_file'; \
-	$(am__check_pre) $(LOG_DRIVER) --test-name "$$f" \
-	--log-file $$b.log --trs-file $$b.trs \
-	$(am__common_driver_flags) $(AM_LOG_DRIVER_FLAGS) $(LOG_DRIVER_FLAGS) -- $(LOG_COMPILE) \
-	"$$tst" $(AM_TESTS_FD_REDIRECT)
-test_file_storage.log: test_file_storage$(EXEEXT)
-	@p='test_file_storage$(EXEEXT)'; \
-	b='test_file_storage'; \
 	$(am__check_pre) $(LOG_DRIVER) --test-name "$$f" \
 	--log-file $$b.log --trs-file $$b.trs \
 	$(am__common_driver_flags) $(AM_LOG_DRIVER_FLAGS) $(LOG_DRIVER_FLAGS) -- $(LOG_COMPILE) \
@@ -1842,34 +1734,6 @@ test_auto_unchoke.log: test_auto_unchoke$(EXEEXT)
 	--log-file $$b.log --trs-file $$b.trs \
 	$(am__common_driver_flags) $(AM_LOG_DRIVER_FLAGS) $(LOG_DRIVER_FLAGS) -- $(LOG_COMPILE) \
 	"$$tst" $(AM_TESTS_FD_REDIRECT)
-test_bandwidth_limiter.log: test_bandwidth_limiter$(EXEEXT)
-	@p='test_bandwidth_limiter$(EXEEXT)'; \
-	b='test_bandwidth_limiter'; \
-	$(am__check_pre) $(LOG_DRIVER) --test-name "$$f" \
-	--log-file $$b.log --trs-file $$b.trs \
-	$(am__common_driver_flags) $(AM_LOG_DRIVER_FLAGS) $(LOG_DRIVER_FLAGS) -- $(LOG_COMPILE) \
-	"$$tst" $(AM_TESTS_FD_REDIRECT)
-test_bdecode_performance.log: test_bdecode_performance$(EXEEXT)
-	@p='test_bdecode_performance$(EXEEXT)'; \
-	b='test_bdecode_performance'; \
-	$(am__check_pre) $(LOG_DRIVER) --test-name "$$f" \
-	--log-file $$b.log --trs-file $$b.trs \
-	$(am__common_driver_flags) $(AM_LOG_DRIVER_FLAGS) $(LOG_DRIVER_FLAGS) -- $(LOG_COMPILE) \
-	"$$tst" $(AM_TESTS_FD_REDIRECT)
-test_bencoding.log: test_bencoding$(EXEEXT)
-	@p='test_bencoding$(EXEEXT)'; \
-	b='test_bencoding'; \
-	$(am__check_pre) $(LOG_DRIVER) --test-name "$$f" \
-	--log-file $$b.log --trs-file $$b.trs \
-	$(am__common_driver_flags) $(AM_LOG_DRIVER_FLAGS) $(LOG_DRIVER_FLAGS) -- $(LOG_COMPILE) \
-	"$$tst" $(AM_TESTS_FD_REDIRECT)
-test_buffer.log: test_buffer$(EXEEXT)
-	@p='test_buffer$(EXEEXT)'; \
-	b='test_buffer'; \
-	$(am__check_pre) $(LOG_DRIVER) --test-name "$$f" \
-	--log-file $$b.log --trs-file $$b.trs \
-	$(am__common_driver_flags) $(AM_LOG_DRIVER_FLAGS) $(LOG_DRIVER_FLAGS) -- $(LOG_COMPILE) \
-	"$$tst" $(AM_TESTS_FD_REDIRECT)
 test_checking.log: test_checking$(EXEEXT)
 	@p='test_checking$(EXEEXT)'; \
 	b='test_checking'; \
@@ -1884,37 +1748,9 @@ test_fast_extension.log: test_fast_extension$(EXEEXT)
 	--log-file $$b.log --trs-file $$b.trs \
 	$(am__common_driver_flags) $(AM_LOG_DRIVER_FLAGS) $(LOG_DRIVER_FLAGS) -- $(LOG_COMPILE) \
 	"$$tst" $(AM_TESTS_FD_REDIRECT)
-test_hasher.log: test_hasher$(EXEEXT)
-	@p='test_hasher$(EXEEXT)'; \
-	b='test_hasher'; \
-	$(am__check_pre) $(LOG_DRIVER) --test-name "$$f" \
-	--log-file $$b.log --trs-file $$b.trs \
-	$(am__common_driver_flags) $(AM_LOG_DRIVER_FLAGS) $(LOG_DRIVER_FLAGS) -- $(LOG_COMPILE) \
-	"$$tst" $(AM_TESTS_FD_REDIRECT)
 test_http_connection.log: test_http_connection$(EXEEXT)
 	@p='test_http_connection$(EXEEXT)'; \
 	b='test_http_connection'; \
-	$(am__check_pre) $(LOG_DRIVER) --test-name "$$f" \
-	--log-file $$b.log --trs-file $$b.trs \
-	$(am__common_driver_flags) $(AM_LOG_DRIVER_FLAGS) $(LOG_DRIVER_FLAGS) -- $(LOG_COMPILE) \
-	"$$tst" $(AM_TESTS_FD_REDIRECT)
-test_ip_filter.log: test_ip_filter$(EXEEXT)
-	@p='test_ip_filter$(EXEEXT)'; \
-	b='test_ip_filter'; \
-	$(am__check_pre) $(LOG_DRIVER) --test-name "$$f" \
-	--log-file $$b.log --trs-file $$b.trs \
-	$(am__common_driver_flags) $(AM_LOG_DRIVER_FLAGS) $(LOG_DRIVER_FLAGS) -- $(LOG_COMPILE) \
-	"$$tst" $(AM_TESTS_FD_REDIRECT)
-test_ip_voter.log: test_ip_voter$(EXEEXT)
-	@p='test_ip_voter$(EXEEXT)'; \
-	b='test_ip_voter'; \
-	$(am__check_pre) $(LOG_DRIVER) --test-name "$$f" \
-	--log-file $$b.log --trs-file $$b.trs \
-	$(am__common_driver_flags) $(AM_LOG_DRIVER_FLAGS) $(LOG_DRIVER_FLAGS) -- $(LOG_COMPILE) \
-	"$$tst" $(AM_TESTS_FD_REDIRECT)
-test_dht.log: test_dht$(EXEEXT)
-	@p='test_dht$(EXEEXT)'; \
-	b='test_dht'; \
 	$(am__check_pre) $(LOG_DRIVER) --test-name "$$f" \
 	--log-file $$b.log --trs-file $$b.trs \
 	$(am__common_driver_flags) $(AM_LOG_DRIVER_FLAGS) $(LOG_DRIVER_FLAGS) -- $(LOG_COMPILE) \
@@ -1926,23 +1762,9 @@ test_lsd.log: test_lsd$(EXEEXT)
 	--log-file $$b.log --trs-file $$b.trs \
 	$(am__common_driver_flags) $(AM_LOG_DRIVER_FLAGS) $(LOG_DRIVER_FLAGS) -- $(LOG_COMPILE) \
 	"$$tst" $(AM_TESTS_FD_REDIRECT)
-test_metadata_extension.log: test_metadata_extension$(EXEEXT)
-	@p='test_metadata_extension$(EXEEXT)'; \
-	b='test_metadata_extension'; \
-	$(am__check_pre) $(LOG_DRIVER) --test-name "$$f" \
-	--log-file $$b.log --trs-file $$b.trs \
-	$(am__common_driver_flags) $(AM_LOG_DRIVER_FLAGS) $(LOG_DRIVER_FLAGS) -- $(LOG_COMPILE) \
-	"$$tst" $(AM_TESTS_FD_REDIRECT)
 test_pe_crypto.log: test_pe_crypto$(EXEEXT)
 	@p='test_pe_crypto$(EXEEXT)'; \
 	b='test_pe_crypto'; \
-	$(am__check_pre) $(LOG_DRIVER) --test-name "$$f" \
-	--log-file $$b.log --trs-file $$b.trs \
-	$(am__common_driver_flags) $(AM_LOG_DRIVER_FLAGS) $(LOG_DRIVER_FLAGS) -- $(LOG_COMPILE) \
-	"$$tst" $(AM_TESTS_FD_REDIRECT)
-test_peer_priority.log: test_peer_priority$(EXEEXT)
-	@p='test_peer_priority$(EXEEXT)'; \
-	b='test_peer_priority'; \
 	$(am__check_pre) $(LOG_DRIVER) --test-name "$$f" \
 	--log-file $$b.log --trs-file $$b.trs \
 	$(am__common_driver_flags) $(AM_LOG_DRIVER_FLAGS) $(LOG_DRIVER_FLAGS) -- $(LOG_COMPILE) \
@@ -1954,58 +1776,16 @@ test_pex.log: test_pex$(EXEEXT)
 	--log-file $$b.log --trs-file $$b.trs \
 	$(am__common_driver_flags) $(AM_LOG_DRIVER_FLAGS) $(LOG_DRIVER_FLAGS) -- $(LOG_COMPILE) \
 	"$$tst" $(AM_TESTS_FD_REDIRECT)
-test_piece_picker.log: test_piece_picker$(EXEEXT)
-	@p='test_piece_picker$(EXEEXT)'; \
-	b='test_piece_picker'; \
-	$(am__check_pre) $(LOG_DRIVER) --test-name "$$f" \
-	--log-file $$b.log --trs-file $$b.trs \
-	$(am__common_driver_flags) $(AM_LOG_DRIVER_FLAGS) $(LOG_DRIVER_FLAGS) -- $(LOG_COMPILE) \
-	"$$tst" $(AM_TESTS_FD_REDIRECT)
-test_xml.log: test_xml$(EXEEXT)
-	@p='test_xml$(EXEEXT)'; \
-	b='test_xml'; \
-	$(am__check_pre) $(LOG_DRIVER) --test-name "$$f" \
-	--log-file $$b.log --trs-file $$b.trs \
-	$(am__common_driver_flags) $(AM_LOG_DRIVER_FLAGS) $(LOG_DRIVER_FLAGS) -- $(LOG_COMPILE) \
-	"$$tst" $(AM_TESTS_FD_REDIRECT)
-test_string.log: test_string$(EXEEXT)
-	@p='test_string$(EXEEXT)'; \
-	b='test_string'; \
-	$(am__check_pre) $(LOG_DRIVER) --test-name "$$f" \
-	--log-file $$b.log --trs-file $$b.trs \
-	$(am__common_driver_flags) $(AM_LOG_DRIVER_FLAGS) $(LOG_DRIVER_FLAGS) -- $(LOG_COMPILE) \
-	"$$tst" $(AM_TESTS_FD_REDIRECT)
-test_primitives.log: test_primitives$(EXEEXT)
-	@p='test_primitives$(EXEEXT)'; \
-	b='test_primitives'; \
-	$(am__check_pre) $(LOG_DRIVER) --test-name "$$f" \
-	--log-file $$b.log --trs-file $$b.trs \
-	$(am__common_driver_flags) $(AM_LOG_DRIVER_FLAGS) $(LOG_DRIVER_FLAGS) -- $(LOG_COMPILE) \
-	"$$tst" $(AM_TESTS_FD_REDIRECT)
-test_http_parser.log: test_http_parser$(EXEEXT)
-	@p='test_http_parser$(EXEEXT)'; \
-	b='test_http_parser'; \
-	$(am__check_pre) $(LOG_DRIVER) --test-name "$$f" \
-	--log-file $$b.log --trs-file $$b.trs \
-	$(am__common_driver_flags) $(AM_LOG_DRIVER_FLAGS) $(LOG_DRIVER_FLAGS) -- $(LOG_COMPILE) \
-	"$$tst" $(AM_TESTS_FD_REDIRECT)
-test_magnet.log: test_magnet$(EXEEXT)
-	@p='test_magnet$(EXEEXT)'; \
-	b='test_magnet'; \
-	$(am__check_pre) $(LOG_DRIVER) --test-name "$$f" \
-	--log-file $$b.log --trs-file $$b.trs \
-	$(am__common_driver_flags) $(AM_LOG_DRIVER_FLAGS) $(LOG_DRIVER_FLAGS) -- $(LOG_COMPILE) \
-	"$$tst" $(AM_TESTS_FD_REDIRECT)
-test_packet_buffer.log: test_packet_buffer$(EXEEXT)
-	@p='test_packet_buffer$(EXEEXT)'; \
-	b='test_packet_buffer'; \
-	$(am__check_pre) $(LOG_DRIVER) --test-name "$$f" \
-	--log-file $$b.log --trs-file $$b.trs \
-	$(am__common_driver_flags) $(AM_LOG_DRIVER_FLAGS) $(LOG_DRIVER_FLAGS) -- $(LOG_COMPILE) \
-	"$$tst" $(AM_TESTS_FD_REDIRECT)
 test_read_piece.log: test_read_piece$(EXEEXT)
 	@p='test_read_piece$(EXEEXT)'; \
 	b='test_read_piece'; \
+	$(am__check_pre) $(LOG_DRIVER) --test-name "$$f" \
+	--log-file $$b.log --trs-file $$b.trs \
+	$(am__common_driver_flags) $(AM_LOG_DRIVER_FLAGS) $(LOG_DRIVER_FLAGS) -- $(LOG_COMPILE) \
+	"$$tst" $(AM_TESTS_FD_REDIRECT)
+test_receive_buffer.log: test_receive_buffer$(EXEEXT)
+	@p='test_receive_buffer$(EXEEXT)'; \
+	b='test_receive_buffer'; \
 	$(am__check_pre) $(LOG_DRIVER) --test-name "$$f" \
 	--log-file $$b.log --trs-file $$b.trs \
 	$(am__common_driver_flags) $(AM_LOG_DRIVER_FLAGS) $(LOG_DRIVER_FLAGS) -- $(LOG_COMPILE) \
@@ -2017,16 +1797,16 @@ test_resume.log: test_resume$(EXEEXT)
 	--log-file $$b.log --trs-file $$b.trs \
 	$(am__common_driver_flags) $(AM_LOG_DRIVER_FLAGS) $(LOG_DRIVER_FLAGS) -- $(LOG_COMPILE) \
 	"$$tst" $(AM_TESTS_FD_REDIRECT)
-test_rss.log: test_rss$(EXEEXT)
-	@p='test_rss$(EXEEXT)'; \
-	b='test_rss'; \
+test_ssl.log: test_ssl$(EXEEXT)
+	@p='test_ssl$(EXEEXT)'; \
+	b='test_ssl'; \
 	$(am__check_pre) $(LOG_DRIVER) --test-name "$$f" \
 	--log-file $$b.log --trs-file $$b.trs \
 	$(am__common_driver_flags) $(AM_LOG_DRIVER_FLAGS) $(LOG_DRIVER_FLAGS) -- $(LOG_COMPILE) \
 	"$$tst" $(AM_TESTS_FD_REDIRECT)
-test_ssl.log: test_ssl$(EXEEXT)
-	@p='test_ssl$(EXEEXT)'; \
-	b='test_ssl'; \
+test_stack_allocator.log: test_stack_allocator$(EXEEXT)
+	@p='test_stack_allocator$(EXEEXT)'; \
+	b='test_stack_allocator'; \
 	$(am__check_pre) $(LOG_DRIVER) --test-name "$$f" \
 	--log-file $$b.log --trs-file $$b.trs \
 	$(am__common_driver_flags) $(AM_LOG_DRIVER_FLAGS) $(LOG_DRIVER_FLAGS) -- $(LOG_COMPILE) \
@@ -2038,23 +1818,9 @@ test_storage.log: test_storage$(EXEEXT)
 	--log-file $$b.log --trs-file $$b.trs \
 	$(am__common_driver_flags) $(AM_LOG_DRIVER_FLAGS) $(LOG_DRIVER_FLAGS) -- $(LOG_COMPILE) \
 	"$$tst" $(AM_TESTS_FD_REDIRECT)
-test_swarm.log: test_swarm$(EXEEXT)
-	@p='test_swarm$(EXEEXT)'; \
-	b='test_swarm'; \
-	$(am__check_pre) $(LOG_DRIVER) --test-name "$$f" \
-	--log-file $$b.log --trs-file $$b.trs \
-	$(am__common_driver_flags) $(AM_LOG_DRIVER_FLAGS) $(LOG_DRIVER_FLAGS) -- $(LOG_COMPILE) \
-	"$$tst" $(AM_TESTS_FD_REDIRECT)
-test_time.log: test_time$(EXEEXT)
-	@p='test_time$(EXEEXT)'; \
-	b='test_time'; \
-	$(am__check_pre) $(LOG_DRIVER) --test-name "$$f" \
-	--log-file $$b.log --trs-file $$b.trs \
-	$(am__common_driver_flags) $(AM_LOG_DRIVER_FLAGS) $(LOG_DRIVER_FLAGS) -- $(LOG_COMPILE) \
-	"$$tst" $(AM_TESTS_FD_REDIRECT)
-test_threads.log: test_threads$(EXEEXT)
-	@p='test_threads$(EXEEXT)'; \
-	b='test_threads'; \
+test_time_critical.log: test_time_critical$(EXEEXT)
+	@p='test_time_critical$(EXEEXT)'; \
+	b='test_time_critical'; \
 	$(am__check_pre) $(LOG_DRIVER) --test-name "$$f" \
 	--log-file $$b.log --trs-file $$b.trs \
 	$(am__common_driver_flags) $(AM_LOG_DRIVER_FLAGS) $(LOG_DRIVER_FLAGS) -- $(LOG_COMPILE) \
@@ -2066,30 +1832,9 @@ test_torrent.log: test_torrent$(EXEEXT)
 	--log-file $$b.log --trs-file $$b.trs \
 	$(am__common_driver_flags) $(AM_LOG_DRIVER_FLAGS) $(LOG_DRIVER_FLAGS) -- $(LOG_COMPILE) \
 	"$$tst" $(AM_TESTS_FD_REDIRECT)
-test_torrent_info.log: test_torrent_info$(EXEEXT)
-	@p='test_torrent_info$(EXEEXT)'; \
-	b='test_torrent_info'; \
-	$(am__check_pre) $(LOG_DRIVER) --test-name "$$f" \
-	--log-file $$b.log --trs-file $$b.trs \
-	$(am__common_driver_flags) $(AM_LOG_DRIVER_FLAGS) $(LOG_DRIVER_FLAGS) -- $(LOG_COMPILE) \
-	"$$tst" $(AM_TESTS_FD_REDIRECT)
-test_torrent_parse.log: test_torrent_parse$(EXEEXT)
-	@p='test_torrent_parse$(EXEEXT)'; \
-	b='test_torrent_parse'; \
-	$(am__check_pre) $(LOG_DRIVER) --test-name "$$f" \
-	--log-file $$b.log --trs-file $$b.trs \
-	$(am__common_driver_flags) $(AM_LOG_DRIVER_FLAGS) $(LOG_DRIVER_FLAGS) -- $(LOG_COMPILE) \
-	"$$tst" $(AM_TESTS_FD_REDIRECT)
 test_tracker.log: test_tracker$(EXEEXT)
 	@p='test_tracker$(EXEEXT)'; \
 	b='test_tracker'; \
-	$(am__check_pre) $(LOG_DRIVER) --test-name "$$f" \
-	--log-file $$b.log --trs-file $$b.trs \
-	$(am__common_driver_flags) $(AM_LOG_DRIVER_FLAGS) $(LOG_DRIVER_FLAGS) -- $(LOG_COMPILE) \
-	"$$tst" $(AM_TESTS_FD_REDIRECT)
-test_trackers_extension.log: test_trackers_extension$(EXEEXT)
-	@p='test_trackers_extension$(EXEEXT)'; \
-	b='test_trackers_extension'; \
 	$(am__check_pre) $(LOG_DRIVER) --test-name "$$f" \
 	--log-file $$b.log --trs-file $$b.trs \
 	$(am__common_driver_flags) $(AM_LOG_DRIVER_FLAGS) $(LOG_DRIVER_FLAGS) -- $(LOG_COMPILE) \
@@ -2104,13 +1849,6 @@ test_transfer.log: test_transfer$(EXEEXT)
 test_create_torrent.log: test_create_torrent$(EXEEXT)
 	@p='test_create_torrent$(EXEEXT)'; \
 	b='test_create_torrent'; \
-	$(am__check_pre) $(LOG_DRIVER) --test-name "$$f" \
-	--log-file $$b.log --trs-file $$b.trs \
-	$(am__common_driver_flags) $(AM_LOG_DRIVER_FLAGS) $(LOG_DRIVER_FLAGS) -- $(LOG_COMPILE) \
-	"$$tst" $(AM_TESTS_FD_REDIRECT)
-test_upnp.log: test_upnp$(EXEEXT)
-	@p='test_upnp$(EXEEXT)'; \
-	b='test_upnp'; \
 	$(am__check_pre) $(LOG_DRIVER) --test-name "$$f" \
 	--log-file $$b.log --trs-file $$b.trs \
 	$(am__common_driver_flags) $(AM_LOG_DRIVER_FLAGS) $(LOG_DRIVER_FLAGS) -- $(LOG_COMPILE) \
@@ -2220,30 +1958,37 @@ test_remap_files.log: test_remap_files$(EXEEXT)
 	--log-file $$b.log --trs-file $$b.trs \
 	$(am__common_driver_flags) $(AM_LOG_DRIVER_FLAGS) $(LOG_DRIVER_FLAGS) -- $(LOG_COMPILE) \
 	"$$tst" $(AM_TESTS_FD_REDIRECT)
-test_gzip.log: test_gzip$(EXEEXT)
-	@p='test_gzip$(EXEEXT)'; \
-	b='test_gzip'; \
+test_enum_net.log: test_enum_net$(EXEEXT)
+	@p='test_enum_net$(EXEEXT)'; \
+	b='test_enum_net'; \
 	$(am__check_pre) $(LOG_DRIVER) --test-name "$$f" \
 	--log-file $$b.log --trs-file $$b.trs \
 	$(am__common_driver_flags) $(AM_LOG_DRIVER_FLAGS) $(LOG_DRIVER_FLAGS) -- $(LOG_COMPILE) \
 	"$$tst" $(AM_TESTS_FD_REDIRECT)
-test_utf8.log: test_utf8$(EXEEXT)
-	@p='test_utf8$(EXEEXT)'; \
-	b='test_utf8'; \
+test_file_progress.log: test_file_progress$(EXEEXT)
+	@p='test_file_progress$(EXEEXT)'; \
+	b='test_file_progress'; \
 	$(am__check_pre) $(LOG_DRIVER) --test-name "$$f" \
 	--log-file $$b.log --trs-file $$b.trs \
 	$(am__common_driver_flags) $(AM_LOG_DRIVER_FLAGS) $(LOG_DRIVER_FLAGS) -- $(LOG_COMPILE) \
 	"$$tst" $(AM_TESTS_FD_REDIRECT)
-test_socket_io.log: test_socket_io$(EXEEXT)
-	@p='test_socket_io$(EXEEXT)'; \
-	b='test_socket_io'; \
+test_linked_list.log: test_linked_list$(EXEEXT)
+	@p='test_linked_list$(EXEEXT)'; \
+	b='test_linked_list'; \
 	$(am__check_pre) $(LOG_DRIVER) --test-name "$$f" \
 	--log-file $$b.log --trs-file $$b.trs \
 	$(am__common_driver_flags) $(AM_LOG_DRIVER_FLAGS) $(LOG_DRIVER_FLAGS) -- $(LOG_COMPILE) \
 	"$$tst" $(AM_TESTS_FD_REDIRECT)
-test_sliding_average.log: test_sliding_average$(EXEEXT)
-	@p='test_sliding_average$(EXEEXT)'; \
-	b='test_sliding_average'; \
+test_direct_dht.log: test_direct_dht$(EXEEXT)
+	@p='test_direct_dht$(EXEEXT)'; \
+	b='test_direct_dht'; \
+	$(am__check_pre) $(LOG_DRIVER) --test-name "$$f" \
+	--log-file $$b.log --trs-file $$b.trs \
+	$(am__common_driver_flags) $(AM_LOG_DRIVER_FLAGS) $(LOG_DRIVER_FLAGS) -- $(LOG_COMPILE) \
+	"$$tst" $(AM_TESTS_FD_REDIRECT)
+test_ed25519.log: test_ed25519$(EXEEXT)
+	@p='test_ed25519$(EXEEXT)'; \
+	b='test_ed25519'; \
 	$(am__check_pre) $(LOG_DRIVER) --test-name "$$f" \
 	--log-file $$b.log --trs-file $$b.trs \
 	$(am__common_driver_flags) $(AM_LOG_DRIVER_FLAGS) $(LOG_DRIVER_FLAGS) -- $(LOG_COMPILE) \

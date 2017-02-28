@@ -3,18 +3,48 @@ import feature : feature ;
 import project ;
 import targets ;
 import "class" : new ;
+import modules ;
 
 use-project /torrent : ../.. ;
 
-lib boost_python : : <target-os>darwin <name>boost_python-mt $(boost-library-search-path) ;
-lib boost_python : : <name>boost_python ;
+BOOST_ROOT = [ modules.peek : BOOST_ROOT ] ;
 
-feature visibility : default hidden : composite propagated link-incompatible ;
+feature visibility : default hidden : composite ;
 feature.compose <visibility>hidden : <cflags>-fvisibility=hidden <cxxflags>-fvisibility-inlines-hidden ;
 
 feature libtorrent-link : shared static : composite propagated ;
 feature libtorrent-python-pic : off on : composite propagated link-incompatible ;
 feature.compose <libtorrent-python-pic>on : <cflags>-fPIC ;
+
+if $(BOOST_ROOT)
+{
+	use-project /boost : $(BOOST_ROOT) ;
+	alias boost_python : /boost/python//boost_python : : : <include>$(BOOST_ROOT) ;
+}
+else
+{
+	local boost-lib-search-path =
+		<search>/opt/local/lib
+		<search>/usr/lib
+		<search>/usr/local/lib
+		<search>/sw/lib
+		<search>/usr/g++/lib
+		;
+
+	local boost-include-path =
+		<include>/opt/local/include
+		<include>/usr/local/include
+		<include>/usr/sfw/include
+	;
+
+	# the names are decorated in MacPorts
+	lib boost_python : : <target-os>darwin <name>boost_python-mt
+		: : $(boost-include-path) ;
+
+	lib boost_python : : <name>boost_python
+		: : $(boost-include-path) ;
+}
+
 
 rule libtorrent_linking ( properties * )
 {
@@ -39,41 +69,35 @@ rule libtorrent_linking ( properties * )
         }
     }
 
-    if <boost>source in $(properties)
+    if <link>static in $(properties)
     {
-        # linux must link dynamically against boost python because it pulls
-        # in libpthread, which must be linked dynamically since we're building a .so
-        # (the static build of libpthread is not position independent)
-        if <boost-link>shared in $(properties) || <target-os>linux in $(properties)
-        {
-            result += <library>/boost/python//boost_python/<link>shared ;
-        }
-        else
-        {
-            result += <library>/boost/python//boost_python/<link>static ;
-        }
+        ECHO "WARNING: you probably want to specify libtorrent-link=static rather than link=static" ;
+    }
 
-        if <libtorrent-link>shared in $(properties)
-        {
-            result += <library>/torrent//torrent/<link>shared/<boost-link>shared ;
-        }
-        else
-        {
-            result += <library>/torrent//torrent/<link>static/<boost-link>static ;
-        }
+    if <boost-link>static in $(properties) && <target-os>linux in $(properties)
+    {
+        ECHO "WARNING: you cannot link statically against boost-python on linux, because it links against pthread statically in that case, which is not allowed" ;
+    }
+
+    # linux must link dynamically against boost python because it pulls
+    # in libpthread, which must be linked dynamically since we're building a .so
+    # (the static build of libpthread is not position independent)
+    if <boost-link>shared in $(properties) || <target-os>linux in $(properties)
+    {
+        result += <library>boost_python/<link>shared ;
     }
     else
     {
-        result += <library>boost_python ;
+        result += <library>boost_python/<link>static ;
+    }
 
-        if <libtorrent-link>shared in $(properties)
-        {
-            result += <library>/torrent//torrent/<link>shared/<boost-link>shared ;
-        }
-        else
-        {
-            result += <library>/torrent//torrent/<link>static/<boost-link>static ;
-        }
+    if <libtorrent-link>shared in $(properties)
+    {
+        result += <library>/torrent//torrent/<link>shared ;
+    }
+    else
+    {
+        result += <library>/torrent//torrent/<link>static ;
     }
 
     return $(result) ;
@@ -123,6 +147,9 @@ my-python-extension libtorrent
     src/error_code.cpp
   : # requirements
     <include>src
+    <toolset>gcc:<cxxflags>-Wno-deprecated-declarations
+    <toolset>darwin:<cxxflags>-Wno-deprecated-declarations
+    <toolset>darwin:<cxxflags>-Wno-unused-command-line-argument
     <conditional>@libtorrent_linking
   : # usage-requirements
     <conditional>@libtorrent_linking

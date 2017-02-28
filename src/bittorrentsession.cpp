@@ -38,6 +38,8 @@
 #include <libtorrent/identify_client.hpp>
 #include <libtorrent/alert_types.hpp>
 #include <libtorrent/create_torrent.hpp>
+#include <libtorrent/session_status.hpp>
+
 //plugins
 #include <libtorrent/extensions/ut_metadata.hpp>
 #include <libtorrent/extensions/ut_pex.hpp>
@@ -222,7 +224,8 @@ void BitTorrentSession::SetConnection()
 		m_config->SetPortMax( portmax );
 	}
 
-	m_libbtsession->listen_on( std::make_pair( portmin, portmax ),
+	error_code ec;
+	m_libbtsession->listen_on( std::make_pair( portmin, portmax ), ec,
 							   m_config->m_local_ip.IPAddress().ToAscii() );
 }
 
@@ -417,7 +420,7 @@ void BitTorrentSession::StartLsd()
 void BitTorrentSession::AddTorrentSession( shared_ptr<torrent_t>& torrent )
 {
 	torrent_handle &handle = torrent->handle;
-	boost::intrusive_ptr<torrent_info> t = torrent->info;
+	shared_ptr<torrent_info> t = torrent->info;
 	wxLogDebug( _T( "AddTorrent %s into session\n" ), torrent->name.c_str() );
 	wxString fastresumefile = wxGetApp().SaveTorrentsPath() + wxGetApp().PathSeparator() + torrent->hash + _T( ".fastresume" );
 	entry resume_data;
@@ -457,13 +460,13 @@ void BitTorrentSession::AddTorrentSession( shared_ptr<torrent_t>& torrent )
 		p.duplicate_is_error = true;
 		p.auto_managed = true;
 
-		if( torrent->config->GetTorrentCompactAlloc() )
+		/*if( torrent->config->GetTorrentCompactAlloc() )
 		{
 			wxLogInfo( _T( "%s: Compact allocation mode\n" ), torrent->name.c_str() );
 			p.storage_mode = libtorrent::storage_mode_compact;
 			handle = m_libbtsession->add_torrent( p );
 		}
-		else
+		else*/
 		{
 			wxString strStorageMode;
 			enum libtorrent::storage_mode_t eStorageMode = torrent->config->GetTorrentStorageMode();
@@ -478,9 +481,9 @@ void BitTorrentSession::AddTorrentSession( shared_ptr<torrent_t>& torrent )
 				strStorageMode = _( "Sparse" );
 				break;
 
-			case libtorrent::storage_mode_compact:
+			/*case libtorrent::storage_mode_compact:
 				strStorageMode = _( "Compact" );
-				break;
+				break;*/
 
 			default:
 				eStorageMode = libtorrent::storage_mode_sparse;
@@ -953,7 +956,7 @@ shared_ptr<torrent_t> BitTorrentSession::ParseTorrent( const wxString& filename 
 		std::ifstream in( ( const char* )filename.mb_str( wxConvFile ), std::ios_base::binary );
 		in.unsetf( std::ios_base::skipws );
 		entry e = bdecode( std::istream_iterator<char>( in ), std::istream_iterator<char>() );
-		boost::intrusive_ptr<libtorrent::torrent_info> t = new torrent_info( e );
+		shared_ptr<libtorrent::torrent_info> t(new torrent_info( e ));
 		torrent->info = t;
 		torrent->name = wxString( wxConvUTF8.cMB2WC( t->name().c_str() ) );
 		std::stringstream hash_stream;
@@ -988,7 +991,7 @@ shared_ptr<torrent_t> BitTorrentSession::LoadMagnetUri( MagnetUri& magneturi )
 		// Limits
 		//p.max_connections = maxConnectionsPerTorrent();
 		//p.max_uploads = maxUploadsPerTorrent();
-		boost::intrusive_ptr<libtorrent::torrent_info> t = new torrent_info( sha1_hash( magneturi.hash() ) );
+		shared_ptr<libtorrent::torrent_info> t(new torrent_info( sha1_hash( magneturi.hash() ) ));
 		torrent->info = t;
 		torrent->name = magneturi.name();
 		torrent->hash = magneturi.hash();

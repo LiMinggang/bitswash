@@ -4,7 +4,7 @@
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 <meta name="generator" content="Docutils 0.11: http://docutils.sourceforge.net/" />
-<title>Custom Storage</title>
+<title></title>
 <meta name="author" content="Arvid Norberg, arvid&#64;libtorrent.org" />
 <meta name=viewport content="width=device-width, initial-scale=1">
 <script type="text/javascript">
@@ -27,14 +27,14 @@
 </style>
 </head>
 <body>
-<div class="document" id="custom-storage">
+<div class="document">
     <div id="container">
-    <table id="header">
+    <a href="index.html"><table id="header">
     <tr><td id="orange"></td>
     <td id="logo">libtorrent</td></tr>
-    </table>
+    </table></a>
     <div id="main">
-<h1 class="title">Custom Storage</h1>
+
 <table class="docinfo" frame="void" rules="none">
 <col class="docinfo-name" />
 <col class="docinfo-content" />
@@ -42,15 +42,23 @@
 <tr><th class="docinfo-name">Author:</th>
 <td>Arvid Norberg, <a class="last reference external" href="mailto:arvid&#64;libtorrent.org">arvid&#64;libtorrent.org</a></td></tr>
 <tr><th class="docinfo-name">Version:</th>
-<td>1.0.11</td></tr>
+<td>1.1.2</td></tr>
 </tbody>
 </table>
+<p><a class="reference external" href="reference.html">home</a></p>
+<div class="section" id="custom-storage">
+<h1>Custom Storage</h1>
 <div class="contents topic" id="table-of-contents">
 <p class="topic-title first">Table of contents</p>
 <ul class="simple">
-<li><a class="reference internal" href="#file-pool" id="id22">file_pool</a></li>
-<li><a class="reference internal" href="#storage-interface" id="id23">storage_interface</a></li>
-<li><a class="reference internal" href="#default-storage" id="id24">default_storage</a></li>
+<li><a class="reference internal" href="#custom-storage" id="id27">Custom Storage</a><ul>
+<li><a class="reference internal" href="#disk-buffer-holder" id="id28">disk_buffer_holder</a></li>
+<li><a class="reference internal" href="#file-pool" id="id29">file_pool</a></li>
+<li><a class="reference internal" href="#storage-interface" id="id30">storage_interface</a></li>
+<li><a class="reference internal" href="#default-storage" id="id31">default_storage</a></li>
+<li><a class="reference internal" href="#enum-move-flags-t" id="id32">enum move_flags_t</a></li>
+</ul>
+</li>
 </ul>
 </div>
 <p>libtorrent provides a customization point for storage of data. By default,
@@ -60,9 +68,9 @@ when the torrent was created. The libtorrent user may define a custom
 storage to store piece data in a different way.</p>
 <p>A custom storage implementation must derive from and implement the
 <a class="reference external" href="reference-Custom_Storage.html#storage_interface">storage_interface</a>. You must also provide a function that constructs the
-custom storage object and provide this function to the <a class="reference external" href="reference-Session.html#add_torrent()">add_torrent()</a> call
-via <a class="reference external" href="reference-Session.html#add_torrent_params">add_torrent_params</a>. Either passed in to the constructor or by setting
-the <a class="reference external" href="reference-Session.html#storage">add_torrent_params::storage</a> field.</p>
+custom storage object and provide this function to the <a class="reference external" href="reference-Core.html#add_torrent()">add_torrent()</a> call
+via <a class="reference external" href="reference-Core.html#add_torrent_params">add_torrent_params</a>. Either passed in to the constructor or by setting
+the <a class="reference external" href="reference-Core.html#storage">add_torrent_params::storage</a> field.</p>
 <p>This is an example storage implementation that stores all pieces in a
 <tt class="docutils literal"><span class="pre">std::map</span></tt>, i.e. in RAM. It's not necessarily very useful in practice, but
 illustrates the basics of implementing a custom storage.</p>
@@ -70,12 +78,11 @@ illustrates the basics of implementing a custom storage.</p>
 <span class="keyword">struct</span> <span class="name">temp_storage</span> <span class="operator">:</span> <span class="name">storage_interface</span>
 <span class="punctuation">{</span>
         <span class="name">temp_storage</span><span class="punctuation">(</span><span class="name">file_storage</span> <span class="keyword">const</span><span class="operator">&amp;</span> <span class="name">fs</span><span class="punctuation">)</span> <span class="operator">:</span> <span class="name">m_files</span><span class="punctuation">(</span><span class="name">fs</span><span class="punctuation">)</span> <span class="punctuation">{}</span>
-        <span class="keyword type">void</span> <span class="name">set_file_priority</span><span class="punctuation">(</span><span class="name">std</span><span class="operator">::</span><span class="name">vector</span><span class="operator">&lt;</span><span class="name">boost</span><span class="operator">::</span><span class="keyword type">uint8_t</span><span class="operator">&gt;</span> <span class="keyword">const</span><span class="operator">&amp;</span> <span class="name">prio</span><span class="punctuation">)</span> <span class="punctuation">{}</span>
-        <span class="keyword">virtual</span> <span class="keyword type">bool</span> <span class="name">initialize</span><span class="punctuation">(</span><span class="keyword type">bool</span> <span class="name">allocate_files</span><span class="punctuation">)</span> <span class="punctuation">{</span> <span class="keyword">return</span> <span class="name builtin">false</span><span class="punctuation">;</span> <span class="punctuation">}</span>
+        <span class="keyword">virtual</span> <span class="keyword type">bool</span> <span class="name">initialize</span><span class="punctuation">(</span><span class="name">storage_error</span><span class="operator">&amp;</span> <span class="name">se</span><span class="punctuation">)</span> <span class="punctuation">{</span> <span class="keyword">return</span> <span class="name builtin">false</span><span class="punctuation">;</span> <span class="punctuation">}</span>
         <span class="keyword">virtual</span> <span class="keyword type">bool</span> <span class="name">has_any_file</span><span class="punctuation">()</span> <span class="punctuation">{</span> <span class="keyword">return</span> <span class="name builtin">false</span><span class="punctuation">;</span> <span class="punctuation">}</span>
-        <span class="keyword">virtual</span> <span class="keyword type">int</span> <span class="name">read</span><span class="punctuation">(</span><span class="keyword type">char</span><span class="operator">*</span> <span class="name">buf</span><span class="punctuation">,</span> <span class="keyword type">int</span> <span class="name">slot</span><span class="punctuation">,</span> <span class="keyword type">int</span> <span class="name">offset</span><span class="punctuation">,</span> <span class="keyword type">int</span> <span class="name">size</span><span class="punctuation">)</span>
+        <span class="keyword">virtual</span> <span class="keyword type">int</span> <span class="name">read</span><span class="punctuation">(</span><span class="keyword type">char</span><span class="operator">*</span> <span class="name">buf</span><span class="punctuation">,</span> <span class="keyword type">int</span> <span class="name">piece</span><span class="punctuation">,</span> <span class="keyword type">int</span> <span class="name">offset</span><span class="punctuation">,</span> <span class="keyword type">int</span> <span class="name">size</span><span class="punctuation">)</span>
         <span class="punctuation">{</span>
-                <span class="name">std</span><span class="operator">::</span><span class="name">map</span><span class="operator">&lt;</span><span class="keyword type">int</span><span class="punctuation">,</span> <span class="name">std</span><span class="operator">::</span><span class="name">vector</span><span class="operator">&lt;</span><span class="keyword type">char</span><span class="operator">&gt;</span> <span class="operator">&gt;::</span><span class="name">const_iterator</span> <span class="name">i</span> <span class="operator">=</span> <span class="name">m_file_data</span><span class="punctuation">.</span><span class="name">find</span><span class="punctuation">(</span><span class="name">slot</span><span class="punctuation">);</span>
+                <span class="name">std</span><span class="operator">::</span><span class="name">map</span><span class="operator">&lt;</span><span class="keyword type">int</span><span class="punctuation">,</span> <span class="name">std</span><span class="operator">::</span><span class="name">vector</span><span class="operator">&lt;</span><span class="keyword type">char</span><span class="operator">&gt;</span> <span class="operator">&gt;::</span><span class="name">const_iterator</span> <span class="name">i</span> <span class="operator">=</span> <span class="name">m_file_data</span><span class="punctuation">.</span><span class="name">find</span><span class="punctuation">(</span><span class="name">piece</span><span class="punctuation">);</span>
                 <span class="keyword">if</span> <span class="punctuation">(</span><span class="name">i</span> <span class="operator">==</span> <span class="name">m_file_data</span><span class="punctuation">.</span><span class="name">end</span><span class="punctuation">())</span> <span class="keyword">return</span> <span class="literal number integer">0</span><span class="punctuation">;</span>
                 <span class="keyword type">int</span> <span class="name">available</span> <span class="operator">=</span> <span class="name">i</span><span class="operator">-&gt;</span><span class="name">second</span><span class="punctuation">.</span><span class="name">size</span><span class="punctuation">()</span> <span class="operator">-</span> <span class="name">offset</span><span class="punctuation">;</span>
                 <span class="keyword">if</span> <span class="punctuation">(</span><span class="name">available</span> <span class="operator">&lt;=</span> <span class="literal number integer">0</span><span class="punctuation">)</span> <span class="keyword">return</span> <span class="literal number integer">0</span><span class="punctuation">;</span>
@@ -83,9 +90,9 @@ illustrates the basics of implementing a custom storage.</p>
                 <span class="name">memcpy</span><span class="punctuation">(</span><span class="name">buf</span><span class="punctuation">,</span> <span class="operator">&amp;</span><span class="name">i</span><span class="operator">-&gt;</span><span class="name">second</span><span class="punctuation">[</span><span class="name">offset</span><span class="punctuation">],</span> <span class="name">available</span><span class="punctuation">);</span>
                 <span class="keyword">return</span> <span class="name">available</span><span class="punctuation">;</span>
         <span class="punctuation">}</span>
-        <span class="keyword">virtual</span> <span class="keyword type">int</span> <span class="name">write</span><span class="punctuation">(</span><span class="keyword">const</span> <span class="keyword type">char</span><span class="operator">*</span> <span class="name">buf</span><span class="punctuation">,</span> <span class="keyword type">int</span> <span class="name">slot</span><span class="punctuation">,</span> <span class="keyword type">int</span> <span class="name">offset</span><span class="punctuation">,</span> <span class="keyword type">int</span> <span class="name">size</span><span class="punctuation">)</span>
+        <span class="keyword">virtual</span> <span class="keyword type">int</span> <span class="name">write</span><span class="punctuation">(</span><span class="keyword">const</span> <span class="keyword type">char</span><span class="operator">*</span> <span class="name">buf</span><span class="punctuation">,</span> <span class="keyword type">int</span> <span class="name">piece</span><span class="punctuation">,</span> <span class="keyword type">int</span> <span class="name">offset</span><span class="punctuation">,</span> <span class="keyword type">int</span> <span class="name">size</span><span class="punctuation">)</span>
         <span class="punctuation">{</span>
-                <span class="name">std</span><span class="operator">::</span><span class="name">vector</span><span class="operator">&lt;</span><span class="keyword type">char</span><span class="operator">&gt;&amp;</span> <span class="name">data</span> <span class="operator">=</span> <span class="name">m_file_data</span><span class="punctuation">[</span><span class="name">slot</span><span class="punctuation">];</span>
+                <span class="name">std</span><span class="operator">::</span><span class="name">vector</span><span class="operator">&lt;</span><span class="keyword type">char</span><span class="operator">&gt;&amp;</span> <span class="name">data</span> <span class="operator">=</span> <span class="name">m_file_data</span><span class="punctuation">[</span><span class="name">piece</span><span class="punctuation">];</span>
                 <span class="keyword">if</span> <span class="punctuation">(</span><span class="name">data</span><span class="punctuation">.</span><span class="name">size</span><span class="punctuation">()</span> <span class="operator">&lt;</span> <span class="name">offset</span> <span class="operator">+</span> <span class="name">size</span><span class="punctuation">)</span> <span class="name">data</span><span class="punctuation">.</span><span class="name">resize</span><span class="punctuation">(</span><span class="name">offset</span> <span class="operator">+</span> <span class="name">size</span><span class="punctuation">);</span>
                 <span class="name">std</span><span class="operator">::</span><span class="name">memcpy</span><span class="punctuation">(</span><span class="operator">&amp;</span><span class="name">data</span><span class="punctuation">[</span><span class="name">offset</span><span class="punctuation">],</span> <span class="name">buf</span><span class="punctuation">,</span> <span class="name">size</span><span class="punctuation">);</span>
                 <span class="keyword">return</span> <span class="name">size</span><span class="punctuation">;</span>
@@ -93,20 +100,19 @@ illustrates the basics of implementing a custom storage.</p>
         <span class="keyword">virtual</span> <span class="keyword type">bool</span> <span class="name">rename_file</span><span class="punctuation">(</span><span class="keyword type">int</span> <span class="name">file</span><span class="punctuation">,</span> <span class="name">std</span><span class="operator">::</span><span class="name">string</span> <span class="keyword">const</span><span class="operator">&amp;</span> <span class="name">new_name</span><span class="punctuation">)</span>
         <span class="punctuation">{</span> <span class="name">assert</span><span class="punctuation">(</span><span class="name builtin">false</span><span class="punctuation">);</span> <span class="keyword">return</span> <span class="name builtin">false</span><span class="punctuation">;</span> <span class="punctuation">}</span>
         <span class="keyword">virtual</span> <span class="keyword type">bool</span> <span class="name">move_storage</span><span class="punctuation">(</span><span class="name">std</span><span class="operator">::</span><span class="name">string</span> <span class="keyword">const</span><span class="operator">&amp;</span> <span class="name">save_path</span><span class="punctuation">)</span> <span class="punctuation">{</span> <span class="keyword">return</span> <span class="name builtin">false</span><span class="punctuation">;</span> <span class="punctuation">}</span>
-        <span class="keyword">virtual</span> <span class="keyword type">bool</span> <span class="name">verify_resume_data</span><span class="punctuation">(</span><span class="name">lazy_entry</span> <span class="keyword">const</span><span class="operator">&amp;</span> <span class="name">rd</span><span class="punctuation">,</span> <span class="name">error_code</span><span class="operator">&amp;</span> <span class="name">error</span><span class="punctuation">)</span> <span class="punctuation">{</span> <span class="keyword">return</span> <span class="name builtin">false</span><span class="punctuation">;</span> <span class="punctuation">}</span>
+        <span class="keyword">virtual</span> <span class="keyword type">bool</span> <span class="name">verify_resume_data</span><span class="punctuation">(</span><span class="name">bdecode_node</span> <span class="keyword">const</span><span class="operator">&amp;</span> <span class="name">rd</span>
+                <span class="punctuation">,</span> <span class="name">std</span><span class="operator">::</span><span class="name">vector</span><span class="operator">&lt;</span><span class="name">std</span><span class="operator">::</span><span class="name">string</span><span class="operator">&gt;</span> <span class="keyword">const</span><span class="operator">*</span> <span class="name">links</span>
+                <span class="punctuation">,</span> <span class="name">storage_error</span><span class="operator">&amp;</span> <span class="name">error</span><span class="punctuation">)</span> <span class="punctuation">{</span> <span class="keyword">return</span> <span class="name builtin">false</span><span class="punctuation">;</span> <span class="punctuation">}</span>
         <span class="keyword">virtual</span> <span class="keyword type">bool</span> <span class="name">write_resume_data</span><span class="punctuation">(</span><span class="name">entry</span><span class="operator">&amp;</span> <span class="name">rd</span><span class="punctuation">)</span> <span class="keyword">const</span> <span class="punctuation">{</span> <span class="keyword">return</span> <span class="name builtin">false</span><span class="punctuation">;</span> <span class="punctuation">}</span>
-        <span class="keyword">virtual</span> <span class="keyword type">bool</span> <span class="name">move_slot</span><span class="punctuation">(</span><span class="keyword type">int</span> <span class="name">src_slot</span><span class="punctuation">,</span> <span class="keyword type">int</span> <span class="name">dst_slot</span><span class="punctuation">)</span> <span class="punctuation">{</span> <span class="name">assert</span><span class="punctuation">(</span><span class="name builtin">false</span><span class="punctuation">);</span> <span class="keyword">return</span> <span class="name builtin">false</span><span class="punctuation">;</span> <span class="punctuation">}</span>
-        <span class="keyword">virtual</span> <span class="keyword type">bool</span> <span class="name">swap_slots</span><span class="punctuation">(</span><span class="keyword type">int</span> <span class="name">slot1</span><span class="punctuation">,</span> <span class="keyword type">int</span> <span class="name">slot2</span><span class="punctuation">)</span> <span class="punctuation">{</span> <span class="name">assert</span><span class="punctuation">(</span><span class="name builtin">false</span><span class="punctuation">);</span> <span class="keyword">return</span> <span class="name builtin">false</span><span class="punctuation">;</span> <span class="punctuation">}</span>
-        <span class="keyword">virtual</span> <span class="keyword type">bool</span> <span class="name">swap_slots3</span><span class="punctuation">(</span><span class="keyword type">int</span> <span class="name">slot1</span><span class="punctuation">,</span> <span class="keyword type">int</span> <span class="name">slot2</span><span class="punctuation">,</span> <span class="keyword type">int</span> <span class="name">slot3</span><span class="punctuation">)</span> <span class="punctuation">{</span> <span class="name">assert</span><span class="punctuation">(</span><span class="name builtin">false</span><span class="punctuation">);</span> <span class="keyword">return</span> <span class="name builtin">false</span><span class="punctuation">;</span> <span class="punctuation">}</span>
-        <span class="keyword">virtual</span> <span class="name">size_type</span> <span class="name">physical_offset</span><span class="punctuation">(</span><span class="keyword type">int</span> <span class="name">slot</span><span class="punctuation">,</span> <span class="keyword type">int</span> <span class="name">offset</span><span class="punctuation">)</span>
-        <span class="punctuation">{</span> <span class="keyword">return</span> <span class="name">slot</span> <span class="operator">*</span> <span class="name">m_files</span><span class="punctuation">.</span><span class="name">piece_length</span><span class="punctuation">()</span> <span class="operator">+</span> <span class="name">offset</span><span class="punctuation">;</span> <span class="punctuation">};</span>
-        <span class="keyword">virtual</span> <span class="name">sha1_hash</span> <span class="name function">hash_for_slot</span><span class="punctuation">(</span><span class="keyword type">int</span> <span class="name">slot</span><span class="punctuation">,</span> <span class="name">partial_hash</span><span class="operator">&amp;</span> <span class="name">ph</span><span class="punctuation">,</span> <span class="keyword type">int</span> <span class="name">piece_size</span><span class="punctuation">)</span>
+        <span class="keyword">virtual</span> <span class="name">boost</span><span class="operator">::</span><span class="keyword type">int64_t</span> <span class="name">physical_offset</span><span class="punctuation">(</span><span class="keyword type">int</span> <span class="name">piece</span><span class="punctuation">,</span> <span class="keyword type">int</span> <span class="name">offset</span><span class="punctuation">)</span>
+        <span class="punctuation">{</span> <span class="keyword">return</span> <span class="name">piece</span> <span class="operator">*</span> <span class="name">m_files</span><span class="punctuation">.</span><span class="name">piece_length</span><span class="punctuation">()</span> <span class="operator">+</span> <span class="name">offset</span><span class="punctuation">;</span> <span class="punctuation">};</span>
+        <span class="keyword">virtual</span> <span class="name">sha1_hash</span> <span class="name function">hash_for_slot</span><span class="punctuation">(</span><span class="keyword type">int</span> <span class="name">piece</span><span class="punctuation">,</span> <span class="name">partial_hash</span><span class="operator">&amp;</span> <span class="name">ph</span><span class="punctuation">,</span> <span class="keyword type">int</span> <span class="name">piece_size</span><span class="punctuation">)</span>
         <span class="punctuation">{</span>
                 <span class="keyword type">int</span> <span class="name">left</span> <span class="operator">=</span> <span class="name">piece_size</span> <span class="operator">-</span> <span class="name">ph</span><span class="punctuation">.</span><span class="name">offset</span><span class="punctuation">;</span>
                 <span class="name">assert</span><span class="punctuation">(</span><span class="name">left</span> <span class="operator">&gt;=</span> <span class="literal number integer">0</span><span class="punctuation">);</span>
                 <span class="keyword">if</span> <span class="punctuation">(</span><span class="name">left</span> <span class="operator">&gt;</span> <span class="literal number integer">0</span><span class="punctuation">)</span>
                 <span class="punctuation">{</span>
-                        <span class="name">std</span><span class="operator">::</span><span class="name">vector</span><span class="operator">&lt;</span><span class="keyword type">char</span><span class="operator">&gt;&amp;</span> <span class="name">data</span> <span class="operator">=</span> <span class="name">m_file_data</span><span class="punctuation">[</span><span class="name">slot</span><span class="punctuation">];</span>
+                        <span class="name">std</span><span class="operator">::</span><span class="name">vector</span><span class="operator">&lt;</span><span class="keyword type">char</span><span class="operator">&gt;&amp;</span> <span class="name">data</span> <span class="operator">=</span> <span class="name">m_file_data</span><span class="punctuation">[</span><span class="name">piece</span><span class="punctuation">];</span>
                         <span class="comment single">// if there are padding files, those blocks will be considered
 </span>                        <span class="comment single">// completed even though they haven't been written to the storage.
 </span>                        <span class="comment single">// in this case, just extend the piece buffer to its full size
@@ -123,16 +129,85 @@ illustrates the basics of implementing a custom storage.</p>
         <span class="name">file_storage</span> <span class="name">m_files</span><span class="punctuation">;</span>
 <span class="punctuation">};</span>
 
-<span class="name">storage_interface</span><span class="operator">*</span> <span class="name function">temp_storage_constructor</span><span class="punctuation">(</span>
-        <span class="name">file_storage</span> <span class="keyword">const</span><span class="operator">&amp;</span> <span class="name">fs</span><span class="punctuation">,</span> <span class="name">file_storage</span> <span class="keyword">const</span><span class="operator">*</span> <span class="name">mapped</span>
-        <span class="punctuation">,</span> <span class="name">std</span><span class="operator">::</span><span class="name">string</span> <span class="keyword">const</span><span class="operator">&amp;</span> <span class="name">path</span><span class="punctuation">,</span> <span class="name">file_pool</span><span class="operator">&amp;</span> <span class="name">fp</span>
-        <span class="punctuation">,</span> <span class="name">std</span><span class="operator">::</span><span class="name">vector</span><span class="operator">&lt;</span><span class="name">boost</span><span class="operator">::</span><span class="keyword type">uint8_t</span><span class="operator">&gt;</span> <span class="keyword">const</span><span class="operator">&amp;</span> <span class="name">prio</span><span class="punctuation">)</span>
+<span class="name">storage_interface</span><span class="operator">*</span> <span class="name function">temp_storage_constructor</span><span class="punctuation">(</span><span class="name">storage_params</span> <span class="keyword">const</span><span class="operator">&amp;</span> <span class="name">params</span><span class="punctuation">)</span>
 <span class="punctuation">{</span>
-        <span class="keyword">return</span> <span class="keyword">new</span> <span class="name">temp_storage</span><span class="punctuation">(</span><span class="name">fs</span><span class="punctuation">);</span>
+        <span class="keyword">return</span> <span class="keyword">new</span> <span class="name">temp_storage</span><span class="punctuation">(</span><span class="operator">*</span><span class="name">params</span><span class="punctuation">.</span><span class="name">files</span><span class="punctuation">);</span>
 <span class="punctuation">}</span>
 </pre>
-<a name="file_pool"></a><div class="section" id="file-pool">
-<h1>file_pool</h1>
+<a name="disk_buffer_holder"></a><div class="section" id="disk-buffer-holder">
+<h2>disk_buffer_holder</h2>
+<p>Declared in &quot;<a class="reference external" href="../include/libtorrent/disk_buffer_holder.hpp">libtorrent/disk_buffer_holder.hpp</a>&quot;</p>
+<p>The disk buffer holder acts like a <tt class="docutils literal">scoped_ptr</tt> that frees a disk buffer
+when it's destructed, unless it's released. <tt class="docutils literal">release</tt> returns the disk
+buffer and transfers ownership and responsibility to free it to the caller.</p>
+<p>A disk buffer is freed by passing it to <tt class="docutils literal"><span class="pre">session_impl::free_disk_buffer()</span></tt>.</p>
+<p><tt class="docutils literal">get()</tt> returns the pointer without transferring responsibility. If
+this buffer has been released, <tt class="docutils literal">buffer()</tt> will return 0.</p>
+<pre class="literal-block">
+struct disk_buffer_holder
+{
+   <strong>disk_buffer_holder</strong> (buffer_allocator_interface&amp; alloc, disk_io_job const&amp; j);
+   <strong>~disk_buffer_holder</strong> ();
+   char* <strong>release</strong> ();
+   char* <strong>get</strong> () const;
+   void <strong>reset</strong> (char* buf = 0);
+   void <strong>reset</strong> (disk_io_job const&amp; j);
+   void <strong>swap</strong> (disk_buffer_holder&amp; h);
+   block_cache_reference <strong>ref</strong> () const;
+};
+</pre>
+<a name="disk_buffer_holder()"></a><div class="section" id="id7">
+<h3>disk_buffer_holder()</h3>
+<pre class="literal-block">
+<strong>disk_buffer_holder</strong> (buffer_allocator_interface&amp; alloc, disk_io_job const&amp; j);
+</pre>
+<p>construct a buffer holder that will free the held buffer
+using a disk buffer pool directly (there's only one
+disk_buffer_pool per <a class="reference external" href="reference-Core.html#session">session</a>)</p>
+<a name="~disk_buffer_holder()"></a></div>
+<div class="section" id="id9">
+<h3>~disk_buffer_holder()</h3>
+<pre class="literal-block">
+<strong>~disk_buffer_holder</strong> ();
+</pre>
+<p>frees any unreleased disk buffer held by this object</p>
+<a name="release()"></a></div>
+<div class="section" id="release">
+<h3>release()</h3>
+<pre class="literal-block">
+char* <strong>release</strong> ();
+</pre>
+<p>return the held disk buffer and clear it from the
+holder. The responsibility to free it is passed on
+to the caller</p>
+<a name="get()"></a></div>
+<div class="section" id="get">
+<h3>get()</h3>
+<pre class="literal-block">
+char* <strong>get</strong> () const;
+</pre>
+<p>return a pointer to the held buffer</p>
+<a name="reset()"></a></div>
+<div class="section" id="reset">
+<h3>reset()</h3>
+<pre class="literal-block">
+void <strong>reset</strong> (char* buf = 0);
+void <strong>reset</strong> (disk_io_job const&amp; j);
+</pre>
+<p>set the holder object to hold the specified buffer
+(or NULL by default). If it's already holding a
+disk buffer, it will first be freed.</p>
+<a name="swap()"></a></div>
+<div class="section" id="swap">
+<h3>swap()</h3>
+<pre class="literal-block">
+void <strong>swap</strong> (disk_buffer_holder&amp; h);
+</pre>
+<p>swap pointers of two disk buffer holders.</p>
+<a name="file_pool"></a></div>
+</div>
+<div class="section" id="file-pool">
+<h2>file_pool</h2>
 <p>Declared in &quot;<a class="reference external" href="../include/libtorrent/file_pool.hpp">libtorrent/file_pool.hpp</a>&quot;</p>
 <p>this is an internal cache of open file handles. It's primarily used by
 <a class="reference external" href="reference-Custom_Storage.html#storage_interface">storage_interface</a> implementations. It provides semi weak guarantees of
@@ -144,9 +219,9 @@ struct file_pool : boost::noncopyable
 {
    <strong>~file_pool</strong> ();
    <strong>file_pool</strong> (int size = 40);
-   boost::intrusive_ptr&lt;file&gt; <strong>open_file</strong> (void* st, std::string const&amp; p
+   file_handle <strong>open_file</strong> (void* st, std::string const&amp; p
       , int file_index, file_storage const&amp; fs, int m, error_code&amp; ec);
-   void <strong>release</strong> (void* st);
+   void <strong>release</strong> (void* st = NULL);
    void <strong>release</strong> (void* st, int file_index);
    void <strong>resize</strong> (int size);
    int <strong>size_limit</strong> () const;
@@ -154,7 +229,7 @@ struct file_pool : boost::noncopyable
 </pre>
 <a name="~file_pool()"></a>
 <a name="file_pool()"></a><div class="section" id="file-pool-file-pool">
-<h2>~file_pool() file_pool()</h2>
+<h3>~file_pool() file_pool()</h3>
 <pre class="literal-block">
 <strong>~file_pool</strong> ();
 <strong>file_pool</strong> (int size = 40);
@@ -163,19 +238,19 @@ struct file_pool : boost::noncopyable
 to hold open at any given time.</p>
 <a name="open_file()"></a></div>
 <div class="section" id="open-file">
-<h2>open_file()</h2>
+<h3>open_file()</h3>
 <pre class="literal-block">
-boost::intrusive_ptr&lt;file&gt; <strong>open_file</strong> (void* st, std::string const&amp; p
+file_handle <strong>open_file</strong> (void* st, std::string const&amp; p
       , int file_index, file_storage const&amp; fs, int m, error_code&amp; ec);
 </pre>
 <p>return an open file handle to file at <tt class="docutils literal">file_index</tt> in the
 <a class="reference external" href="reference-Storage.html#file_storage">file_storage</a> <tt class="docutils literal">fs</tt> opened at save path <tt class="docutils literal">p</tt>. <tt class="docutils literal">m</tt> is the
 file open mode (see <a class="reference external" href="file::open_mode_t">file::open_mode_t</a>).</p>
 <a name="release()"></a></div>
-<div class="section" id="release">
-<h2>release()</h2>
+<div class="section" id="id13">
+<h3>release()</h3>
 <pre class="literal-block">
-void <strong>release</strong> (void* st);
+void <strong>release</strong> (void* st = NULL);
 void <strong>release</strong> (void* st, int file_index);
 </pre>
 <p>release all files belonging to the specified <a class="reference external" href="reference-Custom_Storage.html#storage_interface">storage_interface</a> (<tt class="docutils literal">st</tt>)
@@ -183,14 +258,14 @@ the overload that takes <tt class="docutils literal">file_index</tt> releases on
 that index in storage <tt class="docutils literal">st</tt>.</p>
 <a name="resize()"></a></div>
 <div class="section" id="resize">
-<h2>resize()</h2>
+<h3>resize()</h3>
 <pre class="literal-block">
 void <strong>resize</strong> (int size);
 </pre>
 <p>update the allowed number of open file handles to <tt class="docutils literal">size</tt>.</p>
 <a name="size_limit()"></a></div>
 <div class="section" id="size-limit">
-<h2>size_limit()</h2>
+<h3>size_limit()</h3>
 <pre class="literal-block">
 int <strong>size_limit</strong> () const;
 </pre>
@@ -199,7 +274,7 @@ by the <a class="reference external" href="reference-Custom_Storage.html#file_po
 <a name="storage_interface"></a></div>
 </div>
 <div class="section" id="storage-interface">
-<h1>storage_interface</h1>
+<h2>storage_interface</h2>
 <p>Declared in &quot;<a class="reference external" href="../include/libtorrent/storage.hpp">libtorrent/storage.hpp</a>&quot;</p>
 <p>The storage interface is a pure virtual class that can be implemented to
 customize how and where data for a torrent is stored. The default storage
@@ -212,11 +287,10 @@ order to be able to take advantage of optimized disk-I/O.</p>
 <p>It is also possible to write a thin class that uses the default storage
 but modifies some particular behavior, for instance encrypting the data
 before it's written to disk, and decrypting it when it's read again.</p>
-<p>The storage interface is based on slots, each slot is 'piece_size' number
+<p>The storage interface is based on pieces. Avery read and write operation
+happens in the piece-space. Each piece fits 'piece_size' number
 of bytes. All access is done by writing and reading whole or partial
-slots. One slot is one piece in the torrent, but the data in the slot
-does not necessarily correspond to the piece with the same index (in
-compact allocation mode it won't).</p>
+pieces.</p>
 <p>libtorrent comes with two built-in storage implementations;
 <tt class="docutils literal">default_storage</tt> and <tt class="docutils literal">disabled_storage</tt>. Their constructor functions
 are called <a class="reference external" href="reference-Storage.html#default_storage_constructor()">default_storage_constructor()</a> and
@@ -226,229 +300,177 @@ reads garbage. It's useful mostly for benchmarking and profiling purpose.</p>
 <pre class="literal-block">
 struct storage_interface
 {
-   virtual bool <strong>initialize</strong> (bool allocate_files) = 0;
-   virtual bool <strong>has_any_file</strong> () = 0;
-   virtual void <strong>set_file_priority</strong> (std::vector&lt;boost::uint8_t&gt; const&amp; prio) = 0;
-   virtual int <strong>writev</strong> (<a class="reference external" href="file::iovec_t">file::iovec_t</a> const* bufs, int slot, int offset, int num_bufs, int flags = <a class="reference external" href="file::random_access">file::random_access</a>);
-   virtual int <strong>readv</strong> (<a class="reference external" href="file::iovec_t">file::iovec_t</a> const* bufs, int slot, int offset, int num_bufs, int flags = <a class="reference external" href="file::random_access">file::random_access</a>);
-   virtual void <strong>hint_read</strong> (int, int, int);
-   virtual int <strong>read</strong> (char* buf, int slot, int offset, int size) = 0;
-   virtual int <strong>write</strong> (const char* buf, int slot, int offset, int size) = 0;
-   virtual size_type <strong>physical_offset</strong> (int slot, int offset) = 0;
-   virtual int <strong>sparse_end</strong> (int start) const;
-   virtual int <strong>move_storage</strong> (std::string const&amp; save_path, int flags) = 0;
-   virtual bool <strong>verify_resume_data</strong> (lazy_entry const&amp; rd, error_code&amp; error) = 0;
-   virtual bool <strong>write_resume_data</strong> (entry&amp; rd) const = 0;
-   virtual bool <strong>move_slot</strong> (int src_slot, int dst_slot) = 0;
-   virtual bool <strong>swap_slots</strong> (int slot1, int slot2) = 0;
-   virtual bool <strong>swap_slots3</strong> (int slot1, int slot2, int slot3) = 0;
-   virtual bool <strong>release_files</strong> () = 0;
-   virtual bool <strong>rename_file</strong> (int index, std::string const&amp; new_filename) = 0;
-   virtual bool <strong>delete_files</strong> () = 0;
-   disk_buffer_pool* <strong>disk_pool</strong> ();
-   session_settings const&amp; <strong>settings</strong> () const;
-   void <strong>set_error</strong> (std::string const&amp; file, error_code const&amp; ec) const;
-   error_code const&amp; <strong>error</strong> () const;
-   std::string const&amp; <strong>error_file</strong> () const;
-   virtual void <strong>clear_error</strong> ();
+   virtual void <strong>initialize</strong> (storage_error&amp; ec) = 0;
+   virtual int <strong>writev</strong> (file::iovec_t const* bufs, int num_bufs
+      , int piece, int offset, int flags, storage_error&amp; ec) = 0;
+   virtual int <strong>readv</strong> (file::iovec_t const* bufs, int num_bufs
+      , int piece, int offset, int flags, storage_error&amp; ec) = 0;
+   virtual bool <strong>has_any_file</strong> (storage_error&amp; ec) = 0;
+   virtual void <strong>set_file_priority</strong> (std::vector&lt;boost::uint8_t&gt; const&amp; prio
+      , storage_error&amp; ec) = 0;
+   virtual int <strong>move_storage</strong> (std::string const&amp; save_path, int flags
+      , storage_error&amp; ec) = 0;
+   virtual bool <strong>verify_resume_data</strong> (bdecode_node const&amp; rd
+      , std::vector&lt;std::string&gt; const* links
+      , storage_error&amp; ec) = 0;
+   virtual void <strong>write_resume_data</strong> (entry&amp; rd, storage_error&amp; ec) const = 0;
+   virtual void <strong>release_files</strong> (storage_error&amp; ec) = 0;
+   virtual void <strong>rename_file</strong> (int index, std::string const&amp; new_filename
+      , storage_error&amp; ec) = 0;
+   virtual void <strong>delete_files</strong> (int options, storage_error&amp; ec) = 0;
+   virtual bool <strong>tick</strong> ();
+   aux::session_settings const&amp; <strong>settings</strong> () const;
+
+   aux::session_settings* m_settings;
 };
 </pre>
 <a name="initialize()"></a><div class="section" id="initialize">
-<h2>initialize()</h2>
+<h3>initialize()</h3>
 <pre class="literal-block">
-virtual bool <strong>initialize</strong> (bool allocate_files) = 0;
+virtual void <strong>initialize</strong> (storage_error&amp; ec) = 0;
 </pre>
 <p>This function is called when the storage is to be initialized. The
 default storage will create directories and empty files at this point.
 If <tt class="docutils literal">allocate_files</tt> is true, it will also <tt class="docutils literal">ftruncate</tt> all files to
 their target size.</p>
-<p>Returning <tt class="docutils literal">true</tt> indicates an error occurred.</p>
-<a name="has_any_file()"></a></div>
-<div class="section" id="has-any-file">
-<h2>has_any_file()</h2>
-<pre class="literal-block">
-virtual bool <strong>has_any_file</strong> () = 0;
-</pre>
-<p>This function is called when first checking (or re-checking) the
-storage for a torrent. It should return true if any of the files that
-is used in this storage exists on disk. If so, the storage will be
-checked for existing pieces before starting the download.</p>
-<a name="set_file_priority()"></a></div>
-<div class="section" id="set-file-priority">
-<h2>set_file_priority()</h2>
-<pre class="literal-block">
-virtual void <strong>set_file_priority</strong> (std::vector&lt;boost::uint8_t&gt; const&amp; prio) = 0;
-</pre>
-<p>change the priorities of files.</p>
+<p>If an error occurs, <tt class="docutils literal">storage_error</tt> should be set to reflect it.</p>
 <a name="writev()"></a>
 <a name="readv()"></a></div>
 <div class="section" id="writev-readv">
-<h2>writev() readv()</h2>
+<h3>writev() readv()</h3>
 <pre class="literal-block">
-virtual int <strong>writev</strong> (<a class="reference external" href="file::iovec_t">file::iovec_t</a> const* bufs, int slot, int offset, int num_bufs, int flags = <a class="reference external" href="file::random_access">file::random_access</a>);
-virtual int <strong>readv</strong> (<a class="reference external" href="file::iovec_t">file::iovec_t</a> const* bufs, int slot, int offset, int num_bufs, int flags = <a class="reference external" href="file::random_access">file::random_access</a>);
+virtual int <strong>writev</strong> (file::iovec_t const* bufs, int num_bufs
+      , int piece, int offset, int flags, storage_error&amp; ec) = 0;
+virtual int <strong>readv</strong> (file::iovec_t const* bufs, int num_bufs
+      , int piece, int offset, int flags, storage_error&amp; ec) = 0;
 </pre>
-<p>These functions should read or write the data in or to the given
-<tt class="docutils literal">slot</tt> at the given <tt class="docutils literal">offset</tt>. It should read or write <tt class="docutils literal">num_bufs</tt>
-buffers sequentially, where the size of each buffer is specified in
-the buffer array <tt class="docutils literal">bufs</tt>. The <a class="reference external" href="file::iovec_t">file::iovec_t</a> type has the following
-members:</p>
+<p>These functions should read and write the data in or to the given
+<tt class="docutils literal">piece</tt> at the given <tt class="docutils literal">offset</tt>. It should read or write
+<tt class="docutils literal">num_bufs</tt> buffers sequentially, where the size of each buffer is
+specified in the buffer array <tt class="docutils literal">bufs</tt>. The <a class="reference external" href="file::iovec_t">file::iovec_t</a> type has the
+following members:</p>
 <pre class="literal-block">
 struct iovec_t { void* iov_base; size_t iov_len; };
 </pre>
-<p>The return value is the number of bytes actually read or written, or
--1 on failure. If it returns -1, the error code is expected to be set
-to</p>
+<p>These functions may be called simultaneously from multiple threads.
+Make sure they are thread safe. The <tt class="docutils literal">file</tt> in libtorrent is thread
+safe when it can fall back to <tt class="docutils literal">pread</tt>, <tt class="docutils literal">preadv</tt> or the windows
+equivalents. On targets where read operations cannot be thread safe
+(i.e one has to seek first and then read), only one disk thread is
+used.</p>
 <p>Every buffer in <tt class="docutils literal">bufs</tt> can be assumed to be page aligned and be of a
 page aligned size, except for the last buffer of the torrent. The
 allocated buffer can be assumed to fit a fully page aligned number of
 bytes though. This is useful when reading and writing the last piece
 of a file in unbuffered mode.</p>
-<p>The <tt class="docutils literal">offset</tt> is aligned to 16 kiB boundries  <em>most of the time</em>, but
+<p>The <tt class="docutils literal">offset</tt> is aligned to 16 kiB boundaries  <em>most of the time</em>, but
 there are rare exceptions when it's not. Specifically if the read
-cache is disabled/or full and a client requests unaligned data, or the
-file itself is not aligned in the torrent. Most clients request
-aligned data.</p>
-<a name="hint_read()"></a></div>
-<div class="section" id="hint-read">
-<h2>hint_read()</h2>
+cache is disabled/or full and a peer requests unaligned data. Most
+clients request aligned data.</p>
+<p>The number of bytes read or written should be returned, or -1 on
+error. If there's an error, the <tt class="docutils literal">storage_error</tt> must be filled out
+to represent the error that occurred.</p>
+<a name="has_any_file()"></a></div>
+<div class="section" id="has-any-file">
+<h3>has_any_file()</h3>
 <pre class="literal-block">
-virtual void <strong>hint_read</strong> (int, int, int);
+virtual bool <strong>has_any_file</strong> (storage_error&amp; ec) = 0;
 </pre>
-<p>This function is called when a read job is queued. It gives the
-storage wrapper an opportunity to hint the operating system about this
-coming read. For instance, the storage may call
-<tt class="docutils literal">posix_fadvise(POSIX_FADV_WILLNEED)</tt> or <tt class="docutils literal">fcntl(F_RDADVISE)</tt>.</p>
-<a name="read()"></a></div>
-<div class="section" id="read">
-<h2>read()</h2>
+<p>This function is called when first checking (or re-checking) the
+storage for a torrent. It should return true if any of the files that
+is used in this storage exists on disk. If so, the storage will be
+checked for existing pieces before starting the download.</p>
+<p>If an error occurs, <tt class="docutils literal">storage_error</tt> should be set to reflect it.</p>
+<a name="set_file_priority()"></a></div>
+<div class="section" id="set-file-priority">
+<h3>set_file_priority()</h3>
 <pre class="literal-block">
-virtual int <strong>read</strong> (char* buf, int slot, int offset, int size) = 0;
+virtual void <strong>set_file_priority</strong> (std::vector&lt;boost::uint8_t&gt; const&amp; prio
+      , storage_error&amp; ec) = 0;
 </pre>
-<p>negative return value indicates an error</p>
-<a name="write()"></a></div>
-<div class="section" id="write">
-<h2>write()</h2>
-<pre class="literal-block">
-virtual int <strong>write</strong> (const char* buf, int slot, int offset, int size) = 0;
-</pre>
-<p>negative return value indicates an error</p>
-<a name="physical_offset()"></a></div>
-<div class="section" id="physical-offset">
-<h2>physical_offset()</h2>
-<pre class="literal-block">
-virtual size_type <strong>physical_offset</strong> (int slot, int offset) = 0;
-</pre>
-<p>returns the offset on the physical storage medium for the
-byte at offset <tt class="docutils literal">offset</tt> in slot <tt class="docutils literal">slot</tt>.</p>
-<a name="sparse_end()"></a></div>
-<div class="section" id="sparse-end">
-<h2>sparse_end()</h2>
-<pre class="literal-block">
-virtual int <strong>sparse_end</strong> (int start) const;
-</pre>
-<p>This function is optional. It is supposed to return the first piece,
-starting at <tt class="docutils literal">start</tt> that is fully contained within a data-region on
-disk (i.e. non-sparse region). The purpose of this is to skip parts of
-files that can be known to contain zeros when checking files.</p>
+<p>change the priorities of files. This is a fenced job and is
+guaranteed to be the only running function on this storage
+when called</p>
 <a name="move_storage()"></a></div>
 <div class="section" id="move-storage">
-<h2>move_storage()</h2>
+<h3>move_storage()</h3>
 <pre class="literal-block">
-virtual int <strong>move_storage</strong> (std::string const&amp; save_path, int flags) = 0;
+virtual int <strong>move_storage</strong> (std::string const&amp; save_path, int flags
+      , storage_error&amp; ec) = 0;
 </pre>
 <p>This function should move all the files belonging to the storage to
 the new save_path. The default storage moves the single file or the
 directory of the torrent.</p>
 <p>Before moving the files, any open file handles may have to be closed,
 like <tt class="docutils literal">release_files()</tt>.</p>
+<p>If an error occurs, <tt class="docutils literal">storage_error</tt> should be set to reflect it.</p>
 <p>returns one of:
 | no_error = 0
-| need_full_check = -1
-| fatal_disk_error = -2
+| fatal_disk_error = -1
+| need_full_check = -2
 | file_exist = -4</p>
 <a name="verify_resume_data()"></a></div>
 <div class="section" id="verify-resume-data">
-<h2>verify_resume_data()</h2>
+<h3>verify_resume_data()</h3>
 <pre class="literal-block">
-virtual bool <strong>verify_resume_data</strong> (lazy_entry const&amp; rd, error_code&amp; error) = 0;
+virtual bool <strong>verify_resume_data</strong> (bdecode_node const&amp; rd
+      , std::vector&lt;std::string&gt; const* links
+      , storage_error&amp; ec) = 0;
 </pre>
 <p>This function should verify the resume data <tt class="docutils literal">rd</tt> with the files
 on disk. If the resume data seems to be up-to-date, return true. If
 not, set <tt class="docutils literal">error</tt> to a description of what mismatched and return false.</p>
 <p>The default storage may compare file sizes and time stamps of the files.</p>
-<p>Returning <tt class="docutils literal">false</tt> indicates an error occurred.</p>
+<p>If an error occurs, <tt class="docutils literal">storage_error</tt> should be set to reflect it.</p>
+<p>This function should verify the resume data <tt class="docutils literal">rd</tt> with the files
+on disk. If the resume data seems to be up-to-date, return true. If
+not, set <tt class="docutils literal">error</tt> to a description of what mismatched and return false.</p>
+<p>If the <tt class="docutils literal">links</tt> pointer is non-null, it has the same number
+of elements as there are files. Each element is either empty or contains
+the absolute path to a file identical to the corresponding file in this
+torrent. The storage must create hard links (or copy) those files. If
+any file does not exist or is inaccessible, the disk job must fail.</p>
 <a name="write_resume_data()"></a></div>
 <div class="section" id="write-resume-data">
-<h2>write_resume_data()</h2>
+<h3>write_resume_data()</h3>
 <pre class="literal-block">
-virtual bool <strong>write_resume_data</strong> (entry&amp; rd) const = 0;
+virtual void <strong>write_resume_data</strong> (entry&amp; rd, storage_error&amp; ec) const = 0;
 </pre>
 <p>This function should fill in resume data, the current state of the
 storage, in <tt class="docutils literal">rd</tt>. The default storage adds file timestamps and
 sizes.</p>
 <p>Returning <tt class="docutils literal">true</tt> indicates an error occurred.</p>
-<a name="move_slot()"></a></div>
-<div class="section" id="move-slot">
-<h2>move_slot()</h2>
-<pre class="literal-block">
-virtual bool <strong>move_slot</strong> (int src_slot, int dst_slot) = 0;
-</pre>
-<p>This function should copy or move the data in slot <tt class="docutils literal">src_slot</tt> to
-the slot <tt class="docutils literal">dst_slot</tt>. This is only used in compact mode.</p>
-<p>If the storage caches slots, this could be implemented more
-efficient than reading and writing the data.</p>
-<p>Returning <tt class="docutils literal">true</tt> indicates an error occurred.</p>
-<a name="swap_slots()"></a></div>
-<div class="section" id="swap-slots">
-<h2>swap_slots()</h2>
-<pre class="literal-block">
-virtual bool <strong>swap_slots</strong> (int slot1, int slot2) = 0;
-</pre>
-<p>This function should swap the data in <tt class="docutils literal">slot1</tt> and <tt class="docutils literal">slot2</tt>. The
-default storage uses a scratch buffer to read the data into, then
-moving the other slot and finally writing back the temporary slot's
-data</p>
-<p>This is only used in compact mode.</p>
-<p>Returning <tt class="docutils literal">true</tt> indicates an error occurred.</p>
-<a name="swap_slots3()"></a></div>
-<div class="section" id="swap-slots3">
-<h2>swap_slots3()</h2>
-<pre class="literal-block">
-virtual bool <strong>swap_slots3</strong> (int slot1, int slot2, int slot3) = 0;
-</pre>
-<p>This function should do a 3-way swap, or shift of the slots. <tt class="docutils literal">slot1</tt>
-should move to <tt class="docutils literal">slot2</tt>, which should be moved to <tt class="docutils literal">slot3</tt> which in
-turn should be moved to <tt class="docutils literal">slot1</tt>.</p>
-<p>This is only used in compact mode.</p>
-<p>Returning <tt class="docutils literal">true</tt> indicates an error occurred.</p>
+<p>If an error occurs, <tt class="docutils literal">storage_error</tt> should be set to reflect it.</p>
 <a name="release_files()"></a></div>
 <div class="section" id="release-files">
-<h2>release_files()</h2>
+<h3>release_files()</h3>
 <pre class="literal-block">
-virtual bool <strong>release_files</strong> () = 0;
+virtual void <strong>release_files</strong> (storage_error&amp; ec) = 0;
 </pre>
-<p>This function should release all the file handles that it keeps open to files
-belonging to this storage. The default implementation just calls
-<tt class="docutils literal"><span class="pre">file_pool::release_files(this)</span></tt>.</p>
-<p>Returning <tt class="docutils literal">true</tt> indicates an error occurred.</p>
+<p>This function should release all the file handles that it keeps open
+to files belonging to this storage. The default implementation just
+calls file_pool::release_files().</p>
+<p>If an error occurs, <tt class="docutils literal">storage_error</tt> should be set to reflect it.</p>
 <a name="rename_file()"></a></div>
 <div class="section" id="rename-file">
-<h2>rename_file()</h2>
+<h3>rename_file()</h3>
 <pre class="literal-block">
-virtual bool <strong>rename_file</strong> (int index, std::string const&amp; new_filename) = 0;
+virtual void <strong>rename_file</strong> (int index, std::string const&amp; new_filename
+      , storage_error&amp; ec) = 0;
 </pre>
-<p>Rename file with index <tt class="docutils literal">file</tt> to the thame <tt class="docutils literal">new_name</tt>. If there is an error,
-<tt class="docutils literal">true</tt> should be returned.</p>
+<p>Rename file with index <tt class="docutils literal">file</tt> to the thame <tt class="docutils literal">new_name</tt>.</p>
+<p>If an error occurs, <tt class="docutils literal">storage_error</tt> should be set to reflect it.</p>
 <a name="delete_files()"></a></div>
 <div class="section" id="delete-files">
-<h2>delete_files()</h2>
+<h3>delete_files()</h3>
 <pre class="literal-block">
-virtual bool <strong>delete_files</strong> () = 0;
+virtual void <strong>delete_files</strong> (int options, storage_error&amp; ec) = 0;
 </pre>
-<p>This function should delete all files and directories belonging to
-this storage.</p>
-<p>Returning <tt class="docutils literal">true</tt> indicates an error occurred.</p>
+<p>This function should delete some or all of the storage for this torrent.
+The <tt class="docutils literal">options</tt> parameter specifies whether to delete all files or just
+the partfile. <tt class="docutils literal">options</tt> are set to the same value as the options
+passed to session::remove_torrent().</p>
+<p>If an error occurs, <tt class="docutils literal">storage_error</tt> should be set to reflect it.</p>
 <p>The <tt class="docutils literal">disk_buffer_pool</tt> is used to allocate and free disk buffers. It
 has the following members:</p>
 <pre class="literal-block">
@@ -465,51 +487,31 @@ struct disk_buffer_pool : boost::noncopyable
         void release_memory();
 };
 </pre>
-<a name="disk_pool()"></a></div>
-<div class="section" id="disk-pool">
-<h2>disk_pool()</h2>
+<a name="tick()"></a></div>
+<div class="section" id="tick">
+<h3>tick()</h3>
 <pre class="literal-block">
-disk_buffer_pool* <strong>disk_pool</strong> ();
+virtual bool <strong>tick</strong> ();
 </pre>
-<p>access global disk_buffer_pool, for allocating and freeing disk buffers</p>
+<p>called periodically (useful for deferred flushing). When returning
+false, it means no more ticks are necessary. Any disk job submitted
+will re-enable ticking. The default will always turn ticking back
+off again.</p>
 <a name="settings()"></a></div>
 <div class="section" id="settings">
-<h2>settings()</h2>
+<h3>settings()</h3>
 <pre class="literal-block">
-session_settings const&amp; <strong>settings</strong> () const;
+aux::session_settings const&amp; <strong>settings</strong> () const;
 </pre>
-<p>access global <a class="reference external" href="reference-Settings.html#session_settings">session_settings</a></p>
-<a name="set_error()"></a></div>
-<div class="section" id="set-error">
-<h2>set_error()</h2>
-<pre class="literal-block">
-void <strong>set_error</strong> (std::string const&amp; file, error_code const&amp; ec) const;
-</pre>
-<p>called by the storage implementation to set it into an
-error state. Typically whenever a critical file operation
-fails.</p>
-<a name="error_file()"></a>
-<a name="error()"></a></div>
-<div class="section" id="error-file-error">
-<h2>error_file() error()</h2>
-<pre class="literal-block">
-error_code const&amp; <strong>error</strong> () const;
-std::string const&amp; <strong>error_file</strong> () const;
-</pre>
-<p>returns the currently set error code and file path associated with it,
-if set.</p>
-<a name="clear_error()"></a></div>
-<div class="section" id="clear-error">
-<h2>clear_error()</h2>
-<pre class="literal-block">
-virtual void <strong>clear_error</strong> ();
-</pre>
-<p>reset the error state to allow continuing reading and writing
-to the storage</p>
+<p>access global session_settings</p>
+<a name="m_settings"></a><dl class="docutils">
+<dt>m_settings</dt>
+<dd>initialized in disk_io_thread::perform_async_job</dd>
+</dl>
 <a name="default_storage"></a></div>
 </div>
 <div class="section" id="default-storage">
-<h1>default_storage</h1>
+<h2>default_storage</h2>
 <p>Declared in &quot;<a class="reference external" href="../include/libtorrent/storage.hpp">libtorrent/storage.hpp</a>&quot;</p>
 <p>The default implementation of <a class="reference external" href="reference-Custom_Storage.html#storage_interface">storage_interface</a>. Behaves as a normal
 bittorrent client. It is possible to derive from this class in order to
@@ -517,18 +519,35 @@ override some of its behavior, when implementing a custom storage.</p>
 <pre class="literal-block">
 class default_storage : public storage_interface, boost::noncopyable
 {
-   <strong>default_storage</strong> (file_storage const&amp; fs, file_storage const* mapped
-      , std::string const&amp; path, file_pool&amp; fp
-      , std::vector&lt;boost::uint8_t&gt; const&amp; file_prio);
+   <strong>default_storage</strong> (storage_params const&amp; params);
+   virtual int <strong>move_storage</strong> (std::string const&amp; save_path, int flags
+      , storage_error&amp; ec) override;
+   virtual bool <strong>verify_resume_data</strong> (bdecode_node const&amp; rd
+      , std::vector&lt;std::string&gt; const* links
+      , storage_error&amp; error) override;
+   virtual void <strong>initialize</strong> (storage_error&amp; ec) override;
+   virtual bool <strong>tick</strong> () override;
+   virtual void <strong>delete_files</strong> (int options, storage_error&amp; ec) override;
+   virtual void <strong>rename_file</strong> (int index, std::string const&amp; new_filename
+      , storage_error&amp; ec) override;
+   virtual void <strong>set_file_priority</strong> (std::vector&lt;boost::uint8_t&gt; const&amp; prio
+      , storage_error&amp; ec) override;
+   virtual void <strong>write_resume_data</strong> (entry&amp; rd, storage_error&amp; ec) const override;
+   virtual void <strong>release_files</strong> (storage_error&amp; ec) override;
+   virtual bool <strong>has_any_file</strong> (storage_error&amp; ec) override;
+   int <strong>readv</strong> (file::iovec_t const* bufs, int num_bufs
+      , int piece, int offset, int flags, storage_error&amp; ec) override;
+   int <strong>writev</strong> (file::iovec_t const* bufs, int num_bufs
+      , int piece, int offset, int flags, storage_error&amp; ec) override;
    file_storage const&amp; <strong>files</strong> () const;
+   static void <strong>disk_write_access_log</strong> (bool enable);
+   static bool <strong>disk_write_access_log</strong> ();
 };
 </pre>
-<a name="default_storage()"></a><div class="section" id="id15">
-<h2>default_storage()</h2>
+<a name="default_storage()"></a><div class="section" id="id20">
+<h3>default_storage()</h3>
 <pre class="literal-block">
-<strong>default_storage</strong> (file_storage const&amp; fs, file_storage const* mapped
-      , std::string const&amp; path, file_pool&amp; fp
-      , std::vector&lt;boost::uint8_t&gt; const&amp; file_prio);
+<strong>default_storage</strong> (storage_params const&amp; params);
 </pre>
 <p>constructs the <a class="reference external" href="reference-Custom_Storage.html#default_storage">default_storage</a> based on the give <a class="reference external" href="reference-Storage.html#file_storage">file_storage</a> (fs).
 <tt class="docutils literal">mapped</tt> is an optional argument (it may be NULL). If non-NULL it
@@ -543,13 +562,14 @@ an empty vector. Any file whose index is not represented by the vector
 this is used to treat files with priority 0 slightly differently.</p>
 <a name="files()"></a></div>
 <div class="section" id="files">
-<h2>files()</h2>
+<h3>files()</h3>
 <pre class="literal-block">
 file_storage const&amp; <strong>files</strong> () const;
 </pre>
 <p>if the files in this storage are mapped, returns the mapped
 <a class="reference external" href="reference-Storage.html#file_storage">file_storage</a>, otherwise returns the original <a class="reference external" href="reference-Storage.html#file_storage">file_storage</a> object.</p>
 <a name="move_flags_t"></a></div>
+</div>
 <div class="section" id="enum-move-flags-t">
 <h2>enum move_flags_t</h2>
 <p>Declared in &quot;<a class="reference external" href="../include/libtorrent/storage.hpp">libtorrent/storage.hpp</a>&quot;</p>

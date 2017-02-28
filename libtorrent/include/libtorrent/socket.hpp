@@ -33,9 +33,9 @@ POSSIBILITY OF SUCH DAMAGE.
 #ifndef TORRENT_SOCKET_HPP_INCLUDED
 #define TORRENT_SOCKET_HPP_INCLUDED
 
-#ifdef _MSC_VER
-#pragma warning(push, 1)
-#endif
+#include "libtorrent/config.hpp"
+
+#include "libtorrent/aux_/disable_warnings_push.hpp"
 
 // if building as Objective C++, asio's template
 // parameters Protocol has to be renamed to avoid
@@ -52,49 +52,36 @@ POSSIBILITY OF SUCH DAMAGE.
 
 #include <boost/version.hpp>
 
-#if BOOST_VERSION < 103500
-#include <asio/ip/tcp.hpp>
-#include <asio/ip/udp.hpp>
-#include <asio/write.hpp>
-#include <asio/read.hpp>
-#else
 #include <boost/asio/ip/tcp.hpp>
 #include <boost/asio/ip/udp.hpp>
 #include <boost/asio/write.hpp>
 #include <boost/asio/read.hpp>
-#endif
 
-#ifdef __OBJC__ 
+#ifdef __OBJC__
 #undef Protocol
 #endif
 
-#ifdef _MSC_VER
-#pragma warning(pop)
+#if defined TORRENT_BUILD_SIMULATOR
+#include "simulator/simulator.hpp"
 #endif
+
+#include "libtorrent/aux_/disable_warnings_pop.hpp"
 
 namespace libtorrent
 {
 
-#if BOOST_VERSION < 103500
-	using ::asio::ip::tcp;
-	using ::asio::ip::udp;
-	using ::asio::async_write;
-	using ::asio::async_read;
-
-	typedef ::asio::ip::tcp::socket stream_socket;
-	typedef ::asio::ip::udp::socket datagram_socket;
-	typedef ::asio::ip::tcp::acceptor socket_acceptor;
+#if defined TORRENT_BUILD_SIMULATOR
+	using sim::asio::ip::udp;
+	using sim::asio::ip::tcp;
+	using sim::asio::async_write;
+	using sim::asio::async_read;
+	using sim::asio::null_buffers;
 #else
 	using boost::asio::ip::tcp;
 	using boost::asio::ip::udp;
 	using boost::asio::async_write;
 	using boost::asio::async_read;
-
-	typedef boost::asio::ip::tcp::socket stream_socket;
-	typedef boost::asio::ip::udp::socket datagram_socket;
-	typedef boost::asio::ip::tcp::acceptor socket_acceptor;
-
-	namespace asio = boost::asio;
+	using boost::asio::null_buffers;
 #endif
 
 #ifdef TORRENT_WINDOWS
@@ -106,6 +93,7 @@ namespace libtorrent
 #ifndef IPV6_PROTECTION_LEVEL
 #define IPV6_PROTECTION_LEVEL 30
 #endif
+
 	struct v6_protection_level
 	{
 		v6_protection_level(int level): m_value(level) {}

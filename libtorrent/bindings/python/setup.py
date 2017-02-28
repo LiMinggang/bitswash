@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 
 from distutils.core import setup, Extension
-from distutils.sysconfig import get_config_var
+from distutils.sysconfig import get_config_vars
 import os
 import platform
 import sys
@@ -9,15 +9,26 @@ import shutil
 import multiprocessing
 import subprocess
 
-def parse_cmd(cmdline, prefix, keep_prefix = False):
-	ret = []
-	for token in cmdline.split():
-		if token[:len(prefix)] == prefix:
-			if keep_prefix:
-				ret.append(token)
+class flags_parser:
+	def __init__(self):
+		self.include_dirs = []
+		self.library_dirs = []
+		self.libraries = []
+
+	def parse(self, args):
+		"""Parse out the -I -L -l directives and return a list of all other arguments"""
+		ret = []
+		for token in args.split():
+			prefix = token[:2]
+			if prefix == '-I':
+				self.include_dirs.append(token[2:])
+			elif prefix == '-L':
+				self.library_dirs.append(token[2:])
+			elif prefix == '-l':
+				self.libraries.append(token[2:])
 			else:
-				ret.append(token[len(prefix):])
-	return ret
+				ret.append(token)
+		return ret
 
 def arch():
 	if platform.system() != 'Darwin': return []
@@ -51,7 +62,7 @@ except:
 ext = None
 packages = None
 
-if '--bjam' in sys.argv or ldflags == None or extra_cmd == None:
+if '--bjam' in sys.argv:
 
 	if '--bjam' in sys.argv:
 		del sys.argv[sys.argv.index('--bjam')]
@@ -71,7 +82,7 @@ if '--bjam' in sys.argv or ldflags == None or extra_cmd == None:
 		parallel_builds = ' -j%d' % multiprocessing.cpu_count()
 
 		# build libtorrent using bjam and build the installer with distutils
-		cmdline = 'b2 boost=source libtorrent-link=static geoip=static boost-link=static release optimization=space stage_module --abbreviate-paths' + toolset + parallel_builds
+		cmdline = 'b2 libtorrent-link=static boost-link=static release optimization=space stage_module --abbreviate-paths' + toolset + parallel_builds
 		print(cmdline)
 		if os.system(cmdline) != 0:
 			print('build failed')
@@ -91,24 +102,38 @@ if '--bjam' in sys.argv or ldflags == None or extra_cmd == None:
 
 else:
 	# Remove the '-Wstrict-prototypes' compiler option, which isn't valid for C++.
-	os.environ['OPT'] = ' '.join(
-		flag for flag in get_config_var('OPT').split() if flag != '-Wstrict-prototypes')
+	cfg_vars = get_config_vars()
+	for key, value in cfg_vars.items():
+		if isinstance(value, str):
+			cfg_vars[key] = value.replace('-Wstrict-prototypes', '')
 
 	source_list = os.listdir(os.path.join(os.path.dirname(__file__), "src"))
 	source_list = [os.path.abspath(os.path.join(os.path.dirname(__file__), "src", s)) for s in source_list if s.endswith(".cpp")]
 
-	ext = [Extension('libtorrent',
-		sources = source_list,
-		language='c++',
-		include_dirs = parse_cmd(extra_cmd, '-I'),
-		library_dirs = parse_cmd(extra_cmd, '-L'),
-		extra_link_args = ldflags.split() + arch(),
-		extra_compile_args = parse_cmd(extra_cmd, '-D', True) + arch() \
-			+ target_specific(),
-		libraries = ['torrent-rasterbar'] + parse_cmd(extra_cmd, '-l'))]
+	if extra_cmd:
+		flags = flags_parser()
+		# ldflags must be parsed first to ensure the correct library search path order
+		extra_link = flags.parse(ldflags)
+		extra_compile = flags.parse(extra_cmd)
+
+		# for some reason distutils uses the CC environment variable to determine
+		# the compiler to use for C++
+		if 'CXX' in os.environ:
+			os.environ['CC'] = os.environ['CXX']
+		if 'CXXFLAGS' in os.environ:
+			os.environ['CFLAGS'] = os.environ['CXXFLAGS']
+
+		ext = [Extension('libtorrent',
+			sources = source_list,
+			language='c++',
+			include_dirs = flags.include_dirs,
+			library_dirs = flags.library_dirs,
+			extra_link_args = extra_link + arch(),
+			extra_compile_args = extra_compile + arch() + target_specific(),
+			libraries = ['torrent-rasterbar'] + flags.libraries)]
 
 setup(name = 'python-libtorrent',
-	version = '1.0.11',
+	version = '1.1.2',
 	author = 'Arvid Norberg',
 	author_email = 'arvid@libtorrent.org',
 	description = 'Python bindings for libtorrent-rasterbar',

@@ -29,10 +29,10 @@
 <body>
 <div class="document" id="libtorrent-python-binding">
     <div id="container">
-    <table id="header">
+    <a href="index.html"><table id="header">
     <tr><td id="orange"></td>
     <td id="logo">libtorrent</td></tr>
-    </table>
+    </table></a>
     <div id="main">
 <h1 class="title">libtorrent python binding</h1>
 <table class="docinfo" frame="void" rules="none">
@@ -102,7 +102,7 @@ directory and invoke <tt class="docutils literal">bjam</tt> with the apropriate 
 build variants, see <a class="reference external" href="building.html#step-3-building-libtorrent">libtorrent build options</a>.</p>
 <p>For example:</p>
 <pre class="literal-block">
-$ bjam dht-support=on boost=source release link=static
+$ bjam dht-support=on link=static
 </pre>
 <p>On Mac OS X, this will produce the following python module:</p>
 <pre class="literal-block">
@@ -132,12 +132,11 @@ a list of entries.</p>
 </ul>
 <p><tt class="docutils literal"><span class="pre">create_torrent::add_node()</span></tt> takes two arguments, one string and one integer,
 instead of a pair. The string is the address and the integer is the port.</p>
-<p><tt class="docutils literal"><span class="pre">session::set_settings()</span></tt> not only accepts a <tt class="docutils literal">session_settings</tt> object, but also
-a dictionary with keys matching the names of the members of the <tt class="docutils literal">session_settings</tt> struct.
-When calling <tt class="docutils literal">set_settings</tt>, the dictionary does not need to have every settings set,
-keys that are not present, are set to their default value.</p>
-<p>For backwards compatibility, <tt class="docutils literal"><span class="pre">session::settings()</span></tt> still returns a <tt class="docutils literal">session_settings</tt>
-struct. To get a python dictionary of the settings, call <tt class="docutils literal"><span class="pre">session::get_settings</span></tt>.</p>
+<p><tt class="docutils literal"><span class="pre">session::apply_settings()</span></tt> accepts a dictionary with keys matching the names
+of settings in settings_pack.
+When calling <tt class="docutils literal">apply_settings</tt>, the dictionary does not need to have every settings set,
+keys that are not present are not updated.</p>
+<p>To get a python dictionary of the settings, call <tt class="docutils literal"><span class="pre">session::get_settings</span></tt>.</p>
 <p>For an example python program, see <tt class="docutils literal">client.py</tt> in the <tt class="docutils literal">bindings/python</tt>
 directory.</p>
 <p>A very simple example usage of the module would be something like this:</p>
@@ -151,9 +150,9 @@ ses.listen_on(6881, 6891)
 e = lt.bdecode(open(&quot;test.torrent&quot;, 'rb').read())
 info = lt.torrent_info(e)
 
-params = { save_path: '.', \
-        storage_mode: lt.storage_mode_t.storage_mode_sparse, \
-        ti: info }
+params = { 'save_path': '.', \
+        'storage_mode': lt.storage_mode_t.storage_mode_sparse, \
+        'ti': info }
 h = ses.add_torrent(params)
 
 s = h.status()

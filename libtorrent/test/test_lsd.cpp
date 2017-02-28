@@ -32,6 +32,7 @@ POSSIBILITY OF SUCH DAMAGE.
 
 #include "libtorrent/session.hpp"
 #include "libtorrent/session_settings.hpp"
+#include "libtorrent/torrent_status.hpp"
 #include "libtorrent/hasher.hpp"
 #include "libtorrent/thread.hpp"
 #include <boost/tuple/tuple.hpp>
@@ -43,6 +44,7 @@ POSSIBILITY OF SUCH DAMAGE.
 void test_lsd()
 {
 	using namespace libtorrent;
+	namespace lt = libtorrent;
 
 	// these are declared before the session objects
 	// so that they are destructed last. This enables
@@ -50,16 +52,19 @@ void test_lsd()
 	session_proxy p1;
 	session_proxy p2;
 
-	session ses1(fingerprint("LT", 0, 1, 0, 0), std::make_pair(48100, 49000), "0.0.0.0", 0);
-	session ses2(fingerprint("LT", 0, 1, 0, 0), std::make_pair(49100, 50000), "0.0.0.0", 0);
+	settings_pack pack;
+	pack.set_bool(settings_pack::allow_multiple_connections_per_ip, true);
+	pack.set_bool(settings_pack::enable_dht, false);
+	pack.set_bool(settings_pack::enable_lsd, true);
+	pack.set_bool(settings_pack::enable_upnp, false);
+	pack.set_bool(settings_pack::enable_natpmp, false);
+	pack.set_str(settings_pack::listen_interfaces, "127.0.0.1:48100");
 
-	session_settings settings;
-	settings.allow_multiple_connections_per_ip = true;
-	ses1.set_settings(settings);
-	ses2.set_settings(settings);
+	lt::session ses1(pack);
 
-	ses1.start_lsd();
-	ses2.start_lsd();
+	pack.set_str(settings_pack::listen_interfaces, "127.0.0.1:49100");
+	lt::session ses2(pack);
+
 	torrent_handle tor1;
 	torrent_handle tor2;
 
@@ -90,7 +95,7 @@ void test_lsd()
 	p2 = ses2.abort();
 }
 
-int test_main()
+TORRENT_TEST(lsd)
 {
 	using namespace libtorrent;
 
@@ -101,12 +106,10 @@ int test_main()
 	remove_all("./tmp3_lsd", ec);
 
 	test_lsd();
-	
+
 	remove_all("./tmp1_lsd", ec);
 	remove_all("./tmp2_lsd", ec);
 	remove_all("./tmp3_lsd", ec);
-
-	return 0;
 }
 
 

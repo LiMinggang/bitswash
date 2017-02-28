@@ -37,6 +37,8 @@ using std::shared_ptr;
 #include <wx/thread.h>
 
 #include <libtorrent/session.hpp>
+#include <libtorrent/torrent_info.hpp>
+#include <libtorrent/kademlia/traversal_algorithm.hpp>
 
 #include "configuration.h"
 #include "torrentconfig.h"
@@ -53,7 +55,7 @@ typedef struct torrent_handle_t {
 	wxString hash;
     wxString magneturi;
 	libtorrent::torrent_handle handle;
-	boost::intrusive_ptr<libtorrent::torrent_info> info;
+	shared_ptr<libtorrent::torrent_info> info;
 	shared_ptr<TorrentConfig> config;
 	bool isvalid;
 } torrent_t ;

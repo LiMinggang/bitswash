@@ -118,7 +118,7 @@ void test_speed()
 
 // -- test buffer --
 
-void test_buffer()
+TORRENT_TEST(buffer)
 {
 	char data[] = {0, 1, 2, 3, 4, 5, 6, 7, 8, 9};
 
@@ -127,16 +127,16 @@ void test_buffer()
 	TEST_CHECK(b.size() == 0);
 	TEST_CHECK(b.capacity() == 0);
 	TEST_CHECK(b.empty());
-	
+
 	b.resize(10);
 	TEST_CHECK(b.size() == 10);
 	TEST_CHECK(b.capacity() == 10);
-	
+
 	std::memcpy(b.begin(), data, 10);
 	b.reserve(50);
 	TEST_CHECK(std::memcmp(b.begin(), data, 10) == 0);
 	TEST_CHECK(b.capacity() == 50);
-	
+
 	b.erase(b.begin() + 6, b.end());
 	TEST_CHECK(std::memcmp(b.begin(), data, 6) == 0);
 	TEST_CHECK(b.capacity() == 50);
@@ -154,7 +154,7 @@ void test_buffer()
 	b.insert(b.end(), data, data + 10);
 	TEST_CHECK(b.size() == 10);
 	TEST_CHECK(std::memcmp(b.begin(), data, 10) == 0);
-	
+
 	b.erase(b.begin(), b.end());
 	TEST_CHECK(b.capacity() == 50);
 	TEST_CHECK(b.size() == 0);
@@ -168,8 +168,9 @@ void test_buffer()
 
 std::set<char*> buffer_list;
 
-void free_buffer(char* m)
+void free_buffer(char* m, void* userdata, block_cache_reference ref)
 {
+	TEST_CHECK(userdata == (void*)0x1337);
 	std::set<char*>::iterator i = buffer_list.find(m);
 	TEST_CHECK(i != buffer_list.end());
 
@@ -191,9 +192,9 @@ int copy_buffers(T const& b, char* target)
 	for (typename T::const_iterator i = b.begin()
 		, end(b.end()); i != end; ++i)
 	{
-		memcpy(target, libtorrent::asio::buffer_cast<char const*>(*i), libtorrent::asio::buffer_size(*i));
-		target += libtorrent::asio::buffer_size(*i);
-		copied += libtorrent::asio::buffer_size(*i);
+		memcpy(target, boost::asio::buffer_cast<char const*>(*i), boost::asio::buffer_size(*i));
+		target += boost::asio::buffer_size(*i);
+		copied += boost::asio::buffer_size(*i);
 	}
 	return copied;
 }
@@ -202,18 +203,18 @@ bool compare_chained_buffer(chained_buffer& b, char const* mem, int size)
 {
 	if (size == 0) return true;
 	std::vector<char> flat(size);
-	std::list<libtorrent::asio::const_buffer> const& iovec2 = b.build_iovec(size);
+	std::vector<boost::asio::const_buffer> const& iovec2 = b.build_iovec(size);
 	int copied = copy_buffers(iovec2, &flat[0]);
 	TEST_CHECK(copied == size);
 	return std::memcmp(&flat[0], mem, size) == 0;
 }
 
-void test_chained_buffer()
+TORRENT_TEST(chained_buffer)
 {
 	char data[] = "foobar";
 	{
 		chained_buffer b;
-		
+
 		TEST_CHECK(b.empty());
 		TEST_EQUAL(b.capacity(), 0);
 		TEST_EQUAL(b.size(), 0);
@@ -226,7 +227,7 @@ void test_chained_buffer()
 
 		char* b1 = allocate_buffer(512);
 		std::memcpy(b1, data, 6);
-		b.append_buffer(b1, 512, 6, (void(*)(char*))&free_buffer);
+		b.append_buffer(b1, 512, 6, &free_buffer, (void*)0x1337);
 		TEST_EQUAL(buffer_list.size(), 1);
 
 		TEST_CHECK(b.capacity() == 512);
@@ -256,12 +257,12 @@ void test_chained_buffer()
 
 		char* b2 = allocate_buffer(512);
 		std::memcpy(b2, data, 6);
-		b.append_buffer(b2, 512, 6, (void(*)(char*))&free_buffer);
+		b.append_buffer(b2, 512, 6, free_buffer, (void*)0x1337);
 		TEST_CHECK(buffer_list.size() == 2);
 
 		char* b3 = allocate_buffer(512);
 		std::memcpy(b3, data, 6);
-		b.append_buffer(b3, 512, 6, (void(*)(char*))&free_buffer);
+		b.append_buffer(b3, 512, 6, &free_buffer, (void*)0x1337);
 		TEST_CHECK(buffer_list.size() == 3);
 
 		TEST_CHECK(b.capacity() == 512 * 3);
@@ -296,7 +297,7 @@ void test_chained_buffer()
 		char* b4 = allocate_buffer(20);
 		std::memcpy(b4, data, 6);
 		std::memcpy(b4 + 6, data, 6);
-		b.append_buffer(b4, 20, 12, (void(*)(char*))&free_buffer);
+		b.append_buffer(b4, 20, 12, &free_buffer, (void*)0x1337);
 		TEST_CHECK(b.space_in_last_buffer() == 8);
 
 		ret = b.append(data, 6);
@@ -307,21 +308,14 @@ void test_chained_buffer()
 		TEST_CHECK(ret == true);
 		TEST_CHECK(b.space_in_last_buffer() == 0);
 		std::cout << b.space_in_last_buffer() << std::endl;
-		
+
 		char* b5 = allocate_buffer(20);
 		std::memcpy(b4, data, 6);
-		b.append_buffer(b5, 20, 6, (void(*)(char*))&free_buffer);
+		b.append_buffer(b5, 20, 6, &free_buffer, (void*)0x1337);
 
 		b.pop_front(22);
 		TEST_CHECK(b.size() == 5);
 	}
 	TEST_CHECK(buffer_list.empty());
-}
-
-int test_main()
-{
-	test_buffer();
-	test_chained_buffer();
-	return 0;
 }
 

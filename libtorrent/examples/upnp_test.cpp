@@ -63,6 +63,7 @@ void print_alert(libtorrent::alert const* a)
 int main(int argc, char* argv[])
 {
 	using namespace libtorrent;
+	namespace lt = libtorrent;
 
 	if (argc != 1)
 	{
@@ -70,20 +71,28 @@ int main(int argc, char* argv[])
 		return 1;
 	}
 
-	session s;
-	s.set_alert_mask(alert::port_mapping_notification);
+	settings_pack p;
+	p.set_int(settings_pack::alert_mask, alert::port_mapping_notification);
+	lt::session s(p);
 
 	for (;;)
 	{
 		alert const* a = s.wait_for_alert(seconds(5));
 		if (a == 0)
 		{
-			s.stop_upnp();
-			s.stop_natpmp();
+			settings_pack p;
+			p.set_bool(settings_pack::enable_upnp, false);
+			p.set_bool(settings_pack::enable_natpmp, false);
+			s.apply_settings(p);
 			break;
 		}
-		std::auto_ptr<alert> holder = s.pop_alert();
-		print_alert(holder.get());
+		std::vector<alert*> alerts;
+		s.pop_alerts(&alerts);
+		for (std::vector<alert*>::iterator i = alerts.begin()
+			, end(alerts.end()); i != end; ++i)
+		{
+			print_alert(*i);
+		}
 	}
 
 	printf("\x1b[1m\n\n===================== done mapping. Now deleting mappings ========================\n\n\n\x1b[0m");
@@ -92,8 +101,13 @@ int main(int argc, char* argv[])
 	{
 		alert const* a = s.wait_for_alert(seconds(5));
 		if (a == 0) break;
-		std::auto_ptr<alert> holder = s.pop_alert();
-		print_alert(holder.get());
+		std::vector<alert*> alerts;
+		s.pop_alerts(&alerts);
+		for (std::vector<alert*>::iterator i = alerts.begin()
+			, end(alerts.end()); i != end; ++i)
+		{
+			print_alert(*i);
+		}
 	}
 
 

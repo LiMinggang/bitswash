@@ -94,9 +94,10 @@ EXTRA_PROGRAMS = $(am__EXEEXT_1)
 subdir = tools
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
 am__aclocal_m4_deps = $(top_srcdir)/m4/ax_boost_base.m4 \
+	$(top_srcdir)/m4/ax_boost_chrono.m4 \
 	$(top_srcdir)/m4/ax_boost_python.m4 \
+	$(top_srcdir)/m4/ax_boost_random.m4 \
 	$(top_srcdir)/m4/ax_boost_system.m4 \
-	$(top_srcdir)/m4/ax_check_geoip.m4 \
 	$(top_srcdir)/m4/ax_check_openssl.m4 \
 	$(top_srcdir)/m4/ax_pthread.m4 \
 	$(top_srcdir)/m4/ax_python_devel.m4 \
@@ -111,13 +112,13 @@ DIST_COMMON = $(srcdir)/Makefile.am $(am__DIST_COMMON)
 mkinstalldirs = $(install_sh) -d
 CONFIG_CLEAN_FILES =
 CONFIG_CLEAN_VPATH_FILES =
-am__EXEEXT_1 = parse_request_log$(EXEEXT)
+am__EXEEXT_1 = fuzz_torrent$(EXEEXT)
 am__installdirs = "$(DESTDIR)$(bindir)"
 PROGRAMS = $(bin_PROGRAMS)
-am_parse_request_log_OBJECTS = parse_request_log.$(OBJEXT)
-parse_request_log_OBJECTS = $(am_parse_request_log_OBJECTS)
-parse_request_log_LDADD = $(LDADD)
-parse_request_log_DEPENDENCIES =  \
+am_fuzz_torrent_OBJECTS = fuzz_torrent.$(OBJEXT)
+fuzz_torrent_OBJECTS = $(am_fuzz_torrent_OBJECTS)
+fuzz_torrent_LDADD = $(LDADD)
+fuzz_torrent_DEPENDENCIES =  \
 	$(top_builddir)/src/libtorrent-rasterbar.la
 AM_V_lt = $(am__v_lt_@AM_V@)
 am__v_lt_ = $(am__v_lt_@AM_DEFAULT_V@)
@@ -157,8 +158,8 @@ AM_V_CXXLD = $(am__v_CXXLD_@AM_V@)
 am__v_CXXLD_ = $(am__v_CXXLD_@AM_DEFAULT_V@)
 am__v_CXXLD_0 = @echo "  CXXLD   " $@;
 am__v_CXXLD_1 = 
-SOURCES = $(parse_request_log_SOURCES)
-DIST_SOURCES = $(parse_request_log_SOURCES)
+SOURCES = $(fuzz_torrent_SOURCES)
+DIST_SOURCES = $(fuzz_torrent_SOURCES)
 am__can_run_installinfo = \
   case $$AM_UPDATE_INFO_DIR in \
     n|no|NO) false;; \
@@ -194,9 +195,11 @@ AUTOCONF = @AUTOCONF@
 AUTOHEADER = @AUTOHEADER@
 AUTOMAKE = @AUTOMAKE@
 AWK = @AWK@
+BOOST_CHRONO_LIB = @BOOST_CHRONO_LIB@
 BOOST_CPPFLAGS = @BOOST_CPPFLAGS@
 BOOST_LDFLAGS = @BOOST_LDFLAGS@
 BOOST_PYTHON_LIB = @BOOST_PYTHON_LIB@
+BOOST_RANDOM_LIB = @BOOST_RANDOM_LIB@
 BOOST_SYSTEM_LIB = @BOOST_SYSTEM_LIB@
 CC = @CC@
 CCDEPMODE = @CCDEPMODE@
@@ -221,8 +224,6 @@ ECHO_T = @ECHO_T@
 EGREP = @EGREP@
 EXEEXT = @EXEEXT@
 FGREP = @FGREP@
-GEOIP_CFLAGS = @GEOIP_CFLAGS@
-GEOIP_LIBS = @GEOIP_LIBS@
 GREP = @GREP@
 ICONV_LIBS = @ICONV_LIBS@
 INSTALL = @INSTALL@
@@ -269,6 +270,7 @@ PTHREAD_CFLAGS = @PTHREAD_CFLAGS@
 PTHREAD_LIBS = @PTHREAD_LIBS@
 PYTHON = @PYTHON@
 PYTHON_CPPFLAGS = @PYTHON_CPPFLAGS@
+PYTHON_CXXFLAGS = @PYTHON_CXXFLAGS@
 PYTHON_EXEC_PREFIX = @PYTHON_EXEC_PREFIX@
 PYTHON_EXTRA_LDFLAGS = @PYTHON_EXTRA_LDFLAGS@
 PYTHON_EXTRA_LIBS = @PYTHON_EXTRA_LIBS@
@@ -347,7 +349,7 @@ top_build_prefix = @top_build_prefix@
 top_builddir = @top_builddir@
 top_srcdir = @top_srcdir@
 tool_programs = \
-  parse_request_log
+  fuzz_torrent
 
 EXTRA_DIST = Jamfile     \
   parse_bandwidth_log.py \
@@ -355,19 +357,15 @@ EXTRA_DIST = Jamfile     \
   parse_dht_log.py       \
   parse_dht_rtt.py       \
   parse_dht_stats.py     \
-  parse_disk_access.py   \
   parse_disk_buffer_log.py\
   parse_disk_log.py      \
   parse_memory_log.py    \
   parse_peer_log.py      \
   parse_sample.py        \
   parse_session_stats.py \
-  parse_test_results.py  \
-  parse_utp_log.py       \
-  run_regression_tests.py\
-  run_tests.py
+  parse_utp_log.py
 
-parse_request_log_SOURCES = parse_request_log.cpp
+fuzz_torrent_SOURCES = fuzz_torrent.cpp
 LDADD = $(top_builddir)/src/libtorrent-rasterbar.la
 AM_CPPFLAGS = -ftemplate-depth-50 -I$(top_srcdir)/include @DEBUGFLAGS@
 AM_LDFLAGS = @BOOST_SYSTEM_LIB@
@@ -454,9 +452,9 @@ clean-binPROGRAMS:
 	echo " rm -f" $$list; \
 	rm -f $$list
 
-parse_request_log$(EXEEXT): $(parse_request_log_OBJECTS) $(parse_request_log_DEPENDENCIES) $(EXTRA_parse_request_log_DEPENDENCIES) 
-	@rm -f parse_request_log$(EXEEXT)
-	$(AM_V_CXXLD)$(CXXLINK) $(parse_request_log_OBJECTS) $(parse_request_log_LDADD) $(LIBS)
+fuzz_torrent$(EXEEXT): $(fuzz_torrent_OBJECTS) $(fuzz_torrent_DEPENDENCIES) $(EXTRA_fuzz_torrent_DEPENDENCIES) 
+	@rm -f fuzz_torrent$(EXEEXT)
+	$(AM_V_CXXLD)$(CXXLINK) $(fuzz_torrent_OBJECTS) $(fuzz_torrent_LDADD) $(LIBS)
 
 mostlyclean-compile:
 	-rm -f *.$(OBJEXT)
@@ -464,7 +462,7 @@ mostlyclean-compile:
 distclean-compile:
 	-rm -f *.tab.c
 
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/parse_request_log.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/fuzz_torrent.Po@am__quote@
 
 .cpp.o:
 @am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXXCOMPILE) -MT $@ -MD -MP -MF $(DEPDIR)/$*.Tpo -c -o $@ $<
