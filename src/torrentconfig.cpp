@@ -31,6 +31,7 @@
 
 #include "bitswash.h"
 #include "torrentconfig.h"
+#include "configuration.h"
 
 
 TorrentConfig::TorrentConfig( const wxString& TorrentName )
@@ -70,7 +71,7 @@ void TorrentConfig::Save()
 	m_cfg->Write( _T( "/Torrent/downloadpath" ), m_downloadpath );
 
 	/* legacy */
-	if( m_storagemode != libtorrent::storage_mode_compact )
+	//if( m_storagemode != libtorrent::storage_mode_compact )
 	{ m_compactalloc = false; }
 
 	m_cfg->Write( _T( "/Torrent/compact_alloc" ), ( bool )m_compactalloc );

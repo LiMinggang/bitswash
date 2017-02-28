@@ -14,3 +14,8 @@ Currently supported Languages:
     German(de_DE)
     Russian(ru_RU)
     Norwegian(nb_NO)
+    
+Build
+-----
+BOOST
+.\bjam.exe define=_WIN32_WINNT=0x0601 --with-thread --with-system --with-filesystem --with-regex --with-iostreams threading=multi variant=release link=static address-model=64 runtime-link=static stage

@@ -23,8 +23,7 @@
 #include <wx/arrstr.h>
 #include <map>
 #include <vector>
-
-#include "configuration.h"
+#include "libtorrent/announce_entry.hpp"
 
 enum
 {

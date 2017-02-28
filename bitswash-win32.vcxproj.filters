@@ -904,9 +904,6 @@
     <ClCompile Include="libtorrent\src\file_storage.cpp">
       <Filter>Source Files\libtorrent</Filter>
     </ClCompile>
-    <ClCompile Include="libtorrent\src\GeoIP.c">
-      <Filter>Source Files\libtorrent</Filter>
-    </ClCompile>
     <ClCompile Include="libtorrent\src\gzip.cpp">
       <Filter>Source Files\libtorrent</Filter>
     </ClCompile>
@@ -968,9 +965,6 @@
       <Filter>Source Files\libtorrent</Filter>
     </ClCompile>
     <ClCompile Include="libtorrent\src\metadata_transfer.cpp">
-      <Filter>Source Files\libtorrent</Filter>
-    </ClCompile>
-    <ClCompile Include="libtorrent\src\mpi.c">
       <Filter>Source Files\libtorrent</Filter>
     </ClCompile>
     <ClCompile Include="libtorrent\src\natpmp.cpp">
