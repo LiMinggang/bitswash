@@ -279,13 +279,14 @@ void BitTorrentSession::SetDht()
 		}
 
 		//dht_state.print(std::cout, 1);
-		m_libbtsession->start_dht( dht_state );
 		m_libbtsession->add_dht_router( std::make_pair( std::string( "dht.libtorrent.org" ), 25401 ) );
 		m_libbtsession->add_dht_router( std::make_pair( std::string( "router.bittorrent.com" ), 6881 ) );
 		m_libbtsession->add_dht_router( std::make_pair( std::string( "router.utorrent.com" ), 6881 ) );
 		m_libbtsession->add_dht_router( std::make_pair( std::string( "dht.transmissionbt.com" ), 6881 ) );
+		m_libbtsession->add_dht_router(std::make_pair( std::string("router.bitcomet.com"), 6881));
 		m_libbtsession->add_dht_router( std::make_pair( std::string( "dht.aelitis.com" ), 6881 ) ); // Vuze
 		wxLogMessage( _T( "DHT service started, port %d\n" ), m_config->GetDHTPort() );
+		m_libbtsession->start_dht( dht_state );
 	}
 	else
 	{
