@@ -193,8 +193,7 @@ MainFrame::MainFrame( wxFrame *frame, const wxString& title )
 	              */
 	CreateTorrentPanel();
 	m_mgr.SetFlags( m_mgr.GetFlags() | wxAUI_MGR_ALLOW_ACTIVE_PANE );
-#ifndef NDEBUG //XXX asert failure fired in gtk debug library.
-	aa
+#ifdef NDEBUG //XXX asert failure fired in gtk debug library.
 	m_oldlog = wxLog::SetActiveTarget( ( wxLog* )m_torrentinfo->GetLogger() );
 #endif
 
