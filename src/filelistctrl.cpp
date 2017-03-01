@@ -419,7 +419,7 @@ void FileListCtrl::OnMenuPriority( wxCommandEvent& event )
 
 	for(size_t i = 0; i < filespriority.size(); ++i)
 	{
-		if(filespriority.at(i) != 0)
+		if(filespriority.at(i) != BITTORRENT_FILE_NONE)
 		{
 			f_entry = torrentinfo.file_at( i );
 			total_selected += f_entry.size;

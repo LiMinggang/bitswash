@@ -17,7 +17,7 @@ New: Open torrent at command line
 New: Merge trackers/seeds if add the same torrent again
 New: Packing all icons to the binary(no icon directory needed anymore)
 Optimization on UI refresh
-Upgrade libtorrent to 1.0.11
+Upgrade libtorrent to 1.1.2
 Upgrade boost to 1.62
 Upgrade openssl to 1.1.0d
 Upgrade wxWidgets to 3.1
