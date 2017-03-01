@@ -550,7 +550,7 @@ bool BitSwash::OnInit()
 
 	wxInitAllImageHandlers();
 #ifdef USE_LIBGEOIP
-	m_geoip = GeoIP_open(g_BitSwashHomeDir + "GeoLite2-Country.mmdb", GEOIP_MMAP_CACHE);
+	m_geoip = GeoIP_open(g_BitSwashHomeDir + "GeoIP.dat", GEOIP_STANDARD | GEOIP_CHECK_CACHE);
 #endif
 	LoadIcons();
 	LoadFlags();
