@@ -28,6 +28,12 @@
     <Filter Include="Header Files\libtorrent\kademlia">
       <UniqueIdentifier>{141cf486-3dcc-4592-be7c-0d28d3186fd2}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\libgeoip">
+      <UniqueIdentifier>{80e9509c-61ff-44d4-b84a-62dc0a2adef6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\libgeoip">
+      <UniqueIdentifier>{674fa450-e635-4d1f-84f4-fd5bb3dacb65}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="libtorrent\include\libtorrent\add_torrent_params.hpp">
@@ -711,6 +717,18 @@
     <ClInclude Include="libtorrent\include\libtorrent\kademlia\put_data.hpp">
       <Filter>Header Files\libtorrent\kademlia</Filter>
     </ClInclude>
+    <ClInclude Include="libgeoip\GeoIP.h">
+      <Filter>Header Files\libgeoip</Filter>
+    </ClInclude>
+    <ClInclude Include="libgeoip\GeoIP_internal.h">
+      <Filter>Header Files\libgeoip</Filter>
+    </ClInclude>
+    <ClInclude Include="libgeoip\GeoIPCity.h">
+      <Filter>Header Files\libgeoip</Filter>
+    </ClInclude>
+    <ClInclude Include="libgeoip\pread.h">
+      <Filter>Header Files\libgeoip</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="src\bitswash.rc">
@@ -1257,6 +1275,24 @@
     </ClCompile>
     <ClCompile Include="libtorrent\src\disk_io_job.cpp">
       <Filter>Source Files\libtorrent</Filter>
+    </ClCompile>
+    <ClCompile Include="libgeoip\GeoIP.c">
+      <Filter>Source Files\libgeoip</Filter>
+    </ClCompile>
+    <ClCompile Include="libgeoip\GeoIP_deprecated.c">
+      <Filter>Source Files\libgeoip</Filter>
+    </ClCompile>
+    <ClCompile Include="libgeoip\GeoIPCity.c">
+      <Filter>Source Files\libgeoip</Filter>
+    </ClCompile>
+    <ClCompile Include="libgeoip\pread.c">
+      <Filter>Source Files\libgeoip</Filter>
+    </ClCompile>
+    <ClCompile Include="libgeoip\regionName.c">
+      <Filter>Source Files\libgeoip</Filter>
+    </ClCompile>
+    <ClCompile Include="libgeoip\timeZone.c">
+      <Filter>Source Files\libgeoip</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

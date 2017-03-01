@@ -48,7 +48,7 @@ class MagnetUri;
 typedef struct torrent_handle_t {
 
 	torrent_handle_t() :
-		isvalid(false), config(0)
+		isvalid(false)/*, config(0)*/
 	{}
 
 	wxString name;

@@ -113,7 +113,7 @@ wxMenu *SwashTrayIcon::CreatePopupMenu()
 
 void SwashTrayIcon::OnLeftButton(wxTaskBarIconEvent&)
 {
-	ShowHideMainFrame();		
+	ShowHideMainFrame();
 }
 
 
@@ -129,16 +129,17 @@ void SwashTrayIcon::ShowHideMainFrame()  {
 		} 
 		else 
 		{
+			m_pMainFrame->UpdateUI();
 			m_pMainFrame->Show(true);
 			m_pMainFrame->Iconize(false);
 			m_pMainFrame->Raise();
 		}
-
 	} 
 	else
 	{
 		if (m_pMainFrame->IsIconized())
 		{
+			m_pMainFrame->UpdateUI();
 			m_pMainFrame->Iconize(false);
 		} 
 		else 
