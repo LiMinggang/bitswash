@@ -202,8 +202,6 @@ wxString PeerListCtrl::GetItemValue(long item, long columnid) const
 #if WXVER >= 280
 int PeerListCtrl::GetItemColumnImage(long item, long columnid) const
 {
-	PeerListCtrl* pThis = const_cast<PeerListCtrl*>(this);
-
 	MainFrame* pMainFrame = (MainFrame*)(wxGetApp().GetTopWindow());
 	const PeerListCtrl::peer_list_t *peers_list = pMainFrame->GetPeersList();
 
@@ -249,9 +247,6 @@ int PeerListCtrl::GetItemColumnImage(long item, long columnid) const
 #else
 int PeerListCtrl::OnGetItemImage(long item) const
 {
-
-	PeerListCtrl* pThis = const_cast<PeerListCtrl*>(this);
-
 	MainFrame* pMainFrame = (MainFrame*)(wxGetApp().GetTopWindow());
 	const PeerListCtrl::peer_list_t *peers_list = pMainFrame->GetPeersList();
 

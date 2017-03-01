@@ -183,10 +183,10 @@ wxString TorrentListCtrl::GetItemValue( long item, long columnid ) const
 		ret = HumanReadableByte( ( wxDouble ) torrentinfo.total_size() );
 		break;
 	case TORRENTLIST_COLUMN_SELECTEDSIZE:
-		ret = HumanReadableByte( ( wxDouble ) torrentinfo.total_size() );
+		ret = HumanReadableByte( ( wxDouble ) torrent->config->GetSelectedSize() );
 		break;
 	case TORRENTLIST_COLUMN_DOWNLOADED:
-		ret = HumanReadableByte( ( wxDouble ) torrent->config->GetSelectedSize() );
+		ret = HumanReadableByte( ( wxDouble ) torrentstats.total_download );
 		break;
 	case TORRENTLIST_COLUMN_UPLOADED:
 		ret = HumanReadableByte( ( wxDouble ) torrentstats.total_upload );
