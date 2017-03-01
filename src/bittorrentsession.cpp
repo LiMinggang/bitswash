@@ -874,7 +874,7 @@ void BitTorrentSession::SaveAllTorrent()
 			if( tp )
 			{
 				++num_paused;
-				wxLogDebug( _T( "\rleft: %d failed: %d pause: %d " )
+				wxLogDebug( _T( "\nleft: %d failed: %d pause: %d " )
 							, num_outstanding_resume_data, num_failed, num_paused );
 				continue;
 			}
@@ -883,7 +883,7 @@ void BitTorrentSession::SaveAllTorrent()
 			{
 				++num_failed;
 				--num_outstanding_resume_data;
-				wxLogDebug( _T( "\rleft: %d failed: %d pause: %d " )
+				wxLogDebug( _T( "\nleft: %d failed: %d pause: %d " )
 							, num_outstanding_resume_data, num_failed, num_paused );
 				continue;
 			}
@@ -893,7 +893,7 @@ void BitTorrentSession::SaveAllTorrent()
 			if( !rd ) { continue; }
 
 			--num_outstanding_resume_data;
-			wxLogDebug( _T( "\rleft: %d failed: %d pause: %d " )
+			wxLogDebug( _T( "\nleft: %d failed: %d pause: %d " )
 						, num_outstanding_resume_data, num_failed, num_paused );
 
 			if( !rd->resume_data ) { continue; }
