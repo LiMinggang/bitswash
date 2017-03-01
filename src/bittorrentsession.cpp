@@ -183,10 +183,10 @@ void BitTorrentSession::OnExit()
 void BitTorrentSession::ConfigureSession()
 {
 	wxASSERT( m_libbtsession != NULL );
-#ifndef TORRENT_DISABLE_GEO_IP
-	m_libbtsession->load_asnum_db( "GeoIPASNum.dat" );
-	m_libbtsession->load_country_db( "GeoIP.dat" );
-#endif
+//#ifndef TORRENT_DISABLE_GEO_IP
+//	m_libbtsession->load_asnum_db( "GeoIPASNum.dat" );
+//	m_libbtsession->load_country_db( "GeoIP.dat" );
+//#endif
 	SetLogSeverity();
 	//Network settings
 	SetConnection();

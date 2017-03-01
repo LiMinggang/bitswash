@@ -16,6 +16,7 @@ New: Single instance(IPC support)
 New: Open torrent at command line
 New: Merge trackers/seeds if add the same torrent again
 New: Packing all icons to the binary(no icon directory needed anymore)
+New: Using libGeoIP because libtorrent stoped support resolve IP
 Optimization on UI refresh
 Upgrade libtorrent to 1.1.2
 Upgrade boost to 1.62
