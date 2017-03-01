@@ -545,6 +545,31 @@ bool BitTorrentSession::AddTorrent( shared_ptr<torrent_t>& torrent )
 			}
 		}
 
+	 	bool nopriority = false;
+		long total_selected = 0;
+		libtorrent::file_entry f_entry;
+		libtorrent::torrent_info const& torrent_info = *(torrent->info);
+		std::vector<int> filespriority = torrent->config->GetFilesPriorities();
+
+		if (filespriority.size() != torrent_info.num_files())
+		{
+			nopriority = true;
+		}
+		/*0--unchecked_xpm*/
+		/*1--checked_xpm*/
+		/*2--unchecked_dis_xpm*/
+		/*3--checked_dis_xpm*/
+
+		for(int i = 0; i < torrent_info.num_files(); ++i)
+		{
+			if (nopriority || filespriority[i] != BITTORRENT_FILE_NONE)
+			{
+				f_entry = torrent_info.file_at( i );
+				total_selected += f_entry.size;
+			}
+		}
+		torrent->config->SetSelectedSize(total_selected);
+
 		{
 			wxMutexLocker ml( m_torrent_queue_lock );
 			m_torrent_queue.push_back( torrent );
