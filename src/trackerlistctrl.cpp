@@ -86,8 +86,6 @@ TrackerListCtrl::~TrackerListCtrl()
 
 wxString TrackerListCtrl::GetItemValue(long item, long columnid) const
 {
-	TrackerListCtrl* pThis = const_cast<TrackerListCtrl*>(this);
-
 	MainFrame* pMainFrame = (MainFrame*)(wxGetApp().GetTopWindow());
 
 	wxString ret;
@@ -111,10 +109,11 @@ wxString TrackerListCtrl::GetItemValue(long item, long columnid) const
 
 	wxString t_name = wxEmptyString;
 
-	const std::vector<libtorrent::announce_entry>& trackers = pTorrent->config->GetTrackersURL();
+	const std::vector<libtorrent::announce_entry>& trackers = pTorrent->handle.trackers();
 
 	if (item >= trackers.size())
 	{
+		TrackerListCtrl* pThis = const_cast<TrackerListCtrl*>(this);
 		pThis->SetItemCount(trackers.size());
 		return _T("");
 
@@ -176,8 +175,6 @@ void TrackerListCtrl::ShowContextMenu(const wxPoint& pos)
 /* update files priority to torrent config */
 void TrackerListCtrl::OnMenuEdit(wxCommandEvent& event)
 {
-	TrackerListCtrl* pThis = const_cast<TrackerListCtrl*>(this);
-
 	//int cmd = event.GetId() - TRACKERLISTCTRL_MENU_ADD;
 	int cmd = event.GetId(); 
 	bool refreshtrk = false;
@@ -231,6 +228,7 @@ void TrackerListCtrl::OnMenuEdit(wxCommandEvent& event)
 				//pTorrent->config->SetTrackersURL(trackers);
 				pTorrent->config->Save();
 
+				TrackerListCtrl* pThis = const_cast<TrackerListCtrl*>(this);
 				pThis->SetItemCount(trackers.size());
 				refreshtrk = true;
 #if 0
