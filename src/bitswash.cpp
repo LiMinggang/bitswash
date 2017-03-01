@@ -404,12 +404,21 @@ static const wxCmdLineEntryDesc g_cmdLineDesc [] =
 
 bool BitSwash::OnInit()
 {
+	m_btsession = 0;
+	m_logold = 0;
+	m_config = 0;
+	m_imglist_ctryflags = 0;
+	m_imglist_settingicons = 0;
+	m_locale = 0;
 	m_SigleAppChecker = 0;
 	m_AppServer = 0;
+#ifdef USE_LIBGEOIP
+	m_geoip = 0;
+#endif
 
 	//==========================================================================
 	if( !wxApp::OnInit() )
-			return false;
+		return false;
 
 	wxString name = wxString::Format( wxT( "BitSwash-%s" ), wxGetUserId().GetData() );
 	m_SigleAppChecker = new wxSingleInstanceChecker( name );
@@ -540,7 +549,9 @@ bool BitSwash::OnInit()
 	}
 
 	wxInitAllImageHandlers();
-
+#ifdef USE_LIBGEOIP
+	m_geoip = GeoIP_open(g_BitSwashHomeDir + "GeoLite2-Country.mmdb", GEOIP_MMAP_CACHE);
+#endif
 	LoadIcons();
 	LoadFlags();
 	LoadSettingIcons();
@@ -598,6 +609,9 @@ int BitSwash::OnExit()
 	if( m_AppServer )
 		delete m_AppServer;
 
+#ifdef USE_LIBGEOIP
+	if(m_geoip) GeoIP_delete(m_geoip);
+#endif
 	return 0;
 }
 
@@ -630,7 +644,18 @@ int BitSwash::GetCountryFlag( const wxString& code )
 {
 	if( code.IsEmpty() )
 		return 0;
+#ifdef USE_LIBGEOIP
+	if(!m_geoip)
+		return -1;
+	// code is IP actually
+	wxString wxcode(_T("--"));
+	const char * ccode = GeoIP_country_code_by_addr(m_geoip, code.ToStdString().c_str());
+	if(ccode)
+		wxcode = wxString::FromAscii(ccode);
+	std::map<wxString, int>::iterator it = CountryCodeIndexMap.find( wxcode );
+#else
 	std::map<wxString, int>::iterator it = CountryCodeIndexMap.find( code );
+#endif
 	if( it != CountryCodeIndexMap.end() )
 	{
 		wxASSERT( it->second < N_COUNTRY );

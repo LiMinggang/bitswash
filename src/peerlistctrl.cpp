@@ -219,21 +219,29 @@ int PeerListCtrl::GetItemColumnImage(long item, long columnid) const
 	switch (columnid)
 	{
 	case PEERLIST_COLUMN_IP:
-		wxString ctry = wxString::FromAscii(peer_info.country, sizeof(peer_info.country) / sizeof(peer_info.country[0]));
-		if ((!ctry.IsEmpty()) && (('A' <= ctry[0]) &&
-			(ctry[0] <= 'Z')) &&
-			(('A' <= ctry[1]) &&
-			(ctry[1] <= 'Z')))
 		{
-			//ctry[2] = '\0';
-			int index = wxGetApp().GetCountryFlag(ctry);
-			wxLogDebug(_T("Image idx %s %d\n"), ctry.c_str(), index);
-			return index;
+#ifdef USE_LIBGEOIP
+			libtorrent::address c_ip = peer_info.ip.address();
+			return wxGetApp().GetCountryFlag(wxString(c_ip.to_string()));
+#else
+			wxString ctry = wxString::FromAscii(peer_info.country, sizeof(peer_info.country) / sizeof(peer_info.country[0]));
+			if ((!ctry.IsEmpty()) && (('A' <= ctry[0]) &&
+				(ctry[0] <= 'Z')) &&
+				(('A' <= ctry[1]) &&
+				(ctry[1] <= 'Z')))
+			{
+				//ctry[2] = '\0';
+				int index = wxGetApp().GetCountryFlag(ctry);
+				wxLogDebug(_T("Image idx %s %d\n"), ctry.c_str(), index);
+				return index;
 
+			}
+			else
+				return wxGetApp().GetCountryFlag(wxEmptyString);
+#endif
+			break;
 		}
-		else
-			return wxGetApp().GetCountryFlag(wxEmptyString);
-
+	default:
 		break;
 	}
 	return -1;
@@ -256,9 +264,15 @@ int PeerListCtrl::OnGetItemImage(long item) const
 
 	//wxLogDebug(_T("PeerListCtrl GetItemImage Column %ld of item %ld"), 0, item);
 
+#ifdef USE_LIBGEOIP
+	libtorrent::address c_ip = peer_info.ip.address();
+	return wxGetApp().GetCountryFlag(wxString(c_ip.to_string()));
+#else
 	wxString ctry = wxString::FromAscii(peer_info.country, sizeof(peer_info.country) / sizeof(peer_info.country[0]));
 	//wxLogDebug(_T("Image idx %s %d\n"),ctry.c_str(), wxGetApp().GetCountryFlag(ctry.c_str()));
 	return wxGetApp().GetCountryFlag(ctry);
+#endif
+
 }
 #endif
 

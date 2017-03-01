@@ -32,6 +32,8 @@
 #include <wx/filename.h>
 #include <wx/stdpaths.h>
 
+#include <GeoIP.h>
+
 #include <libtorrent/session.hpp>
 
 #include "bittorrentsession.h"
@@ -175,7 +177,9 @@ private:
 #if (wxUSE_ON_FATAL_EXCEPTION == 1) && (wxUSE_STACKWALKER == 1)
     BitSwashStackWalker m_StackWalker;
 #endif
-
+#ifdef USE_LIBGEOIP
+    GeoIP *m_geoip;
+#endif
 };
 
 DECLARE_APP(BitSwash)
