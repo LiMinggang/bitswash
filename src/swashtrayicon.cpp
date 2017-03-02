@@ -129,7 +129,7 @@ void SwashTrayIcon::ShowHideMainFrame()  {
 		} 
 		else 
 		{
-			((MainFrame *)m_pMainFrame)->UpdateUI();
+			((MainFrame *)m_pMainFrame)->UpdateUI(true);
 			m_pMainFrame->Show(true);
 			m_pMainFrame->Iconize(false);
 			m_pMainFrame->Raise();
@@ -139,7 +139,7 @@ void SwashTrayIcon::ShowHideMainFrame()  {
 	{
 		if (m_pMainFrame->IsIconized())
 		{
-			((MainFrame *)m_pMainFrame)->UpdateUI();
+			((MainFrame *)m_pMainFrame)->UpdateUI(true);
 			m_pMainFrame->Iconize(false);
 		} 
 		else 

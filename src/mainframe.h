@@ -107,7 +107,7 @@ public:
 	wxMenu* GetNewTorrentMenu();
 	void OnMenuOpen( wxMenuEvent& event );
 	void TorrentOperationMenu( wxMenu* torrentmenu );
-	void UpdateUI();
+	void UpdateUI(bool force = false);
 	void UpdateSelectedTorrent();
 
 	shared_ptr<torrent_t> GetSelectedTorrent() ;

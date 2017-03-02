@@ -822,12 +822,12 @@ void MainFrame::OnListItemClick( long item )
 	UpdateUI();
 }
 
-void MainFrame::UpdateUI()
+void MainFrame::UpdateUI(bool force/* = false*/)
 {
-	wxASSERT( m_btsession );
+	wxASSERT( m_btsession != 0 );
 	bool need_refresh = false;
 
-	if(this->IsShown() && !this->IsIconized())
+	if(force || (this->IsShown() && !this->IsIconized()))
 	{
 		if( !TorrentListIsValid() )
 		{
