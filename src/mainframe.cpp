@@ -151,7 +151,6 @@ MainFrame::MainFrame( wxFrame *frame, const wxString& title )
 	  m_lsd_started( false ),
 	  m_prevlocale( 0 ),
 	  m_prevselecteditem( 0 ),
-	  m_torrentlistisvalid( false ),
 	  m_closed( false )
 {
 	int x, y;
@@ -633,7 +632,6 @@ void MainFrame::AddTorrent( wxString filename, bool usedefault )
 					wxLogError( _T( "Error copying backup file %s\n" ), filename.c_str() );
 				}
 
-				TorrentListIsValid( false );
 				UpdateUI();
 			}
 		}
@@ -772,7 +770,6 @@ void MainFrame::OpenTorrentUrl()
 							m_btsession->SaveTorrent( torrent, torrent_backup );
 						}
 						
-						TorrentListIsValid( false );
 						UpdateUI();
 					}
 					else
@@ -829,28 +826,30 @@ void MainFrame::UpdateUI(bool force/* = false*/)
 
 	if(force || (this->IsShown() && !this->IsIconized()))
 	{
-		if( !TorrentListIsValid() )
-		{
-			//int t = 0;
-			//torrents_t *torrentqueue = m_btsession->GetTorrentQueue();
-			///torrents_t::const_iterator torrent_it = torrentqueue->begin();
-			/* XXX more filtering/sorting */
-			m_btsession->GetTorrentQueue( m_torrentlistitems );
-			TorrentListIsValid( true );
-			wxLogDebug( _T( "Refreshing torrent list size %s\n" ), ( wxLongLong( m_torrentlistitems.size() ).ToString() ).c_str() );
-			m_torrentlistctrl->SetItemCount( m_torrentlistitems.size() );
-		}
+		size_t torrent_queue_size = m_btsession->GetTorrentQueueSize();
+		//int t = 0;
+		//torrents_t *torrentqueue = m_btsession->GetTorrentQueue();
+		///torrents_t::const_iterator torrent_it = torrentqueue->begin();
+		/* XXX more filtering/sorting */
+		//m_btsession->GetTorrentQueue( m_torrentlistitems );
+		wxLogDebug( _T( "Refreshing torrent list size %s\n" ), ( wxLongLong( torrent_queue_size ).ToString() ).c_str() );
+		m_torrentlistctrl->SetItemCount( torrent_queue_size );
 
-		if( m_torrentlistitems.size() > 0 )
+		if( torrent_queue_size > 0 )
 		{
 			const SwashListCtrl::itemlist_t selecteditems = m_torrentlistctrl->GetSelectedItems();
 
 			/* selected more than 1 item in the torrent list */
 			if( selecteditems.size() > 0 )
 			{
-				libtorrent::torrent_handle &torrent_handle = m_torrentlistitems[selecteditems[0]]->handle;
-				libtorrent::torrent_info const& torrent_info = *m_torrentlistitems[selecteditems[0]]->info;
-				wxLogDebug( _T( "MainFrame: list size %s selected items %s\n" ), ( wxLongLong( m_torrentlistitems.size() ).ToString() ).c_str(), ( wxLongLong( selecteditems.size() ).ToString() ).c_str() );
+				shared_ptr<torrent_t> torrent = m_btsession->GetTorrent( selecteditems[0] );
+				if(!torrent || !torrent->isvalid)
+				{
+					return;
+				}
+				libtorrent::torrent_handle &torrent_handle = torrent->handle;
+				libtorrent::torrent_info const& torrent_info = *(torrent->info);
+				wxLogDebug( _T( "MainFrame: list size %s selected items %s\n" ), ( wxLongLong( torrent_queue_size ).ToString() ).c_str(), ( wxLongLong( selecteditems.size() ).ToString() ).c_str() );
 
 				/* if torrent is started in libtorrent */
 				if( torrent_handle.is_valid() )
@@ -873,7 +872,7 @@ void MainFrame::UpdateUI(bool force/* = false*/)
 					m_filelistctrl->SetItemCount( torrent_info.num_files() );
 				}
 				{
-					m_trackerlistctrl->SetStaticHandle( m_torrentlistitems[selecteditems[0]] );
+					m_trackerlistctrl->SetStaticHandle( torrent );
 
 					if( torrent_handle.is_valid() )
 					{
@@ -881,7 +880,7 @@ void MainFrame::UpdateUI(bool force/* = false*/)
 					}
 					else
 					{
-						m_trackerlistctrl->SetItemCount( m_torrentlistitems[selecteditems[0]]->config->GetTrackersURL().size() );
+						m_trackerlistctrl->SetItemCount( torrent->config->GetTrackersURL().size() );
 					}
 				}
 				m_summarypane->UpdateSummary();
@@ -892,10 +891,6 @@ void MainFrame::UpdateUI(bool force/* = false*/)
 			}
 
 			m_torrentlistctrl->UpdateSwashList();
-		}
-		else
-		{
-			m_torrentlistctrl->SetItemCount( 0 );
 		}
 
 		m_torrentinfo->UpdateTorrentInfo( false );
@@ -1022,7 +1017,7 @@ void MainFrame::OnUpdateUI_MenuTorrent( wxUpdateUIEvent& event )
 {
 	bool enable = false;
 
-	if( m_torrentlistitems.size() > 0 )
+	if( m_btsession && m_btsession->GetTorrentQueueSize() > 0 )
 	{
 		const SwashListCtrl::itemlist_t selecteditems = m_torrentlistctrl->GetSelectedItems();
 		/* selected more than 1 item in the torrent list */
@@ -1048,7 +1043,11 @@ void MainFrame::OnUpdateUI_MenuTorrent( wxUpdateUIEvent& event )
 				{
 					for( size_t i = 0; i < total; ++i )
 					{
-						shared_ptr<torrent_t> torrent = m_torrentlistitems[selecteditems[i]];
+						shared_ptr<torrent_t> torrent = m_btsession->GetTorrent( selecteditems[i] );
+						if(!torrent || !torrent->isvalid)
+						{
+							return;
+						}
 						torrent_state = torrent->config->GetTorrentState();
 						if( ID_TORRENT_START == menuId )
 						{
@@ -1150,13 +1149,6 @@ void MainFrame::OnMenuViewToolbar( wxCommandEvent& event )
 void MainFrame::OnMenuTorrentStart( wxCommandEvent& event )
 {
 	int i = 0;
-
-	if( !TorrentListIsValid() )
-	{
-		wxLogError( _T( "MainFrame: Invalid torrent list\n" ) );
-		return;
-	}
-
 	wxLogDebug( _T( "MainFrame: OnMenuTorrentStart\n" ) );
 	const SwashListCtrl::itemlist_t selecteditems = m_torrentlistctrl->GetSelectedItems();
 
@@ -1173,11 +1165,11 @@ void MainFrame::OnMenuTorrentStart( wxCommandEvent& event )
 		{
 			if( event.GetId() == ID_TORRENT_FORCE_START )
 			{
-				m_btsession->StartTorrent( ( m_torrentlistitems[selecteditems[i]] ), true );
+				m_btsession->StartTorrent( selecteditems[i], true );
 			}
 			else
 			{
-				m_btsession->QueueTorrent( ( m_torrentlistitems[selecteditems[i]] ) );
+				m_btsession->QueueTorrent( selecteditems[i] );
 			}
 		}
 	}
@@ -1186,12 +1178,6 @@ void MainFrame::OnMenuTorrentStart( wxCommandEvent& event )
 void MainFrame::OnMenuTorrentPause( wxCommandEvent& event )
 {
 	int i = 0;
-
-	if( !TorrentListIsValid() )
-	{
-		wxLogError( _T( "MainFrame: Invalid torrent list\n" ) );
-		return;
-	}
 
 	wxLogDebug( _T( "MainFrame: OnMenuTorrentPause\n" ) );
 	const SwashListCtrl::itemlist_t selecteditems = m_torrentlistctrl->GetSelectedItems();
@@ -1207,7 +1193,7 @@ void MainFrame::OnMenuTorrentPause( wxCommandEvent& event )
 		/* pause data selected in ui list */
 		for( i = 0; i < selecteditems.size(); i++ )
 		{
-			m_btsession->PauseTorrent( ( m_torrentlistitems[selecteditems[i]] ) );
+			m_btsession->PauseTorrent( selecteditems[i] );
 		}
 
 		/* mark for list refresh */
@@ -1217,12 +1203,6 @@ void MainFrame::OnMenuTorrentPause( wxCommandEvent& event )
 void MainFrame::OnMenuTorrentStop( wxCommandEvent& event )
 {
 	int i = 0;
-
-	if( !TorrentListIsValid() )
-	{
-		wxLogError( _T( "MainFrame: Invalid torrent list\n" ) );
-		return;
-	}
 
 	wxLogDebug( _T( "MainFrame: OnMenuTorrentStop\n" ) );
 	const SwashListCtrl::itemlist_t selecteditems = m_torrentlistctrl->GetSelectedItems();
@@ -1238,7 +1218,7 @@ void MainFrame::OnMenuTorrentStop( wxCommandEvent& event )
 		/* stop data selected in ui list */
 		for( i = 0; i < selecteditems.size(); i++ )
 		{
-			m_btsession->StopTorrent( ( m_torrentlistitems[selecteditems[i]] ) );
+			m_btsession->StopTorrent( selecteditems[i] );
 		}
 	}
 	UpdateUI();
@@ -1248,12 +1228,6 @@ void MainFrame::OnMenuTorrentStop( wxCommandEvent& event )
 void MainFrame::OnMenuTorrentProperties( wxCommandEvent& event )
 {
 	int i = 0;
-
-	if( !TorrentListIsValid() )
-	{
-		wxLogError( _T( "MainFrame: Invalid torrent list\n" ) );
-		return;
-	}
 
 	wxLogDebug( _T( "MainFrame: OnMenuTorrentProperties\n" ) );
 	const SwashListCtrl::itemlist_t selecteditems = m_torrentlistctrl->GetSelectedItems();
@@ -1268,13 +1242,17 @@ void MainFrame::OnMenuTorrentProperties( wxCommandEvent& event )
 	{
 		for( i = 0; i < selecteditems.size(); i++ )
 		{
-			shared_ptr<torrent_t> torrent = ( m_torrentlistitems[selecteditems[i]] );
+			shared_ptr<torrent_t> torrent = m_btsession->GetTorrent( selecteditems[i] );
+			if(!torrent || !torrent->isvalid)
+			{
+				return;
+			}
 			TorrentProperty torrent_property_dlg( torrent, this, wxID_ANY );
 
 			if( torrent_property_dlg.ShowModal() == wxID_OK )
 			{
 				//set selected torrent properties`
-				m_btsession->ConfigureTorrent( torrent );
+				m_btsession->ConfigureTorrent( selecteditems[i] );
 			}
 		}
 	}
@@ -1284,13 +1262,6 @@ void MainFrame::OnMenuTorrentProperties( wxCommandEvent& event )
 void MainFrame::RemoveTorrent( bool deletedata )
 {
 	int i = 0;
-
-	if( !TorrentListIsValid() )
-	{
-		wxLogError( _T( "MainFrame: Invalid torrent list\n" ) );
-		return;
-	}
-
 	const SwashListCtrl::itemlist_t selecteditems = m_torrentlistctrl->GetSelectedItems();
 
 	if( selecteditems.size() <= 0 )
@@ -1331,12 +1302,10 @@ void MainFrame::RemoveTorrent( bool deletedata )
 		for( i = 0; i < selecteditems.size(); i++ )
 		{
 			//shared_ptr<torrent_t> torrent = m_torrentlistitems[selecteditems[i] - (offset++)];
-			shared_ptr<torrent_t> torrent = m_torrentlistitems[selecteditems[i]] ;
-			m_btsession->RemoveTorrent( torrent, deletedata );
+			m_btsession->RemoveTorrent( selecteditems[i], deletedata );
 		}
 
 		/* mark for list refresh */
-		TorrentListIsValid( false );
 		UpdateUI();
 	}
 	else
@@ -1359,12 +1328,6 @@ void MainFrame::OnMenuTorrentMoveUp( wxCommandEvent& event )
 {
 	int i = 0;
 
-	if( !TorrentListIsValid() )
-	{
-		wxLogError( _T( "MainFrame: Invalid torrent list\n" ) );
-		return;
-	}
-
 	wxLogDebug( _T( "MainFrame: OnMenuTorrentMoveUp\n" ) );
 	const SwashListCtrl::itemlist_t selecteditems = m_torrentlistctrl->GetSelectedItems();
 
@@ -1384,10 +1347,9 @@ void MainFrame::OnMenuTorrentMoveUp( wxCommandEvent& event )
 				m_torrentlistctrl->Select( selecteditems[i] - 1, true );
 			}
 
-			m_btsession->MoveTorrentUp( ( m_torrentlistitems[selecteditems[i]] ) );
+			m_btsession->MoveTorrentUp( selecteditems[i] );
 		}
 
-		TorrentListIsValid( false );
 		UpdateUI();
 	}
 }
@@ -1395,12 +1357,6 @@ void MainFrame::OnMenuTorrentMoveUp( wxCommandEvent& event )
 void MainFrame::OnMenuTorrentMoveDown( wxCommandEvent& event )
 {
 	int i = 0;
-
-	if( !TorrentListIsValid() )
-	{
-		wxLogError( _T( "MainFrame: Invalid torrent list\n" ) );
-		return;
-	}
 
 	wxLogDebug( _T( "MainFrame: OnMenuTorrentMoveDown\n" ) );
 	const SwashListCtrl::itemlist_t selecteditems = m_torrentlistctrl->GetSelectedItems();
@@ -1421,10 +1377,9 @@ void MainFrame::OnMenuTorrentMoveDown( wxCommandEvent& event )
 				m_torrentlistctrl->Select( selecteditems[i] + 1, true );
 			}
 
-			m_btsession->MoveTorrentDown( ( m_torrentlistitems[selecteditems[i]] ) );
+			m_btsession->MoveTorrentDown( selecteditems[i] );
 		}
 
-		TorrentListIsValid( false );
 		UpdateUI();
 	}
 }
@@ -1432,13 +1387,6 @@ void MainFrame::OnMenuTorrentMoveDown( wxCommandEvent& event )
 void MainFrame::OnMenuTorrentReannounce( wxCommandEvent& event )
 {
 	int i = 0;
-
-	if( !TorrentListIsValid() )
-	{
-		wxLogError( _T( "MainFrame: Invalid torrent list\n" ) );
-		return;
-	}
-
 	wxLogDebug( _T( "MainFrame: OnMenuTorrentReannounce\n" ) );
 	const SwashListCtrl::itemlist_t selecteditems = m_torrentlistctrl->GetSelectedItems();
 
@@ -1452,7 +1400,7 @@ void MainFrame::OnMenuTorrentReannounce( wxCommandEvent& event )
 	{
 		for( i = 0; i < selecteditems.size(); i++ )
 		{
-			m_btsession->ReannounceTorrent( ( m_torrentlistitems[selecteditems[i]] ) );
+			m_btsession->ReannounceTorrent( selecteditems[i] );
 		}
 	}
 }
@@ -1460,12 +1408,6 @@ void MainFrame::OnMenuTorrentReannounce( wxCommandEvent& event )
 void MainFrame::OnMenuTorrentRecheck( wxCommandEvent& event )
 {
 	int i = 0;
-
-	if( !TorrentListIsValid() )
-	{
-		wxLogError( _T( "MainFrame: Invalid torrent list\n" ) );
-		return;
-	}
 
 	wxLogDebug( _T( "MainFrame: OnMenuTorrentRecheck\n" ) );
 	const SwashListCtrl::itemlist_t selecteditems = m_torrentlistctrl->GetSelectedItems();
@@ -1482,7 +1424,11 @@ void MainFrame::OnMenuTorrentRecheck( wxCommandEvent& event )
 		{
 			//m_btsession->ReannounceTorrent((m_torrentlistitems[selecteditems[i]]));
 			//XXX Workaround for libtorrent lack of recheck redo if supported in core
-			shared_ptr<torrent_t> torrent = m_torrentlistitems[selecteditems[i]];
+			shared_ptr<torrent_t> torrent = m_btsession->GetTorrent( selecteditems[i] );
+			if(!torrent || !torrent->isvalid)
+			{
+				return;
+			}
 			enum torrent_state prev_state = ( enum torrent_state ) torrent->config->GetTorrentState();
 
 			if( ( prev_state == TORRENT_STATE_START ) ||
@@ -1524,13 +1470,12 @@ shared_ptr<torrent_t> MainFrame::GetSelectedTorrent()
 {
 	shared_ptr<torrent_t> torrent;
 
-	if( !TorrentListIsValid() )
-	{ return torrent; }
-
 	const SwashListCtrl::itemlist_t selecteditems = m_torrentlistctrl->GetSelectedItems();
 
 	if( selecteditems.size() > 0 )
-	{ return m_torrentlistitems[selecteditems[0]]; }
+	{
+		torrent = m_btsession->GetTorrent( selecteditems[0] );
+	}
 
 	return torrent;
 }

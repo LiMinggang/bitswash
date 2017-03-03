@@ -111,8 +111,7 @@ public:
 	void UpdateSelectedTorrent();
 
 	shared_ptr<torrent_t> GetSelectedTorrent() ;
-
-	const std::vector<shared_ptr<torrent_t> >* GetTorrentList() { return &m_torrentlistitems;  }
+	const torrents_t * GetTorrentList() { return m_btsession->GetTorrentQueue();  }
 	const PeerListCtrl::peer_list_t* GetPeersList() { return &m_peerlistitems;  }
 
 	wxMutex& GetListLock() {return  m_listlock; }
@@ -133,8 +132,6 @@ public:
 
 	void OnListItemClick( long item );
 
-	bool TorrentListIsValid() { return m_torrentlistisvalid; }
-	void TorrentListIsValid( bool valid ) { m_torrentlistisvalid = valid; }
 	static void ReceiveTorrent( wxString fileorurl );
 private:
 
@@ -222,7 +219,6 @@ private:
 
 	wxTimer m_refreshtimer;
 
-	torrents_t m_torrentlistitems;
 	PeerListCtrl::peer_list_t m_peerlistitems;
 
 	int m_lastqindex;
@@ -238,7 +234,6 @@ private:
 
 	int m_prevlocale;
 	long m_prevselecteditem;
-	bool m_torrentlistisvalid;
 	bool m_closed;
 	DECLARE_EVENT_TABLE()
 };

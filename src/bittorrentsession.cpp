@@ -592,18 +592,16 @@ bool BitTorrentSession::AddTorrent( shared_ptr<torrent_t>& torrent )
 
 void BitTorrentSession::RemoveTorrent( shared_ptr<torrent_t>& torrent, bool deletedata )
 {
-	libtorrent::torrent_handle& h = torrent->handle;
-	long idx = -1;
-	idx = find_torrent_from_hash( torrent->hash );
+	int idx = find_torrent_from_hash( torrent->hash );
 
 	if( idx < 0 )
 	{
-		wxLogError( _T( "RemoveTorrent %s: Torrent not found in queue\n" ), torrent->name.c_str() );
+		wxLogError( _T( "QueueTorrent %s: Torrent not found in queue\n" ), torrent->name.c_str() );
 		return ;
 	}
-
 	wxLogInfo( _T( "%s: Removing Torrent\n" ), torrent->name.c_str() );
 
+	libtorrent::torrent_handle& h = torrent->handle;
 	if( h.is_valid() )
 	{
 		h.pause();
@@ -675,7 +673,15 @@ shared_ptr<torrent_t> BitTorrentSession::FindTorrent( const wxString &hash ) con
 	shared_ptr<torrent_t> torrent;
 	int idx = find_torrent_from_hash( hash );
 
-	if( idx > 0 ) { torrent = m_torrent_queue.at( idx ); }
+	if( idx >= 0 ) { torrent = m_torrent_queue.at( idx ); }
+
+	return torrent;
+}
+
+shared_ptr<torrent_t> BitTorrentSession::GetTorrent( int idx ) const
+{
+	shared_ptr<torrent_t> torrent;
+	if( idx >= 0 && idx < m_torrent_queue.size()) { torrent = m_torrent_queue.at( idx ); }
 
 	return torrent;
 }
@@ -1067,30 +1073,8 @@ bool BitTorrentSession::SaveTorrent( shared_ptr<torrent_t>& torrent, const wxStr
 	return true;
 }
 
-void BitTorrentSession::GetTorrentQueue( torrents_t & queue_copy )
+void BitTorrentSession::StartTorrent( shared_ptr<torrent_t>& torrent, bool force )
 {
-	size_t t = 0;
-	queue_copy.clear();
-
-	while( t < m_torrent_queue.size() )
-	{
-		queue_copy.push_back( m_torrent_queue.at( t ) );
-		t++;
-	}
-}
-void BitTorrentSession::StartTorrent( shared_ptr<torrent_t>& t_torrent, bool force )
-{
-	long idx = 0;
-	idx = find_torrent_from_hash( t_torrent->hash );
-
-	if( idx < 0 )
-	{
-		wxLogError( _T( "StartTorrent %s: Torrent not found in queue\n" ), t_torrent->name.c_str() );
-		return ;
-	}
-
-	// XXX pointer ???
-	shared_ptr<torrent_t>torrent = m_torrent_queue[idx];
 	wxLogInfo( _T( "%s: Start %s\n" ), torrent->name.c_str(), force ? _T( "force" ) : _T( "" ) );
 	torrent_handle& handle = torrent->handle;
 
@@ -1107,18 +1091,8 @@ void BitTorrentSession::StartTorrent( shared_ptr<torrent_t>& t_torrent, bool for
 	ConfigureTorrent( torrent );
 }
 
-void BitTorrentSession::StopTorrent( shared_ptr<torrent_t>& t_torrent )
+void BitTorrentSession::StopTorrent( shared_ptr<torrent_t>& torrent )
 {
-	long idx = 0;
-	idx = find_torrent_from_hash( t_torrent->hash );
-
-	if( idx < 0 )
-	{
-		wxLogError( _T( "Stop %s: Torrent not found in queue\n" ), t_torrent->name.c_str() );
-		return ;
-	}
-
-	shared_ptr<torrent_t> torrent = m_torrent_queue[idx];
 	wxLogInfo( _T( "%s:Stop\n" ), torrent->name.c_str() );
 	torrent_handle& handle = torrent->handle;
 	torrent_handle invalid_handle;
@@ -1138,18 +1112,8 @@ void BitTorrentSession::StopTorrent( shared_ptr<torrent_t>& t_torrent )
 	torrent->config->Save();
 }
 
-void BitTorrentSession::QueueTorrent( shared_ptr<torrent_t>& t_torrent )
+void BitTorrentSession::QueueTorrent( shared_ptr<torrent_t>& torrent )
 {
-	long idx = 0;
-	idx = find_torrent_from_hash( t_torrent->hash );
-
-	if( idx < 0 )
-	{
-		wxLogError( _T( "QueueTorrent %s: Torrent not found in queue\n" ), t_torrent->name.c_str() );
-		return ;
-	}
-
-	shared_ptr<torrent_t> torrent = m_torrent_queue[idx];
 	//wxLogInfo(_T("%s: Queue\n"), torrent->name.c_str());
 	torrent_handle& handle = torrent->handle;
 	/*
@@ -1165,18 +1129,8 @@ void BitTorrentSession::QueueTorrent( shared_ptr<torrent_t>& t_torrent )
 	torrent->config->Save();
 }
 
-void BitTorrentSession::PauseTorrent( shared_ptr<torrent_t>& t_torrent )
+void BitTorrentSession::PauseTorrent( shared_ptr<torrent_t>& torrent )
 {
-	long idx = 0;
-	idx = find_torrent_from_hash( t_torrent->hash );
-
-	if( idx < 0 )
-	{
-		wxLogError( _T( "PauseTorrent %s: Torrent not found in queue\n" ), t_torrent->name.c_str() );
-		return ;
-	}
-
-	shared_ptr<torrent_t> torrent = m_torrent_queue[idx];
 	wxLogInfo( _T( "%s: Pause\n" ), torrent->name.c_str() );
 	torrent_handle& handle = torrent->handle;
 
@@ -1194,8 +1148,7 @@ void BitTorrentSession::PauseTorrent( shared_ptr<torrent_t>& t_torrent )
 
 void BitTorrentSession::MoveTorrentUp( shared_ptr<torrent_t>& torrent )
 {
-	long idx = -1;
-	idx = find_torrent_from_hash( torrent->hash );
+	int idx = find_torrent_from_hash( torrent->hash );
 
 	if( idx < 0 )
 	{
@@ -1234,8 +1187,7 @@ void BitTorrentSession::MoveTorrentUp( shared_ptr<torrent_t>& torrent )
 
 void BitTorrentSession::MoveTorrentDown( shared_ptr<torrent_t>& torrent )
 {
-	long idx = -1;
-	idx = find_torrent_from_hash( torrent->hash );
+	int idx = find_torrent_from_hash( torrent->hash );
 
 	if( idx < 0 )
 	{
@@ -1276,18 +1228,8 @@ void BitTorrentSession::MoveTorrentDown( shared_ptr<torrent_t>& torrent )
 	//m_torrent_queue.insert( torrent_it, torrent );
 }
 
-void BitTorrentSession::ReannounceTorrent( shared_ptr<torrent_t>& t_torrent )
+void BitTorrentSession::ReannounceTorrent( shared_ptr<torrent_t>& torrent )
 {
-	long idx = -1;
-	idx = find_torrent_from_hash( t_torrent->hash );
-
-	if( idx < 0 )
-	{
-		wxLogError( _T( "ReannounceTorrent %s: Torrent not found in queue\n" ), t_torrent->name.c_str() );
-		return ;
-	}
-
-	shared_ptr<torrent_t>& torrent = m_torrent_queue[idx];
 	wxLogInfo( _T( "%s: Reannounce\n" ), torrent->name.c_str() );
 	torrent_handle &h = torrent->handle;
 
@@ -1299,18 +1241,6 @@ void BitTorrentSession::ReannounceTorrent( shared_ptr<torrent_t>& t_torrent )
 
 void BitTorrentSession::ConfigureTorrentFilesPriority( shared_ptr<torrent_t>& torrent )
 {
-	long idx = -1;
-#if 0
-	idx = find_torrent_from_hash( torrent->hash );
-
-	if( idx < 0 )
-	{
-		wxLogError( _T( "ConfigureTorrentFilesPriority %s: Torrent not found in queue\n" ), torrent->name.c_str() );
-		return ;
-	}
-
-	shared_ptr<torrent_t>& torrent = torrent;
-#endif
 	int nopriority = 0;
 	std::vector<int> filespriority = torrent->config->GetFilesPriorities();
 	//XXX default priority is 4...
@@ -1328,38 +1258,13 @@ void BitTorrentSession::ConfigureTorrentFilesPriority( shared_ptr<torrent_t>& to
 
 void BitTorrentSession::ConfigureTorrentTrackers( shared_ptr<torrent_t>& torrent )
 {
-	long idx = -1;
 	libtorrent::torrent_handle& t_handle = torrent->handle;
-#if 0
-	idx = find_torrent_from_hash( torrent->hash );
-
-	if( idx < 0 )
-	{
-		wxLogError( _T( "%s: Torrent not found in queue\n" ), torrent->name.c_str() );
-		return ;
-	}
-
-	shared_ptr<torrent_t>& torrent = torrent;
-#endif
-
 	if( t_handle.is_valid() )
 	{ t_handle.replace_trackers( torrent->config->GetTrackersURL() ); }
 }
 
 void BitTorrentSession::ConfigureTorrent( shared_ptr<torrent_t>& torrent )
 {
-	long idx = -1;
-#if 0
-	idx = find_torrent_from_hash( torrent->hash );
-
-	if( idx < 0 )
-	{
-		wxLogError( _T( "%s: Torrent not found in queue\n" ), torrent->name.c_str() );
-		return ;
-	}
-
-	shared_ptr<torrent_t>& torrent = torrent;
-#endif
 	torrent_handle &h = torrent->handle;
 	wxLogDebug( _T( "%s: Configure\n" ), torrent->name.c_str() );
 	std::string existdir = h.save_path()/*.string()*/;
@@ -1452,6 +1357,139 @@ void BitTorrentSession::ConfigureTorrent( shared_ptr<torrent_t>& torrent )
 		ConfigureTorrentTrackers( torrent );
 	}
 }
+
+void BitTorrentSession::RemoveTorrent( int idx, bool deletedata )
+{
+	if( idx < 0 || idx >= m_torrent_queue.size())
+	{
+		wxLogError( _T( "%d: Invalid torrent index\n" ), idx );
+		return ;
+	}
+
+	RemoveTorrent( m_torrent_queue[idx], deletedata);
+}
+
+void BitTorrentSession::StartTorrent( int idx, bool force )
+{
+	if( idx < 0 || idx >= m_torrent_queue.size())
+	{
+		wxLogError( _T( "%d: Invalid torrent index\n" ), idx );
+		return ;
+	}
+
+	StartTorrent( m_torrent_queue[idx], force );
+}
+
+void BitTorrentSession::StopTorrent( int idx )
+{
+	if( idx < 0 || idx >= m_torrent_queue.size())
+	{
+		wxLogError( _T( "%d: Invalid torrent index\n" ), idx );
+		return ;
+	}
+
+	StopTorrent( m_torrent_queue[idx] );
+}
+
+void BitTorrentSession::QueueTorrent( int idx )
+{
+	if( idx < 0 || idx >= m_torrent_queue.size())
+	{
+		wxLogError( _T( "%d: Invalid torrent index\n" ), idx );
+		return ;
+	}
+
+	QueueTorrent( m_torrent_queue[idx] );
+}
+
+void BitTorrentSession::PauseTorrent( int idx )
+{
+	if( idx < 0 || idx >= m_torrent_queue.size())
+	{
+		wxLogError( _T( "%d: Invalid torrent index\n" ), idx );
+		return ;
+	}
+
+	PauseTorrent( m_torrent_queue[idx] );
+}
+
+void BitTorrentSession::MoveTorrentUp( int idx )
+{
+	if( idx < 0 || idx >= m_torrent_queue.size())
+	{
+		wxLogError( _T( "%d: Invalid torrent index\n" ), idx );
+		return ;
+	}
+
+	if( idx == 0 )
+	{
+		wxLogInfo( _T( "Torrent is at top position %d\n" ), idx );
+		return;
+	}
+	MoveTorrentUp( m_torrent_queue[idx] );
+}
+
+void BitTorrentSession::MoveTorrentDown( int idx )
+{
+	if( idx < 0 || idx >= m_torrent_queue.size())
+	{
+		wxLogError( _T( "%d: Invalid torrent index\n" ), idx );
+		return ;
+	}
+
+	if( idx == ( m_torrent_queue.size() - 1 ) )
+	{
+		wxLogInfo( _T( "Torrent is at bottom position %d\n" ), idx );
+		return;
+	}
+
+	MoveTorrentDown( m_torrent_queue[idx] );
+}
+
+void BitTorrentSession::ReannounceTorrent( int idx )
+{
+	if( idx < 0 || idx >= m_torrent_queue.size())
+	{
+		wxLogError( _T( "%d: Invalid torrent index\n" ), idx );
+		return ;
+	}
+
+	ReannounceTorrent( m_torrent_queue[idx] );
+}
+
+void BitTorrentSession::ConfigureTorrentFilesPriority( int idx )
+{
+	if( idx < 0 || idx >= m_torrent_queue.size())
+	{
+		wxLogError( _T( "%d: Invalid torrent index\n" ), idx );
+		return ;
+	}
+
+	ConfigureTorrentFilesPriority( m_torrent_queue[idx] );
+}
+
+void BitTorrentSession::ConfigureTorrentTrackers( int idx )
+{
+	if( idx < 0 || idx >= m_torrent_queue.size())
+	{
+		wxLogError( _T( "%d: Invalid torrent index\n" ), idx );
+		return ;
+	}
+
+	ConfigureTorrentTrackers( m_torrent_queue[idx] );
+}
+
+void BitTorrentSession::ConfigureTorrent( int idx )
+{
+	if( idx < 0 || idx >= m_torrent_queue.size())
+	{
+		wxLogError( _T( "%d: Invalid torrent index\n" ), idx );
+		return ;
+	}
+
+	ConfigureTorrent( m_torrent_queue[idx] );
+}
+
 /* start or stop queued item based on several criteria
  * start:
  *  max number of torrent is  less than cfg->maxstart

@@ -89,6 +89,7 @@ public:
 	bool AddTorrent(shared_ptr<torrent_t>& torrent);
 	void RemoveTorrent(shared_ptr<torrent_t>& torrent, bool deletedata);
 	shared_ptr<torrent_t> FindTorrent(const wxString &hash) const;
+	shared_ptr<torrent_t> GetTorrent(int idx) const;
 	void MergeTorrent(shared_ptr<torrent_t>& dst_torrent, shared_ptr<torrent_t>& src_torrent);
 	void MergeTorrent(shared_ptr<torrent_t>& dst_torrent, MagnetUri& src_magneturi);
 
@@ -96,7 +97,8 @@ public:
 	shared_ptr<torrent_t> LoadMagnetUri( MagnetUri& magneturi );
 	bool SaveTorrent(shared_ptr<torrent_t>& torrent, const wxString& filename);
 	
-	void GetTorrentQueue(torrents_t & queue_copy);
+	torrents_t * GetTorrentQueue() {return &m_torrent_queue;}
+	size_t GetTorrentQueueSize() {return m_torrent_queue.size();}
 
 	void StartTorrent(shared_ptr<torrent_t>& torrent, bool force);
 	void StopTorrent(shared_ptr<torrent_t>& torrent);
@@ -108,6 +110,18 @@ public:
 	void ConfigureTorrent(shared_ptr<torrent_t>& torrent);
 	void ConfigureTorrentFilesPriority(shared_ptr<torrent_t>& torrent);
 	void ConfigureTorrentTrackers(shared_ptr<torrent_t>& torrent);
+
+	void BitTorrentSession::RemoveTorrent( int idx, bool deletedata );
+	void BitTorrentSession::StartTorrent( int idx, bool force );
+	void BitTorrentSession::StopTorrent( int idx );
+	void BitTorrentSession::QueueTorrent( int idx );
+	void BitTorrentSession::PauseTorrent( int idx );
+	void BitTorrentSession::MoveTorrentUp( int idx );
+	void BitTorrentSession::MoveTorrentDown( int idx );
+	void BitTorrentSession::ReannounceTorrent( int idx );
+	void BitTorrentSession::ConfigureTorrentFilesPriority( int idx );
+	void BitTorrentSession::ConfigureTorrentTrackers( int idx );
+	void BitTorrentSession::ConfigureTorrent( int idx );
 
 	libtorrent::session* GetLibTorrent() { return m_libbtsession;}
 
