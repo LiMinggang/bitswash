@@ -1110,8 +1110,6 @@ void MainFrame::OnMenuViewStatusBar( wxCommandEvent& event )
 	{ m_swashstatbar->Hide(); }
 	else
 	{ m_swashstatbar->Show(); }
-
-	//SetStatusBar(NULL);
 }
 
 void MainFrame::OnMenuViewToolbar( wxCommandEvent& event )

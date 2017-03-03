@@ -336,6 +336,8 @@ void FileListCtrl::ShowContextMenu( const wxPoint& pos )
 			MainFrame* pMainFrame = ( MainFrame* )wxGetApp().GetTopWindow();
 			pTorrent = pMainFrame->GetSelectedTorrent();
 		}
+
+		if(!pTorrent) return;
  		wxString filepath = pTorrent->config->GetDownloadPath();
 		{
 			enable_openpath = wxFileName::DirExists( filepath );
