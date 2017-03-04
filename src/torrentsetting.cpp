@@ -161,7 +161,7 @@ TorrentSettingPane::TorrentSettingPane( wxWindow* parent, shared_ptr<torrent_t>&
 	
 	m_arrStorageMode.Add(_("Full"));
 	m_arrStorageMode.Add(_("Sparse"));
-	m_arrStorageMode.Add(_("Compact"));
+//	m_arrStorageMode.Add(_("Compact"));
 
 	m_combo_storagemode = new wxComboBox( this, wxID_ANY, wxEmptyString, wxDefaultPosition, wxSize(80,-1), m_arrStorageMode, wxCB_READONLY );
 	

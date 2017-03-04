@@ -125,6 +125,8 @@ void *BitTorrentSession::Entry()
 	btsetting.handshake_timeout = m_config->GetHandshakeTimeout();
 	btsetting.use_dht_as_fallback = m_config->GetUseDhtAsFallback();
 	btsetting.free_torrent_hashes = m_config->GetFreeTorrentHashes();
+	btsetting.announce_to_all_tiers = true;
+	btsetting.announce_to_all_trackers = true;
 	m_libbtsession->set_settings( btsetting );
 	ConfigureSession();
 	ScanTorrentsDirectory( wxGetApp().SaveTorrentsPath() );
@@ -1787,6 +1789,7 @@ void BitTorrentSession::GetTorrentLog()
 		else
 		{
 			event_string << a->message();
+			if(event_string.IsEmpty()) return;
 		}
 
 		//XXX include more alert from latest libtorrent
