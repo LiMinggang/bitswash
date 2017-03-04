@@ -124,9 +124,9 @@ public:
     void OnFatalException();
 #endif
 
-	wxString DataPath() { return m_datapath ;}
-	wxString ConfigPath() { return m_configpath ;}
-	wxString SaveTorrentsPath() { return m_savetorrentspath ;}
+	wxString DataPath() { return m_datapath;}
+	wxString ConfigPath() { return m_configpath;}
+	wxString SaveTorrentsPath() { return m_savetorrentspath;}
 	wxString DHTStatePath() { return m_dhtstatepath ;} 
 	wxString UserAgent() { return wxString::Format(_T("%s %s"), APPNAME, BITSWASH_VERSION );}
 	wxString LogPath() { return m_logpath; }
@@ -136,8 +136,10 @@ public:
 	wxChar PathSeparator() { return wxFileName::GetPathSeparator(wxPATH_NATIVE); }
 
 	int GetCountryFlag(const wxString & code);
-
-	wxImageList* GetCountryFlagsList() { return m_imglist_ctryflags ;} 
+#ifdef USE_LIBGEOIP
+	bool BitSwash::GetCountryCode(const wxString& ip/*IN*/, wxString& code/*OUT*/);
+#endif
+	wxImageList* GetCountryFlagsList() { return m_imglist_ctryflags;} 
 	wxImageList* GetSettingIconsList() { return m_imglist_settingicons;} 
 
 	bool SetLocale(wxString lang);
@@ -146,7 +148,7 @@ public:
 
 	wxImage & GetAppIcon(enum appicon_id id);
 
-	BitTorrentSession* GetBitTorrentSession() { return m_btsession ; }
+	BitTorrentSession* GetBitTorrentSession() { return m_btsession; }
 	void BTInitDone() { m_btinitdone = true; }
 
 private:

@@ -134,7 +134,16 @@ wxString PeerListCtrl::GetItemValue(long item, long columnid) const
 		ret = wxString(c_ip.to_string());
 		break;
 	case PEERLIST_COLUMN_COUNTRY:
+		{
+#ifdef USE_LIBGEOIP
+		BitSwash& bitSwachApp = wxGetApp();
+		libtorrent::address c_ip = peer_info.ip.address();
+		ret = (_T("--"));
+		bitSwachApp.GetCountryCode(wxString(c_ip.to_string()), ret);
+#else
 		ret = wxString(peer_info.country, sizeof(peer_info.country) / sizeof(peer_info.country[0]));
+#endif
+		}
 		break;
 	case PEERLIST_COLUMN_CLIENT:
 		ret = wxString(peer_info.client.c_str(), *wxConvCurrent);
@@ -218,25 +227,26 @@ int PeerListCtrl::GetItemColumnImage(long item, long columnid) const
 	{
 	case PEERLIST_COLUMN_IP:
 		{
+			BitSwash& bitSwachApp = wxGetApp();
 #ifdef USE_LIBGEOIP
 			libtorrent::address c_ip = peer_info.ip.address();
-			return wxGetApp().GetCountryFlag(wxString(c_ip.to_string()));
+			wxString ctry(_T("--"));
+			bitSwachApp.GetCountryCode(wxString(c_ip.to_string()), ctry);
 #else
 			wxString ctry = wxString::FromAscii(peer_info.country, sizeof(peer_info.country) / sizeof(peer_info.country[0]));
+#endif
 			if ((!ctry.IsEmpty()) && (('A' <= ctry[0]) &&
 				(ctry[0] <= 'Z')) &&
 				(('A' <= ctry[1]) &&
 				(ctry[1] <= 'Z')))
 			{
 				//ctry[2] = '\0';
-				int index = wxGetApp().GetCountryFlag(ctry);
+				int index = bitSwachApp.GetCountryFlag(ctry);
 				wxLogDebug(_T("Image idx %s %d\n"), ctry.c_str(), index);
 				return index;
-
 			}
 			else
-				return wxGetApp().GetCountryFlag(wxEmptyString);
-#endif
+				return bitSwachApp.GetCountryFlag(wxEmptyString);
 			break;
 		}
 	default:
@@ -261,13 +271,13 @@ int PeerListCtrl::OnGetItemImage(long item) const
 
 #ifdef USE_LIBGEOIP
 	libtorrent::address c_ip = peer_info.ip.address();
-	return wxGetApp().GetCountryFlag(wxString(c_ip.to_string()));
+	wxString ctry(_T("--"));
+	bitSwachApp.GetCountryCode(wxString(c_ip.to_string()), ctry);
 #else
 	wxString ctry = wxString::FromAscii(peer_info.country, sizeof(peer_info.country) / sizeof(peer_info.country[0]));
 	//wxLogDebug(_T("Image idx %s %d\n"),ctry.c_str(), wxGetApp().GetCountryFlag(ctry.c_str()));
-	return wxGetApp().GetCountryFlag(ctry);
 #endif
-
+	return wxGetApp().GetCountryFlag(ctry);
 }
 #endif
 

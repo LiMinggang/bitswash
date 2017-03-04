@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2017-03-04 09:16+0800\n"
-"PO-Revision-Date: 2017-03-04 09:19+0800\n"
+"PO-Revision-Date: 2017-03-04 11:12+0800\n"
 "Last-Translator: Aaron Wang Shi <aarons.wang@gmail.com>\n"
 "Language-Team: \n"
 "Language: zh_CN\n"
@@ -1553,7 +1553,7 @@ msgstr "确认移除"
 
 #: ../src/mainframe.cpp:1562
 msgid "Ok"
-msgstr "确认"
+msgstr "确定"
 
 #: ../src/mainframe.cpp:1563
 msgid "Error"

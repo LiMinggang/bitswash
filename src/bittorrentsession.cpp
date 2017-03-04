@@ -546,7 +546,7 @@ bool BitTorrentSession::AddTorrent( shared_ptr<torrent_t>& torrent )
 		}
 
 	 	bool nopriority = false;
-		long total_selected = 0;
+		size_t total_selected = 0;
 		libtorrent::file_entry f_entry;
 		libtorrent::torrent_info const& torrent_info = *(torrent->info);
 		std::vector<int> filespriority = torrent->config->GetFilesPriorities();
@@ -917,6 +917,8 @@ void BitTorrentSession::SaveAllTorrent()
 
 	// save dead magnet uri
 	size_t counts = magneturi.GetCount();
+	wxString filename = wxGetApp().SaveTorrentsPath() + wxGetApp().PathSeparator() + APPBINNAME + _T( ".magneturi" );
+	wxTextFile magneturifile( filename );
 	if(counts > 0)
 	{
 		wxString filename = wxGetApp().SaveTorrentsPath() + wxGetApp().PathSeparator() + APPBINNAME + _T( ".magneturi" );
@@ -944,6 +946,16 @@ void BitTorrentSession::SaveAllTorrent()
 #else
 			magneturifile.Write( wxTextFileType_Unix );
 #endif
+			magneturifile.Close();
+		}
+	}	
+	else if( magneturifile.Exists() )
+	{
+		magneturifile.Open( wxConvFile );
+
+		if( magneturifile.IsOpened() )
+		{
+			magneturifile.Clear();
 			magneturifile.Close();
 		}
 	}

@@ -112,8 +112,8 @@ public:
 	void ReadFilesPriority();
 	void WriteTrackersUrl();
 	void ReadTrackersUrl();
-	void SetSelectedSize(long fsize) {m_selected_file_size = fsize;}
-	long GetSelectedSize() {return m_selected_file_size;}
+	void SetSelectedSize(size_t fsize) {m_selected_file_size = fsize;}
+	size_t GetSelectedSize() {return m_selected_file_size;}
 
 protected:
 private:
@@ -136,7 +136,7 @@ private:
 	int m_torrent_download_limit;
 	int m_torrent_max_uploads;
 	int m_torrent_max_connections;
-	long m_selected_file_size;
+	size_t m_selected_file_size;
 	std::vector<int> m_files_priority;
 	std::vector<libtorrent::announce_entry> m_trackers_url;
 	stats_t m_torrent_stats;

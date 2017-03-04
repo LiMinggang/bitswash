@@ -358,25 +358,33 @@ void BitSwash::LoadFlags()
 	}
 }
 
+#ifdef USE_LIBGEOIP
+bool BitSwash::GetCountryCode(const wxString& ip/*IN*/, wxString& code/*OUT*/)
+{
+	bool ret = false;
+	if(m_geoip)
+	{
+		// code is IP actually
+		const char * ccode = GeoIP_country_code_by_addr(m_geoip, ip.ToStdString().c_str());
+		if(ccode)
+			code = wxString::FromAscii(ccode);
+		else
+			code = (_T("--"));
+	}
+
+	return ret;
+}
+#endif
+
+
 int BitSwash::GetCountryFlag( const wxString& code )
 {
 	if( code.IsEmpty() )
 		return 0;
-#ifdef USE_LIBGEOIP
-	if(!m_geoip)
-		return -1;
-	// code is IP actually
-	wxString wxcode(_T("--"));
-	const char * ccode = GeoIP_country_code_by_addr(m_geoip, code.ToStdString().c_str());
-	if(ccode)
-		wxcode = wxString::FromAscii(ccode);
-	std::map<wxString, int>::iterator it = CountryCodeIndexMap.find( wxcode );
-#else
 	std::map<wxString, int>::iterator it = CountryCodeIndexMap.find( code );
-#endif
 	if( it != CountryCodeIndexMap.end() )
 	{
-		wxASSERT( ((unsigned int)it->second) < N_COUNTRY );
+		wxASSERT( it->second < N_COUNTRY );
 		return CountryFlags[it->second].imgidx;
 	}
 	/*for (i=0; i< N_COUNTRY ; i++)
@@ -388,7 +396,6 @@ int BitSwash::GetCountryFlag( const wxString& code )
 	}*/
 	return -1;
 }
-#undef N_COUNTRY
 
 void BitSwash::LoadSettingIcons()
 {
