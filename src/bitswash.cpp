@@ -337,14 +337,13 @@ int BitSwash::OnExit()
 
 void BitSwash::LoadFlags()
 {
-	int i;
 	wxChar dirsep = wxFileName::GetPathSeparator( wxPATH_NATIVE );
     wxMemoryInputStream fstream(&un_bin[0], sizeof(un_bin)/sizeof(un_bin[0]));
 	wxImage empty(fstream);
 	int emptyidx = 0;
 	m_imglist_ctryflags = new wxImageList( 16, 11, false );
 	emptyidx = m_imglist_ctryflags->Add( wxBitmap( empty ) );
-	for( i = 0; i < N_COUNTRY ; ++i )
+	for(unsigned int i = 0; i < N_COUNTRY ; ++i )
 	{
 		CountryCodeIndexMap[wxString( CountryFlags[i].code )] = i;
 		if( ( wxIsEmpty( CountryFlags[i].code ) ) || ( ! wxStricmp( CountryFlags[i].code, _T( "--" ) ) ) )
@@ -377,7 +376,7 @@ int BitSwash::GetCountryFlag( const wxString& code )
 #endif
 	if( it != CountryCodeIndexMap.end() )
 	{
-		wxASSERT( it->second < N_COUNTRY );
+		wxASSERT( ((unsigned int)it->second) < N_COUNTRY );
 		return CountryFlags[it->second].imgidx;
 	}
 	/*for (i=0; i< N_COUNTRY ; i++)
@@ -393,12 +392,11 @@ int BitSwash::GetCountryFlag( const wxString& code )
 
 void BitSwash::LoadSettingIcons()
 {
-	int i;
 	wxChar dirsep = wxFileName::GetPathSeparator( wxPATH_NATIVE );
 	wxImage empty( 16, 16, true );
 	m_imglist_settingicons = new wxImageList( 16, 16, false );
 
-	for( i = 0; i < N_SETTINGS; i++ )
+	for( unsigned int i = 0; i < N_SETTINGS; i++ )
 	{
         wxMemoryInputStream stream(SettingIcons[i].filebuf, SettingIcons[i].filesize);
         wxImage flags(stream);
