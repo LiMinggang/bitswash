@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 0.0.6\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2017-02-26 16:54+0800\n"
+"POT-Creation-Date: 2017-03-04 09:16+0800\n"
 "PO-Revision-Date: 2007-11-19 20:10+0800\n"
 "Last-Translator: Osipov Igor <oival@yandex.ru>\n"
 "Language-Team: RUSSIAN <LL@li.org>\n"
@@ -983,32 +983,27 @@ msgstr "Замбия"
 msgid "Zimbabwe"
 msgstr "Зимбабве"
 
-#: ../src/bitswash.cpp:426
+#: ../src/bitswash.cpp:435
 msgid "Failed to create an IPC service."
 msgstr ""
 
-#: ../src/bitswash.cpp:458
+#: ../src/bitswash.cpp:467
 msgid ""
 "Sorry, the existing instance may be too busy too respond.\n"
 "Please close any open dialogs and retry."
 msgstr ""
 
-#: ../src/bittorrentsession.cpp:473 ../src/torrentsetting.cpp:162
+#: ../src/bittorrentsession.cpp:477 ../src/torrentsetting.cpp:162
 #: ../src/torrentsetting.cpp:187
 msgid "Full"
 msgstr ""
 
-#: ../src/bittorrentsession.cpp:477 ../src/bittorrentsession.cpp:486
+#: ../src/bittorrentsession.cpp:481 ../src/bittorrentsession.cpp:490
 #: ../src/torrentsetting.cpp:163 ../src/torrentsetting.cpp:190
 #: ../src/torrentsetting.cpp:196
 #, fuzzy
 msgid "Sparse"
 msgstr "пауза"
-
-#: ../src/bittorrentsession.cpp:481 ../src/torrentsetting.cpp:164
-#: ../src/torrentsetting.cpp:193
-msgid "Compact"
-msgstr ""
 
 #: ../src/connectionsetting.cpp:56
 msgid "Ports Setting"
@@ -1100,7 +1095,7 @@ msgid "Files in torrent"
 msgstr "Файлы в торренте"
 
 #: ../src/filelistctrl.cpp:79 ../src/filelistctrl.cpp:88
-#: ../src/torrentlistctrl.cpp:57 ../src/torrentlistctrl.cpp:74
+#: ../src/torrentlistctrl.cpp:58 ../src/torrentlistctrl.cpp:76
 msgid "Size"
 msgstr "Размер"
 
@@ -1118,7 +1113,7 @@ msgstr "Приоритет файла"
 
 #: ../src/filelistctrl.cpp:81 ../src/filelistctrl.cpp:90
 #: ../src/peerlistctrl.cpp:67 ../src/peerlistctrl.cpp:82
-#: ../src/torrentlistctrl.cpp:58 ../src/torrentlistctrl.cpp:75
+#: ../src/torrentlistctrl.cpp:60 ../src/torrentlistctrl.cpp:78
 msgid "Progress"
 msgstr "Прогресс"
 
@@ -1163,6 +1158,22 @@ msgstr "Норма"
 #: ../src/filelistctrl.cpp:166
 msgid "Higest"
 msgstr "Higest"
+
+#: ../src/functions.cpp:84
+msgid "D"
+msgstr ""
+
+#: ../src/functions.cpp:85
+msgid "H"
+msgstr ""
+
+#: ../src/functions.cpp:86
+msgid "M"
+msgstr ""
+
+#: ../src/functions.cpp:87
+msgid "S"
+msgstr ""
 
 #: ../src/generalsetting.cpp:63 ../src/swashsetting.cpp:71
 msgid "General"
@@ -1262,410 +1273,410 @@ msgstr "Очестить Лог"
 msgid "Pause Log"
 msgstr "Приостановить Лог"
 
-#: ../src/mainframe.cpp:301
+#: ../src/mainframe.cpp:300
 msgid "Categories"
 msgstr "Категории"
 
-#: ../src/mainframe.cpp:303
+#: ../src/mainframe.cpp:302
 msgid "All"
 msgstr "Все"
 
-#: ../src/mainframe.cpp:304
+#: ../src/mainframe.cpp:303
 msgid "Downloads"
 msgstr "Загрузки"
 
-#: ../src/mainframe.cpp:305
+#: ../src/mainframe.cpp:304
 msgid "Seeds"
 msgstr "Сиды"
 
-#: ../src/mainframe.cpp:389 ../src/swashtrayicon.cpp:102
+#: ../src/mainframe.cpp:388 ../src/swashtrayicon.cpp:102
 msgid "&Open Torrent\tCtrl+O"
 msgstr "Открыть Торрент(&O)\tCtrl+O"
 
-#: ../src/mainframe.cpp:389 ../src/mainframe.cpp:473
+#: ../src/mainframe.cpp:388 ../src/mainframe.cpp:472
 #: ../src/swashtrayicon.cpp:102
 msgid "Open Torrent"
 msgstr "Открыть Торрент"
 
-#: ../src/mainframe.cpp:391 ../src/swashtrayicon.cpp:103
+#: ../src/mainframe.cpp:390 ../src/swashtrayicon.cpp:103
 msgid "Open &URL\tCtrl+U"
 msgstr "Открыть URL(&U)\tCtrl+U"
 
-#: ../src/mainframe.cpp:391 ../src/mainframe.cpp:476
+#: ../src/mainframe.cpp:390 ../src/mainframe.cpp:475
 #: ../src/swashtrayicon.cpp:103
 msgid "Open URL"
 msgstr "Открыть URL"
 
-#: ../src/mainframe.cpp:397
+#: ../src/mainframe.cpp:396
 msgid "E&xit\tAlt-F4"
 msgstr "Выход(&x)\tAlt-F4"
 
-#: ../src/mainframe.cpp:397 ../src/mainframe.cpp:529
+#: ../src/mainframe.cpp:396 ../src/mainframe.cpp:528
 msgid "Exit Bitswash"
 msgstr "Выйти из Bitswash"
 
-#: ../src/mainframe.cpp:399
+#: ../src/mainframe.cpp:398
 msgid "&File"
 msgstr "Файл(&F)"
 
-#: ../src/mainframe.cpp:401
+#: ../src/mainframe.cpp:400
 msgid "View &Toolbar"
 msgstr "Показать Панель Инструментов(&T)"
 
-#: ../src/mainframe.cpp:401
+#: ../src/mainframe.cpp:400
 msgid "View Toolbar"
 msgstr "Показать Панель Инструментов"
 
-#: ../src/mainframe.cpp:402
+#: ../src/mainframe.cpp:401
 msgid "View &Status"
 msgstr "Показать Статуса(&S)"
 
-#: ../src/mainframe.cpp:402
+#: ../src/mainframe.cpp:401
 msgid "View Status"
 msgstr "Показать Статус"
 
-#: ../src/mainframe.cpp:404
+#: ../src/mainframe.cpp:403
 msgid "&View"
 msgstr "Вид(&V)"
 
-#: ../src/mainframe.cpp:406
+#: ../src/mainframe.cpp:405
 msgid "&Torrent"
 msgstr "Торрент(&T)"
 
-#: ../src/mainframe.cpp:408 ../src/swashtrayicon.cpp:105
+#: ../src/mainframe.cpp:407 ../src/swashtrayicon.cpp:105
 msgid "Prefere&nce\tCtrl+F"
 msgstr "Настройки(&P)\t(Ctrl+P)"
 
-#: ../src/mainframe.cpp:408 ../src/mainframe.cpp:520
+#: ../src/mainframe.cpp:407 ../src/mainframe.cpp:519
 #: ../src/swashtrayicon.cpp:105
 msgid "Preference"
 msgstr "Настройки"
 
-#: ../src/mainframe.cpp:414
+#: ../src/mainframe.cpp:413
 msgid "System Language"
 msgstr "Язык Системы"
 
-#: ../src/mainframe.cpp:456
+#: ../src/mainframe.cpp:455
 msgid "&Language"
 msgstr "Язык(&L)"
 
-#: ../src/mainframe.cpp:456
+#: ../src/mainframe.cpp:455
 msgid "Language"
 msgstr "Язык"
 
-#: ../src/mainframe.cpp:457
+#: ../src/mainframe.cpp:456
 msgid "&Options"
 msgstr "Настройки(&O)"
 
-#: ../src/mainframe.cpp:459
+#: ../src/mainframe.cpp:458
 msgid "&Help\tF1"
 msgstr "Помощь(&H)\tF1"
 
-#: ../src/mainframe.cpp:459
+#: ../src/mainframe.cpp:458
 msgid "Help"
 msgstr "Помощь"
 
-#: ../src/mainframe.cpp:461
+#: ../src/mainframe.cpp:460
 msgid "Home&page"
 msgstr "Домашняя страница(&p)"
 
-#: ../src/mainframe.cpp:461 ../src/mainframe.cpp:523
+#: ../src/mainframe.cpp:460 ../src/mainframe.cpp:522
 msgid "Homepage"
 msgstr "Домашняя страница"
 
-#: ../src/mainframe.cpp:462
+#: ../src/mainframe.cpp:461
 msgid "&About"
 msgstr "О программе(&A)"
 
-#: ../src/mainframe.cpp:462
+#: ../src/mainframe.cpp:461
 msgid "About"
 msgstr "О программе"
 
-#: ../src/mainframe.cpp:463
+#: ../src/mainframe.cpp:462
 msgid "&Help"
 msgstr "Помощь(&H)"
 
-#: ../src/mainframe.cpp:475
+#: ../src/mainframe.cpp:474
 msgid "Open torrent file"
 msgstr "Открыть торрент-файл"
 
-#: ../src/mainframe.cpp:478
+#: ../src/mainframe.cpp:477
 msgid "Open torrent from url"
 msgstr "Открыть торрент из url"
 
-#: ../src/mainframe.cpp:478
+#: ../src/mainframe.cpp:477
 msgid "Open torrent from URL"
 msgstr "Открыть торрент из URL"
 
-#: ../src/mainframe.cpp:481
+#: ../src/mainframe.cpp:480
 msgid "Create Torrent"
 msgstr "Создать Торрент"
 
-#: ../src/mainframe.cpp:483
+#: ../src/mainframe.cpp:482
 msgid "Create torrent file"
 msgstr "Создать торрент-файл"
 
-#: ../src/mainframe.cpp:483
+#: ../src/mainframe.cpp:482
 msgid "Create torrent file to publish"
 msgstr "Создать торрент-файл для раздачи"
 
-#: ../src/mainframe.cpp:488
+#: ../src/mainframe.cpp:487
 msgid "Queue"
 msgstr "Очередь"
 
-#: ../src/mainframe.cpp:490
+#: ../src/mainframe.cpp:489
 msgid "Queue torrent"
 msgstr "Очередь торрентов"
 
-#: ../src/mainframe.cpp:491
+#: ../src/mainframe.cpp:490
 msgid "Pause"
 msgstr "Пауза"
 
-#: ../src/mainframe.cpp:493
+#: ../src/mainframe.cpp:492
 msgid "Pause download"
 msgstr "Приостановить закачку"
 
-#: ../src/mainframe.cpp:493
+#: ../src/mainframe.cpp:492
 msgid "Pause downlaoding"
 msgstr "Приоставить скачивание"
 
-#: ../src/mainframe.cpp:494
+#: ../src/mainframe.cpp:493
 msgid "stop"
 msgstr "стоп"
 
-#: ../src/mainframe.cpp:496
+#: ../src/mainframe.cpp:495
 msgid "Stop download"
 msgstr "Остановить закачку"
 
-#: ../src/mainframe.cpp:496
+#: ../src/mainframe.cpp:495
 msgid "Stop downlaoding"
 msgstr "Остановить загрузку"
 
-#: ../src/mainframe.cpp:498 ../src/trackerlistctrl.cpp:141
+#: ../src/mainframe.cpp:497 ../src/trackerlistctrl.cpp:169
 msgid "Delete"
 msgstr "Удаление"
 
-#: ../src/mainframe.cpp:500
+#: ../src/mainframe.cpp:499
 msgid "Delete torrent file"
 msgstr "Удалить торрент-файл"
 
-#: ../src/mainframe.cpp:501
+#: ../src/mainframe.cpp:500
 msgid "Delete Data"
 msgstr "Удалить Файлы"
 
-#: ../src/mainframe.cpp:503
+#: ../src/mainframe.cpp:502
 msgid "Delete torrent file and downloaded data"
 msgstr "Удалить торрент-файл и скаченные файлы"
 
-#: ../src/mainframe.cpp:505
+#: ../src/mainframe.cpp:504
 msgid "Move Up"
 msgstr "Вверх"
 
-#: ../src/mainframe.cpp:508 ../src/mainframe.cpp:1693
+#: ../src/mainframe.cpp:507 ../src/mainframe.cpp:1644
 msgid "Move torrent up"
 msgstr "Поднять торрент вверх"
 
-#: ../src/mainframe.cpp:508
+#: ../src/mainframe.cpp:507
 msgid "Move torrent up in the queue position"
 msgstr "Поднять торрент выше в очереди"
 
-#: ../src/mainframe.cpp:509
+#: ../src/mainframe.cpp:508
 msgid "Move Down"
 msgstr "Вниз"
 
-#: ../src/mainframe.cpp:512 ../src/mainframe.cpp:1696
+#: ../src/mainframe.cpp:511 ../src/mainframe.cpp:1647
 msgid "Move torrent down"
 msgstr "Опустить торрент ниже"
 
-#: ../src/mainframe.cpp:512
+#: ../src/mainframe.cpp:511
 msgid "Move torrent down in the queue position"
 msgstr "Опустить торрент ниже в очереди"
 
-#: ../src/mainframe.cpp:514
+#: ../src/mainframe.cpp:513
 msgid "Open"
 msgstr "Открыть"
 
-#: ../src/mainframe.cpp:516
+#: ../src/mainframe.cpp:515
 msgid "Open destination directory"
 msgstr "Указать папку назначения"
 
-#: ../src/mainframe.cpp:516
+#: ../src/mainframe.cpp:515
 msgid "Open destination downloaded directory"
 msgstr "Указать папку сохранения"
 
-#: ../src/mainframe.cpp:522
+#: ../src/mainframe.cpp:521
 msgid "Program settings"
 msgstr "Настройки программы"
 
-#: ../src/mainframe.cpp:522
+#: ../src/mainframe.cpp:521
 msgid "Set user preference"
 msgstr "Установить настройки профиля"
 
-#: ../src/mainframe.cpp:525
+#: ../src/mainframe.cpp:524
 msgid "Bitswash homepage"
 msgstr "Сайт Bitswash"
 
-#: ../src/mainframe.cpp:525
+#: ../src/mainframe.cpp:524
 msgid "Visit Bitswash homepage"
 msgstr "Посетить сайт Bitswash"
 
-#: ../src/mainframe.cpp:527
+#: ../src/mainframe.cpp:526
 msgid "Exit"
 msgstr "Выход"
 
-#: ../src/mainframe.cpp:642 ../src/mainframe.cpp:785
+#: ../src/mainframe.cpp:640 ../src/mainframe.cpp:782
 msgid "Torrent Exists. Do you want to update trackers/seeds from the torrent?"
 msgstr ""
 
-#: ../src/mainframe.cpp:642 ../src/mainframe.cpp:785
+#: ../src/mainframe.cpp:640 ../src/mainframe.cpp:782
 #, fuzzy
 msgid "Confirm"
 msgstr "Подтвердите удаление"
 
-#: ../src/mainframe.cpp:667
+#: ../src/mainframe.cpp:665
 msgid "Open Torrent(s)..."
 msgstr "Открыть Торрент(ы)..."
 
-#: ../src/mainframe.cpp:1303
+#: ../src/mainframe.cpp:1274
 msgid "torrents"
 msgstr "торренты"
 
-#: ../src/mainframe.cpp:1305
+#: ../src/mainframe.cpp:1276
 msgid "torrent"
 msgstr "торрент"
 
-#: ../src/mainframe.cpp:1308
+#: ../src/mainframe.cpp:1279
 msgid " and data"
 msgstr " и данные"
 
-#: ../src/mainframe.cpp:1310
+#: ../src/mainframe.cpp:1281
 msgid "Confirm remove "
 msgstr "Подтвердите удаление"
 
-#: ../src/mainframe.cpp:1311
+#: ../src/mainframe.cpp:1282
 msgid "Confirm Remove"
 msgstr "Подтвердите удаление"
 
-#: ../src/mainframe.cpp:1617
+#: ../src/mainframe.cpp:1562
 msgid "Ok"
 msgstr "Ок"
 
-#: ../src/mainframe.cpp:1618
+#: ../src/mainframe.cpp:1563
 msgid "Error"
 msgstr "Ошибка"
 
-#: ../src/mainframe.cpp:1624
+#: ../src/mainframe.cpp:1571
 msgid "Download Rate"
 msgstr "Приоритет загрузки"
 
-#: ../src/mainframe.cpp:1624
+#: ../src/mainframe.cpp:1572
 msgid "Upload Rate"
 msgstr "Ограничение Раздачи"
 
-#: ../src/mainframe.cpp:1624 ../src/torrentinfo.cpp:65
-#: ../src/torrentlistctrl.cpp:61 ../src/torrentlistctrl.cpp:78
+#: ../src/mainframe.cpp:1573 ../src/torrentinfo.cpp:65
+#: ../src/torrentlistctrl.cpp:63 ../src/torrentlistctrl.cpp:81
 msgid "Peers"
 msgstr "Пиры"
 
-#: ../src/mainframe.cpp:1624
+#: ../src/mainframe.cpp:1574
 msgid "DHT Nodes"
 msgstr "Сообщения DHT"
 
-#: ../src/mainframe.cpp:1624
+#: ../src/mainframe.cpp:1575
 msgid "Incoming"
 msgstr "Вхидящий"
 
-#: ../src/mainframe.cpp:1635
+#: ../src/mainframe.cpp:1586
 msgid "Could not set icon."
 msgstr ""
 
-#: ../src/mainframe.cpp:1679
+#: ../src/mainframe.cpp:1630
 msgid "&Queue Torrent\tCtrl+S"
 msgstr "Добавить Торрент в Очередь(&Q)\tCtrl+S"
 
-#: ../src/mainframe.cpp:1679
+#: ../src/mainframe.cpp:1630
 msgid "Queue Download"
 msgstr "Очередь Загрузки"
 
-#: ../src/mainframe.cpp:1681
+#: ../src/mainframe.cpp:1632
 msgid "&Force Start Torrent\tCtrl+Alt+S"
 msgstr "Форсированный Запуск Торрента(&F)"
 
-#: ../src/mainframe.cpp:1681
+#: ../src/mainframe.cpp:1632
 msgid "Force Torrent Download"
 msgstr "Форсировать Закачку"
 
-#: ../src/mainframe.cpp:1683
+#: ../src/mainframe.cpp:1634
 msgid "&Pause Torrent\tCtrl+P"
 msgstr "Пауза(&P)\tCtrl-P"
 
-#: ../src/mainframe.cpp:1683
+#: ../src/mainframe.cpp:1634
 msgid "Pause Download"
 msgstr "Приостановть Загрузку"
 
-#: ../src/mainframe.cpp:1685
+#: ../src/mainframe.cpp:1636
 msgid "St&op Torrent\tCtrl+T"
 msgstr "Остановить Торрент(&t)\tCtrl+T"
 
-#: ../src/mainframe.cpp:1685
+#: ../src/mainframe.cpp:1636
 msgid "Stop Download"
 msgstr "Остановить Закачку"
 
-#: ../src/mainframe.cpp:1688
+#: ../src/mainframe.cpp:1639
 msgid "&Remove Torrent"
 msgstr "Удалить Торрент(&R)"
 
-#: ../src/mainframe.cpp:1688
+#: ../src/mainframe.cpp:1639
 msgid "Delete Torrent"
 msgstr "Удалить Торрент"
 
-#: ../src/mainframe.cpp:1690
+#: ../src/mainframe.cpp:1641
 msgid "Remove Torrent and &Data"
 msgstr "Удалить Торрент и Файлы(&D)"
 
-#: ../src/mainframe.cpp:1690
+#: ../src/mainframe.cpp:1641
 msgid "Delete Torrent and Data"
 msgstr "Удалить Торрент и Файлы"
 
-#: ../src/mainframe.cpp:1693
+#: ../src/mainframe.cpp:1644
 msgid "Move &Up\tAlt+UP"
 msgstr "Вверх(&U)"
 
-#: ../src/mainframe.cpp:1696
+#: ../src/mainframe.cpp:1647
 msgid "Move Do&wn\tAlt+DOWN"
 msgstr "Вниз(&w)"
 
-#: ../src/mainframe.cpp:1700
+#: ../src/mainframe.cpp:1651
 msgid "Re&announce Torrent"
 msgstr "Повторить Торрент(&a)"
 
-#: ../src/mainframe.cpp:1700
+#: ../src/mainframe.cpp:1651
 msgid "Force Reannounce Torrent"
 msgstr "Принудительно повторить торрент"
 
-#: ../src/mainframe.cpp:1702
+#: ../src/mainframe.cpp:1653
 #, fuzzy
 msgid "Force Re&check Torrent"
 msgstr "Принудительно повторить торрент"
 
-#: ../src/mainframe.cpp:1702
+#: ../src/mainframe.cpp:1653
 #, fuzzy
 msgid "Force Recheck Torrent"
 msgstr "Принудительно повторить торрент"
 
-#: ../src/mainframe.cpp:1703
+#: ../src/mainframe.cpp:1654
 msgid "Open &Directory"
 msgstr "Открыть папку(&D)"
 
-#: ../src/mainframe.cpp:1703
+#: ../src/mainframe.cpp:1654
 msgid "Open downloaded directory"
 msgstr "Открыть папку сохранения"
 
-#: ../src/mainframe.cpp:1705
+#: ../src/mainframe.cpp:1656
 msgid "Propert&ies"
 msgstr "Свойства(&i)"
 
-#: ../src/mainframe.cpp:1705
+#: ../src/mainframe.cpp:1656
 msgid "Torrent Properties"
 msgstr "Свойства Торрента"
 
@@ -1694,8 +1705,9 @@ msgid "Peer type"
 msgstr "Тип пира"
 
 #: ../src/peerlistctrl.cpp:60 ../src/peerlistctrl.cpp:75
-#: ../src/torrentinfo.cpp:62 ../src/torrentlistctrl.cpp:56
-#: ../src/torrentlistctrl.cpp:73
+#: ../src/torrentinfo.cpp:62 ../src/torrentlistctrl.cpp:57
+#: ../src/torrentlistctrl.cpp:75 ../src/trackerlistctrl.cpp:58
+#: ../src/trackerlistctrl.cpp:65
 msgid "Status"
 msgstr "Статус"
 
@@ -1720,32 +1732,32 @@ msgid "Peer flags"
 msgstr "Флаги пира"
 
 #: ../src/peerlistctrl.cpp:63 ../src/peerlistctrl.cpp:78
-#: ../src/torrentlistctrl.cpp:59 ../src/torrentlistctrl.cpp:76
+#: ../src/torrentlistctrl.cpp:61 ../src/torrentlistctrl.cpp:79
 msgid "Download Speed"
 msgstr "Скорость скачивания"
 
 #: ../src/peerlistctrl.cpp:64 ../src/peerlistctrl.cpp:79
-#: ../src/torrentlistctrl.cpp:60 ../src/torrentlistctrl.cpp:77
+#: ../src/torrentlistctrl.cpp:62 ../src/torrentlistctrl.cpp:80
 msgid "Upload Speed"
 msgstr "Скорость отдачи"
 
 #: ../src/peerlistctrl.cpp:65 ../src/peerlistctrl.cpp:80
-#: ../src/torrentlistctrl.cpp:62 ../src/torrentlistctrl.cpp:79
+#: ../src/torrentlistctrl.cpp:64 ../src/torrentlistctrl.cpp:82
 msgid "Downloaded"
 msgstr "Загружено"
 
 #: ../src/peerlistctrl.cpp:65 ../src/peerlistctrl.cpp:80
-#: ../src/torrentlistctrl.cpp:62 ../src/torrentlistctrl.cpp:79
+#: ../src/torrentlistctrl.cpp:64 ../src/torrentlistctrl.cpp:82
 msgid "Total bytes downloaded"
 msgstr "Всего байт загружено"
 
 #: ../src/peerlistctrl.cpp:66 ../src/peerlistctrl.cpp:81
-#: ../src/torrentlistctrl.cpp:63 ../src/torrentlistctrl.cpp:80
+#: ../src/torrentlistctrl.cpp:65 ../src/torrentlistctrl.cpp:83
 msgid "Uploaded"
 msgstr "Отдано"
 
 #: ../src/peerlistctrl.cpp:66 ../src/peerlistctrl.cpp:81
-#: ../src/torrentlistctrl.cpp:63 ../src/torrentlistctrl.cpp:80
+#: ../src/torrentlistctrl.cpp:65 ../src/torrentlistctrl.cpp:83
 msgid "Total bytes uploaded"
 msgstr "Всего байт отдано"
 
@@ -1785,7 +1797,7 @@ msgstr "Рукопожатие"
 msgid "Connecting"
 msgstr "Соединение"
 
-#: ../src/peerlistctrl.cpp:159 ../src/torrentlistctrl.cpp:130
+#: ../src/peerlistctrl.cpp:159 ../src/torrentlistctrl.cpp:133
 msgid "Queued"
 msgstr "В очереди"
 
@@ -1933,117 +1945,125 @@ msgstr "Файлы"
 msgid "Trackers"
 msgstr "Трэкер"
 
-#: ../src/torrentlistctrl.cpp:54 ../src/torrentlistctrl.cpp:71
+#: ../src/torrentlistctrl.cpp:55 ../src/torrentlistctrl.cpp:73
 msgid "Index"
 msgstr "Индекс"
 
-#: ../src/torrentlistctrl.cpp:54 ../src/torrentlistctrl.cpp:71
+#: ../src/torrentlistctrl.cpp:55 ../src/torrentlistctrl.cpp:73
 msgid "Queue Index"
 msgstr "Индекс Очереди"
 
-#: ../src/torrentlistctrl.cpp:55 ../src/torrentlistctrl.cpp:72
+#: ../src/torrentlistctrl.cpp:56 ../src/torrentlistctrl.cpp:74
 msgid "Torrent"
 msgstr "Торрент"
 
-#: ../src/torrentlistctrl.cpp:55 ../src/torrentlistctrl.cpp:72
+#: ../src/torrentlistctrl.cpp:56 ../src/torrentlistctrl.cpp:74
 msgid "Torrent name"
 msgstr "Название Торрента"
 
-#: ../src/torrentlistctrl.cpp:56 ../src/torrentlistctrl.cpp:73
+#: ../src/torrentlistctrl.cpp:57 ../src/torrentlistctrl.cpp:75
 msgid "Torrent status"
 msgstr "Статус Торрента"
 
-#: ../src/torrentlistctrl.cpp:57 ../src/torrentlistctrl.cpp:74
+#: ../src/torrentlistctrl.cpp:58 ../src/torrentlistctrl.cpp:76
 msgid "Torrent size"
 msgstr "Размер Торрента"
 
-#: ../src/torrentlistctrl.cpp:61 ../src/torrentlistctrl.cpp:78
+#: ../src/torrentlistctrl.cpp:59 ../src/torrentlistctrl.cpp:77
+msgid "Selected Size"
+msgstr ""
+
+#: ../src/torrentlistctrl.cpp:59 ../src/torrentlistctrl.cpp:77
+msgid "Selected file size"
+msgstr ""
+
+#: ../src/torrentlistctrl.cpp:63 ../src/torrentlistctrl.cpp:81
 msgid "Number or peers"
 msgstr "Количество пиров"
 
-#: ../src/torrentlistctrl.cpp:64 ../src/torrentlistctrl.cpp:81
+#: ../src/torrentlistctrl.cpp:66 ../src/torrentlistctrl.cpp:84
 msgid "Copies"
 msgstr "Копии"
 
-#: ../src/torrentlistctrl.cpp:64 ../src/torrentlistctrl.cpp:81
+#: ../src/torrentlistctrl.cpp:66 ../src/torrentlistctrl.cpp:84
 msgid "Number of copies in swarm"
 msgstr "Количество копий в общем"
 
-#: ../src/torrentlistctrl.cpp:65 ../src/torrentlistctrl.cpp:82
+#: ../src/torrentlistctrl.cpp:67 ../src/torrentlistctrl.cpp:85
 msgid "Time Left"
 msgstr "Времени прошло"
 
-#: ../src/torrentlistctrl.cpp:65 ../src/torrentlistctrl.cpp:82
+#: ../src/torrentlistctrl.cpp:67 ../src/torrentlistctrl.cpp:85
 msgid "Estimated time left to finish"
 msgstr "Предположительное время до завершения"
 
-#: ../src/torrentlistctrl.cpp:66
+#: ../src/torrentlistctrl.cpp:68
 #, fuzzy
 msgid "Ratio"
 msgstr "Приоритет Сидирования"
 
-#: ../src/torrentlistctrl.cpp:66 ../src/torrentlistctrl.cpp:83
+#: ../src/torrentlistctrl.cpp:68 ../src/torrentlistctrl.cpp:86
 msgid "Share Ratio"
 msgstr "Поделиться Ратио"
 
-#: ../src/torrentlistctrl.cpp:66 ../src/torrentlistctrl.cpp:83
+#: ../src/torrentlistctrl.cpp:68 ../src/torrentlistctrl.cpp:86
 msgid "Upload/Download ratio"
 msgstr "Ратио Загрузки/Отдачи"
 
-#: ../src/torrentlistctrl.cpp:131
+#: ../src/torrentlistctrl.cpp:134
 #, fuzzy
 msgid "Checking"
 msgstr "проверка"
 
-#: ../src/torrentlistctrl.cpp:132
+#: ../src/torrentlistctrl.cpp:135
 #, fuzzy
 msgid "Downloading meta data"
 msgstr "загрузка мета данных"
 
-#: ../src/torrentlistctrl.cpp:133
+#: ../src/torrentlistctrl.cpp:136
 #, fuzzy
 msgid "Downloading"
 msgstr "загрузка"
 
-#: ../src/torrentlistctrl.cpp:134
+#: ../src/torrentlistctrl.cpp:137
 #, fuzzy
 msgid "Finished"
 msgstr "закончено"
 
-#: ../src/torrentlistctrl.cpp:135
+#: ../src/torrentlistctrl.cpp:138
 #, fuzzy
 msgid "Seeding"
 msgstr "сидирование"
 
-#: ../src/torrentlistctrl.cpp:136
+#: ../src/torrentlistctrl.cpp:139
 #, fuzzy
 msgid "Allocating"
 msgstr "расположение"
 
-#: ../src/torrentlistctrl.cpp:137
+#: ../src/torrentlistctrl.cpp:140
 msgid "Checking resume data"
 msgstr ""
 
-#: ../src/torrentlistctrl.cpp:154
+#: ../src/torrentlistctrl.cpp:157
 #, fuzzy
 msgid "Queueing"
 msgstr "Очередь"
 
-#: ../src/torrentlistctrl.cpp:159
+#: ../src/torrentlistctrl.cpp:162
 msgid "Stopped"
 msgstr ""
 
-#: ../src/torrentlistctrl.cpp:166
+#: ../src/torrentlistctrl.cpp:169
 #, fuzzy
 msgid "Paused"
 msgstr "Пауза"
 
-#: ../src/torrentlistctrl.cpp:173
+#: ../src/torrentlistctrl.cpp:176
 #, fuzzy
 msgid "Error!"
 msgstr "Ошибка"
 
-#: ../src/torrentlistctrl.cpp:268
+#: ../src/torrentlistctrl.cpp:272
 msgid "inf"
 msgstr "инфо"
 
@@ -2105,6 +2125,10 @@ msgstr "Не запрашивать настройки торрента"
 msgid "Storage Allocation Mode:"
 msgstr ""
 
+#: ../src/torrentsetting.cpp:164
+msgid "Compact"
+msgstr ""
+
 #: ../src/torrentsetting.cpp:232
 msgid "Seed Ratio"
 msgstr "Приоритет Сидирования"
@@ -2113,50 +2137,77 @@ msgstr "Приоритет Сидирования"
 msgid "Choose default download directory"
 msgstr "Выберите директорию для сохранения по умолчанию"
 
-#: ../src/trackerlistctrl.cpp:52 ../src/trackerlistctrl.cpp:57
+#: ../src/trackerlistctrl.cpp:57 ../src/trackerlistctrl.cpp:64
 #, fuzzy
 msgid "URL"
 msgstr "URL:"
 
-#: ../src/trackerlistctrl.cpp:52 ../src/trackerlistctrl.cpp:57
+#: ../src/trackerlistctrl.cpp:57 ../src/trackerlistctrl.cpp:64
 #, fuzzy
 msgid "Torrent Tracker URL"
 msgstr "URL Трэкера: %s"
 
-#: ../src/trackerlistctrl.cpp:139
+#: ../src/trackerlistctrl.cpp:58 ../src/trackerlistctrl.cpp:65
+#, fuzzy
+msgid "Torrent Tracker Status"
+msgstr "URL Трэкера: %s"
+
+#: ../src/trackerlistctrl.cpp:59 ../src/trackerlistctrl.cpp:66
+msgid "Next Announce Time"
+msgstr ""
+
+#: ../src/trackerlistctrl.cpp:59 ../src/trackerlistctrl.cpp:66
+#, fuzzy
+msgid "Torrent Tracker Next Announce Time"
+msgstr "URL Трэкера: %s"
+
+#: ../src/trackerlistctrl.cpp:137
+msgid "Working"
+msgstr ""
+
+#: ../src/trackerlistctrl.cpp:141
+#, fuzzy
+msgid "Not connected"
+msgstr "соединение"
+
+#: ../src/trackerlistctrl.cpp:166
 msgid "Add"
 msgstr ""
 
-#: ../src/trackerlistctrl.cpp:140
+#: ../src/trackerlistctrl.cpp:167
+msgid "Copy"
+msgstr ""
+
+#: ../src/trackerlistctrl.cpp:168
 #, fuzzy
 msgid "Edit"
 msgstr "Выход"
 
-#: ../src/trackerlistctrl.cpp:189
+#: ../src/trackerlistctrl.cpp:214
 msgid ""
 "Add tracker\n"
 "Please enter a new tracker address"
 msgstr ""
 
-#: ../src/trackerlistctrl.cpp:190
+#: ../src/trackerlistctrl.cpp:215
 msgid "Enter a new tracker address"
 msgstr ""
 
-#: ../src/trackerlistctrl.cpp:224
+#: ../src/trackerlistctrl.cpp:250
 #, fuzzy
 msgid "Edit tracker\n"
 msgstr "Трэкер"
 
-#: ../src/trackerlistctrl.cpp:225
+#: ../src/trackerlistctrl.cpp:251
 msgid "Edit tracker address"
 msgstr ""
 
-#: ../src/trackerlistctrl.cpp:254
+#: ../src/trackerlistctrl.cpp:279
 #, fuzzy
 msgid "Confirm remove tracker "
 msgstr "Подтвердите удаление"
 
-#: ../src/trackerlistctrl.cpp:255
+#: ../src/trackerlistctrl.cpp:280
 #, fuzzy
 msgid "Confirm remove tracker"
 msgstr "Подтвердите удаление"
@@ -2164,9 +2215,6 @@ msgstr "Подтвердите удаление"
 #: ../src/urldialog.cpp:46
 msgid "URL:"
 msgstr "URL:"
-
-#~ msgid "connecting"
-#~ msgstr "соединение"
 
 #~ msgid "pause"
 #~ msgstr "пауза"

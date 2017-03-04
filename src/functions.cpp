@@ -81,10 +81,10 @@ wxString HumanReadableTime(unsigned long second)
 	mins = (second%hour)/min;
 	secs = (second%min);
 	wxString time;
-	if(days) time << days << _("Days");
-	if(hours) time << hours << _("Hours");
-	if(mins) time << mins << _("Minutes");
-	if(secs) time << secs << _("Seconds");
+	if(days) time << days << _("D");
+	if(hours) time << hours << _("H");
+	if(mins) time << mins << _("M");
+	if(secs) time << secs << _("S");
 	return time;
 }
 
@@ -233,7 +233,6 @@ void SystemOpenURL(wxString url)
         	delete filetype;
     	}
 #endif
-
 }
 
 wxString & GetExecutablePath()

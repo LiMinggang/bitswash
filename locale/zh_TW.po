@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2017-02-26 16:54+0800\n"
+"POT-Creation-Date: 2017-03-04 09:16+0800\n"
 "PO-Revision-Date: 2008-06-06 21:24+0800\n"
 "Last-Translator: Aaron Wang Shi <aarons.wang@gmail.com>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -984,31 +984,26 @@ msgstr "Zambia"
 msgid "Zimbabwe"
 msgstr "Zimbabwe"
 
-#: ../src/bitswash.cpp:426
+#: ../src/bitswash.cpp:435
 msgid "Failed to create an IPC service."
 msgstr ""
 
-#: ../src/bitswash.cpp:458
+#: ../src/bitswash.cpp:467
 msgid ""
 "Sorry, the existing instance may be too busy too respond.\n"
 "Please close any open dialogs and retry."
 msgstr ""
 
-#: ../src/bittorrentsession.cpp:473 ../src/torrentsetting.cpp:162
+#: ../src/bittorrentsession.cpp:477 ../src/torrentsetting.cpp:162
 #: ../src/torrentsetting.cpp:187
 msgid "Full"
 msgstr "完全分配"
 
-#: ../src/bittorrentsession.cpp:477 ../src/bittorrentsession.cpp:486
+#: ../src/bittorrentsession.cpp:481 ../src/bittorrentsession.cpp:490
 #: ../src/torrentsetting.cpp:163 ../src/torrentsetting.cpp:190
 #: ../src/torrentsetting.cpp:196
 msgid "Sparse"
 msgstr "稀疏"
-
-#: ../src/bittorrentsession.cpp:481 ../src/torrentsetting.cpp:164
-#: ../src/torrentsetting.cpp:193
-msgid "Compact"
-msgstr "緊湊分配"
 
 #: ../src/connectionsetting.cpp:56
 msgid "Ports Setting"
@@ -1099,7 +1094,7 @@ msgid "Files in torrent"
 msgstr "打開種子"
 
 #: ../src/filelistctrl.cpp:79 ../src/filelistctrl.cpp:88
-#: ../src/torrentlistctrl.cpp:57 ../src/torrentlistctrl.cpp:74
+#: ../src/torrentlistctrl.cpp:58 ../src/torrentlistctrl.cpp:76
 msgid "Size"
 msgstr "大小"
 
@@ -1117,7 +1112,7 @@ msgstr "最高優先級"
 
 #: ../src/filelistctrl.cpp:81 ../src/filelistctrl.cpp:90
 #: ../src/peerlistctrl.cpp:67 ../src/peerlistctrl.cpp:82
-#: ../src/torrentlistctrl.cpp:58 ../src/torrentlistctrl.cpp:75
+#: ../src/torrentlistctrl.cpp:60 ../src/torrentlistctrl.cpp:78
 msgid "Progress"
 msgstr "進度"
 
@@ -1161,6 +1156,22 @@ msgstr "普通"
 #: ../src/filelistctrl.cpp:166
 msgid "Higest"
 msgstr "最高"
+
+#: ../src/functions.cpp:84
+msgid "D"
+msgstr ""
+
+#: ../src/functions.cpp:85
+msgid "H"
+msgstr ""
+
+#: ../src/functions.cpp:86
+msgid "M"
+msgstr ""
+
+#: ../src/functions.cpp:87
+msgid "S"
+msgstr ""
 
 #: ../src/generalsetting.cpp:63 ../src/swashsetting.cpp:71
 msgid "General"
@@ -1259,408 +1270,408 @@ msgstr "清除日志"
 msgid "Pause Log"
 msgstr "暫停記録日志"
 
-#: ../src/mainframe.cpp:301
+#: ../src/mainframe.cpp:300
 msgid "Categories"
 msgstr "分類"
 
-#: ../src/mainframe.cpp:303
+#: ../src/mainframe.cpp:302
 msgid "All"
 msgstr "全部"
 
-#: ../src/mainframe.cpp:304
+#: ../src/mainframe.cpp:303
 msgid "Downloads"
 msgstr "下載"
 
-#: ../src/mainframe.cpp:305
+#: ../src/mainframe.cpp:304
 msgid "Seeds"
 msgstr "做種"
 
-#: ../src/mainframe.cpp:389 ../src/swashtrayicon.cpp:102
+#: ../src/mainframe.cpp:388 ../src/swashtrayicon.cpp:102
 msgid "&Open Torrent\tCtrl+O"
 msgstr "打開種子(&O)\tCtrl+O"
 
-#: ../src/mainframe.cpp:389 ../src/mainframe.cpp:473
+#: ../src/mainframe.cpp:388 ../src/mainframe.cpp:472
 #: ../src/swashtrayicon.cpp:102
 msgid "Open Torrent"
 msgstr "打開種子"
 
-#: ../src/mainframe.cpp:391 ../src/swashtrayicon.cpp:103
+#: ../src/mainframe.cpp:390 ../src/swashtrayicon.cpp:103
 msgid "Open &URL\tCtrl+U"
 msgstr "打開URL(&U)\tCtrl+U"
 
-#: ../src/mainframe.cpp:391 ../src/mainframe.cpp:476
+#: ../src/mainframe.cpp:390 ../src/mainframe.cpp:475
 #: ../src/swashtrayicon.cpp:103
 msgid "Open URL"
 msgstr "打開 URL"
 
-#: ../src/mainframe.cpp:397
+#: ../src/mainframe.cpp:396
 msgid "E&xit\tAlt-F4"
 msgstr "退出(&x)\tAlt-F4"
 
-#: ../src/mainframe.cpp:397 ../src/mainframe.cpp:529
+#: ../src/mainframe.cpp:396 ../src/mainframe.cpp:528
 msgid "Exit Bitswash"
 msgstr "退出Bitswash"
 
-#: ../src/mainframe.cpp:399
+#: ../src/mainframe.cpp:398
 msgid "&File"
 msgstr "文件(&F)"
 
-#: ../src/mainframe.cpp:401
+#: ../src/mainframe.cpp:400
 msgid "View &Toolbar"
 msgstr "顯示工具欄(&T)"
 
-#: ../src/mainframe.cpp:401
+#: ../src/mainframe.cpp:400
 msgid "View Toolbar"
 msgstr "顯示工具欄"
 
-#: ../src/mainframe.cpp:402
+#: ../src/mainframe.cpp:401
 msgid "View &Status"
 msgstr "顯示狀態欄(&S)"
 
-#: ../src/mainframe.cpp:402
+#: ../src/mainframe.cpp:401
 msgid "View Status"
 msgstr "顯示狀態欄"
 
-#: ../src/mainframe.cpp:404
+#: ../src/mainframe.cpp:403
 msgid "&View"
 msgstr "視圖(&V)"
 
-#: ../src/mainframe.cpp:406
+#: ../src/mainframe.cpp:405
 msgid "&Torrent"
 msgstr "種子(&T)"
 
-#: ../src/mainframe.cpp:408 ../src/swashtrayicon.cpp:105
+#: ../src/mainframe.cpp:407 ../src/swashtrayicon.cpp:105
 msgid "Prefere&nce\tCtrl+F"
 msgstr "首選項(&P)\tCtrl+F"
 
-#: ../src/mainframe.cpp:408 ../src/mainframe.cpp:520
+#: ../src/mainframe.cpp:407 ../src/mainframe.cpp:519
 #: ../src/swashtrayicon.cpp:105
 msgid "Preference"
 msgstr "首選項"
 
-#: ../src/mainframe.cpp:414
+#: ../src/mainframe.cpp:413
 msgid "System Language"
 msgstr "系統語言"
 
-#: ../src/mainframe.cpp:456
+#: ../src/mainframe.cpp:455
 msgid "&Language"
 msgstr "語言(&L)"
 
-#: ../src/mainframe.cpp:456
+#: ../src/mainframe.cpp:455
 msgid "Language"
 msgstr "語言"
 
-#: ../src/mainframe.cpp:457
+#: ../src/mainframe.cpp:456
 msgid "&Options"
 msgstr "選項(&O)"
 
-#: ../src/mainframe.cpp:459
+#: ../src/mainframe.cpp:458
 msgid "&Help\tF1"
 msgstr "幫助(&H)\tF1"
 
-#: ../src/mainframe.cpp:459
+#: ../src/mainframe.cpp:458
 msgid "Help"
 msgstr "幫助"
 
-#: ../src/mainframe.cpp:461
+#: ../src/mainframe.cpp:460
 msgid "Home&page"
 msgstr "軟件主頁(&p)"
 
-#: ../src/mainframe.cpp:461 ../src/mainframe.cpp:523
+#: ../src/mainframe.cpp:460 ../src/mainframe.cpp:522
 msgid "Homepage"
 msgstr "軟件主頁"
 
-#: ../src/mainframe.cpp:462
+#: ../src/mainframe.cpp:461
 msgid "&About"
 msgstr "關于(&A)"
 
-#: ../src/mainframe.cpp:462
+#: ../src/mainframe.cpp:461
 msgid "About"
 msgstr "關于"
 
-#: ../src/mainframe.cpp:463
+#: ../src/mainframe.cpp:462
 msgid "&Help"
 msgstr "幫助(&H)"
 
-#: ../src/mainframe.cpp:475
+#: ../src/mainframe.cpp:474
 msgid "Open torrent file"
 msgstr "打開torrent文件"
 
-#: ../src/mainframe.cpp:478
+#: ../src/mainframe.cpp:477
 msgid "Open torrent from url"
 msgstr "從url打開torrent文件"
 
-#: ../src/mainframe.cpp:478
+#: ../src/mainframe.cpp:477
 msgid "Open torrent from URL"
 msgstr "從URL打開torrent文件"
 
-#: ../src/mainframe.cpp:481
+#: ../src/mainframe.cpp:480
 msgid "Create Torrent"
 msgstr "創建種子"
 
-#: ../src/mainframe.cpp:483
+#: ../src/mainframe.cpp:482
 msgid "Create torrent file"
 msgstr "創建種子文件"
 
-#: ../src/mainframe.cpp:483
+#: ../src/mainframe.cpp:482
 msgid "Create torrent file to publish"
 msgstr "創建并發布種子"
 
-#: ../src/mainframe.cpp:488
+#: ../src/mainframe.cpp:487
 msgid "Queue"
 msgstr "排隊中"
 
-#: ../src/mainframe.cpp:490
+#: ../src/mainframe.cpp:489
 msgid "Queue torrent"
 msgstr "排隊種子"
 
-#: ../src/mainframe.cpp:491
+#: ../src/mainframe.cpp:490
 msgid "Pause"
 msgstr "暫停"
 
-#: ../src/mainframe.cpp:493
+#: ../src/mainframe.cpp:492
 msgid "Pause download"
 msgstr "暫停下載"
 
-#: ../src/mainframe.cpp:493
+#: ../src/mainframe.cpp:492
 msgid "Pause downlaoding"
 msgstr "暫停正在進行的下載"
 
-#: ../src/mainframe.cpp:494
+#: ../src/mainframe.cpp:493
 msgid "stop"
 msgstr "停止"
 
-#: ../src/mainframe.cpp:496
+#: ../src/mainframe.cpp:495
 msgid "Stop download"
 msgstr "停止下載"
 
-#: ../src/mainframe.cpp:496
+#: ../src/mainframe.cpp:495
 msgid "Stop downlaoding"
 msgstr "停止正在進行的下載"
 
-#: ../src/mainframe.cpp:498 ../src/trackerlistctrl.cpp:141
+#: ../src/mainframe.cpp:497 ../src/trackerlistctrl.cpp:169
 msgid "Delete"
 msgstr "删除"
 
-#: ../src/mainframe.cpp:500
+#: ../src/mainframe.cpp:499
 msgid "Delete torrent file"
 msgstr "删除種子文件"
 
-#: ../src/mainframe.cpp:501
+#: ../src/mainframe.cpp:500
 msgid "Delete Data"
 msgstr "删除下載數據"
 
-#: ../src/mainframe.cpp:503
+#: ../src/mainframe.cpp:502
 msgid "Delete torrent file and downloaded data"
 msgstr "删除種子文件和已下載的數據"
 
-#: ../src/mainframe.cpp:505
+#: ../src/mainframe.cpp:504
 msgid "Move Up"
 msgstr "上移"
 
-#: ../src/mainframe.cpp:508 ../src/mainframe.cpp:1693
+#: ../src/mainframe.cpp:507 ../src/mainframe.cpp:1644
 msgid "Move torrent up"
 msgstr "上移種子"
 
-#: ../src/mainframe.cpp:508
+#: ../src/mainframe.cpp:507
 msgid "Move torrent up in the queue position"
 msgstr "上移種子在隊列中的位置"
 
-#: ../src/mainframe.cpp:509
+#: ../src/mainframe.cpp:508
 msgid "Move Down"
 msgstr "下移"
 
-#: ../src/mainframe.cpp:512 ../src/mainframe.cpp:1696
+#: ../src/mainframe.cpp:511 ../src/mainframe.cpp:1647
 msgid "Move torrent down"
 msgstr "下移種子"
 
-#: ../src/mainframe.cpp:512
+#: ../src/mainframe.cpp:511
 msgid "Move torrent down in the queue position"
 msgstr "下移種子在隊列中的位置"
 
-#: ../src/mainframe.cpp:514
+#: ../src/mainframe.cpp:513
 msgid "Open"
 msgstr "打開"
 
-#: ../src/mainframe.cpp:516
+#: ../src/mainframe.cpp:515
 msgid "Open destination directory"
 msgstr "打開目標文件夾"
 
-#: ../src/mainframe.cpp:516
+#: ../src/mainframe.cpp:515
 msgid "Open destination downloaded directory"
 msgstr "打開目標下載文件夾"
 
-#: ../src/mainframe.cpp:522
+#: ../src/mainframe.cpp:521
 msgid "Program settings"
 msgstr "程序設定"
 
-#: ../src/mainframe.cpp:522
+#: ../src/mainframe.cpp:521
 msgid "Set user preference"
 msgstr "設定用户參數"
 
-#: ../src/mainframe.cpp:525
+#: ../src/mainframe.cpp:524
 msgid "Bitswash homepage"
 msgstr "Bitswash主頁"
 
-#: ../src/mainframe.cpp:525
+#: ../src/mainframe.cpp:524
 msgid "Visit Bitswash homepage"
 msgstr "訪問Bitswash主頁"
 
-#: ../src/mainframe.cpp:527
+#: ../src/mainframe.cpp:526
 msgid "Exit"
 msgstr "退出"
 
-#: ../src/mainframe.cpp:642 ../src/mainframe.cpp:785
+#: ../src/mainframe.cpp:640 ../src/mainframe.cpp:782
 msgid "Torrent Exists. Do you want to update trackers/seeds from the torrent?"
 msgstr ""
 
-#: ../src/mainframe.cpp:642 ../src/mainframe.cpp:785
+#: ../src/mainframe.cpp:640 ../src/mainframe.cpp:782
 #, fuzzy
 msgid "Confirm"
 msgstr "確認移除"
 
-#: ../src/mainframe.cpp:667
+#: ../src/mainframe.cpp:665
 msgid "Open Torrent(s)..."
 msgstr "打開種子"
 
-#: ../src/mainframe.cpp:1303
+#: ../src/mainframe.cpp:1274
 msgid "torrents"
 msgstr "種子"
 
-#: ../src/mainframe.cpp:1305
+#: ../src/mainframe.cpp:1276
 msgid "torrent"
 msgstr "種子"
 
-#: ../src/mainframe.cpp:1308
+#: ../src/mainframe.cpp:1279
 msgid " and data"
 msgstr " 及數据"
 
-#: ../src/mainframe.cpp:1310
+#: ../src/mainframe.cpp:1281
 msgid "Confirm remove "
 msgstr "確認移除"
 
-#: ../src/mainframe.cpp:1311
+#: ../src/mainframe.cpp:1282
 msgid "Confirm Remove"
 msgstr "確認移除"
 
-#: ../src/mainframe.cpp:1617
+#: ../src/mainframe.cpp:1562
 msgid "Ok"
 msgstr "確認"
 
-#: ../src/mainframe.cpp:1618
+#: ../src/mainframe.cpp:1563
 msgid "Error"
 msgstr "錯誤"
 
-#: ../src/mainframe.cpp:1624
+#: ../src/mainframe.cpp:1571
 msgid "Download Rate"
 msgstr "下載速率"
 
-#: ../src/mainframe.cpp:1624
+#: ../src/mainframe.cpp:1572
 msgid "Upload Rate"
 msgstr "上傳速率"
 
-#: ../src/mainframe.cpp:1624 ../src/torrentinfo.cpp:65
-#: ../src/torrentlistctrl.cpp:61 ../src/torrentlistctrl.cpp:78
+#: ../src/mainframe.cpp:1573 ../src/torrentinfo.cpp:65
+#: ../src/torrentlistctrl.cpp:63 ../src/torrentlistctrl.cpp:81
 msgid "Peers"
 msgstr "對等連接"
 
-#: ../src/mainframe.cpp:1624
+#: ../src/mainframe.cpp:1574
 msgid "DHT Nodes"
 msgstr "DHT節點"
 
-#: ../src/mainframe.cpp:1624
+#: ../src/mainframe.cpp:1575
 msgid "Incoming"
 msgstr "進入"
 
-#: ../src/mainframe.cpp:1635
+#: ../src/mainframe.cpp:1586
 msgid "Could not set icon."
 msgstr ""
 
-#: ../src/mainframe.cpp:1679
+#: ../src/mainframe.cpp:1630
 msgid "&Queue Torrent\tCtrl+S"
 msgstr "排隊作種(&Q)\tCtrl+S"
 
-#: ../src/mainframe.cpp:1679
+#: ../src/mainframe.cpp:1630
 msgid "Queue Download"
 msgstr "排隊下載"
 
-#: ../src/mainframe.cpp:1681
+#: ../src/mainframe.cpp:1632
 msgid "&Force Start Torrent\tCtrl+Alt+S"
 msgstr "强制初始作種(&F)\tCtrl+Alt+S"
 
-#: ../src/mainframe.cpp:1681
+#: ../src/mainframe.cpp:1632
 msgid "Force Torrent Download"
 msgstr "强制下載種子"
 
-#: ../src/mainframe.cpp:1683
+#: ../src/mainframe.cpp:1634
 msgid "&Pause Torrent\tCtrl+P"
 msgstr "暫停作種(&P)\tCtrl-P"
 
-#: ../src/mainframe.cpp:1683
+#: ../src/mainframe.cpp:1634
 msgid "Pause Download"
 msgstr "暫停下載"
 
-#: ../src/mainframe.cpp:1685
+#: ../src/mainframe.cpp:1636
 msgid "St&op Torrent\tCtrl+T"
 msgstr "停止作種(&t)\tCtrl-T"
 
-#: ../src/mainframe.cpp:1685
+#: ../src/mainframe.cpp:1636
 msgid "Stop Download"
 msgstr "停止下載"
 
-#: ../src/mainframe.cpp:1688
+#: ../src/mainframe.cpp:1639
 msgid "&Remove Torrent"
 msgstr "移除種子(&R)"
 
-#: ../src/mainframe.cpp:1688
+#: ../src/mainframe.cpp:1639
 msgid "Delete Torrent"
 msgstr "删除種子"
 
-#: ../src/mainframe.cpp:1690
+#: ../src/mainframe.cpp:1641
 msgid "Remove Torrent and &Data"
 msgstr "移除種子和下載文件(&D)"
 
-#: ../src/mainframe.cpp:1690
+#: ../src/mainframe.cpp:1641
 msgid "Delete Torrent and Data"
 msgstr "删除種子和下載文件"
 
-#: ../src/mainframe.cpp:1693
+#: ../src/mainframe.cpp:1644
 msgid "Move &Up\tAlt+UP"
 msgstr "上移(&U)\tAlt+UP"
 
-#: ../src/mainframe.cpp:1696
+#: ../src/mainframe.cpp:1647
 msgid "Move Do&wn\tAlt+DOWN"
 msgstr "下移(&w)\tAlt+DOWN"
 
-#: ../src/mainframe.cpp:1700
+#: ../src/mainframe.cpp:1651
 msgid "Re&announce Torrent"
 msgstr "重新發布種子(&a)"
 
-#: ../src/mainframe.cpp:1700
+#: ../src/mainframe.cpp:1651
 msgid "Force Reannounce Torrent"
 msgstr "强制重新發布種子"
 
-#: ../src/mainframe.cpp:1702
+#: ../src/mainframe.cpp:1653
 msgid "Force Re&check Torrent"
 msgstr "强制重新檢查種子"
 
-#: ../src/mainframe.cpp:1702
+#: ../src/mainframe.cpp:1653
 msgid "Force Recheck Torrent"
 msgstr "强制重新檢查種子"
 
-#: ../src/mainframe.cpp:1703
+#: ../src/mainframe.cpp:1654
 msgid "Open &Directory"
 msgstr "打開目録(&D)"
 
-#: ../src/mainframe.cpp:1703
+#: ../src/mainframe.cpp:1654
 msgid "Open downloaded directory"
 msgstr "打開下載目録"
 
-#: ../src/mainframe.cpp:1705
+#: ../src/mainframe.cpp:1656
 msgid "Propert&ies"
 msgstr "屬性(&i)"
 
-#: ../src/mainframe.cpp:1705
+#: ../src/mainframe.cpp:1656
 msgid "Torrent Properties"
 msgstr "種子屬性"
 
@@ -1689,8 +1700,9 @@ msgid "Peer type"
 msgstr "對等連接"
 
 #: ../src/peerlistctrl.cpp:60 ../src/peerlistctrl.cpp:75
-#: ../src/torrentinfo.cpp:62 ../src/torrentlistctrl.cpp:56
-#: ../src/torrentlistctrl.cpp:73
+#: ../src/torrentinfo.cpp:62 ../src/torrentlistctrl.cpp:57
+#: ../src/torrentlistctrl.cpp:75 ../src/trackerlistctrl.cpp:58
+#: ../src/trackerlistctrl.cpp:65
 msgid "Status"
 msgstr "狀態"
 
@@ -1715,32 +1727,32 @@ msgid "Peer flags"
 msgstr "對等連接"
 
 #: ../src/peerlistctrl.cpp:63 ../src/peerlistctrl.cpp:78
-#: ../src/torrentlistctrl.cpp:59 ../src/torrentlistctrl.cpp:76
+#: ../src/torrentlistctrl.cpp:61 ../src/torrentlistctrl.cpp:79
 msgid "Download Speed"
 msgstr "下載速度"
 
 #: ../src/peerlistctrl.cpp:64 ../src/peerlistctrl.cpp:79
-#: ../src/torrentlistctrl.cpp:60 ../src/torrentlistctrl.cpp:77
+#: ../src/torrentlistctrl.cpp:62 ../src/torrentlistctrl.cpp:80
 msgid "Upload Speed"
 msgstr "上傳速度"
 
 #: ../src/peerlistctrl.cpp:65 ../src/peerlistctrl.cpp:80
-#: ../src/torrentlistctrl.cpp:62 ../src/torrentlistctrl.cpp:79
+#: ../src/torrentlistctrl.cpp:64 ../src/torrentlistctrl.cpp:82
 msgid "Downloaded"
 msgstr "已下載"
 
 #: ../src/peerlistctrl.cpp:65 ../src/peerlistctrl.cpp:80
-#: ../src/torrentlistctrl.cpp:62 ../src/torrentlistctrl.cpp:79
+#: ../src/torrentlistctrl.cpp:64 ../src/torrentlistctrl.cpp:82
 msgid "Total bytes downloaded"
 msgstr "開始下載"
 
 #: ../src/peerlistctrl.cpp:66 ../src/peerlistctrl.cpp:81
-#: ../src/torrentlistctrl.cpp:63 ../src/torrentlistctrl.cpp:80
+#: ../src/torrentlistctrl.cpp:65 ../src/torrentlistctrl.cpp:83
 msgid "Uploaded"
 msgstr "已上傳"
 
 #: ../src/peerlistctrl.cpp:66 ../src/peerlistctrl.cpp:81
-#: ../src/torrentlistctrl.cpp:63 ../src/torrentlistctrl.cpp:80
+#: ../src/torrentlistctrl.cpp:65 ../src/torrentlistctrl.cpp:83
 msgid "Total bytes uploaded"
 msgstr "總上傳字節"
 
@@ -1780,7 +1792,7 @@ msgstr "握手中"
 msgid "Connecting"
 msgstr "連接中"
 
-#: ../src/peerlistctrl.cpp:159 ../src/torrentlistctrl.cpp:130
+#: ../src/peerlistctrl.cpp:159 ../src/torrentlistctrl.cpp:133
 msgid "Queued"
 msgstr "排隊中"
 
@@ -1927,117 +1939,125 @@ msgstr "文件"
 msgid "Trackers"
 msgstr "Tracker服務器"
 
-#: ../src/torrentlistctrl.cpp:54 ../src/torrentlistctrl.cpp:71
+#: ../src/torrentlistctrl.cpp:55 ../src/torrentlistctrl.cpp:73
 msgid "Index"
 msgstr "索引"
 
-#: ../src/torrentlistctrl.cpp:54 ../src/torrentlistctrl.cpp:71
+#: ../src/torrentlistctrl.cpp:55 ../src/torrentlistctrl.cpp:73
 msgid "Queue Index"
 msgstr "排隊中"
 
-#: ../src/torrentlistctrl.cpp:55 ../src/torrentlistctrl.cpp:72
+#: ../src/torrentlistctrl.cpp:56 ../src/torrentlistctrl.cpp:74
 msgid "Torrent"
 msgstr "種子"
 
-#: ../src/torrentlistctrl.cpp:55 ../src/torrentlistctrl.cpp:72
+#: ../src/torrentlistctrl.cpp:56 ../src/torrentlistctrl.cpp:74
 msgid "Torrent name"
 msgstr "移除種子"
 
-#: ../src/torrentlistctrl.cpp:56 ../src/torrentlistctrl.cpp:73
+#: ../src/torrentlistctrl.cpp:57 ../src/torrentlistctrl.cpp:75
 msgid "Torrent status"
 msgstr "移除種子"
 
-#: ../src/torrentlistctrl.cpp:57 ../src/torrentlistctrl.cpp:74
+#: ../src/torrentlistctrl.cpp:58 ../src/torrentlistctrl.cpp:76
 msgid "Torrent size"
 msgstr "種子大小"
 
-#: ../src/torrentlistctrl.cpp:61 ../src/torrentlistctrl.cpp:78
+#: ../src/torrentlistctrl.cpp:59 ../src/torrentlistctrl.cpp:77
+msgid "Selected Size"
+msgstr ""
+
+#: ../src/torrentlistctrl.cpp:59 ../src/torrentlistctrl.cpp:77
+msgid "Selected file size"
+msgstr ""
+
+#: ../src/torrentlistctrl.cpp:63 ../src/torrentlistctrl.cpp:81
 msgid "Number or peers"
 msgstr "對等連接數"
 
-#: ../src/torrentlistctrl.cpp:64 ../src/torrentlistctrl.cpp:81
+#: ../src/torrentlistctrl.cpp:66 ../src/torrentlistctrl.cpp:84
 msgid "Copies"
 msgstr "健康度"
 
-#: ../src/torrentlistctrl.cpp:64 ../src/torrentlistctrl.cpp:81
+#: ../src/torrentlistctrl.cpp:66 ../src/torrentlistctrl.cpp:84
 msgid "Number of copies in swarm"
 msgstr "健康度"
 
-#: ../src/torrentlistctrl.cpp:65 ../src/torrentlistctrl.cpp:82
+#: ../src/torrentlistctrl.cpp:67 ../src/torrentlistctrl.cpp:85
 msgid "Time Left"
 msgstr "剩餘時間"
 
-#: ../src/torrentlistctrl.cpp:65 ../src/torrentlistctrl.cpp:82
+#: ../src/torrentlistctrl.cpp:67 ../src/torrentlistctrl.cpp:85
 msgid "Estimated time left to finish"
 msgstr "估計剩余時間"
 
-#: ../src/torrentlistctrl.cpp:66
+#: ../src/torrentlistctrl.cpp:68
 msgid "Ratio"
 msgstr "分享率"
 
-#: ../src/torrentlistctrl.cpp:66 ../src/torrentlistctrl.cpp:83
+#: ../src/torrentlistctrl.cpp:68 ../src/torrentlistctrl.cpp:86
 msgid "Share Ratio"
 msgstr "分享率：%s"
 
-#: ../src/torrentlistctrl.cpp:66 ../src/torrentlistctrl.cpp:83
+#: ../src/torrentlistctrl.cpp:68 ../src/torrentlistctrl.cpp:86
 msgid "Upload/Download ratio"
 msgstr "上下載速率"
 
-#: ../src/torrentlistctrl.cpp:131
+#: ../src/torrentlistctrl.cpp:134
 #, fuzzy
 msgid "Checking"
 msgstr "檢查中"
 
-#: ../src/torrentlistctrl.cpp:132
+#: ../src/torrentlistctrl.cpp:135
 #, fuzzy
 msgid "Downloading meta data"
 msgstr "正在下載meta數據"
 
-#: ../src/torrentlistctrl.cpp:133
+#: ../src/torrentlistctrl.cpp:136
 #, fuzzy
 msgid "Downloading"
 msgstr "下載中"
 
-#: ../src/torrentlistctrl.cpp:134
+#: ../src/torrentlistctrl.cpp:137
 #, fuzzy
 msgid "Finished"
 msgstr "已完成"
 
-#: ../src/torrentlistctrl.cpp:135
+#: ../src/torrentlistctrl.cpp:138
 #, fuzzy
 msgid "Seeding"
 msgstr "做種中"
 
-#: ../src/torrentlistctrl.cpp:136
+#: ../src/torrentlistctrl.cpp:139
 #, fuzzy
 msgid "Allocating"
 msgstr "分配中"
 
-#: ../src/torrentlistctrl.cpp:137
+#: ../src/torrentlistctrl.cpp:140
 msgid "Checking resume data"
 msgstr ""
 
-#: ../src/torrentlistctrl.cpp:154
+#: ../src/torrentlistctrl.cpp:157
 #, fuzzy
 msgid "Queueing"
 msgstr "排隊中"
 
-#: ../src/torrentlistctrl.cpp:159
+#: ../src/torrentlistctrl.cpp:162
 #, fuzzy
 msgid "Stopped"
 msgstr "停止"
 
-#: ../src/torrentlistctrl.cpp:166
+#: ../src/torrentlistctrl.cpp:169
 #, fuzzy
 msgid "Paused"
 msgstr "暫停"
 
-#: ../src/torrentlistctrl.cpp:173
+#: ../src/torrentlistctrl.cpp:176
 #, fuzzy
 msgid "Error!"
 msgstr "錯誤"
 
-#: ../src/torrentlistctrl.cpp:268
+#: ../src/torrentlistctrl.cpp:272
 msgid "inf"
 msgstr "無窮"
 
@@ -2099,6 +2119,10 @@ msgstr "取消提示torrent設置。"
 msgid "Storage Allocation Mode:"
 msgstr "存儲分配模式："
 
+#: ../src/torrentsetting.cpp:164
+msgid "Compact"
+msgstr "緊湊分配"
+
 #: ../src/torrentsetting.cpp:232
 msgid "Seed Ratio"
 msgstr "分享率"
@@ -2107,23 +2131,50 @@ msgstr "分享率"
 msgid "Choose default download directory"
 msgstr "選擇默認下載文件夾"
 
-#: ../src/trackerlistctrl.cpp:52 ../src/trackerlistctrl.cpp:57
+#: ../src/trackerlistctrl.cpp:57 ../src/trackerlistctrl.cpp:64
 msgid "URL"
 msgstr "URL:"
 
-#: ../src/trackerlistctrl.cpp:52 ../src/trackerlistctrl.cpp:57
+#: ../src/trackerlistctrl.cpp:57 ../src/trackerlistctrl.cpp:64
 msgid "Torrent Tracker URL"
 msgstr "Tracker服務器URL： %s"
 
-#: ../src/trackerlistctrl.cpp:139
+#: ../src/trackerlistctrl.cpp:58 ../src/trackerlistctrl.cpp:65
+#, fuzzy
+msgid "Torrent Tracker Status"
+msgstr "Tracker服務器URL： %s"
+
+#: ../src/trackerlistctrl.cpp:59 ../src/trackerlistctrl.cpp:66
+msgid "Next Announce Time"
+msgstr ""
+
+#: ../src/trackerlistctrl.cpp:59 ../src/trackerlistctrl.cpp:66
+#, fuzzy
+msgid "Torrent Tracker Next Announce Time"
+msgstr "Tracker服務器URL： %s"
+
+#: ../src/trackerlistctrl.cpp:137
+msgid "Working"
+msgstr ""
+
+#: ../src/trackerlistctrl.cpp:141
+#, fuzzy
+msgid "Not connected"
+msgstr "連接中"
+
+#: ../src/trackerlistctrl.cpp:166
 msgid "Add"
 msgstr "添加"
 
-#: ../src/trackerlistctrl.cpp:140
+#: ../src/trackerlistctrl.cpp:167
+msgid "Copy"
+msgstr ""
+
+#: ../src/trackerlistctrl.cpp:168
 msgid "Edit"
 msgstr "編輯"
 
-#: ../src/trackerlistctrl.cpp:189
+#: ../src/trackerlistctrl.cpp:214
 msgid ""
 "Add tracker\n"
 "Please enter a new tracker address"
@@ -2131,32 +2182,29 @@ msgstr ""
 "添加tracker服務器\n"
 "請輸入新tracker地址"
 
-#: ../src/trackerlistctrl.cpp:190
+#: ../src/trackerlistctrl.cpp:215
 msgid "Enter a new tracker address"
 msgstr "輸入新tracker地址"
 
-#: ../src/trackerlistctrl.cpp:224
+#: ../src/trackerlistctrl.cpp:250
 msgid "Edit tracker\n"
 msgstr "編輯Tracker\n"
 
-#: ../src/trackerlistctrl.cpp:225
+#: ../src/trackerlistctrl.cpp:251
 msgid "Edit tracker address"
 msgstr "編輯tracker地址"
 
-#: ../src/trackerlistctrl.cpp:254
+#: ../src/trackerlistctrl.cpp:279
 msgid "Confirm remove tracker "
 msgstr "確認移除tracker"
 
-#: ../src/trackerlistctrl.cpp:255
+#: ../src/trackerlistctrl.cpp:280
 msgid "Confirm remove tracker"
 msgstr "確認移除tracker"
 
 #: ../src/urldialog.cpp:46
 msgid "URL:"
 msgstr "URL:"
-
-#~ msgid "connecting"
-#~ msgstr "連接中"
 
 #~ msgid "pause"
 #~ msgstr "暫停"
