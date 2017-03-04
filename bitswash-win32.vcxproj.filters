@@ -729,6 +729,9 @@
     <ClInclude Include="libgeoip\pread.h">
       <Filter>Header Files\libgeoip</Filter>
     </ClInclude>
+    <ClInclude Include="src\icon.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="src\bitswash.rc">
@@ -1293,6 +1296,9 @@
     </ClCompile>
     <ClCompile Include="libgeoip\timeZone.c">
       <Filter>Source Files\libgeoip</Filter>
+    </ClCompile>
+    <ClCompile Include="src\icons.cpp">
+      <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

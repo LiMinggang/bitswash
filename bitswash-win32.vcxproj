@@ -405,6 +405,7 @@
     <ClInclude Include="src\filelistctrl.h" />
     <ClInclude Include="src\functions.h" />
     <ClInclude Include="src\generalsetting.h" />
+    <ClInclude Include="src\icon.h" />
     <ClInclude Include="src\loggerctrl.h" />
     <ClInclude Include="src\mainframe.h" />
     <ClInclude Include="src\peerlistctrl.h" />
@@ -648,6 +649,7 @@
     <ClCompile Include="src\filelistctrl.cpp" />
     <ClCompile Include="src\functions.cpp" />
     <ClCompile Include="src\generalsetting.cpp" />
+    <ClCompile Include="src\icons.cpp" />
     <ClCompile Include="src\infohash.cpp" />
     <ClCompile Include="src\loggerctrl.cpp" />
     <ClCompile Include="src\magneturi.cpp" />

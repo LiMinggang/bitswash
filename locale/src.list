@@ -7,6 +7,7 @@
 ../src/filelistctrl.cpp
 ../src/functions.cpp
 ../src/generalsetting.cpp
+../src/icons.cpp
 ../src/infohash.cpp
 ../src/loggerctrl.cpp
 ../src/magneturi.cpp
