@@ -1424,7 +1424,7 @@ void BitTorrentSession::ConfigureTorrent( shared_ptr<torrent_t>& torrent )
 		else
 		{
 			wxLogWarning( _T( "Old path not exists %s\n" ), oldpath.c_str() );
-			copysuccess = 0;
+			copysuccess = false;
 		}
 
 		//failed copy, restore path
