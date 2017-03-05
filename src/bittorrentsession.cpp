@@ -243,7 +243,7 @@ void BitTorrentSession::configure(libtorrent::settings_pack &settingsPack)
 	settingsPack.set_int( libtorrent::settings_pack::peer_connect_timeout, m_config->GetPeerConnectTimeout());
 	settingsPack.set_bool( libtorrent::settings_pack::ignore_limits_on_local_network, m_config->GetIgnoreLimitsOnLocalNetwork());
 	settingsPack.set_int( libtorrent::settings_pack::connection_speed, m_config->GetConnectionSpeed());
-	settingsPack.set_int( libtorrent::settings_pack::send_redundant_have, m_config->GetSendRedundantHave());
+	settingsPack.set_bool( libtorrent::settings_pack::send_redundant_have, m_config->GetSendRedundantHave());
 	settingsPack.set_bool( libtorrent::settings_pack::lazy_bitfields, m_config->GetLazyBitfields());
 	settingsPack.set_int( libtorrent::settings_pack::inactivity_timeout, m_config->GetInactivityTimeout());
 	settingsPack.set_int( libtorrent::settings_pack::unchoke_interval, m_config->GetUnchokeInterval());
