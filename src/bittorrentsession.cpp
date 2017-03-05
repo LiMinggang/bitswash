@@ -152,6 +152,46 @@ void *BitTorrentSession::Entry()
 
     Configure(pack);
     m_libbtsession = new libtorrent::session(pack, 0);
+	wxASSERT(m_libbtsession != 0);
+
+	if( m_config->GetDHTEnabled() )
+	{
+		entry dht_state;
+		long dhtport = m_config->GetDHTPort();
+		wxString dhtstatefile = wxGetApp().DHTStatePath();
+		struct dht_settings DHTSettings;
+
+		//XXX set other dht settings
+		if( dhtport < 1 || dhtport > 65535 )
+		{ DHTSettings.service_port = dhtport; }
+		else //use TCP port
+		{ DHTSettings.service_port = m_config->GetPortMax(); }
+
+		DHTSettings.max_peers_reply = m_config->GetDHTMaxPeers();
+		DHTSettings.search_branching = m_config->GetDHTSearchBranching();
+		DHTSettings.max_fail_count = m_config->GetDHTMaxFail();
+		m_libbtsession->set_dht_settings( DHTSettings );
+
+		if( wxFileExists( dhtstatefile ) )
+		{
+			wxLogInfo( _T( "Restoring previous DHT state \n" ) + dhtstatefile );
+			std::ifstream in( ( const char* )dhtstatefile.mb_str( wxConvFile ), std::ios_base::binary );
+			in.unsetf( std::ios_base::skipws );
+
+			try
+			{
+				dht_state = bdecode( std::istream_iterator<char>( in ), std::istream_iterator<char>() );
+			}
+			catch( std::exception& e )
+			{
+				wxLogWarning( _T( "Unable to restore dht state file %s - %s\n" ), dhtstatefile.c_str(), wxString::FromAscii( e.what() ).c_str() );
+			}
+		}
+		else
+		{
+			wxLogWarning( _T( "Previous DHT state not found \n" ) + dhtstatefile );
+		}
+	}
 #endif
 
 	ConfigureSession();
@@ -362,41 +402,6 @@ void BitTorrentSession::Configure(libtorrent::settings_pack &settingsPack)
 
 	if( m_config->GetDHTEnabled() )
 	{
-		entry dht_state;
-		long dhtport = m_config->GetDHTPort();
-		wxString dhtstatefile = wxGetApp().DHTStatePath();
-		struct dht_settings DHTSettings;
-
-		//XXX set other dht settings
-		if( dhtport < 1 || dhtport > 65535 )
-		{ DHTSettings.service_port = dhtport; }
-		else //use TCP port
-		{ DHTSettings.service_port = m_config->GetPortMax(); }
-
-		DHTSettings.max_peers_reply = m_config->GetDHTMaxPeers();
-		DHTSettings.search_branching = m_config->GetDHTSearchBranching();
-		DHTSettings.max_fail_count = m_config->GetDHTMaxFail();
-		m_libbtsession->set_dht_settings( DHTSettings );
-
-		if( wxFileExists( dhtstatefile ) )
-		{
-			wxLogInfo( _T( "Restoring previous DHT state \n" ) + dhtstatefile );
-			std::ifstream in( ( const char* )dhtstatefile.mb_str( wxConvFile ), std::ios_base::binary );
-			in.unsetf( std::ios_base::skipws );
-
-			try
-			{
-				dht_state = bdecode( std::istream_iterator<char>( in ), std::istream_iterator<char>() );
-			}
-			catch( std::exception& e )
-			{
-				wxLogWarning( _T( "Unable to restore dht state file %s - %s\n" ), dhtstatefile.c_str(), wxString::FromAscii( e.what() ).c_str() );
-			}
-		}
-		else
-		{
-			wxLogWarning( _T( "Previous DHT state not found \n" ) + dhtstatefile );
-		}
 		settingsPack.set_str(libtorrent::settings_pack::dht_bootstrap_nodes, "dht.libtorrent.org:25401,router.bittorrent.com:6881,router.utorrent.com:6881,dht.transmissionbt.com:6881,dht.aelitis.com:6881");
 	}
 	settingsPack.set_bool(libtorrent::settings_pack::enable_lsd, m_config->GetEnableLsd());

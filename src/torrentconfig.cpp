@@ -85,10 +85,10 @@ void TorrentConfig::Save()
 	if( m_torrent_max_uploads < 2 ) { m_torrent_max_uploads = 2; }
 
 	m_cfg->Write( _T( "/Torrent/max_uploads" ), m_torrent_max_uploads );
-	wxString stats_string = wxString::Format( _T( "%.02f,%ld,%ld" ),
+	wxString stats_string = wxString::Format( _T( "%.02f,%s,%s" ),
 							m_torrent_stats.progress,
-							m_torrent_stats.total_download,
-							m_torrent_stats.total_upload
+							wxULongLong(m_torrent_stats.total_download).ToString(),
+							wxULongLong(m_torrent_stats.total_upload).ToString()
 											);
 	m_cfg->Write( _T( "/Torrent/stats" ), stats_string );
 	WriteFilesPriority();
