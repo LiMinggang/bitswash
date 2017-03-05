@@ -40,8 +40,8 @@ enum
 typedef struct
 {
 	double progress;
-	long total_download;
-	long total_upload;
+	size_t total_download;
+	size_t total_upload;
 } stats_t;
 
 /*
