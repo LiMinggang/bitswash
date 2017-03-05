@@ -74,6 +74,7 @@ public:
 	virtual void *Entry();
 	virtual void OnExit();
 
+	void configure(libtorrent::settings_pack &settingsPack);
 	void ConfigureSession();
 	void SetLogSeverity();
 	void SetConnection();

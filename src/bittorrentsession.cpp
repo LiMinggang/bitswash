@@ -87,10 +87,15 @@ BitTorrentSession::~BitTorrentSession()
 {
 }
 
+static const char PEER_ID[] = "SW";
+
 void *BitTorrentSession::Entry()
 {
 	session_settings btsetting;
 	wxLogDebug( _T( "BitTorrentSession Thread Entry pid 0x%lx priority %u.\n" ), GetId(), GetPriority() );
+	
+#if LIBTORRENT_VERSION_NUM < 10100
+
 	m_libbtsession = new session( fingerprint( "sw", BITSWASH_FINGERPRINT_VERSION ) );
 	//XXX: session_settings contain lots more like proxy and misc
 	btsetting.user_agent = wxGetApp().UserAgent().mb_str( wxConvUTF8 );
@@ -127,7 +132,29 @@ void *BitTorrentSession::Entry()
 	btsetting.free_torrent_hashes = m_config->GetFreeTorrentHashes();
 	btsetting.announce_to_all_tiers = true;
 	btsetting.announce_to_all_trackers = true;
+
+	
+    btsetting.upnp_ignore_nonrouters = true;
+    btsetting.use_dht_as_fallback = false;
+    // Disable support for SSL torrents for now
+    //btsetting.ssl_listen = 0;
+    // To prevent ISPs from blocking seeding
+    btsetting.lazy_bitfields = true;
+    // Speed up exit
+    //btsetting.stop_tracker_timeout = 1;
+    btsetting.auto_scrape_interval = 1200; // 20 minutes
+    btsetting.auto_scrape_min_interval = 900; // 15 minutes
+    //btsetting.connection_speed = 20; // default is 10
+    btsetting.no_connect_privileged_ports = false;
+    btsetting.seed_choking_algorithm = libt::session_settings::fastest_upload;
 	m_libbtsession->set_settings( btsetting );
+#else
+	libtorrent::settings_pack pack;
+
+    configure(pack);
+    m_libbtsession = new libtorrent::session(pack, 0);
+#endif
+
 	ConfigureSession();
 	ScanTorrentsDirectory( wxGetApp().SaveTorrentsPath() );
 	( ( BitSwash* )m_pParent )->BTInitDone();
@@ -180,6 +207,69 @@ void BitTorrentSession::OnExit()
 		m_torrent_queue.empty();
 		m_torrent_queue.swap( m_torrent_queue );
 	}
+}
+
+void BitTorrentSession::configure(libtorrent::settings_pack &settingsPack)
+{
+	// Set severity level of libtorrent session
+	int alertMask = libtorrent::alert::error_notification
+		| libtorrent::alert::peer_notification
+		| libtorrent::alert::port_mapping_notification
+		| libtorrent::alert::storage_notification
+		| libtorrent::alert::tracker_notification
+		| libtorrent::alert::status_notification
+		| libtorrent::alert::ip_block_notification
+		| libtorrent::alert::progress_notification
+		| libtorrent::alert::stats_notification;
+
+	std::string peerId = libtorrent::generate_fingerprint(PEER_ID, BITSWASH_FINGERPRINT_VERSION);
+	settingsPack.set_str( libtorrent::settings_pack::user_agent, wxGetApp().UserAgent().ToStdString( ));
+	settingsPack.set_int( libtorrent::settings_pack::tracker_completion_timeout, m_config->GetTrackerCompletionTimeout());
+	settingsPack.set_int( libtorrent::settings_pack::tracker_receive_timeout, m_config->GetTrackerReceiveTimeout());
+	settingsPack.set_int( libtorrent::settings_pack::stop_tracker_timeout, m_config->GetStopTrackerTimeout());
+	settingsPack.set_int( libtorrent::settings_pack::tracker_maximum_response_length, m_config->GetTrackerMaximumResponseLength());
+	settingsPack.set_int( libtorrent::settings_pack::piece_timeout, m_config->GetPieceTimeout());
+	settingsPack.set_int( libtorrent::settings_pack::request_queue_time, m_config->GetRequestQueueTime());
+	settingsPack.set_int( libtorrent::settings_pack::max_allowed_in_request_queue, m_config->GetMaxAllowedInRequestQueue());
+	settingsPack.set_int( libtorrent::settings_pack::max_out_request_queue, m_config->GetMaxOutRequestQueue());
+	settingsPack.set_int( libtorrent::settings_pack::whole_pieces_threshold, m_config->GetWholePiecesThreshold());
+	settingsPack.set_int( libtorrent::settings_pack::peer_timeout, m_config->GetPeerTimeout());
+	settingsPack.set_int( libtorrent::settings_pack::urlseed_timeout, m_config->GetUrlseedTimeout());
+	settingsPack.set_int( libtorrent::settings_pack::urlseed_pipeline_size, m_config->GetUrlseedPipelineSize());
+	settingsPack.set_int( libtorrent::settings_pack::file_pool_size, m_config->GetFilePoolSize());
+	settingsPack.set_bool( libtorrent::settings_pack::allow_multiple_connections_per_ip, m_config->GetAllowMultipleConnectionsPerIP());
+	settingsPack.set_int( libtorrent::settings_pack::max_failcount, m_config->GetMaxFailCount());
+	settingsPack.set_int( libtorrent::settings_pack::min_reconnect_time, m_config->GetMinReconnectTime());
+	settingsPack.set_int( libtorrent::settings_pack::peer_connect_timeout, m_config->GetPeerConnectTimeout());
+	settingsPack.set_bool( libtorrent::settings_pack::ignore_limits_on_local_network, m_config->GetIgnoreLimitsOnLocalNetwork());
+	settingsPack.set_int( libtorrent::settings_pack::connection_speed, m_config->GetConnectionSpeed());
+	settingsPack.set_int( libtorrent::settings_pack::send_redundant_have, m_config->GetSendRedundantHave());
+	settingsPack.set_bool( libtorrent::settings_pack::lazy_bitfields, m_config->GetLazyBitfields());
+	settingsPack.set_int( libtorrent::settings_pack::inactivity_timeout, m_config->GetInactivityTimeout());
+	settingsPack.set_int( libtorrent::settings_pack::unchoke_interval, m_config->GetUnchokeInterval());
+	//	settingsPack.set_int( libtorrent::settings_pack::optimistic_unchoke_multiplier, m_config->GetOptimisticUnchokeMultiplier());
+	settingsPack.set_int( libtorrent::settings_pack::num_want, m_config->GetNumWant());
+	settingsPack.set_int( libtorrent::settings_pack::initial_picker_threshold, m_config->GetInitialPickerThreshold());
+	settingsPack.set_int( libtorrent::settings_pack::allowed_fast_set_size, m_config->GetAllowedFastSetSize());
+	//	settingsPack.set_int( libtorrent::settings_pack::max_outstanding_disk_bytes_per_connection, m_config->GetMaxOutstandingDiskBytesPerConnection());
+	settingsPack.set_int( libtorrent::settings_pack::handshake_timeout, m_config->GetHandshakeTimeout());
+	settingsPack.set_bool( libtorrent::settings_pack::use_dht_as_fallback, m_config->GetUseDhtAsFallback());
+	//settingsPack.set_bool( libtorrent::settings_pack::free_torrent_hashes, m_config->GetFreeTorrentHashes());
+	settingsPack.set_bool( libtorrent::settings_pack::announce_to_all_tiers, true);
+	settingsPack.set_bool( libtorrent::settings_pack::announce_to_all_trackers, true);
+	settingsPack.set_int(libtorrent::settings_pack::alert_mask, alertMask);
+	settingsPack.set_str(libtorrent::settings_pack::peer_fingerprint, peerId);
+	settingsPack.set_bool(libtorrent::settings_pack::listen_system_port_fallback, false);
+	settingsPack.set_bool(libtorrent::settings_pack::upnp_ignore_nonrouters, true);
+	settingsPack.set_bool(libtorrent::settings_pack::use_dht_as_fallback, false);
+	// Disable support for SSL torrents for now
+	settingsPack.set_int(libtorrent::settings_pack::ssl_listen, 0);
+	// To prevent ISPs from blocking seeding
+	// Speed up exit
+	settingsPack.set_int(libtorrent::settings_pack::auto_scrape_interval, 1200); // 20 minutes
+	settingsPack.set_int(libtorrent::settings_pack::auto_scrape_min_interval, 900); // 15 minutes
+	settingsPack.set_bool(libtorrent::settings_pack::no_connect_privileged_ports, false);
+	settingsPack.set_int(libtorrent::settings_pack::seed_choking_algorithm, libtorrent::settings_pack::fastest_upload);
 }
 
 void BitTorrentSession::ConfigureSession()
