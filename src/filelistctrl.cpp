@@ -416,7 +416,7 @@ void FileListCtrl::OnMenuPriority( wxCommandEvent& event )
 
  	wxGetApp().GetBitTorrentSession()->ConfigureTorrentFilesPriority( pTorrent );
 	libtorrent::file_entry f_entry;
-	long total_selected = 0;
+	wxULongLong_t total_selected = 0;
 	libtorrent::torrent_info const& torrentinfo = *(pTorrent->info);
 
 	for(size_t i = 0; i < filespriority.size(); ++i)

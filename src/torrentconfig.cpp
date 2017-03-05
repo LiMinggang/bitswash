@@ -123,10 +123,10 @@ void TorrentConfig::Load()
 	tmpstr.ToDouble( &m_torrent_stats.progress );
 	tmpstr = tmpstr2.BeforeFirst( token );
 	tmpstr2 = tmpstr2.AfterFirst( token );
-	tmpstr.ToLong( &m_torrent_stats.total_download );
+	tmpstr.ToULongLong( &m_torrent_stats.total_download );
 	tmpstr = tmpstr2.BeforeFirst( token );
 	tmpstr2 = tmpstr2.AfterFirst( token );
-	tmpstr.ToLong( &m_torrent_stats.total_upload );
+	tmpstr.ToULongLong( &m_torrent_stats.total_upload );
 	ReadFilesPriority();
 	ReadTrackersUrl();
 }

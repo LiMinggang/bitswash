@@ -40,8 +40,8 @@ enum
 typedef struct
 {
 	double progress;
-	size_t total_download;
-	size_t total_upload;
+	wxULongLong_t total_download;
+	wxULongLong_t total_upload;
 } stats_t;
 
 /*
@@ -112,8 +112,8 @@ public:
 	void ReadFilesPriority();
 	void WriteTrackersUrl();
 	void ReadTrackersUrl();
-	void SetSelectedSize(size_t fsize) {m_selected_file_size = fsize;}
-	size_t GetSelectedSize() {return m_selected_file_size;}
+	void SetSelectedSize(const wxULongLong_t& fsize) {m_selected_file_size = fsize;}
+	const wxULongLong_t& GetSelectedSize() {return m_selected_file_size;}
 
 protected:
 private:
@@ -126,7 +126,7 @@ private:
 	wxString m_downloadpath;
 
 	//legacy
-	bool    m_compactalloc;
+	bool m_compactalloc;
 	libtorrent::storage_mode_t m_storagemode;
 
 	//per torrent settings
@@ -136,7 +136,7 @@ private:
 	int m_torrent_download_limit;
 	int m_torrent_max_uploads;
 	int m_torrent_max_connections;
-	size_t m_selected_file_size;
+	wxULongLong_t m_selected_file_size;
 	std::vector<int> m_files_priority;
 	std::vector<libtorrent::announce_entry> m_trackers_url;
 	stats_t m_torrent_stats;

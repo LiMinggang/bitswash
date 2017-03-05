@@ -637,7 +637,7 @@ bool BitTorrentSession::AddTorrent( shared_ptr<torrent_t>& torrent )
 		}
 
 	 	bool nopriority = false;
-		size_t total_selected = 0;
+		wxULongLong_t total_selected = 0;
 		libtorrent::file_entry f_entry;
 		libtorrent::torrent_info const& torrent_info = *(torrent->info);
 		std::vector<int> filespriority = torrent->config->GetFilesPriorities();
