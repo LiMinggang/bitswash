@@ -74,17 +74,14 @@ public:
 	virtual void *Entry();
 	virtual void OnExit();
 
-	void configure(libtorrent::settings_pack &settingsPack);
+	void Configure(libtorrent::settings_pack &settingsPack);
 	void ConfigureSession();
 	void SetLogSeverity();
 	void SetConnection();
-	void SetConnectionLimit();
-	void SetDht();
 	void SetEncryption();
 	void StartExtensions();
 	void StartUpnp();
 	void StartNatpmp();
-	void StartLsd();
 	
 	void AddTorrentSession(shared_ptr<torrent_t>& torrent);
 	bool AddTorrent(shared_ptr<torrent_t>& torrent);
@@ -112,17 +109,17 @@ public:
 	void ConfigureTorrentFilesPriority(shared_ptr<torrent_t>& torrent);
 	void ConfigureTorrentTrackers(shared_ptr<torrent_t>& torrent);
 
-	void BitTorrentSession::RemoveTorrent( int idx, bool deletedata );
-	void BitTorrentSession::StartTorrent( int idx, bool force );
-	void BitTorrentSession::StopTorrent( int idx );
-	void BitTorrentSession::QueueTorrent( int idx );
-	void BitTorrentSession::PauseTorrent( int idx );
-	void BitTorrentSession::MoveTorrentUp( int idx );
-	void BitTorrentSession::MoveTorrentDown( int idx );
-	void BitTorrentSession::ReannounceTorrent( int idx );
-	void BitTorrentSession::ConfigureTorrentFilesPriority( int idx );
-	void BitTorrentSession::ConfigureTorrentTrackers( int idx );
-	void BitTorrentSession::ConfigureTorrent( int idx );
+	void RemoveTorrent( int idx, bool deletedata );
+	void StartTorrent( int idx, bool force );
+	void StopTorrent( int idx );
+	void QueueTorrent( int idx );
+	void PauseTorrent( int idx );
+	void MoveTorrentUp( int idx );
+	void MoveTorrentDown( int idx );
+	void ReannounceTorrent( int idx );
+	void ConfigureTorrentFilesPriority( int idx );
+	void ConfigureTorrentTrackers( int idx );
+	void ConfigureTorrent( int idx );
 
 	libtorrent::session* GetLibTorrent() { return m_libbtsession;}
 

@@ -95,7 +95,6 @@ void *BitTorrentSession::Entry()
 	wxLogDebug( _T( "BitTorrentSession Thread Entry pid 0x%lx priority %u.\n" ), GetId(), GetPriority() );
 	
 #if LIBTORRENT_VERSION_NUM < 10100
-
 	m_libbtsession = new session( fingerprint( "sw", BITSWASH_FINGERPRINT_VERSION ) );
 	//XXX: session_settings contain lots more like proxy and misc
 	btsetting.user_agent = wxGetApp().UserAgent().mb_str( wxConvUTF8 );
@@ -146,12 +145,12 @@ void *BitTorrentSession::Entry()
     btsetting.auto_scrape_min_interval = 900; // 15 minutes
     //btsetting.connection_speed = 20; // default is 10
     btsetting.no_connect_privileged_ports = false;
-    btsetting.seed_choking_algorithm = libt::session_settings::fastest_upload;
+    btsetting.seed_choking_algorithm = libtorrent::session_settings::fastest_upload;
 	m_libbtsession->set_settings( btsetting );
 #else
 	libtorrent::settings_pack pack;
 
-    configure(pack);
+    Configure(pack);
     m_libbtsession = new libtorrent::session(pack, 0);
 #endif
 
@@ -209,7 +208,7 @@ void BitTorrentSession::OnExit()
 	}
 }
 
-void BitTorrentSession::configure(libtorrent::settings_pack &settingsPack)
+void BitTorrentSession::Configure(libtorrent::settings_pack &settingsPack)
 {
 	// Set severity level of libtorrent session
 	int alertMask = libtorrent::alert::error_notification
@@ -224,6 +223,21 @@ void BitTorrentSession::configure(libtorrent::settings_pack &settingsPack)
 
 	std::string peerId = libtorrent::generate_fingerprint(PEER_ID, BITSWASH_FINGERPRINT_VERSION);
 	settingsPack.set_str( libtorrent::settings_pack::user_agent, wxGetApp().UserAgent().ToStdString( ));
+
+	// Speed limit
+	//const bool altSpeedLimitEnabled = isAltGlobalSpeedLimitEnabled();
+	//settingsPack.set_int(libtorrent::settings_pack::download_rate_limit, altSpeedLimitEnabled ? altGlobalDownloadSpeedLimit() : globalDownloadSpeedLimit());
+	//settingsPack.set_int(libtorrent::settings_pack::upload_rate_limit, altSpeedLimitEnabled ? altGlobalUploadSpeedLimit() : globalUploadSpeedLimit());
+	settingsPack.set_int( libtorrent::settings_pack::upload_rate_limit, m_config->GetGlobalUploadLimit() );
+	settingsPack.set_int( libtorrent::settings_pack::download_rate_limit, m_config->GetGlobalDownloadLimit() );
+	// * Max Half-open connections
+	settingsPack.set_int(libtorrent::settings_pack::half_open_limit, m_config->GetGlobalMaxHalfConnect());
+	// * Max connections limit
+	settingsPack.set_int(libtorrent::settings_pack::connections_limit, m_config->GetGlobalMaxConnections());
+	// * Global max upload slots
+	settingsPack.set_int(libtorrent::settings_pack::unchoke_slots_limit, m_config->GetGlobalMaxUploads());
+	// uTP
+
 	settingsPack.set_int( libtorrent::settings_pack::tracker_completion_timeout, m_config->GetTrackerCompletionTimeout());
 	settingsPack.set_int( libtorrent::settings_pack::tracker_receive_timeout, m_config->GetTrackerReceiveTimeout());
 	settingsPack.set_int( libtorrent::settings_pack::stop_tracker_timeout, m_config->GetStopTrackerTimeout());
@@ -241,6 +255,7 @@ void BitTorrentSession::configure(libtorrent::settings_pack &settingsPack)
 	settingsPack.set_int( libtorrent::settings_pack::max_failcount, m_config->GetMaxFailCount());
 	settingsPack.set_int( libtorrent::settings_pack::min_reconnect_time, m_config->GetMinReconnectTime());
 	settingsPack.set_int( libtorrent::settings_pack::peer_connect_timeout, m_config->GetPeerConnectTimeout());
+	// Ignore limits on LAN
 	settingsPack.set_bool( libtorrent::settings_pack::ignore_limits_on_local_network, m_config->GetIgnoreLimitsOnLocalNetwork());
 	settingsPack.set_int( libtorrent::settings_pack::connection_speed, m_config->GetConnectionSpeed());
 	settingsPack.set_bool( libtorrent::settings_pack::send_redundant_have, m_config->GetSendRedundantHave());
@@ -255,8 +270,82 @@ void BitTorrentSession::configure(libtorrent::settings_pack &settingsPack)
 	settingsPack.set_int( libtorrent::settings_pack::handshake_timeout, m_config->GetHandshakeTimeout());
 	settingsPack.set_bool( libtorrent::settings_pack::use_dht_as_fallback, m_config->GetUseDhtAsFallback());
 	//settingsPack.set_bool( libtorrent::settings_pack::free_torrent_hashes, m_config->GetFreeTorrentHashes());
+
+	//Todo: new options=======================================
 	settingsPack.set_bool( libtorrent::settings_pack::announce_to_all_tiers, true);
 	settingsPack.set_bool( libtorrent::settings_pack::announce_to_all_trackers, true);
+
+	libtorrent::settings_pack::io_buffer_mode_t mode = /*useOSCache() ? */libtorrent::settings_pack::enable_os_cache;
+                                                              //: libtorrent::settings_pack::disable_os_cache;
+	settingsPack.set_int(libtorrent::settings_pack::disk_io_read_mode, mode);
+	settingsPack.set_int(libtorrent::settings_pack::disk_io_write_mode, mode);
+	settingsPack.set_bool(libtorrent::settings_pack::anonymous_mode, false);
+
+	
+    // The most secure, rc4 only so that all streams are encrypted
+    settingsPack.set_int(libtorrent::settings_pack::allowed_enc_level, ( libtorrent::pe_settings::enc_level )( m_config->GetEncLevel()));
+    settingsPack.set_bool(libtorrent::settings_pack::prefer_rc4, m_config->GetEncEnabled());
+	
+	if( m_config->GetEncEnabled() )
+	{
+		settingsPack.set_int(libtorrent::settings_pack::out_enc_policy,  (libtorrent::pe_settings::enc_policy )( m_config->GetEncPolicy()));
+		settingsPack.set_int(libtorrent::settings_pack::in_enc_policy, ( libtorrent::pe_settings::enc_policy )( m_config->GetEncPolicy()));
+		wxLogMessage( _T( "Encryption enabled, policy %d\n" ), m_config->GetEncPolicy() );
+	}
+	else
+	{
+		settingsPack.set_int(libtorrent::settings_pack::out_enc_policy, libtorrent::settings_pack::pe_disabled);
+		settingsPack.set_int(libtorrent::settings_pack::in_enc_policy, libtorrent::settings_pack::pe_disabled);
+		wxLogMessage( _T( "Encryption is disabled\n" ) );
+	}
+    //case 1: // Forced
+    //    settingsPack.set_int(libtorrent::settings_pack::out_enc_policy, libtorrent::settings_pack::pe_forced);
+    //    settingsPack.set_int(libtorrent::settings_pack::in_enc_policy, libtorrent::settings_pack::pe_forced);
+	/*
+	if (isQueueingSystemEnabled()) {
+        adjustLimits(settingsPack);
+
+        settingsPack.set_int(libtorrent::settings_pack::active_seeds, maxActiveUploads());
+        settingsPack.set_bool(libtorrent::settings_pack::dont_count_slow_torrents, ignoreSlowTorrentsForQueueing());
+    }
+    else {
+        settingsPack.set_int(libtorrent::settings_pack::active_downloads, -1);
+        settingsPack.set_int(libtorrent::settings_pack::active_seeds, -1);
+        settingsPack.set_int(libtorrent::settings_pack::active_limit, -1);
+    }
+	*/
+	// 1 active torrent force 2 connections. If you have more active torrents * 2 than connection limit,
+	// connection limit will get extended. Multiply max connections or active torrents by 10 for queue.
+	// Ignore -1 values because we don't want to set a max int message queue
+	//settingsPack.set_int(libtorrent::settings_pack::alert_queue_size, std::max(1000,
+	//	10 * std::max(maxActiveTorrents() * 2, maxConnections())));
+	
+	// Outgoing ports
+	//settingsPack.set_int(libtorrent::settings_pack::outgoing_port, m_config->GetPortMin());
+	//settingsPack.set_int(libtorrent::settings_pack::num_outgoing_ports, m_config->GetPortMax() - m_config->GetPortMin() + 1);
+	
+	// Include overhead in transfer limits
+	settingsPack.set_bool(libtorrent::settings_pack::rate_limit_ip_overhead, true);
+	// IP address to announce to trackers
+	//settingsPack.set_str(libtorrent::settings_pack::announce_ip, Utils::String::toStdString(announceIP()));
+	// Super seeding
+	settingsPack.set_bool(libtorrent::settings_pack::strict_super_seeding, false);
+	settingsPack.set_bool(libtorrent::settings_pack::enable_incoming_utp, true);
+	settingsPack.set_bool(libtorrent::settings_pack::enable_outgoing_utp, true);
+	// uTP rate limiting
+	//settingsPack.set_bool(libtorrent::settings_pack::rate_limit_utp, isUTPRateLimited());
+	//settingsPack.set_int(libtorrent::settings_pack::mixed_mode_algorithm, isUTPRateLimited()
+	//					 ? libtorrent::settings_pack::prefer_tcp
+	//					 : libtorrent::settings_pack::peer_proportional);
+	
+	//settingsPack.set_bool(libtorrent::settings_pack::apply_ip_filter_to_trackers, isTrackerFilteringEnabled());
+
+	//Todo: new options=======================================
+
+    settingsPack.set_int(libtorrent::settings_pack::active_tracker_limit, -1);
+    settingsPack.set_int(libtorrent::settings_pack::active_dht_limit, -1);
+    settingsPack.set_int(libtorrent::settings_pack::active_lsd_limit, -1);
+
 	settingsPack.set_int(libtorrent::settings_pack::alert_mask, alertMask);
 	settingsPack.set_str(libtorrent::settings_pack::peer_fingerprint, peerId);
 	settingsPack.set_bool(libtorrent::settings_pack::listen_system_port_fallback, false);
@@ -270,70 +359,6 @@ void BitTorrentSession::configure(libtorrent::settings_pack &settingsPack)
 	settingsPack.set_int(libtorrent::settings_pack::auto_scrape_min_interval, 900); // 15 minutes
 	settingsPack.set_bool(libtorrent::settings_pack::no_connect_privileged_ports, false);
 	settingsPack.set_int(libtorrent::settings_pack::seed_choking_algorithm, libtorrent::settings_pack::fastest_upload);
-}
-
-void BitTorrentSession::ConfigureSession()
-{
-	wxASSERT( m_libbtsession != NULL );
-//#ifndef TORRENT_DISABLE_GEO_IP
-//	m_libbtsession->load_asnum_db( "GeoIPASNum.dat" );
-//	m_libbtsession->load_country_db( "GeoIP.dat" );
-//#endif
-	SetLogSeverity();
-	//Network settings
-	SetConnection();
-	SetConnectionLimit();
-	SetDht();
-	SetEncryption();
-	StartExtensions();
-	StartUpnp();
-	StartNatpmp();
-	StartLsd();
-}
-
-void BitTorrentSession::SetLogSeverity()
-{
-	wxASSERT( m_libbtsession != NULL );
-	m_libbtsession->set_severity_level( ( alert::severity_t )m_config->GetLogSeverity() );
-}
-
-void BitTorrentSession::SetConnection()
-{
-	wxASSERT( m_libbtsession != NULL );
-	long portmin, portmax;
-	portmin = m_config->GetPortMin();
-	portmax = m_config->GetPortMax();
-
-	if( ( portmin < 0 ) || ( portmin > 65535 ) )
-	{
-		portmin = 6881 ;
-		m_config->SetPortMin( portmin );
-	}
-
-	if( ( portmax < 0 ) || ( portmax > 65535 ) || ( portmax < portmin ) )
-	{
-		portmax = portmin + 8;
-		m_config->SetPortMax( portmax );
-	}
-
-	error_code ec;
-	m_libbtsession->listen_on( std::make_pair( portmin, portmax ), ec,
-							   m_config->m_local_ip.IPAddress().ToAscii() );
-}
-
-void BitTorrentSession::SetConnectionLimit()
-{
-	wxASSERT( m_libbtsession != NULL );
-	m_libbtsession->set_upload_rate_limit( m_config->GetGlobalUploadLimit() );
-	m_libbtsession->set_download_rate_limit( m_config->GetGlobalDownloadLimit() );
-	m_libbtsession->set_max_uploads( m_config->GetGlobalMaxUploads() );
-	m_libbtsession->set_max_connections( m_config->GetGlobalMaxConnections() );
-	m_libbtsession->set_max_half_open_connections( m_config->GetGlobalMaxHalfConnect() );
-}
-
-void BitTorrentSession::SetDht()
-{
-	wxASSERT( m_libbtsession != NULL );
 
 	if( m_config->GetDHTEnabled() )
 	{
@@ -372,45 +397,50 @@ void BitTorrentSession::SetDht()
 		{
 			wxLogWarning( _T( "Previous DHT state not found \n" ) + dhtstatefile );
 		}
-
-		//dht_state.print(std::cout, 1);
-		m_libbtsession->add_dht_router( std::make_pair( std::string( "dht.libtorrent.org" ), 25401 ) );
-		m_libbtsession->add_dht_router( std::make_pair( std::string( "router.bittorrent.com" ), 6881 ) );
-		m_libbtsession->add_dht_router( std::make_pair( std::string( "router.utorrent.com" ), 6881 ) );
-		m_libbtsession->add_dht_router( std::make_pair( std::string( "dht.transmissionbt.com" ), 6881 ) );
-		m_libbtsession->add_dht_router(std::make_pair( std::string("router.bitcomet.com"), 6881));
-		m_libbtsession->add_dht_router( std::make_pair( std::string( "dht.aelitis.com" ), 6881 ) ); // Vuze
-		wxLogMessage( _T( "DHT service started, port %d\n" ), m_config->GetDHTPort() );
-		m_libbtsession->start_dht( dht_state );
+		settingsPack.set_str(libtorrent::settings_pack::dht_bootstrap_nodes, "dht.libtorrent.org:25401,router.bittorrent.com:6881,router.utorrent.com:6881,dht.transmissionbt.com:6881,dht.aelitis.com:6881");
 	}
-	else
-	{
-		wxLogMessage( _T( "DHT is disabled\n" ) );
-		m_libbtsession->stop_dht();
-	}
+	settingsPack.set_bool(libtorrent::settings_pack::enable_lsd, m_config->GetEnableLsd());
 }
 
-void BitTorrentSession::SetEncryption()
+void BitTorrentSession::ConfigureSession()
 {
 	wxASSERT( m_libbtsession != NULL );
-	struct pe_settings EncSettings;
+	SetLogSeverity();
+	//Network settings
+	SetConnection();
+	StartExtensions();
+	StartUpnp();
+	StartNatpmp();
+}
 
-	if( m_config->GetEncEnabled() )
+void BitTorrentSession::SetLogSeverity()
+{
+	wxASSERT( m_libbtsession != NULL );
+	m_libbtsession->set_severity_level( ( alert::severity_t )m_config->GetLogSeverity() );
+}
+
+void BitTorrentSession::SetConnection()
+{
+	wxASSERT( m_libbtsession != NULL );
+	long portmin, portmax;
+	portmin = m_config->GetPortMin();
+	portmax = m_config->GetPortMax();
+
+	if( ( portmin < 0 ) || ( portmin > 65535 ) )
 	{
-		EncSettings.out_enc_policy = ( pe_settings::enc_policy )( m_config->GetEncPolicy() );
-		EncSettings.in_enc_policy = ( pe_settings::enc_policy )( m_config->GetEncPolicy() );
-		EncSettings.allowed_enc_level = ( pe_settings::enc_level )( m_config->GetEncLevel() );
-		EncSettings.prefer_rc4 = m_config->GetEncPreferRC4();
-		wxLogMessage( _T( "Encryption enabled, policy %d\n" ), m_config->GetEncPolicy() );
-	}
-	else
-	{
-		EncSettings.out_enc_policy = pe_settings::disabled;
-		EncSettings.in_enc_policy = pe_settings::disabled;
-		wxLogMessage( _T( "Encryption is disabled\n" ) );
+		portmin = 6881 ;
+		m_config->SetPortMin( portmin );
 	}
 
-	m_libbtsession->set_pe_settings( EncSettings );
+	if( ( portmax < 0 ) || ( portmax > 65535 ) || ( portmax < portmin ) )
+	{
+		portmax = portmin + 8;
+		m_config->SetPortMax( portmax );
+	}
+
+	error_code ec;
+	m_libbtsession->listen_on( std::make_pair( portmin, portmax ), ec,
+							   m_config->m_local_ip.IPAddress().ToAscii() );
 }
 
 void BitTorrentSession::StartExtensions()
@@ -437,29 +467,20 @@ void BitTorrentSession::StartUpnp()
 	{
 		// XXX workaround upnp crashed when started twice
 		// libtorrent bugs
-		if( ! m_upnp_started )
+		if( !m_upnp_started )
 		{
-#if LIBTORRENT_VERSION_NUM < 10100
-			m_libbtsession->start_upnp();
-#else
 			settings_pack settingsPack = m_libbtsession->get_settings();
 			settingsPack.set_bool( settings_pack::enable_upnp, true );
 			m_libbtsession->apply_settings( settingsPack );
-#endif
+			m_upnp_started = true;
 		}
-
-		m_upnp_started = true;
 	}
 	else
 	{
-#if LIBTORRENT_VERSION_NUM < 10100
-		m_libbtsession->stop_upnp();
-#else
 		settings_pack settingsPack = m_libbtsession->get_settings();
 		settingsPack.set_bool( settings_pack::enable_upnp, false );
 		m_libbtsession->apply_settings( settingsPack );
-#endif
-		m_upnp_started = true;
+		m_upnp_started = false;
 	}
 }
 
@@ -471,42 +492,20 @@ void BitTorrentSession::StartNatpmp()
 	{
 		if( !m_natpmp_started )
 		{
-#if LIBTORRENT_VERSION_NUM < 10100
-			m_libbtsession->start_natpmp();
-#else
 			settings_pack settingsPack = m_libbtsession->get_settings();
 			settingsPack.set_bool( settings_pack::enable_natpmp, true );
 			m_libbtsession->apply_settings( settingsPack );
-#endif
 		}
 
 		m_natpmp_started = true;
 	}
 	else
 	{
-#if LIBTORRENT_VERSION_NUM < 10100
-		m_libbtsession->stop_natpmp();
-#else
 		settings_pack settingsPack = m_libbtsession->get_settings();
 		settingsPack.set_bool( settings_pack::enable_natpmp, false );
 		m_libbtsession->apply_settings( settingsPack );
 		m_natpmp_started = false;
-#endif
 	}
-}
-
-void BitTorrentSession::StartLsd()
-{
-	wxASSERT( m_libbtsession != NULL );
-
-	if( m_config->GetEnableLsd() )
-	{
-		if( !m_lsd_started ) { m_libbtsession->start_lsd(); }
-
-		m_lsd_started = true;
-	}
-	else
-	{ m_libbtsession->stop_lsd(); }
 }
 
 void BitTorrentSession::AddTorrentSession( shared_ptr<torrent_t>& torrent )
