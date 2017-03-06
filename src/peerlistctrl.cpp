@@ -191,10 +191,10 @@ wxString PeerListCtrl::GetItemValue(long item, long columnid) const
 		ret = HumanReadableByte((wxDouble)peer_info.up_speed) + wxString(_T("ps"));
 		break;
 	case PEERLIST_COLUMN_DOWNLOADED:
-		ret = HumanReadableByte((wxDouble)peer_info.total_download);
+		ret = HumanReadableByte((wxDouble)((boost::uint64_t)peer_info.total_download));
 		break;
 	case PEERLIST_COLUMN_UPLOADED:
-		ret = HumanReadableByte((wxDouble)peer_info.total_upload);
+		ret = HumanReadableByte((wxDouble)((boost::uint64_t)peer_info.total_upload));
 		break;
 	case PEERLIST_COLUMN_PROGRESS:
 		ret = wxString::Format(_T("%d/%d"), peer_info.downloading_progress, peer_info.downloading_total);

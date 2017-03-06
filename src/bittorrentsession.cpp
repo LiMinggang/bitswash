@@ -400,6 +400,8 @@ void BitTorrentSession::Configure(libtorrent::settings_pack &settingsPack)
 	settingsPack.set_bool(libtorrent::settings_pack::no_connect_privileged_ports, false);
 	settingsPack.set_int(libtorrent::settings_pack::seed_choking_algorithm, libtorrent::settings_pack::fastest_upload);
 
+	settingsPack.set_bool(libtorrent::settings_pack::enable_dht, m_config->GetDHTEnabled());
+
 	if( m_config->GetDHTEnabled() )
 	{
 		settingsPack.set_str(libtorrent::settings_pack::dht_bootstrap_nodes, "dht.libtorrent.org:25401,router.bittorrent.com:6881,router.utorrent.com:6881,dht.transmissionbt.com:6881,dht.aelitis.com:6881");
