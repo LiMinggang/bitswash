@@ -54,8 +54,10 @@ UrlDialog::UrlDialog( wxString* url, wxWindow* parent, int id,  wxString title, 
 	fgSizerURL->Add( 0, 0, 1, wxEXPAND, 0 );
 	
 	m_sdbOkCancel= new wxStdDialogButtonSizer();
-	m_sdbOkCancel->AddButton( new wxButton( m_panelURL, wxID_OK ) );
+	wxButton *ButtonOK = new wxButton( m_panelURL, wxID_OK );
+	m_sdbOkCancel->AddButton( ButtonOK );
 	m_sdbOkCancel->AddButton( new wxButton( m_panelURL, wxID_CANCEL ) );
+	ButtonOK->SetDefault();
 	m_sdbOkCancel->Realize();
 	fgSizerURL->Add( m_sdbOkCancel, 0, wxALL|wxALIGN_RIGHT, 5 );
 	
