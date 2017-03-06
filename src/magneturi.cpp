@@ -100,7 +100,10 @@ MagnetUri::MagnetUri(const wxString &source)
 
     m_valid = true;
     m_hash = m_addTorrentParams.info_hash;
-    m_name = wxString::FromUTF8(m_addTorrentParams.name.c_str());
+	if(!m_addTorrentParams.name.empty())
+    	m_name = wxString::FromUTF8(m_addTorrentParams.name.c_str());
+	else
+		m_name = m_hash;
 }
 
 bool MagnetUri::isValid() const

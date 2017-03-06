@@ -513,7 +513,7 @@ void BitTorrentSession::StartNatpmp()
 	}
 }
 
-void BitTorrentSession::AddTorrentSession( shared_ptr<torrent_t>& torrent )
+void BitTorrentSession::AddTorrentSession( shared_ptr<torrent_t>& torrent, bool async_add/* = false */)
 {
 	torrent_handle &handle = torrent->handle;
 	shared_ptr<torrent_info> t = torrent->info;
@@ -556,43 +556,42 @@ void BitTorrentSession::AddTorrentSession( shared_ptr<torrent_t>& torrent )
 		p.duplicate_is_error = true;
 		p.auto_managed = true;
 
-		/*if( torrent->config->GetTorrentCompactAlloc() )
+		wxString strStorageMode;
+		enum libtorrent::storage_mode_t eStorageMode = torrent->config->GetTorrentStorageMode();
+
+		switch( eStorageMode )
 		{
-			wxLogInfo( _T( "%s: Compact allocation mode\n" ), torrent->name.c_str() );
-			p.storage_mode = libtorrent::storage_mode_compact;
-			handle = m_libbtsession->add_torrent( p );
-		}
-		else*/
-		{
-			wxString strStorageMode;
-			enum libtorrent::storage_mode_t eStorageMode = torrent->config->GetTorrentStorageMode();
+		case libtorrent::storage_mode_allocate:
+			strStorageMode = _( "Full" );
+			break;
 
-			switch( eStorageMode )
-			{
-			case libtorrent::storage_mode_allocate:
-				strStorageMode = _( "Full" );
-				break;
+		case libtorrent::storage_mode_sparse:
+			strStorageMode = _( "Sparse" );
+			break;
 
-			case libtorrent::storage_mode_sparse:
-				strStorageMode = _( "Sparse" );
-				break;
+		/*case libtorrent::storage_mode_compact:
+			strStorageMode = _( "Compact" );
+			break;*/
 
-			/*case libtorrent::storage_mode_compact:
-				strStorageMode = _( "Compact" );
-				break;*/
-
-			default:
-				eStorageMode = libtorrent::storage_mode_sparse;
-				strStorageMode = _( "Sparse" );
-				break;
-			}
-
-			p.storage_mode = eStorageMode;
-			wxLogInfo( _T( "%s: %s allocation mode\n" ), torrent->name.c_str(), strStorageMode.c_str() );
-			handle = m_libbtsession->add_torrent( p );
+		default:
+			eStorageMode = libtorrent::storage_mode_sparse;
+			strStorageMode = _( "Sparse" );
+			break;
 		}
 
-		handle.resolve_countries( true );
+		p.storage_mode = eStorageMode;
+		wxLogInfo( _T( "%s: %s allocation mode\n" ), torrent->name.c_str(), strStorageMode.c_str() );
+		if(async_add)
+		{
+			m_libbtsession->async_add_torrent( p );
+		}
+		else
+		{
+			handle = m_libbtsession->add_torrent( p );
+		}
+
+		if(handle.is_valid())
+			handle.resolve_countries( true );
 		enum torrent_state state = ( enum torrent_state ) torrent->config->GetTorrentState();
 		//handle.pause();
 		//ConfigureTorrent(torrent);
@@ -604,7 +603,7 @@ void BitTorrentSession::AddTorrentSession( shared_ptr<torrent_t>& torrent )
 	}
 }
 
-bool BitTorrentSession::AddTorrent( shared_ptr<torrent_t>& torrent )
+bool BitTorrentSession::AddTorrent( shared_ptr<torrent_t>& torrent, bool async_add/* = false */ )
 {
 	wxLogDebug( _T( "Add Torrent %s\n" ),  torrent->name.c_str() );
 
@@ -623,7 +622,7 @@ bool BitTorrentSession::AddTorrent( shared_ptr<torrent_t>& torrent )
 				( state == TORRENT_STATE_FORCE_START ) ||
 				( state == TORRENT_STATE_PAUSE ) )
 		{
-			AddTorrentSession( torrent );
+			AddTorrentSession( torrent, async_add );
 		}
 
 		if( torrent->config->GetQIndex() == -1 )
@@ -674,7 +673,8 @@ bool BitTorrentSession::AddTorrent( shared_ptr<torrent_t>& torrent )
 
 		if( state == TORRENT_STATE_FORCE_START || state == TORRENT_STATE_START )
 		{
-			StartTorrent( torrent, ( state == TORRENT_STATE_FORCE_START ) );
+			if(!async_add)
+				StartTorrent( torrent, ( state == TORRENT_STATE_FORCE_START ) );
 		}
 	}
 	catch( std::exception& e )
@@ -1147,7 +1147,7 @@ shared_ptr<torrent_t> BitTorrentSession::LoadMagnetUri( MagnetUri& magneturi )
 		//torrent->handle = m_libbtsession->add_torrent(p, ec);
 		torrent->config->SetTorrentState( TORRENT_STATE_START );
 		torrent->handle.resolve_countries( true );
-		torrent->isvalid = AddTorrent( torrent );
+		torrent->isvalid = AddTorrent( torrent, true );
 		if(torrent->isvalid && !torrent->handle.has_metadata())
 		{
 			torrent->magneturi = magneturi.url();
@@ -1858,19 +1858,24 @@ void BitTorrentSession::GetTorrentLog()
 					if( metadata_received_alert* p = dynamic_cast<metadata_received_alert*>( *it ) )
 					{
 						event_string << _T( "Metadata: " ) << p->message();
-
-						torrent_handle_map::iterator it = m_torrent_handle_map.find(p->handle);
-						if(it != m_torrent_handle_map.end())
+						std::stringstream hash_stream;
+						hash_stream << p->handle.info_hash();
+						wxString thash = wxString::FromAscii( hash_stream.str().c_str() );
+						torrents_map::iterator it = m_torrent_map.find(thash);
+						if(it != m_torrent_map.end())
 						{
-							wxString torrent_backup = wxGetApp().SaveTorrentsPath() + wxGetApp().PathSeparator() + it->second->hash + _T( ".torrent" );
-							SaveTorrent(it->second, torrent_backup );
-							m_torrent_handle_map.erase(it);
+							shared_ptr<torrent_t>& torrent = m_torrent_queue[it->second];
+							wxString torrent_backup = wxGetApp().SaveTorrentsPath() + wxGetApp().PathSeparator() + torrent->hash + _T( ".torrent" );
+							torrent->handle = p->handle;
+							SaveTorrent(torrent, torrent_backup );
+							//m_torrent_handle_map.erase(it);
 							
-							if( it->second->config->GetTrackersURL().size() <= 0 )
+							if(torrent->config->GetTrackersURL().size() <= 0 )
 							{
 								std::vector<libtorrent::announce_entry> trackers = p->handle.trackers();
-								it->second->config->SetTrackersURL( trackers );
+								torrent->config->SetTrackersURL( trackers );
 							}
+							StartTorrent(torrent, false);
 						}
 						break;
 					}

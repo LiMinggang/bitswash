@@ -83,8 +83,8 @@ public:
 	void StartUpnp();
 	void StartNatpmp();
 	
-	void AddTorrentSession(shared_ptr<torrent_t>& torrent);
-	bool AddTorrent(shared_ptr<torrent_t>& torrent);
+	void AddTorrentSession(shared_ptr<torrent_t>& torrent, bool async_add = false);
+	bool AddTorrent(shared_ptr<torrent_t>& torrent, bool async_add = false);
 	void RemoveTorrent(shared_ptr<torrent_t>& torrent, bool deletedata);
 	shared_ptr<torrent_t> FindTorrent(const wxString &hash) const;
 	shared_ptr<torrent_t> GetTorrent(int idx) const;
