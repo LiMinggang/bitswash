@@ -145,6 +145,7 @@ protected:
 #endif
 
     virtual void OnRightClick(wxMouseEvent& event);
+    virtual void OnLeftDClick(wxMouseEvent& event);
 
 	virtual wxString OnGetItemText(long item, long column) const;
 	virtual wxString GetItemValue(long item, long columnid) const; /* override to get value for shown columns */

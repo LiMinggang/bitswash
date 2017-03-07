@@ -59,6 +59,7 @@ BEGIN_EVENT_TABLE( SwashListCtrl, wxListView )
 	EVT_CHAR( SwashListCtrl::OnChar )
 
 	EVT_RIGHT_DOWN( SwashListCtrl::OnRightClick )
+	EVT_LEFT_DCLICK( SwashListCtrl::OnLeftDClick )
 END_EVENT_TABLE()
 // SwashListCtrl
 
@@ -590,7 +591,67 @@ void SwashListCtrl::OnRightClick( wxMouseEvent& event )
 		break;
 	}
 
-	wxLogDebug( _T( "Right double click %s item %s, subitem %s" ),
+	wxLogDebug( _T( "Right click %s item %s, subitem %s" ),
+				where.c_str(), ( wxLongLong( item ).ToString() ).c_str(), ( wxLongLong( subitem ).ToString() ).c_str() );
+}
+
+void SwashListCtrl::OnLeftDClick(wxMouseEvent& event)
+{
+	if( !event.ControlDown() )
+	{
+		event.Skip();
+		return;
+	}
+
+	int flags;
+	long subitem = -1;
+#if wxCHECK_VERSION(2,8,0)
+	long item = HitTest( event.GetPosition(), flags, &subitem );
+#else
+	long item = HitTest( event.GetPosition(), flags );
+#endif
+	wxString where;
+
+	switch( flags )
+	{
+	case wxLIST_HITTEST_ABOVE:
+		where = _T( "above" );
+		break;
+
+	case wxLIST_HITTEST_BELOW:
+		where = _T( "below" );
+		break;
+
+	case wxLIST_HITTEST_NOWHERE:
+		where = _T( "nowhere near" );
+		break;
+
+	case wxLIST_HITTEST_ONITEMICON:
+		where = _T( "on icon of" );
+		break;
+
+	case wxLIST_HITTEST_ONITEMLABEL:
+		where = _T( "on label of" );
+		break;
+
+	case wxLIST_HITTEST_ONITEMRIGHT:
+		where = _T( "right on" );
+		break;
+
+	case wxLIST_HITTEST_TOLEFT:
+		where = _T( "to the left of" );
+		break;
+
+	case wxLIST_HITTEST_TORIGHT:
+		where = _T( "to the right of" );
+		break;
+
+	default:
+		where = _T( "not clear exactly where on" );
+		break;
+	}
+
+	wxLogDebug( _T( "Left double click %s item %s, subitem %s" ),
 				where.c_str(), ( wxLongLong( item ).ToString() ).c_str(), ( wxLongLong( subitem ).ToString() ).c_str() );
 }
 

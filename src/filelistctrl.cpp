@@ -22,6 +22,7 @@
 // Created on: Mon Feb  5 11:09:21 2007
 //
 #include <wx/utils.h> 
+#include <wx/filename.h>
 
 #include "torrentinfo.h"
 #include "filelistctrl.h"
@@ -308,6 +309,44 @@ void FileListCtrl::OnLeftDown(wxMouseEvent& event)
     event.Skip();
 }
 
+void FileListCtrl::OnLeftDClick(wxMouseEvent& event)
+{
+	shared_ptr<torrent_t> pTorrent;
+
+	if( m_pTorrent )
+	{ pTorrent = m_pTorrent; }
+	else
+	{
+		MainFrame* pMainFrame = ( MainFrame* )wxGetApp().GetTopWindow();
+		pTorrent = pMainFrame->GetSelectedTorrent();
+	}
+
+	if( pTorrent )
+	{
+		int selectedfiles = GetFirstSelected();
+		if( selectedfiles != -1 )
+		{
+			libtorrent::torrent_info const& torrentinfo = *(pTorrent->info);
+			std::vector<int> & filespriority = pTorrent->config->GetFilesPriorities();
+			libtorrent::file_entry f_entry = torrentinfo.file_at( selectedfiles );
+			if(filespriority.at(selectedfiles) != BITTORRENT_FILE_NONE)
+			{
+				f_entry = torrentinfo.file_at( selectedfiles );
+				wxFileName filename = pTorrent->config->GetDownloadPath() + wxString::FromUTF8(f_entry.path.c_str());
+				filename.MakeAbsolute();
+#if  defined(__WXMSW__) 
+				wxExecute(_T("Explorer ")+filename.GetFullName(), wxEXEC_ASYNC, NULL); 
+#elif defined(__APPLE__)
+				wxExecute(_T("/usr/bin/open "+filename.GetFullName(), wxEXEC_ASYNC, NULL);
+#elif defined(__WXGTK__)
+				wxLaunchDefaultBrowser(_T("file://")+filename.GetFullName());
+#endif
+			}
+		}
+	}
+}
+
+
 void FileListCtrl::ShowContextMenu( const wxPoint& pos )
 {
 	static int menuids[] = {
@@ -453,13 +492,14 @@ void FileListCtrl::OnMenuOpenPath( wxCommandEvent& event )
 			if(filespriority.at(selectedfiles) != BITTORRENT_FILE_NONE)
 			{
 				f_entry = torrentinfo.file_at( selectedfiles );
-				wxString filepath = pTorrent->config->GetDownloadPath() + wxString::FromUTF8(f_entry.path.c_str());
+				wxFileName filename = pTorrent->config->GetDownloadPath() + wxString::FromUTF8(f_entry.path.c_str());
+				filename.MakeAbsolute();
 #if  defined(__WXMSW__) 
-				wxExecute(_T("Explorer ")+filepath, wxEXEC_ASYNC, NULL); 
+				wxExecute(_T("Explorer ")+filename.GetFullPath(), wxEXEC_ASYNC, NULL); 
 #elif defined(__APPLE__)
-				wxExecute(_T("/usr/bin/open "+filepath, wxEXEC_ASYNC, NULL);
+				wxExecute(_T("/usr/bin/open "+filename.GetFullPath(), wxEXEC_ASYNC, NULL);
 #elif defined(__WXGTK__)
-				wxLaunchDefaultBrowser(_T("file://")+filepath);
+				wxLaunchDefaultBrowser(_T("file://")+filename.GetFullPath());
 #endif
 			}
 		}

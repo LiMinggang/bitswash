@@ -57,6 +57,7 @@ public:
 	void DeleteStaticHandle() { m_pTorrent.reset(); }
     virtual int GetItemColumnImage(long item, long columnid) const; /* override to get image for shown columns */
     virtual void OnLeftDown(wxMouseEvent& event);
+    virtual void OnLeftDClick(wxMouseEvent& event);
 protected:
 	// FileListCtrl variables
 
