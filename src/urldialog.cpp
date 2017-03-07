@@ -77,7 +77,6 @@ void UrlDialog::OnOk(wxCommandEvent& event)
 
 	EndModal(wxID_OK);
 	event.Skip();
-
 }
 
 void UrlDialog::OnCancel(wxCommandEvent& event)
