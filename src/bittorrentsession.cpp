@@ -94,105 +94,11 @@ void *BitTorrentSession::Entry()
 	session_settings btsetting;
 	wxLogDebug( _T( "BitTorrentSession Thread Entry pid 0x%lx priority %u.\n" ), GetId(), GetPriority() );
 	
-#if LIBTORRENT_VERSION_NUM < 10100
-	m_libbtsession = new session( fingerprint( "sw", BITSWASH_FINGERPRINT_VERSION ) );
-	//XXX: session_settings contain lots more like proxy and misc
-	btsetting.user_agent = wxGetApp().UserAgent().mb_str( wxConvUTF8 );
-	btsetting.tracker_completion_timeout = m_config->GetTrackerCompletionTimeout();
-	btsetting.tracker_receive_timeout = m_config->GetTrackerReceiveTimeout();
-	btsetting.stop_tracker_timeout = m_config->GetStopTrackerTimeout();
-	btsetting.tracker_maximum_response_length = m_config->GetTrackerMaximumResponseLength();
-	btsetting.piece_timeout = m_config->GetPieceTimeout();
-	btsetting.request_queue_time = m_config->GetRequestQueueTime();
-	btsetting.max_allowed_in_request_queue = m_config->GetMaxAllowedInRequestQueue();
-	btsetting.max_out_request_queue = m_config->GetMaxOutRequestQueue();
-	btsetting.whole_pieces_threshold = m_config->GetWholePiecesThreshold();
-	btsetting.peer_timeout = m_config->GetPeerTimeout();
-	btsetting.urlseed_timeout = m_config->GetUrlseedTimeout();
-	btsetting.urlseed_pipeline_size = m_config->GetUrlseedPipelineSize();
-	btsetting.file_pool_size = m_config->GetFilePoolSize();
-	btsetting.allow_multiple_connections_per_ip = m_config->GetAllowMultipleConnectionsPerIP();
-	btsetting.max_failcount = m_config->GetMaxFailCount();
-	btsetting.min_reconnect_time = m_config->GetMinReconnectTime();
-	btsetting.peer_connect_timeout = m_config->GetPeerConnectTimeout();
-	btsetting.ignore_limits_on_local_network = m_config->GetIgnoreLimitsOnLocalNetwork();
-	btsetting.connection_speed = m_config->GetConnectionSpeed();
-	btsetting.send_redundant_have = m_config->GetSendRedundantHave();
-	btsetting.lazy_bitfields = m_config->GetLazyBitfields();
-	btsetting.inactivity_timeout = m_config->GetInactivityTimeout();
-	btsetting.unchoke_interval = m_config->GetUnchokeInterval();
-	//  btsetting.optimistic_unchoke_multiplier = m_config->GetOptimisticUnchokeMultiplier();
-	btsetting.num_want = m_config->GetNumWant();
-	btsetting.initial_picker_threshold = m_config->GetInitialPickerThreshold();
-	btsetting.allowed_fast_set_size = m_config->GetAllowedFastSetSize();
-	//  btsetting.max_outstanding_disk_bytes_per_connection = m_config->GetMaxOutstandingDiskBytesPerConnection();
-	btsetting.handshake_timeout = m_config->GetHandshakeTimeout();
-	btsetting.use_dht_as_fallback = m_config->GetUseDhtAsFallback();
-	btsetting.free_torrent_hashes = m_config->GetFreeTorrentHashes();
-	btsetting.announce_to_all_tiers = true;
-	btsetting.announce_to_all_trackers = true;
-
-	
-    btsetting.upnp_ignore_nonrouters = true;
-    btsetting.use_dht_as_fallback = false;
-    // Disable support for SSL torrents for now
-    //btsetting.ssl_listen = 0;
-    // To prevent ISPs from blocking seeding
-    btsetting.lazy_bitfields = true;
-    // Speed up exit
-    //btsetting.stop_tracker_timeout = 1;
-    btsetting.auto_scrape_interval = 1200; // 20 minutes
-    btsetting.auto_scrape_min_interval = 900; // 15 minutes
-    //btsetting.connection_speed = 20; // default is 10
-    btsetting.no_connect_privileged_ports = false;
-    btsetting.seed_choking_algorithm = libtorrent::session_settings::fastest_upload;
-	m_libbtsession->set_settings( btsetting );
-#else
 	libtorrent::settings_pack pack;
 
     Configure(pack);
     m_libbtsession = new libtorrent::session(pack, 0);
 	wxASSERT(m_libbtsession != 0);
-
-	if( m_config->GetDHTEnabled() )
-	{
-		entry dht_state;
-		long dhtport = m_config->GetDHTPort();
-		wxString dhtstatefile = wxGetApp().DHTStatePath();
-		struct dht_settings DHTSettings;
-
-		//XXX set other dht settings
-		if( dhtport < 1 || dhtport > 65535 )
-		{ DHTSettings.service_port = dhtport; }
-		else //use TCP port
-		{ DHTSettings.service_port = m_config->GetPortMax(); }
-
-		DHTSettings.max_peers_reply = m_config->GetDHTMaxPeers();
-		DHTSettings.search_branching = m_config->GetDHTSearchBranching();
-		DHTSettings.max_fail_count = m_config->GetDHTMaxFail();
-		m_libbtsession->set_dht_settings( DHTSettings );
-
-		if( wxFileExists( dhtstatefile ) )
-		{
-			wxLogInfo( _T( "Restoring previous DHT state \n" ) + dhtstatefile );
-			std::ifstream in( ( const char* )dhtstatefile.mb_str( wxConvFile ), std::ios_base::binary );
-			in.unsetf( std::ios_base::skipws );
-
-			try
-			{
-				dht_state = bdecode( std::istream_iterator<char>( in ), std::istream_iterator<char>() );
-			}
-			catch( std::exception& e )
-			{
-				wxLogWarning( _T( "Unable to restore dht state file %s - %s\n" ), dhtstatefile.c_str(), wxString::FromAscii( e.what() ).c_str() );
-			}
-		}
-		else
-		{
-			wxLogWarning( _T( "Previous DHT state not found \n" ) + dhtstatefile );
-		}
-	}
-#endif
 
 	ConfigureSession();
 	ScanTorrentsDirectory( wxGetApp().SaveTorrentsPath() );
@@ -205,6 +111,9 @@ void *BitTorrentSession::Entry()
 		{ break; }
 
 		wxThread::Sleep( 1000 );
+		m_libbtsession->post_torrent_updates();
+		m_libbtsession->post_session_stats();
+		m_libbtsession->post_dht_stats();
 		CheckQueueItem();
 	}
 
@@ -412,6 +321,46 @@ void BitTorrentSession::Configure(libtorrent::settings_pack &settingsPack)
 void BitTorrentSession::ConfigureSession()
 {
 	wxASSERT( m_libbtsession != NULL );
+	
+	if( m_config->GetDHTEnabled() )
+	{
+		entry dht_state;
+		long dhtport = m_config->GetDHTPort();
+		wxString dhtstatefile = wxGetApp().DHTStatePath();
+		struct dht_settings DHTSettings;
+
+		//XXX set other dht settings
+		if( dhtport < 1 || dhtport > 65535 )
+		{ DHTSettings.service_port = dhtport; }
+		else //use TCP port
+		{ DHTSettings.service_port = m_config->GetPortMax(); }
+
+		DHTSettings.max_peers_reply = m_config->GetDHTMaxPeers();
+		DHTSettings.search_branching = m_config->GetDHTSearchBranching();
+		DHTSettings.max_fail_count = m_config->GetDHTMaxFail();
+		m_libbtsession->set_dht_settings( DHTSettings );
+
+		if( wxFileExists( dhtstatefile ) )
+		{
+			wxLogInfo( _T( "Restoring previous DHT state \n" ) + dhtstatefile );
+			std::ifstream in( ( const char* )dhtstatefile.mb_str( wxConvFile ), std::ios_base::binary );
+			in.unsetf( std::ios_base::skipws );
+
+			try
+			{
+				dht_state = bdecode( std::istream_iterator<char>( in ), std::istream_iterator<char>() );
+			}
+			catch( std::exception& e )
+			{
+				wxLogWarning( _T( "Unable to restore dht state file %s - %s\n" ), dhtstatefile.c_str(), wxString::FromAscii( e.what() ).c_str() );
+			}
+		}
+		else
+		{
+			wxLogWarning( _T( "Previous DHT state not found \n" ) + dhtstatefile );
+		}
+	}
+
 	SetLogSeverity();
 	//Network settings
 	SetConnection();
@@ -685,7 +634,7 @@ bool BitTorrentSession::AddTorrent( shared_ptr<torrent_t>& torrent, bool async_a
 		return false;
 	}
 
-	return true;
+	return !async_add;
 }
 
 void BitTorrentSession::RemoveTorrent( shared_ptr<torrent_t>& torrent, bool deletedata )
@@ -1142,6 +1091,7 @@ shared_ptr<torrent_t> BitTorrentSession::LoadMagnetUri( MagnetUri& magneturi )
 		p.auto_managed = true;
 		// Forced start
 		p.flags &= ~libtorrent::add_torrent_params::flag_paused;
+		//p.flags |= add_torrent_params::flag_paused;
 		p.flags &= ~libtorrent::add_torrent_params::flag_auto_managed;
 		// Solution to avoid accidental file writes
 		p.flags |= libtorrent::add_torrent_params::flag_upload_mode;
@@ -1153,7 +1103,6 @@ shared_ptr<torrent_t> BitTorrentSession::LoadMagnetUri( MagnetUri& magneturi )
 		if(torrent->isvalid && !torrent->handle.has_metadata())
 		{
 			torrent->magneturi = magneturi.url();
-			m_torrent_handle_map.insert(std::pair<libtorrent::torrent_handle, shared_ptr<torrent_t> >(torrent->handle, torrent));
 		}
 	}
 	catch( std::exception &e )
@@ -1870,7 +1819,6 @@ void BitTorrentSession::GetTorrentLog()
 							wxString torrent_backup = wxGetApp().SaveTorrentsPath() + wxGetApp().PathSeparator() + torrent->hash + _T( ".torrent" );
 							torrent->handle = p->handle;
 							SaveTorrent(torrent, torrent_backup );
-							//m_torrent_handle_map.erase(it);
 							
 							if(torrent->config->GetTrackersURL().size() <= 0 )
 							{
