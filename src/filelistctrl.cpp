@@ -334,13 +334,10 @@ void FileListCtrl::OnLeftDClick(wxMouseEvent& event)
 				f_entry = torrentinfo.file_at( selectedfiles );
 				wxFileName filename = pTorrent->config->GetDownloadPath() + wxString::FromUTF8(f_entry.path.c_str());
 				filename.MakeAbsolute();
-#if  defined(__WXMSW__) 
-				wxExecute(_T("Explorer ")+filename.GetFullName(), wxEXEC_ASYNC, NULL); 
-#elif defined(__APPLE__)
-				wxExecute(_T("/usr/bin/open "+filename.GetFullName(), wxEXEC_ASYNC, NULL);
-#elif defined(__WXGTK__)
-				wxLaunchDefaultBrowser(_T("file://")+filename.GetFullName());
-#endif
+				if(wxFileName::FileExists(filename.GetFullName()))
+				{
+					wxLaunchDefaultApplication(filename.GetFullName()); 
+				}
 			}
 		}
 	}
