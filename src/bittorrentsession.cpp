@@ -111,9 +111,6 @@ void *BitTorrentSession::Entry()
 		{ break; }
 
 		wxThread::Sleep( 1000 );
-		m_libbtsession->post_torrent_updates();
-		m_libbtsession->post_session_stats();
-		m_libbtsession->post_dht_stats();
 		CheckQueueItem();
 	}
 
@@ -407,10 +404,14 @@ void BitTorrentSession::StartExtensions()
 	 * restart is needed
 	 */
 	if( m_config->GetEnableMetadata() )
-	{ m_libbtsession->add_extension( &libtorrent::create_ut_metadata_plugin ); }
+	{
+		m_libbtsession->add_extension( &libtorrent::create_ut_metadata_plugin );
+	}
 
 	if( m_config->GetEnablePex() )
-	{ m_libbtsession->add_extension( &libtorrent::create_ut_pex_plugin ); }
+	{
+		m_libbtsession->add_extension( &libtorrent::create_ut_pex_plugin );
+	}
 
 	m_libbtsession->add_extension( &libtorrent::create_smart_ban_plugin );
 }
@@ -1076,7 +1077,7 @@ shared_ptr<torrent_t> BitTorrentSession::LoadMagnetUri( MagnetUri& magneturi )
 
 	try
 	{
-		libtorrent::add_torrent_params& p = magneturi.addTorrentParams();
+		libtorrent::add_torrent_params p = magneturi.addTorrentParams();
 		libtorrent::error_code ec;
 		// Limits
 		//p.max_connections = maxConnectionsPerTorrent();
@@ -1090,8 +1091,8 @@ shared_ptr<torrent_t> BitTorrentSession::LoadMagnetUri( MagnetUri& magneturi )
 		p.duplicate_is_error = true;
 		p.auto_managed = true;
 		// Forced start
-		p.flags &= ~libtorrent::add_torrent_params::flag_paused;
-		//p.flags |= add_torrent_params::flag_paused;
+		//p.flags &= ~libtorrent::add_torrent_params::flag_paused;
+		p.flags |= add_torrent_params::flag_paused;
 		p.flags &= ~libtorrent::add_torrent_params::flag_auto_managed;
 		// Solution to avoid accidental file writes
 		p.flags |= libtorrent::add_torrent_params::flag_upload_mode;
@@ -1099,10 +1100,17 @@ shared_ptr<torrent_t> BitTorrentSession::LoadMagnetUri( MagnetUri& magneturi )
 		//torrent->handle = m_libbtsession->add_torrent(p, ec);
 		torrent->config->SetTorrentState( TORRENT_STATE_START );
 		torrent->handle.resolve_countries( true );
-		torrent->isvalid = AddTorrent( torrent, true );
+		//torrent->isvalid = AddTorrent( torrent, true );
 		if(torrent->isvalid && !torrent->handle.has_metadata())
 		{
 			torrent->magneturi = magneturi.url();
+		}
+
+		m_libbtsession->async_add_torrent( p );
+		{
+			wxMutexLocker ml( m_torrent_queue_lock );
+			m_torrent_queue.push_back( torrent );
+			m_torrent_map.insert( std::pair<wxString, int>( torrent->hash, m_torrent_queue.size() - 1 ) );
 		}
 	}
 	catch( std::exception &e )
@@ -1705,6 +1713,11 @@ void BitTorrentSession::GetTorrentLog()
 {
 	wxString event_string;
 	std::vector<alert*> alerts;
+	
+	m_libbtsession->post_torrent_updates();
+	m_libbtsession->post_session_stats();
+	m_libbtsession->post_dht_stats();
+
 	m_libbtsession->pop_alerts(&alerts);
 	//std::string now = timestamp();
 	for (std::vector<alert*>::iterator it = alerts.begin()
@@ -1715,96 +1728,125 @@ void BitTorrentSession::GetTorrentLog()
 			event_string.Empty();
 			switch ((*it)->type())
 			{
+				case add_torrent_alert::alert_type:
+					if( add_torrent_alert* p = dynamic_cast<add_torrent_alert*>( *it ) )
+					{
+						if (p->error)
+						{
+							event_string << _T("Couldn't add torrent: ") <<  (*it)->message();
+						}
+						else
+						{
+							std::stringstream hash_stream;
+							hash_stream << p->handle.info_hash();
+							wxString thash = wxString::FromAscii( hash_stream.str().c_str() );
+							torrents_map::iterator it = m_torrent_map.find(thash);
+							if(it != m_torrent_map.end())
+							{
+								shared_ptr<torrent_t>& torrent = m_torrent_queue[it->second];
+								wxString torrent_backup = wxGetApp().SaveTorrentsPath() + wxGetApp().PathSeparator() + torrent->hash + _T( ".torrent" );
+								torrent->handle = p->handle;
+							
+								/*if(torrent->config->GetTrackersURL().size() <= 0 )
+								{
+									std::vector<libtorrent::announce_entry> trackers = p->handle.trackers();
+									torrent->config->SetTrackersURL( trackers );
+								}*/
+								StartTorrent(torrent, false);
+							}
+						}
+					}
+					break;					
 				case torrent_finished_alert::alert_type:
 					if( torrent_finished_alert* p = dynamic_cast<torrent_finished_alert*>( *it ) )
 					{
 						event_string << p->handle.get_torrent_info().name() << _T( ": " ) << (*it)->message();
-						break;
 					}
+					break;
 				case peer_ban_alert::alert_type:
 					if( peer_ban_alert* p = dynamic_cast<peer_ban_alert*>( *it ) )
 					{
 						event_string << _T( "Peer: (" ) << p->ip.address().to_string() << _T( ")" ) << (*it)->message();
-						break;
 					}
+					break;
 				case peer_error_alert::alert_type:
 					if( peer_error_alert* p = dynamic_cast<peer_error_alert*>( *it ) )
 					{
 						event_string << _T( "Peer: " ) << identify_client( p->pid ) << _T( ": " ) << (*it)->message();
-						break;
 					}
+					break;
 				case peer_blocked_alert::alert_type:
 					if( peer_blocked_alert* p = dynamic_cast<peer_blocked_alert*>( *it ) )
 					{
 						event_string << _T( "Peer: (" ) << p->ip.to_string() << _T( ")" ) << (*it)->message();
-						break;
 					}
+					break;
 				case invalid_request_alert::alert_type:
 					if( invalid_request_alert* p = dynamic_cast<invalid_request_alert*>( *it ) )
 					{
 						event_string << identify_client( p->pid ) << _T( ": " ) << (*it)->message();
-						break;
 					}
+					break;
 				case tracker_warning_alert::alert_type:
 					if( tracker_warning_alert* p = dynamic_cast<tracker_warning_alert*>( *it ) )
 					{
 						event_string << _T( "Tracker: " ) << p->message();
-						break;
 					}
+					break;
 				case tracker_reply_alert::alert_type:
 					if( tracker_reply_alert* p = dynamic_cast<tracker_reply_alert*>( *it ) )
 					{
 						event_string << _T( "Tracker:" ) << p->message() << p->num_peers << _T( " number of peers " );
-						break;
 					}
+					break;
 				case url_seed_alert::alert_type:
 					if( url_seed_alert* p = dynamic_cast<url_seed_alert*>( *it ) )
 					{
 						event_string << _T( "Url seed '" ) << p->url << _T( "': " ) << p->message();
-						break;
 					}
+					break;
 				case listen_failed_alert::alert_type:
 					if( listen_failed_alert* p = dynamic_cast<listen_failed_alert*>( *it ) )
 					{
 						event_string << _T( "Listen failed: " ) << p->message();
-						break;
 					}
+					break;
 				case portmap_error_alert::alert_type:
 					if( portmap_error_alert* p = dynamic_cast<portmap_error_alert*>( *it ) )
 					{
 						event_string << _T( "Portmap error: " ) << p->message();
-						break;
 					}
+					break;
 				case portmap_alert::alert_type:
 					if( portmap_alert* p = dynamic_cast<portmap_alert*>( *it ) )
 					{
 						event_string << _T( "Portmap: " ) << p->message();
-						break;
 					}
+					break;
 				case tracker_announce_alert::alert_type:
 					if( tracker_announce_alert* p = dynamic_cast<tracker_announce_alert*>( *it ) )
 					{
 						event_string << _T( "Tracker: " ) << p->message();
-						break;
 					}
+					break;
 				case file_error_alert::alert_type:
 					if( file_error_alert* p = dynamic_cast<file_error_alert*>( *it ) )
 					{
 						event_string << _T( "File error: " ) << p->message();
-						break;
 					}
+					break;
 				case hash_failed_alert::alert_type:
 					if( hash_failed_alert* p = dynamic_cast<hash_failed_alert*>( *it ) )
 					{
 						event_string << _T( "Hash: " ) << p->message();
-						break;
 					}
+					break;
 				case metadata_failed_alert::alert_type:
 					if( metadata_failed_alert* p = dynamic_cast<metadata_failed_alert*>( *it ) )
 					{
 						event_string << _T( "Metadata: " ) << p->message();
-						break;
 					}
+					break;
 				case metadata_received_alert::alert_type:
 					if( metadata_received_alert* p = dynamic_cast<metadata_received_alert*>( *it ) )
 					{
@@ -1827,14 +1869,14 @@ void BitTorrentSession::GetTorrentLog()
 							}
 							StartTorrent(torrent, false);
 						}
-						break;
 					}
+					break;
 				case fastresume_rejected_alert::alert_type:
 					if( fastresume_rejected_alert* p = dynamic_cast<fastresume_rejected_alert*>( *it ) )
 					{
 						event_string << _T( "Fastresume: " ) << p->message();
-						break;
 					}
+					break;
 				case save_resume_data_alert::alert_type:
 					if( save_resume_data_alert *p = dynamic_cast<save_resume_data_alert*>( *it ) )
 					{
@@ -1854,12 +1896,13 @@ void BitTorrentSession::GetTorrentLog()
 
 						event_string << h.name() << _T( ": " ) << p->message();
 					}
+					break;
 				default:
 					{
-						event_string << (*it)->message();
+						event_string << _T("[") << (*it)->type() << _T("]") << (*it)->message();
 						if(event_string.IsEmpty()) return;
-						break;
 					}
+					break;
 			}
 			//XXX include more alert from latest libtorrent
 			//
