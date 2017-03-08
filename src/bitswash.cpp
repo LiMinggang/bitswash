@@ -287,11 +287,7 @@ bool BitSwash::OnInit()
 
 	m_btsession->Run();
 
-	if(wxCOND_NO_ERROR != m_condition->WaitTimeout(5000))
-	{
-		wxLogError( _T( "Error running bit torrent session thread\n" ) );
-		exit( -1 );
-	}
+	m_condition->WaitTimeout(5000);
 
 	//XXX shows some splash
 	//while( !m_btinitdone || ( initcountdown-- > 0 ) )
