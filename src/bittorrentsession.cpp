@@ -489,7 +489,7 @@ void BitTorrentSession::StartNatpmp()
 void BitTorrentSession::AddTorrentSession( shared_ptr<torrent_t>& torrent )
 {
 	torrent_handle &handle = torrent->handle;
-	shared_ptr<torrent_info> t = torrent->info;
+	shared_ptr<const torrent_info> t = torrent->info;
 	wxLogDebug( _T( "AddTorrent %s into session" ), torrent->name.c_str() );
 	wxString fastresumefile = wxGetApp().SaveTorrentsPath() + wxGetApp().PathSeparator() + torrent->hash + _T( ".fastresume" );
 	entry resume_data;
