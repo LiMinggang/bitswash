@@ -639,7 +639,7 @@ bool BitTorrentSession::AddTorrent( shared_ptr<torrent_t>& torrent, bool async_a
 		{
 			wxMutexLocker ml( m_torrent_queue_lock );
 			m_torrent_queue.push_back( torrent );
-			m_torrent_map.insert( std::pair<wxString, int>( torrent->hash, m_torrent_queue.size() - 1 ) );
+			m_torrent_map.insert( std::pair<wxString, int>( torrent->hash, (int)(m_torrent_queue.size() - 1 )) );
 		}
 
 		if( state == TORRENT_STATE_FORCE_START || state == TORRENT_STATE_START )
