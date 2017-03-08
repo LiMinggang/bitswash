@@ -156,17 +156,6 @@ void BitTorrentSession::OnExit()
 
 void BitTorrentSession::Configure(libtorrent::settings_pack &settingsPack)
 {
-	// Set severity level of libtorrent session
-	int alertMask = libtorrent::alert::error_notification
-		| libtorrent::alert::peer_notification
-		| libtorrent::alert::port_mapping_notification
-		| libtorrent::alert::storage_notification
-		| libtorrent::alert::tracker_notification
-		| libtorrent::alert::status_notification
-		| libtorrent::alert::ip_block_notification
-		| libtorrent::alert::progress_notification
-		| libtorrent::alert::stats_notification;
-
 	std::string peerId = libtorrent::generate_fingerprint(PEER_ID, BITSWASH_FINGERPRINT_VERSION);
 	settingsPack.set_str( libtorrent::settings_pack::user_agent, wxGetApp().UserAgent().ToStdString( ));
 
@@ -292,6 +281,29 @@ void BitTorrentSession::Configure(libtorrent::settings_pack &settingsPack)
     settingsPack.set_int(libtorrent::settings_pack::active_dht_limit, -1);
     settingsPack.set_int(libtorrent::settings_pack::active_lsd_limit, -1);
 
+	// Set severity level of libtorrent session
+    int alertMask = libtorrent::alert::error_notification
+                    | libtorrent::alert::peer_notification
+                    | libtorrent::alert::port_mapping_notification
+                    | libtorrent::alert::storage_notification
+                    | libtorrent::alert::tracker_notification
+                    | libtorrent::alert::status_notification
+                    | libtorrent::alert::ip_block_notification
+                    | libtorrent::alert::progress_notification
+                    | libtorrent::alert::stats_notification
+                    ;
+#if 0
+	int alertMask = libtorrent::alert::all_categories
+				& ~(libtorrent::alert::dht_notification
+				+ libtorrent::alert::progress_notification
+				+ libtorrent::alert::stats_notification
+				+ libtorrent::alert::session_log_notification
+				+ libtorrent::alert::torrent_log_notification
+				+ libtorrent::alert::peer_log_notification
+				+ libtorrent::alert::dht_log_notification
+				+ libtorrent::alert::picker_log_notification
+				);
+#endif
 	settingsPack.set_int(libtorrent::settings_pack::alert_mask, alertMask);
 	settingsPack.set_str(libtorrent::settings_pack::peer_fingerprint, peerId);
 	settingsPack.set_bool(libtorrent::settings_pack::listen_system_port_fallback, false);
@@ -369,7 +381,7 @@ void BitTorrentSession::ConfigureSession()
 void BitTorrentSession::SetLogSeverity()
 {
 	wxASSERT( m_libbtsession != NULL );
-	m_libbtsession->set_severity_level( ( alert::severity_t )m_config->GetLogSeverity() );
+	m_libbtsession->set_severity_level( ( libtorrent::alert::severity_t )m_config->GetLogSeverity() );
 }
 
 void BitTorrentSession::SetConnection()
@@ -1714,9 +1726,9 @@ void BitTorrentSession::GetTorrentLog()
 	wxString event_string;
 	std::vector<alert*> alerts;
 	
-	m_libbtsession->post_torrent_updates();
-	m_libbtsession->post_session_stats();
-	m_libbtsession->post_dht_stats();
+	//m_libbtsession->post_torrent_updates();
+	//m_libbtsession->post_session_stats();
+	//m_libbtsession->post_dht_stats();
 
 	m_libbtsession->pop_alerts(&alerts);
 	//std::string now = timestamp();

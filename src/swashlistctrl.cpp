@@ -746,7 +746,7 @@ void SwashListCtrl::UpdateSwashList()
 SwashListCtrl::itemlist_t SwashListCtrl::GetSelectedItems() const
 {
 	itemlist_t selecteditems;
-	wxLogDebug( _T( "SwashListCtrl: Selected items %d\n" ), GetSelectedItemCount() );
+	//wxLogDebug( _T( "SwashListCtrl: Selected items %d\n" ), GetSelectedItemCount() );
 
 	if( GetSelectedItemCount() <= 0 )
 	{ return selecteditems; }
