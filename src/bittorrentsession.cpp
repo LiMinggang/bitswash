@@ -125,6 +125,7 @@ void *BitTorrentSession::Entry()
 	return NULL;
 }
 
+typedef boost::function<void()> notify_func_t;
 void BitTorrentSession::OnExit()
 {
 	//XXX have 1 soon
@@ -153,6 +154,7 @@ void BitTorrentSession::OnExit()
 	SaveAllTorrent();
 	std::deque<alert*> alerts;
 	m_libbtsession->pop_alerts( &alerts );
+	m_libbtsession->set_alert_notify(notify_func_t());
 	delete m_libbtsession;
 	{
 		wxMutexLocker ml( m_torrent_queue_lock );
