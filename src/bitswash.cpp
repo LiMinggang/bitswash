@@ -132,6 +132,7 @@ bool BitSwash::OnInit()
 	m_locale = 0;
 	m_SigleAppChecker = 0;
 	m_AppServer = 0;
+	m_condition = 0;
 #ifdef USE_LIBGEOIP
 	m_geoip = 0;
 #endif
@@ -275,16 +276,26 @@ bool BitSwash::OnInit()
 	LoadIcons();
 	LoadFlags();
 	LoadSettingIcons();
-	m_btsession = new BitTorrentSession( this, m_config );
+	m_condition = new wxCondition(m_mutex);
+	m_mutex.Lock();
+	m_btsession = new BitTorrentSession( this, m_config, &m_mutex, m_condition );
 	if( m_btsession->Create() != wxTHREAD_NO_ERROR )
 	{
 		wxLogError( _T( "Error creating bit torrent session thread\n" ) );
 		exit( -1 );
 	}
+
 	m_btsession->Run();
+
+	if(wxCOND_NO_ERROR != m_condition->WaitTimeout(5000))
+	{
+		wxLogError( _T( "Error running bit torrent session thread\n" ) );
+		exit( -1 );
+	}
+
 	//XXX shows some splash
-	while( !m_btinitdone || ( initcountdown-- > 0 ) )
-		wxSleep( 1 );
+	//while( !m_btinitdone || ( initcountdown-- > 0 ) )
+	//	wxSleep( 1 );
 	g_BitSwashMainFrame = new MainFrame( 0L, APPNAME );
 	if(!( m_config->GetUseSystray() && m_config->GetHideTaskbar() ))
 	{
@@ -332,6 +343,7 @@ int BitSwash::OnExit()
 #ifdef USE_LIBGEOIP
 	if(m_geoip) GeoIP_delete(m_geoip);
 #endif
+	if(m_condition) delete m_condition;
 	return 0;
 }
 

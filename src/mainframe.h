@@ -61,6 +61,7 @@
 class TorrentInfo;
 class SummaryPane;
 class TorrentProperty;
+#define MAX_LOG_LINES 10000
 
 class MainFrame: public wxFrame
 {
@@ -215,7 +216,6 @@ private:
 	wxLog* m_oldlog;
 
 	void OnRefreshTimer( wxTimerEvent& WXUNUSED( event ) );
-	void GetTorrentLog();
 
 	wxTimer m_refreshtimer;
 

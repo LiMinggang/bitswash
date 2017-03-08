@@ -75,11 +75,13 @@ struct BTQueueSortDsc
 
 using namespace libtorrent;
 
-BitTorrentSession::BitTorrentSession( wxApp* pParent, Configuration* config )
+BitTorrentSession::BitTorrentSession( wxApp* pParent, Configuration* config, wxMutex *mutex/* = 0*/, wxCondition *condition/* = 0*/ )
 	: wxThread( wxTHREAD_JOINABLE ), m_upnp_started( false ), m_natpmp_started( false ), m_lsd_started( false ), m_libbtsession( 0 )
 {
 	m_pParent = pParent;
 	m_config = config;
+	m_condition = condition;
+    m_mutex = mutex;
 	//boost::filesystem::path::default_name_check(boost::filesystem::no_check);
 }
 
@@ -91,18 +93,23 @@ static const char PEER_ID[] = "SW";
 
 void *BitTorrentSession::Entry()
 {
-	session_settings btsetting;
 	wxLogDebug( _T( "BitTorrentSession Thread Entry pid 0x%lx priority %u.\n" ), GetId(), GetPriority() );
 	
 	libtorrent::settings_pack pack;
 
     Configure(pack);
     m_libbtsession = new libtorrent::session(pack, 0);
-	wxASSERT(m_libbtsession != 0);
+	m_libbtsession->set_alert_notify(boost::bind(&BitTorrentSession::HandleTorrentAlert, this));
 
 	ConfigureSession();
 	ScanTorrentsDirectory( wxGetApp().SaveTorrentsPath() );
-	( ( BitSwash* )m_pParent )->BTInitDone();
+
+	if(m_mutex != 0 && m_condition != 0)
+	{
+		wxMutexLocker lock(*m_mutex); 
+		m_condition->Broadcast(); // same as Signal() here -- one waiter only
+	}
+	//( ( BitSwash* )m_pParent )->BTInitDone();
 
 	while( 1 )
 	{
@@ -1723,11 +1730,11 @@ void BitTorrentSession::CheckQueueItem()
 	}
 }
 
-void BitTorrentSession::GetTorrentLog()
+void BitTorrentSession::HandleTorrentAlert()
 {
 	wxString event_string;
 	std::vector<alert*> alerts;
-	
+
 	//m_libbtsession->post_torrent_updates();
 	//m_libbtsession->post_session_stats();
 	//m_libbtsession->post_dht_stats();
@@ -1926,11 +1933,7 @@ void BitTorrentSession::GetTorrentLog()
 			//
 			event_string << _T( '\0' );
 
-			if( (*it)->severity() == alert::fatal )
-			{
-				wxLogError( _T("%s"), event_string.c_str() );
-			}
-			else if( (*it)->severity() == alert::critical )
+			if(( (*it)->severity() == alert::fatal ) || ((*it)->severity() == alert::critical))
 			{
 				wxLogError( _T("%s"), event_string.c_str() );
 			}
@@ -1942,10 +1945,10 @@ void BitTorrentSession::GetTorrentLog()
 			{
 				wxLogInfo( _T("%s"), event_string.c_str() );
 			}
-			else if( (*it)->severity() == alert::debug )
+			/*else if( (*it)->severity() == alert::debug )
 			{
 				wxLogDebug( _T("%s"), event_string.c_str() );
-			}
+			}*/
 			else
 			{
 				wxLogDebug( _T("%s"), event_string.c_str() );
@@ -1953,9 +1956,8 @@ void BitTorrentSession::GetTorrentLog()
 		}
 		TORRENT_CATCH(std::exception& e)
 		{
-			wxLogError( _T( "%s\n" ), e.what() );
+			wxLogError( _T( "Exception: %s\n" ), e.what() );
 		}
 	}
-	//alerts.clear();
 }
 

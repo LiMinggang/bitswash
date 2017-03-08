@@ -806,7 +806,7 @@ void MainFrame::OnMenuOpenTorrentUrl( wxCommandEvent& WXUNUSED( event ) )
 
 void MainFrame::OnRefreshTimer( wxTimerEvent& WXUNUSED( event ) )
 {
-	GetTorrentLog();
+	//GetTorrentLog();
 	UpdateUI();
 }
 
@@ -902,6 +902,9 @@ void MainFrame::UpdateUI(bool force/* = false*/)
 	{
 		UpdateTrayInfo();
 	}
+
+	LoggerCtrl* logger = m_torrentinfo->GetLogger();
+	if(MAX_LOG_LINES <= logger->GetNumberOfLogLines()) logger->ClearLog();
 }
 
 void MainFrame::UpdateSelectedTorrent()
@@ -1610,12 +1613,6 @@ void MainFrame::SetLogSeverity()
 
 	m_btsession->SetLogSeverity();
 	//  s->set_severity_level((libtorrent::alert::severity_t)m_config->GetLogSeverity());
-}
-
-
-void MainFrame::GetTorrentLog()
-{
-	m_btsession->GetTorrentLog();
 }
 
 void MainFrame::OnUpdateOptionLanguage( wxUpdateUIEvent& event )

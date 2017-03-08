@@ -67,7 +67,7 @@ typedef std::map<wxString, int> torrents_map;
 class BitTorrentSession : public wxThread
 {
 public:
-	BitTorrentSession(wxApp* pParent, Configuration* config);
+	BitTorrentSession(wxApp* pParent, Configuration* config, wxMutex *mutex = 0, wxCondition *condition = 0);
 	~BitTorrentSession();
 
 	virtual void *Entry();
@@ -122,7 +122,7 @@ public:
 
 	libtorrent::session* GetLibTorrent() { return m_libbtsession;}
 
-	void GetTorrentLog();
+	void HandleTorrentAlert();
 
 private:
 
@@ -146,6 +146,8 @@ private:
 	wxApp* m_pParent;
 	Configuration* m_config;
 	libtorrent::session* m_libbtsession;
+    wxCondition *m_condition;
+    wxMutex *m_mutex;
 };
 
 #endif // _BITTORRENTSESSION_H_

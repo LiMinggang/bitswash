@@ -182,6 +182,8 @@ private:
 #ifdef USE_LIBGEOIP
     GeoIP *m_geoip;
 #endif
+    wxMutex m_mutex;
+    wxCondition *m_condition;
 };
 
 DECLARE_APP(BitSwash)

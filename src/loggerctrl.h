@@ -54,6 +54,8 @@ class LoggerCtrl: public wxPanel, wxLog
 		~LoggerCtrl();
 
 		wxTextCtrl* GetLoggerTextCtrl() { return m_log_text; }
+		void ClearLog() {m_log_text->Clear();}
+        int GetNumberOfLogLines() {return m_log_text->GetNumberOfLines();}
 		void Update();
 
 	private:
