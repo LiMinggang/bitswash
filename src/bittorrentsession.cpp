@@ -1880,6 +1880,9 @@ void BitTorrentSession::HandleTorrentAlert()
 							shared_ptr<torrent_t>& torrent = m_torrent_queue[it->second];
 							wxString torrent_backup = wxGetApp().SaveTorrentsPath() + wxGetApp().PathSeparator() + torrent->hash + _T( ".torrent" );
 							torrent->handle = p->handle;
+							torrent->info = p->handle.torrent_file();
+							torrent_status st = p->handle.status(torrent_handle::query_name);
+							torrent->name = st.name;
 							SaveTorrent(torrent, torrent_backup );
 							
 							if(torrent->config->GetTrackersURL().size() <= 0 )
