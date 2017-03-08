@@ -74,7 +74,7 @@ TorrentInfo::TorrentInfo(wxWindow *parent,
     	InsertPage(BW_TORRENTINFO_LOGGER, m_logger_panel, _("Log") );
 
 
-		//wxLogMessage(_T("Page count %d\n"), GetPageCount());
+		//wxLogMessage(_T("Page count %d"), GetPageCount());
 				
 
 

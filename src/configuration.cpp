@@ -344,7 +344,7 @@ void Configuration::ReadSavePath()
 	}
 	else
 	{
-		wxLogError( _T( "Failed opening download path history file %s\n" ), historypathfile.c_str() );
+		wxLogError( _T( "Failed opening download path history file %s" ), historypathfile.c_str() );
 	}
 }
 
@@ -356,14 +356,14 @@ void Configuration::WriteSavePath()
 	{
 		if( !history_f->Open() )
 		{
-			wxLogError( _T( "Failed opening %n for writing\n" ), historypathfile.c_str() );
+			wxLogError( _T( "Failed opening %n for writing" ), historypathfile.c_str() );
 		}
 	}
 	else
 	{
 		if( !history_f->Create() )
 		{
-			wxLogError( _T( "Failed creating %n for writing\n" ), historypathfile.c_str() );
+			wxLogError( _T( "Failed creating %n for writing" ), historypathfile.c_str() );
 		}
 	}
 	if( history_f->IsOpened() )
@@ -376,7 +376,7 @@ void Configuration::WriteSavePath()
 		}
 		if( !history_f->Write() )
 		{
-			wxLogError( _T( "Error writing into file %s\n" ), historypathfile.c_str() );
+			wxLogError( _T( "Error writing into file %s" ), historypathfile.c_str() );
 		}
 	}
 }

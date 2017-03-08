@@ -79,7 +79,7 @@ SwashListCtrl::SwashListCtrl( wxWindow *parent,
 #ifdef __POCKETPC__
 	EnableContextMenu();
 #endif
-	wxLogDebug( _T( "SwashListCtrl creator, setting %s\n" ), settings.c_str() );
+	wxLogDebug( _T( "SwashListCtrl creator, setting %s" ), settings.c_str() );
 	m_settings = settings;
 	/* XXX initialize list column based on array */
 	Init( num_cols, columns );
@@ -99,7 +99,7 @@ void SwashListCtrl::Init( long num_cols, SwashColumnItem *columns )
 		while( settings_token.HasMoreTokens() )
 		{
 			wxString list_setting = settings_token.GetNextToken();
-			//wxLogDebug(_T("SwashListCtrl: Parsing %s\n"), list_setting.c_str());
+			//wxLogDebug(_T("SwashListCtrl: Parsing %s"), list_setting.c_str());
 			wxStringTokenizer col_setting( list_setting, _T( ":" ), wxTOKEN_RET_EMPTY_ALL );
 			wxString col_name = col_setting.GetNextToken();
 			long col_width;
@@ -114,7 +114,7 @@ void SwashListCtrl::Init( long num_cols, SwashColumnItem *columns )
 			{
 				if( wxGetTranslation( columns[i].name ) == col_name )
 				{
-					//wxLogDebug(_T("SwashListCtrl: Init col id %d name %s title %s width %d sort %s\n"), columns[i].id, columns[i].name.c_str(), columns[i].title.c_str(), col_width, col_sort.c_str());
+					//wxLogDebug(_T("SwashListCtrl: Init col id %d name %s title %s width %d sort %s"), columns[i].id, columns[i].name.c_str(), columns[i].title.c_str(), col_width, col_sort.c_str());
 					columns[i].width = col_width;
 
 					if( col_show == _T( "true" ) )
@@ -141,7 +141,7 @@ long SwashListCtrl::ColumnId( long column ) const
 
 	for( i = 0; i < m_numberofcolumns; i++ )
 	{
-		//wxLogMessage(_T("colname %s - title %s\n"), colname.c_str(), m_columns[i].title.c_str());
+		//wxLogMessage(_T("colname %s - title %s"), colname.c_str(), m_columns[i].title.c_str());
 		if( ( m_columns[i].show ) && ( m_columns[i].column == column ) )
 		{ return i; }
 	}
@@ -205,7 +205,7 @@ bool SwashListCtrl::Create( wxWindow* parent, wxWindowID id, const wxPoint& pos,
 			listitem.SetText( wxGetTranslation( m_columns[i].title ) );
 			listitem.SetId( m_columns[i].id );
 			InsertColumn( j, listitem );
-			wxLogDebug( _T( "Insert column %d name %s id %d\n" ), j, listitem.GetText(), listitem.GetId() );
+			wxLogDebug( _T( "Insert column %d name %s id %d" ), j, listitem.GetText(), listitem.GetId() );
 			m_columns[i].column = j;
 
 			if( m_columns[i].width )
@@ -226,14 +226,14 @@ bool SwashListCtrl::Create( wxWindow* parent, wxWindowID id, const wxPoint& pos,
 
 SwashListCtrl::~SwashListCtrl()
 {
-	wxLogDebug( _T( "SwashListCtrl::Destructor\n" ) );
+	wxLogDebug( _T( "SwashListCtrl::Destructor" ) );
 }
 
 void SwashListCtrl::OnCacheHint( wxListEvent& event )
 {
 	m_showfrom = event.GetCacheFrom();
 	m_showto  = event.GetCacheTo();
-	wxLogDebug( _T( "SwashListCtrl::OnCacheHint %d-%d\n" ), m_showfrom, m_showto );
+	wxLogDebug( _T( "SwashListCtrl::OnCacheHint %d-%d" ), m_showfrom, m_showto );
 }
 
 void SwashListCtrl::SetColumnImage( int col, int image )
@@ -260,7 +260,7 @@ void SwashListCtrl::OnColumnSelected( wxCommandEvent& event )
 	long insert = 0;
 	int i;
 	colnum = event.GetId() - SWASHLIST_POPUP_START;
-	wxLogDebug( _T( "Command colnum %d start %d id %d (%d) %s\n" ), colnum, SWASHLIST_POPUP_START, event.GetId(), ( event.GetId() - SWASHLIST_POPUP_START ), ( event.IsChecked() ? _T( "checked" ) : _T( "uncheck" ) ) );
+	wxLogDebug( _T( "Command colnum %d start %d id %d (%d) %s" ), colnum, SWASHLIST_POPUP_START, event.GetId(), ( event.GetId() - SWASHLIST_POPUP_START ), ( event.IsChecked() ? _T( "checked" ) : _T( "uncheck" ) ) );
 
 	if( event.IsChecked() )
 	{
@@ -292,7 +292,7 @@ void SwashListCtrl::OnColumnSelected( wxCommandEvent& event )
 						{ insert = j; }
 					}
 
-					wxLogDebug( _T( "Insert before %s %d\n" ), m_columns[i].name.c_str(), insert );
+					wxLogDebug( _T( "Insert before %s %d" ), m_columns[i].name.c_str(), insert );
 					break;
 				}
 			}
@@ -314,7 +314,7 @@ void SwashListCtrl::OnColumnSelected( wxCommandEvent& event )
 				m_columns[i].column++;
 			}
 		}
-		wxLogDebug( _T( "Insert column %s in position %d\n" ), listitem.GetText().c_str(), insert );
+		wxLogDebug( _T( "Insert column %s in position %d" ), listitem.GetText().c_str(), insert );
 		InsertColumn( insert, listitem );
 
 		if( m_columns[colnum].width )
@@ -668,7 +668,7 @@ wxString SwashListCtrl::OnGetItemText( long item, long column ) const
 	long index_item = item;
 	wxListItem listitem;
 	//  pThis->GetColumn(column, listitem);
-	//wxLogDebug(_T("OnGetItemText: Item %d column %d listitem %s ColumnCount %d id %d\n"), item, column, listitem.GetText().c_str(), pThis->GetColumnCount(), listitem.GetId());
+	//wxLogDebug(_T("OnGetItemText: Item %d column %d listitem %s ColumnCount %d id %d"), item, column, listitem.GetText().c_str(), pThis->GetColumnCount(), listitem.GetId());
 	return GetItemValue( item, ColumnId( column ) );
 }
 
@@ -687,7 +687,7 @@ int SwashListCtrl::OnGetItemColumnImage( long item, long column ) const
 	long index_item = item;
 	wxListItem listitem;
 	GetColumn( column, listitem );
-	//wxLogDebug(_T("OnGetItemText: Item %d column %d\n"), item, column);
+	//wxLogDebug(_T("OnGetItemText: Item %d column %d"), item, column);
 	return GetItemColumnImage( item, ColumnId( column ) );
 }
 
@@ -724,7 +724,7 @@ void SwashListCtrl::OnContextMenu( wxContextMenuEvent& event )
 
 void SwashListCtrl::ShowContextMenu( const wxPoint& pos )
 {
-	wxLogDebug( _T( "SwashListCtrl: ShowContextMenu (%d, %d)\n" ), pos.x, pos.y );
+	wxLogDebug( _T( "SwashListCtrl: ShowContextMenu (%d, %d)" ), pos.x, pos.y );
 }
 
 void SwashListCtrl::UpdateSwashList()
@@ -735,7 +735,7 @@ void SwashListCtrl::UpdateSwashList()
 	{ return ; }
 
 	m_showto = ( m_showto >= GetItemCount() ) ? ( GetItemCount() - 1 ) : m_showto;
-	wxLogDebug( _T( "UpdateSwashList %d - %d\n" ), m_showfrom, m_showto );
+	wxLogDebug( _T( "UpdateSwashList %d - %d" ), m_showfrom, m_showto );
 
 	if( m_showfrom > m_showto )
 	{ m_showfrom = m_showto; }
@@ -746,7 +746,7 @@ void SwashListCtrl::UpdateSwashList()
 SwashListCtrl::itemlist_t SwashListCtrl::GetSelectedItems() const
 {
 	itemlist_t selecteditems;
-	//wxLogDebug( _T( "SwashListCtrl: Selected items %d\n" ), GetSelectedItemCount() );
+	//wxLogDebug( _T( "SwashListCtrl: Selected items %d" ), GetSelectedItemCount() );
 
 	if( GetSelectedItemCount() <= 0 )
 	{ return selecteditems; }

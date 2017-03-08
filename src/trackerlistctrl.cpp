@@ -90,7 +90,7 @@ wxString TrackerListCtrl::GetItemValue(long item, long columnid) const
 
 	wxString ret;
 
-	wxLogDebug(_T("TrackerListCtrl column %ld of item %ld\n"), columnid, item);
+	wxLogDebug(_T("TrackerListCtrl column %ld of item %ld"), columnid, item);
 	shared_ptr<torrent_t> pTorrent;
 	
 	if (m_pTorrent)
@@ -202,7 +202,7 @@ void TrackerListCtrl::OnMenuEdit(wxCommandEvent& event)
 
  	libtorrent::torrent_info const& t_info = *(pTorrent->info);
 
-	wxLogDebug(_T("edit tracker no %d, cmd %d\n"), item, cmd);
+	wxLogDebug(_T("edit tracker no %d, cmd %d"), item, cmd);
 
 	std::vector<libtorrent::announce_entry>& trackers = pTorrent->config->GetTrackersURL();
 
@@ -223,7 +223,7 @@ void TrackerListCtrl::OnMenuEdit(wxCommandEvent& event)
 				libtorrent::announce_entry e(newtrackerurl_cstr);
 				e.tier = (trackers.size() * 10);
 				trackers.push_back(e);
-				wxLogDebug(_T("Add new tracker %s tier %d, trackers.size %d\n"), newtrackerurl.c_str(), e.tier , trackers.size()) ;
+				wxLogDebug(_T("Add new tracker %s tier %d, trackers.size %d"), newtrackerurl.c_str(), e.tier , trackers.size()) ;
 				
 				//pTorrent->config->SetTrackersURL(trackers);
 				pTorrent->config->Save();
@@ -276,7 +276,7 @@ void TrackerListCtrl::OnMenuEdit(wxCommandEvent& event)
 			std::vector<libtorrent::announce_entry>::iterator tracker_it = trackers.begin() + item;
 
 			wxMessageDialog dialogConfirm(NULL, 
-							_("Confirm remove tracker ") + wxString::FromAscii(tracker_it->url.c_str()) + _T("?"), 
+							_("Remove tracker ") + wxString::FromAscii(tracker_it->url.c_str()) + _T("?"), 
 							_("Confirm remove tracker"), 
 							wxNO_DEFAULT | wxYES_NO| wxICON_QUESTION);
 

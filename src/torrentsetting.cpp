@@ -307,7 +307,7 @@ int TorrentSettingPane::GetRatio()
 
 void TorrentSettingPane::OnFileButton(wxCommandEvent& event)
 {
-	wxLogDebug(_T("OnFileButton\n"));
+	wxLogDebug(_T("OnFileButton"));
 
 #if WXVER >= 280
 	long dirstyle = wxDD_DEFAULT_STYLE| wxDD_DIR_MUST_EXIST |wxDD_CHANGE_DIR;
@@ -320,7 +320,7 @@ void TorrentSettingPane::OnFileButton(wxCommandEvent& event)
 	if (dir_dlg.ShowModal() == wxID_OK) 
 	{
 		wxString newpath = dir_dlg.GetPath();
-		wxLogDebug(_T("DirDlg return %s\n"), newpath.c_str());
+		wxLogDebug(_T("DirDlg return %s"), newpath.c_str());
 		m_combo_saveas->SetValue(newpath);	
 	}
 	event.Skip();

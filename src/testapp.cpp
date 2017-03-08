@@ -50,7 +50,7 @@ bool TestApp::OnInit()
 int TestApp::OnExit() 
 {
 	
-	//wxLogDebug(_T("TestApp OnExit\n"));
+	//wxLogDebug(_T("TestApp OnExit"));
 
 	//delete m_tlist;
 	//delete wxLog::SetActiveTarget(oldlog);

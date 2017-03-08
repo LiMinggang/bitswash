@@ -55,7 +55,7 @@ typedef struct torrent_handle_t {
 	wxString hash;
     wxString magneturi;
 	libtorrent::torrent_handle handle;
-	shared_ptr<libtorrent::torrent_info> info;
+	shared_ptr<const libtorrent::torrent_info> info;
 	shared_ptr<TorrentConfig> config;
 	bool isvalid;
 } torrent_t ;
@@ -82,8 +82,9 @@ public:
 	void StartUpnp();
 	void StartNatpmp();
 	
-	void AddTorrentSession(shared_ptr<torrent_t>& torrent, bool async_add = false);
-	bool AddTorrent(shared_ptr<torrent_t>& torrent, bool async_add = false);
+	void AddTorrentSession(shared_ptr<torrent_t>& torrent);
+	bool AddTorrent(shared_ptr<torrent_t>& torrent);
+	bool HandleAddTorrentAlert(libtorrent::add_torrent_alert *p);
 	void RemoveTorrent(shared_ptr<torrent_t>& torrent, bool deletedata);
 	shared_ptr<torrent_t> FindTorrent(const wxString &hash) const;
 	shared_ptr<torrent_t> GetTorrent(int idx) const;

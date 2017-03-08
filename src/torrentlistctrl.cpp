@@ -108,11 +108,11 @@ wxString TorrentListCtrl::GetItemValue( long item, long columnid ) const
 
 	if( torrentlistitems == NULL )
 	{
-		wxLogError( _T( "TorrentListCtrl: Couldn't retrieve torrent queue\n" ) );
+		wxLogError( _T( "TorrentListCtrl: Couldn't retrieve torrent queue" ) );
 		return _T( "" );
 	}
 
-	//wxLogDebug(_T("TorrentListCtrl::Showing %d items column %d\n"), torrentlistitems->size(), columnid);
+	//wxLogDebug(_T("TorrentListCtrl::Showing %d items column %d"), torrentlistitems->size(), columnid);
 	shared_ptr<torrent_t> torrent = torrentlistitems->at( item );
 	stats_t& torrentstats = torrent->config->GetTorrentStats();
 	libtorrent::torrent_handle &torrenthandle = torrent->handle;
@@ -232,7 +232,7 @@ wxString TorrentListCtrl::GetItemValue( long item, long columnid ) const
 				secleft =  byteleft / downloadrate;
 			}
 
-			//wxLogDebug(_T("XXX byteleft %ld, secleft %ld\n"), secleft);
+			//wxLogDebug(_T("XXX byteleft %ld, secleft %ld"), secleft);
 			if( secleft > 360000 ) //approx 99:99:99 ??
 			{
 				ret = _T( "99:99:99" );

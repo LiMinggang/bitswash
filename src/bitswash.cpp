@@ -250,7 +250,7 @@ bool BitSwash::OnInit()
 	wxSocketClient client;
 	if( client.Connect( remote, false ) ) client.GetLocal( local );
 	wxString ipAddr = local.IPAddress();
-	wxLogDebug( _T( "Local ip %s\n" ), ipAddr.c_str() );
+	wxLogDebug( _T( "Local ip %s" ), ipAddr.c_str() );
 	m_config->m_local_ip = local;
 	/* end workaround */
 	SetLogLevel();
@@ -281,7 +281,7 @@ bool BitSwash::OnInit()
 	m_btsession = new BitTorrentSession( this, m_config, &m_mutex, m_condition );
 	if( m_btsession->Create() != wxTHREAD_NO_ERROR )
 	{
-		wxLogError( _T( "Error creating bit torrent session thread\n" ) );
+		wxLogError( _T( "Error creating bit torrent session thread" ) );
 		exit( -1 );
 	}
 
@@ -310,15 +310,15 @@ int BitSwash::OnExit()
 {
 #if 0
 	int i;
-	wxLogDebug( _T( "BitSwash OnExit\n" ) );
+	wxLogDebug( _T( "BitSwash OnExit" ) );
 	// kill bittorrent session
 	//XXX lock
 #endif
-	wxLogDebug( _T( "Awaiting BitTorrent session exit ...\n" ) );
+	wxLogDebug( _T( "Awaiting BitTorrent session exit ..." ) );
 	if( m_btsession->IsAlive() )
 	{
 		m_btsession->Delete();
-		wxLogDebug( _T( "BitTorrent session exited with code %ld\n" ),
+		wxLogDebug( _T( "BitTorrent session exited with code %ld" ),
 					( long )m_btsession->Wait() );
 	}
 #if 0
@@ -484,7 +484,7 @@ wxImage & BitSwash::GetAppIcon( enum appicon_id id )
 	wxASSERT( id < BITSWASH_ICON_MAX );
 	
 	static wxImage empty( 16, 16, true );
-	//wxLogMessage(_T("size %dx%d\n"), AppIcons[id].image->GetHeight(), AppIcons[id].image->GetWidth());
+	//wxLogMessage(_T("size %dx%d"), AppIcons[id].image->GetHeight(), AppIcons[id].image->GetWidth());
 	if(AppIcons[id].image)
 		return *AppIcons[id].image;
 	else

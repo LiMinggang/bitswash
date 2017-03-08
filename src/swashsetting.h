@@ -71,7 +71,7 @@ class SwashSetting : public wxDialog
 		
 		Configuration *m_pcfg;
 
-		void Todo() { wxLogMessage(_T("Todo\n")) ; }	
+		void Todo() { wxLogMessage(_T("Todo")) ; }	
 
 		TorrentSettingPane* m_pane_torrentsettings;
 		ConnectionSettingPane* m_pane_connectionsettings;

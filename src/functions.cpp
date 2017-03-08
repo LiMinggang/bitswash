@@ -94,7 +94,7 @@ int RemoveDirectory(wxString path) {
 
 	if ( !dir.IsOpened() )
 	{
-		wxLogError(_T("Error opening directory %s for processing\n"), path.c_str());
+		wxLogError(_T("Error opening directory %s for processing"), path.c_str());
 		return 0;
 	}
 	//dive into directory recursively 
@@ -106,22 +106,22 @@ int RemoveDirectory(wxString path) {
 	while (cont) 
 	{
 		wxString fullfilename = path + dirsep + filename;
-		wxLogDebug(_T("Scandir: %s\n"), filename.c_str());
+		wxLogDebug(_T("Scandir: %s"), filename.c_str());
 		if (wxDirExists(fullfilename))
 		{
 			if (!RemoveDirectory(fullfilename))
 			{
-				wxLogError(_T("Error removing directory %s error %s\n"), fullfilename.c_str(), wxSysErrorMsg(wxSysErrorCode()));
+				wxLogError(_T("Error removing directory %s error %s"), fullfilename.c_str(), wxSysErrorMsg(wxSysErrorCode()));
 			}
 		}
 		else if (wxFileExists( fullfilename))
 		{
 			if (!wxRemoveFile(fullfilename)) 
 			{
-				wxLogError(_T("Error removing file %s\n"), fullfilename.c_str());
+				wxLogError(_T("Error removing file %s"), fullfilename.c_str());
 			}
 		} else
-			wxLogError(_T("Error, %s returned is not file nor directory!\n"), fullfilename.c_str());
+			wxLogError(_T("Error, %s returned is not file nor directory!"), fullfilename.c_str());
 
 		cont = dir.GetNext(&filename);
 	}
@@ -134,10 +134,10 @@ int CopyDirectory(wxString frompath, wxString topath) {
 
 	if ( !fromdir.IsOpened() )
 	{
-		wxLogError(_T("Error opening directory %s for processing\n"), frompath.c_str());
+		wxLogError(_T("Error opening directory %s for processing"), frompath.c_str());
 		return 0;
 	}
-	wxLogInfo(_T("Copying %s -> %s\n"), frompath.c_str(), topath.c_str());
+	wxLogInfo(_T("Copying %s -> %s"), frompath.c_str(), topath.c_str());
 	//make first directory
 	if (!wxDirExists(topath) )
 	{
@@ -154,24 +154,24 @@ int CopyDirectory(wxString frompath, wxString topath) {
 	{
 		wxString fromfullfilename = frompath + dirsep + fromfilename;
 		wxString tofullfilename = topath + dirsep + fromfilename;
-		wxLogInfo(_T("Scandir: %s\n"), fromfilename.c_str());
+		wxLogInfo(_T("Scandir: %s"), fromfilename.c_str());
 		if (wxDirExists(fromfullfilename))
 		{
-			wxLogInfo(_T("Copying dir %s -> %s\n"), fromfilename.c_str(), tofullfilename.c_str());
+			wxLogInfo(_T("Copying dir %s -> %s"), fromfilename.c_str(), tofullfilename.c_str());
 			if (!CopyDirectory(fromfullfilename, tofullfilename))
 			{
-				wxLogError(_T("Error copying directory %s -> %s: %s\n"), fromfullfilename.c_str(), fromfullfilename.c_str(), wxSysErrorMsg(wxSysErrorCode()));
+				wxLogError(_T("Error copying directory %s -> %s: %s"), fromfullfilename.c_str(), fromfullfilename.c_str(), wxSysErrorMsg(wxSysErrorCode()));
 			} 
 		}
 		else if (wxFileExists( fromfullfilename))
 		{
-			wxLogInfo(_T("Copying file %s -> %s\n"), fromfullfilename.c_str(), tofullfilename.c_str());
+			wxLogInfo(_T("Copying file %s -> %s"), fromfullfilename.c_str(), tofullfilename.c_str());
 			if (!wxCopyFile(fromfullfilename, tofullfilename)) 
 			{
-				wxLogError(_T("Error copying file %s -> %s: %s\n"), fromfullfilename.c_str(), tofullfilename.c_str(), wxSysErrorMsg(wxSysErrorCode()));
+				wxLogError(_T("Error copying file %s -> %s: %s"), fromfullfilename.c_str(), tofullfilename.c_str(), wxSysErrorMsg(wxSysErrorCode()));
 			} 
 		} else
-			wxLogError(_T("%s returned is not file nor directory!\n"), fromfullfilename.c_str());
+			wxLogError(_T("%s returned is not file nor directory!"), fromfullfilename.c_str());
 
 		cont = fromdir.GetNext(&fromfilename);
 	}
@@ -195,11 +195,11 @@ void SystemOpenURL(wxString url)
 
 	if (wxGetEnv(_T("GNOME_DESKTOP_SESSION_ID"), &desktop_session))
 	{
-			wxLogDebug(_T("GNOME_DESKTOP_SESSION_ID=%s\n"), desktop_session.c_str());
+			wxLogDebug(_T("GNOME_DESKTOP_SESSION_ID=%s"), desktop_session.c_str());
 			wxString cmd = wxEmptyString;
 			cmd.sprintf(_T("%s %s"), _T("gnome-open"), url.c_str());
 
-			wxLogDebug(_T("Open url %s cmd %s\n"), url.c_str(), cmd.c_str());
+			wxLogDebug(_T("Open url %s cmd %s"), url.c_str(), cmd.c_str());
 			::wxExecute(cmd);
 	}
 	else
@@ -212,7 +212,7 @@ void SystemOpenURL(wxString url)
 				wxString cmd;
 				if (filetype->GetOpenCommand (&cmd, wxFileType::MessageParameters (url))) {
 				//cmd.Replace(_T("file://"), wxEmptyString);
-				wxLogDebug(_T("Open url %s cmd %s\n"), url.c_str(), cmd.c_str());
+				wxLogDebug(_T("Open url %s cmd %s"), url.c_str(), cmd.c_str());
 				::wxExecute(cmd);
 				}
 				delete filetype;
@@ -226,7 +226,7 @@ void SystemOpenURL(wxString url)
         	wxString cmd;
         	if (filetype->GetOpenCommand (&cmd, wxFileType::MessageParameters (url))) {
             	//cmd.Replace(_T("file://"), wxEmptyString);
-				wxLogDebug(_T("Open url %s cmd %s\n"), url.c_str(), cmd.c_str());
+				wxLogDebug(_T("Open url %s cmd %s"), url.c_str(), cmd.c_str());
 
             	::wxExecute(cmd);
         	}

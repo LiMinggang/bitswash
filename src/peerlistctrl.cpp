@@ -123,7 +123,7 @@ wxString PeerListCtrl::GetItemValue(long item, long columnid) const
 		_("(R)")
 	};
 
-	//wxLogDebug(_T("PeerListCtrl::Showing %d items \n"), peers_list->size());
+	//wxLogDebug(_T("PeerListCtrl::Showing %d items "), peers_list->size());
 
 	libtorrent::address c_ip = peer_info.ip.address();
 
@@ -263,7 +263,7 @@ int PeerListCtrl::GetItemColumnImage(long item, long columnid) const
 			{
 				//ctry[2] = '\0';
 				int index = bitSwachApp.GetCountryFlag(ctry);
-				wxLogDebug(_T("Image idx %s %d\n"), ctry.c_str(), index);
+				wxLogDebug(_T("Image idx %s %d"), ctry.c_str(), index);
 				return index;
 			}
 			else
@@ -296,7 +296,7 @@ int PeerListCtrl::OnGetItemImage(long item) const
 	bitSwachApp.GetCountryCode(wxString(c_ip.to_string()), ctry);
 #else
 	wxString ctry = wxString::FromAscii(peer_info.country, sizeof(peer_info.country) / sizeof(peer_info.country[0]));
-	//wxLogDebug(_T("Image idx %s %d\n"),ctry.c_str(), wxGetApp().GetCountryFlag(ctry.c_str()));
+	//wxLogDebug(_T("Image idx %s %d"),ctry.c_str(), wxGetApp().GetCountryFlag(ctry.c_str()));
 #endif
 	return wxGetApp().GetCountryFlag(ctry);
 }

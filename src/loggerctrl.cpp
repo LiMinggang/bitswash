@@ -132,36 +132,36 @@ void LoggerCtrl::OnSize( wxSizeEvent& event )
 
 void LoggerCtrl::OnSeverityChoice( wxCommandEvent& event )
 {
-	wxLogDebug( _T( "Severity update %d\n" ), m_choice_logseverity->GetCurrentSelection() );
+	wxLogDebug( _T( "Severity update %d" ), m_choice_logseverity->GetCurrentSelection() );
 	m_pcfg->SetLogSeverity( m_choice_logseverity->GetCurrentSelection() );
 	( ( MainFrame* )m_pMainFrame )->SetLogSeverity();
 }
 
 void LoggerCtrl::OnLogFileCheck( wxCommandEvent& event )
 {
-	wxLogDebug( _T( "OnLogFileCheck\n" ) );
+	wxLogDebug( _T( "OnLogFileCheck" ) );
 	bool logtofile = m_checkLogFile->GetValue();
 	m_pcfg->SetLogFile( logtofile );
 	if( logtofile )
 	{
-		wxLogDebug( _T( "LogToFile\n" ) );
+		wxLogDebug( _T( "LogToFile" ) );
 	}
 	else
 	{
-		wxLogDebug( _T( "Not LogToFile\n" ) );
+		wxLogDebug( _T( "Not LogToFile" ) );
 	}
 	m_logtofile = logtofile;
 }
 
 void LoggerCtrl::OnClearLog( wxCommandEvent& event )
 {
-	wxLogDebug( _T( "Clear Log\n" ) );
+	wxLogDebug( _T( "Clear Log" ) );
 	m_log_text->Clear();
 }
 
 void LoggerCtrl::OnSuspend( wxCommandEvent& event )
 {
-	wxLogDebug( _T( "Suspend Log\n" ) );
+	wxLogDebug( _T( "Suspend Log" ) );
 	if( m_button_suspend->GetValue() )
 		m_issuspend = true;
 	else
