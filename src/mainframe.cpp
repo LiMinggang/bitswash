@@ -1281,7 +1281,7 @@ void MainFrame::RemoveTorrent( bool deletedata )
 	if( deletedata )
 	{ torrentwarning += _( " and data" ); }
 
-	wxMessageDialog dialog( NULL, _( "Confirm remove " ) + torrentwarning + _T( "?" ),
+	wxMessageDialog dialog( NULL, _( "Remove " ) + torrentwarning + _T( "?" ),
 							_( "Confirm Remove" ), wxNO_DEFAULT | wxYES_NO | wxICON_QUESTION );
 
 	if( dialog.ShowModal() == wxID_YES )

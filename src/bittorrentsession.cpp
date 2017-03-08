@@ -1109,19 +1109,16 @@ shared_ptr<torrent_t> BitTorrentSession::LoadMagnetUri( MagnetUri& magneturi )
 		torrent->hash = magneturi.hash();
 		torrent->config.reset( new TorrentConfig( torrent->hash ) );
 		p.save_path = ( const char* )torrent->config->GetDownloadPath().mb_str( wxConvUTF8 );
-		p.duplicate_is_error = true;
-		p.auto_managed = true;
-		// Forced start
-		//p.flags &= ~libtorrent::add_torrent_params::flag_paused;
-		p.flags |= add_torrent_params::flag_paused;
-		p.flags &= ~libtorrent::add_torrent_params::flag_auto_managed;
+
+		p.flags |= libtorrent::add_torrent_params::flag_paused; // Start in pause
+		p.flags &= ~libtorrent::add_torrent_params::flag_auto_managed; // Because it is added in paused state
+		p.flags &= ~libtorrent::add_torrent_params::flag_duplicate_is_error; // Already checked
 		// Solution to avoid accidental file writes
 		p.flags |= libtorrent::add_torrent_params::flag_upload_mode;
+
 		// Adding torrent to BitTorrent session
-		//torrent->handle = m_libbtsession->add_torrent(p, ec);
 		torrent->config->SetTorrentState( TORRENT_STATE_START );
 		torrent->handle.resolve_countries( true );
-		//torrent->isvalid = AddTorrent( torrent, true );
 		if(torrent->isvalid && !torrent->handle.has_metadata())
 		{
 			torrent->magneturi = magneturi.url();
@@ -1131,7 +1128,7 @@ shared_ptr<torrent_t> BitTorrentSession::LoadMagnetUri( MagnetUri& magneturi )
 		{
 			wxMutexLocker ml( m_torrent_queue_lock );
 			m_torrent_queue.push_back( torrent );
-			m_torrent_map.insert( std::pair<wxString, int>( torrent->hash, m_torrent_queue.size() - 1 ) );
+			m_torrent_map.insert( std::pair<wxString, int>( torrent->hash, (int)(m_torrent_queue.size() - 1 )) );
 		}
 	}
 	catch( std::exception &e )
