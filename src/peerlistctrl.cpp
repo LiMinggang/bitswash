@@ -113,7 +113,7 @@ wxString PeerListCtrl::GetItemValue(long item, long columnid) const
 
 	libtorrent::peer_info peer_info = peers_list->at(item);
 
-	int peertype_flag;
+	int peertype_flag = 0;
 	static const wxChar* peer_source_flag[] =
 	{
 		_("(T)"),
@@ -149,11 +149,32 @@ wxString PeerListCtrl::GetItemValue(long item, long columnid) const
 		ret = wxString(peer_info.client.c_str(), *wxConvCurrent);
 		break;
 	case PEERLIST_COLUMN_TYPE:
-		peertype_flag = peer_info.source;
-		if ((peertype_flag < 0) || (peertype_flag > 4)) peertype_flag = 4;
+		{
+			if(peer_info.source & libtorrent::peer_info::tracker)
+			{
+				peertype_flag = 0;
+			}
+			if(peer_info.source & libtorrent::peer_info::dht)
+			{
+				peertype_flag = 1;
+			}
+			else if(peer_info.source & libtorrent::peer_info::pex)
+			{
+				peertype_flag = 2;
+			}
+			else if(peer_info.source & libtorrent::peer_info::lsd)
+			{
+				peertype_flag = 3;
+			}
+			else if(peer_info.source & libtorrent::peer_info::resume_data)
+			{
+				peertype_flag = 4;
+			}
+			//if ((peertype_flag < 0) || (peertype_flag > 4)) peertype_flag = 4;
 
-		ret = wxString::Format(_T("%s %s"), (peer_info.flags & libtorrent::peer_info::seed) ? _("Seed") : _("Peer"), peer_source_flag[peertype_flag]);
-		break;
+			ret = wxString::Format(_T("%s %s"), (peer_info.flags & libtorrent::peer_info::seed) ? _("Seed") : _("Peer"), peer_source_flag[peertype_flag]);
+			break;
+		}
 	case PEERLIST_COLUMN_STATUS:
 		if (peer_info.flags & libtorrent::peer_info::handshake)
 		{
