@@ -1023,8 +1023,8 @@ void BitTorrentSession::SaveAllTorrent()
 
 void BitTorrentSession::SaveTorrentResumeData( shared_ptr<torrent_t>& torrent )
 {
-	wxLogDebug( _T( "%s: SaveTorrentResumeData\n" ), torrent->name.c_str() );
-	wxString fastresumefile = wxGetApp().SaveTorrentsPath() + wxGetApp().PathSeparator() + torrent->hash + _T( ".fastresume" );
+	//wxLogDebug( _T( "%s: SaveTorrentResumeData\n" ), torrent->name.c_str() );
+	//wxString fastresumefile = wxGetApp().SaveTorrentsPath() + wxGetApp().PathSeparator() + torrent->hash + _T( ".fastresume" );
 
 	//new api, write to disk in save_resume_data_alert
 	if( torrent->handle.has_metadata() )
@@ -1456,7 +1456,8 @@ void BitTorrentSession::StartTorrent( int idx, bool force )
 		return ;
 	}
 
-	StartTorrent( m_torrent_queue[idx], force );
+	if(m_torrent_queue[idx]->isvalid)
+		StartTorrent( m_torrent_queue[idx], force );
 }
 
 void BitTorrentSession::StopTorrent( int idx )
@@ -1478,7 +1479,8 @@ void BitTorrentSession::QueueTorrent( int idx )
 		return ;
 	}
 
-	QueueTorrent( m_torrent_queue[idx] );
+	if(m_torrent_queue[idx]->isvalid)
+		QueueTorrent( m_torrent_queue[idx] );
 }
 
 void BitTorrentSession::PauseTorrent( int idx )
@@ -1731,7 +1733,6 @@ void BitTorrentSession::GetTorrentLog()
 	//m_libbtsession->post_dht_stats();
 
 	m_libbtsession->pop_alerts(&alerts);
-	//std::string now = timestamp();
 	for (std::vector<alert*>::iterator it = alerts.begin()
 		, end(alerts.end()); it != end; ++it)
 	{
@@ -1758,6 +1759,7 @@ void BitTorrentSession::GetTorrentLog()
 								shared_ptr<torrent_t>& torrent = m_torrent_queue[it->second];
 								wxString torrent_backup = wxGetApp().SaveTorrentsPath() + wxGetApp().PathSeparator() + torrent->hash + _T( ".torrent" );
 								torrent->handle = p->handle;
+								torrent->isvalid = true;
 							
 								/*if(torrent->config->GetTrackersURL().size() <= 0 )
 								{
@@ -1899,13 +1901,17 @@ void BitTorrentSession::GetTorrentLog()
 							std::stringstream hash_stream;
 							hash_stream << h.info_hash();
 							wxString thash = wxString::FromAscii( hash_stream.str().c_str() );
-							wxString fastresumefile = wxGetApp().SaveTorrentsPath() + wxGetApp().PathSeparator() + thash + _T( ".fastresume" );
+							/*wxString fastresumefile = wxGetApp().SaveTorrentsPath() + wxGetApp().PathSeparator() + thash + _T( ".fastresume" );
 							std::ofstream out( ( const char* )fastresumefile.mb_str( wxConvFile ), std::ios_base::binary );
 							out.unsetf( std::ios_base::skipws );
-							bencode( std::ostream_iterator<char>( out ), *p->resume_data );
+							bencode( std::ostream_iterator<char>( out ), *p->resume_data );*/
 							//save_resume_data to disk
+							torrents_map::iterator it = m_torrent_map.find(thash);
+							if(it != m_torrent_map.end())
+							{
+								SaveTorrentResumeData(m_torrent_queue[it->second]);
+							}
 						}
-
 						event_string << h.name() << _T( ": " ) << p->message();
 					}
 					break;
@@ -1918,7 +1924,7 @@ void BitTorrentSession::GetTorrentLog()
 			}
 			//XXX include more alert from latest libtorrent
 			//
-			event_string << _T( '\n' ) << _T( '\0' );
+			event_string << _T( '\0' );
 
 			if( (*it)->severity() == alert::fatal )
 			{
