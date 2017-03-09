@@ -144,7 +144,6 @@ wxString FileListCtrl::GetItemValue( long item, long columnid ) const
 	{ return ret; }
 
 	libtorrent::torrent_handle h = pTorrent->handle;
-	libtorrent::file_entry f_entry;
 	libtorrent::torrent_info const& torrent_info = *( pTorrent->info );
 	std::vector<int> filespriority = pTorrent->config->GetFilesPriorities();
 
@@ -166,20 +165,21 @@ wxString FileListCtrl::GetItemValue( long item, long columnid ) const
 		_T( "6" ), /* unused priority level */
 		_( "Higest" )
 	};
-	std::vector<float> f_progress;
-	f_entry = torrent_info.file_at( item );
+
+	std::vector<boost::int64_t> f_progress;
+	libtorrent::file_storage const& allfiles = torrent_info.files();
 
 	if( h.is_valid() )
-	{ h.file_progress( f_progress ); }
+	{ h.file_progress( f_progress, libtorrent::torrent_handle::piece_granularity); }
 
 	switch( columnid )
 	{
 	case FILELIST_COLUMN_FILE:
-		ret = wxString( wxConvUTF8.cMB2WC( f_entry.path.c_str() ) );
+		ret = wxString( wxConvUTF8.cMB2WC( (allfiles.file_name(item)).c_str() ) );
 		break;
 
 	case FILELIST_COLUMN_SIZE:
-		ret = HumanReadableByte( ( wxDouble ) f_entry.size );
+		ret = HumanReadableByte( ( wxDouble ) (allfiles.file_size(item)) );
 		break;
 
 	case FILELIST_COLUMN_DOWNLOAD:
@@ -192,7 +192,7 @@ wxString FileListCtrl::GetItemValue( long item, long columnid ) const
 
 	case FILELIST_COLUMN_PROGRESS:
 		if( h.is_valid() )
-		{ return wxString::Format( _T( "%.02f%%" ), ( ( wxDouble ) f_progress[item] * 100 ) ); }
+		{ return wxString::Format( _T( "%.02f%%" ), ( (( wxDouble ) f_progress[item])/ ((wxDouble)allfiles.file_size(item)) * 100 ) ); }
 		else
 		{ ret = _T( "0.00" ); }
 
@@ -328,11 +328,10 @@ void FileListCtrl::OnLeftDClick(wxMouseEvent& event)
 		{
 			libtorrent::torrent_info const& torrentinfo = *(pTorrent->info);
 			std::vector<int> & filespriority = pTorrent->config->GetFilesPriorities();
-			libtorrent::file_entry f_entry = torrentinfo.file_at( selectedfiles );
 			if(filespriority.at(selectedfiles) != BITTORRENT_FILE_NONE)
 			{
-				f_entry = torrentinfo.file_at( selectedfiles );
-				wxFileName filename = pTorrent->config->GetDownloadPath() + wxString::FromUTF8(f_entry.path.c_str());
+				libtorrent::file_storage const& allfiles = torrentinfo.files();
+				wxFileName filename = pTorrent->config->GetDownloadPath() + wxString::FromUTF8((allfiles.file_name(selectedfiles)).c_str());
 				filename.MakeAbsolute();
 				if(wxFileName::FileExists(filename.GetFullName()))
 				{
@@ -445,11 +444,13 @@ void FileListCtrl::OnMenuPriority( wxCommandEvent& event )
 	}
 
 	//pTorrent->config->SetFilesPriority(filespriority);
-	if( !m_pTorrent )
-	{ pTorrent->config->Save(); }
+	pTorrent->config->Save();
+
+	const libtorrent::torrent_info const& torrent_info = *(pTorrent->info);
 
 	wxGetApp().GetBitTorrentSession()->ConfigureTorrentFilesPriority( pTorrent );
-	libtorrent::file_entry f_entry;
+	libtorrent::file_storage const& allfiles = torrent_info.files();
+	
 	wxULongLong_t total_selected = 0;
 	libtorrent::torrent_info const& torrentinfo = *(pTorrent->info);
 
@@ -457,8 +458,7 @@ void FileListCtrl::OnMenuPriority( wxCommandEvent& event )
 	{
 		if(filespriority.at(i) != BITTORRENT_FILE_NONE)
 		{
-			f_entry = torrentinfo.file_at( i );
-			total_selected += f_entry.size;
+			total_selected += allfiles.file_size(i);
 		}
 	}
 
@@ -485,11 +485,10 @@ void FileListCtrl::OnMenuOpenPath( wxCommandEvent& event )
 		{
 			libtorrent::torrent_info const& torrentinfo = *(pTorrent->info);
 			std::vector<int> & filespriority = pTorrent->config->GetFilesPriorities();
-			libtorrent::file_entry f_entry = torrentinfo.file_at( selectedfiles );
 			if(filespriority.at(selectedfiles) != BITTORRENT_FILE_NONE)
 			{
-				f_entry = torrentinfo.file_at( selectedfiles );
-				wxFileName filename = pTorrent->config->GetDownloadPath() + wxString::FromUTF8(f_entry.path.c_str());
+				libtorrent::file_storage const& allfiles = torrentinfo.files();
+				wxFileName filename = pTorrent->config->GetDownloadPath() + wxString::FromUTF8((allfiles.file_name(selectedfiles)).c_str());
 				filename.MakeAbsolute();
 #if  defined(__WXMSW__) 
 				wxExecute(_T("Explorer ")+filename.GetFullPath(), wxEXEC_ASYNC, NULL); 

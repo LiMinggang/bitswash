@@ -764,7 +764,7 @@ void MainFrame::OpenTorrentUrl()
 
 					if( torrent && torrent->isvalid )
 					{
-						if( torrent->handle.has_metadata() )
+						if( torrent->handle.status().has_metadata )
 						{
 							wxString torrent_backup = wxGetApp().SaveTorrentsPath() + wxGetApp().PathSeparator() + torrent->hash + _T( ".torrent" );
 							m_btsession->SaveTorrent( torrent, torrent_backup );
@@ -1536,34 +1536,34 @@ void MainFrame::UpdateStatusBar()
 
 wxString MainFrame::GetStatusDownloadRate()
 {
-	wxString d_rate = HumanReadableByte( m_btsession->GetLibTorrent()->status().payload_download_rate ) + _T( "ps" );
+	wxString d_rate/* = /*HumanReadableByte( m_btsession->GetLibTorrent()->status().payload_download_rate ) + _T( "ps" )*/;
 	return d_rate;
 }
 
 wxString MainFrame::GetStatusUploadRate()
 {
-	wxString u_rate = HumanReadableByte( m_btsession->GetLibTorrent()->status().payload_upload_rate ) + _T( "ps" );
+	wxString u_rate/* = HumanReadableByte( m_btsession->GetLibTorrent()->status().payload_upload_rate ) + _T( "ps" )*/;
 	return u_rate;
 }
 
 wxString MainFrame::GetStatusPeers()
 {
-	wxString numpeers = wxString::Format( _T( "%ld" ), m_btsession->GetLibTorrent()->status().num_peers );
+	wxString numpeers/* = wxString::Format( _T( "%ld" ), m_btsession->GetLibTorrent()->status().num_peers )*/;
 	return numpeers;
 }
 
 wxString MainFrame::GetStatusDHT()
 {
-	wxString numpeers = wxString::Format( _T( "%ld" ),  m_btsession->GetLibTorrent()->status().dht_nodes );
+	wxString numpeers/* = wxString::Format( _T( "%ld" ),  m_btsession->GetLibTorrent()->status().dht_nodes )*/;
 	return numpeers;
 }
 
 wxString MainFrame::GetStatusIncoming()
 {
-	wxString incomingok =  \
-						   ( m_btsession->GetLibTorrent()->status().has_incoming_connections ) ? \
-						   _( "Ok" ) : \
-						   _( "Error" );
+	wxString incomingok =  /*\*/
+						   /*( m_btsession->GetLibTorrent()->status().has_incoming_connections ) ? \*/
+		_("Ok");// : \
+						   //_( "Error" );
 	return incomingok;
 }
 

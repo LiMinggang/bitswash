@@ -184,10 +184,10 @@ wxString PeerListCtrl::GetItemValue(long item, long columnid) const
 		{
 			ret = _("Connecting");
 		}
-		else if (peer_info.flags & libtorrent::peer_info::queued)
+		/*else if (peer_info.flags & libtorrent::peer_info::queued)
 		{
 			ret = _("Queued");
-		}
+		}*/
 		else if (peer_info.flags & libtorrent::peer_info::local_connection)
 		{
 			ret = _("Local");

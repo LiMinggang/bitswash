@@ -250,7 +250,7 @@ void SummaryPane::UpdateSummary()
 	UpdateSaveAs(pTorrent->config->GetDownloadPath() + dirsep + t_name);
 
 	UpdateSize(HumanReadableByte((wxDouble) t.total_size()));
-	if(!h.has_metadata())
+	if(!s.has_metadata)
 		UpdatePieces(wxString::Format(_T("%d x %s"), 0, HumanReadableByte(0).c_str()));
 	else
 		UpdatePieces(wxString::Format(_T("%d x %s"), t.num_pieces(), HumanReadableByte(t.piece_length()).c_str()));

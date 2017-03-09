@@ -201,7 +201,7 @@ void BitTorrentSession::Configure(libtorrent::settings_pack &settingsPack)
 	settingsPack.set_int( libtorrent::settings_pack::min_reconnect_time, m_config->GetMinReconnectTime());
 	settingsPack.set_int( libtorrent::settings_pack::peer_connect_timeout, m_config->GetPeerConnectTimeout());
 	// Ignore limits on LAN
-	settingsPack.set_bool( libtorrent::settings_pack::ignore_limits_on_local_network, m_config->GetIgnoreLimitsOnLocalNetwork());
+	//settingsPack.set_bool( libtorrent::settings_pack::ignore_limits_on_local_network, m_config->GetIgnoreLimitsOnLocalNetwork());
 	settingsPack.set_int( libtorrent::settings_pack::connection_speed, m_config->GetConnectionSpeed());
 	settingsPack.set_bool( libtorrent::settings_pack::send_redundant_have, m_config->GetSendRedundantHave());
 	settingsPack.set_bool( libtorrent::settings_pack::lazy_bitfields, m_config->GetLazyBitfields());
@@ -228,13 +228,13 @@ void BitTorrentSession::Configure(libtorrent::settings_pack &settingsPack)
 
 	
     // The most secure, rc4 only so that all streams are encrypted
-    settingsPack.set_int(libtorrent::settings_pack::allowed_enc_level, ( libtorrent::pe_settings::enc_level )( m_config->GetEncLevel()));
+    //settingsPack.set_int(libtorrent::settings_pack::allowed_enc_level, ( libtorrent::pe_settings::enc_level )( m_config->GetEncLevel()));
     settingsPack.set_bool(libtorrent::settings_pack::prefer_rc4, m_config->GetEncEnabled());
 	
 	if( m_config->GetEncEnabled() )
 	{
-		settingsPack.set_int(libtorrent::settings_pack::out_enc_policy,  (libtorrent::pe_settings::enc_policy )( m_config->GetEncPolicy()));
-		settingsPack.set_int(libtorrent::settings_pack::in_enc_policy, ( libtorrent::pe_settings::enc_policy )( m_config->GetEncPolicy()));
+		settingsPack.set_int(libtorrent::settings_pack::out_enc_policy, libtorrent::settings_pack::pe_enabled);
+		settingsPack.set_int(libtorrent::settings_pack::in_enc_policy, libtorrent::settings_pack::pe_enabled);
 		wxLogMessage( _T( "Encryption enabled, policy %d" ), m_config->GetEncPolicy() );
 	}
 	else
@@ -348,12 +348,7 @@ void BitTorrentSession::ConfigureSession()
 		wxString dhtstatefile = wxGetApp().DHTStatePath();
 		struct dht_settings DHTSettings;
 
-		//XXX set other dht settings
-		if( dhtport < 1 || dhtport > 65535 )
-		{ DHTSettings.service_port = dhtport; }
-		else //use TCP port
-		{ DHTSettings.service_port = m_config->GetPortMax(); }
-
+		DHTSettings.privacy_lookups = true;
 		DHTSettings.max_peers_reply = m_config->GetDHTMaxPeers();
 		DHTSettings.search_branching = m_config->GetDHTSearchBranching();
 		DHTSettings.max_fail_count = m_config->GetDHTMaxFail();
@@ -391,7 +386,7 @@ void BitTorrentSession::ConfigureSession()
 void BitTorrentSession::SetLogSeverity()
 {
 	wxASSERT( m_libbtsession != NULL );
-	m_libbtsession->set_severity_level( ( libtorrent::alert::severity_t )m_config->GetLogSeverity() );
+	//m_libbtsession->set_severity_level( ( libtorrent::alert::severity_t )m_config->GetLogSeverity() );
 }
 
 void BitTorrentSession::SetConnection()
@@ -413,9 +408,9 @@ void BitTorrentSession::SetConnection()
 		m_config->SetPortMax( portmax );
 	}
 
-	error_code ec;
+	/*error_code ec;
 	m_libbtsession->listen_on( std::make_pair( portmin, portmax ), ec,
-							   m_config->m_local_ip.IPAddress().ToAscii() );
+							   m_config->m_local_ip.IPAddress().ToAscii() );*/
 }
 
 void BitTorrentSession::StartExtensions()
@@ -519,16 +514,16 @@ void BitTorrentSession::AddTorrentSession( shared_ptr<torrent_t>& torrent )
 		//compact
 		//
 		libtorrent::add_torrent_params p;
-		p.ti = t;
+		//p.ti = t;
 		p.save_path = ( const char* )torrent->config->GetDownloadPath().mb_str( wxConvUTF8 );
 
 		if( resume_data.type() != entry::undefined_t )
 		{ bencode( std::back_inserter( p.resume_data ), resume_data ); }
 
-		//p.resume_data = resume_data.preformatted();
-		p.paused = ( torrent->config->GetTorrentState() != TORRENT_STATE_PAUSE );
-		p.duplicate_is_error = true;
-		p.auto_managed = true;
+		if (torrent->config->GetTorrentState() != TORRENT_STATE_PAUSE)
+			p.flags |= add_torrent_params::flag_paused;
+		p.flags &= ~add_torrent_params::flag_duplicate_is_error;
+		p.flags |= add_torrent_params::flag_auto_managed;
 
 		wxString strStorageMode;
 		enum libtorrent::storage_mode_t eStorageMode = torrent->config->GetTorrentStorageMode();
@@ -557,8 +552,6 @@ void BitTorrentSession::AddTorrentSession( shared_ptr<torrent_t>& torrent )
 		wxLogInfo( _T( "%s: %s allocation mode" ), torrent->name.c_str(), strStorageMode.c_str() );
 		m_libbtsession->async_add_torrent( p );
 
-		if(handle.is_valid())
-			handle.resolve_countries( true );
 		enum torrent_state state = ( enum torrent_state ) torrent->config->GetTorrentState();
 		//handle.pause();
 		//ConfigureTorrent(torrent);
@@ -611,7 +604,7 @@ bool BitTorrentSession::HandleAddTorrentAlert(libtorrent::add_torrent_alert *p)
 {
 	try
 	{
-		int idx = find_torrent_from_hash( hash );
+		int idx = 0;/* find_torrent_from_hash(hash)*/;
 		if( idx < 0 )
 		{
 //			wxLogWarning( _T( "Torrent %s not exists" ), torrent->name.c_str() );
@@ -656,7 +649,7 @@ bool BitTorrentSession::HandleAddTorrentAlert(libtorrent::add_torrent_alert *p)
 		{
 			if (nopriority || filespriority[i] != BITTORRENT_FILE_NONE)
 			{
-				total_selected += allfiles.file_size(i);;
+				total_selected += allfiles.file_size(i);
 			}
 		}
 		torrent->config->SetSelectedSize(total_selected);
@@ -930,14 +923,15 @@ void BitTorrentSession::SaveAllTorrent()
 		shared_ptr<torrent_t> torrent = *i;
 		torrent->config->SetQIndex( idx++ );
 		torrent->config->Save();
+		
 
 		if( !torrent->handle.is_valid() || \
-				!torrent->handle.has_metadata() || \
+				!torrent->handle.status().has_metadata || \
 				( !( ( torrent->handle.status() ).need_save_resume ) ) || \
 				torrent->config->GetTorrentState() == TORRENT_STATE_STOP )
 		{
 			if((!torrent->magneturi.IsEmpty()) && torrent->handle.is_valid()
-				&& !torrent->handle.has_metadata())
+				&& !torrent->handle.status().has_metadata)
 			{
 				magneturi.Add(torrent->magneturi);
 			}
@@ -957,11 +951,11 @@ void BitTorrentSession::SaveAllTorrent()
 
 		if( a == 0 ) { continue; }
 
-		std::deque<alert*> alerts;
+		std::vector<alert*> alerts;
 		m_libbtsession->pop_alerts( &alerts );
 		std::string now = timestamp();
 
-		for( std::deque<alert*>::iterator i = alerts.begin(),
+		for( std::vector<alert*>::iterator i = alerts.begin(),
 			end( alerts.end() ); i != end; ++i )
 		{
 			// make sure to delete each alert
@@ -1136,11 +1130,9 @@ shared_ptr<torrent_t> BitTorrentSession::LoadMagnetUri( MagnetUri& magneturi )
 
 		// Adding torrent to BitTorrent session
 		torrent->config->SetTorrentState( TORRENT_STATE_START );
-		torrent->handle.resolve_countries( true );
-		if(torrent->isvalid && !torrent->handle.has_metadata())
-		{
-			torrent->magneturi = magneturi.url();
-		}
+		//torrent->handle.resolve_countries( true );
+		torrent->magneturi = magneturi.url();
+
 
 		torrent->isvalid = false;
 		m_libbtsession->async_add_torrent( p );
@@ -1182,12 +1174,13 @@ void BitTorrentSession::StartTorrent( shared_ptr<torrent_t>& torrent, bool force
 	wxLogInfo( _T( "%s: Start %s" ), torrent->name.c_str(), force ? _T( "force" ) : _T( "" ) );
 	torrent_handle& handle = torrent->handle;
 
-	if( !handle.is_valid() || ( ( torrent->handle.save_path() ).empty() ) )
+	if( !handle.is_valid() || ( ( torrent->handle.status(torrent_handle::query_save_path).save_path).empty() ) )
 	{
 		AddTorrentSession( torrent );
 	}
 
-	if( handle.is_paused() )
+	//torrent_status st = handle.status();
+	//if(st.state ==  )
 	{ handle.resume(); }
 
 	torrent->config->SetTorrentState( force ? TORRENT_STATE_FORCE_START : TORRENT_STATE_START );
@@ -1243,8 +1236,8 @@ void BitTorrentSession::PauseTorrent( shared_ptr<torrent_t>& torrent )
 		AddTorrentSession( torrent );
 	}
 
-	if( !handle.is_paused() )
-	{ handle.pause(); }
+	//if( !handle.is_paused() )
+	handle.pause();
 
 	torrent->config->SetTorrentState( TORRENT_STATE_PAUSE );
 	torrent->config->Save();
@@ -1371,7 +1364,7 @@ void BitTorrentSession::ConfigureTorrent( shared_ptr<torrent_t>& torrent )
 {
 	torrent_handle &h = torrent->handle;
 	wxLogDebug( _T( "%s: Configure" ), torrent->name.c_str() );
-	std::string existdir = h.save_path()/*.string()*/;
+	std::string existdir = h.status(torrent_handle::query_save_path).save_path/*.string()*/;
 	std::string newdir( torrent->config->GetDownloadPath().mb_str( wxConvUTF8 ) );
 	wxString oldpath = wxString::FromAscii( existdir.c_str() ) +
 					   wxFileName::GetPathSeparator( wxPATH_NATIVE ) +
@@ -1444,12 +1437,11 @@ void BitTorrentSession::ConfigureTorrent( shared_ptr<torrent_t>& torrent )
 
 	if( h.is_valid() )
 	{
-		bool ispaused = h.is_paused();
 		h.set_upload_limit( torrent->config->GetTorrentUploadLimit() );
 		h.set_download_limit( torrent->config->GetTorrentDownloadLimit() );
 		h.set_max_uploads( torrent->config->GetTorrentMaxUploads() );
 		h.set_max_connections( torrent->config->GetTorrentMaxConnections() );
-		h.set_ratio( torrent->config->GetTorrentRatio() );
+		//h.set_ratio( torrent->config->GetTorrentRatio() );
 		wxLogDebug( _T( "%s: Upload Limit %s download limit %s, max uploads %s, max connections %s, ratio %lf" ),
 					torrent->name.c_str(),
 					( wxLongLong( h.upload_limit() ).ToString() ).c_str(),
@@ -1752,6 +1744,8 @@ void BitTorrentSession::HandleTorrentAlert()
 {
 	wxString event_string;
 	std::vector<alert*> alerts;
+	/*1--debug, 2--info, 3--warning, 4--error*/
+	unsigned int log_severity = 2;
 
 	//m_libbtsession->post_torrent_updates();
 	//m_libbtsession->post_session_stats();
@@ -1771,6 +1765,7 @@ void BitTorrentSession::HandleTorrentAlert()
 					{
 						if (p->error)
 						{
+							log_severity = 4;
 							event_string << _T("Couldn't add torrent: ") <<  (*it)->message();
 						}
 						else
@@ -1800,36 +1795,41 @@ void BitTorrentSession::HandleTorrentAlert()
 				case torrent_finished_alert::alert_type:
 					if( torrent_finished_alert* p = dynamic_cast<torrent_finished_alert*>( *it ) )
 					{
-						event_string << p->handle.get_torrent_info().name() << _T( ": " ) << (*it)->message();
+						torrent_status st = (p->handle).status(torrent_handle::query_name);
+						event_string << st.name << _T(": ") << p->message();
 					}
 					break;
 				case peer_ban_alert::alert_type:
 					if( peer_ban_alert* p = dynamic_cast<peer_ban_alert*>( *it ) )
 					{
-						event_string << _T( "Peer: (" ) << p->ip.address().to_string() << _T( ")" ) << (*it)->message();
+						event_string << _T( "Peer: (" ) << p->ip.address().to_string() << _T( ")" ) << p->message();
 					}
 					break;
 				case peer_error_alert::alert_type:
 					if( peer_error_alert* p = dynamic_cast<peer_error_alert*>( *it ) )
 					{
-						event_string << _T( "Peer: " ) << identify_client( p->pid ) << _T( ": " ) << (*it)->message();
+						log_severity = 4;
+						event_string << _T( "Peer: " ) << identify_client( p->pid ) << _T( ": " ) << p->message();
 					}
 					break;
 				case peer_blocked_alert::alert_type:
 					if( peer_blocked_alert* p = dynamic_cast<peer_blocked_alert*>( *it ) )
 					{
-						event_string << _T( "Peer: (" ) << p->ip.to_string() << _T( ")" ) << (*it)->message();
+						log_severity = 3;
+						event_string << _T( "Peer: (" ) << p->ip.to_string() << _T( ")" ) << p->message();
 					}
 					break;
 				case invalid_request_alert::alert_type:
 					if( invalid_request_alert* p = dynamic_cast<invalid_request_alert*>( *it ) )
 					{
-						event_string << identify_client( p->pid ) << _T( ": " ) << (*it)->message();
+						log_severity = 4;
+						event_string << identify_client( p->pid ) << _T( ": " ) << p->message();
 					}
 					break;
 				case tracker_warning_alert::alert_type:
 					if( tracker_warning_alert* p = dynamic_cast<tracker_warning_alert*>( *it ) )
 					{
+						log_severity = 3;
 						event_string << _T( "Tracker: " ) << p->message();
 					}
 					break;
@@ -1842,18 +1842,20 @@ void BitTorrentSession::HandleTorrentAlert()
 				case url_seed_alert::alert_type:
 					if( url_seed_alert* p = dynamic_cast<url_seed_alert*>( *it ) )
 					{
-						event_string << _T( "Url seed '" ) << p->url << _T( "': " ) << p->message();
+						event_string << _T( "Url seed '" ) << p->server_url() << _T( "': " ) << p->message();
 					}
 					break;
 				case listen_failed_alert::alert_type:
 					if( listen_failed_alert* p = dynamic_cast<listen_failed_alert*>( *it ) )
 					{
+						log_severity = 4;
 						event_string << _T( "Listen failed: " ) << p->message();
 					}
 					break;
 				case portmap_error_alert::alert_type:
 					if( portmap_error_alert* p = dynamic_cast<portmap_error_alert*>( *it ) )
 					{
+						log_severity = 4;
 						event_string << _T( "Portmap error: " ) << p->message();
 					}
 					break;
@@ -1872,18 +1874,21 @@ void BitTorrentSession::HandleTorrentAlert()
 				case file_error_alert::alert_type:
 					if( file_error_alert* p = dynamic_cast<file_error_alert*>( *it ) )
 					{
+						log_severity = 4;
 						event_string << _T( "File error: " ) << p->message();
 					}
 					break;
 				case hash_failed_alert::alert_type:
 					if( hash_failed_alert* p = dynamic_cast<hash_failed_alert*>( *it ) )
 					{
+						log_severity = 4;
 						event_string << _T( "Hash: " ) << p->message();
 					}
 					break;
 				case metadata_failed_alert::alert_type:
 					if( metadata_failed_alert* p = dynamic_cast<metadata_failed_alert*>( *it ) )
 					{
+						log_severity = 4;
 						event_string << _T( "Metadata: " ) << p->message();
 					}
 					break;
@@ -1919,6 +1924,7 @@ void BitTorrentSession::HandleTorrentAlert()
 				case fastresume_rejected_alert::alert_type:
 					if( fastresume_rejected_alert* p = dynamic_cast<fastresume_rejected_alert*>( *it ) )
 					{
+						log_severity = 3;
 						event_string << _T( "Fastresume: " ) << p->message();
 					}
 					break;
@@ -1943,7 +1949,7 @@ void BitTorrentSession::HandleTorrentAlert()
 								SaveTorrentResumeData(m_torrent_queue[it->second]);
 							}
 						}
-						event_string << h.name() << _T( ": " ) << p->message();
+						event_string << h.status(torrent_handle::query_name).name << _T( ": " ) << p->message();
 					}
 					break;
 				default:
@@ -1957,25 +1963,26 @@ void BitTorrentSession::HandleTorrentAlert()
 			//
 			event_string << _T( '\0' );
 
-			if(( (*it)->severity() == alert::fatal ) || ((*it)->severity() == alert::critical))
+			switch(log_severity)
 			{
-				wxLogError( _T("%s"), event_string.c_str() );
-			}
-			else if( (*it)->severity() == alert::warning )
-			{
-				wxLogWarning( _T("%s"), event_string.c_str() );
-			}
-			else if( (*it)->severity() == alert::info )
-			{
-				wxLogInfo( _T("%s"), event_string.c_str() );
-			}
-			/*else if( (*it)->severity() == alert::debug )
-			{
-				wxLogDebug( _T("%s"), event_string.c_str() );
-			}*/
-			else
-			{
-				wxLogDebug( _T("%s"), event_string.c_str() );
+				case 2:
+					{
+						wxLogInfo( _T("%s"), event_string.c_str() );
+					}
+					break;
+				case 3:
+					{
+						wxLogWarning( _T("%s"), event_string.c_str() );
+					}
+					break;
+				case 4:
+					{
+						wxLogError( _T("%s"), event_string.c_str() );
+					}
+					break;
+				default:
+					wxLogDebug( _T("%s"), event_string.c_str() );
+					break;
 			}
 		}
 		TORRENT_CATCH(std::exception& e)
