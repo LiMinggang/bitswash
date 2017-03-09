@@ -495,6 +495,7 @@ void FileListCtrl::OnMenuOpenPath( wxCommandEvent& event )
 #elif defined(__APPLE__)
 				wxExecute(_T("/usr/bin/open "+filename.GetFullPath(), wxEXEC_ASYNC, NULL);
 #elif defined(__WXGTK__)
+//wxFileSystem::FileNameToURL(const wxFileName &filename)
 				wxLaunchDefaultBrowser(_T("file://")+filename.GetFullPath());
 #endif
 			}
