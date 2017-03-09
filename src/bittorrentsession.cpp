@@ -140,7 +140,8 @@ void BitTorrentSession::OnExit()
 
 		try
 		{
-			entry dht_state = m_libbtsession->dht_state();
+			entry dht_state;
+			m_libbtsession->save_state(dht_state, session::save_dht_state);
 			std::ofstream out( ( const char* )dhtstatefile.mb_str( wxConvFile ), std::ios_base::binary );
 			out.unsetf( std::ios_base::skipws );
 			bencode( std::ostream_iterator<char>( out ), dht_state );
@@ -152,7 +153,7 @@ void BitTorrentSession::OnExit()
 	}
 
 	SaveAllTorrent();
-	std::deque<alert*> alerts;
+	std::vector<alert*> alerts;
 	m_libbtsession->pop_alerts( &alerts );
 	m_libbtsession->set_alert_notify(notify_func_t());
 	delete m_libbtsession;
@@ -175,7 +176,7 @@ void BitTorrentSession::Configure(libtorrent::settings_pack &settingsPack)
 	settingsPack.set_int( libtorrent::settings_pack::upload_rate_limit, m_config->GetGlobalUploadLimit() );
 	settingsPack.set_int( libtorrent::settings_pack::download_rate_limit, m_config->GetGlobalDownloadLimit() );
 	// * Max Half-open connections
-	settingsPack.set_int(libtorrent::settings_pack::half_open_limit, m_config->GetGlobalMaxHalfConnect());
+	//settingsPack.set_int(libtorrent::settings_pack::half_open_limit, m_config->GetGlobalMaxHalfConnect());
 	// * Max connections limit
 	settingsPack.set_int(libtorrent::settings_pack::connections_limit, m_config->GetGlobalMaxConnections());
 	// * Global max upload slots
