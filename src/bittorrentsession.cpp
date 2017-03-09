@@ -1053,19 +1053,13 @@ void BitTorrentSession::SaveAllTorrent()
 
 void BitTorrentSession::SaveTorrentResumeData( shared_ptr<torrent_t>& torrent )
 {
-	//wxLogDebug( _T( "%s: SaveTorrentResumeData" ), torrent->name.c_str() );
-	//wxString fastresumefile = wxGetApp().SaveTorrentsPath() + wxGetApp().PathSeparator() + torrent->hash + _T( ".fastresume" );
-
 	//new api, write to disk in save_resume_data_alert
-	if( torrent->handle.has_metadata() )
-	{ torrent->handle.save_resume_data(); }
-
-#if 0
-	entry data = torrent->handle.write_resume_data();
-	std::ofstream out( ( const char* )fastresumefile.mb_str( wxConvFile ), std::ios_base::binary );
-	out.unsetf( std::ios_base::skipws );
-	bencode( std::ostream_iterator<char>( out ), data );
-#endif
+	if (torrent->handle.is_valid())
+	{
+		torrent_status status = torrent->handle.status();
+		if(status.has_metadata)
+		{ torrent->handle.save_resume_data(); }
+	}
 }
 
 void BitTorrentSession::DumpTorrents()
