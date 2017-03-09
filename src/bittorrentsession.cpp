@@ -103,13 +103,14 @@ void *BitTorrentSession::Entry()
 	m_libbtsession->set_alert_notify(boost::bind(&BitTorrentSession::HandleTorrentAlert, this));
 
 	ConfigureSession();
-	ScanTorrentsDirectory( wxGetApp().SaveTorrentsPath() );
-
 	if(m_mutex != 0 && m_condition != 0)
 	{
 		wxMutexLocker lock(*m_mutex); 
 		m_condition->Broadcast(); // same as Signal() here -- one waiter only
 	}
+
+	ScanTorrentsDirectory( wxGetApp().SaveTorrentsPath() );
+
 	//( ( BitSwash* )m_pParent )->BTInitDone();
 
 	while( 1 )
@@ -623,7 +624,7 @@ bool BitTorrentSession::HandleAddTorrentAlert(libtorrent::add_torrent_alert *p)
 
 		if(torrent)
 		{
-			wxString torrent_backup = wxGetApp().SaveTorrentsPath() + wxGetApp().PathSeparator() + torrent->hash + _T( ".torrent" );
+			//wxString torrent_backup = wxGetApp().SaveTorrentsPath() + wxGetApp().PathSeparator() + torrent->hash + _T( ".torrent" );
 			torrent->handle = p->handle;
 			torrent->isvalid = true;
 			enum torrent_state state = ( enum torrent_state ) torrent->config->GetTorrentState();
@@ -1182,7 +1183,7 @@ void BitTorrentSession::StartTorrent( shared_ptr<torrent_t>& torrent, bool force
 	wxLogInfo( _T( "%s: Start %s" ), torrent->name.c_str(), force ? _T( "force" ) : _T( "" ) );
 	torrent_handle& handle = torrent->handle;
 
-	if( !handle.is_valid() || ( ( torrent->handle.status(torrent_handle::query_save_path).save_path).empty() ) )
+	if( !handle.is_valid() || ( ( handle.status(torrent_handle::query_save_path).save_path).empty() ) )
 	{
 		AddTorrentSession( torrent );
 	}

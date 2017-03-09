@@ -138,10 +138,14 @@ bool BitSwash::OnInit()
 #endif
 
 #ifdef __WXMSW__
+#if 0
 	_CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF);
 	_CrtSetBreakAlloc(9554);
 	_CrtSetBreakAlloc(9553);
 	_CrtSetBreakAlloc(9552);
+#else
+	_CrtSetDbgFlag(_CRTDBG_CHECK_DEFAULT_DF);
+#endif
 #endif
 
 	//==========================================================================
@@ -250,6 +254,7 @@ bool BitSwash::OnInit()
 	}
 	m_config = new Configuration( APPNAME );
 	/* workaround for libtorrent unable to resolve our ip address */
+	#if 0
 	wxIPV4address remote;
 	remote.Hostname( _T( "www.google.com" ) );
 	remote.Service( 80 );
@@ -259,6 +264,7 @@ bool BitSwash::OnInit()
 	wxString ipAddr = local.IPAddress();
 	wxLogDebug( _T( "Local ip %s" ), ipAddr.c_str() );
 	m_config->m_local_ip = local;
+	#endif
 	/* end workaround */
 	SetLogLevel();
 	SetLocale( m_config->GetLanguage() );
