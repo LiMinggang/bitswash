@@ -127,7 +127,7 @@ wxString FileListCtrl::GetItemValue( long item, long columnid ) const
 	wxString ret(_T( "" ));
 	//XXX backward compatible
 	int nopriority = 0;
-	wxLogDebug( _T( "FileListCtrl column %ld of item %ld" ), columnid, item );
+	//wxLogDebug( _T( "FileListCtrl column %ld of item %ld" ), columnid, item );
 	shared_ptr<torrent_t> pTorrent;
 
 	if( m_pTorrent )
