@@ -1766,7 +1766,7 @@ void BitTorrentSession::HandleTorrentAlert()
 						if (p->error)
 						{
 							log_severity = 4;
-							event_string << _T("Couldn't add torrent: ") <<  (*it)->message();
+							event_string << _T("Couldn't add torrent: ") <<  wxString::FromUTF8(p->message().c_str());
 						}
 						else
 						{
@@ -1789,6 +1789,7 @@ void BitTorrentSession::HandleTorrentAlert()
 								}*/
 								StartTorrent(torrent, false);
 							}
+							event_string << _T("Metadata: ") <<  wxString::FromUTF8(p->message().c_str());
 						}
 					}
 					break;					
@@ -1796,106 +1797,106 @@ void BitTorrentSession::HandleTorrentAlert()
 					if( torrent_finished_alert* p = dynamic_cast<torrent_finished_alert*>( *it ) )
 					{
 						torrent_status st = (p->handle).status(torrent_handle::query_name);
-						event_string << st.name << _T(": ") << p->message();
+						event_string << st.name << _T(": ") << wxString::FromUTF8(p->message().c_str());
 					}
 					break;
 				case peer_ban_alert::alert_type:
 					if( peer_ban_alert* p = dynamic_cast<peer_ban_alert*>( *it ) )
 					{
-						event_string << _T( "Peer: (" ) << p->ip.address().to_string() << _T( ")" ) << p->message();
+						event_string << _T( "Peer: (" ) << p->ip.address().to_string() << _T( ")" ) << wxString::FromUTF8(p->message().c_str());
 					}
 					break;
 				case peer_error_alert::alert_type:
 					if( peer_error_alert* p = dynamic_cast<peer_error_alert*>( *it ) )
 					{
 						log_severity = 4;
-						event_string << _T( "Peer: " ) << identify_client( p->pid ) << _T( ": " ) << p->message();
+						event_string << _T( "Peer: " ) << identify_client( p->pid ) << _T( ": " ) << wxString::FromUTF8(p->message().c_str());
 					}
 					break;
 				case peer_blocked_alert::alert_type:
 					if( peer_blocked_alert* p = dynamic_cast<peer_blocked_alert*>( *it ) )
 					{
 						log_severity = 3;
-						event_string << _T( "Peer: (" ) << p->ip.to_string() << _T( ")" ) << p->message();
+						event_string << _T( "Peer: (" ) << p->ip.to_string() << _T( ")" ) << wxString::FromUTF8(p->message().c_str());
 					}
 					break;
 				case invalid_request_alert::alert_type:
 					if( invalid_request_alert* p = dynamic_cast<invalid_request_alert*>( *it ) )
 					{
 						log_severity = 4;
-						event_string << identify_client( p->pid ) << _T( ": " ) << p->message();
+						event_string << identify_client( p->pid ) << _T( ": " ) << wxString::FromUTF8(p->message().c_str());
 					}
 					break;
 				case tracker_warning_alert::alert_type:
 					if( tracker_warning_alert* p = dynamic_cast<tracker_warning_alert*>( *it ) )
 					{
 						log_severity = 3;
-						event_string << _T( "Tracker: " ) << p->message();
+						event_string << _T( "Tracker: " ) << wxString::FromUTF8(p->message().c_str());
 					}
 					break;
 				case tracker_reply_alert::alert_type:
 					if( tracker_reply_alert* p = dynamic_cast<tracker_reply_alert*>( *it ) )
 					{
-						event_string << _T( "Tracker:" ) << p->message() << p->num_peers << _T( " number of peers " );
+						event_string << _T( "Tracker:" ) << wxString::FromUTF8(p->message().c_str()) << p->num_peers << _T( " number of peers " );
 					}
 					break;
 				case url_seed_alert::alert_type:
 					if( url_seed_alert* p = dynamic_cast<url_seed_alert*>( *it ) )
 					{
-						event_string << _T( "Url seed '" ) << p->server_url() << _T( "': " ) << p->message();
+						event_string << _T( "Url seed '" ) << p->server_url() << _T( "': " ) << wxString::FromUTF8(p->message().c_str());
 					}
 					break;
 				case listen_failed_alert::alert_type:
 					if( listen_failed_alert* p = dynamic_cast<listen_failed_alert*>( *it ) )
 					{
 						log_severity = 4;
-						event_string << _T( "Listen failed: " ) << p->message();
+						event_string << _T( "Listen failed: " ) << wxString::FromUTF8(p->message().c_str());
 					}
 					break;
 				case portmap_error_alert::alert_type:
 					if( portmap_error_alert* p = dynamic_cast<portmap_error_alert*>( *it ) )
 					{
 						log_severity = 4;
-						event_string << _T( "Portmap error: " ) << p->message();
+						event_string << _T( "Portmap error: " ) << wxString::FromUTF8(p->message().c_str());
 					}
 					break;
 				case portmap_alert::alert_type:
 					if( portmap_alert* p = dynamic_cast<portmap_alert*>( *it ) )
 					{
-						event_string << _T( "Portmap: " ) << p->message();
+						event_string << _T( "Portmap: " ) << wxString::FromUTF8(p->message().c_str());
 					}
 					break;
 				case tracker_announce_alert::alert_type:
 					if( tracker_announce_alert* p = dynamic_cast<tracker_announce_alert*>( *it ) )
 					{
-						event_string << _T( "Tracker: " ) << p->message();
+						event_string << _T( "Tracker: " ) << wxString::FromUTF8(p->message().c_str());
 					}
 					break;
 				case file_error_alert::alert_type:
 					if( file_error_alert* p = dynamic_cast<file_error_alert*>( *it ) )
 					{
 						log_severity = 4;
-						event_string << _T( "File error: " ) << p->message();
+						event_string << _T( "File error: " ) << wxString::FromUTF8(p->message().c_str());
 					}
 					break;
 				case hash_failed_alert::alert_type:
 					if( hash_failed_alert* p = dynamic_cast<hash_failed_alert*>( *it ) )
 					{
 						log_severity = 4;
-						event_string << _T( "Hash: " ) << p->message();
+						event_string << _T( "Hash: " ) << wxString::FromUTF8(p->message().c_str());
 					}
 					break;
 				case metadata_failed_alert::alert_type:
 					if( metadata_failed_alert* p = dynamic_cast<metadata_failed_alert*>( *it ) )
 					{
 						log_severity = 4;
-						event_string << _T( "Metadata: " ) << p->message();
+						event_string << _T( "Metadata: " ) << wxString::FromUTF8(p->message().c_str());
 					}
 					break;
 				case metadata_received_alert::alert_type:
 					if( metadata_received_alert* p = dynamic_cast<metadata_received_alert*>( *it ) )
 					{
-						event_string << _T( "Metadata: " ) << p->message();
+						event_string << _T( "Metadata: " ) << wxString::FromUTF8(p->message().c_str());
 						std::stringstream hash_stream;
 						hash_stream << p->handle.info_hash();
 						wxString thash = wxString::FromAscii( hash_stream.str().c_str() );
@@ -1925,7 +1926,7 @@ void BitTorrentSession::HandleTorrentAlert()
 					if( fastresume_rejected_alert* p = dynamic_cast<fastresume_rejected_alert*>( *it ) )
 					{
 						log_severity = 3;
-						event_string << _T( "Fastresume: " ) << p->message();
+						event_string << _T( "Fastresume: " ) << wxString::FromUTF8(p->message().c_str());
 					}
 					break;
 				case save_resume_data_alert::alert_type:
@@ -1949,7 +1950,7 @@ void BitTorrentSession::HandleTorrentAlert()
 								SaveTorrentResumeData(m_torrent_queue[it->second]);
 							}
 						}
-						event_string << h.status(torrent_handle::query_name).name << _T( ": " ) << p->message();
+						event_string << h.status(torrent_handle::query_name).name << _T( ": " ) << wxString::FromUTF8(p->message().c_str());
 					}
 					break;
 				default:

@@ -146,7 +146,7 @@ wxString PeerListCtrl::GetItemValue(long item, long columnid) const
 		}
 		break;
 	case PEERLIST_COLUMN_CLIENT:
-		ret = wxString(peer_info.client.c_str(), *wxConvCurrent);
+		ret = wxString::FromUTF8(peer_info.client.c_str());
 		break;
 	case PEERLIST_COLUMN_TYPE:
 		{
