@@ -613,7 +613,7 @@ bool BitTorrentSession::HandleAddTorrentAlert(libtorrent::add_torrent_alert *p)
 		int idx = find_torrent_from_hash( hash );
 		if( idx < 0 )
 		{
-			wxLogWarning( _T( "Torrent %s not exists" ), torrent->name.c_str() );
+//			wxLogWarning( _T( "Torrent %s not exists" ), torrent->name.c_str() );
 			return false;
 		}
 
@@ -638,8 +638,8 @@ bool BitTorrentSession::HandleAddTorrentAlert(libtorrent::add_torrent_alert *p)
 
 	 	bool nopriority = false;
 		wxULongLong_t total_selected = 0;
-		libtorrent::file_entry f_entry;
 		const libtorrent::torrent_info const& torrent_info = *(torrent->info);
+		file_storage const& allfiles = torrent_info.files();
 		std::vector<int> filespriority = torrent->config->GetFilesPriorities();
 
 		if (filespriority.size() != torrent_info.num_files())
@@ -655,8 +655,7 @@ bool BitTorrentSession::HandleAddTorrentAlert(libtorrent::add_torrent_alert *p)
 		{
 			if (nopriority || filespriority[i] != BITTORRENT_FILE_NONE)
 			{
-				f_entry = torrent_info.file_at( i );
-				total_selected += f_entry.size;
+				total_selected += allfiles.file_size(i);;
 			}
 		}
 		torrent->config->SetSelectedSize(total_selected);
