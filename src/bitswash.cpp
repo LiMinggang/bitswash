@@ -137,6 +137,13 @@ bool BitSwash::OnInit()
 	m_geoip = 0;
 #endif
 
+#ifdef __WXMSW__
+	_CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF);
+	_CrtSetBreakAlloc(9554);
+	_CrtSetBreakAlloc(9553);
+	_CrtSetBreakAlloc(9552);
+#endif
+
 	//==========================================================================
 	if( !wxApp::OnInit() )
 		return false;

@@ -26,6 +26,7 @@
 #include <wx/app.h>
 #include <wx/dir.h>
 #include <wx/log.h>
+#include <wx/filesys.h>
 
 #include <boost/filesystem/operations.hpp>
 #include <boost/filesystem/path.hpp>
@@ -515,6 +516,7 @@ void BitTorrentSession::AddTorrentSession( shared_ptr<torrent_t>& torrent )
 		//
 		libtorrent::add_torrent_params p;
 		//p.ti = t;
+		p.url = wxFileSystem::FileNameToURL(const wxFileName &filename)
 		p.save_path = ( const char* )torrent->config->GetDownloadPath().mb_str( wxConvUTF8 );
 
 		if( resume_data.type() != entry::undefined_t )
@@ -569,7 +571,7 @@ bool BitTorrentSession::AddTorrent( shared_ptr<torrent_t>& torrent )
 
 	try
 	{
-		if( find_torrent_from_hash( torrent->hash ) >= 0 )
+		if( find_torrent_from_hash( wxString(torrent->hash) ) >= 0 )
 		{
 			wxLogWarning( _T( "Torrent %s already exists" ), torrent->name.c_str() );
 			return false;
@@ -605,9 +607,9 @@ bool BitTorrentSession::HandleAddTorrentAlert(libtorrent::add_torrent_alert *p)
 {
 	try
 	{
-		std::stringstream hash_stream;
-		hash_stream << p->handle.info_hash();
-		wxString thash = wxString::FromAscii( hash_stream.str().c_str() );
+		//std::stringstream hash_stream;
+		//hash_stream << p->handle.info_hash();
+		InfoHash thash(p->handle.info_hash());
 		shared_ptr<torrent_t> torrent;
 		{
 			wxMutexLocker ml( m_torrent_queue_lock );
@@ -1090,9 +1092,9 @@ shared_ptr<torrent_t> BitTorrentSession::ParseTorrent( const wxString& filename 
 			wxLogError( wxString::FromUTF8( ec.message().c_str() ) );
 		torrent->info = t;
 		torrent->name = wxString( wxConvUTF8.cMB2WC( t->name().c_str() ) );
-		std::stringstream hash_stream;
-		hash_stream << t->info_hash();
-		torrent->hash = wxString::FromAscii( hash_stream.str().c_str() );
+		//std::stringstream hash_stream;
+		//hash_stream << t->info_hash();
+		torrent->hash = t->info_hash();
 		torrent->config.reset( new TorrentConfig( torrent->hash ) );
 
 		if( torrent->config->GetTrackersURL().size() <= 0 )
@@ -1187,7 +1189,7 @@ void BitTorrentSession::StartTorrent( shared_ptr<torrent_t>& torrent, bool force
 
 	//torrent_status st = handle.status();
 	//if(st.state ==  )
-	{ handle.resume(); }
+	//{ handle.resume(); }
 
 	torrent->config->SetTorrentState( force ? TORRENT_STATE_FORCE_START : TORRENT_STATE_START );
 	torrent->config->Save();
@@ -1780,7 +1782,7 @@ void BitTorrentSession::HandleTorrentAlert()
 							event_string << _T("Metadata: ") <<  wxString::FromUTF8(p->message().c_str());
 						}
 					}
-					break;					
+					break;
 				case torrent_finished_alert::alert_type:
 					if( torrent_finished_alert* p = dynamic_cast<torrent_finished_alert*>( *it ) )
 					{
@@ -1885,12 +1887,10 @@ void BitTorrentSession::HandleTorrentAlert()
 					if( metadata_received_alert* p = dynamic_cast<metadata_received_alert*>( *it ) )
 					{
 						event_string << _T( "Metadata: " ) << wxString::FromUTF8(p->message().c_str());
-						std::stringstream hash_stream;
-						hash_stream << p->handle.info_hash();
-						wxString thash = wxString::FromAscii( hash_stream.str().c_str() );
+						InfoHash thash(p->handle.info_hash());
 						
 						wxMutexLocker ml( m_torrent_queue_lock );
-						torrents_map::iterator it = m_torrent_map.find(thash);
+						torrents_map::iterator it = m_torrent_map.find(wxString(thash));
 						if(it != m_torrent_map.end())
 						{
 							shared_ptr<torrent_t>& torrent = m_torrent_queue[it->second];
@@ -1924,15 +1924,13 @@ void BitTorrentSession::HandleTorrentAlert()
 
 						if( p->resume_data )
 						{
-							std::stringstream hash_stream;
-							hash_stream << h.info_hash();
-							wxString thash = wxString::FromAscii( hash_stream.str().c_str() );
+							InfoHash thash(h.info_hash());
 							/*wxString fastresumefile = wxGetApp().SaveTorrentsPath() + wxGetApp().PathSeparator() + thash + _T( ".fastresume" );
 							std::ofstream out( ( const char* )fastresumefile.mb_str( wxConvFile ), std::ios_base::binary );
 							out.unsetf( std::ios_base::skipws );
 							bencode( std::ostream_iterator<char>( out ), *p->resume_data );*/
 							//save_resume_data to disk
-							torrents_map::iterator it = m_torrent_map.find(thash);
+							torrents_map::iterator it = m_torrent_map.find(wxString(thash));
 							if(it != m_torrent_map.end())
 							{
 								SaveTorrentResumeData(m_torrent_queue[it->second]);

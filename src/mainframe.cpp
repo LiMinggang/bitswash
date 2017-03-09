@@ -904,7 +904,12 @@ void MainFrame::UpdateUI(bool force/* = false*/)
 	}
 
 	LoggerCtrl* logger = m_torrentinfo->GetLogger();
-	if(MAX_LOG_LINES <= logger->GetNumberOfLogLines()) logger->ClearLog();
+	if(logger)
+	{
+		if(MAX_LOG_LINES <= logger->GetNumberOfLogLines()) logger->ClearLog();
+	}
+
+	wxLogDebug( _T( "MainFrame::UpdateUI done" ) );
 }
 
 void MainFrame::UpdateSelectedTorrent()

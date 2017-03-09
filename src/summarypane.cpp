@@ -255,11 +255,7 @@ void SummaryPane::UpdateSummary()
 	else
 		UpdatePieces(wxString::Format(_T("%d x %s"), t.num_pieces(), HumanReadableByte(t.piece_length()).c_str()));
 
-	std::stringstream hash_stream;
-	hash_stream << t.info_hash();
-
-	// TODO: Find out how to hash >> wxString
-	UpdateHash(wxString::FromAscii(hash_stream.str().c_str()));
+	UpdateHash(wxString(InfoHash(t.info_hash())));
 	//
 	
 	UpdatePeers(h.is_valid()?wxString::Format(_T("%d"), s.num_peers):_T("0"));

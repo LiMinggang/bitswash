@@ -40,6 +40,8 @@ using std::shared_ptr;
 #include <libtorrent/torrent_info.hpp>
 #include <libtorrent/kademlia/traversal_algorithm.hpp>
 
+#include "infohash.h"
+
 #include "configuration.h"
 #include "torrentconfig.h"
 
@@ -76,7 +78,7 @@ typedef struct torrent_handle_t {
 	{}
 
 	wxString name;
-	wxString hash;
+	InfoHash hash;
     wxString magneturi;
 	libtorrent::torrent_handle handle;
 	shared_ptr<const libtorrent::torrent_info> info;
