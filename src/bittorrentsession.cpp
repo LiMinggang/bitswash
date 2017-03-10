@@ -644,29 +644,32 @@ bool BitTorrentSession::HandleAddTorrentAlert(libtorrent::add_torrent_alert *p)
 				}
 			}
 
-		 	bool nopriority = false;
-			wxULongLong_t total_selected = 0;
-			const libtorrent::torrent_info const& torrent_info = *(torrent->info);
-			file_storage const& allfiles = torrent_info.files();
-			std::vector<int> filespriority = torrent->config->GetFilesPriorities();
-
-			if (filespriority.size() != torrent_info.num_files())
+			if(torrent->info)
 			{
-				nopriority = true;
-			}
-			/*0--unchecked_xpm*/
-			/*1--checked_xpm*/
-			/*2--unchecked_dis_xpm*/
-			/*3--checked_dis_xpm*/
+			 	bool nopriority = false;
+				wxULongLong_t total_selected = 0;
+				const libtorrent::torrent_info const& torrent_info = *(torrent->info);
+				file_storage const& allfiles = torrent_info.files();
+				std::vector<int> filespriority = torrent->config->GetFilesPriorities();
 
-			for(int i = 0; i < torrent_info.num_files(); ++i)
-			{
-				if (nopriority || filespriority[i] != BITTORRENT_FILE_NONE)
+				if (filespriority.size() != torrent_info.num_files())
 				{
-					total_selected += allfiles.file_size(i);
+					nopriority = true;
 				}
+				/*0--unchecked_xpm*/
+				/*1--checked_xpm*/
+				/*2--unchecked_dis_xpm*/
+				/*3--checked_dis_xpm*/
+
+				for(int i = 0; i < torrent_info.num_files(); ++i)
+				{
+					if (nopriority || filespriority[i] != BITTORRENT_FILE_NONE)
+					{
+						total_selected += allfiles.file_size(i);
+					}
+				}
+				torrent->config->SetSelectedSize(total_selected);
 			}
-			torrent->config->SetSelectedSize(total_selected);
 
 			if( state == TORRENT_STATE_FORCE_START || state == TORRENT_STATE_START )
 			{
@@ -1183,7 +1186,7 @@ void BitTorrentSession::StartTorrent( shared_ptr<torrent_t>& torrent, bool force
 	wxLogInfo( _T( "%s: Start %s" ), torrent->name.c_str(), force ? _T( "force" ) : _T( "" ) );
 	torrent_handle& handle = torrent->handle;
 
-	if( !handle.is_valid() /*|| ( ( handle.status(torrent_handle::query_save_path).save_path).empty() ) */)
+	if( !handle.is_valid() || ( ( handle.status(torrent_handle::query_save_path).save_path).empty() ) )
 	{
 		AddTorrentSession( torrent );
 	}
@@ -1373,78 +1376,81 @@ void BitTorrentSession::ConfigureTorrent( shared_ptr<torrent_t>& torrent )
 {
 	torrent_handle &h = torrent->handle;
 	wxLogDebug( _T( "%s: Configure" ), torrent->name.c_str() );
-#if 0
-	std::string existdir = h.status(torrent_handle::query_save_path).save_path;
-	std::string newdir( torrent->config->GetDownloadPath().mb_str( wxConvUTF8 ) );
-	wxString oldpath = wxString::FromAscii( existdir.c_str() ) +
-					   wxFileName::GetPathSeparator( wxPATH_NATIVE ) +
-					   wxString( wxConvUTF8.cMB2WC( torrent->info->name().c_str() ) );
-#ifdef __WXMSW__
-	oldpath.Replace( _T( "/" ), _T( "\\" ), true );
-#endif
-	wxString newpath = torrent->config->GetDownloadPath() +
-					   wxFileName::GetPathSeparator( wxPATH_NATIVE ) +
-					   wxString( wxConvUTF8.cMB2WC( torrent->info->name().c_str() ) )/*.c_str()*/;
 
-	if( /*oldpath.Cmp( newpath ) !=*/ 0 )
+	if(torrent->info)
 	{
-		bool copysuccess = true;
-		/* move_storage already handled copying files */
-		/* 2007-12-05 : Not to other drive/partition
-		 * stop session, move it wx way restore session */
-		enum torrent_state prev_state = ( enum torrent_state ) torrent->config->GetTorrentState();
+		std::string existdir = h.status(torrent_handle::query_save_path).save_path;
+		std::string newdir( torrent->config->GetDownloadPath().mb_str( wxConvUTF8 ) );
+		wxString oldpath = wxString::FromAscii( existdir.c_str() ) +
+						   wxFileName::GetPathSeparator( wxPATH_NATIVE ) +
+						   wxString( wxConvUTF8.cMB2WC( torrent->info->name().c_str() ) );
+#ifdef __WXMSW__
+		oldpath.Replace( _T( "/" ), _T( "\\" ), true );
+#endif
+		wxString newpath = torrent->config->GetDownloadPath() +
+						   wxFileName::GetPathSeparator( wxPATH_NATIVE ) +
+						   wxString( wxConvUTF8.cMB2WC( torrent->info->name().c_str() ) )/*.c_str()*/;
 
-		if( ( prev_state == TORRENT_STATE_START ) ||
-				( prev_state == TORRENT_STATE_FORCE_START ) )
+		if( oldpath.Cmp( newpath ) != 0 )
 		{
-			StopTorrent( torrent );
-		}
+			bool copysuccess = true;
+			/* move_storage already handled copying files */
+			/* 2007-12-05 : Not to other drive/partition
+			 * stop session, move it wx way restore session */
+			enum torrent_state prev_state = ( enum torrent_state ) torrent->config->GetTorrentState();
 
-		wxLogDebug( _T( "Old path %s, new path %s" ), oldpath.c_str(), newpath.c_str() );
-
-		if( wxDirExists( oldpath ) )
-		{
-			copysuccess = ( CopyDirectory( oldpath, newpath ) != 0 );
-
-			if( copysuccess )
-			{
-				RemoveDirectory( oldpath );
-			}
-		}
-		else if( wxFileExists( oldpath ) )
-		{
-			copysuccess = wxCopyFile( oldpath, newpath );
-
-			if( copysuccess )
-			{
-				wxRemoveFile( oldpath );
-			}
-		}
-		else
-		{
-			wxLogWarning( _T( "Old path not exists %s" ), oldpath.c_str() );
-			copysuccess = false;
-		}
-
-		//failed copy, restore path
-		if( copysuccess )
-		{
 			if( ( prev_state == TORRENT_STATE_START ) ||
 					( prev_state == TORRENT_STATE_FORCE_START ) )
 			{
-				StartTorrent( torrent, prev_state == ( TORRENT_STATE_FORCE_START ) );
-				h = torrent->handle;
+				StopTorrent( torrent );
+			}
+
+			wxLogDebug( _T( "Old path %s, new path %s" ), oldpath.c_str(), newpath.c_str() );
+
+			if( wxDirExists( oldpath ) )
+			{
+				copysuccess = ( CopyDirectory( oldpath, newpath ) != 0 );
+
+				if( copysuccess )
+				{
+					RemoveDirectory( oldpath );
+				}
+			}
+			else if( wxFileExists( oldpath ) )
+			{
+				copysuccess = wxCopyFile( oldpath, newpath );
+
+				if( copysuccess )
+				{
+					wxRemoveFile( oldpath );
+				}
+			}
+			else
+			{
+				wxLogWarning( _T( "Old path not exists %s" ), oldpath.c_str() );
+				copysuccess = false;
+			}
+
+			//failed copy, restore path
+			if( copysuccess )
+			{
+				if( ( prev_state == TORRENT_STATE_START ) ||
+						( prev_state == TORRENT_STATE_FORCE_START ) )
+				{
+					StartTorrent( torrent, prev_state == ( TORRENT_STATE_FORCE_START ) );
+					h = torrent->handle;
+				}
+			}
+			else
+			{
+				wxLogError( _T( "Failed moving save path %s" ), torrent->config->GetDownloadPath().c_str() );
+				wxLogWarning( _T( "Restoring download path %s" ), oldpath.c_str() );
+				torrent->config->SetDownloadPath( wxString::FromAscii( existdir.c_str() ) );
+				torrent->config->Save();
 			}
 		}
-		else
-		{
-			wxLogError( _T( "Failed moving save path %s" ), torrent->config->GetDownloadPath().c_str() );
-			wxLogWarning( _T( "Restoring download path %s" ), oldpath.c_str() );
-			torrent->config->SetDownloadPath( wxString::FromAscii( existdir.c_str() ) );
-			torrent->config->Save();
-		}
 	}
-#endif
+
 	if( h.is_valid() )
 	{
 		h.set_upload_limit( torrent->config->GetTorrentUploadLimit() );
@@ -1459,8 +1465,11 @@ void BitTorrentSession::ConfigureTorrent( shared_ptr<torrent_t>& torrent )
 					( wxLongLong( torrent->config->GetTorrentMaxUploads() ).ToString() ).c_str(),
 					( wxLongLong( torrent->config->GetTorrentMaxConnections() ).ToString() ).c_str(),
 					( float )torrent->config->GetTorrentRatio() / 100 );
-		ConfigureTorrentFilesPriority( torrent );
-		ConfigureTorrentTrackers( torrent );
+		if(torrent->info)
+		{
+			ConfigureTorrentFilesPriority( torrent );
+			ConfigureTorrentTrackers( torrent );
+		}
 	}
 }
 

@@ -116,7 +116,7 @@ wxString TorrentListCtrl::GetItemValue( long item, long columnid ) const
 	shared_ptr<torrent_t> torrent = torrentlistitems->at( item );
 	stats_t& torrentstats = torrent->config->GetTorrentStats();
 	libtorrent::torrent_handle &torrenthandle = torrent->handle;
-	libtorrent::torrent_info const& torrentinfo = *( torrent->info );
+	shared_ptr<const libtorrent::torrent_info> torrentinfo = torrent->info;
 	libtorrent::torrent_status torrentstatus;
 	int torrentstoped = !torrenthandle.is_valid();
 
@@ -180,7 +180,7 @@ wxString TorrentListCtrl::GetItemValue( long item, long columnid ) const
 		break;
 
 	case TORRENTLIST_COLUMN_SIZE:
-		ret = HumanReadableByte( ( wxDouble ) torrentinfo.total_size() );
+		ret = HumanReadableByte( ( wxDouble ) ((torrentinfo) ? torrentinfo->total_size() : 0) );
 		break;
 	case TORRENTLIST_COLUMN_SELECTEDSIZE:
 		ret = HumanReadableByte( ( wxDouble ) torrent->config->GetSelectedSize() );
@@ -223,7 +223,7 @@ wxString TorrentListCtrl::GetItemValue( long item, long columnid ) const
 		}
 		else
 		{
-			unsigned long byteleft = ( unsigned long )( ( double )torrentinfo.total_size() * ( 1 - torrentstats.progress ) );
+			unsigned long byteleft = ( unsigned long )( ((torrentinfo) ? (( double )torrentinfo->total_size() * ( 1 - torrentstats.progress )) : 0) );
 			unsigned long secleft = 999999;
 			unsigned long downloadrate = torrentstatus.download_payload_rate ;
 

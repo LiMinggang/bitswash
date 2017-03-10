@@ -237,25 +237,28 @@ void SummaryPane::UpdateSummary()
 
 	libtorrent::torrent_handle h = pTorrent->handle;
 
-	libtorrent::torrent_info const& t = *pTorrent->info;
+	shared_ptr<const libtorrent::torrent_info> t = pTorrent->info;
 	libtorrent::torrent_status s;
 
 	if(h.is_valid()) 
 		s = h.status();
 
-	wxString t_name = wxString(wxConvUTF8.cMB2WC(t.name().c_str()));
-	wxLogDebug(_T("UpdateSummary - Update torrent %s"), t_name.c_str());
+	if(t)
+	{
+		wxString t_name = wxString(wxConvUTF8.cMB2WC(t->name().c_str()));
+		wxLogDebug(_T("UpdateSummary - Update torrent %s"), t_name.c_str());
 
-	//if(h.is_valid()) UpdateSaveAs(wxString::FromAscii( pTorrent->handle.save_path().string().c_str()));
-	UpdateSaveAs(pTorrent->config->GetDownloadPath() + dirsep + t_name);
+		//if(h.is_valid()) UpdateSaveAs(wxString::FromAscii( pTorrent->handle.save_path().string().c_str()));
+		UpdateSaveAs(pTorrent->config->GetDownloadPath() + dirsep + t_name);
 
-	UpdateSize(HumanReadableByte((wxDouble) t.total_size()));
-	if(!s.has_metadata)
-		UpdatePieces(wxString::Format(_T("%d x %s"), 0, HumanReadableByte(0).c_str()));
-	else
-		UpdatePieces(wxString::Format(_T("%d x %s"), t.num_pieces(), HumanReadableByte(t.piece_length()).c_str()));
+		UpdateSize(HumanReadableByte((wxDouble) t->total_size()));
+		if(!s.has_metadata)
+			UpdatePieces(wxString::Format(_T("%d x %s"), 0, HumanReadableByte(0).c_str()));
+		else
+			UpdatePieces(wxString::Format(_T("%d x %s"), t->num_pieces(), HumanReadableByte(t->piece_length()).c_str()));
 
-	UpdateHash(wxString(InfoHash(t.info_hash())));
+		UpdateHash(wxString(InfoHash(t->info_hash())));
+	}
 	//
 	
 	UpdatePeers(h.is_valid()?wxString::Format(_T("%d"), s.num_peers):_T("0"));
@@ -279,7 +282,8 @@ void SummaryPane::UpdateSummary()
 			UpdateRatio(_T("inf"));
 	}
 
-	UpdateComment(wxString(wxConvUTF8.cMB2WC(t.comment().c_str())));
+	if(t)
+		UpdateComment(wxString(wxConvUTF8.cMB2WC(t->comment().c_str())));
 
 	UpdateTrackerUrl(h.is_valid()?wxString::FromAscii(s.current_tracker.c_str()):_T(""));
 	//

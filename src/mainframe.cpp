@@ -848,7 +848,6 @@ void MainFrame::UpdateUI(bool force/* = false*/)
 					return;
 				}
 				libtorrent::torrent_handle &torrent_handle = torrent->handle;
-				libtorrent::torrent_info const& torrent_info = *(torrent->info);
 				wxLogDebug( _T( "MainFrame: list size %s selected items %s" ), ( wxLongLong( torrent_queue_size ).ToString() ).c_str(), ( wxLongLong( selecteditems.size() ).ToString() ).c_str() );
 
 				/* if torrent is started in libtorrent */
@@ -869,7 +868,7 @@ void MainFrame::UpdateUI(bool force/* = false*/)
 				/* get files list */
 				{
 					//m_filelistctrl->SetStaticHandle(m_torrentlistitems[selecteditems[0]]);
-					m_filelistctrl->SetItemCount( torrent_info.num_files() );
+					m_filelistctrl->SetItemCount( (torrent->info) ? torrent->info->num_files() : 0 );
 				}
 				{
 					m_trackerlistctrl->SetStaticHandle( torrent );

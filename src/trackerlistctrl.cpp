@@ -105,8 +105,6 @@ wxString TrackerListCtrl::GetItemValue(long item, long columnid) const
 	if (!pTorrent)
 		return _T("");
 
- 	libtorrent::torrent_info const& t_info= *(pTorrent->info);
-
 	wxString t_name = wxEmptyString;
 
 	const std::vector<libtorrent::announce_entry>& trackers = pTorrent->handle.trackers();
@@ -199,8 +197,6 @@ void TrackerListCtrl::OnMenuEdit(wxCommandEvent& event)
 			return;
 		
 	}
-
- 	libtorrent::torrent_info const& t_info = *(pTorrent->info);
 
 	wxLogDebug(_T("edit tracker no %d, cmd %d"), item, cmd);
 
