@@ -1201,9 +1201,12 @@ void BitTorrentSession::StartTorrent( shared_ptr<torrent_t>& torrent, bool force
 	//if(st.state ==  )
 	//{ handle.resume(); }
 
-	torrent->config->SetTorrentState( force ? TORRENT_STATE_FORCE_START : TORRENT_STATE_START );
-	torrent->config->Save();
-	ConfigureTorrent( torrent );
+	if (handle.is_valid())
+	{
+		torrent->config->SetTorrentState(force ? TORRENT_STATE_FORCE_START : TORRENT_STATE_START);
+		torrent->config->Save();
+		ConfigureTorrent(torrent);
+	}
 }
 
 void BitTorrentSession::StopTorrent( shared_ptr<torrent_t>& torrent )
