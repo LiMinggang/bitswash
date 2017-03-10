@@ -130,6 +130,7 @@ BEGIN_EVENT_TABLE( MainFrame, wxFrame )
 	EVT_SIZE( MainFrame::OnSize )
 	EVT_MOVE( MainFrame::OnMove )
 	EVT_TIMER( ID_TIMER_GUI_UPDATE, MainFrame::OnRefreshTimer )
+	EVT_TIMER( ID_TIMER_BT_UPDATE, MainFrame::OnBTTimer )
 
 	EVT_CLOSE( MainFrame::OnClose )
 	EVT_ICONIZE( MainFrame::OnMinimize )
@@ -207,6 +208,8 @@ MainFrame::MainFrame( wxFrame *frame, const wxString& title )
 	wxLogDebug( _T( "Refresh timer %d" ), m_config->GetRefreshTime() );
 	m_refreshtimer.SetOwner( this, ID_TIMER_GUI_UPDATE );
 	m_refreshtimer.Start( m_config->GetRefreshTime() * 1000, wxTIMER_CONTINUOUS );
+	m_bttimer.SetOwner( this, ID_TIMER_BT_UPDATE );
+	m_bttimer.Start( 1000, wxTIMER_CONTINUOUS );
 	//Refresh torrent list on timer
 	//
 }
@@ -230,6 +233,7 @@ void MainFrame::OnClose( wxCloseEvent& event )
 	wxLogDebug( _T( "MainFrame Closing" ) );
 	//stop update timer
 	m_refreshtimer.Stop();
+	m_bttimer.Stop();
 	m_config->SetTorrentListCtrlSetting( m_torrentlistctrl->Settings() );
 	m_config->SetPeerListCtrlSetting( m_peerlistctrl->Settings() );
 	m_config->SetFileListCtrlSetting( m_filelistctrl->Settings() );
@@ -808,6 +812,12 @@ void MainFrame::OnRefreshTimer( wxTimerEvent& WXUNUSED( event ) )
 {
 	//GetTorrentLog();
 	UpdateUI();
+}
+
+void MainFrame::OnBTTimer( wxTimerEvent& WXUNUSED( event ) )
+{
+	static BTSEvent dummy(BTSEvent::EVENT_TIMER);
+	m_btsession->PostEvent(dummy);
 }
 
 void MainFrame::OnListItemClick( long item )

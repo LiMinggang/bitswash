@@ -94,6 +94,7 @@ class MainFrame: public wxFrame
 
 		/* TIMER */
 		ID_TIMER_GUI_UPDATE,
+		ID_TIMER_BT_UPDATE,
 
 		ID_OPTIONS_LANGUAGE,
 		/* plenty of languages follows
@@ -216,8 +217,10 @@ private:
 	wxLog* m_oldlog;
 
 	void OnRefreshTimer( wxTimerEvent& WXUNUSED( event ) );
+	void OnBTTimer( wxTimerEvent& WXUNUSED( event ) );
 
 	wxTimer m_refreshtimer;
+	wxTimer m_bttimer;
 
 	PeerListCtrl::peer_list_t m_peerlistitems;
 

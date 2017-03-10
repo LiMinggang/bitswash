@@ -112,14 +112,15 @@ void *BitTorrentSession::Entry()
 	ScanTorrentsDirectory( wxGetApp().SaveTorrentsPath() );
 
 	//( ( BitSwash* )m_pParent )->BTInitDone();
-
+	BTSEvent evt;
 	while( 1 )
 	{
 		//DumpTorrents();
 		if( TestDestroy() )
 		{ break; }
 
-		wxThread::Sleep( 1000 );
+		m_evt_queue.Receive( evt );
+		//wxThread::Sleep( 1000 );
 		CheckQueueItem();
 	}
 
@@ -155,6 +156,7 @@ void BitTorrentSession::OnExit()
 	}
 
 	SaveAllTorrent();
+	m_evt_queue.Clear();
 	std::vector<alert*> alerts;
 	m_libbtsession->pop_alerts( &alerts );
 	m_libbtsession->set_alert_notify(notify_func_t());
