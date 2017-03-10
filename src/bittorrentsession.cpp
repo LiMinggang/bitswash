@@ -100,7 +100,7 @@ void *BitTorrentSession::Entry()
 
     Configure(pack);
     m_libbtsession = new libtorrent::session(pack, 0);
-	m_libbtsession->set_alert_notify(boost::bind(&BitTorrentSession::HandleTorrentAlert, this));
+	m_libbtsession->set_alert_notify(boost::bind(&BitTorrentSession::LibTorrentAlert, this));
 
 	ConfigureSession();
 	if(m_mutex != 0 && m_condition != 0)
@@ -112,7 +112,7 @@ void *BitTorrentSession::Entry()
 	ScanTorrentsDirectory( wxGetApp().SaveTorrentsPath() );
 
 	//( ( BitSwash* )m_pParent )->BTInitDone();
-	BTSEvent evt;
+	bts_event evt;
 	while( 1 )
 	{
 		//DumpTorrents();
@@ -120,6 +120,10 @@ void *BitTorrentSession::Entry()
 		{ break; }
 
 		m_evt_queue.Receive( evt );
+		if(evt == BTS_EVENT_ALERT)
+		{
+			HandleTorrentAlert();
+		}
 		//wxThread::Sleep( 1000 );
 		CheckQueueItem();
 	}

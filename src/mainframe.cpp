@@ -816,7 +816,7 @@ void MainFrame::OnRefreshTimer( wxTimerEvent& WXUNUSED( event ) )
 
 void MainFrame::OnBTTimer( wxTimerEvent& WXUNUSED( event ) )
 {
-	static BTSEvent dummy(BTSEvent::EVENT_TIMER);
+	static bts_event dummy(BTS_EVENT_TIMER);
 	m_btsession->PostEvent(dummy);
 }
 

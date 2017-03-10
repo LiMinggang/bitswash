@@ -72,27 +72,14 @@ namespace libtorrent
 	struct add_torrent_alert;
 }
 
-typedef std::vector<libtorrent::alert*> bt_alerts_t;
+enum BTS_EVENT_TYPE
+	{
+	BTS_EVENT_INVALID = 0,
+	BTS_EVENT_TIMER,
+	BTS_EVENT_ALERT,
+	};
 
-class BTSEvent
-{
-public:
-	enum BTS_EVENT_TYPE
-		{
-		EVENT_INVALID = 0,
-		EVENT_TIMER,
-		EVENT_ALERT,
-		};
-	BTSEvent():m_type(EVENT_INVALID) {}
-	BTSEvent(BTS_EVENT_TYPE type):m_type(type) {}
-	~BTSEvent() {}
-	BTS_EVENT_TYPE Type() {return m_type;}
-	void SetType(BTS_EVENT_TYPE type) {m_type = type;}
-	void SaveAlerts(shared_ptr<bt_alerts_t>& alerts) {m_bt_alerts = alerts;}
-private:
-	shared_ptr<bt_alerts_t> m_bt_alerts;
-	BTS_EVENT_TYPE m_type;
-};
+typedef wxUint32 bts_event;
 
 typedef struct torrent_handle_t {
 
@@ -173,11 +160,16 @@ public:
 	libtorrent::session* GetLibTorrent() { return m_libbtsession;}
 
 	void HandleTorrentAlert();
-	void PostEvent(BTSEvent & evt) {m_evt_queue.Post(evt);}
+	void PostEvent(bts_event & evt) {m_evt_queue.Post(evt);}
+	void LibTorrentAlert()
+		{
+			static bts_event lbtAlert(BTS_EVENT_ALERT);
+			PostEvent(lbtAlert);
+		}
 
 private:
 	void ScanTorrentsDirectory(const wxString& dirname);
-	int find_torrent_from_hash(const wxString&  hash) const;
+	int find_torrent_from_hash(const wxString& hash) const;
 
 	void SaveTorrentResumeData(shared_ptr<torrent_t>& torrent);
 	void SaveAllTorrent();
@@ -198,7 +190,7 @@ private:
 	libtorrent::session* m_libbtsession;
     wxCondition *m_condition;
     wxMutex *m_mutex;
-	wxMessageQueue< BTSEvent > m_evt_queue;
+	wxMessageQueue< bts_event > m_evt_queue;
 };
 
 #endif // _BITTORRENTSESSION_H_
