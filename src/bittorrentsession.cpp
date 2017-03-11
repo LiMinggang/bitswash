@@ -113,20 +113,31 @@ void *BitTorrentSession::Entry()
 
 	//( ( BitSwash* )m_pParent )->BTInitDone();
 	bts_event evt;
-	while( 1 )
-	{
-		//DumpTorrents();
-		if( TestDestroy() )
-		{ break; }
+	wxMessageQueueError result = wxMSGQUEUE_NO_ERROR;
 
-		m_evt_queue.Receive( evt );
-		if(evt == BTS_EVENT_ALERT)
+	do
+	{
+		wxLogDebug( _T( "BitTorrentSession Thread Receive queue" ));
+		result = m_evt_queue.ReceiveTimeout( 5000, evt );
+		if(result == wxMSGQUEUE_NO_ERROR)
 		{
-			HandleTorrentAlert();
+			wxLogDebug( _T( "BitTorrentSession Thread BT Alert!" ));
+			if(evt == BTS_EVENT_ALERT)
+			{
+				HandleTorrentAlert();
+			}
 		}
-		//wxThread::Sleep( 1000 );
-		CheckQueueItem();
+		else if(result == wxMSGQUEUE_TIMEOUT)
+		{
+			if( TestDestroy() )
+			{ break; }
+			//DumpTorrents();
+			wxLogDebug( _T( "BitTorrentSession check item" ));
+			CheckQueueItem();
+			wxLogDebug( _T( "BitTorrentSession check item done" ));
+		}
 	}
+	while(result != wxMSGQUEUE_MISC_ERROR);
 
 	Exit( 0 );
 	return NULL;

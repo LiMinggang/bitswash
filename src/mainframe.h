@@ -217,10 +217,8 @@ private:
 	wxLog* m_oldlog;
 
 	void OnRefreshTimer( wxTimerEvent& WXUNUSED( event ) );
-	void OnBTTimer( wxTimerEvent& WXUNUSED( event ) );
 
 	wxTimer m_refreshtimer;
-	wxTimer m_bttimer;
 
 	PeerListCtrl::peer_list_t m_peerlistitems;
 
