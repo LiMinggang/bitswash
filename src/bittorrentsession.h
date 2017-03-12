@@ -175,6 +175,7 @@ public:
 	wxDouble GetDownloadRate() { return m_download_rate; }
 	wxDouble GetUploadRate() { return m_upload_rate; }
 	boost::uint64_t GetNumPeers() { return m_cnt[0][m_num_peers_idx]; }
+	boost::uint64_t GetDhtNodes() { return m_cnt[0][m_dht_nodes_idx]; }
 	bool HasInComingConns() { return (m_cnt[0][m_has_incoming_connections_idx] > 0 ? true : false); }
 	void PostStatusUpdate();
 	void UpdateCounters(boost::uint64_t* stats_counters, int num_cnt
@@ -234,6 +235,7 @@ private:
 	int m_blocks_in_use_idx;
 	int m_blocks_written_idx;
 	int m_write_ops_idx;
+	int m_dht_nodes_idx;
 
 	int m_mfu_size_idx;
 	int m_mfu_ghost_idx;

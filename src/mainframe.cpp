@@ -1568,7 +1568,7 @@ wxString MainFrame::GetStatusPeers()
 
 wxString MainFrame::GetStatusDHT()
 {
-	wxString numpeers/* = wxString::Format( _T( "%ld" ),  m_btsession->GetLibTorrent()->status().dht_nodes )*/;
+	wxString numpeers = wxString::Format( _T( "%ld" ),  m_btsession->GetDhtNodes() );
 	return numpeers;
 }
 

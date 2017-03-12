@@ -122,6 +122,7 @@ BitTorrentSession::BitTorrentSession( wxApp* pParent, Configuration* config, wxM
 	m_utp_fin_sent = find_metric_idx("utp.num_utp_fin_sent");
 	m_utp_close_wait = find_metric_idx("utp.num_utp_close_wait");
 	
+	m_dht_nodes_idx = find_metric_idx("dht.dht_nodes");
 	m_download_rate = 0.0;
 	m_upload_rate = 0.0;
 }
@@ -1335,19 +1336,19 @@ void BitTorrentSession::ReannounceTorrent( shared_ptr<torrent_t>& torrent )
 
 void BitTorrentSession::ConfigureTorrentFilesPriority( shared_ptr<torrent_t>& torrent )
 {
-	int nopriority = 0;
 	std::vector<int> filespriority = torrent->config->GetFilesPriorities();
 	//XXX default priority is 4...
 	// win32 4 triggers a assert
-	std::vector<int> deffilespriority( torrent->info->num_files(), 5 );
 
-	if( filespriority.size() != torrent->info->num_files() )
+	wxASSERT(torrent->info);
+	if (filespriority.size() != torrent->info.num_files())
 	{
-		nopriority = 1;
+		std::vector<int> deffilespriority( torrent->info->num_files(), BITTORRENT_FILE_NORMAL );
+		filespriority.swap( deffilespriority );
 	}
 
 	if( torrent->handle.is_valid() )
-	{ torrent->handle.prioritize_files( nopriority ? deffilespriority : filespriority ); }
+	{ torrent->handle.prioritize_files( filespriority ); }
 }
 
 void BitTorrentSession::ConfigureTorrentTrackers( shared_ptr<torrent_t>& torrent )
@@ -1364,6 +1365,7 @@ void BitTorrentSession::ConfigureTorrent( shared_ptr<torrent_t>& torrent )
 
 	if(torrent->info)
 	{
+		wxASSERT(h.is_valid());
 		std::string existdir = h.status(lt::torrent_handle::query_save_path).save_path;
 		std::string newdir( torrent->config->GetDownloadPath().mb_str( wxConvUTF8 ) );
 		wxString oldpath = wxString::FromAscii( existdir.c_str() ) +
@@ -2001,7 +2003,6 @@ bool BitTorrentSession::HandleAddTorrentAlert(lt::add_torrent_alert *p)
 
 			if(torrent->info)
 			{
-			 	bool nopriority = false;
 				wxULongLong_t total_selected = 0;
 				lt::torrent_info const& t_info = *(torrent->info);
 				lt::file_storage const& allfiles = t_info.files();
@@ -2009,7 +2010,8 @@ bool BitTorrentSession::HandleAddTorrentAlert(lt::add_torrent_alert *p)
 
 				if (filespriority.size() != t_info.num_files())
 				{
-					nopriority = true;
+					std::vector<int> deffilespriority( pTorrent->info->num_files(), BITTORRENT_FILE_NORMAL );
+					filespriority.swap( deffilespriority );
 				}
 				/*0--unchecked_xpm*/
 				/*1--checked_xpm*/
@@ -2018,7 +2020,7 @@ bool BitTorrentSession::HandleAddTorrentAlert(lt::add_torrent_alert *p)
 
 				for(int i = 0; i < t_info.num_files(); ++i)
 				{
-					if (nopriority || filespriority[i] != BITTORRENT_FILE_NONE)
+					if (filespriority[i] != BITTORRENT_FILE_NONE)
 					{
 						total_selected += allfiles.file_size(i);
 					}
