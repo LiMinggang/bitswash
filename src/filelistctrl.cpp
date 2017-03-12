@@ -331,7 +331,9 @@ void FileListCtrl::OnLeftDClick(wxMouseEvent& event)
 			if(filespriority.at(selectedfiles) != BITTORRENT_FILE_NONE)
 			{
 				libtorrent::file_storage const& allfiles = torrentinfo.files();
-				wxFileName filename = pTorrent->config->GetDownloadPath() + wxString::FromUTF8((allfiles.file_name(selectedfiles)).c_str());
+				wxString fname = pTorrent->config->GetDownloadPath() + wxFileName::GetPathSeparator(wxPATH_NATIVE) + wxString::FromUTF8((allfiles.file_name(selectedfiles)).c_str());
+				std::vector<std::string> const& allp = allfiles.paths();
+				wxFileName filename (fname);
 				filename.MakeAbsolute();
 				if(wxFileName::FileExists(filename.GetFullName()))
 				{

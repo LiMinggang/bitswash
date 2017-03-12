@@ -74,7 +74,7 @@ struct BTQueueSortDsc
 	}
 };
 
-using namespace libtorrent;
+namespace lt = libtorrent;
 
 BitTorrentSession::BitTorrentSession( wxApp* pParent, Configuration* config, wxMutex *mutex/* = 0*/, wxCondition *condition/* = 0*/ )
 	: wxThread( wxTHREAD_JOINABLE ), m_upnp_started( false ), m_natpmp_started( false ), m_lsd_started( false ), m_libbtsession( 0 )
@@ -94,12 +94,12 @@ static const char PEER_ID[] = "SW";
 
 void *BitTorrentSession::Entry()
 {
-	wxLogDebug( _T( "BitTorrentSession Thread Entry pid 0x%lx priority %u." ), GetId(), GetPriority() );
+	wxLogDebug( _T( "BitTorrentSession Thread lt::entry pid 0x%lx priority %u." ), GetId(), GetPriority() );
 	
-	libtorrent::settings_pack pack;
+	lt::settings_pack pack;
 
     Configure(pack);
-    m_libbtsession = new libtorrent::session(pack, 0);
+    m_libbtsession = new lt::session(pack, 0);
 	m_libbtsession->set_alert_notify(boost::bind(&BitTorrentSession::LibTorrentAlert, this));
 
 	ConfigureSession();
@@ -114,11 +114,12 @@ void *BitTorrentSession::Entry()
 	//( ( BitSwash* )m_pParent )->BTInitDone();
 	bts_event evt;
 	wxMessageQueueError result = wxMSGQUEUE_NO_ERROR;
+	time_t starttime = wxDateTime::GetTimeNow();
 
 	do
 	{
 		wxLogDebug( _T( "BitTorrentSession Thread Receive queue" ));
-		result = m_evt_queue.ReceiveTimeout( 5000, evt );
+		result = m_evt_queue.ReceiveTimeout( 1000, evt );
 		if(result == wxMSGQUEUE_NO_ERROR)
 		{
 			wxLogDebug( _T( "BitTorrentSession Thread BT Alert!" ));
@@ -127,15 +128,20 @@ void *BitTorrentSession::Entry()
 				HandleTorrentAlert();
 			}
 		}
-		else if(result == wxMSGQUEUE_TIMEOUT)
+		time_t now = wxDateTime::GetTimeNow();
+		int timediff = now - starttime;
+		if(timediff >= 5000)
 		{
-			if( TestDestroy() )
-			{ break; }
+			starttime = now;
 			//DumpTorrents();
 			wxLogDebug( _T( "BitTorrentSession check item" ));
 			CheckQueueItem();
 			wxLogDebug( _T( "BitTorrentSession check item done" ));
 		}
+
+		if( TestDestroy() )
+		{ break; }
+		wxLogDebug( _T( "BitTorrentSession Thread Receive queue done" ));
 	}
 	while(result != wxMSGQUEUE_MISC_ERROR);
 
@@ -149,7 +155,7 @@ void BitTorrentSession::OnExit()
 	//XXX have 1 soon
 	//
 	//wxCriticalSectionLocker locker(wxGetApp().m_btcritsect);
-	//save DHT entry
+	//save DHT lt::entry
 	wxLogDebug( _T( "BitTorrent Session exiting" ) );
 
 	if( m_config->GetDHTEnabled() )
@@ -158,8 +164,8 @@ void BitTorrentSession::OnExit()
 
 		try
 		{
-			entry dht_state;
-			m_libbtsession->save_state(dht_state, session::save_dht_state);
+			lt::entry dht_state;
+			m_libbtsession->save_state(dht_state, lt::session::save_dht_state);
 			std::ofstream out( ( const char* )dhtstatefile.mb_str( wxConvFile ), std::ios_base::binary );
 			out.unsetf( std::ios_base::skipws );
 			bencode( std::ostream_iterator<char>( out ), dht_state );
@@ -172,7 +178,7 @@ void BitTorrentSession::OnExit()
 
 	SaveAllTorrent();
 	m_evt_queue.Clear();
-	std::vector<alert*> alerts;
+	std::vector<lt::alert*> alerts;
 	m_libbtsession->pop_alerts( &alerts );
 	m_libbtsession->set_alert_notify(notify_func_t());
 	delete m_libbtsession;
@@ -183,177 +189,177 @@ void BitTorrentSession::OnExit()
 	}
 }
 
-void BitTorrentSession::Configure(libtorrent::settings_pack &settingsPack)
+void BitTorrentSession::Configure(lt::settings_pack &settingsPack)
 {
-	std::string peerId = libtorrent::generate_fingerprint(PEER_ID, BITSWASH_FINGERPRINT_VERSION);
-	settingsPack.set_str( libtorrent::settings_pack::user_agent, wxGetApp().UserAgent().ToStdString( ));
+	std::string peerId = lt::generate_fingerprint(PEER_ID, BITSWASH_FINGERPRINT_VERSION);
+	settingsPack.set_str( lt::settings_pack::user_agent, wxGetApp().UserAgent().ToStdString( ));
 
 	// Speed limit
 	//const bool altSpeedLimitEnabled = isAltGlobalSpeedLimitEnabled();
-	//settingsPack.set_int(libtorrent::settings_pack::download_rate_limit, altSpeedLimitEnabled ? altGlobalDownloadSpeedLimit() : globalDownloadSpeedLimit());
-	//settingsPack.set_int(libtorrent::settings_pack::upload_rate_limit, altSpeedLimitEnabled ? altGlobalUploadSpeedLimit() : globalUploadSpeedLimit());
-	settingsPack.set_int( libtorrent::settings_pack::upload_rate_limit, m_config->GetGlobalUploadLimit() );
-	settingsPack.set_int( libtorrent::settings_pack::download_rate_limit, m_config->GetGlobalDownloadLimit() );
+	//settingsPack.set_int(lt::settings_pack::download_rate_limit, altSpeedLimitEnabled ? altGlobalDownloadSpeedLimit() : globalDownloadSpeedLimit());
+	//settingsPack.set_int(lt::settings_pack::upload_rate_limit, altSpeedLimitEnabled ? altGlobalUploadSpeedLimit() : globalUploadSpeedLimit());
+	settingsPack.set_int( lt::settings_pack::upload_rate_limit, m_config->GetGlobalUploadLimit() );
+	settingsPack.set_int( lt::settings_pack::download_rate_limit, m_config->GetGlobalDownloadLimit() );
 	// * Max Half-open connections
-	//settingsPack.set_int(libtorrent::settings_pack::half_open_limit, m_config->GetGlobalMaxHalfConnect());
+	//settingsPack.set_int(lt::settings_pack::half_open_limit, m_config->GetGlobalMaxHalfConnect());
 	// * Max connections limit
-	settingsPack.set_int(libtorrent::settings_pack::connections_limit, m_config->GetGlobalMaxConnections());
+	settingsPack.set_int(lt::settings_pack::connections_limit, m_config->GetGlobalMaxConnections());
 	// * Global max upload slots
-	settingsPack.set_int(libtorrent::settings_pack::unchoke_slots_limit, m_config->GetGlobalMaxUploads());
+	settingsPack.set_int(lt::settings_pack::unchoke_slots_limit, m_config->GetGlobalMaxUploads());
 	// uTP
 
-	settingsPack.set_int( libtorrent::settings_pack::tracker_completion_timeout, m_config->GetTrackerCompletionTimeout());
-	settingsPack.set_int( libtorrent::settings_pack::tracker_receive_timeout, m_config->GetTrackerReceiveTimeout());
-	settingsPack.set_int( libtorrent::settings_pack::stop_tracker_timeout, m_config->GetStopTrackerTimeout());
-	settingsPack.set_int( libtorrent::settings_pack::tracker_maximum_response_length, m_config->GetTrackerMaximumResponseLength());
-	settingsPack.set_int( libtorrent::settings_pack::piece_timeout, m_config->GetPieceTimeout());
-	settingsPack.set_int( libtorrent::settings_pack::request_queue_time, m_config->GetRequestQueueTime());
-	settingsPack.set_int( libtorrent::settings_pack::max_allowed_in_request_queue, m_config->GetMaxAllowedInRequestQueue());
-	settingsPack.set_int( libtorrent::settings_pack::max_out_request_queue, m_config->GetMaxOutRequestQueue());
-	settingsPack.set_int( libtorrent::settings_pack::whole_pieces_threshold, m_config->GetWholePiecesThreshold());
-	settingsPack.set_int( libtorrent::settings_pack::peer_timeout, m_config->GetPeerTimeout());
-	settingsPack.set_int( libtorrent::settings_pack::urlseed_timeout, m_config->GetUrlseedTimeout());
-	settingsPack.set_int( libtorrent::settings_pack::urlseed_pipeline_size, m_config->GetUrlseedPipelineSize());
-	settingsPack.set_int( libtorrent::settings_pack::file_pool_size, m_config->GetFilePoolSize());
-	settingsPack.set_bool( libtorrent::settings_pack::allow_multiple_connections_per_ip, m_config->GetAllowMultipleConnectionsPerIP());
-	settingsPack.set_int( libtorrent::settings_pack::max_failcount, m_config->GetMaxFailCount());
-	settingsPack.set_int( libtorrent::settings_pack::min_reconnect_time, m_config->GetMinReconnectTime());
-	settingsPack.set_int( libtorrent::settings_pack::peer_connect_timeout, m_config->GetPeerConnectTimeout());
+	settingsPack.set_int( lt::settings_pack::tracker_completion_timeout, m_config->GetTrackerCompletionTimeout());
+	settingsPack.set_int( lt::settings_pack::tracker_receive_timeout, m_config->GetTrackerReceiveTimeout());
+	settingsPack.set_int( lt::settings_pack::stop_tracker_timeout, m_config->GetStopTrackerTimeout());
+	settingsPack.set_int( lt::settings_pack::tracker_maximum_response_length, m_config->GetTrackerMaximumResponseLength());
+	settingsPack.set_int( lt::settings_pack::piece_timeout, m_config->GetPieceTimeout());
+	settingsPack.set_int( lt::settings_pack::request_queue_time, m_config->GetRequestQueueTime());
+	settingsPack.set_int( lt::settings_pack::max_allowed_in_request_queue, m_config->GetMaxAllowedInRequestQueue());
+	settingsPack.set_int( lt::settings_pack::max_out_request_queue, m_config->GetMaxOutRequestQueue());
+	settingsPack.set_int( lt::settings_pack::whole_pieces_threshold, m_config->GetWholePiecesThreshold());
+	settingsPack.set_int( lt::settings_pack::peer_timeout, m_config->GetPeerTimeout());
+	settingsPack.set_int( lt::settings_pack::urlseed_timeout, m_config->GetUrlseedTimeout());
+	settingsPack.set_int( lt::settings_pack::urlseed_pipeline_size, m_config->GetUrlseedPipelineSize());
+	settingsPack.set_int( lt::settings_pack::file_pool_size, m_config->GetFilePoolSize());
+	settingsPack.set_bool( lt::settings_pack::allow_multiple_connections_per_ip, m_config->GetAllowMultipleConnectionsPerIP());
+	settingsPack.set_int( lt::settings_pack::max_failcount, m_config->GetMaxFailCount());
+	settingsPack.set_int( lt::settings_pack::min_reconnect_time, m_config->GetMinReconnectTime());
+	settingsPack.set_int( lt::settings_pack::peer_connect_timeout, m_config->GetPeerConnectTimeout());
 	// Ignore limits on LAN
-	//settingsPack.set_bool( libtorrent::settings_pack::ignore_limits_on_local_network, m_config->GetIgnoreLimitsOnLocalNetwork());
-	settingsPack.set_int( libtorrent::settings_pack::connection_speed, m_config->GetConnectionSpeed());
-	settingsPack.set_bool( libtorrent::settings_pack::send_redundant_have, m_config->GetSendRedundantHave());
-	settingsPack.set_bool( libtorrent::settings_pack::lazy_bitfields, m_config->GetLazyBitfields());
-	settingsPack.set_int( libtorrent::settings_pack::inactivity_timeout, m_config->GetInactivityTimeout());
-	settingsPack.set_int( libtorrent::settings_pack::unchoke_interval, m_config->GetUnchokeInterval());
-	//	settingsPack.set_int( libtorrent::settings_pack::optimistic_unchoke_multiplier, m_config->GetOptimisticUnchokeMultiplier());
-	settingsPack.set_int( libtorrent::settings_pack::num_want, m_config->GetNumWant());
-	settingsPack.set_int( libtorrent::settings_pack::initial_picker_threshold, m_config->GetInitialPickerThreshold());
-	settingsPack.set_int( libtorrent::settings_pack::allowed_fast_set_size, m_config->GetAllowedFastSetSize());
-	//	settingsPack.set_int( libtorrent::settings_pack::max_outstanding_disk_bytes_per_connection, m_config->GetMaxOutstandingDiskBytesPerConnection());
-	settingsPack.set_int( libtorrent::settings_pack::handshake_timeout, m_config->GetHandshakeTimeout());
-	settingsPack.set_bool( libtorrent::settings_pack::use_dht_as_fallback, m_config->GetUseDhtAsFallback());
-	//settingsPack.set_bool( libtorrent::settings_pack::free_torrent_hashes, m_config->GetFreeTorrentHashes());
+	//settingsPack.set_bool( lt::settings_pack::ignore_limits_on_local_network, m_config->GetIgnoreLimitsOnLocalNetwork());
+	settingsPack.set_int( lt::settings_pack::connection_speed, m_config->GetConnectionSpeed());
+	settingsPack.set_bool( lt::settings_pack::send_redundant_have, m_config->GetSendRedundantHave());
+	settingsPack.set_bool( lt::settings_pack::lazy_bitfields, m_config->GetLazyBitfields());
+	settingsPack.set_int( lt::settings_pack::inactivity_timeout, m_config->GetInactivityTimeout());
+	settingsPack.set_int( lt::settings_pack::unchoke_interval, m_config->GetUnchokeInterval());
+	//	settingsPack.set_int( lt::settings_pack::optimistic_unchoke_multiplier, m_config->GetOptimisticUnchokeMultiplier());
+	settingsPack.set_int( lt::settings_pack::num_want, m_config->GetNumWant());
+	settingsPack.set_int( lt::settings_pack::initial_picker_threshold, m_config->GetInitialPickerThreshold());
+	settingsPack.set_int( lt::settings_pack::allowed_fast_set_size, m_config->GetAllowedFastSetSize());
+	//	settingsPack.set_int( lt::settings_pack::max_outstanding_disk_bytes_per_connection, m_config->GetMaxOutstandingDiskBytesPerConnection());
+	settingsPack.set_int( lt::settings_pack::handshake_timeout, m_config->GetHandshakeTimeout());
+	settingsPack.set_bool( lt::settings_pack::use_dht_as_fallback, m_config->GetUseDhtAsFallback());
+	//settingsPack.set_bool( lt::settings_pack::free_torrent_hashes, m_config->GetFreeTorrentHashes());
 
 	//Todo: new options=======================================
-	settingsPack.set_bool( libtorrent::settings_pack::announce_to_all_tiers, true);
-	settingsPack.set_bool( libtorrent::settings_pack::announce_to_all_trackers, true);
+	settingsPack.set_bool( lt::settings_pack::announce_to_all_tiers, true);
+	settingsPack.set_bool( lt::settings_pack::announce_to_all_trackers, true);
 
-	libtorrent::settings_pack::io_buffer_mode_t mode = /*useOSCache() ? */libtorrent::settings_pack::enable_os_cache;
-                                                              //: libtorrent::settings_pack::disable_os_cache;
-	settingsPack.set_int(libtorrent::settings_pack::disk_io_read_mode, mode);
-	settingsPack.set_int(libtorrent::settings_pack::disk_io_write_mode, mode);
-	settingsPack.set_bool(libtorrent::settings_pack::anonymous_mode, false);
+	lt::settings_pack::io_buffer_mode_t mode = /*useOSCache() ? */lt::settings_pack::enable_os_cache;
+                                                              //: lt::settings_pack::disable_os_cache;
+	settingsPack.set_int(lt::settings_pack::disk_io_read_mode, mode);
+	settingsPack.set_int(lt::settings_pack::disk_io_write_mode, mode);
+	settingsPack.set_bool(lt::settings_pack::anonymous_mode, false);
 
 	
     // The most secure, rc4 only so that all streams are encrypted
-    //settingsPack.set_int(libtorrent::settings_pack::allowed_enc_level, ( libtorrent::pe_settings::enc_level )( m_config->GetEncLevel()));
-    settingsPack.set_bool(libtorrent::settings_pack::prefer_rc4, m_config->GetEncEnabled());
+    //settingsPack.set_int(lt::settings_pack::allowed_enc_level, ( lt::pe_settings::enc_level )( m_config->GetEncLevel()));
+    settingsPack.set_bool(lt::settings_pack::prefer_rc4, m_config->GetEncEnabled());
 	
 	if( m_config->GetEncEnabled() )
 	{
-		settingsPack.set_int(libtorrent::settings_pack::out_enc_policy, libtorrent::settings_pack::pe_enabled);
-		settingsPack.set_int(libtorrent::settings_pack::in_enc_policy, libtorrent::settings_pack::pe_enabled);
+		settingsPack.set_int(lt::settings_pack::out_enc_policy, lt::settings_pack::pe_enabled);
+		settingsPack.set_int(lt::settings_pack::in_enc_policy, lt::settings_pack::pe_enabled);
 		wxLogMessage( _T( "Encryption enabled, policy %d" ), m_config->GetEncPolicy() );
 	}
 	else
 	{
-		settingsPack.set_int(libtorrent::settings_pack::out_enc_policy, libtorrent::settings_pack::pe_disabled);
-		settingsPack.set_int(libtorrent::settings_pack::in_enc_policy, libtorrent::settings_pack::pe_disabled);
+		settingsPack.set_int(lt::settings_pack::out_enc_policy, lt::settings_pack::pe_disabled);
+		settingsPack.set_int(lt::settings_pack::in_enc_policy, lt::settings_pack::pe_disabled);
 		wxLogMessage( _T( "Encryption is disabled" ) );
 	}
     //case 1: // Forced
-    //    settingsPack.set_int(libtorrent::settings_pack::out_enc_policy, libtorrent::settings_pack::pe_forced);
-    //    settingsPack.set_int(libtorrent::settings_pack::in_enc_policy, libtorrent::settings_pack::pe_forced);
+    //    settingsPack.set_int(lt::settings_pack::out_enc_policy, lt::settings_pack::pe_forced);
+    //    settingsPack.set_int(lt::settings_pack::in_enc_policy, lt::settings_pack::pe_forced);
 	/*
 	if (isQueueingSystemEnabled()) {
         adjustLimits(settingsPack);
 
-        settingsPack.set_int(libtorrent::settings_pack::active_seeds, maxActiveUploads());
-        settingsPack.set_bool(libtorrent::settings_pack::dont_count_slow_torrents, ignoreSlowTorrentsForQueueing());
+        settingsPack.set_int(lt::settings_pack::active_seeds, maxActiveUploads());
+        settingsPack.set_bool(lt::settings_pack::dont_count_slow_torrents, ignoreSlowTorrentsForQueueing());
     }
     else {
-        settingsPack.set_int(libtorrent::settings_pack::active_downloads, -1);
-        settingsPack.set_int(libtorrent::settings_pack::active_seeds, -1);
-        settingsPack.set_int(libtorrent::settings_pack::active_limit, -1);
+        settingsPack.set_int(lt::settings_pack::active_downloads, -1);
+        settingsPack.set_int(lt::settings_pack::active_seeds, -1);
+        settingsPack.set_int(lt::settings_pack::active_limit, -1);
     }
 	*/
 	// 1 active torrent force 2 connections. If you have more active torrents * 2 than connection limit,
 	// connection limit will get extended. Multiply max connections or active torrents by 10 for queue.
 	// Ignore -1 values because we don't want to set a max int message queue
-	//settingsPack.set_int(libtorrent::settings_pack::alert_queue_size, std::max(1000,
+	//settingsPack.set_int(lt::settings_pack::alert_queue_size, std::max(1000,
 	//	10 * std::max(maxActiveTorrents() * 2, maxConnections())));
 	
 	// Outgoing ports
-	//settingsPack.set_int(libtorrent::settings_pack::outgoing_port, m_config->GetPortMin());
-	//settingsPack.set_int(libtorrent::settings_pack::num_outgoing_ports, m_config->GetPortMax() - m_config->GetPortMin() + 1);
+	//settingsPack.set_int(lt::settings_pack::outgoing_port, m_config->GetPortMin());
+	//settingsPack.set_int(lt::settings_pack::num_outgoing_ports, m_config->GetPortMax() - m_config->GetPortMin() + 1);
 	
 	// Include overhead in transfer limits
-	settingsPack.set_bool(libtorrent::settings_pack::rate_limit_ip_overhead, true);
+	settingsPack.set_bool(lt::settings_pack::rate_limit_ip_overhead, true);
 	// IP address to announce to trackers
-	//settingsPack.set_str(libtorrent::settings_pack::announce_ip, Utils::String::toStdString(announceIP()));
+	//settingsPack.set_str(lt::settings_pack::announce_ip, Utils::String::toStdString(announceIP()));
 	// Super seeding
-	settingsPack.set_bool(libtorrent::settings_pack::strict_super_seeding, false);
-	settingsPack.set_bool(libtorrent::settings_pack::enable_incoming_utp, true);
-	settingsPack.set_bool(libtorrent::settings_pack::enable_outgoing_utp, true);
+	settingsPack.set_bool(lt::settings_pack::strict_super_seeding, false);
+	settingsPack.set_bool(lt::settings_pack::enable_incoming_utp, true);
+	settingsPack.set_bool(lt::settings_pack::enable_outgoing_utp, true);
 	// uTP rate limiting
-	//settingsPack.set_bool(libtorrent::settings_pack::rate_limit_utp, isUTPRateLimited());
-	//settingsPack.set_int(libtorrent::settings_pack::mixed_mode_algorithm, isUTPRateLimited()
-	//					 ? libtorrent::settings_pack::prefer_tcp
-	//					 : libtorrent::settings_pack::peer_proportional);
+	//settingsPack.set_bool(lt::settings_pack::rate_limit_utp, isUTPRateLimited());
+	//settingsPack.set_int(lt::settings_pack::mixed_mode_algorithm, isUTPRateLimited()
+	//					 ? lt::settings_pack::prefer_tcp
+	//					 : lt::settings_pack::peer_proportional);
 	
-	//settingsPack.set_bool(libtorrent::settings_pack::apply_ip_filter_to_trackers, isTrackerFilteringEnabled());
+	//settingsPack.set_bool(lt::settings_pack::apply_ip_filter_to_trackers, isTrackerFilteringEnabled());
 
 	//Todo: new options=======================================
 
-    settingsPack.set_int(libtorrent::settings_pack::active_tracker_limit, -1);
-    settingsPack.set_int(libtorrent::settings_pack::active_dht_limit, -1);
-    settingsPack.set_int(libtorrent::settings_pack::active_lsd_limit, -1);
+    settingsPack.set_int(lt::settings_pack::active_tracker_limit, -1);
+    settingsPack.set_int(lt::settings_pack::active_dht_limit, -1);
+    settingsPack.set_int(lt::settings_pack::active_lsd_limit, -1);
 
 	// Set severity level of libtorrent session
-    int alertMask = libtorrent::alert::error_notification
-                    | libtorrent::alert::peer_notification
-                    | libtorrent::alert::port_mapping_notification
-                    | libtorrent::alert::storage_notification
-                    | libtorrent::alert::tracker_notification
-                    | libtorrent::alert::status_notification
-                    | libtorrent::alert::ip_block_notification
-                    | libtorrent::alert::progress_notification
-                    | libtorrent::alert::stats_notification
+    int alertMask = lt::alert::error_notification
+                    | lt::alert::peer_notification
+                    | lt::alert::port_mapping_notification
+                    | lt::alert::storage_notification
+                    | lt::alert::tracker_notification
+                    | lt::alert::status_notification
+                    | lt::alert::ip_block_notification
+                    | lt::alert::progress_notification
+                    | lt::alert::stats_notification
                     ;
 #if 0
-	int alertMask = libtorrent::alert::all_categories
-				& ~(libtorrent::alert::dht_notification
-				+ libtorrent::alert::progress_notification
-				+ libtorrent::alert::stats_notification
-				+ libtorrent::alert::session_log_notification
-				+ libtorrent::alert::torrent_log_notification
-				+ libtorrent::alert::peer_log_notification
-				+ libtorrent::alert::dht_log_notification
-				+ libtorrent::alert::picker_log_notification
+	int alertMask = lt::alert::all_categories
+				& ~(lt::alert::dht_notification
+				+ lt::alert::progress_notification
+				+ lt::alert::stats_notification
+				+ lt::alert::session_log_notification
+				+ lt::alert::torrent_log_notification
+				+ lt::alert::peer_log_notification
+				+ lt::alert::dht_log_notification
+				+ lt::alert::picker_log_notification
 				);
 #endif
-	settingsPack.set_int(libtorrent::settings_pack::alert_mask, alertMask);
-	settingsPack.set_str(libtorrent::settings_pack::peer_fingerprint, peerId);
-	settingsPack.set_bool(libtorrent::settings_pack::listen_system_port_fallback, false);
-	settingsPack.set_bool(libtorrent::settings_pack::upnp_ignore_nonrouters, true);
-	settingsPack.set_bool(libtorrent::settings_pack::use_dht_as_fallback, false);
+	settingsPack.set_int(lt::settings_pack::alert_mask, alertMask);
+	settingsPack.set_str(lt::settings_pack::peer_fingerprint, peerId);
+	settingsPack.set_bool(lt::settings_pack::listen_system_port_fallback, false);
+	settingsPack.set_bool(lt::settings_pack::upnp_ignore_nonrouters, true);
+	settingsPack.set_bool(lt::settings_pack::use_dht_as_fallback, false);
 	// Disable support for SSL torrents for now
-	settingsPack.set_int(libtorrent::settings_pack::ssl_listen, 0);
+	settingsPack.set_int(lt::settings_pack::ssl_listen, 0);
 	// To prevent ISPs from blocking seeding
 	// Speed up exit
-	settingsPack.set_int(libtorrent::settings_pack::auto_scrape_interval, 1200); // 20 minutes
-	settingsPack.set_int(libtorrent::settings_pack::auto_scrape_min_interval, 900); // 15 minutes
-	settingsPack.set_bool(libtorrent::settings_pack::no_connect_privileged_ports, false);
-	settingsPack.set_int(libtorrent::settings_pack::seed_choking_algorithm, libtorrent::settings_pack::fastest_upload);
+	settingsPack.set_int(lt::settings_pack::auto_scrape_interval, 1200); // 20 minutes
+	settingsPack.set_int(lt::settings_pack::auto_scrape_min_interval, 900); // 15 minutes
+	settingsPack.set_bool(lt::settings_pack::no_connect_privileged_ports, false);
+	settingsPack.set_int(lt::settings_pack::seed_choking_algorithm, lt::settings_pack::fastest_upload);
 
-	settingsPack.set_bool(libtorrent::settings_pack::enable_dht, m_config->GetDHTEnabled());
+	settingsPack.set_bool(lt::settings_pack::enable_dht, m_config->GetDHTEnabled());
 
 	if( m_config->GetDHTEnabled() )
 	{
-		settingsPack.set_str(libtorrent::settings_pack::dht_bootstrap_nodes, "dht.libtorrent.org:25401,router.bittorrent.com:6881,router.utorrent.com:6881,dht.transmissionbt.com:6881,dht.aelitis.com:6881");
+		settingsPack.set_str(lt::settings_pack::dht_bootstrap_nodes, "dht.libtorrent.org:25401,router.bittorrent.com:6881,router.utorrent.com:6881,dht.transmissionbt.com:6881,dht.aelitis.com:6881");
 	}
-	settingsPack.set_bool(libtorrent::settings_pack::enable_lsd, m_config->GetEnableLsd());
+	settingsPack.set_bool(lt::settings_pack::enable_lsd, m_config->GetEnableLsd());
 }
 
 void BitTorrentSession::ConfigureSession()
@@ -362,10 +368,10 @@ void BitTorrentSession::ConfigureSession()
 	
 	if( m_config->GetDHTEnabled() )
 	{
-		entry dht_state;
+		lt::entry dht_state;
 		long dhtport = m_config->GetDHTPort();
 		wxString dhtstatefile = wxGetApp().DHTStatePath();
-		struct dht_settings DHTSettings;
+		struct lt::dht_settings DHTSettings;
 
 		DHTSettings.privacy_lookups = true;
 		DHTSettings.max_peers_reply = m_config->GetDHTMaxPeers();
@@ -381,7 +387,7 @@ void BitTorrentSession::ConfigureSession()
 
 			try
 			{
-				dht_state = bdecode( std::istream_iterator<char>( in ), std::istream_iterator<char>() );
+				dht_state = lt::bdecode( std::istream_iterator<char>( in ), std::istream_iterator<char>() );
 			}
 			catch( std::exception& e )
 			{
@@ -405,7 +411,7 @@ void BitTorrentSession::ConfigureSession()
 void BitTorrentSession::SetLogSeverity()
 {
 	wxASSERT( m_libbtsession != NULL );
-	//m_libbtsession->set_severity_level( ( libtorrent::alert::severity_t )m_config->GetLogSeverity() );
+	//m_libbtsession->set_severity_level( ( lt::alert::severity_t )m_config->GetLogSeverity() );
 }
 
 void BitTorrentSession::SetConnection()
@@ -441,15 +447,15 @@ void BitTorrentSession::StartExtensions()
 	 */
 	if( m_config->GetEnableMetadata() )
 	{
-		m_libbtsession->add_extension( &libtorrent::create_ut_metadata_plugin );
+		m_libbtsession->add_extension( &lt::create_ut_metadata_plugin );
 	}
 
 	if( m_config->GetEnablePex() )
 	{
-		m_libbtsession->add_extension( &libtorrent::create_ut_pex_plugin );
+		m_libbtsession->add_extension( &lt::create_ut_pex_plugin );
 	}
 
-	m_libbtsession->add_extension( &libtorrent::create_smart_ban_plugin );
+	m_libbtsession->add_extension( &lt::create_smart_ban_plugin );
 }
 
 void BitTorrentSession::StartUpnp()
@@ -462,16 +468,16 @@ void BitTorrentSession::StartUpnp()
 		// libtorrent bugs
 		if( !m_upnp_started )
 		{
-			settings_pack settingsPack = m_libbtsession->get_settings();
-			settingsPack.set_bool( settings_pack::enable_upnp, true );
+			lt::settings_pack settingsPack = m_libbtsession->get_settings();
+			settingsPack.set_bool(lt::settings_pack::enable_upnp, true );
 			m_libbtsession->apply_settings( settingsPack );
 			m_upnp_started = true;
 		}
 	}
 	else
 	{
-		settings_pack settingsPack = m_libbtsession->get_settings();
-		settingsPack.set_bool( settings_pack::enable_upnp, false );
+		lt::settings_pack settingsPack = m_libbtsession->get_settings();
+		settingsPack.set_bool(lt::settings_pack::enable_upnp, false );
 		m_libbtsession->apply_settings( settingsPack );
 		m_upnp_started = false;
 	}
@@ -485,8 +491,8 @@ void BitTorrentSession::StartNatpmp()
 	{
 		if( !m_natpmp_started )
 		{
-			settings_pack settingsPack = m_libbtsession->get_settings();
-			settingsPack.set_bool( settings_pack::enable_natpmp, true );
+			lt::settings_pack settingsPack = m_libbtsession->get_settings();
+			settingsPack.set_bool(lt::settings_pack::enable_natpmp, true );
 			m_libbtsession->apply_settings( settingsPack );
 		}
 
@@ -494,8 +500,8 @@ void BitTorrentSession::StartNatpmp()
 	}
 	else
 	{
-		settings_pack settingsPack = m_libbtsession->get_settings();
-		settingsPack.set_bool( settings_pack::enable_natpmp, false );
+		lt::settings_pack settingsPack = m_libbtsession->get_settings();
+		settingsPack.set_bool(lt::settings_pack::enable_natpmp, false );
 		m_libbtsession->apply_settings( settingsPack );
 		m_natpmp_started = false;
 	}
@@ -503,10 +509,10 @@ void BitTorrentSession::StartNatpmp()
 
 void BitTorrentSession::AddTorrentSession( shared_ptr<torrent_t>& torrent )
 {
-	torrent_handle &handle = torrent->handle;
+	lt::torrent_handle &handle = torrent->handle;
 	wxLogDebug( _T( "AddTorrent %s into session" ), torrent->name.c_str() );
 	wxString fastresumefile = wxGetApp().SaveTorrentsPath() + wxGetApp().PathSeparator() + torrent->hash + _T( ".fastresume" );
-	entry resume_data;
+	lt::entry resume_data;
 
 	if( wxFileExists( fastresumefile ) )
 	{
@@ -516,7 +522,7 @@ void BitTorrentSession::AddTorrentSession( shared_ptr<torrent_t>& torrent )
 
 		try
 		{
-			resume_data = bdecode( std::istream_iterator<char>( ( fastresume_in ) ), std::istream_iterator<char>() );
+			resume_data = lt::bdecode( std::istream_iterator<char>( ( fastresume_in ) ), std::istream_iterator<char>() );
 		}
 		catch( std::exception& e )
 		{
@@ -531,39 +537,39 @@ void BitTorrentSession::AddTorrentSession( shared_ptr<torrent_t>& torrent )
 		//allocate
 		//compact
 		//
-		libtorrent::add_torrent_params p;
-		shared_ptr<torrent_info> t(new torrent_info(*(torrent->info)));
+		lt::add_torrent_params p;
+		shared_ptr<lt::torrent_info> t(new lt::torrent_info(*(torrent->info)));
 		p.ti = t;
 		//p.url = wxFileSystem::FileNameToURL(const wxFileName &filename)
 		p.save_path = ( const char* )torrent->config->GetDownloadPath().mb_str( wxConvUTF8 );
 
-		if( resume_data.type() != entry::undefined_t )
+		if( resume_data.type() != lt::entry::undefined_t )
 		{ bencode( std::back_inserter( p.resume_data ), resume_data ); }
 
 		if (torrent->config->GetTorrentState() != TORRENT_STATE_PAUSE)
-			p.flags |= add_torrent_params::flag_paused;
-		p.flags &= ~add_torrent_params::flag_duplicate_is_error;
-		p.flags |= add_torrent_params::flag_auto_managed;
+			p.flags |= lt::add_torrent_params::flag_paused;
+		p.flags &= ~lt::add_torrent_params::flag_duplicate_is_error;
+		p.flags |= lt::add_torrent_params::flag_auto_managed;
 
 		wxString strStorageMode;
-		enum libtorrent::storage_mode_t eStorageMode = torrent->config->GetTorrentStorageMode();
+		enum lt::storage_mode_t eStorageMode = torrent->config->GetTorrentStorageMode();
 
 		switch( eStorageMode )
 		{
-		case libtorrent::storage_mode_allocate:
+		case lt::storage_mode_allocate:
 			strStorageMode = _( "Full" );
 			break;
 
-		case libtorrent::storage_mode_sparse:
+		case lt::storage_mode_sparse:
 			strStorageMode = _( "Sparse" );
 			break;
 
-		/*case libtorrent::storage_mode_compact:
+		/*case lt::storage_mode_compact:
 			strStorageMode = _( "Compact" );
 			break;*/
 
 		default:
-			eStorageMode = libtorrent::storage_mode_sparse;
+			eStorageMode = lt::storage_mode_sparse;
 			strStorageMode = _( "Sparse" );
 			break;
 		}
@@ -621,7 +627,7 @@ bool BitTorrentSession::AddTorrent( shared_ptr<torrent_t>& torrent )
 }
 
 /*Check error before call it. So, assume no p->error*/
-bool BitTorrentSession::HandleAddTorrentAlert(libtorrent::add_torrent_alert *p)
+bool BitTorrentSession::HandleAddTorrentAlert(lt::add_torrent_alert *p)
 {
 	try
 	{
@@ -665,11 +671,11 @@ bool BitTorrentSession::HandleAddTorrentAlert(libtorrent::add_torrent_alert *p)
 			{
 			 	bool nopriority = false;
 				wxULongLong_t total_selected = 0;
-				const libtorrent::torrent_info const& torrent_info = *(torrent->info);
-				file_storage const& allfiles = torrent_info.files();
+				const lt::torrent_info const& t_info = *(torrent->info);
+				lt::file_storage const& allfiles = t_info.files();
 				std::vector<int> filespriority = torrent->config->GetFilesPriorities();
 
-				if (filespriority.size() != torrent_info.num_files())
+				if (filespriority.size() != t_info.num_files())
 				{
 					nopriority = true;
 				}
@@ -678,7 +684,7 @@ bool BitTorrentSession::HandleAddTorrentAlert(libtorrent::add_torrent_alert *p)
 				/*2--unchecked_dis_xpm*/
 				/*3--checked_dis_xpm*/
 
-				for(int i = 0; i < torrent_info.num_files(); ++i)
+				for(int i = 0; i < t_info.num_files(); ++i)
 				{
 					if (nopriority || filespriority[i] != BITTORRENT_FILE_NONE)
 					{
@@ -714,7 +720,7 @@ void BitTorrentSession::RemoveTorrent( shared_ptr<torrent_t>& torrent, bool dele
 	}
 	wxLogInfo( _T( "%s: Removing Torrent" ), torrent->name.c_str() );
 
-	libtorrent::torrent_handle& h = torrent->handle;
+	lt::torrent_handle& h = torrent->handle;
 	if( h.is_valid() )
 	{
 		h.pause();
@@ -801,33 +807,33 @@ shared_ptr<torrent_t> BitTorrentSession::GetTorrent( int idx ) const
 
 void BitTorrentSession::MergeTorrent( shared_ptr<torrent_t>& dst_torrent, shared_ptr<torrent_t>& src_torrent )
 {
-	libtorrent::torrent_handle &torrent_handle = dst_torrent->handle;
-	std::vector<libtorrent::announce_entry> const& trackers = src_torrent->info->trackers();
+	lt::torrent_handle &torrent_handle = dst_torrent->handle;
+	std::vector<lt::announce_entry> const& trackers = src_torrent->info->trackers();
 
 	for( size_t i = 0; i < trackers.size(); ++i )
 	{
 		torrent_handle.add_tracker( trackers.at( i ) );
 	}
 
-	std::vector<libtorrent::web_seed_entry> const& web_seeds = src_torrent->info->web_seeds();
+	std::vector<lt::web_seed_entry> const& web_seeds = src_torrent->info->web_seeds();
 
-	for( std::vector<libtorrent::web_seed_entry>::const_iterator i = web_seeds.begin(); i != web_seeds.end(); ++i )
+	for( std::vector<lt::web_seed_entry>::const_iterator i = web_seeds.begin(); i != web_seeds.end(); ++i )
 	{
-		if( i->type == libtorrent::web_seed_entry::url_seed )
+		if( i->type == lt::web_seed_entry::url_seed )
 		{ torrent_handle.add_url_seed( i->url ); }
-		else if( i->type == libtorrent::web_seed_entry::http_seed )
+		else if( i->type == lt::web_seed_entry::http_seed )
 		{ torrent_handle.add_http_seed( i->url ); }
 	}
 }
 
 void BitTorrentSession::MergeTorrent( shared_ptr<torrent_t>& dst_torrent, MagnetUri& src_magneturi )
 {
-	libtorrent::torrent_handle &torrent_handle = dst_torrent->handle;
+	lt::torrent_handle &torrent_handle = dst_torrent->handle;
 	std::vector<std::string> const& trackers = src_magneturi.trackers();
 
 	for( size_t i = 0; i < trackers.size(); ++i )
 	{
-		torrent_handle.add_tracker( libtorrent::announce_entry( trackers.at( i ) ) );
+		torrent_handle.add_tracker( lt::announce_entry( trackers.at( i ) ) );
 	}
 
 	std::vector<std::string> const& url_seeds = src_magneturi.urlSeeds();
@@ -976,20 +982,20 @@ void BitTorrentSession::SaveAllTorrent()
 
 	while( num_outstanding_resume_data > 0 )
 	{
-		alert const* a = m_libbtsession->wait_for_alert( seconds( 10 ) );
+		lt::alert const* a = m_libbtsession->wait_for_alert(lt::seconds( 10 ) );
 
 		if( a == 0 ) { continue; }
 
-		std::vector<alert*> alerts;
+		std::vector<lt::alert*> alerts;
 		m_libbtsession->pop_alerts( &alerts );
 		std::string now = timestamp();
 
-		for( std::vector<alert*>::iterator i = alerts.begin(),
+		for( std::vector<lt::alert*>::iterator i = alerts.begin(),
 			end( alerts.end() ); i != end; ++i )
 		{
 			// make sure to delete each alert
-			std::auto_ptr<alert> a( *i );
-			torrent_paused_alert const* tp = alert_cast<torrent_paused_alert>( *i );
+			std::auto_ptr<lt::alert> a( *i );
+			lt::torrent_paused_alert const* tp = lt::alert_cast<lt::torrent_paused_alert>( *i );
 
 			if( tp )
 			{
@@ -999,7 +1005,7 @@ void BitTorrentSession::SaveAllTorrent()
 				continue;
 			}
 
-			if( alert_cast<save_resume_data_failed_alert>( *i ) )
+			if(lt::alert_cast<lt::save_resume_data_failed_alert>( *i ) )
 			{
 				++num_failed;
 				--num_outstanding_resume_data;
@@ -1008,7 +1014,7 @@ void BitTorrentSession::SaveAllTorrent()
 				continue;
 			}
 
-			save_resume_data_alert const* rd = alert_cast<save_resume_data_alert>( *i );
+			lt::save_resume_data_alert const* rd = lt::alert_cast<lt::save_resume_data_alert>( *i );
 
 			if( !rd ) { continue; }
 
@@ -1018,11 +1024,11 @@ void BitTorrentSession::SaveAllTorrent()
 
 			if( !rd->resume_data ) { continue; }
 
-			torrent_handle h = rd->handle;
-			torrent_status st = h.status( torrent_handle::query_save_path );
+			lt::torrent_handle h = rd->handle;
+			lt::torrent_status st = h.status( lt::torrent_handle::query_save_path );
 			//std::vector<char> out;
 			//bencode(std::back_inserter(out), *rd->resume_data);
-			wxString resumefile = wxGetApp().SaveTorrentsPath() + wxGetApp().PathSeparator() + to_hex( st.info_hash.to_string() ) + _T( ".resume" );
+			wxString resumefile = wxGetApp().SaveTorrentsPath() + wxGetApp().PathSeparator() + lt::to_hex( st.info_hash.to_string() ) + _T( ".resume" );
 			std::ofstream out( ( const char* )resumefile.mb_str( wxConvFile ), std::ios_base::binary );
 			out.unsetf( std::ios_base::skipws );
 			bencode( std::ostream_iterator<char>( out ), *rd->resume_data );
@@ -1080,7 +1086,7 @@ void BitTorrentSession::SaveTorrentResumeData( shared_ptr<torrent_t>& torrent )
 	//new api, write to disk in save_resume_data_alert
 	if (torrent->handle.is_valid())
 	{
-		torrent_status status = torrent->handle.status();
+		lt::torrent_status status = torrent->handle.status();
 		if(status.has_metadata)
 		{ torrent->handle.save_resume_data(); }
 	}
@@ -1106,9 +1112,9 @@ shared_ptr<torrent_t> BitTorrentSession::ParseTorrent( const wxString& filename 
 	{
 		//std::ifstream in( ( const char* )filename.mb_str( wxConvFile ), std::ios_base::binary );
 		//in.unsetf( std::ios_base::skipws );
-		//entry e = bdecode( std::istream_iterator<char>( in ), std::istream_iterator<char>() );
-		libtorrent::error_code ec;
-		shared_ptr<const libtorrent::torrent_info> t(new torrent_info( filename.ToStdString(), ec));
+		//lt::entry e = lt::bdecode( std::istream_iterator<char>( in ), std::istream_iterator<char>() );
+		lt::error_code ec;
+		shared_ptr<const lt::torrent_info> t(new lt::torrent_info( filename.ToStdString(), ec));
 		if(ec)
 			wxLogError( wxString::FromUTF8( ec.message().c_str() ) );
 		torrent->info = t;
@@ -1120,7 +1126,7 @@ shared_ptr<torrent_t> BitTorrentSession::ParseTorrent( const wxString& filename 
 
 		if( torrent->config->GetTrackersURL().size() <= 0 )
 		{
-			std::vector<libtorrent::announce_entry> trackers = t->trackers();
+			std::vector<lt::announce_entry> trackers = t->trackers();
 			torrent->config->SetTrackersURL( trackers );
 		}
 
@@ -1140,22 +1146,22 @@ shared_ptr<torrent_t> BitTorrentSession::LoadMagnetUri( MagnetUri& magneturi )
 
 	try
 	{
-		libtorrent::add_torrent_params p = magneturi.addTorrentParams();
+		lt::add_torrent_params p = magneturi.addTorrentParams();
 		// Limits
 		//p.max_connections = maxConnectionsPerTorrent();
 		//p.max_uploads = maxUploadsPerTorrent();
-		//shared_ptr<libtorrent::torrent_info> t(new torrent_info( sha1_hash( magneturi.hash() ) ));
+		//shared_ptr<lt::torrent_info> t(new lt::torrent_info( sha1_hash( magneturi.hash() ) ));
 		//torrent->info = t;
 		torrent->name = magneturi.name();
 		torrent->hash = magneturi.hash();
 		torrent->config.reset( new TorrentConfig( torrent->hash ) );
 		p.save_path = ( const char* )torrent->config->GetDownloadPath().mb_str( wxConvUTF8 );
 
-		p.flags |= libtorrent::add_torrent_params::flag_paused; // Start in pause
-		p.flags &= ~libtorrent::add_torrent_params::flag_auto_managed; // Because it is added in paused state
-		p.flags &= ~libtorrent::add_torrent_params::flag_duplicate_is_error; // Already checked
+		p.flags |= lt::add_torrent_params::flag_paused; // Start in pause
+		p.flags &= ~lt::add_torrent_params::flag_auto_managed; // Because it is added in paused state
+		p.flags &= ~lt::add_torrent_params::flag_duplicate_is_error; // Already checked
 		// Solution to avoid accidental file writes
-		p.flags |= libtorrent::add_torrent_params::flag_upload_mode;
+		p.flags |= lt::add_torrent_params::flag_upload_mode;
 
 		// Adding torrent to BitTorrent session
 		torrent->config->SetTorrentState( TORRENT_STATE_START );
@@ -1181,7 +1187,7 @@ shared_ptr<torrent_t> BitTorrentSession::LoadMagnetUri( MagnetUri& magneturi )
 
 bool BitTorrentSession::SaveTorrent( shared_ptr<torrent_t>& torrent, const wxString& filename )
 {
-	libtorrent::create_torrent ct_torrent( *( torrent->info ) );
+	lt::create_torrent ct_torrent( *( torrent->info ) );
 
 	try
 	{
@@ -1201,14 +1207,14 @@ bool BitTorrentSession::SaveTorrent( shared_ptr<torrent_t>& torrent, const wxStr
 void BitTorrentSession::StartTorrent( shared_ptr<torrent_t>& torrent, bool force )
 {
 	wxLogInfo( _T( "%s: Start %s" ), torrent->name.c_str(), force ? _T( "force" ) : _T( "" ) );
-	torrent_handle& handle = torrent->handle;
+	lt::torrent_handle& handle = torrent->handle;
 
-	if( !handle.is_valid() || ( ( handle.status(torrent_handle::query_save_path).save_path).empty() ) )
+	if( !handle.is_valid() || ( ( handle.status(lt::torrent_handle::query_save_path).save_path).empty() ) )
 	{
 		AddTorrentSession( torrent );
 	}
 
-	//torrent_status st = handle.status();
+	//lt::torrent_status st = handle.status();
 	//if(st.state ==  )
 	//{ handle.resume(); }
 
@@ -1223,8 +1229,8 @@ void BitTorrentSession::StartTorrent( shared_ptr<torrent_t>& torrent, bool force
 void BitTorrentSession::StopTorrent( shared_ptr<torrent_t>& torrent )
 {
 	wxLogInfo( _T( "%s:Stop" ), torrent->name.c_str() );
-	torrent_handle& handle = torrent->handle;
-	torrent_handle invalid_handle;
+	lt::torrent_handle& handle = torrent->handle;
+	lt::torrent_handle invalid_handle;
 
 	//Remove torrent from session
 	//set property to STOP
@@ -1244,7 +1250,7 @@ void BitTorrentSession::StopTorrent( shared_ptr<torrent_t>& torrent )
 void BitTorrentSession::QueueTorrent( shared_ptr<torrent_t>& torrent )
 {
 	//wxLogInfo(_T("%s: Queue"), torrent->name.c_str());
-	torrent_handle& handle = torrent->handle;
+	lt::torrent_handle& handle = torrent->handle;
 	/*
 	if(!handle.is_valid())
 	{
@@ -1261,7 +1267,7 @@ void BitTorrentSession::QueueTorrent( shared_ptr<torrent_t>& torrent )
 void BitTorrentSession::PauseTorrent( shared_ptr<torrent_t>& torrent )
 {
 	wxLogInfo( _T( "%s: Pause" ), torrent->name.c_str() );
-	torrent_handle& handle = torrent->handle;
+	lt::torrent_handle& handle = torrent->handle;
 
 	if( !handle.is_valid() )
 	{
@@ -1360,7 +1366,7 @@ void BitTorrentSession::MoveTorrentDown( shared_ptr<torrent_t>& torrent )
 void BitTorrentSession::ReannounceTorrent( shared_ptr<torrent_t>& torrent )
 {
 	wxLogInfo( _T( "%s: Reannounce" ), torrent->name.c_str() );
-	torrent_handle &h = torrent->handle;
+	lt::torrent_handle &h = torrent->handle;
 
 	if( h.is_valid() )
 	{
@@ -1387,19 +1393,19 @@ void BitTorrentSession::ConfigureTorrentFilesPriority( shared_ptr<torrent_t>& to
 
 void BitTorrentSession::ConfigureTorrentTrackers( shared_ptr<torrent_t>& torrent )
 {
-	libtorrent::torrent_handle& t_handle = torrent->handle;
+	lt::torrent_handle& t_handle = torrent->handle;
 	if( t_handle.is_valid() )
 	{ t_handle.replace_trackers( torrent->config->GetTrackersURL() ); }
 }
 
 void BitTorrentSession::ConfigureTorrent( shared_ptr<torrent_t>& torrent )
 {
-	torrent_handle &h = torrent->handle;
+	lt::torrent_handle &h = torrent->handle;
 	wxLogDebug( _T( "%s: Configure" ), torrent->name.c_str() );
 
 	if(torrent->info)
 	{
-		std::string existdir = h.status(torrent_handle::query_save_path).save_path;
+		std::string existdir = h.status(lt::torrent_handle::query_save_path).save_path;
 		std::string newdir( torrent->config->GetDownloadPath().mb_str( wxConvUTF8 ) );
 		wxString oldpath = wxString::FromAscii( existdir.c_str() ) +
 						   wxFileName::GetPathSeparator( wxPATH_NATIVE ) +
@@ -1664,12 +1670,12 @@ void BitTorrentSession::CheckQueueItem()
 
 				if( torrent->handle.is_valid() )
 				{
-					torrent_status t_status = torrent->handle.status();
+					lt::torrent_status t_status = torrent->handle.status();
 
-					if( ( t_status.state == torrent_status::seeding ) ||
-							( t_status.state == torrent_status::finished ) ||
+					if( ( t_status.state == lt::torrent_status::seeding ) ||
+							( t_status.state == lt::torrent_status::finished ) ||
 							( ( t_status.progress >= 1 ) &&
-							  ( t_status.state != torrent_status::checking_files ) ) )
+							  ( t_status.state != lt::torrent_status::checking_files ) ) )
 					{
 						//manually check ratio to stop torrent
 						//XXX sometime it fails, have a look
@@ -1782,7 +1788,7 @@ void BitTorrentSession::CheckQueueItem()
 void BitTorrentSession::HandleTorrentAlert()
 {
 	wxString event_string;
-	std::vector<alert*> alerts;
+	std::vector<lt::alert*> alerts;
 	/*1--debug, 2--info, 3--warning, 4--error*/
 	unsigned int log_severity = 2;
 
@@ -1791,7 +1797,7 @@ void BitTorrentSession::HandleTorrentAlert()
 	//m_libbtsession->post_dht_stats();
 
 	m_libbtsession->pop_alerts(&alerts);
-	for (std::vector<alert*>::iterator it = alerts.begin()
+	for (std::vector<lt::alert*>::iterator it = alerts.begin()
 		, end(alerts.end()); it != end; ++it)
 	{
 		TORRENT_TRY
@@ -1799,8 +1805,8 @@ void BitTorrentSession::HandleTorrentAlert()
 			event_string.Empty();
 			switch ((*it)->type())
 			{
-				case add_torrent_alert::alert_type:
-					if( add_torrent_alert* p = dynamic_cast<add_torrent_alert*>( *it ) )
+				case lt::add_torrent_alert::alert_type:
+					if( lt::add_torrent_alert* p = dynamic_cast<lt::add_torrent_alert*>( *it ) )
 					{
 						if (p->error)
 						{
@@ -1814,108 +1820,108 @@ void BitTorrentSession::HandleTorrentAlert()
 						}
 					}
 					break;
-				case torrent_finished_alert::alert_type:
-					if( torrent_finished_alert* p = dynamic_cast<torrent_finished_alert*>( *it ) )
+				case lt::torrent_finished_alert::alert_type:
+					if( lt::torrent_finished_alert* p = dynamic_cast<lt::torrent_finished_alert*>( *it ) )
 					{
-						torrent_status st = (p->handle).status(torrent_handle::query_name);
+						lt::torrent_status st = (p->handle).status(lt::torrent_handle::query_name);
 						event_string << st.name << _T(": ") << wxString::FromUTF8(p->message().c_str());
 					}
 					break;
-				case peer_ban_alert::alert_type:
-					if( peer_ban_alert* p = dynamic_cast<peer_ban_alert*>( *it ) )
+				case lt::peer_ban_alert::alert_type:
+					if( lt::peer_ban_alert* p = dynamic_cast<lt::peer_ban_alert*>( *it ) )
 					{
 						event_string << _T( "Peer: (" ) << p->ip.address().to_string() << _T( ")" ) << wxString::FromUTF8(p->message().c_str());
 					}
 					break;
-				case peer_error_alert::alert_type:
-					if( peer_error_alert* p = dynamic_cast<peer_error_alert*>( *it ) )
+				case lt::peer_error_alert::alert_type:
+					if( lt::peer_error_alert* p = dynamic_cast<lt::peer_error_alert*>( *it ) )
 					{
 						log_severity = 4;
 						event_string << _T( "Peer: " ) << identify_client( p->pid ) << _T( ": " ) << wxString::FromUTF8(p->message().c_str());
 					}
 					break;
-				case peer_blocked_alert::alert_type:
-					if( peer_blocked_alert* p = dynamic_cast<peer_blocked_alert*>( *it ) )
+				case lt::peer_blocked_alert::alert_type:
+					if( lt::peer_blocked_alert* p = dynamic_cast<lt::peer_blocked_alert*>( *it ) )
 					{
 						log_severity = 3;
 						event_string << _T( "Peer: (" ) << p->ip.to_string() << _T( ")" ) << wxString::FromUTF8(p->message().c_str());
 					}
 					break;
-				case invalid_request_alert::alert_type:
-					if( invalid_request_alert* p = dynamic_cast<invalid_request_alert*>( *it ) )
+				case lt::invalid_request_alert::alert_type:
+					if( lt::invalid_request_alert* p = dynamic_cast<lt::invalid_request_alert*>( *it ) )
 					{
 						log_severity = 4;
 						event_string << identify_client( p->pid ) << _T( ": " ) << wxString::FromUTF8(p->message().c_str());
 					}
 					break;
-				case tracker_warning_alert::alert_type:
-					if( tracker_warning_alert* p = dynamic_cast<tracker_warning_alert*>( *it ) )
+				case lt::tracker_warning_alert::alert_type:
+					if( lt::tracker_warning_alert* p = dynamic_cast<lt::tracker_warning_alert*>( *it ) )
 					{
 						log_severity = 3;
 						event_string << _T( "Tracker: " ) << wxString::FromUTF8(p->message().c_str());
 					}
 					break;
-				case tracker_reply_alert::alert_type:
-					if( tracker_reply_alert* p = dynamic_cast<tracker_reply_alert*>( *it ) )
+				case lt::tracker_reply_alert::alert_type:
+					if( lt::tracker_reply_alert* p = dynamic_cast<lt::tracker_reply_alert*>( *it ) )
 					{
 						event_string << _T( "Tracker:" ) << wxString::FromUTF8(p->message().c_str()) << p->num_peers << _T( " number of peers " );
 					}
 					break;
-				case url_seed_alert::alert_type:
-					if( url_seed_alert* p = dynamic_cast<url_seed_alert*>( *it ) )
+				case lt::url_seed_alert::alert_type:
+					if( lt::url_seed_alert* p = dynamic_cast<lt::url_seed_alert*>( *it ) )
 					{
 						event_string << _T( "Url seed '" ) << p->server_url() << _T( "': " ) << wxString::FromUTF8(p->message().c_str());
 					}
 					break;
-				case listen_failed_alert::alert_type:
-					if( listen_failed_alert* p = dynamic_cast<listen_failed_alert*>( *it ) )
+				case lt::listen_failed_alert::alert_type:
+					if( lt::listen_failed_alert* p = dynamic_cast<lt::listen_failed_alert*>( *it ) )
 					{
 						log_severity = 4;
 						event_string << _T( "Listen failed: " ) << wxString::FromUTF8(p->message().c_str());
 					}
 					break;
-				case portmap_error_alert::alert_type:
-					if( portmap_error_alert* p = dynamic_cast<portmap_error_alert*>( *it ) )
+				case lt::portmap_error_alert::alert_type:
+					if( lt::portmap_error_alert* p = dynamic_cast<lt::portmap_error_alert*>( *it ) )
 					{
 						log_severity = 4;
 						event_string << _T( "Portmap error: " ) << wxString::FromUTF8(p->message().c_str());
 					}
 					break;
-				case portmap_alert::alert_type:
-					if( portmap_alert* p = dynamic_cast<portmap_alert*>( *it ) )
+				case lt::portmap_alert::alert_type:
+					if( lt::portmap_alert* p = dynamic_cast<lt::portmap_alert*>( *it ) )
 					{
 						event_string << _T( "Portmap: " ) << wxString::FromUTF8(p->message().c_str());
 					}
 					break;
-				case tracker_announce_alert::alert_type:
-					if( tracker_announce_alert* p = dynamic_cast<tracker_announce_alert*>( *it ) )
+				case lt::tracker_announce_alert::alert_type:
+					if( lt::tracker_announce_alert* p = dynamic_cast<lt::tracker_announce_alert*>( *it ) )
 					{
 						event_string << _T( "Tracker: " ) << wxString::FromUTF8(p->message().c_str());
 					}
 					break;
-				case file_error_alert::alert_type:
-					if( file_error_alert* p = dynamic_cast<file_error_alert*>( *it ) )
+				case lt::file_error_alert::alert_type:
+					if( lt::file_error_alert* p = dynamic_cast<lt::file_error_alert*>( *it ) )
 					{
 						log_severity = 4;
 						event_string << _T( "File error: " ) << wxString::FromUTF8(p->message().c_str());
 					}
 					break;
-				case hash_failed_alert::alert_type:
-					if( hash_failed_alert* p = dynamic_cast<hash_failed_alert*>( *it ) )
+				case lt::hash_failed_alert::alert_type:
+					if( lt::hash_failed_alert* p = dynamic_cast<lt::hash_failed_alert*>( *it ) )
 					{
 						log_severity = 4;
 						event_string << _T( "Hash: " ) << wxString::FromUTF8(p->message().c_str());
 					}
 					break;
-				case metadata_failed_alert::alert_type:
-					if( metadata_failed_alert* p = dynamic_cast<metadata_failed_alert*>( *it ) )
+				case lt::metadata_failed_alert::alert_type:
+					if( lt::metadata_failed_alert* p = dynamic_cast<lt::metadata_failed_alert*>( *it ) )
 					{
 						log_severity = 4;
 						event_string << _T( "Metadata: " ) << wxString::FromUTF8(p->message().c_str());
 					}
 					break;
-				case metadata_received_alert::alert_type:
-					if( metadata_received_alert* p = dynamic_cast<metadata_received_alert*>( *it ) )
+				case lt::metadata_received_alert::alert_type:
+					if( lt::metadata_received_alert* p = dynamic_cast<lt::metadata_received_alert*>( *it ) )
 					{
 						event_string << _T( "Metadata: " ) << wxString::FromUTF8(p->message().c_str());
 						InfoHash thash(p->handle.info_hash());
@@ -1928,30 +1934,30 @@ void BitTorrentSession::HandleTorrentAlert()
 							wxString torrent_backup = wxGetApp().SaveTorrentsPath() + wxGetApp().PathSeparator() + torrent->hash + _T( ".torrent" );
 							torrent->handle = p->handle;
 							torrent->info = p->handle.torrent_file();
-							torrent_status st = p->handle.status(torrent_handle::query_name);
+							lt::torrent_status st = p->handle.status(lt::torrent_handle::query_name);
 							torrent->name = st.name;
 							SaveTorrent(torrent, torrent_backup );
 							
 							if(torrent->config->GetTrackersURL().size() <= 0 )
 							{
-								std::vector<libtorrent::announce_entry> trackers = p->handle.trackers();
+								std::vector<lt::announce_entry> trackers = p->handle.trackers();
 								torrent->config->SetTrackersURL( trackers );
 							}
 							StartTorrent(torrent, false);
 						}
 					}
 					break;
-				case fastresume_rejected_alert::alert_type:
-					if( fastresume_rejected_alert* p = dynamic_cast<fastresume_rejected_alert*>( *it ) )
+				case lt::fastresume_rejected_alert::alert_type:
+					if( lt::fastresume_rejected_alert* p = dynamic_cast<lt::fastresume_rejected_alert*>( *it ) )
 					{
 						log_severity = 3;
 						event_string << _T( "Fastresume: " ) << wxString::FromUTF8(p->message().c_str());
 					}
 					break;
-				case save_resume_data_alert::alert_type:
-					if( save_resume_data_alert *p = dynamic_cast<save_resume_data_alert*>( *it ) )
+				case lt::save_resume_data_alert::alert_type:
+					if( lt::save_resume_data_alert *p = dynamic_cast<lt::save_resume_data_alert*>( *it ) )
 					{
-						torrent_handle& h = p->handle;
+						lt::torrent_handle& h = p->handle;
 
 						if( p->resume_data )
 						{
@@ -1967,7 +1973,7 @@ void BitTorrentSession::HandleTorrentAlert()
 								SaveTorrentResumeData(m_torrent_queue[it->second]);
 							}
 						}
-						event_string << h.status(torrent_handle::query_name).name << _T( ": " ) << wxString::FromUTF8(p->message().c_str());
+						event_string << h.status(lt::torrent_handle::query_name).name << _T( ": " ) << wxString::FromUTF8(p->message().c_str());
 					}
 					break;
 				default:
