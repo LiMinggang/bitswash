@@ -344,9 +344,9 @@ void FileListCtrl::OnLeftDClick(wxMouseEvent& event)
 				//std::vector<std::string> const& allp = allfiles.paths();
 				wxFileName filename (fname);
 				filename.MakeAbsolute();
-				if(wxFileName::FileExists(filename.GetFullName()))
+				if(wxFileName::FileExists(filename.GetFullPath()))
 				{
-					wxLaunchDefaultApplication(filename.GetFullName()); 
+					wxLaunchDefaultApplication(filename.GetFullPath()); 
 				}
 			}
 		}
@@ -510,12 +510,12 @@ void FileListCtrl::OnMenuOpenPath( wxCommandEvent& event )
 				wxFileName filename (fname);
 				filename.MakeAbsolute();
 #if  defined(__WXMSW__) 
-				wxExecute(_T("Explorer ")+filename.GetFullPath(), wxEXEC_ASYNC, NULL); 
+				wxExecute(_T("Explorer ")+filename.GetPath(), wxEXEC_ASYNC, NULL); 
 #elif defined(__APPLE__)
-				wxExecute(_T("/usr/bin/open "+filename.GetFullPath(), wxEXEC_ASYNC, NULL);
+				wxExecute(_T("/usr/bin/open "+filename.GetPath(), wxEXEC_ASYNC, NULL);
 #elif defined(__WXGTK__)
 //wxFileSystem::FileNameToURL(const wxFileName &filename)
-				wxLaunchDefaultBrowser(_T("file://")+filename.GetFullPath());
+				wxLaunchDefaultBrowser(_T("file://")+filename.GetPath());
 #endif
 			}
 		}

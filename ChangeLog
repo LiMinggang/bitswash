@@ -1,4 +1,5 @@
 0.0.7
+Changes since 0.0.6
 Fix: Crash on startup if no icons
 Fix: Crash on timer
 Fix: Lots of GUI issue in configuration dialog
@@ -8,7 +9,9 @@ Fix: Class members were not initialized
 Fix: Memory leak in ShowPreferences
 Fix: Use shared_ptr to replace torrent_t* to fix a lot of memory leak
 Fix: Show/Hide bug of SwashListCtrl
+Fix: Wrong file icon files
 Fix: Lots of bugs fixed
+New: Magnet URI support
 New: 64bits build
 New: Run at Windows startup
 New: Crash handler
@@ -17,7 +20,16 @@ New: Open torrent at command line
 New: Merge trackers/seeds if add the same torrent again
 New: Packing all icons to the binary(no icon directory needed anymore)
 New: Using libGeoIP because libtorrent stoped support resolve IP
+New: Change to new libtorrent APIs(TORRENT_NO_DEPRECATE)
+New: File selection indicator
+New: Click to toggle selecting files
+New: Select all/none buttons
+New: Right click on file with Open file path
+New: Double click to open file with default application associated
+New: Embedded all icons in application
+New: Update toolbar items according to torrent status
 Optimization on UI refresh
+Optimization on communication between main thread and torrent thread
 Upgrade libtorrent to 1.1.2
 Upgrade boost to 1.62
 Upgrade openssl to 1.1.0d
