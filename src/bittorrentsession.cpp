@@ -1341,7 +1341,7 @@ void BitTorrentSession::ConfigureTorrentFilesPriority( shared_ptr<torrent_t>& to
 	// win32 4 triggers a assert
 
 	wxASSERT(torrent->info);
-	if (filespriority.size() != torrent->info.num_files())
+	if (filespriority.size() != torrent->info->num_files())
 	{
 		std::vector<int> deffilespriority( torrent->info->num_files(), BITTORRENT_FILE_NORMAL );
 		filespriority.swap( deffilespriority );
@@ -2010,7 +2010,7 @@ bool BitTorrentSession::HandleAddTorrentAlert(lt::add_torrent_alert *p)
 
 				if (filespriority.size() != t_info.num_files())
 				{
-					std::vector<int> deffilespriority( pTorrent->info->num_files(), BITTORRENT_FILE_NORMAL );
+					std::vector<int> deffilespriority(torrent->info->num_files(), BITTORRENT_FILE_NORMAL );
 					filespriority.swap( deffilespriority );
 				}
 				/*0--unchecked_xpm*/
