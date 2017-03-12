@@ -135,14 +135,9 @@ static const char PEER_ID[] = "SW";
 void *BitTorrentSession::Entry()
 {
 	wxLogDebug( _T( "BitTorrentSession Thread lt::entry pid 0x%lx priority %u." ), GetId(), GetPriority() );
-	
-	lt::settings_pack pack;
-
-    Configure(pack);
-    m_libbtsession = new lt::session(pack, 0);
-	m_libbtsession->set_alert_notify(boost::bind(&BitTorrentSession::LibTorrentAlert, this));
-
 	ConfigureSession();
+
+	// Resume main thread
 	if(m_mutex != 0 && m_condition != 0)
 	{
 		wxMutexLocker lock(*m_mutex); 
@@ -189,7 +184,7 @@ void *BitTorrentSession::Entry()
 	return NULL;
 }
 
-typedef boost::function<void()> notify_func_t;
+typedef boost::function<void()> null_notify_func_t;
 void BitTorrentSession::OnExit()
 {
 	//XXX have 1 soon
@@ -220,7 +215,7 @@ void BitTorrentSession::OnExit()
 	m_evt_queue.Clear();
 	std::vector<lt::alert*> alerts;
 	m_libbtsession->pop_alerts( &alerts );
-	m_libbtsession->set_alert_notify(notify_func_t());
+	m_libbtsession->set_alert_notify(null_notify_func_t());
 	delete m_libbtsession;
 	{
 		wxMutexLocker ml( m_torrent_queue_lock );
@@ -404,8 +399,14 @@ void BitTorrentSession::Configure(lt::settings_pack &settingsPack)
 
 void BitTorrentSession::ConfigureSession()
 {
-	wxASSERT( m_libbtsession != NULL );
-	
+	lt::settings_pack pack;
+
+    Configure(pack);
+
+    m_libbtsession = new lt::session(pack, 0);
+
+	m_libbtsession->set_alert_notify(boost::bind(&BitTorrentSession::PostLibTorrentAlertEvent, this));
+
 	if( m_config->GetDHTEnabled() )
 	{
 		lt::entry dht_state;
@@ -953,7 +954,6 @@ void BitTorrentSession::SaveAllTorrent()
 			end( alerts.end() ); i != end; ++i )
 		{
 			// make sure to delete each alert
-			std::auto_ptr<lt::alert> a( *i );
 			lt::torrent_paused_alert const* tp = lt::alert_cast<lt::torrent_paused_alert>( *i );
 
 			if( tp )
@@ -975,7 +975,7 @@ void BitTorrentSession::SaveAllTorrent()
 
 			lt::save_resume_data_alert const* rd = lt::alert_cast<lt::save_resume_data_alert>( *i );
 
-			if( !rd ) { continue; }
+			if( rd == 0 ) { continue; }
 
 			--num_outstanding_resume_data;
 			wxLogDebug( _T( "\nleft: %d failed: %d pause: %d " )
@@ -2041,7 +2041,7 @@ bool BitTorrentSession::HandleAddTorrentAlert(lt::add_torrent_alert *p)
 	return true;
 }
 
-void BitTorrentSession::HandleMetaDataAlert(lt::metadata_received_alert *p)
+bool BitTorrentSession::HandleMetaDataAlert(lt::metadata_received_alert *p)
 {
 	InfoHash thash(p->handle.info_hash());
 	
@@ -2063,7 +2063,10 @@ void BitTorrentSession::HandleMetaDataAlert(lt::metadata_received_alert *p)
 			torrent->config->SetTrackersURL( trackers );
 		}
 		StartTorrent(torrent, false);
+		return true;
 	}
+
+	return false;
 }
 
 void BitTorrentSession::PostStatusUpdate()

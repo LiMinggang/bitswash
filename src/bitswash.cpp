@@ -306,15 +306,18 @@ bool BitSwash::OnInit()
 	//while( !m_btinitdone || ( initcountdown-- > 0 ) )
 	//	wxSleep( 1 );
 	g_BitSwashMainFrame = new MainFrame( 0L, APPNAME );
-	if(!( m_config->GetUseSystray() && m_config->GetHideTaskbar() ))
-	{
-		g_BitSwashMainFrame->Show( TRUE );
-		SetTopWindow( g_BitSwashMainFrame );
-	}
 	for( size_t i = 0; i < m_FileNames.GetCount(); ++i )
 	{
 		MainFrame::ReceiveTorrent(m_FileNames[i]);
 	}
+
+	if(!( m_config->GetUseSystray() && m_config->GetHideTaskbar() ))
+	{
+		g_BitSwashMainFrame->Show( TRUE );
+		SetTopWindow( g_BitSwashMainFrame );
+		g_BitSwashMainFrame->UpdateUI(true);
+	}
+
 	SetExitOnFrameDelete( true );
 	return TRUE;
 }

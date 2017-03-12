@@ -160,13 +160,13 @@ public:
 	void ConfigureTorrentTrackers( int idx );
 	void ConfigureTorrent( int idx );
 
-	libtorrent::session* GetLibTorrent() { return m_libbtsession;}
+	//libtorrent::session* GetLibTorrent() { return m_libbtsession;}
 
 	void HandleTorrentAlert();
 	bool HandleAddTorrentAlert(libtorrent::add_torrent_alert *p);
 	bool HandleMetaDataAlert(libtorrent::metadata_received_alert *p);
 	void PostEvent(bts_event & evt) {m_evt_queue.Post(evt);}
-	void LibTorrentAlert()
+	void PostLibTorrentAlertEvent()
 		{
 			static bts_event lbtAlert(BTS_EVENT_ALERT);
 			PostEvent(lbtAlert);
