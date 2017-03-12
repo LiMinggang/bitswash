@@ -53,9 +53,7 @@
 #include "bitswash.h"
 #include "bittorrentsession.h"
 
-#ifdef TORRENT_DISABLE_RESOLVE_COUNTRIES
-	#error you must not disable RESOLVE COUNTRIES
-#endif
+namespace lt = libtorrent;
 
 #ifdef TORRENT_DISABLE_DHT
 	#error you must not disable DHT
@@ -75,7 +73,6 @@ struct BTQueueSortDsc
 	}
 };
 
-namespace lt = libtorrent;
 
 BitTorrentSession::BitTorrentSession( wxApp* pParent, Configuration* config, wxMutex *mutex/* = 0*/, wxCondition *condition/* = 0*/ )
 	: wxThread( wxTHREAD_JOINABLE ), m_upnp_started( false ), m_natpmp_started( false ), m_lsd_started( false ), m_libbtsession( 0 )
@@ -85,7 +82,7 @@ BitTorrentSession::BitTorrentSession( wxApp* pParent, Configuration* config, wxM
 	m_condition = condition;
     m_mutex = mutex;
 	//boost::filesystem::path::default_name_check(boost::filesystem::no_check);
-	using libtorrent::find_metric_idx;
+	using lt::find_metric_idx;
 
 	std::vector<lt::stats_metric> metrics = lt::session_stats_metrics();
 	m_cnt[0].resize(metrics.size(), 0);
@@ -94,6 +91,7 @@ BitTorrentSession::BitTorrentSession( wxApp* pParent, Configuration* config, wxM
 	m_queued_bytes_idx = find_metric_idx("disk.queued_write_bytes");
 	m_wasted_bytes_idx = find_metric_idx("net.recv_redundant_bytes");
 	m_failed_bytes_idx = find_metric_idx("net.recv_failed_bytes");
+	m_has_incoming_connections_idx = find_metric_idx("net.has_incoming_connections");
 	m_num_peers_idx = find_metric_idx("peer.num_peers_connected");
 	m_recv_payload_idx = find_metric_idx("net.recv_payload_bytes");
 	m_sent_payload_idx = find_metric_idx("net.sent_payload_bytes");
@@ -123,6 +121,9 @@ BitTorrentSession::BitTorrentSession( wxApp* pParent, Configuration* config, wxM
 	m_utp_connected = find_metric_idx("utp.num_utp_connected");
 	m_utp_fin_sent = find_metric_idx("utp.num_utp_fin_sent");
 	m_utp_close_wait = find_metric_idx("utp.num_utp_close_wait");
+	
+	m_download_rate = 0.0;
+	m_upload_rate = 0.0;
 }
 
 BitTorrentSession::~BitTorrentSession()
@@ -710,7 +711,7 @@ bool BitTorrentSession::HandleAddTorrentAlert(lt::add_torrent_alert *p)
 			{
 			 	bool nopriority = false;
 				wxULongLong_t total_selected = 0;
-				const lt::torrent_info const& t_info = *(torrent->info);
+				lt::torrent_info const& t_info = *(torrent->info);
 				lt::file_storage const& allfiles = t_info.files();
 				std::vector<int> filespriority = torrent->config->GetFilesPriorities();
 
@@ -2015,6 +2016,13 @@ void BitTorrentSession::HandleTorrentAlert()
 						event_string << h.status(lt::torrent_handle::query_name).name << _T( ": " ) << wxString::FromUTF8(p->message().c_str());
 					}
 					break;
+				case lt::session_stats_alert::alert_type:
+					if (lt::session_stats_alert* p = dynamic_cast<lt::session_stats_alert *>(*it))
+					{
+						UpdateCounters(p->values, sizeof(p->values)/sizeof(p->values[0])
+							, lt::duration_cast<lt::microseconds>(p->timestamp().time_since_epoch()).count());
+					}
+					break;
 				default:
 					{
 						event_string << _T("[") << (*it)->type() << _T("]") << (*it)->message();
@@ -2055,6 +2063,13 @@ void BitTorrentSession::HandleTorrentAlert()
 	}
 }
 
+void BitTorrentSession::PostStatusUpdate()
+{
+	m_libbtsession->post_torrent_updates();
+	m_libbtsession->post_session_stats();
+	m_libbtsession->post_dht_stats();
+}
+
 void BitTorrentSession::UpdateCounters(boost::uint64_t* stats_counters
 	, int num_cnt, boost::uint64_t t)
 {
@@ -2069,5 +2084,15 @@ void BitTorrentSession::UpdateCounters(boost::uint64_t* stats_counters
 	m_cnt[0].assign(stats_counters, stats_counters + num_cnt);
 	m_timestamp[0] = t;
 	//render();
+	
+	float seconds = (m_timestamp[0] - m_timestamp[1]) / 1000000.f;
+
+	if(seconds > 0.0)
+	{
+		m_download_rate = (m_cnt[0][m_recv_payload_idx] - m_cnt[1][m_recv_payload_idx])
+			/ seconds;
+		m_upload_rate = (m_cnt[0][m_sent_payload_idx] - m_cnt[1][m_sent_payload_idx])
+			/ seconds;
+	}
 }
 

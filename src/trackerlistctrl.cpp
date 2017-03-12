@@ -27,6 +27,8 @@
 #include "trackerlistctrl.h"
 #include "functions.h"
 
+namespace lt = libtorrent;
+
 enum
 {
 	TRACKERLISTCTRL_MENU_ADD= 10000,
@@ -107,7 +109,7 @@ wxString TrackerListCtrl::GetItemValue(long item, long columnid) const
 
 	wxString t_name = wxEmptyString;
 
-	const std::vector<libtorrent::announce_entry>& trackers = pTorrent->handle.trackers();
+	const std::vector<lt::announce_entry>& trackers = pTorrent->handle.trackers();
 
 	if (item >= trackers.size())
 	{
@@ -116,7 +118,7 @@ wxString TrackerListCtrl::GetItemValue(long item, long columnid) const
 		return _T("");
 
 	}
-	libtorrent::announce_entry tracker= trackers.at(item);
+	lt::announce_entry tracker= trackers.at(item);
 
 //	if (h.is_valid())
 
@@ -200,7 +202,7 @@ void TrackerListCtrl::OnMenuEdit(wxCommandEvent& event)
 
 	wxLogDebug(_T("edit tracker no %d, cmd %d"), item, cmd);
 
-	std::vector<libtorrent::announce_entry>& trackers = pTorrent->config->GetTrackersURL();
+	std::vector<lt::announce_entry>& trackers = pTorrent->config->GetTrackersURL();
 
 	switch(cmd)
 	{
@@ -216,7 +218,7 @@ void TrackerListCtrl::OnMenuEdit(wxCommandEvent& event)
 			{
 				wxString newtrackerurl = dialog.GetValue();
 				std::string newtrackerurl_cstr( newtrackerurl.mb_str(wxConvUTF8));
-				libtorrent::announce_entry e(newtrackerurl_cstr);
+				lt::announce_entry e(newtrackerurl_cstr);
 				e.tier = (trackers.size() * 10);
 				trackers.push_back(e);
 				wxLogDebug(_T("Add new tracker %s tier %d, trackers.size %d"), newtrackerurl.c_str(), e.tier , trackers.size()) ;
@@ -239,7 +241,7 @@ void TrackerListCtrl::OnMenuEdit(wxCommandEvent& event)
 			if ((item < 0) || (item >= trackers.size()))
 				return;
 
-			std::vector<libtorrent::announce_entry>::iterator tracker_it = trackers.begin() + item;
+			std::vector<lt::announce_entry>::iterator tracker_it = trackers.begin() + item;
 			wxString trackerurl = wxString::FromAscii(tracker_it->url.c_str());
 			int tier = tracker_it->tier;
 			wxTextEntryDialog dialog(this,
@@ -269,7 +271,7 @@ void TrackerListCtrl::OnMenuEdit(wxCommandEvent& event)
 			if ((item < 0) || (item >= trackers.size()))
 				return;
 
-			std::vector<libtorrent::announce_entry>::iterator tracker_it = trackers.begin() + item;
+			std::vector<lt::announce_entry>::iterator tracker_it = trackers.begin() + item;
 
 			wxMessageDialog dialogConfirm(NULL, 
 							_("Remove tracker ") + wxString::FromAscii(tracker_it->url.c_str()) + _T("?"), 
@@ -296,8 +298,8 @@ void TrackerListCtrl::OnMenuEdit(wxCommandEvent& event)
 					if ((item < 0) || (item >= trackers.size()))
 						return;
 
-					std::vector<libtorrent::announce_entry>::iterator tracker_it = trackers.begin() + item;
-					libtorrent::announce_entry tracker= trackers.at(item);
+					std::vector<lt::announce_entry>::iterator tracker_it = trackers.begin() + item;
+					lt::announce_entry tracker= trackers.at(item);
 					trackerurls += wxString(wxConvUTF8.cMB2WC(tracker.url.c_str())) + _T("\n");
 
 				} while((item = GetNextSelected(item)) != -1);

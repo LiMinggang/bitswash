@@ -25,6 +25,8 @@
 #include "mainframe.h"
 #include "torrentinfo.h"
 
+namespace lt = libtorrent;
+
 enum bw_torrentinfo_page {
 	BW_TORRENTINFO_SUMMARY=0,
 	BW_TORRENTINFO_PEERLIST,

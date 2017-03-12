@@ -33,6 +33,7 @@
 #include "torrentconfig.h"
 #include "configuration.h"
 
+namespace lt = libtorrent;
 
 TorrentConfig::TorrentConfig( const wxString& TorrentName )
 	: wxFileConfig( wxEmptyString, wxEmptyString, TorrentName, wxEmptyString, wxCONFIG_USE_LOCAL_FILE | wxCONFIG_USE_RELATIVE_PATH )
@@ -71,7 +72,7 @@ void TorrentConfig::Save()
 	m_cfg->Write( _T( "/Torrent/downloadpath" ), m_downloadpath );
 
 	/* legacy */
-	//if( m_storagemode != libtorrent::storage_mode_compact )
+	//if( m_storagemode != lt::storage_mode_compact )
 	{ m_compactalloc = false; }
 
 	m_cfg->Write( _T( "/Torrent/compact_alloc" ), ( bool )m_compactalloc );
@@ -103,7 +104,7 @@ void TorrentConfig::Load()
 	m_qindex = m_cfg->Read( _T( "/Torrent/qindex" ), -1 );
 	m_downloadpath = m_cfg->Read( _T( "/Torrent/downloadpath" ), m_maincfg->GetDownloadPath() );
 	m_cfg->Read( _T( "/Torrent/compact_alloc" ), &m_compactalloc, m_maincfg->GetCompactAlloc() );
-	m_storagemode = ( libtorrent::storage_mode_t ) m_cfg->Read( _T( "/Torrent/storagemode" ), ( long ) m_maincfg->GetDefaultStorageMode() );
+	m_storagemode = ( lt::storage_mode_t ) m_cfg->Read( _T( "/Torrent/storagemode" ), ( long ) m_maincfg->GetDefaultStorageMode() );
 	m_torrent_state = m_cfg->Read( _T( "/Torrent/state" ), m_maincfg->GetDefaultState() );
 	m_torrent_ratio = m_cfg->Read( _T( "/Torrent/ratio" ), m_maincfg->GetDefaultRatio() );
 	m_torrent_upload_limit = m_cfg->Read( _T( "/Torrent/upload_limit" ), m_maincfg->GetDefaultUploadLimit() );
@@ -148,7 +149,7 @@ void TorrentConfig::WriteFilesPriority()
 void TorrentConfig::WriteTrackersUrl()
 {
 	wxString trackers = wxEmptyString;
-	std::vector<libtorrent::announce_entry>::const_iterator t = m_trackers_url.begin();
+	std::vector<lt::announce_entry>::const_iterator t = m_trackers_url.begin();
 
 	if( m_trackers_url.size() == 0 )
 	{ return ; }
@@ -198,7 +199,7 @@ void TorrentConfig::ReadTrackersUrl()
 		wxString token = tokens.GetNextToken();
 		std::string t_str( token.BeforeFirst( '|' ).mb_str( wxConvUTF8 ) );
 		int t_tier = wxAtoi( token.AfterFirst( '|' ) );
-		libtorrent::announce_entry e( t_str );
+		lt::announce_entry e( t_str );
 		e.tier = t_tier;
 		m_trackers_url.push_back( e );
 	}
@@ -209,7 +210,7 @@ void TorrentConfig::SetFilesPriority( std::vector<int>& files )
 	m_files_priority.swap( files ) ;
 }
 
-void TorrentConfig::SetTrackersURL( std::vector<libtorrent::announce_entry>& trackers )
+void TorrentConfig::SetTrackersURL( std::vector<lt::announce_entry>& trackers )
 {
 	m_trackers_url.clear();
 	m_trackers_url.swap( trackers ) ;

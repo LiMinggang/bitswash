@@ -43,6 +43,7 @@
 
 #include "functions.h"
 
+namespace lt = libtorrent;
 
 BEGIN_EVENT_TABLE(SummaryPane, wxScrolledWindow)
 	//EVT_SET_FOCUS(SummaryPane::OnFocus)
@@ -235,10 +236,10 @@ void SummaryPane::UpdateSummary()
 		return;
 	}
 
-	libtorrent::torrent_handle h = pTorrent->handle;
+	lt::torrent_handle h = pTorrent->handle;
 
-	shared_ptr<const libtorrent::torrent_info> t = pTorrent->info;
-	libtorrent::torrent_status s;
+	shared_ptr<const lt::torrent_info> t = pTorrent->info;
+	lt::torrent_status s;
 
 	if(h.is_valid()) 
 		s = h.status();

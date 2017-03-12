@@ -30,6 +30,8 @@
 #include "torrentsetting.h"
 #include "functions.h"
 
+namespace lt = libtorrent;
+
 //CLASS TorrentSettingPane
 //
 BEGIN_EVENT_TABLE(TorrentSettingPane, wxPanel)
@@ -167,13 +169,13 @@ TorrentSettingPane::TorrentSettingPane( wxWindow* parent, shared_ptr<torrent_t>&
 	
 	/* legacy */
 	bool bCompactMode = false;
-	enum libtorrent::storage_mode_t e_storagemode = libtorrent::storage_mode_sparse;
+	enum lt::storage_mode_t e_storagemode = lt::storage_mode_sparse;
 
 	/*bCompactMode = m_pTorrent?m_pTorrent->config->GetTorrentCompactAlloc():pcfg->GetCompactAlloc();
 
 	if(bCompactMode)
 	{
-		e_storagemode = libtorrent::storage_mode_compact;
+		e_storagemode = lt::storage_mode_compact;
 	}
 	else*/
 	{
@@ -183,13 +185,13 @@ TorrentSettingPane::TorrentSettingPane( wxWindow* parent, shared_ptr<torrent_t>&
 	wxString strStorageMode;
 	switch (e_storagemode)
 	{
-		case libtorrent::storage_mode_allocate:
+		case lt::storage_mode_allocate:
 			strStorageMode = _("Full");
 			break;
-		case libtorrent::storage_mode_sparse:
+		case lt::storage_mode_sparse:
 			strStorageMode = _("Sparse");
 			break;
-		/*case libtorrent::storage_mode_compact:
+		/*case lt::storage_mode_compact:
 			strStorageMode = _("Compact");
 			break;*/
 		default:
@@ -263,10 +265,10 @@ bool TorrentSettingPane::GetCompactAlloc()
 }
 */
 
-libtorrent::storage_mode_t TorrentSettingPane::GetStorageMode()
+lt::storage_mode_t TorrentSettingPane::GetStorageMode()
 {
-	//return (libtorrent::storage_mode_t)m_combo_storagemode->GetValue();
-	return libtorrent::storage_mode_sparse;
+	//return (lt::storage_mode_t)m_combo_storagemode->GetValue();
+	return lt::storage_mode_sparse;
 }
 
 bool TorrentSettingPane::GetStartTorrent()

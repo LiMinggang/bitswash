@@ -34,6 +34,8 @@
 #include "../icons/checked_dis.xpm"
 #include "../icons/unchecked_dis.xpm"
 
+namespace lt = libtorrent;
+
 enum
 {
 	FILELISTCTRL_MENU_PRIORITY0 = 10000,
@@ -143,8 +145,8 @@ wxString FileListCtrl::GetItemValue( long item, long columnid ) const
 	if( !pTorrent )
 	{ return ret; }
 
-	libtorrent::torrent_handle h = pTorrent->handle;
-	libtorrent::torrent_info const& torrent_info = *( pTorrent->info );
+	lt::torrent_handle h = pTorrent->handle;
+	lt::torrent_info const& torrent_info = *( pTorrent->info );
 	std::vector<int> filespriority = pTorrent->config->GetFilesPriorities();
 
 	if( filespriority.size() != torrent_info.num_files() )
@@ -167,10 +169,10 @@ wxString FileListCtrl::GetItemValue( long item, long columnid ) const
 	};
 
 	std::vector<boost::int64_t> f_progress;
-	libtorrent::file_storage const& allfiles = torrent_info.files();
+	lt::file_storage const& allfiles = torrent_info.files();
 
 	if( h.is_valid() )
-	{ h.file_progress( f_progress, libtorrent::torrent_handle::piece_granularity); }
+	{ h.file_progress( f_progress, lt::torrent_handle::piece_granularity); }
 
 	switch( columnid )
 	{
@@ -227,7 +229,7 @@ int FileListCtrl::GetItemColumnImage(long item, long columnid) const
 
 		if (pTorrent)
 		{
-			libtorrent::torrent_info const& torrent_info = *(pTorrent->info);
+			lt::torrent_info const& torrent_info = *(pTorrent->info);
 			std::vector<int> filespriority = pTorrent->config->GetFilesPriorities();
 
 			if (filespriority.size() != torrent_info.num_files())
@@ -287,7 +289,7 @@ void FileListCtrl::OnLeftDown(wxMouseEvent& event)
 
 				if (pTorrent)
 				{
- 					libtorrent::torrent_info const& torrent_info = *(pTorrent->info);
+ 					lt::torrent_info const& torrent_info = *(pTorrent->info);
 					std::vector<int>& filespriority = pTorrent->config->GetFilesPriorities();
 
 					if ((item < filespriority.size() ) && filespriority[item] != 0)
@@ -326,11 +328,11 @@ void FileListCtrl::OnLeftDClick(wxMouseEvent& event)
 		int selectedfiles = GetFirstSelected();
 		if( selectedfiles != -1 )
 		{
-			libtorrent::torrent_info const& torrentinfo = *(pTorrent->info);
+			lt::torrent_info const& torrentinfo = *(pTorrent->info);
 			std::vector<int> & filespriority = pTorrent->config->GetFilesPriorities();
 			if(filespriority.at(selectedfiles) != BITTORRENT_FILE_NONE)
 			{
-				libtorrent::file_storage const& allfiles = torrentinfo.files();
+				lt::file_storage const& allfiles = torrentinfo.files();
 				wxString fname = pTorrent->config->GetDownloadPath() + wxFileName::GetPathSeparator(wxPATH_NATIVE) + wxString::FromUTF8((allfiles.file_name(selectedfiles)).c_str());
 				std::vector<std::string> const& allp = allfiles.paths();
 				wxFileName filename (fname);
@@ -448,13 +450,13 @@ void FileListCtrl::OnMenuPriority( wxCommandEvent& event )
 	//pTorrent->config->SetFilesPriority(filespriority);
 	pTorrent->config->Save();
 
-	const libtorrent::torrent_info const& torrent_info = *(pTorrent->info);
+	lt::torrent_info const& torrent_info = *(pTorrent->info);
 
 	wxGetApp().GetBitTorrentSession()->ConfigureTorrentFilesPriority( pTorrent );
-	libtorrent::file_storage const& allfiles = torrent_info.files();
+	lt::file_storage const& allfiles = torrent_info.files();
 	
 	wxULongLong_t total_selected = 0;
-	libtorrent::torrent_info const& torrentinfo = *(pTorrent->info);
+	lt::torrent_info const& torrentinfo = *(pTorrent->info);
 
 	for(size_t i = 0; i < filespriority.size(); ++i)
 	{
@@ -485,11 +487,11 @@ void FileListCtrl::OnMenuOpenPath( wxCommandEvent& event )
 		int selectedfiles = GetFirstSelected();
 		if( selectedfiles != -1 )
 		{
-			libtorrent::torrent_info const& torrentinfo = *(pTorrent->info);
+			lt::torrent_info const& torrentinfo = *(pTorrent->info);
 			std::vector<int> & filespriority = pTorrent->config->GetFilesPriorities();
 			if(filespriority.at(selectedfiles) != BITTORRENT_FILE_NONE)
 			{
-				libtorrent::file_storage const& allfiles = torrentinfo.files();
+				lt::file_storage const& allfiles = torrentinfo.files();
 				wxFileName filename = pTorrent->config->GetDownloadPath() + wxString::FromUTF8((allfiles.file_name(selectedfiles)).c_str());
 				filename.MakeAbsolute();
 #if  defined(__WXMSW__) 

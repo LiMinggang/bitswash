@@ -170,6 +170,12 @@ public:
 			static bts_event lbtAlert(BTS_EVENT_ALERT);
 			PostEvent(lbtAlert);
 		}
+	
+	wxDouble GetDownloadRate() { return m_download_rate; }
+	wxDouble GetUploadRate() { return m_upload_rate; }
+	boost::uint64_t GetNumPeers() { return m_cnt[0][m_num_peers_idx]; }
+	bool HasInComingConns() { return (m_cnt[0][m_has_incoming_connections_idx] > 0 ? true : false); }
+	void PostStatusUpdate();
 	void UpdateCounters(boost::uint64_t* stats_counters, int num_cnt
 		, boost::uint64_t t);
 
@@ -206,11 +212,10 @@ private:
 	// respectively. The timestamps are microseconds since session start
 	boost::uint64_t m_timestamp[2];
 
-	bool m_print_utp_stats;
-
 	int m_queued_bytes_idx;
 	int m_wasted_bytes_idx;
 	int m_failed_bytes_idx;
+	int m_has_incoming_connections_idx;
 	int m_num_peers_idx;
 	int m_recv_payload_idx;
 	int m_sent_payload_idx;
@@ -239,6 +244,9 @@ private:
 	int m_utp_connected;
 	int m_utp_fin_sent;
 	int m_utp_close_wait;
+
+	wxDouble m_download_rate;
+	wxDouble m_upload_rate;
 };
 
 #endif // _BITTORRENTSESSION_H_

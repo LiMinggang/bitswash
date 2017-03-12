@@ -11,6 +11,8 @@
 
 #include "functions.h"
 
+namespace lt = libtorrent;
+
 //(*IdInit(TorrentProperty)
 const long TorrentProperty::ID_STATICTEXT1 = wxNewId();
 const long TorrentProperty::ID_PANEL1 = wxNewId();
@@ -64,7 +66,7 @@ TorrentProperty::TorrentProperty(shared_ptr<torrent_t>& pTorrent, wxWindow* pare
 	fgSizer11 = new wxFlexGridSizer(0, 2, 2, 2);
 	m_label_name = new wxStaticText(this, ID_STATICTEXT2, _("Name:"), wxDefaultPosition, wxDefaultSize, 0, _T("ID_STATICTEXT2"));
 	fgSizer11->Add(m_label_name, 0, wxALL|wxALIGN_LEFT|wxALIGN_CENTER_VERTICAL, 5);
-	libtorrent::torrent_info const& torrent_info = *(m_pTorrent->info);
+	lt::torrent_info const& torrent_info = *(m_pTorrent->info);
  	wxString t_name = wxString(wxConvUTF8.cMB2WC(torrent_info.name().c_str()));
 	m_label_torrentname = new wxStaticText(this, ID_STATICTEXT3, t_name, wxDefaultPosition, wxDefaultSize, 0, _T("ID_STATICTEXT3"));
 	fgSizer11->Add(m_label_torrentname, 0, wxALL|wxEXPAND, 5);

@@ -33,6 +33,8 @@
 #include "mainframe.h"
 #include "functions.h"
 
+namespace lt = libtorrent;
+
 BEGIN_EVENT_TABLE(PeerListCtrl, SwashListCtrl)
 END_EVENT_TABLE()
 // PeerListCtrl
@@ -111,7 +113,7 @@ wxString PeerListCtrl::GetItemValue(long item, long columnid) const
 		return _T("");
 	}
 
-	libtorrent::peer_info peer_info = peers_list->at(item);
+	lt::peer_info peer_info = peers_list->at(item);
 
 	int peertype_flag = 0;
 	static const wxChar* peer_source_flag[] =
@@ -125,7 +127,7 @@ wxString PeerListCtrl::GetItemValue(long item, long columnid) const
 
 	//wxLogDebug(_T("PeerListCtrl::Showing %d items "), peers_list->size());
 
-	libtorrent::address c_ip = peer_info.ip.address();
+	lt::address c_ip = peer_info.ip.address();
 
 	wxString ret;
 	switch (columnid)
@@ -137,7 +139,7 @@ wxString PeerListCtrl::GetItemValue(long item, long columnid) const
 		{
 #ifdef USE_LIBGEOIP
 		BitSwash& bitSwachApp = wxGetApp();
-		libtorrent::address c_ip = peer_info.ip.address();
+		lt::address c_ip = peer_info.ip.address();
 		ret = (_T("--"));
 		bitSwachApp.GetCountryCode(wxString(c_ip.to_string()), ret);
 #else
@@ -150,45 +152,45 @@ wxString PeerListCtrl::GetItemValue(long item, long columnid) const
 		break;
 	case PEERLIST_COLUMN_TYPE:
 		{
-			if(peer_info.source & libtorrent::peer_info::tracker)
+			if(peer_info.source & lt::peer_info::tracker)
 			{
 				peertype_flag = 0;
 			}
-			if(peer_info.source & libtorrent::peer_info::dht)
+			if(peer_info.source & lt::peer_info::dht)
 			{
 				peertype_flag = 1;
 			}
-			else if(peer_info.source & libtorrent::peer_info::pex)
+			else if(peer_info.source & lt::peer_info::pex)
 			{
 				peertype_flag = 2;
 			}
-			else if(peer_info.source & libtorrent::peer_info::lsd)
+			else if(peer_info.source & lt::peer_info::lsd)
 			{
 				peertype_flag = 3;
 			}
-			else if(peer_info.source & libtorrent::peer_info::resume_data)
+			else if(peer_info.source & lt::peer_info::resume_data)
 			{
 				peertype_flag = 4;
 			}
 			//if ((peertype_flag < 0) || (peertype_flag > 4)) peertype_flag = 4;
 
-			ret = wxString::Format(_T("%s %s"), (peer_info.flags & libtorrent::peer_info::seed) ? _("Seed") : _("Peer"), peer_source_flag[peertype_flag]);
+			ret = wxString::Format(_T("%s %s"), (peer_info.flags & lt::peer_info::seed) ? _("Seed") : _("Peer"), peer_source_flag[peertype_flag]);
 			break;
 		}
 	case PEERLIST_COLUMN_STATUS:
-		if (peer_info.flags & libtorrent::peer_info::handshake)
+		if (peer_info.flags & lt::peer_info::handshake)
 		{
 			ret = _("Handshaking");
 		}
-		else if (peer_info.flags & libtorrent::peer_info::connecting)
+		else if (peer_info.flags & lt::peer_info::connecting)
 		{
 			ret = _("Connecting");
 		}
-		/*else if (peer_info.flags & libtorrent::peer_info::queued)
+		/*else if (peer_info.flags & lt::peer_info::queued)
 		{
 			ret = _("Queued");
 		}*/
-		else if (peer_info.flags & libtorrent::peer_info::local_connection)
+		else if (peer_info.flags & lt::peer_info::local_connection)
 		{
 			ret = _("Local");
 		}
@@ -197,13 +199,13 @@ wxString PeerListCtrl::GetItemValue(long item, long columnid) const
 		break;
 	case PEERLIST_COLUMN_FLAGS:
 		ret = wxString::Format(_T("%c%c%c%c%c%c%c"),
-			(peer_info.flags & libtorrent::peer_info::interesting) ? 'I' : ' ',
-			(peer_info.flags & libtorrent::peer_info::choked) ? 'C' : ' ',
-			(peer_info.flags & libtorrent::peer_info::remote_interested) ? 'i' : ' ',
-			(peer_info.flags & libtorrent::peer_info::remote_choked) ? 'c' : ' ',
-			(peer_info.flags & libtorrent::peer_info::supports_extensions) ? 'e' : ' ',
-			(peer_info.flags & libtorrent::peer_info::rc4_encrypted) ? 'X' : ' ',
-			(peer_info.flags & libtorrent::peer_info::plaintext_encrypted) ? 'x' : ' ');
+			(peer_info.flags & lt::peer_info::interesting) ? 'I' : ' ',
+			(peer_info.flags & lt::peer_info::choked) ? 'C' : ' ',
+			(peer_info.flags & lt::peer_info::remote_interested) ? 'i' : ' ',
+			(peer_info.flags & lt::peer_info::remote_choked) ? 'c' : ' ',
+			(peer_info.flags & lt::peer_info::supports_extensions) ? 'e' : ' ',
+			(peer_info.flags & lt::peer_info::rc4_encrypted) ? 'X' : ' ',
+			(peer_info.flags & lt::peer_info::plaintext_encrypted) ? 'x' : ' ');
 		break;
 	case PEERLIST_COLUMN_DOWNLOADSPEED:
 		ret = HumanReadableByte((wxDouble)peer_info.down_speed) + wxString(_T("ps"));
@@ -240,7 +242,7 @@ int PeerListCtrl::GetItemColumnImage(long item, long columnid) const
 		return -1;
 	}
 
-	libtorrent::peer_info peer_info = peers_list->at(item);
+	lt::peer_info peer_info = peers_list->at(item);
 
 	wxLogDebug(_T("PeerListCtrl GetItemColumnImage Column %ld of item %ld"), columnid, item);
 
@@ -250,7 +252,7 @@ int PeerListCtrl::GetItemColumnImage(long item, long columnid) const
 		{
 			BitSwash& bitSwachApp = wxGetApp();
 #ifdef USE_LIBGEOIP
-			libtorrent::address c_ip = peer_info.ip.address();
+			lt::address c_ip = peer_info.ip.address();
 			wxString ctry(_T("--"));
 			bitSwachApp.GetCountryCode(wxString(c_ip.to_string()), ctry);
 #else
@@ -286,12 +288,12 @@ int PeerListCtrl::OnGetItemImage(long item) const
 		return -1;
 	}
 
-	libtorrent::peer_info peer_info = peers_list->at(item);
+	lt::peer_info peer_info = peers_list->at(item);
 
 	//wxLogDebug(_T("PeerListCtrl GetItemImage Column %ld of item %ld"), 0, item);
 
 #ifdef USE_LIBGEOIP
-	libtorrent::address c_ip = peer_info.ip.address();
+	lt::address c_ip = peer_info.ip.address();
 	wxString ctry(_T("--"));
 	bitSwachApp.GetCountryCode(wxString(c_ip.to_string()), ctry);
 #else

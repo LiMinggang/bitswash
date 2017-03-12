@@ -31,17 +31,19 @@
 
 #include "infohash.h"
 
+namespace lt = libtorrent;
+
 InfoHash::InfoHash()
     : m_valid(false)
 {
 }
 
-InfoHash::InfoHash(const libtorrent::sha1_hash &nativeHash)
+InfoHash::InfoHash(const lt::sha1_hash &nativeHash)
     : m_valid(true)
     , m_nativeHash(nativeHash)
 {
-    char out[(libtorrent::sha1_hash::size * 2) + 1];
-    libtorrent::to_hex((char const*)&m_nativeHash[0], libtorrent::sha1_hash::size, out);
+    char out[(lt::sha1_hash::size * 2) + 1];
+    lt::to_hex((char const*)&m_nativeHash[0], lt::sha1_hash::size, out);
     m_hashString = wxString(out);
 }
 
@@ -51,7 +53,7 @@ InfoHash::InfoHash(const wxString &hashString)
 {
     wxCharBuffer raw = m_hashString.ToAscii();
     if (raw.length() == 40)
-        m_valid = libtorrent::from_hex(raw.data(), 40, (char*)&m_nativeHash[0]);
+        m_valid = lt::from_hex(raw.data(), 40, (char*)&m_nativeHash[0]);
 }
 
 InfoHash::InfoHash(const InfoHash &other)
@@ -66,7 +68,7 @@ bool InfoHash::isValid() const
     return m_valid;
 }
 
-InfoHash::operator libtorrent::sha1_hash() const
+InfoHash::operator lt::sha1_hash() const
 {
     return m_nativeHash;
 }

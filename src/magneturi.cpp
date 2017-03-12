@@ -37,6 +37,7 @@
 
 #include "magneturi.h"
 
+namespace lt = libtorrent;
 
 namespace
 {
@@ -94,8 +95,8 @@ MagnetUri::MagnetUri(const wxString &source)
         m_url = "magnet:?xt=urn:btih:" + source;
     }
 
-    libt::error_code ec;
-    libt::parse_magnet_uri(m_url.ToUTF8().data(), m_addTorrentParams, ec);
+    lt::error_code ec;
+    lt::parse_magnet_uri(m_url.ToUTF8().data(), m_addTorrentParams, ec);
     if (ec) return;
 
     m_valid = true;
@@ -136,7 +137,7 @@ wxString MagnetUri::url() const
     return m_url;
 }
 
-libtorrent::add_torrent_params MagnetUri::addTorrentParams() const
+lt::add_torrent_params MagnetUri::addTorrentParams() const
 {
     return m_addTorrentParams;
 }

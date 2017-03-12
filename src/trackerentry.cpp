@@ -32,12 +32,14 @@
 
 #include "trackerentry.h"
 
+namespace lt = libtorrent;
+
 TrackerEntry::TrackerEntry(const wxString &url)
-    : m_nativeEntry(libtorrent::announce_entry(url.ToStdString()))
+    : m_nativeEntry(lt::announce_entry(url.ToStdString()))
 {
 }
 
-TrackerEntry::TrackerEntry(const libtorrent::announce_entry &nativeEntry)
+TrackerEntry::TrackerEntry(const lt::announce_entry &nativeEntry)
     : m_nativeEntry(nativeEntry)
 {
 }
@@ -59,7 +61,7 @@ int TrackerEntry::tier() const
 
 TrackerEntry::Status TrackerEntry::status() const
 {
-    // libtorrent::announce_entry::is_working() returns
+    // lt::announce_entry::is_working() returns
     // true when the tracker hasn't been tried yet.
     if (m_nativeEntry.verified && m_nativeEntry.is_working())
         return Working;
@@ -87,7 +89,7 @@ bool TrackerEntry::operator==(const TrackerEntry &other)
     return (wxURL(url()) == wxURL(other.url()));
 }
 
-libtorrent::announce_entry TrackerEntry::nativeEntry() const
+lt::announce_entry TrackerEntry::nativeEntry() const
 {
     return m_nativeEntry;
 }

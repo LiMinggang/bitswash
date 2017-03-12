@@ -71,6 +71,8 @@
 #include "swashlistctrl.h" //for itemlist_t
 #include "magneturi.h"
 
+namespace lt = libtorrent;
+
 #ifndef __WXMSW__
 #include "languages.h"
 #else
@@ -825,6 +827,8 @@ void MainFrame::UpdateUI(bool force/* = false*/)
 	bool need_refresh = false;
 	wxLogDebug( _T( "UpdateUI" ));
 
+	m_btsession->PostStatusUpdate();
+
 	if(force || (this->IsShown() && !this->IsIconized()))
 	{
 		size_t torrent_queue_size = m_btsession->GetTorrentQueueSize();
@@ -848,7 +852,7 @@ void MainFrame::UpdateUI(bool force/* = false*/)
 				{
 					return;
 				}
-				libtorrent::torrent_handle &torrent_handle = torrent->handle;
+				lt::torrent_handle &torrent_handle = torrent->handle;
 				wxLogDebug( _T( "MainFrame: list size %s selected items %s" ), ( wxLongLong( torrent_queue_size ).ToString() ).c_str(), ( wxLongLong( selecteditems.size() ).ToString() ).c_str() );
 
 				/* if torrent is started in libtorrent */
@@ -1071,7 +1075,7 @@ void MainFrame::OnUpdateUI_MenuTorrent( wxUpdateUIEvent& event )
 							}
 							else
 							{
-								libtorrent::torrent_handle &torrenthandle = torrent->handle;
+								lt::torrent_handle &torrenthandle = torrent->handle;
 								if(( torrenthandle.status().paused ))
 								{
 									enable = true;
@@ -1546,19 +1550,19 @@ void MainFrame::UpdateStatusBar()
 
 wxString MainFrame::GetStatusDownloadRate()
 {
-	wxString d_rate/* = /*HumanReadableByte( m_btsession->GetLibTorrent()->status().payload_download_rate ) + _T( "ps" )*/;
+	wxString d_rate = HumanReadableByte( m_btsession->GetDownloadRate() ) + _T( "/s" );
 	return d_rate;
 }
 
 wxString MainFrame::GetStatusUploadRate()
 {
-	wxString u_rate/* = HumanReadableByte( m_btsession->GetLibTorrent()->status().payload_upload_rate ) + _T( "ps" )*/;
+	wxString u_rate = HumanReadableByte( m_btsession->GetUploadRate() ) + _T( "/s" );
 	return u_rate;
 }
 
 wxString MainFrame::GetStatusPeers()
 {
-	wxString numpeers/* = wxString::Format( _T( "%ld" ), m_btsession->GetLibTorrent()->status().num_peers )*/;
+	wxString numpeers = wxString::Format( _T( "%s" ), (wxLongLong( m_btsession->GetNumPeers() ).ToString()).c_str() );
 	return numpeers;
 }
 
@@ -1570,10 +1574,10 @@ wxString MainFrame::GetStatusDHT()
 
 wxString MainFrame::GetStatusIncoming()
 {
-	wxString incomingok =  /*\*/
-						   /*( m_btsession->GetLibTorrent()->status().has_incoming_connections ) ? \*/
-		_("Ok");// : \
-						   //_( "Error" );
+	wxString incomingok =  \
+						( m_btsession->HasInComingConns() ? \
+						_("Ok") : \
+						_( "Error" ));
 	return incomingok;
 }
 
@@ -1622,7 +1626,7 @@ void MainFrame::SetLogSeverity()
 	{ wxLog::SetVerbose( false ); }
 
 	m_btsession->SetLogSeverity();
-	//  s->set_severity_level((libtorrent::alert::severity_t)m_config->GetLogSeverity());
+	//  s->set_severity_level((lt::alert::severity_t)m_config->GetLogSeverity());
 }
 
 void MainFrame::OnUpdateOptionLanguage( wxUpdateUIEvent& event )

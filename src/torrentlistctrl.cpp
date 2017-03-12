@@ -27,6 +27,8 @@
 #include "mainframe.h"
 #include "functions.h"
 
+namespace lt = libtorrent;
+
 BEGIN_EVENT_TABLE( TorrentListCtrl, SwashListCtrl )
 END_EVENT_TABLE()
 // TorrentListCtrl
@@ -115,9 +117,9 @@ wxString TorrentListCtrl::GetItemValue( long item, long columnid ) const
 	//wxLogDebug(_T("TorrentListCtrl::Showing %d items column %d"), torrentlistitems->size(), columnid);
 	shared_ptr<torrent_t> torrent = torrentlistitems->at( item );
 	stats_t& torrentstats = torrent->config->GetTorrentStats();
-	libtorrent::torrent_handle &torrenthandle = torrent->handle;
-	shared_ptr<const libtorrent::torrent_info> torrentinfo = torrent->info;
-	libtorrent::torrent_status torrentstatus;
+	lt::torrent_handle &torrenthandle = torrent->handle;
+	shared_ptr<const lt::torrent_info> torrentinfo = torrent->info;
+	lt::torrent_status torrentstatus;
 	int torrentstoped = !torrenthandle.is_valid();
 
 	if( !torrentstoped )
@@ -213,7 +215,7 @@ wxString TorrentListCtrl::GetItemValue( long item, long columnid ) const
 		break;
 
 	case TORRENTLIST_COLUMN_TIMELEFT:
-		if( ( torrentstatus.state == libtorrent::torrent_status::seeding ) || ( torrentstatus.progress >= 1 ) )
+		if( ( torrentstatus.state == lt::torrent_status::seeding ) || ( torrentstatus.progress >= 1 ) )
 		{
 			ret = _T( "00:00:00" );
 		}
