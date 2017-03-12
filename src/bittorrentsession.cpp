@@ -22,6 +22,7 @@
 //
 
 #include <vector>
+#include <algorithm> // for std::max
 #include <wx/wx.h>
 #include <wx/app.h>
 #include <wx/dir.h>
@@ -84,6 +85,44 @@ BitTorrentSession::BitTorrentSession( wxApp* pParent, Configuration* config, wxM
 	m_condition = condition;
     m_mutex = mutex;
 	//boost::filesystem::path::default_name_check(boost::filesystem::no_check);
+	using libtorrent::find_metric_idx;
+
+	std::vector<lt::stats_metric> metrics = lt::session_stats_metrics();
+	m_cnt[0].resize(metrics.size(), 0);
+	m_cnt[1].resize(metrics.size(), 0);
+
+	m_queued_bytes_idx = find_metric_idx("disk.queued_write_bytes");
+	m_wasted_bytes_idx = find_metric_idx("net.recv_redundant_bytes");
+	m_failed_bytes_idx = find_metric_idx("net.recv_failed_bytes");
+	m_num_peers_idx = find_metric_idx("peer.num_peers_connected");
+	m_recv_payload_idx = find_metric_idx("net.recv_payload_bytes");
+	m_sent_payload_idx = find_metric_idx("net.sent_payload_bytes");
+	m_unchoked_idx = find_metric_idx("peer.num_peers_up_unchoked");
+	m_unchoke_slots_idx = find_metric_idx("ses.num_unchoke_slots");
+	m_limiter_up_queue_idx = find_metric_idx("net.limiter_up_queue");
+	m_limiter_down_queue_idx = find_metric_idx("net.limiter_down_queue");
+	m_queued_writes_idx = find_metric_idx("disk.num_write_jobs");
+	m_queued_reads_idx = find_metric_idx("disk.num_read_jobs");
+
+	m_writes_cache_idx = find_metric_idx("disk.write_cache_blocks");
+	m_reads_cache_idx = find_metric_idx("disk.read_cache_blocks");
+	m_pinned_idx = find_metric_idx("disk.pinned_blocks");
+	m_num_blocks_read_idx = find_metric_idx("disk.num_blocks_read");
+	m_cache_hit_idx = find_metric_idx("disk.num_blocks_cache_hits");
+	m_blocks_in_use_idx = find_metric_idx("disk.disk_blocks_in_use");
+	m_blocks_written_idx = find_metric_idx("disk.num_blocks_written");
+	m_write_ops_idx = find_metric_idx("disk.num_write_ops");
+
+	m_mfu_size_idx = find_metric_idx("disk.arc_mfu_size");
+	m_mfu_ghost_idx = find_metric_idx("disk.arc_mfu_ghost_size");
+	m_mru_size_idx = find_metric_idx("disk.arc_mru_size");
+	m_mru_ghost_idx = find_metric_idx("disk.arc_mru_ghost_size");
+
+	m_utp_idle = find_metric_idx("utp.num_utp_idle");
+	m_utp_syn_sent = find_metric_idx("utp.num_utp_syn_sent");
+	m_utp_connected = find_metric_idx("utp.num_utp_connected");
+	m_utp_fin_sent = find_metric_idx("utp.num_utp_fin_sent");
+	m_utp_close_wait = find_metric_idx("utp.num_utp_close_wait");
 }
 
 BitTorrentSession::~BitTorrentSession()
@@ -2014,5 +2053,21 @@ void BitTorrentSession::HandleTorrentAlert()
 			wxLogError( _T( "Exception: %s" ), e.what() );
 		}
 	}
+}
+
+void BitTorrentSession::UpdateCounters(boost::uint64_t* stats_counters
+	, int num_cnt, boost::uint64_t t)
+{
+	// only update the previous counters if there's been enough
+	// time since it was last updated
+	if (t - m_timestamp[1] > 2000000)
+	{
+		m_cnt[1].swap(m_cnt[0]);
+		m_timestamp[1] = m_timestamp[0];
+	}
+
+	m_cnt[0].assign(stats_counters, stats_counters + num_cnt);
+	m_timestamp[0] = t;
+	//render();
 }
 

@@ -24,6 +24,9 @@
 #ifndef _BITTORRENTSESSION_H_
 #define _BITTORRENTSESSION_H_
 
+#include <libtorrent/session_stats.hpp>
+#include <boost/cstdint.hpp>
+
 #include <vector>
 #if __cplusplus <= 199711L
 #include <boost/shared_ptr.hpp>
@@ -50,6 +53,7 @@ class MagnetUri;
 
 namespace libtorrent
 {
+	class session;
     class alert;
     struct stats_alert;
     struct torrent_checked_alert;
@@ -166,6 +170,8 @@ public:
 			static bts_event lbtAlert(BTS_EVENT_ALERT);
 			PostEvent(lbtAlert);
 		}
+	void UpdateCounters(boost::uint64_t* stats_counters, int num_cnt
+		, boost::uint64_t t);
 
 private:
 	void ScanTorrentsDirectory(const wxString& dirname);
@@ -191,6 +197,48 @@ private:
     wxCondition *m_condition;
     wxMutex *m_mutex;
 	wxMessageQueue< bts_event > m_evt_queue;
+	
+	// there are two sets of counters. the current one and the last one. This
+	// is used to calculate rates
+	std::vector<boost::uint64_t> m_cnt[2];
+
+	// the timestamps of the counters in m_cnt[0] and m_cnt[1]
+	// respectively. The timestamps are microseconds since session start
+	boost::uint64_t m_timestamp[2];
+
+	bool m_print_utp_stats;
+
+	int m_queued_bytes_idx;
+	int m_wasted_bytes_idx;
+	int m_failed_bytes_idx;
+	int m_num_peers_idx;
+	int m_recv_payload_idx;
+	int m_sent_payload_idx;
+	int m_unchoked_idx;
+	int m_unchoke_slots_idx;
+	int m_limiter_up_queue_idx;
+	int m_limiter_down_queue_idx;
+	int m_queued_writes_idx;
+	int m_queued_reads_idx;
+	int m_writes_cache_idx;
+	int m_reads_cache_idx;
+	int m_pinned_idx;
+	int m_num_blocks_read_idx;
+	int m_cache_hit_idx;
+	int m_blocks_in_use_idx;
+	int m_blocks_written_idx;
+	int m_write_ops_idx;
+
+	int m_mfu_size_idx;
+	int m_mfu_ghost_idx;
+	int m_mru_size_idx;
+	int m_mru_ghost_idx;
+
+	int m_utp_idle;
+	int m_utp_syn_sent;
+	int m_utp_connected;
+	int m_utp_fin_sent;
+	int m_utp_close_wait;
 };
 
 #endif // _BITTORRENTSESSION_H_
