@@ -905,6 +905,8 @@ void BitTorrentSession::ScanTorrentsDirectory( const wxString& dirname )
 		wxLogDebug( _T( "Saved Torrent: %s" ), fullpath.c_str() );
 		torrent =  ParseTorrent( fullpath );
 
+		if (torrent->config->GetTorrentState() == TORRENT_STATE_QUEUE) /*Fist time added torrent, it's not in libtorrent*/
+			torrent->config->SetTorrentState(TORRENT_STATE_START);
 		if( torrent->isvalid )
 		{ AddTorrent( torrent ); }
 
@@ -1736,6 +1738,7 @@ void BitTorrentSession::CheckQueueItem()
 						{ exseed = true; }
 					}
 
+#if 0
 					//periodic save fastresume data
 					//
 					wxString fastresumefile = wxGetApp().SaveTorrentsPath() + wxGetApp().PathSeparator() + torrent->hash + _T( ".fastresume" );
@@ -1755,6 +1758,7 @@ void BitTorrentSession::CheckQueueItem()
 					{
 						SaveTorrentResumeData( torrent );
 					}
+#endif
 				}
 
 				/* make this an option */
@@ -1769,6 +1773,7 @@ void BitTorrentSession::CheckQueueItem()
 
 		case TORRENT_STATE_FORCE_START:
 			{
+#if 0
 				//periodic save fastresume data
 				//
 				wxString fastresumefile = wxGetApp().SaveTorrentsPath() + wxGetApp().PathSeparator() + torrent->hash + _T( ".fastresume" );
@@ -1788,7 +1793,7 @@ void BitTorrentSession::CheckQueueItem()
 				{
 					SaveTorrentResumeData( torrent );
 				}
-
+#endif
 				break;
 			}
 
