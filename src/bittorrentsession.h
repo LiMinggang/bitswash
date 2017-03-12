@@ -124,7 +124,6 @@ public:
 	
 	void AddTorrentSession(shared_ptr<torrent_t>& torrent);
 	bool AddTorrent(shared_ptr<torrent_t>& torrent);
-	bool HandleAddTorrentAlert(libtorrent::add_torrent_alert *p);
 	void RemoveTorrent(shared_ptr<torrent_t>& torrent, bool deletedata);
 	shared_ptr<torrent_t> FindTorrent(const wxString &hash) const;
 	shared_ptr<torrent_t> GetTorrent(int idx) const;
@@ -164,6 +163,8 @@ public:
 	libtorrent::session* GetLibTorrent() { return m_libbtsession;}
 
 	void HandleTorrentAlert();
+	bool HandleAddTorrentAlert(libtorrent::add_torrent_alert *p);
+	bool HandleMetaDataAlert(libtorrent::metadata_received_alert *p);
 	void PostEvent(bts_event & evt) {m_evt_queue.Post(evt);}
 	void LibTorrentAlert()
 		{
