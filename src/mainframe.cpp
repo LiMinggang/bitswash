@@ -849,10 +849,9 @@ void MainFrame::UpdateUI(bool force/* = false*/)
 	bool need_refresh = false;
 	wxLogDebug( _T( "UpdateUI" ));
 
-	m_btsession->PostStatusUpdate();
-
 	if(force || (this->IsShown() && !this->IsIconized()))
 	{
+		need_refresh = true;
 		size_t torrent_queue_size = m_btsession->GetTorrentQueueSize();
 		//int t = 0;
 		//torrents_t *torrentqueue = m_btsession->GetTorrentQueue();
@@ -931,9 +930,12 @@ void MainFrame::UpdateUI(bool force/* = false*/)
 
 	if( m_config->GetUseSystray() )
 	{
+		need_refresh = true;
 		UpdateTrayInfo();
 	}
 
+	if(need_refresh)
+		m_btsession->PostStatusUpdate();
 	wxLogDebug( _T( "MainFrame::UpdateUI done" ) );
 }
 
