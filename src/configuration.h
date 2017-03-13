@@ -310,7 +310,7 @@ class Configuration : public wxFileConfig
 		{
 			std::vector<wxString>::iterator p = m_savepathhistory.begin();
 			wxString existpath;
-			for(p=m_savepathhistory.begin(); p != m_savepathhistory.end(); p++)
+			for(p=m_savepathhistory.begin(); p != m_savepathhistory.end(); ++p)
 			{
 				existpath = *p;
 				if ((existpath.CmpNoCase(path)) == 0)

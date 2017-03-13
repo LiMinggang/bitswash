@@ -328,7 +328,7 @@ void MainFrame::OnMenuTorrentOpenDir( wxCommandEvent& event )
 #if  defined(__WXMSW__)
 		wxExecute( _T( "Explorer " ) + pTorrent->config->GetDownloadPath(), wxEXEC_ASYNC, NULL );
 #elif defined(__APPLE__)
-		wxExecute( _T( "/usr/bin/open " + pTorrent->config->GetDownloadPath(), wxEXEC_ASYNC, NULL );
+		wxExecute( _T( "/usr/bin/open ") + pTorrent->config->GetDownloadPath(), wxEXEC_ASYNC, NULL );
 #elif defined(__WXGTK__)
 		wxString loc = _T( "file://" ) + pTorrent->config->GetDownloadPath();
 		//SystemOpenURL( loc );
