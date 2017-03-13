@@ -270,46 +270,46 @@ void FileListCtrl::OnLeftDown(wxMouseEvent& event)
 
 	switch ( flags )
 	{
-		case wxLIST_HITTEST_ONITEMICON: /*FILELIST_COLUMN_SELECTED*/
-			{
-				//XXX backward compatible
-				bool nopriority = false;
-				shared_ptr<torrent_t> pTorrent;
+	case wxLIST_HITTEST_ONITEMICON: /*FILELIST_COLUMN_SELECTED*/
+		{
+			//XXX backward compatible
+			bool nopriority = false;
+			shared_ptr<torrent_t> pTorrent;
 
-				if( m_pTorrent )
+			if( m_pTorrent )
+			{
+				pTorrent = m_pTorrent;
+			}
+			else
+			{
+				MainFrame* pMainFrame = ( MainFrame* )( wxGetApp().GetTopWindow() );
+				pTorrent = pMainFrame->GetSelectedTorrent();
+			}
+
+			if (pTorrent)
+			{
+					lt::torrent_info const& torrent_info = *(pTorrent->info);
+				std::vector<int>& filespriority = pTorrent->config->GetFilesPriorities();
+				if( filespriority.size() != torrent_info.num_files() )
 				{
-					pTorrent = m_pTorrent;
+					nopriority = true;
+				}
+
+				if (nopriority && ((item < filespriority.size() ) && filespriority[item] != BITTORRENT_FILE_NONE))
+				{
+					filespriority[item] = BITTORRENT_FILE_NONE;
 				}
 				else
 				{
-					MainFrame* pMainFrame = ( MainFrame* )( wxGetApp().GetTopWindow() );
-					pTorrent = pMainFrame->GetSelectedTorrent();
+					filespriority[item] = BITTORRENT_FILE_NORMAL; /*Normal*/
 				}
-
-				if (pTorrent)
-				{
- 					lt::torrent_info const& torrent_info = *(pTorrent->info);
-					std::vector<int>& filespriority = pTorrent->config->GetFilesPriorities();
-					if( filespriority.size() != torrent_info.num_files() )
-					{
-						nopriority = true;
-					}
-
-					if (nopriority && ((item < filespriority.size() ) && filespriority[item] != BITTORRENT_FILE_NONE))
-					{
-						filespriority[item] = BITTORRENT_FILE_NONE;
-					}
-					else
-					{
-						filespriority[item] = BITTORRENT_FILE_NORMAL; /*Normal*/
-					}
-					Refresh(false);
-					return;
-				}
-				break;
+				Refresh(false);
+				return;
 			}
-		default: 
 			break;
+		}
+	default: 
+		break;
 	}
     event.Skip();
 }
