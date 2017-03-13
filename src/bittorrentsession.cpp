@@ -1916,6 +1916,10 @@ void BitTorrentSession::HandleTorrentAlert()
 						return;
 					}
 					break;
+				case lt::stats_alert::alert_type:
+				case lt::state_update_alert::alert_type:
+				case lt::dht_stats_alert::alert_type:
+					log_severity = 1;
 				default:
 					{
 						event_string << _T("[") << (*it)->type() << _T("]") << (*it)->message();
@@ -1931,27 +1935,27 @@ void BitTorrentSession::HandleTorrentAlert()
 			{
 				case 2:
 					{
-						wxLogInfo( _T("%s"), event_string.c_str() );
+						wxLogInfo( _T("%s\n"), event_string.c_str() );
 					}
 					break;
 				case 3:
 					{
-						wxLogWarning( _T("%s"), event_string.c_str() );
+						wxLogWarning( _T("%s\n"), event_string.c_str() );
 					}
 					break;
 				case 4:
 					{
-						wxLogError( _T("%s"), event_string.c_str() );
+						wxLogError( _T("%s\n"), event_string.c_str() );
 					}
 					break;
 				default:
-					wxLogDebug( _T("%s"), event_string.c_str() );
+					wxLogDebug( _T("%s\n"), event_string.c_str() );
 					break;
 			}
 		}
 		TORRENT_CATCH(std::exception& e)
 		{
-			wxLogError( _T( "Exception: %s" ), e.what() );
+			wxLogError( _T( "Exception: %s\n" ), e.what() );
 		}
 	}
 }
