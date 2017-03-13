@@ -1568,7 +1568,7 @@ wxString MainFrame::GetStatusPeers()
 
 wxString MainFrame::GetStatusDHT()
 {
-	wxString numpeers = wxString::Format( _T( "%ld" ),  m_btsession->GetDhtNodes() );
+	wxString numpeers = wxString::Format( _T( "%s" ),  (wxLongLong( m_btsession->GetDhtNodes() ).ToString()).c_str() );
 	return numpeers;
 }
 

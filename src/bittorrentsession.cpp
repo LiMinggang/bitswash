@@ -769,19 +769,22 @@ void BitTorrentSession::MergeTorrent( shared_ptr<torrent_t>& dst_torrent, shared
 	lt::torrent_handle &torrent_handle = dst_torrent->handle;
 	std::vector<lt::announce_entry> const& trackers = src_torrent->info->trackers();
 
-	for( size_t i = 0; i < trackers.size(); ++i )
+	if(torrent_handle.is_valid())
 	{
-		torrent_handle.add_tracker( trackers.at( i ) );
-	}
+		for( size_t i = 0; i < trackers.size(); ++i )
+		{
+			torrent_handle.add_tracker( trackers.at( i ) );
+		}
 
-	std::vector<lt::web_seed_entry> const& web_seeds = src_torrent->info->web_seeds();
+		std::vector<lt::web_seed_entry> const& web_seeds = src_torrent->info->web_seeds();
 
-	for( std::vector<lt::web_seed_entry>::const_iterator i = web_seeds.begin(); i != web_seeds.end(); ++i )
-	{
-		if( i->type == lt::web_seed_entry::url_seed )
-		{ torrent_handle.add_url_seed( i->url ); }
-		else if( i->type == lt::web_seed_entry::http_seed )
-		{ torrent_handle.add_http_seed( i->url ); }
+		for( std::vector<lt::web_seed_entry>::const_iterator i = web_seeds.begin(); i != web_seeds.end(); ++i )
+		{
+			if( i->type == lt::web_seed_entry::url_seed )
+			{ torrent_handle.add_url_seed( i->url ); }
+			else if( i->type == lt::web_seed_entry::http_seed )
+			{ torrent_handle.add_http_seed( i->url ); }
+		}
 	}
 }
 
@@ -790,16 +793,19 @@ void BitTorrentSession::MergeTorrent( shared_ptr<torrent_t>& dst_torrent, Magnet
 	lt::torrent_handle &torrent_handle = dst_torrent->handle;
 	std::vector<std::string> const& trackers = src_magneturi.trackers();
 
-	for( size_t i = 0; i < trackers.size(); ++i )
+	if(torrent_handle.is_valid())
 	{
-		torrent_handle.add_tracker( lt::announce_entry( trackers.at( i ) ) );
-	}
+		for( size_t i = 0; i < trackers.size(); ++i )
+		{
+			torrent_handle.add_tracker( lt::announce_entry( trackers.at( i ) ) );
+		}
 
-	std::vector<std::string> const& url_seeds = src_magneturi.urlSeeds();
+		std::vector<std::string> const& url_seeds = src_magneturi.urlSeeds();
 
-	for( std::vector<std::string>::const_iterator i = url_seeds.begin(); i != url_seeds.end(); ++i )
-	{
-		torrent_handle.add_url_seed( *i );
+		for( std::vector<std::string>::const_iterator i = url_seeds.begin(); i != url_seeds.end(); ++i )
+		{
+			torrent_handle.add_url_seed( *i );
+		}
 	}
 }
 void BitTorrentSession::ScanTorrentsDirectory( const wxString& dirname )
@@ -871,17 +877,6 @@ void BitTorrentSession::ScanTorrentsDirectory( const wxString& dirname )
 int BitTorrentSession::find_torrent_from_hash( const wxString& hash ) const
 {
 	int j = -1;
-	/*for( torrents_t::iterator i = m_torrent_queue.begin();
-	        i != m_torrent_queue.end(); ++i )
-	{
-	    torrent_t *torrent = *i;
-	    wxLogDebug( _T( "hash %s - %s" ), torrent->hash.c_str(), hash.c_str() );
-
-	    if( torrent->hash.Cmp( hash ) == 0 )
-	    { return j; }
-
-	    j++;
-	}*/
 	torrents_map::const_iterator it = m_torrent_map.find( hash );
 
 	if( it != m_torrent_map.end() ) { j = it->second; }
