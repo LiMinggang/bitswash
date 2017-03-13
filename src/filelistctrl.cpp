@@ -49,7 +49,6 @@ enum
 	FILELISTCTRL_MENU_OPENPATH,
 };
 
-
 BEGIN_EVENT_TABLE( FileListCtrl, SwashListCtrl )
 	EVT_MENU( FILELISTCTRL_MENU_PRIORITY0, FileListCtrl::OnMenuPriority )
 	EVT_MENU( FILELISTCTRL_MENU_PRIORITY1, FileListCtrl::OnMenuPriority )
@@ -356,7 +355,6 @@ void FileListCtrl::OnLeftDClick(wxMouseEvent& event)
 		}
 	}
 }
-
 
 void FileListCtrl::ShowContextMenu( const wxPoint& pos )
 {
