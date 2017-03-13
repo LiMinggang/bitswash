@@ -912,12 +912,6 @@ void MainFrame::UpdateUI(bool force/* = false*/)
 		UpdateTrayInfo();
 	}
 
-	LoggerCtrl* logger = m_torrentinfo->GetLogger();
-	if(logger)
-	{
-		if(MAX_LOG_LINES <= logger->GetNumberOfLogLines()) logger->ClearLog();
-	}
-
 	wxLogDebug( _T( "MainFrame::UpdateUI done" ) );
 }
 

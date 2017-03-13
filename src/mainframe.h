@@ -61,7 +61,6 @@
 class TorrentInfo;
 class SummaryPane;
 class TorrentProperty;
-#define MAX_LOG_LINES 10000
 
 class MainFrame: public wxFrame
 {

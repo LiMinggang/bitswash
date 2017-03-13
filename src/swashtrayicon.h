@@ -32,26 +32,26 @@
 
 class SwashTrayIcon : public wxTaskBarIcon 
 {
+public:
+	SwashTrayIcon(wxFrame* parent) ;
+	virtual ~SwashTrayIcon();
 
-	public:
-    		SwashTrayIcon(wxFrame* parent) ;
+private:
+	wxFrame* m_pMainFrame;
+	bool m_hidetaskbar;
+	void OnLeftButton(wxTaskBarIconEvent&);
+	void OnMenuRestore(wxCommandEvent&);
+	void OnMenuExit(wxCommandEvent&);
+	void OnMenuHideTaskbar(wxCommandEvent&);
+	void OnMenuUICheckmark(wxUpdateUIEvent &event);
+	void ShowHideMainFrame();
+	void OnMenuOpenTorrent(wxCommandEvent&);
+	void OnMenuOpenTorrentUrl(wxCommandEvent&);
+	void OnMenuPreference(wxCommandEvent&);
+	virtual wxMenu *CreatePopupMenu();
 
-	private:
-		wxFrame* m_pMainFrame;
-		bool m_hidetaskbar;
-    		void OnLeftButton(wxTaskBarIconEvent&);
-    		void OnMenuRestore(wxCommandEvent&);
-    		void OnMenuExit(wxCommandEvent&);
-       		void OnMenuHideTaskbar(wxCommandEvent&);
-			void OnMenuUICheckmark(wxUpdateUIEvent &event);
-    		void ShowHideMainFrame();
-       		void OnMenuOpenTorrent(wxCommandEvent&);
-       		void OnMenuOpenTorrentUrl(wxCommandEvent&);
-       		void OnMenuPreference(wxCommandEvent&);
-    		virtual wxMenu *CreatePopupMenu();
 
-			
-		DECLARE_EVENT_TABLE()
+	DECLARE_EVENT_TABLE()
 };
 
 

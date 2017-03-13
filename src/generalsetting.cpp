@@ -46,7 +46,6 @@ GeneralSettingPane::GeneralSettingPane( wxWindow* parent,
 	       wxSize size, 
 	       int style): wxPanel(parent, id, pos, size, style)
 {
-
 	m_pMainFrame = (wxFrame*)wxGetApp().GetTopWindow();
 	m_pcfg = ((MainFrame*)m_pMainFrame)->GetConfig();
 
@@ -199,19 +198,16 @@ GeneralSettingPane::GeneralSettingPane( wxWindow* parent,
 int GeneralSettingPane::GetMaxStart() 
 {
 	return m_spin_maxstart->GetValue();
-
 }
 
 int GeneralSettingPane::GetRefreshTimer() 
 {
 	return m_spin_refreshtimer->GetValue();
-
 }
 
 int GeneralSettingPane::GetFastResumeSaveTime() 
 {
 	return m_spin_fastresume_save_time->GetValue();
-
 }
 
 bool GeneralSettingPane::GetUseSystray() 
@@ -228,7 +224,6 @@ bool GeneralSettingPane::GetExcludeSeed()
 bool GeneralSettingPane::GetHideTaskbar() 
 {
 	return m_check_hidetaskbar->GetValue();
-
 }
 
 
@@ -240,7 +235,6 @@ void GeneralSettingPane::OnUseSystray(wxCommandEvent& event)
 	m_pcfg->SetUseSystray(usesystray);
 	
 	m_check_hidetaskbar->Enable(usesystray);
-
 }
 
 int GeneralSettingPane::GetLogSeverity() 

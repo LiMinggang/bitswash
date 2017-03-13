@@ -14,7 +14,6 @@
  *  Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  */
 
-
 //
 // Class: SwashTrayIcon
 // Created by: lim k. c. <admin@bitswash.org>
@@ -26,24 +25,24 @@
 #include "mainframe.h"
 
 enum {
-    TRAY_RESTORE = wxID_HIGHEST,
-    TRAY_EXIT,
-    TRAY_HIDETASKBAR,
-    TRAY_OPENTORRENT,
-    TRAY_OPENTORRENTURL,
-    TRAY_PREFERENCE
+	TRAY_RESTORE = wxID_HIGHEST,
+	TRAY_EXIT,
+	TRAY_HIDETASKBAR,
+	TRAY_OPENTORRENT,
+	TRAY_OPENTORRENTURL,
+	TRAY_PREFERENCE
 };
 
 
 BEGIN_EVENT_TABLE(SwashTrayIcon, wxTaskBarIcon)
-    EVT_MENU(TRAY_RESTORE, SwashTrayIcon::OnMenuRestore)
-    EVT_MENU(TRAY_EXIT,    SwashTrayIcon::OnMenuExit)
-    EVT_MENU(TRAY_HIDETASKBAR,SwashTrayIcon::OnMenuHideTaskbar)
-    EVT_UPDATE_UI(TRAY_HIDETASKBAR,SwashTrayIcon::OnMenuUICheckmark)
-    EVT_TASKBAR_LEFT_UP(SwashTrayIcon::OnLeftButton)
-    EVT_MENU(TRAY_OPENTORRENT, SwashTrayIcon::OnMenuOpenTorrent)
-    EVT_MENU(TRAY_OPENTORRENTURL, SwashTrayIcon::OnMenuOpenTorrentUrl)
-    EVT_MENU(TRAY_PREFERENCE, SwashTrayIcon::OnMenuPreference)
+	EVT_MENU(TRAY_RESTORE, SwashTrayIcon::OnMenuRestore)
+	EVT_MENU(TRAY_EXIT,	SwashTrayIcon::OnMenuExit)
+	EVT_MENU(TRAY_HIDETASKBAR,SwashTrayIcon::OnMenuHideTaskbar)
+	EVT_UPDATE_UI(TRAY_HIDETASKBAR,SwashTrayIcon::OnMenuUICheckmark)
+	EVT_TASKBAR_LEFT_UP(SwashTrayIcon::OnLeftButton)
+	EVT_MENU(TRAY_OPENTORRENT, SwashTrayIcon::OnMenuOpenTorrent)
+	EVT_MENU(TRAY_OPENTORRENTURL, SwashTrayIcon::OnMenuOpenTorrentUrl)
+	EVT_MENU(TRAY_PREFERENCE, SwashTrayIcon::OnMenuPreference)
 END_EVENT_TABLE()
 
 SwashTrayIcon::SwashTrayIcon(wxFrame* parent) 
@@ -53,6 +52,12 @@ SwashTrayIcon::SwashTrayIcon(wxFrame* parent)
 	m_hidetaskbar =	((MainFrame*)m_pMainFrame)->GetConfig()->GetHideTaskbar();
 }
 
+SwashTrayIcon::~SwashTrayIcon()
+{
+	m_pMainFrame = 0;
+	Unlink();
+}
+
 void SwashTrayIcon::OnMenuRestore(wxCommandEvent& )
 {
 	ShowHideMainFrame();		
@@ -60,7 +65,7 @@ void SwashTrayIcon::OnMenuRestore(wxCommandEvent& )
 
 void SwashTrayIcon::OnMenuExit(wxCommandEvent& )
 {
-    m_pMainFrame->Close(true);
+	m_pMainFrame->Close(true);
 }
 
 void SwashTrayIcon::OnMenuOpenTorrent(wxCommandEvent& )
@@ -80,35 +85,34 @@ void SwashTrayIcon::OnMenuPreference(wxCommandEvent& )
 
 void SwashTrayIcon::OnMenuHideTaskbar(wxCommandEvent& )
 {
-       m_hidetaskbar =!m_hidetaskbar;
+	m_hidetaskbar =!m_hidetaskbar;
 	((MainFrame*)m_pMainFrame)->GetConfig()->SetHideTaskbar(m_hidetaskbar);
 }
 
 void SwashTrayIcon::OnMenuUICheckmark(wxUpdateUIEvent &event)
 {
-       event.Check( m_hidetaskbar);
+	event.Check( m_hidetaskbar);
 }
-
 
 // Overridables
 wxMenu *SwashTrayIcon::CreatePopupMenu()
 {
-    // Try creating menus different ways
-    // TODO: Probably try calling SetBitmap with some XPMs here
-    wxMenu *menu = new wxMenu;
-    menu->Append(TRAY_RESTORE, _("&Restore"));
-    menu->Append(TRAY_HIDETASKBAR, _("&Hide Taskbar Icon"),wxT(""), wxITEM_CHECK);
-    menu->AppendSeparator();
-    menu->Append(TRAY_OPENTORRENT, _("&Open Torrent\tCtrl+O"),_("Open Torrent"));
+	// Try creating menus different ways
+	// TODO: Probably try calling SetBitmap with some XPMs here
+	wxMenu *menu = new wxMenu;
+	menu->Append(TRAY_RESTORE, _("&Restore"));
+	menu->Append(TRAY_HIDETASKBAR, _("&Hide Taskbar Icon"),wxT(""), wxITEM_CHECK);
+	menu->AppendSeparator();
+	menu->Append(TRAY_OPENTORRENT, _("&Open Torrent\tCtrl+O"),_("Open Torrent"));
 	menu->Append(TRAY_OPENTORRENTURL, _("Open &URL\tCtrl+U"), _("Open URL"));
 	menu->AppendSeparator();
 	menu->Append(TRAY_PREFERENCE, _("Prefere&nce\tCtrl+F"), _("Preference"));
 
 #ifndef __WXMAC_OSX__ /*Mac has built-in quit menu*/
-    menu->AppendSeparator();
-    menu->Append(TRAY_EXIT,    _("E&xit"));
+	menu->AppendSeparator();
+	menu->Append(TRAY_EXIT,	_("E&xit"));
 #endif
-    return menu;
+	return menu;
 }
 
 void SwashTrayIcon::OnLeftButton(wxTaskBarIconEvent&)
@@ -116,9 +120,8 @@ void SwashTrayIcon::OnLeftButton(wxTaskBarIconEvent&)
 	ShowHideMainFrame();
 }
 
-
-void SwashTrayIcon::ShowHideMainFrame()  {
-
+void SwashTrayIcon::ShowHideMainFrame()
+{
 	bool hidetaskbar = ((MainFrame *)m_pMainFrame)->GetConfig()->GetHideTaskbar();
 	
 	if (hidetaskbar) 
@@ -147,7 +150,6 @@ void SwashTrayIcon::ShowHideMainFrame()  {
 			m_pMainFrame->Iconize(true);
 		}
 	}
-
 }
 
 
