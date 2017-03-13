@@ -10,6 +10,7 @@ Fix: Memory leak in ShowPreferences
 Fix: Use shared_ptr to replace torrent_t* to fix a lot of memory leak
 Fix: Show/Hide bug of SwashListCtrl
 Fix: Wrong file icon files
+Fix: Assertion failure if you hide sys tray icon from the Preference show on popup menu of sys tray
 Fix: Lots of bugs fixed
 New: Magnet URI support
 New: 64bits build
