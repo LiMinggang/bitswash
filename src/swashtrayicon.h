@@ -34,7 +34,6 @@ class SwashTrayIcon : public wxTaskBarIcon
 {
 public:
 	SwashTrayIcon(wxFrame* parent) ;
-	virtual ~SwashTrayIcon();
 
 private:
 	wxFrame* m_pMainFrame;

@@ -14,7 +14,6 @@
  *  Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  */
 
-
 //
 // Class: GeneralSettingPane
 //
@@ -220,12 +219,10 @@ bool GeneralSettingPane::GetExcludeSeed()
 	return m_check_excludeseed->GetValue();
 }
 
-
 bool GeneralSettingPane::GetHideTaskbar() 
 {
 	return m_check_hidetaskbar->GetValue();
 }
-
 
 void GeneralSettingPane::OnUseSystray(wxCommandEvent& event)
 {

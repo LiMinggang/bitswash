@@ -1602,6 +1602,7 @@ void MainFrame::ShowSystray( bool show )
 	{
 		if( m_swashtrayicon != NULL )
 		{
+			m_swashtrayicon->RemoveIcon();
 			delete m_swashtrayicon;
 			m_swashtrayicon = NULL;
 		}

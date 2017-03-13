@@ -52,12 +52,6 @@ SwashTrayIcon::SwashTrayIcon(wxFrame* parent)
 	m_hidetaskbar =	((MainFrame*)m_pMainFrame)->GetConfig()->GetHideTaskbar();
 }
 
-SwashTrayIcon::~SwashTrayIcon()
-{
-	m_pMainFrame = 0;
-	Unlink();
-}
-
 void SwashTrayIcon::OnMenuRestore(wxCommandEvent& )
 {
 	ShowHideMainFrame();		
@@ -80,7 +74,12 @@ void SwashTrayIcon::OnMenuOpenTorrentUrl(wxCommandEvent& )
 
 void SwashTrayIcon::OnMenuPreference(wxCommandEvent& )
 {
-	((MainFrame*)m_pMainFrame)->ShowPreferences();
+	wxMenuEvent * event = new wxMenuEvent(wxEVT_MENU, MainFrame::ID_OPTIONS_PREFERENCES);
+	
+	event->SetEventObject( m_pMainFrame );
+	wxQueueEvent( m_pMainFrame, event );
+
+	//((MainFrame*)m_pMainFrame)->ShowPreferences();
 }
 
 void SwashTrayIcon::OnMenuHideTaskbar(wxCommandEvent& )

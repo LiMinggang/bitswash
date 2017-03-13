@@ -62,8 +62,11 @@ class TorrentInfo;
 class SummaryPane;
 class TorrentProperty;
 
+wxDECLARE_EVENT( SHOW_HIDE_TRAYICON, wxCommandEvent );
+
 class MainFrame: public wxFrame
 {
+public:
 	enum
 	{
 		ID_FILE_EXIT = wxID_EXIT,
@@ -100,8 +103,6 @@ class MainFrame: public wxFrame
 		 * next item should starts with +100 or so
 		 */
 	};
-
-public:
 	MainFrame( wxFrame *frame, const wxString& title );
 	~MainFrame();
 
