@@ -110,7 +110,7 @@ wxString TorrentListCtrl::GetItemValue( long item, long columnid ) const
 
 	if( torrentlistitems == NULL )
 	{
-		wxLogError( _T( "TorrentListCtrl: Couldn't retrieve torrent queue" ) );
+		wxLogError( _T( "TorrentListCtrl: Couldn't retrieve torrent queue\n" ) );
 		return _T( "" );
 	}
 

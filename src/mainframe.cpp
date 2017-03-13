@@ -207,7 +207,7 @@ MainFrame::MainFrame( wxFrame *frame, const wxString& title )
 	ShowSystray( m_config->GetUseSystray() );
 	UpdateUI();
 	//Refresh timer
-	wxLogDebug( _T( "Refresh timer %d" ), m_config->GetRefreshTime() );
+	wxLogDebug( _T( "Refresh timer %d\n" ), m_config->GetRefreshTime() );
 	m_refreshtimer.SetOwner( this, ID_TIMER_GUI_UPDATE );
 	m_refreshtimer.Start( m_config->GetRefreshTime() * 1000, wxTIMER_CONTINUOUS );
 
@@ -241,7 +241,7 @@ void MainFrame::OnClose( wxCloseEvent& event )
 {
 	if( m_closed ) { return; }
 
-	wxLogDebug( _T( "MainFrame Closing" ) );
+	wxLogDebug( _T( "MainFrame Closing\n" ) );
 	//stop update timer
 	m_refreshtimer.Stop();
 	m_config->SetTorrentListCtrlSetting( m_torrentlistctrl->Settings() );
@@ -444,7 +444,7 @@ wxMenuBar* MainFrame::CreateMainMenuBar()
 
 			if( langinfo == NULL )
 			{
-				wxLogError( _T( "Language %s is not available" ), strlang.c_str() );
+				wxLogError( _T( "Language %s is not available\n" ), strlang.c_str() );
 				i++;
 				continue;
 			}
@@ -616,7 +616,7 @@ void MainFrame::ReceiveTorrent( wxString fileorurl )
 /* parse torrent file and add to session */
 void MainFrame::AddTorrent( wxString filename, bool usedefault )
 {
-	wxLogDebug( _T( "MainFrame: Add Torrent: %s" ), filename.c_str() );
+	wxLogDebug( _T( "MainFrame: Add Torrent: %s\n" ), filename.c_str() );
 	shared_ptr<torrent_t> torrent = m_btsession->ParseTorrent( filename );
 
 	if( torrent->isvalid )
@@ -643,7 +643,7 @@ void MainFrame::AddTorrent( wxString filename, bool usedefault )
 				/* save a copy of torrent file */
 				if( !wxCopyFile( filename, torrent_backup, true ) )
 				{
-					wxLogError( _T( "Error copying backup file %s" ), filename.c_str() );
+					wxLogError( _T( "Error copying backup file %s\n" ), filename.c_str() );
 				}
 
 				UpdateUI();
@@ -690,7 +690,7 @@ void MainFrame::OpenTorrent()
 		for( size_t n = 0; n < count; n++ )
 		{
 			//add each torrent here
-			wxLogDebug( wxT( "File %d: %s (%s)" ),
+			wxLogDebug( wxT( "File %d: %s (%s)\n" ),
 						( int )n, paths[n].c_str(), filenames[n].c_str() );
 			AddTorrent( paths[n], false );
 		}
@@ -744,7 +744,7 @@ void MainFrame::OpenMagnetURI(const wxString & magneturi)
 	}
 	else
 	{
-		wxLogMessage( _T( "Not Supported" ) );
+		wxLogMessage( _T( "Not Supported\n" ) );
 	}
 }
 
@@ -758,16 +758,16 @@ void MainFrame::DownloadTorrent(wxURL & url)
 		{
 			wxString contenttype = url.GetProtocol().GetContentType();
 			size_t s_size = in_stream->GetSize();
-			wxLogDebug( _T( "openurl: type %s, size %d" ), contenttype.c_str(), s_size );
+			wxLogDebug( _T( "openurl: type %s, size %d\n" ), contenttype.c_str(), s_size );
 			wxString tmpfile = wxFileName::CreateTempFileName( _T( "bitswash" ) );
-			wxLogDebug( _T( "openurl: Tmp file %s" ), tmpfile.c_str() );
+			wxLogDebug( _T( "openurl: Tmp file %s\n" ), tmpfile.c_str() );
 			{
 				/* write downloaded stream in to temporary file */
 				wxFileOutputStream fos( tmpfile );
 	
 				if( !fos.Ok() )
 				{
-					wxLogError( _T( "Error creating temporary file %s" ), tmpfile.c_str() );
+					wxLogError( _T( "Error creating temporary file %s\n" ), tmpfile.c_str() );
 					return;
 				}
 	
@@ -805,7 +805,7 @@ void MainFrame::OpenTorrentUrl()
 
 	if( urldialog.ShowModal() == wxID_OK )
 	{
-		wxLogDebug( _T( "openurl: Fetch URL %s" ), url.c_str() );
+		wxLogDebug( _T( "openurl: Fetch URL %s\n" ), url.c_str() );
 		wxURL torrenturl( url );
 
 		if( isUrl( torrenturl.GetScheme() ) )
@@ -846,7 +846,7 @@ void MainFrame::OnListItemClick( long item )
 void MainFrame::UpdateUI(bool force/* = false*/)
 {
 	wxASSERT( m_btsession != 0 );
-	wxLogDebug( _T( "UpdateUI" ));
+	wxLogDebug( _T( "UpdateUI\n" ));
 
 	if(force || (this->IsShown() && !this->IsIconized()))
 	{
@@ -856,7 +856,7 @@ void MainFrame::UpdateUI(bool force/* = false*/)
 		///torrents_t::const_iterator torrent_it = torrentqueue->begin();
 		/* XXX more filtering/sorting */
 		//m_btsession->GetTorrentQueue( m_torrentlistitems );
-		wxLogDebug( _T( "Refreshing torrent list size %s" ), ( wxLongLong( torrent_queue_size ).ToString() ).c_str() );
+		wxLogDebug( _T( "Refreshing torrent list size %s\n" ), ( wxLongLong( torrent_queue_size ).ToString() ).c_str() );
 		m_torrentlistctrl->SetItemCount( torrent_queue_size );
 
 		if( torrent_queue_size > 0 )
@@ -872,7 +872,7 @@ void MainFrame::UpdateUI(bool force/* = false*/)
 					return;
 				}
 				lt::torrent_handle &torrent_handle = torrent->handle;
-				wxLogDebug( _T( "MainFrame: list size %s selected items %s" ), ( wxLongLong( torrent_queue_size ).ToString() ).c_str(), ( wxLongLong( selecteditems.size() ).ToString() ).c_str() );
+				wxLogDebug( _T( "MainFrame: list size %s selected items %s\n" ), ( wxLongLong( torrent_queue_size ).ToString() ).c_str(), ( wxLongLong( selecteditems.size() ).ToString() ).c_str() );
 
 				/* if torrent is started in libtorrent */
 				if( torrent_handle.is_valid() )
@@ -891,7 +891,7 @@ void MainFrame::UpdateUI(bool force/* = false*/)
 
 				/* get files list */
 				
-				wxLogDebug( _T( "get files list" ));
+				wxLogDebug( _T( "get files list\n" ));
 				{
 					//m_filelistctrl->SetStaticHandle(m_torrentlistitems[selecteditems[0]]);
 					m_filelistctrl->SetItemCount( (torrent->info) ? torrent->info->num_files() : 0 );
@@ -908,7 +908,7 @@ void MainFrame::UpdateUI(bool force/* = false*/)
 						m_trackerlistctrl->SetItemCount( torrent->config->GetTrackersURL().size() );
 					}
 				}
-				wxLogDebug( _T( "UpdateSummary" ));
+				wxLogDebug( _T( "UpdateSummary\n" ));
 				m_summarypane->UpdateSummary();
 			}
 			else
@@ -916,11 +916,11 @@ void MainFrame::UpdateUI(bool force/* = false*/)
 				m_torrentlistctrl->Select( 0, true );
 			}
 
-			wxLogDebug( _T( "UpdateSwashList" ));
+			wxLogDebug( _T( "UpdateSwashList\n" ));
 			m_torrentlistctrl->UpdateSwashList();
 		}
 
-		wxLogDebug( _T( "UpdateTorrentInfo" ));
+		wxLogDebug( _T( "UpdateTorrentInfo\n" ));
 		m_torrentinfo->UpdateTorrentInfo( false );
 		m_torrentlistctrl->Refresh(false);
 		UpdateStatusBar();
@@ -932,7 +932,7 @@ void MainFrame::UpdateUI(bool force/* = false*/)
 		UpdateTrayInfo();
 	}
 
-	wxLogDebug( _T( "MainFrame::UpdateUI done" ) );
+	wxLogDebug( _T( "MainFrame::UpdateUI done\n" ) );
 }
 
 void MainFrame::UpdateSelectedTorrent()
@@ -1178,12 +1178,12 @@ void MainFrame::OnMenuViewToolbar( wxCommandEvent& event )
 void MainFrame::OnMenuTorrentStart( wxCommandEvent& event )
 {
 	int i = 0;
-	wxLogDebug( _T( "MainFrame: OnMenuTorrentStart" ) );
+	wxLogDebug( _T( "MainFrame: OnMenuTorrentStart\n" ) );
 	const SwashListCtrl::itemlist_t selecteditems = m_torrentlistctrl->GetSelectedItems();
 
 	if( selecteditems.size() <= 0 )
 	{
-		wxLogWarning( _T( "MainFrame: No torrent is selected" ) );
+		wxLogWarning( _T( "MainFrame: No torrent is selected\n" ) );
 		return;
 	}
 
@@ -1208,12 +1208,12 @@ void MainFrame::OnMenuTorrentPause( wxCommandEvent& event )
 {
 	int i = 0;
 
-	wxLogDebug( _T( "MainFrame: OnMenuTorrentPause" ) );
+	wxLogDebug( _T( "MainFrame: OnMenuTorrentPause\n" ) );
 	const SwashListCtrl::itemlist_t selecteditems = m_torrentlistctrl->GetSelectedItems();
 
 	if( selecteditems.size() <= 0 )
 	{
-		wxLogWarning( _T( "MainFrame: No torrent is selected" ) );
+		wxLogWarning( _T( "MainFrame: No torrent is selected\n" ) );
 		return;
 	}
 
@@ -1233,12 +1233,12 @@ void MainFrame::OnMenuTorrentStop( wxCommandEvent& event )
 {
 	int i = 0;
 
-	wxLogDebug( _T( "MainFrame: OnMenuTorrentStop" ) );
+	wxLogDebug( _T( "MainFrame: OnMenuTorrentStop\n" ) );
 	const SwashListCtrl::itemlist_t selecteditems = m_torrentlistctrl->GetSelectedItems();
 
 	if( selecteditems.size() <= 0 )
 	{
-		wxLogWarning( _T( "MainFrame: No torrent is selected" ) );
+		wxLogWarning( _T( "MainFrame: No torrent is selected\n" ) );
 		return;
 	}
 
@@ -1258,12 +1258,12 @@ void MainFrame::OnMenuTorrentProperties( wxCommandEvent& event )
 {
 	int i = 0;
 
-	wxLogDebug( _T( "MainFrame: OnMenuTorrentProperties" ) );
+	wxLogDebug( _T( "MainFrame: OnMenuTorrentProperties\n" ) );
 	const SwashListCtrl::itemlist_t selecteditems = m_torrentlistctrl->GetSelectedItems();
 
 	if( selecteditems.size() <= 0 )
 	{
-		wxLogWarning( _T( "MainFrame: No torrent is selected" ) );
+		wxLogWarning( _T( "MainFrame: No torrent is selected\n" ) );
 		return;
 	}
 
@@ -1295,7 +1295,7 @@ void MainFrame::RemoveTorrent( bool deletedata )
 
 	if( selecteditems.size() <= 0 )
 	{
-		wxLogWarning( _T( "MainFrame: No torrent is selected" ) );
+		wxLogWarning( _T( "MainFrame: No torrent is selected\n" ) );
 		return;
 	}
 
@@ -1338,18 +1338,18 @@ void MainFrame::RemoveTorrent( bool deletedata )
 		UpdateUI();
 	}
 	else
-	{ wxLogInfo( _T( "Torrent removal cancelled" ) ); }
+	{ wxLogInfo( _T( "Torrent removal cancelled\n" ) ); }
 }
 
 void MainFrame::OnMenuTorrentRemove( wxCommandEvent& event )
 {
-	wxLogDebug( _T( "MainFrame: OnMenuTorrentRemove" ) );
+	wxLogDebug( _T( "MainFrame: OnMenuTorrentRemove\n" ) );
 	RemoveTorrent( false );
 }
 
 void MainFrame::OnMenuTorrentRemoveData( wxCommandEvent& event )
 {
-	wxLogDebug( _T( "MainFrame: OnMenuTorrentRemoveData" ) );
+	wxLogDebug( _T( "MainFrame: OnMenuTorrentRemoveData\n" ) );
 	RemoveTorrent( true );
 }
 
@@ -1357,12 +1357,12 @@ void MainFrame::OnMenuTorrentMoveUp( wxCommandEvent& event )
 {
 	int i = 0;
 
-	wxLogDebug( _T( "MainFrame: OnMenuTorrentMoveUp" ) );
+	wxLogDebug( _T( "MainFrame: OnMenuTorrentMoveUp\n" ) );
 	const SwashListCtrl::itemlist_t selecteditems = m_torrentlistctrl->GetSelectedItems();
 
 	if( selecteditems.size() <= 0 )
 	{
-		wxLogWarning( _T( "MainFrame: No torrent is selected" ) );
+		wxLogWarning( _T( "MainFrame: No torrent is selected\n" ) );
 		return;
 	}
 
@@ -1387,12 +1387,12 @@ void MainFrame::OnMenuTorrentMoveDown( wxCommandEvent& event )
 {
 	int i = 0;
 
-	wxLogDebug( _T( "MainFrame: OnMenuTorrentMoveDown" ) );
+	wxLogDebug( _T( "MainFrame: OnMenuTorrentMoveDown\n" ) );
 	const SwashListCtrl::itemlist_t selecteditems = m_torrentlistctrl->GetSelectedItems();
 
 	if( selecteditems.size() <= 0 )
 	{
-		wxLogWarning( _T( "MainFrame: No torrent is selected" ) );
+		wxLogWarning( _T( "MainFrame: No torrent is selected\n" ) );
 		return;
 	}
 
@@ -1416,12 +1416,12 @@ void MainFrame::OnMenuTorrentMoveDown( wxCommandEvent& event )
 void MainFrame::OnMenuTorrentReannounce( wxCommandEvent& event )
 {
 	int i = 0;
-	wxLogDebug( _T( "MainFrame: OnMenuTorrentReannounce" ) );
+	wxLogDebug( _T( "MainFrame: OnMenuTorrentReannounce\n" ) );
 	const SwashListCtrl::itemlist_t selecteditems = m_torrentlistctrl->GetSelectedItems();
 
 	if( selecteditems.size() <= 0 )
 	{
-		wxLogWarning( _T( "MainFrame: No torrent is selected" ) );
+		wxLogWarning( _T( "MainFrame: No torrent is selected\n" ) );
 		return;
 	}
 
@@ -1438,12 +1438,12 @@ void MainFrame::OnMenuTorrentRecheck( wxCommandEvent& event )
 {
 	int i = 0;
 
-	wxLogDebug( _T( "MainFrame: OnMenuTorrentRecheck" ) );
+	wxLogDebug( _T( "MainFrame: OnMenuTorrentRecheck\n" ) );
 	const SwashListCtrl::itemlist_t selecteditems = m_torrentlistctrl->GetSelectedItems();
 
 	if( selecteditems.size() <= 0 )
 	{
-		wxLogWarning( _T( "MainFrame: No torrent is selected" ) );
+		wxLogWarning( _T( "MainFrame: No torrent is selected\n" ) );
 		return;
 	}
 
@@ -1464,7 +1464,7 @@ void MainFrame::OnMenuTorrentRecheck( wxCommandEvent& event )
 					( prev_state == TORRENT_STATE_FORCE_START ) ||
 					( prev_state == TORRENT_STATE_PAUSE ) )
 			{
-				wxLogInfo( _T( "%s: Stop for checking" ), torrent->name.c_str() );
+				wxLogInfo( _T( "%s: Stop for checking\n" ), torrent->name.c_str() );
 				m_btsession->StopTorrent( torrent );
 			}
 
@@ -1472,18 +1472,18 @@ void MainFrame::OnMenuTorrentRecheck( wxCommandEvent& event )
 
 			if( wxFileExists( fastresumefile ) )
 			{
-				wxLogWarning( _T( "%s: Remove fast resume data" ), torrent->name.c_str() );
+				wxLogWarning( _T( "%s: Remove fast resume data\n" ), torrent->name.c_str() );
 
 				if( ! wxRemoveFile( fastresumefile ) )
 				{
-					wxLogError( _T( "%s: Remove fast resume data: failed" ), torrent->name.c_str() );
+					wxLogError( _T( "%s: Remove fast resume data: failed\n" ), torrent->name.c_str() );
 				}
 			}
 
 			if( ( prev_state == TORRENT_STATE_START ) ||
 					( prev_state == TORRENT_STATE_FORCE_START ) )
 			{
-				wxLogInfo( _T( "%s: Stop for checking" ), torrent->name.c_str() );
+				wxLogInfo( _T( "%s: Stop for checking\n" ), torrent->name.c_str() );
 				m_btsession->StartTorrent( torrent, ( prev_state == TORRENT_STATE_FORCE_START ) );
 			}
 			else
@@ -1544,7 +1544,7 @@ void MainFrame::OnMenuOptionLanguage( wxCommandEvent& event )
 	wxString strlang = wxEmptyString;
 	const wxLanguageInfo* langinfo ;
 	langinfo = wxLocale::GetLanguageInfo( event.GetId() - ID_OPTIONS_LANGUAGE );
-	wxLogDebug( _T( "Command  %d, %s, item %p" ), event.GetId(), langinfo->CanonicalName.c_str(), event.GetEventObject() );
+	wxLogDebug( _T( "Command  %d, %s, item %p\n" ), event.GetId(), langinfo->CanonicalName.c_str(), event.GetEventObject() );
 
 	if( ( event.GetId() - ID_OPTIONS_LANGUAGE ) == 0 )
 	{

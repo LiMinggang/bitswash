@@ -224,7 +224,7 @@ SummaryPane::~SummaryPane()
 
 void SummaryPane::UpdateSummary()
 {
-	wxLogDebug(_T("UpdateSummary"));
+	wxLogDebug(_T("UpdateSummary\n"));
 	shared_ptr<torrent_t> pTorrent = ((MainFrame*)m_pMainFrame)->GetSelectedTorrent();
 	wxChar dirsep = wxFileName::GetPathSeparator(wxPATH_NATIVE);
 
@@ -232,7 +232,7 @@ void SummaryPane::UpdateSummary()
 	if ( !pTorrent )
 	{
 		ResetSummary();
-		wxLogInfo(_T("No torrent selected"));
+		wxLogInfo(_T("No torrent selected\n"));
 		return;
 	}
 
@@ -247,7 +247,7 @@ void SummaryPane::UpdateSummary()
 	if(t)
 	{
 		wxString t_name = wxString(wxConvUTF8.cMB2WC(t->name().c_str()));
-		wxLogDebug(_T("UpdateSummary - Update torrent %s"), t_name.c_str());
+		wxLogDebug(_T("UpdateSummary - Update torrent %s\n"), t_name.c_str());
 
 		//if(h.is_valid()) UpdateSaveAs(wxString::FromAscii( pTorrent->handle.save_path().string().c_str()));
 		UpdateSaveAs(pTorrent->config->GetDownloadPath() + dirsep + t_name);
@@ -307,7 +307,7 @@ void SummaryPane::UpdateSummary()
 
 void SummaryPane::OnFocus(wxFocusEvent& event)
 {
-	wxLogDebug(_T("OnFocus"));
+	wxLogDebug(_T("OnFocus\n"));
 	//UpdateSummary();
 	//this->Layout();
 	//event.Skip();

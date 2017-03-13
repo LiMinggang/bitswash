@@ -244,7 +244,7 @@ int PeerListCtrl::GetItemColumnImage(long item, long columnid) const
 
 	lt::peer_info peer_info = peers_list->at(item);
 
-	wxLogDebug(_T("PeerListCtrl GetItemColumnImage Column %ld of item %ld"), columnid, item);
+	wxLogDebug(_T("PeerListCtrl GetItemColumnImage Column %ld of item %ld\n" ), columnid, item);
 
 	switch (columnid)
 	{
@@ -265,7 +265,7 @@ int PeerListCtrl::GetItemColumnImage(long item, long columnid) const
 			{
 				//ctry[2] = '\0';
 				int index = bitSwachApp.GetCountryFlag(ctry);
-				wxLogDebug(_T("Image idx %s %d"), ctry.c_str(), index);
+				wxLogDebug(_T("Image idx %s %d\n" ), ctry.c_str(), index);
 				return index;
 			}
 			else
@@ -290,7 +290,7 @@ int PeerListCtrl::OnGetItemImage(long item) const
 
 	lt::peer_info peer_info = peers_list->at(item);
 
-	//wxLogDebug(_T("PeerListCtrl GetItemImage Column %ld of item %ld"), 0, item);
+	//wxLogDebug(_T("PeerListCtrl GetItemImage Column %ld of item %ld\n" ), 0, item);
 
 #ifdef USE_LIBGEOIP
 	lt::address c_ip = peer_info.ip.address();
@@ -298,7 +298,7 @@ int PeerListCtrl::OnGetItemImage(long item) const
 	bitSwachApp.GetCountryCode(wxString(c_ip.to_string()), ctry);
 #else
 	wxString ctry = wxString::FromAscii(peer_info.country, sizeof(peer_info.country) / sizeof(peer_info.country[0]));
-	//wxLogDebug(_T("Image idx %s %d"),ctry.c_str(), wxGetApp().GetCountryFlag(ctry.c_str()));
+	//wxLogDebug(_T("Image idx %s %d\n" ),ctry.c_str(), wxGetApp().GetCountryFlag(ctry.c_str()));
 #endif
 	return wxGetApp().GetCountryFlag(ctry);
 }

@@ -164,7 +164,7 @@ bool BitSwash::OnInit()
 
 		if( !m_AppServer->Create( g_BitSwashServerStr ) )
 		{
-			wxLogDebug( wxGetTranslation(_( "Failed to create an IPC service." ) ));
+			wxLogDebug( wxGetTranslation(_( "Failed to create an IPC service.\n" ) ));
 		}
 	}
 	else
@@ -330,11 +330,11 @@ int BitSwash::OnExit()
 	// kill bittorrent session
 	//XXX lock
 #endif
-	wxLogDebug( _T( "Awaiting BitTorrent session exit ..." ) );
+	wxLogDebug( _T( "Awaiting BitTorrent session exit ...\n" ) );
 	if( m_btsession->IsAlive() )
 	{
 		m_btsession->Delete();
-		wxLogDebug( _T( "BitTorrent session exited with code %ld" ),
+		wxLogDebug( _T( "BitTorrent session exited with code %ld\n" ),
 					( long )m_btsession->Wait() );
 	}
 #if 0

@@ -213,7 +213,7 @@ int FileListCtrl::GetItemColumnImage(long item, long columnid) const
 	{
 		//XXX backward compatible
 		bool nopriority = false;
-		wxLogDebug( _T( "FileListCtrl column %ld of item %ld" ), columnid, item );
+		wxLogDebug( _T( "FileListCtrl column %ld of item %ld\n" ), columnid, item );
 		shared_ptr<torrent_t> pTorrent;
 
 		if( m_pTorrent )

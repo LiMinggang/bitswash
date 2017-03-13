@@ -47,12 +47,12 @@ TorrentConfig::TorrentConfig( const wxString& TorrentName )
 		wxFile *f = new wxFile();
 		bool b = f->Create( m_configfile.c_str() );
 
-		if( !b ) { wxLogError( _T( "Failed to create file " ) + m_configfile ); }
+		if( !b ) { wxLogError( _T( "Failed to create file " ) + m_configfile +_T("\n")); }
 	}
 
 	wxFileInputStream fis( m_configfile );
 	m_torrentname = TorrentName;
-	wxLogDebug( _T( "Init TorrentConfig %s" ), m_configfile.c_str() );
+	wxLogDebug( _T( "Init TorrentConfig %s\n" ), m_configfile.c_str() );
 	m_cfg =  new wxFileConfig( ( wxInputStream & )fis );
 	m_selected_file_size = 0;
 	//m_cfg = (wxConfig*)wxConfig::Get(m_appname);
@@ -164,7 +164,7 @@ void TorrentConfig::WriteTrackersUrl()
 		trackers += wxString::FromAscii( t_url.c_str() ) + _T( "|" ) + wxString::Format( _T( "%d" ), t_tier ) + _T( ";" );
 	}
 
-	wxLogDebug( _T( "Writing trackers %s" ), trackers.c_str() );
+	wxLogDebug( _T( "Writing trackers %s\n" ), trackers.c_str() );
 	trackers = trackers.BeforeLast( ';' );
 	m_cfg->Write( _T( "/Torrent/trackers" ), trackers );
 }
