@@ -846,12 +846,10 @@ void MainFrame::OnListItemClick( long item )
 void MainFrame::UpdateUI(bool force/* = false*/)
 {
 	wxASSERT( m_btsession != 0 );
-	bool need_refresh = false;
 	wxLogDebug( _T( "UpdateUI" ));
 
 	if(force || (this->IsShown() && !this->IsIconized()))
 	{
-		need_refresh = true;
 		size_t torrent_queue_size = m_btsession->GetTorrentQueueSize();
 		//int t = 0;
 		//torrents_t *torrentqueue = m_btsession->GetTorrentQueue();
@@ -930,12 +928,10 @@ void MainFrame::UpdateUI(bool force/* = false*/)
 
 	if( m_config->GetUseSystray() )
 	{
-		need_refresh = true;
+		m_btsession->PostStatusUpdate();
 		UpdateTrayInfo();
 	}
 
-	if(need_refresh)
-		m_btsession->PostStatusUpdate();
 	wxLogDebug( _T( "MainFrame::UpdateUI done" ) );
 }
 
