@@ -54,7 +54,7 @@ SwashTrayIcon::SwashTrayIcon(wxFrame* parent)
 
 void SwashTrayIcon::OnMenuRestore(wxCommandEvent& )
 {
-	ShowHideMainFrame();		
+	ShowHideMainFrame();
 }
 
 void SwashTrayIcon::OnMenuExit(wxCommandEvent& )
@@ -78,8 +78,6 @@ void SwashTrayIcon::OnMenuPreference(wxCommandEvent& )
 	
 	event->SetEventObject( m_pMainFrame );
 	wxQueueEvent( m_pMainFrame, event );
-
-	//((MainFrame*)m_pMainFrame)->ShowPreferences();
 }
 
 void SwashTrayIcon::OnMenuHideTaskbar(wxCommandEvent& )

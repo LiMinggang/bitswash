@@ -135,8 +135,11 @@ class Configuration : public wxFileConfig
 #ifdef __WXMSW__
         bool GetRunAtStartup() { return m_run_at_startup; }
         void SetRunAtStartup(bool run_at_startup ) { m_run_at_startup = run_at_startup; }
+        bool GetAssociateTorrent() { return m_associate_torrent; }
+        void SetAssociateTorrent(bool associate_torrent) { m_associate_torrent = associate_torrent; }
 #endif
-
+        bool GetAssociateMagnetURI() { return m_associate_magneturi; }
+        void SetAssociateMagnetURI(bool associate_magneturi) { m_associate_magneturi = associate_magneturi; }
 
         // libtorrent
 
@@ -370,6 +373,8 @@ class Configuration : public wxFileConfig
 		bool 		m_exclude_seed;
 #ifdef __WXMSW__
         bool        m_run_at_startup;
+        bool        m_associate_torrent;
+		bool        m_associate_magneturi;
         static wxString m_startup_regkey;
 		static wxString m_bitswash_regkey_path;
 #endif

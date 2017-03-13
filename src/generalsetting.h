@@ -40,58 +40,61 @@
 
 class GeneralSettingPane :  public wxPanel
 {
-	public:
-		GeneralSettingPane( wxWindow* parent, int id = wxID_ANY, wxPoint pos = wxDefaultPosition, wxSize size = wxDefaultSize, int style = wxTAB_TRAVERSAL);
-		int GetMaxStart();
-		int GetLogSeverity();
-		int GetRefreshTimer();
-		int GetFastResumeSaveTime();
-		bool GetUseSystray();
-		bool GetExcludeSeed();
-		bool GetHideTaskbar();
-		int GetLogLineCount();
-		bool GetLogToFile(); 
+public:
+	GeneralSettingPane( wxWindow* parent, int id = wxID_ANY, wxPoint pos = wxDefaultPosition, wxSize size = wxDefaultSize, int style = wxTAB_TRAVERSAL);
+	int GetMaxStart();
+	int GetLogSeverity();
+	int GetRefreshTimer();
+	int GetFastResumeSaveTime();
+	bool GetUseSystray();
+	bool GetExcludeSeed();
+	bool GetHideTaskbar();
+	int GetLogLineCount();
+	bool GetLogToFile(); 
 #ifdef __WXMSW__
-		void SetRunAtStartup(bool start) { m_check_runatstartup->SetValue(start); }
-		bool GetRunAtStartup() { return m_check_runatstartup->GetValue(); }
-        static wxString m_startup_regkey;
+	void SetRunAtStartup(bool start) { m_check_runatstartup->SetValue(start); }
+	bool GetRunAtStartup() { return m_check_runatstartup->GetValue(); }
+	void SetAssociateTorrent(bool associate) { m_check_associate_torrent->SetValue(associate); }
+	bool GetAssociateTorrent() { return m_check_associate_torrent->GetValue(); }
+	void SetAssociateMagnetURI(bool associate) { m_check_associate_magneturi->SetValue(associate); }
+	bool GetAssociateMagnetURI() { return m_check_associate_magneturi->GetValue(); }
+    static wxString m_startup_regkey;
 #endif
-	private:
-		wxFrame* m_pMainFrame;
-		Configuration *m_pcfg;
+private:
+	wxFrame* m_pMainFrame;
+	Configuration *m_pcfg;
 
-		wxPanel* m_pane_infogeneral;
-		wxStaticText* m_static_infogeneral;
-		wxStaticText* m_static_maxstart;
-		wxSpinCtrl* m_spin_maxstart;
-		wxCheckBox* m_check_excludeseed;
+	wxPanel* m_pane_infogeneral;
+	wxStaticText* m_static_infogeneral;
+	wxStaticText* m_static_maxstart;
+	wxSpinCtrl* m_spin_maxstart;
+	wxCheckBox* m_check_excludeseed;
 #ifdef __WXMSW__
-		wxCheckBox* m_check_runatstartup;
+	wxCheckBox* m_check_runatstartup;
+	wxCheckBox* m_check_associate_torrent;
 #endif
+	wxCheckBox* m_check_associate_magneturi;
 
-		wxPanel* m_pane_infogui;
-		wxStaticText* m_static_infogui;
-		wxStaticText* m_static_refreshtimer;
-		wxStaticText* m_static_fastresume_save_time;
-		wxSpinCtrl* m_spin_refreshtimer;
-		wxSpinCtrl* m_spin_fastresume_save_time;
-		wxCheckBox* m_check_usesystray;
-		wxCheckBox* m_check_hidetaskbar;
+	wxPanel* m_pane_infogui;
+	wxStaticText* m_static_infogui;
+	wxStaticText* m_static_refreshtimer;
+	wxStaticText* m_static_fastresume_save_time;
+	wxSpinCtrl* m_spin_refreshtimer;
+	wxSpinCtrl* m_spin_fastresume_save_time;
+	wxCheckBox* m_check_usesystray;
+	wxCheckBox* m_check_hidetaskbar;
 
-		wxPanel* m_pane_infolog;
-		wxStaticText* m_static_infolog;
-		wxStaticText* m_static_logseverity;
-		wxChoice* m_choice_logseverity;
-		wxCheckBox* m_check_logtofile;
-		wxStaticText* m_static_loglinecount;
-		wxSpinCtrl* m_spin_loglinecount;
+	wxPanel* m_pane_infolog;
+	wxStaticText* m_static_infolog;
+	wxStaticText* m_static_logseverity;
+	wxChoice* m_choice_logseverity;
+	wxCheckBox* m_check_logtofile;
+	wxStaticText* m_static_loglinecount;
+	wxSpinCtrl* m_spin_loglinecount;
 
-		void OnUseSystray(wxCommandEvent& event);
-	private:
-		DECLARE_EVENT_TABLE()
-	
+	void OnUseSystray(wxCommandEvent& event);
+private:
+	DECLARE_EVENT_TABLE()
 };
-
-
 #endif	//_GENERALSETTING_H_
 

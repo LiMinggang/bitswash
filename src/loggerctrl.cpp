@@ -14,7 +14,6 @@
  *  Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  */
 
-
 //
 // Class: LoggerCtrl
 //
@@ -303,7 +302,6 @@ void LoggerCtrl::PopSuspendedLog()
 	m_suspended_logdata.clear();
 	m_suspended_logdata.swap( m_suspended_logdata );
 }
-
 
 void LoggerCtrl::LogToFile( wxString msg )
 {

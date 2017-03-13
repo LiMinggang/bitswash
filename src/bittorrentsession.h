@@ -132,6 +132,7 @@ public:
 
 	shared_ptr<torrent_t> ParseTorrent(const wxString& filename);
 	shared_ptr<torrent_t> LoadMagnetUri( MagnetUri& magneturi );
+	void LoadMagnetUri( const wxString& magneturi );
 	bool SaveTorrent(shared_ptr<torrent_t>& torrent, const wxString& filename);
 	
 	torrents_t * GetTorrentQueue() {return &m_torrent_queue;}

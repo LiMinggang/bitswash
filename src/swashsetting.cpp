@@ -37,7 +37,6 @@ END_EVENT_TABLE()
 
 SwashSetting::SwashSetting( wxWindow* parent, Configuration *pcfg, int id, wxString title, wxPoint pos, wxSize size, int style ) : wxDialog( parent, id, title, pos, size, style )
 {
-
 	//wxASSERT(pcfg == NULL);
 
 	m_pcfg = pcfg;
@@ -89,7 +88,6 @@ SwashSetting::SwashSetting( wxWindow* parent, Configuration *pcfg, int id, wxStr
 	this->SetSizer( fgMain );
 	this->Layout();
 	fgMain->Fit(this);
-
 }
 
 SwashSetting::~SwashSetting()
@@ -101,8 +99,10 @@ void SwashSetting::OnOK(wxCommandEvent& event)
 	m_pcfg->SetMaxStart(m_pane_generalsettings->GetMaxStart());
 	m_pcfg->SetExcludeSeed(m_pane_generalsettings->GetExcludeSeed());
 
+	m_pcfg->SetAssociateMagnetURI(m_pane_generalsettings->GetAssociateMagnetURI());
 #ifdef __WXMSW__
 	m_pcfg->SetRunAtStartup(m_pane_generalsettings->GetRunAtStartup());
+	m_pcfg->SetAssociateTorrent(m_pane_generalsettings->GetAssociateTorrent());
 #endif
 
 	m_pcfg->SetFastResumeSaveTime(m_pane_generalsettings->GetFastResumeSaveTime());
@@ -162,7 +162,6 @@ void SwashSetting::OnOK(wxCommandEvent& event)
 
 	EndModal(wxID_OK);
 	event.Skip();
-
 }
 
 void SwashSetting::OnCancel(wxCommandEvent& event)
@@ -170,6 +169,4 @@ void SwashSetting::OnCancel(wxCommandEvent& event)
 	EndModal (wxID_CANCEL);
 	event.Skip();
 }
-
-
 

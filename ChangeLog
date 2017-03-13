@@ -14,7 +14,8 @@ Fix: Assertion failure if you hide sys tray icon from the Preference show on pop
 Fix: Lots of bugs fixed
 New: Magnet URI support
 New: 64bits build
-New: Run at Windows startup
+New: Run at Windows startup(MS Windows only)
+New: Associate .torrent file with Bitswash(MS Windows only)
 New: Crash handler
 New: Single instance(IPC support)
 New: Open torrent at command line
@@ -29,6 +30,7 @@ New: Right click on file with Open file path
 New: Double click to open file with default application associated
 New: Embedded all icons in application
 New: Update toolbar items according to torrent status
+New: Magnet URI protocol handler
 Optimization on UI refresh
 Optimization on communication between main thread and torrent thread
 Upgrade libtorrent to 1.1.2

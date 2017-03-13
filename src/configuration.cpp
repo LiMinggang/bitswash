@@ -81,6 +81,7 @@ void Configuration::Save()
 	m_cfg->Write( _T( "/Config/use_systray" ), ( bool )m_use_systray );
 	m_cfg->Write( _T( "/Config/hidetaskbar" ), ( bool )m_hidetaskbar );
 	m_cfg->Write( _T( "/Config/exclude_seed" ), ( bool )m_exclude_seed );
+	m_cfg->Write( _T( "/Config/associate_magneturi" ), m_associate_magneturi );
 #ifdef __WXMSW__
 	m_cfg->Write( _T( "/Config/run_at_startup" ), ( bool )m_run_at_startup );
 	wxRegKey regKey( m_startup_regkey );
@@ -98,6 +99,12 @@ void Configuration::Save()
 			regKey.SetValue( APPNAME, exepath );
 		}
 	}
+	
+	m_cfg->Write( _T( "/Config/associate_torrent" ), ( bool )m_run_at_startup );
+	if(m_associate_torrent)
+		AddType( _T(".torrent") );
+	else
+		RemoveType(_T(".torrent"));
 #endif
 	m_cfg->Write( _T( "/Config/enable_upnp" ), ( bool )m_enable_upnp );
 	m_cfg->Write( _T( "/Config/enable_natpmp" ), ( bool )m_enable_natpmp );
@@ -229,6 +236,7 @@ void Configuration::Load()
 	//if (! (m_cfg->Read(_T("/Config/use_systray"), &m_use_systray))) m_use_systray = true;
 	m_cfg->Read( _T( "/Config/hidetaskbar" ), &m_hidetaskbar, false ) ;
 	m_cfg->Read( _T( "/Config/exclude_seed" ), &m_exclude_seed, true );
+	m_cfg->Read( _T( "/Config/associate_magneturi" ), &m_associate_magneturi, false );
 #ifdef __WXMSW__
 	m_cfg->Read( _T( "/Config/run_at_startup" ), &m_run_at_startup, false );
 	wxRegKey regKey( m_startup_regkey );
@@ -247,6 +255,12 @@ void Configuration::Load()
 			regKey.SetValue( APPNAME, exepath );
 		}
 	}
+
+	m_cfg->Read( _T( "/Config/associate_torrent" ), &m_associate_torrent, false );
+	if(m_associate_torrent)
+		AddType( _T(".torrent") );
+	else
+		RemoveType(_T(".torrent"));
 #endif
 	//
 	m_cfg->Read( _T( "/Config/enable_upnp" ), &m_enable_upnp, true );

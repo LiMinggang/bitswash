@@ -25,6 +25,14 @@
 #define _MAINFRAME_H_
 
 #include <set>
+#if __cplusplus <= 199711L
+#include <boost/shared_ptr.hpp>
+using boost::shared_ptr;
+#else
+#include <memory>
+using std::shared_ptr;
+#endif
+
 #include "compat.h"
 #include <wx/hashmap.h>
 #include <wx/menu.h>
@@ -58,9 +66,11 @@
 #include "swashstatbar.h"
 #include "swashtrayicon.h"
 
+class wxURL;
 class TorrentInfo;
 class SummaryPane;
 class TorrentProperty;
+class MagnetUriHanlder;
 
 wxDECLARE_EVENT( SHOW_HIDE_TRAYICON, wxCommandEvent );
 
@@ -128,6 +138,8 @@ public:
 
 	void OpenTorrent();
 	void OpenTorrentUrl();
+	void OpenMagnetURI(const wxString & magneturi);
+	void DownloadTorrent(wxURL & url);
 	void ShowPreferences();
 
 	void SetLogSeverity();
@@ -236,6 +248,7 @@ private:
 	int m_prevlocale;
 	long m_prevselecteditem;
 	bool m_closed;
+	MagnetUriHanlder* m_magneturi_handler;
 	DECLARE_EVENT_TABLE()
 };
 

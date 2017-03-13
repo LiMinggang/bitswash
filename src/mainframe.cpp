@@ -70,6 +70,7 @@
 #include "urldialog.h"
 #include "swashlistctrl.h" //for itemlist_t
 #include "magneturi.h"
+#include "magneturihandler.h"
 
 namespace lt = libtorrent;
 
@@ -209,6 +210,14 @@ MainFrame::MainFrame( wxFrame *frame, const wxString& title )
 	wxLogDebug( _T( "Refresh timer %d" ), m_config->GetRefreshTime() );
 	m_refreshtimer.SetOwner( this, ID_TIMER_GUI_UPDATE );
 	m_refreshtimer.Start( m_config->GetRefreshTime() * 1000, wxTIMER_CONTINUOUS );
+
+	m_magneturi_handler = 0;
+	if(m_config->GetAssociateMagnetURI())
+	{
+		m_magneturi_handler = new MagnetUriHanlder(this);
+		wxFileSystem::AddHandler(m_magneturi_handler);
+	}
+		
 	//Refresh torrent list on timer
 	//
 }
@@ -220,6 +229,9 @@ MainFrame::~MainFrame()
 	{ delete m_swashtrayicon; }
 
 	delete m_config;
+
+	if(m_magneturi_handler)
+		delete m_magneturi_handler;
 #ifndef __WXDEBUG__
 	//wxLog::SetActiveTarget(m_oldlog);
 #endif
@@ -693,6 +705,96 @@ void MainFrame::OnMenuOpenTorrent( wxCommandEvent& WXUNUSED( event ) )
 	OpenTorrent();
 }
 
+void MainFrame::OpenMagnetURI(const wxString & magneturi)
+{
+	MagnetUri magnetUri( magneturi );
+
+	if( magnetUri.isValid() )
+	{
+		shared_ptr<torrent_t> torrent = m_btsession->FindTorrent( magnetUri.hash() );
+
+		if( !torrent )
+		{
+			torrent = m_btsession->LoadMagnetUri( magnetUri );
+
+			if( torrent && torrent->isvalid )
+			{
+				if( torrent->handle.status().has_metadata )
+				{
+					wxString torrent_backup = wxGetApp().SaveTorrentsPath() + wxGetApp().PathSeparator() + torrent->hash + _T( ".torrent" );
+					m_btsession->SaveTorrent( torrent, torrent_backup );
+				}
+				
+				UpdateUI();
+			}
+			else
+			{
+				wxLogMessage( _T( "Load Magnet URI error" ) );
+			}
+		}
+		else
+		{
+			int answer = wxMessageBox( _("Torrent Exists. Do you want to update trackers/seeds from the torrent?"), _("Confirm"), wxYES_NO, this );
+
+			if( answer == wxYES )
+			{
+				m_btsession->MergeTorrent( torrent, magnetUri );
+			}
+		}
+	}
+	else
+	{
+		wxLogMessage( _T( "Not Supported" ) );
+	}
+}
+
+void MainFrame::DownloadTorrent(wxURL & url)
+{
+	if(url.GetError() == wxURL_NOERR )
+	{
+		wxInputStream *in_stream = url.GetInputStream();
+	
+		if( in_stream && in_stream->IsOk() )
+		{
+			wxString contenttype = url.GetProtocol().GetContentType();
+			size_t s_size = in_stream->GetSize();
+			wxLogDebug( _T( "openurl: type %s, size %d" ), contenttype.c_str(), s_size );
+			wxString tmpfile = wxFileName::CreateTempFileName( _T( "bitswash" ) );
+			wxLogDebug( _T( "openurl: Tmp file %s" ), tmpfile.c_str() );
+			{
+				/* write downloaded stream in to temporary file */
+				wxFileOutputStream fos( tmpfile );
+	
+				if( !fos.Ok() )
+				{
+					wxLogError( _T( "Error creating temporary file %s" ), tmpfile.c_str() );
+					return;
+				}
+	
+				static char buffer[4096];
+				memset( buffer, 0, 4096 );
+				int counter = 0;
+	
+				while( !in_stream->Eof() && in_stream->CanRead() )
+				{
+					in_stream->Read( buffer, 4096 );
+					size_t size = in_stream->LastRead();
+	
+					if( size == 0 )
+					{ break; }
+	
+					fos.Write( buffer, size );
+					counter += size;
+				}
+			}
+			/* everythings seems fine
+			 * add torrent to session
+			 */
+			AddTorrent( tmpfile, false );
+		}
+	}
+}
+
 /* open torrent from web url
  * XXX more verbose downloading (progress bar, cancel button etc)
  */
@@ -704,95 +806,15 @@ void MainFrame::OpenTorrentUrl()
 	if( urldialog.ShowModal() == wxID_OK )
 	{
 		wxLogDebug( _T( "openurl: Fetch URL %s" ), url.c_str() );
-		wxURL *torrenturl = new wxURL( url );
+		wxURL torrenturl( url );
 
-		if( isUrl( torrenturl->GetScheme() ) )
+		if( isUrl( torrenturl.GetScheme() ) )
 		{
-			if( torrenturl->GetError() == wxURL_NOERR )
-			{
-				wxInputStream *in_stream = torrenturl->GetInputStream();
-
-				if( in_stream && in_stream->IsOk() )
-				{
-					wxString contenttype =  torrenturl->GetProtocol().GetContentType();
-					size_t s_size = in_stream->GetSize();
-					wxLogDebug( _T( "openurl: type %s, size %d" ), contenttype.c_str(), s_size );
-					wxString tmpfile = wxFileName::CreateTempFileName( _T( "bitswash" ) );
-					wxLogDebug( _T( "openurl: Tmp file %s" ), tmpfile.c_str() );
-					{
-						/* write downloaded stream in to temporary file */
-						wxFileOutputStream fos( tmpfile );
-
-						if( !fos.Ok() )
-						{
-							wxLogError( _T( "Error creating temporary file %s" ), tmpfile.c_str() );
-							return;
-						}
-
-						static char buffer[4096];
-						memset( buffer, 0, 4096 );
-						int counter = 0;
-
-						while( !in_stream->Eof() && in_stream->CanRead() )
-						{
-							in_stream->Read( buffer, 4096 );
-							size_t size = in_stream->LastRead();
-
-							if( size == 0 )
-							{ break; }
-
-							fos.Write( buffer, size );
-							counter += size;
-						}
-					}
-					/* everythings seems fine
-					 * add torrent to session
-					 */
-					AddTorrent( tmpfile, false );
-				}
-			}
+			DownloadTorrent(torrenturl);
 		}
 		else
 		{
-			MagnetUri magnetUri( url );
-
-			if( magnetUri.isValid() )
-			{
-				shared_ptr<torrent_t> torrent = m_btsession->FindTorrent( magnetUri.hash() );
-
-				if( !torrent )
-				{
-					torrent = m_btsession->LoadMagnetUri( magnetUri );
-
-					if( torrent && torrent->isvalid )
-					{
-						if( torrent->handle.status().has_metadata )
-						{
-							wxString torrent_backup = wxGetApp().SaveTorrentsPath() + wxGetApp().PathSeparator() + torrent->hash + _T( ".torrent" );
-							m_btsession->SaveTorrent( torrent, torrent_backup );
-						}
-						
-						UpdateUI();
-					}
-					else
-					{
-						wxLogMessage( _T( "Load Magnet URI error" ) );
-					}
-				}
-				else
-				{
-					int answer = wxMessageBox( _("Torrent Exists. Do you want to update trackers/seeds from the torrent?"), _("Confirm"), wxYES_NO, this );
-
-					if( answer == wxYES )
-					{
-						m_btsession->MergeTorrent( torrent, magnetUri );
-					}
-				}
-			}
-			else
-			{
-				wxLogMessage( _T( "Not Supported" ) );
-			}
+			OpenMagnetURI(url);
 		}
 	}
 	else
@@ -1494,9 +1516,23 @@ void MainFrame::ShowPreferences()
 	if( m_swashsetting == 0 )
 	{ m_swashsetting = new SwashSetting( this, m_config ); }
 
+	bool magneturi = m_config->GetAssociateMagnetURI();
 	if( m_swashsetting->ShowModal() == wxID_OK )
 	{
 		//XXX settorrent session
+		if(magneturi != m_config->GetAssociateMagnetURI())
+		{
+			if(m_config->GetAssociateMagnetURI())
+			{
+				if(!m_magneturi_handler)
+					m_magneturi_handler = new MagnetUriHanlder(this);
+				wxFileSystem::AddHandler(m_magneturi_handler);
+			}
+			else
+			{
+				wxFileSystem::RemoveHandler(m_magneturi_handler);
+			}
+		}
 	}
 }
 

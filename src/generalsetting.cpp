@@ -40,10 +40,10 @@ BEGIN_EVENT_TABLE(GeneralSettingPane, wxPanel)
 END_EVENT_TABLE()
 
 GeneralSettingPane::GeneralSettingPane( wxWindow* parent,
-	       int id, 
-	       wxPoint pos, 
-	       wxSize size, 
-	       int style): wxPanel(parent, id, pos, size, style)
+			int id, 
+			wxPoint pos, 
+			wxSize size, 
+			int style): wxPanel(parent, id, pos, size, style)
 {
 	m_pMainFrame = (wxFrame*)wxGetApp().GetTopWindow();
 	m_pcfg = ((MainFrame*)m_pMainFrame)->GetConfig();
@@ -82,13 +82,28 @@ GeneralSettingPane::GeneralSettingPane( wxWindow* parent,
 	m_check_excludeseed->SetValue(m_pcfg->GetExcludeSeed());
 
 	fgSizerGeneral->Add( m_check_excludeseed, 0, wxALL, 5 );
+	
+	fgSizerGeneral->AddSpacer( 5 );
+
+	m_check_associate_magneturi = new wxCheckBox( this, wxID_ANY, _("Associate Magnet URI with Bitswash"), wxDefaultPosition, wxDefaultSize, 0 );
+
+	m_check_associate_magneturi->SetValue(m_pcfg->GetAssociateMagnetURI());
+	
+	fgSizerGeneral->Add( m_check_associate_magneturi, 0, wxALL, 5 );
 
 #ifdef __WXMSW__
+	m_check_associate_torrent = new wxCheckBox( this, wxID_ANY, _("Associate .torrent with Bitswash"), wxDefaultPosition, wxDefaultSize, 0 );
+
+	m_check_associate_torrent->SetValue(m_pcfg->GetAssociateTorrent());
+	
+	fgSizerGeneral->Add( m_check_associate_torrent, 0, wxALL, 5 );
+
 	m_check_runatstartup = new wxCheckBox( this, wxID_ANY, _("Run at Windows startup"), wxDefaultPosition, wxDefaultSize, 0 );
 
 	m_check_runatstartup->SetValue(m_pcfg->GetRunAtStartup());
 	
 	fgSizerGeneral->Add( m_check_runatstartup, 0, wxALL, 5 );
+
 #endif
 
 //	fgSizerGeneral->AddSpacer( 5 );
