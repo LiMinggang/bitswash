@@ -128,7 +128,7 @@ wxString FileListCtrl::GetItemValue( long item, long columnid ) const
 {
 	wxString ret(_T( "" ));
 	//XXX backward compatible
-	int nopriority = 0;
+	bool nopriority = false;
 	//wxLogDebug( _T( "FileListCtrl column %ld of item %ld" ), columnid, item );
 	shared_ptr<torrent_t> pTorrent;
 
@@ -149,12 +149,10 @@ wxString FileListCtrl::GetItemValue( long item, long columnid ) const
 	lt::torrent_info const& torrent_info = *( pTorrent->info );
 	std::vector<int> filespriority = pTorrent->config->GetFilesPriorities();
 
-	wxASSERT(filespriority.size() == pTorrent->info->num_files());
-	/*if( filespriority.size() != pTorrent->info->num_files() )
+	if( filespriority.size() != torrent_info.num_files() )
 	{
-		std::vector<int> deffilespriority( pTorrent->info->num_files(), BITTORRENT_FILE_NORMAL );
-		filespriority.swap( deffilespriority );
-	}*/
+		nopriority = true;
+	}
 
 	// some priority has no name and not made an option yet
 	//
@@ -187,7 +185,10 @@ wxString FileListCtrl::GetItemValue( long item, long columnid ) const
 		break;
 
 	case FILELIST_COLUMN_DOWNLOAD:
-		ret = priority[filespriority[item]];
+		if( nopriority )
+		{ ret = priority[BITTORRENT_FILE_NORMAL]; }
+		else
+		{ ret = priority[filespriority[item]]; }
 
 		break;
 
@@ -212,6 +213,7 @@ int FileListCtrl::GetItemColumnImage(long item, long columnid) const
 	if(columnid == FILELIST_COLUMN_SELECTED)
 	{
 		//XXX backward compatible
+		bool nopriority = false;
 		wxLogDebug( _T( "FileListCtrl column %ld of item %ld" ), columnid, item );
 		shared_ptr<torrent_t> pTorrent;
 
@@ -230,12 +232,10 @@ int FileListCtrl::GetItemColumnImage(long item, long columnid) const
 			lt::torrent_info const& torrent_info = *(pTorrent->info);
 			std::vector<int> filespriority = pTorrent->config->GetFilesPriorities();
 
-			wxASSERT(filespriority.size() == pTorrent->info->num_files());
-			/*if( filespriority.size() != pTorrent->info->num_files() )
+			if (filespriority.size() != torrent_info.num_files())
 			{
-				std::vector<int> deffilespriority( pTorrent->info->num_files(), BITTORRENT_FILE_NORMAL );
-				filespriority.swap( deffilespriority );
-			}*/
+				nopriority = true;
+			}
 			/*0--unchecked_xpm*/
 			/*1--checked_xpm*/
 			/*2--unchecked_dis_xpm*/
@@ -245,7 +245,7 @@ int FileListCtrl::GetItemColumnImage(long item, long columnid) const
 			{
 			case FILELIST_COLUMN_SELECTED:
 
-				if (filespriority[item] != BITTORRENT_FILE_NONE)
+				if (nopriority || filespriority[item] != BITTORRENT_FILE_NONE)
 					ret = 1;
 				else
 					ret = 0;
@@ -274,7 +274,7 @@ void FileListCtrl::OnLeftDown(wxMouseEvent& event)
 		case wxLIST_HITTEST_ONITEMICON: /*FILELIST_COLUMN_SELECTED*/
 			{
 				//XXX backward compatible
-				int nopriority = 0;
+				bool nopriority = false;
 				shared_ptr<torrent_t> pTorrent;
 
 				if( m_pTorrent )
@@ -291,8 +291,12 @@ void FileListCtrl::OnLeftDown(wxMouseEvent& event)
 				{
  					lt::torrent_info const& torrent_info = *(pTorrent->info);
 					std::vector<int>& filespriority = pTorrent->config->GetFilesPriorities();
+					if( filespriority.size() != torrent_info.num_files() )
+					{
+						nopriority = true;
+					}
 
-					if ((item < filespriority.size() ) && filespriority[item] != 0)
+					if (nopriority && ((item < filespriority.size() ) && filespriority[item] != BITTORRENT_FILE_NONE))
 					{
 						filespriority[item] = BITTORRENT_FILE_NONE;
 					}
@@ -328,16 +332,16 @@ void FileListCtrl::OnLeftDClick(wxMouseEvent& event)
 		int selectedfiles = GetFirstSelected();
 		if( selectedfiles != -1 )
 		{
+			bool nopriority = false;
 			lt::torrent_info const& torrentinfo = *(pTorrent->info);
 			std::vector<int> & filespriority = pTorrent->config->GetFilesPriorities();
-			wxASSERT(filespriority.size() == pTorrent->info->num_files());
-			/*if( filespriority.size() != pTorrent->info->num_files() )
+			
+			if( filespriority.size() != torrentinfo.num_files() )
 			{
-				std::vector<int> deffilespriority( pTorrent->info->num_files(), BITTORRENT_FILE_NORMAL );
-				filespriority.swap( deffilespriority );
-			}*/
+				nopriority = true;
+			}
 
-			if(filespriority.at(selectedfiles) != BITTORRENT_FILE_NONE)
+			if(nopriority || filespriority.at(selectedfiles) != BITTORRENT_FILE_NONE)
 			{
 				lt::file_storage const& allfiles = torrentinfo.files();
 				wxString fname = pTorrent->config->GetDownloadPath() + wxFileName::GetPathSeparator(wxPATH_NATIVE) + wxString::FromUTF8((allfiles.file_name(selectedfiles)).c_str());
@@ -385,12 +389,12 @@ void FileListCtrl::ShowContextMenu( const wxPoint& pos )
 		enable_openpath = wxFileName::DirExists( filepath );
 		std::vector<int> & filespriority = pTorrent->config->GetFilesPriorities();
 		std::vector<int>::iterator file_it ;
-		wxASSERT(filespriority.size() == pTorrent->info->num_files());
-		/*if( filespriority.size() != pTorrent->info->num_files() )
+		
+		if( filespriority.size() != pTorrent->info->num_files() )
 		{
 			std::vector<int> deffilespriority( pTorrent->info->num_files(), BITTORRENT_FILE_NORMAL );
 			filespriority.swap( deffilespriority );
-		}*/
+		}
 		
 		int selectedfiles = GetFirstSelected();
 
@@ -494,15 +498,9 @@ void FileListCtrl::OnMenuOpenPath( wxCommandEvent& event )
 		int selectedfiles = GetFirstSelected();
 		if( selectedfiles != -1 )
 		{
+			bool nopriority = false;
 			lt::torrent_info const& torrentinfo = *(pTorrent->info);
 			std::vector<int> & filespriority = pTorrent->config->GetFilesPriorities();
-			wxASSERT(filespriority.size() == pTorrent->info->num_files());
-			/*if( filespriority.size() != pTorrent->info->num_files() )
-			{
-				std::vector<int> deffilespriority( pTorrent->info->num_files(), BITTORRENT_FILE_NORMAL );
-				filespriority.swap( deffilespriority );
-			}*/
-
 			if(filespriority.at(selectedfiles) != BITTORRENT_FILE_NONE)
 			{
 				lt::file_storage const& allfiles = torrentinfo.files();

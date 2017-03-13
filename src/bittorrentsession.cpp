@@ -1336,19 +1336,20 @@ void BitTorrentSession::ReannounceTorrent( shared_ptr<torrent_t>& torrent )
 
 void BitTorrentSession::ConfigureTorrentFilesPriority( shared_ptr<torrent_t>& torrent )
 {
+	bool nopriority = false;
 	std::vector<int> filespriority = torrent->config->GetFilesPriorities();
 	//XXX default priority is 4...
 	// win32 4 triggers a assert
+	std::vector<int> deffilespriority( torrent->info->num_files(), BITTORRENT_FILE_NORMAL );
 
 	wxASSERT(torrent->info);
 	if (filespriority.size() != torrent->info->num_files())
 	{
-		std::vector<int> deffilespriority( torrent->info->num_files(), BITTORRENT_FILE_NORMAL );
-		filespriority.swap( deffilespriority );
+		nopriority = true;
 	}
 
 	if( torrent->handle.is_valid() )
-	{ torrent->handle.prioritize_files( filespriority ); }
+	{ torrent->handle.prioritize_files( nopriority ? deffilespriority : filespriority ); }
 }
 
 void BitTorrentSession::ConfigureTorrentTrackers( shared_ptr<torrent_t>& torrent )
@@ -2003,6 +2004,7 @@ bool BitTorrentSession::HandleAddTorrentAlert(lt::add_torrent_alert *p)
 
 			if(torrent->info)
 			{
+			 	bool nopriority = false;
 				wxULongLong_t total_selected = 0;
 				lt::torrent_info const& t_info = *(torrent->info);
 				lt::file_storage const& allfiles = t_info.files();
@@ -2010,8 +2012,7 @@ bool BitTorrentSession::HandleAddTorrentAlert(lt::add_torrent_alert *p)
 
 				if (filespriority.size() != t_info.num_files())
 				{
-					std::vector<int> deffilespriority(torrent->info->num_files(), BITTORRENT_FILE_NORMAL );
-					filespriority.swap( deffilespriority );
+					nopriority = true;
 				}
 				/*0--unchecked_xpm*/
 				/*1--checked_xpm*/
@@ -2020,7 +2021,7 @@ bool BitTorrentSession::HandleAddTorrentAlert(lt::add_torrent_alert *p)
 
 				for(int i = 0; i < t_info.num_files(); ++i)
 				{
-					if (filespriority[i] != BITTORRENT_FILE_NONE)
+					if (nopriority || filespriority[i] != BITTORRENT_FILE_NONE)
 					{
 						total_selected += allfiles.file_size(i);
 					}
