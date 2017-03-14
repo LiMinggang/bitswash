@@ -656,7 +656,7 @@ bool BitTorrentSession::AddTorrent( shared_ptr<torrent_t>& torrent )
 		{
 			wxMutexLocker ml( m_torrent_queue_lock );
 			m_torrent_queue.push_back( torrent );
-			m_torrent_map.insert( std::pair<wxString, int>( torrent->hash, (int)(m_torrent_queue.size() - 1 )) );
+			m_torrent_map.insert( std::pair<wxString, int>( wxString(torrent->hash), (int)(m_torrent_queue.size() - 1 )) );
 		}
 	}
 	catch( std::exception& e )
@@ -670,7 +670,7 @@ bool BitTorrentSession::AddTorrent( shared_ptr<torrent_t>& torrent )
 
 void BitTorrentSession::RemoveTorrent( shared_ptr<torrent_t>& torrent, bool deletedata )
 {
-	int idx = find_torrent_from_hash( torrent->hash );
+	int idx = find_torrent_from_hash( wxString(torrent->hash) );
 
 	if( idx < 0 )
 	{
@@ -686,20 +686,24 @@ void BitTorrentSession::RemoveTorrent( shared_ptr<torrent_t>& torrent, bool dele
 		m_libbtsession->remove_torrent( h );
 	}
 
-	wxString fastresumefile = wxGetApp().SaveTorrentsPath() +
+	wxString app_prefix = wxGetApp().SaveTorrentsPath() +
 							  wxGetApp().PathSeparator() +
-							  torrent->hash + _T( ".fastresume" );
-	wxString torrentconffile = wxGetApp().SaveTorrentsPath() +
-							   wxGetApp().PathSeparator() +
-							   torrent->hash + _T( ".conf" );
-	wxString torrentfile = wxGetApp().SaveTorrentsPath() +
-						   wxGetApp().PathSeparator() +
-						   torrent->hash + _T( ".torrent" );
+							  wxString(torrent->hash);
+	wxString fastresumefile = app_prefix + _T( ".fastresume" );
+	wxString resumefile = app_prefix + _T( ".resume" );
+	wxString torrentconffile = app_prefix + _T( ".conf" );
+	wxString torrentfile = app_prefix + _T( ".torrent" );
 
 	if( ( wxFileExists( fastresumefile ) ) &&
 			( !wxRemoveFile( fastresumefile ) ) )
 	{
 		wxLogError( _T( "Error removing file %s\n" ), fastresumefile.c_str() );
+	}
+
+	if( ( wxFileExists( resumefile ) ) &&
+			( !wxRemoveFile( resumefile ) ) )
+	{
+		wxLogError( _T( "Error removing file %s\n" ), resumefile.c_str() );
 	}
 
 	if( ( wxFileExists( torrentconffile ) ) &&
@@ -741,7 +745,7 @@ void BitTorrentSession::RemoveTorrent( shared_ptr<torrent_t>& torrent, bool dele
 	torrents_t::iterator torrent_it = m_torrent_queue.begin() + idx;
 	{
 		wxMutexLocker ml( m_torrent_queue_lock );
-		m_torrent_map.erase( ( *torrent_it )->hash );
+		m_torrent_map.erase( wxString(( *torrent_it )->hash) );
 		m_torrent_queue.erase( torrent_it );
 	}
 }
@@ -1077,7 +1081,7 @@ shared_ptr<torrent_t> BitTorrentSession::ParseTorrent( const wxString& filename 
 		//std::stringstream hash_stream;
 		//hash_stream << t->info_hash();
 		torrent->hash = t->info_hash();
-		torrent->config.reset( new TorrentConfig( torrent->hash ) );
+		torrent->config.reset( new TorrentConfig( wxString(torrent->hash) ) );
 
 		if( torrent->config->GetTrackersURL().size() <= 0 )
 		{
@@ -1109,7 +1113,7 @@ shared_ptr<torrent_t> BitTorrentSession::LoadMagnetUri( MagnetUri& magneturi )
 		//torrent->info = t;
 		torrent->name = magneturi.name();
 		torrent->hash = magneturi.hash();
-		torrent->config.reset( new TorrentConfig( torrent->hash ) );
+		torrent->config.reset( new TorrentConfig( wxString(torrent->hash) ) );
 		p.save_path = ( const char* )torrent->config->GetDownloadPath().mb_str( wxConvUTF8 );
 
 		p.flags |= lt::add_torrent_params::flag_paused; // Start in pause
@@ -1129,7 +1133,7 @@ shared_ptr<torrent_t> BitTorrentSession::LoadMagnetUri( MagnetUri& magneturi )
 		{
 			wxMutexLocker ml( m_torrent_queue_lock );
 			m_torrent_queue.push_back( torrent );
-			m_torrent_map.insert( std::pair<wxString, int>( torrent->hash, (int)(m_torrent_queue.size() - 1 )) );
+			m_torrent_map.insert( std::pair<wxString, int>( wxString(torrent->hash), (int)(m_torrent_queue.size() - 1 )) );
 		}
 	}
 	catch( std::exception &e )
@@ -1238,7 +1242,7 @@ void BitTorrentSession::PauseTorrent( shared_ptr<torrent_t>& torrent )
 
 void BitTorrentSession::MoveTorrentUp( shared_ptr<torrent_t>& torrent )
 {
-	int idx = find_torrent_from_hash( torrent->hash );
+	int idx = find_torrent_from_hash( wxString(torrent->hash));
 
 	if( idx < 0 )
 	{
@@ -1267,8 +1271,8 @@ void BitTorrentSession::MoveTorrentUp( shared_ptr<torrent_t>& torrent )
 		wxMutexLocker ml( m_torrent_queue_lock );
 		m_torrent_queue[idx - 1] = torrent;
 		m_torrent_queue[idx] = prev_torrent;
-		m_torrent_map[torrent->hash] = idx - 1;
-		m_torrent_map[prev_torrent->hash] = idx;
+		m_torrent_map[wxString(torrent->hash)] = idx - 1;
+		m_torrent_map[wxString(prev_torrent->hash)] = idx;
 	}
 	//m_torrent_queue.erase( torrent_it );
 	//torrent_it = m_torrent_queue.begin() + idx;
@@ -1277,7 +1281,7 @@ void BitTorrentSession::MoveTorrentUp( shared_ptr<torrent_t>& torrent )
 
 void BitTorrentSession::MoveTorrentDown( shared_ptr<torrent_t>& torrent )
 {
-	int idx = find_torrent_from_hash( torrent->hash );
+	int idx = find_torrent_from_hash( wxString(torrent->hash));
 
 	if( idx < 0 )
 	{
@@ -1310,8 +1314,8 @@ void BitTorrentSession::MoveTorrentDown( shared_ptr<torrent_t>& torrent )
 		wxMutexLocker ml( m_torrent_queue_lock );
 		m_torrent_queue[idx] = next_torrent;
 		m_torrent_queue[idx + 1] = torrent;
-		m_torrent_map[torrent->hash] = idx + 1;
-		m_torrent_map[next_torrent->hash] = idx;
+		m_torrent_map[wxString(torrent->hash)] = idx + 1;
+		m_torrent_map[wxString(next_torrent->hash)] = idx;
 	}
 	//m_torrent_queue.erase( torrent_it );
 	//torrent_it = m_torrent_queue.begin() + idx + 1 ;
@@ -2056,7 +2060,7 @@ bool BitTorrentSession::HandleMetaDataAlert(lt::metadata_received_alert *p)
 	if(it != m_torrent_map.end())
 	{
 		shared_ptr<torrent_t>& torrent = m_torrent_queue[it->second];
-		wxString torrent_backup = wxGetApp().SaveTorrentsPath() + wxGetApp().PathSeparator() + torrent->hash + _T( ".torrent" );
+		wxString torrent_backup = wxGetApp().SaveTorrentsPath() + wxGetApp().PathSeparator() + wxString(torrent->hash) + _T( ".torrent" );
 		torrent->handle = p->handle;
 		torrent->info = p->handle.torrent_file();
 		lt::torrent_status st = p->handle.status(lt::torrent_handle::query_name);

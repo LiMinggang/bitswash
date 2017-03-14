@@ -621,7 +621,7 @@ void MainFrame::AddTorrent( wxString filename, bool usedefault )
 
 	if( torrent->isvalid )
 	{
-		shared_ptr<torrent_t> tmp_torrent = m_btsession->FindTorrent( torrent->hash );
+		shared_ptr<torrent_t> tmp_torrent = m_btsession->FindTorrent( wxString(torrent->hash) );
 
 		if( !tmp_torrent )
 		{
@@ -638,7 +638,7 @@ void MainFrame::AddTorrent( wxString filename, bool usedefault )
 
 			if( m_btsession->AddTorrent( torrent ) )
 			{
-				wxString torrent_backup = wxGetApp().SaveTorrentsPath() + wxGetApp().PathSeparator() + torrent->hash + _T( ".torrent" );
+				wxString torrent_backup = wxGetApp().SaveTorrentsPath() + wxGetApp().PathSeparator() + wxString(torrent->hash) + _T( ".torrent" );
 
 				/* save a copy of torrent file */
 				if( !wxCopyFile( filename, torrent_backup, true ) )
@@ -721,7 +721,7 @@ void MainFrame::OpenMagnetURI(const wxString & magneturi)
 			{
 				if( torrent->handle.status().has_metadata )
 				{
-					wxString torrent_backup = wxGetApp().SaveTorrentsPath() + wxGetApp().PathSeparator() + torrent->hash + _T( ".torrent" );
+					wxString torrent_backup = wxGetApp().SaveTorrentsPath() + wxGetApp().PathSeparator() + wxString(torrent->hash) + _T( ".torrent" );
 					m_btsession->SaveTorrent( torrent, torrent_backup );
 				}
 				
@@ -1468,7 +1468,7 @@ void MainFrame::OnMenuTorrentRecheck( wxCommandEvent& event )
 				m_btsession->StopTorrent( torrent );
 			}
 
-			wxString fastresumefile = wxGetApp().SaveTorrentsPath() + wxGetApp().PathSeparator() + torrent->hash + _T( ".fastresume" );
+			wxString fastresumefile = wxGetApp().SaveTorrentsPath() + wxGetApp().PathSeparator() + wxString(torrent->hash) + _T( ".fastresume" );
 
 			if( wxFileExists( fastresumefile ) )
 			{
