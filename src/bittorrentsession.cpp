@@ -1920,6 +1920,9 @@ void BitTorrentSession::HandleTorrentAlert()
 				case lt::state_update_alert::alert_type:
 				case lt::dht_stats_alert::alert_type:
 				case lt::piece_finished_alert::alert_type:
+				case lt::block_finished_alert::alert_type:
+				case lt::block_downloading_alert::alert_type:
+				case lt::udp_error_alert::alert_type:
 					log_severity = 1;
 				default:
 					{
