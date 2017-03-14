@@ -822,7 +822,7 @@ void BitTorrentSession::ScanTorrentsDirectory( const wxString& dirname )
 		return ;
 	}
 
-	bool cont = torrents_dir.GetFirst( &filename, _T( "*.torrent\n" ), wxDIR_FILES );
+	bool cont = torrents_dir.GetFirst( &filename, _T( "*.torrent" ), wxDIR_FILES );
 
 	while( cont )
 	{
