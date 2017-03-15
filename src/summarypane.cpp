@@ -232,7 +232,7 @@ void SummaryPane::UpdateSummary()
 	if ( !pTorrent )
 	{
 		ResetSummary();
-		wxLogInfo(_T("No torrent selected\n"));
+		//wxLogInfo(_T("No torrent selected\n"));
 		return;
 	}
 
