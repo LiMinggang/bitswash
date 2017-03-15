@@ -129,13 +129,9 @@ wxString FileListCtrl::GetItemValue( long item, long columnid ) const
 	//XXX backward compatible
 	bool nopriority = false;
 	//wxLogDebug( _T( "FileListCtrl column %ld of item %ld" ), columnid, item );
-	shared_ptr<torrent_t> pTorrent;
+	shared_ptr<torrent_t> pTorrent(m_pTorrent);
 
-	if( m_pTorrent )
-	{
-		pTorrent = m_pTorrent;
-	}
-	else
+	if (!pTorrent)
 	{
         MainFrame* pMainFrame = ( MainFrame* )( wxGetApp().GetTopWindow() );
 		pTorrent = pMainFrame->GetSelectedTorrent();
@@ -214,13 +210,9 @@ int FileListCtrl::GetItemColumnImage(long item, long columnid) const
 		//XXX backward compatible
 		bool nopriority = false;
 		wxLogDebug( _T( "FileListCtrl column %ld of item %ld\n" ), columnid, item );
-		shared_ptr<torrent_t> pTorrent;
+		shared_ptr<torrent_t> pTorrent(m_pTorrent);
 
-		if( m_pTorrent )
-		{
-			pTorrent = m_pTorrent;
-		}
-		else
+		if (!pTorrent)
 		{
 			MainFrame* pMainFrame = ( MainFrame* )( wxGetApp().GetTopWindow() );
 			pTorrent = pMainFrame->GetSelectedTorrent();
@@ -274,13 +266,9 @@ void FileListCtrl::OnLeftDown(wxMouseEvent& event)
 		{
 			//XXX backward compatible
 			bool nopriority = false;
-			shared_ptr<torrent_t> pTorrent;
+			shared_ptr<torrent_t> pTorrent(m_pTorrent);
 
-			if( m_pTorrent )
-			{
-				pTorrent = m_pTorrent;
-			}
-			else
+			if (!pTorrent)
 			{
 				MainFrame* pMainFrame = ( MainFrame* )( wxGetApp().GetTopWindow() );
 				pTorrent = pMainFrame->GetSelectedTorrent();
@@ -316,11 +304,9 @@ void FileListCtrl::OnLeftDown(wxMouseEvent& event)
 
 void FileListCtrl::OnLeftDClick(wxMouseEvent& event)
 {
-	shared_ptr<torrent_t> pTorrent;
+	shared_ptr<torrent_t> pTorrent(m_pTorrent);
 
-	if( m_pTorrent )
-	{ pTorrent = m_pTorrent; }
-	else
+	if( !pTorrent )
 	{
 		MainFrame* pMainFrame = ( MainFrame* )wxGetApp().GetTopWindow();
 		pTorrent = pMainFrame->GetSelectedTorrent();
