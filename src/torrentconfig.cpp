@@ -161,7 +161,7 @@ void TorrentConfig::WriteTrackersUrl()
 	{
 		t_url = t->url;
 		t_tier = t->tier;
-		trackers += wxString::FromAscii( t_url.c_str() ) + _T( "|" ) + wxString::Format( _T( "%d" ), t_tier ) + _T( ";" );
+		trackers += wxString::FromUTF8( t_url.c_str() ) + _T( "|" ) + wxString::Format( _T( "%d" ), t_tier ) + _T( ";" );
 	}
 
 	wxLogDebug( _T( "Writing trackers %s\n" ), trackers.c_str() );

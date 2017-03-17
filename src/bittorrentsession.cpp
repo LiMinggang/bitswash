@@ -433,7 +433,7 @@ void BitTorrentSession::ConfigureSession()
 			}
 			catch( std::exception& e )
 			{
-				wxLogWarning( _T( "Unable to restore dht state file %s - %s\n" ), dhtstatefile.c_str(), wxString::FromAscii( e.what() ).c_str() );
+				wxLogWarning( _T( "Unable to restore dht state file %s - %s\n" ), dhtstatefile.c_str(), wxString::FromUTF8( e.what() ).c_str() );
 			}
 		}
 		else
@@ -556,6 +556,11 @@ void BitTorrentSession::AddTorrentSession( shared_ptr<torrent_t>& torrent )
 	wxString fastresumefile = wxGetApp().SaveTorrentsPath() + wxGetApp().PathSeparator() + torrent->hash + _T( ".fastresume" );
 	lt::entry resume_data;
 
+	if(m_queue_torrent_set.find(wxString(torrent->hash)) != m_queue_torrent_set.end())
+	{
+		return;
+	}
+
 	if( wxFileExists( fastresumefile ) )
 	{
 		wxLogInfo( _T( "%s: Read fast resume data\n" ), torrent->name.c_str() );
@@ -568,7 +573,7 @@ void BitTorrentSession::AddTorrentSession( shared_ptr<torrent_t>& torrent )
 		}
 		catch( std::exception& e )
 		{
-			wxLogError( wxString::FromAscii( e.what() ) + _T("\n") );
+			wxLogError( wxString::FromUTF8( e.what() ) + _T("\n") );
 		}
 	}
 
@@ -619,15 +624,16 @@ void BitTorrentSession::AddTorrentSession( shared_ptr<torrent_t>& torrent )
 		p.storage_mode = eStorageMode;
 		wxLogInfo( _T( "%s: %s allocation mode\n" ), torrent->name.c_str(), strStorageMode.c_str() );
 		m_libbtsession->async_add_torrent( p );
+		m_queue_torrent_set.insert(wxString(torrent->hash));
 
-		enum torrent_state state = ( enum torrent_state ) torrent->config->GetTorrentState();
+		//enum torrent_state state = ( enum torrent_state ) torrent->config->GetTorrentState();
 		//handle.pause();
 		//ConfigureTorrent(torrent);
 	}
 	catch( std::exception& e )
 	{
 		//posibly duplicate torrent
-		wxLogError( wxString::FromAscii( e.what() ) + _T("\n") );
+		wxLogError( wxString::FromUTF8( e.what() ) + _T("\n") );
 	}
 }
 
@@ -656,12 +662,12 @@ bool BitTorrentSession::AddTorrent( shared_ptr<torrent_t>& torrent )
 		{
 			wxMutexLocker ml( m_torrent_queue_lock );
 			m_torrent_queue.push_back( torrent );
-			m_torrent_map.insert( std::pair<wxString, int>( wxString(torrent->hash), (int)(m_torrent_queue.size() - 1 )) );
+			m_running_torrent_map.insert( std::pair<wxString, int>( wxString(torrent->hash), (int)(m_torrent_queue.size() - 1 )) );
 		}
 	}
 	catch( std::exception& e )
 	{
-		wxLogError( wxString::FromAscii( e.what() ) + _T("\n") );
+		wxLogError( wxString::FromUTF8( e.what() ) + _T("\n") );
 		return false;
 	}
 
@@ -745,7 +751,7 @@ void BitTorrentSession::RemoveTorrent( shared_ptr<torrent_t>& torrent, bool dele
 	torrents_t::iterator torrent_it = m_torrent_queue.begin() + idx;
 	{
 		wxMutexLocker ml( m_torrent_queue_lock );
-		m_torrent_map.erase( wxString(( *torrent_it )->hash) );
+		m_running_torrent_map.erase( wxString(( *torrent_it )->hash) );
 		m_torrent_queue.erase( torrent_it );
 	}
 }
@@ -868,11 +874,11 @@ void BitTorrentSession::ScanTorrentsDirectory( const wxString& dirname )
 		wxMutexLocker ml( m_torrent_queue_lock );
 		std::sort( m_torrent_queue.begin(), m_torrent_queue.end(),
 				   BTQueueSortAsc() );
-		m_torrent_map.clear();
+		m_running_torrent_map.clear();
 
 		for( int i = 0; i < m_torrent_queue.size(); ++i )
 		{
-			m_torrent_map[m_torrent_queue.at( i )->hash] = i;
+			m_running_torrent_map[m_torrent_queue.at( i )->hash] = i;
 		}
 	}
 }
@@ -881,9 +887,9 @@ void BitTorrentSession::ScanTorrentsDirectory( const wxString& dirname )
 int BitTorrentSession::find_torrent_from_hash( const wxString& hash ) const
 {
 	int j = -1;
-	torrents_map::const_iterator it = m_torrent_map.find( hash );
+	torrents_map::const_iterator it = m_running_torrent_map.find( hash );
 
-	if( it != m_torrent_map.end() ) { j = it->second; }
+	if( it != m_running_torrent_map.end() ) { j = it->second; }
 
 	return j;
 }
@@ -1093,7 +1099,7 @@ shared_ptr<torrent_t> BitTorrentSession::ParseTorrent( const wxString& filename 
 	}
 	catch( std::exception &e )
 	{
-		wxLogError( wxString::FromAscii( e.what() ) + _T("\n") );
+		wxLogError( wxString::FromUTF8( e.what() ) + _T("\n") );
 	}
 
 	return torrent;
@@ -1102,43 +1108,46 @@ shared_ptr<torrent_t> BitTorrentSession::ParseTorrent( const wxString& filename 
 shared_ptr<torrent_t> BitTorrentSession::LoadMagnetUri( MagnetUri& magneturi )
 {
 	shared_ptr<torrent_t> torrent( new torrent_t() );
-
-	try
+	if(m_queue_torrent_set.find(wxString(torrent->hash)) == m_queue_torrent_set.end())
 	{
-		lt::add_torrent_params p = magneturi.addTorrentParams();
-		// Limits
-		//p.max_connections = maxConnectionsPerTorrent();
-		//p.max_uploads = maxUploadsPerTorrent();
-		//shared_ptr<lt::torrent_info> t(new lt::torrent_info( sha1_hash( magneturi.hash() ) ));
-		//torrent->info = t;
-		torrent->name = magneturi.name();
-		torrent->hash = magneturi.hash();
-		torrent->config.reset( new TorrentConfig( wxString(torrent->hash) ) );
-		p.save_path = ( const char* )torrent->config->GetDownloadPath().mb_str( wxConvUTF8 );
-
-		p.flags |= lt::add_torrent_params::flag_paused; // Start in pause
-		p.flags &= ~lt::add_torrent_params::flag_auto_managed; // Because it is added in paused state
-		p.flags &= ~lt::add_torrent_params::flag_duplicate_is_error; // Already checked
-		// Solution to avoid accidental file writes
-		p.flags |= lt::add_torrent_params::flag_upload_mode;
-
-		// Adding torrent to BitTorrent session
-		torrent->config->SetTorrentState( TORRENT_STATE_START );
-		//torrent->handle.resolve_countries( true );
-		torrent->magneturi = magneturi.url();
-
-
-		torrent->isvalid = false;
-		m_libbtsession->async_add_torrent( p );
+		try
 		{
-			wxMutexLocker ml( m_torrent_queue_lock );
-			m_torrent_queue.push_back( torrent );
-			m_torrent_map.insert( std::pair<wxString, int>( wxString(torrent->hash), (int)(m_torrent_queue.size() - 1 )) );
+			lt::add_torrent_params p = magneturi.addTorrentParams();
+			// Limits
+			//p.max_connections = maxConnectionsPerTorrent();
+			//p.max_uploads = maxUploadsPerTorrent();
+			//shared_ptr<lt::torrent_info> t(new lt::torrent_info( sha1_hash( magneturi.hash() ) ));
+			//torrent->info = t;
+			torrent->name = magneturi.name();
+			torrent->hash = magneturi.hash();
+			torrent->config.reset( new TorrentConfig( wxString(torrent->hash) ) );
+			p.save_path = ( const char* )torrent->config->GetDownloadPath().mb_str( wxConvUTF8 );
+
+			p.flags |= lt::add_torrent_params::flag_paused; // Start in pause
+			p.flags &= ~lt::add_torrent_params::flag_auto_managed; // Because it is added in paused state
+			p.flags &= ~lt::add_torrent_params::flag_duplicate_is_error; // Already checked
+			// Solution to avoid accidental file writes
+			p.flags |= lt::add_torrent_params::flag_upload_mode;
+
+			// Adding torrent to BitTorrent session
+			torrent->config->SetTorrentState( TORRENT_STATE_START );
+			//torrent->handle.resolve_countries( true );
+			torrent->magneturi = magneturi.url();
+
+
+			torrent->isvalid = false;
+			m_libbtsession->async_add_torrent( p );
+			m_queue_torrent_set.insert(wxString(torrent->hash));
+			{
+				wxMutexLocker ml( m_torrent_queue_lock );
+				m_torrent_queue.push_back( torrent );
+				m_running_torrent_map.insert( std::pair<wxString, int>( wxString(torrent->hash), (int)(m_torrent_queue.size() - 1 )) );
+			}
 		}
-	}
-	catch( std::exception &e )
-	{
-		wxLogError( wxString::FromAscii( e.what() ) + _T("\n") );
+		catch( std::exception &e )
+		{
+			wxLogError( wxString::FromUTF8( e.what() ) + _T("\n") );
+		}
 	}
 
 	return torrent;
@@ -1156,7 +1165,7 @@ bool BitTorrentSession::SaveTorrent( shared_ptr<torrent_t>& torrent, const wxStr
 	}
 	catch( std::exception &e )
 	{
-		wxLogError( wxString::FromAscii( e.what() ) + _T("\n") );
+		wxLogError( wxString::FromUTF8( e.what() ) + _T("\n") );
 		return false;
 	}
 
@@ -1182,6 +1191,7 @@ void BitTorrentSession::StartTorrent( shared_ptr<torrent_t>& torrent, bool force
 		torrent->config->SetTorrentState(force ? TORRENT_STATE_FORCE_START : TORRENT_STATE_START);
 		torrent->config->Save();
 		ConfigureTorrent(torrent);
+		handle.resume();
 	}
 }
 
@@ -1271,8 +1281,8 @@ void BitTorrentSession::MoveTorrentUp( shared_ptr<torrent_t>& torrent )
 		wxMutexLocker ml( m_torrent_queue_lock );
 		m_torrent_queue[idx - 1] = torrent;
 		m_torrent_queue[idx] = prev_torrent;
-		m_torrent_map[wxString(torrent->hash)] = idx - 1;
-		m_torrent_map[wxString(prev_torrent->hash)] = idx;
+		m_running_torrent_map[wxString(torrent->hash)] = idx - 1;
+		m_running_torrent_map[wxString(prev_torrent->hash)] = idx;
 	}
 	//m_torrent_queue.erase( torrent_it );
 	//torrent_it = m_torrent_queue.begin() + idx;
@@ -1314,8 +1324,8 @@ void BitTorrentSession::MoveTorrentDown( shared_ptr<torrent_t>& torrent )
 		wxMutexLocker ml( m_torrent_queue_lock );
 		m_torrent_queue[idx] = next_torrent;
 		m_torrent_queue[idx + 1] = torrent;
-		m_torrent_map[wxString(torrent->hash)] = idx + 1;
-		m_torrent_map[wxString(next_torrent->hash)] = idx;
+		m_running_torrent_map[wxString(torrent->hash)] = idx + 1;
+		m_running_torrent_map[wxString(next_torrent->hash)] = idx;
 	}
 	//m_torrent_queue.erase( torrent_it );
 	//torrent_it = m_torrent_queue.begin() + idx + 1 ;
@@ -1367,18 +1377,14 @@ void BitTorrentSession::ConfigureTorrent( shared_ptr<torrent_t>& torrent )
 	{
 		wxASSERT(h.is_valid());
 		std::string existdir = h.status(lt::torrent_handle::query_save_path).save_path;
-		std::string newdir( torrent->config->GetDownloadPath().mb_str( wxConvUTF8 ) );
-		wxString oldpath = wxString::FromAscii( existdir.c_str() ) +
+		wxFileName oldpath(wxString::FromUTF8( existdir.c_str() ) +
 						   wxFileName::GetPathSeparator( wxPATH_NATIVE ) +
-						   wxString( wxConvUTF8.cMB2WC( torrent->info->name().c_str() ) );
-#ifdef __WXMSW__
-		oldpath.Replace( _T( "/" ), _T( "\\" ), true );
-#endif
-		wxString newpath = torrent->config->GetDownloadPath() +
+						   wxString( wxConvUTF8.cMB2WC( torrent->info->name().c_str() ) ));
+		wxFileName newpath (torrent->config->GetDownloadPath() +
 						   wxFileName::GetPathSeparator( wxPATH_NATIVE ) +
-						   wxString( wxConvUTF8.cMB2WC( torrent->info->name().c_str() ) )/*.c_str()*/;
+						   wxString( wxConvUTF8.cMB2WC( torrent->info->name().c_str() ) )/*.c_str()*/);
 
-		if( oldpath.Cmp( newpath ) != 0 )
+		if( oldpath != newpath )
 		{
 			bool copysuccess = true;
 			/* move_storage already handled copying files */
@@ -1392,48 +1398,66 @@ void BitTorrentSession::ConfigureTorrent( shared_ptr<torrent_t>& torrent )
 				StopTorrent( torrent );
 			}
 
-			wxLogDebug( _T( "Old path %s, new path %s\n" ), oldpath.c_str(), newpath.c_str() );
+			wxLogDebug( _T( "Old path %s, new path %s\n" ), oldpath.GetFullPath().c_str(), newpath.GetFullPath().c_str() );
 
-			if( wxDirExists( oldpath ) )
+			if(oldpath.DirExists())
 			{
-				copysuccess = ( CopyDirectory( oldpath, newpath ) != 0 );
+				copysuccess = ( CopyDirectory( oldpath.GetPath(), newpath.GetPath() ) != 0 );
 
 				if( copysuccess )
 				{
-					RemoveDirectory( oldpath );
+					oldpath.Rmdir();
 				}
 			}
-			else if( wxFileExists( oldpath ) )
+			else if( oldpath.FileExists () )
 			{
-				copysuccess = wxCopyFile( oldpath, newpath );
+				copysuccess = wxCopyFile( oldpath.GetFullPath(), newpath.GetFullPath() );
 
 				if( copysuccess )
 				{
-					wxRemoveFile( oldpath );
+					wxRemoveFile( oldpath.GetFullPath() );
 				}
 			}
 			else
 			{
-				wxLogWarning( _T( "Old path not exists %s\n" ), oldpath.c_str() );
+				wxLogWarning( _T( "Old path not exists %s\n" ), oldpath.GetFullPath().c_str() );
 				copysuccess = false;
 			}
 
-			//failed copy, restore path
 			if( copysuccess )
 			{
 				if( ( prev_state == TORRENT_STATE_START ) ||
 						( prev_state == TORRENT_STATE_FORCE_START ) )
 				{
-					StartTorrent( torrent, prev_state == ( TORRENT_STATE_FORCE_START ) );
-					h = torrent->handle;
+					lt::torrent_handle& h = torrent->handle;
+					
+					if( !h.is_valid() || ( ( h.status(lt::torrent_handle::query_save_path).save_path).empty() ) )
+					{
+						AddTorrentSession( torrent );
+					}
+					/*if( h.is_valid() )
+					{
+						torrent->config->SetTorrentState(force ? TORRENT_STATE_FORCE_START : TORRENT_STATE_START);
+						torrent->config->Save();
+						h = torrent->handle;
+						h.resume();
+					}*/
 				}
 			}
-			else
+			else //failed copy, restore path
 			{
 				wxLogError( _T( "Failed moving save path %s\n" ), torrent->config->GetDownloadPath().c_str() );
-				wxLogWarning( _T( "Restoring download path %s\n" ), oldpath.c_str() );
-				torrent->config->SetDownloadPath( wxString::FromAscii( existdir.c_str() ) );
+				wxLogWarning( _T( "Restoring download path %s\n" ), oldpath.GetFullPath().c_str() );
+				torrent->config->SetDownloadPath( wxString::FromUTF8( existdir.c_str() ) );
 				torrent->config->Save();
+				if(oldpath.DirExists() && ( ( prev_state == TORRENT_STATE_START ) ||
+						( prev_state == TORRENT_STATE_FORCE_START ) ))
+				{
+					if( !h.is_valid() || ( ( h.status(lt::torrent_handle::query_save_path).save_path).empty() ) )
+					{
+						AddTorrentSession( torrent );
+					}
+				}
 			}
 		}
 	}
@@ -1903,8 +1927,8 @@ void BitTorrentSession::HandleTorrentAlert()
 						{
 							InfoHash thash(h.info_hash());
 							//save_resume_data to disk
-							torrents_map::iterator it = m_torrent_map.find(wxString(thash));
-							if(it != m_torrent_map.end())
+							torrents_map::iterator it = m_running_torrent_map.find(wxString(thash));
+							if(it != m_running_torrent_map.end())
 							{
 								SaveTorrentResumeData(m_torrent_queue[it->second]);
 							}
@@ -1977,6 +2001,7 @@ bool BitTorrentSession::HandleAddTorrentAlert(lt::add_torrent_alert *p)
 		//std::stringstream hash_stream;
 		//hash_stream << p->handle.info_hash();
 		InfoHash thash(p->handle.info_hash());
+		m_queue_torrent_set.erase(wxString(thash));
 		shared_ptr<torrent_t> torrent;
 		{
 			wxMutexLocker ml( m_torrent_queue_lock );
@@ -2045,7 +2070,7 @@ bool BitTorrentSession::HandleAddTorrentAlert(lt::add_torrent_alert *p)
 	}
 	catch( std::exception& e )
 	{
-		wxLogError( wxString::FromAscii( e.what() ) + _T("\n") );
+		wxLogError( wxString::FromUTF8( e.what() ) + _T("\n") );
 		return false;
 	}
 
@@ -2057,8 +2082,8 @@ bool BitTorrentSession::HandleMetaDataAlert(lt::metadata_received_alert *p)
 	InfoHash thash(p->handle.info_hash());
 	
 	wxMutexLocker ml( m_torrent_queue_lock );
-	torrents_map::iterator it = m_torrent_map.find(wxString(thash));
-	if(it != m_torrent_map.end())
+	torrents_map::iterator it = m_running_torrent_map.find(wxString(thash));
+	if(it != m_running_torrent_map.end())
 	{
 		shared_ptr<torrent_t>& torrent = m_torrent_queue[it->second];
 		wxString torrent_backup = wxGetApp().SaveTorrentsPath() + wxGetApp().PathSeparator() + wxString(torrent->hash) + _T( ".torrent" );

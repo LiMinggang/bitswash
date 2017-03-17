@@ -242,7 +242,7 @@ void TrackerListCtrl::OnMenuEdit(wxCommandEvent& event)
 				return;
 
 			std::vector<lt::announce_entry>::iterator tracker_it = trackers.begin() + item;
-			wxString trackerurl = wxString::FromAscii(tracker_it->url.c_str());
+			wxString trackerurl = wxString::FromUTF8(tracker_it->url.c_str());
 			int tier = tracker_it->tier;
 			wxTextEntryDialog dialog(this,
 				_("Edit tracker\n"),
@@ -274,7 +274,7 @@ void TrackerListCtrl::OnMenuEdit(wxCommandEvent& event)
 			std::vector<lt::announce_entry>::iterator tracker_it = trackers.begin() + item;
 
 			wxMessageDialog dialogConfirm(NULL, 
-							_("Remove tracker ") + wxString::FromAscii(tracker_it->url.c_str()) + _T("?"), 
+							_("Remove tracker ") + wxString::FromUTF8(tracker_it->url.c_str()) + _T("?"), 
 							_("Confirm remove tracker"), 
 							wxNO_DEFAULT | wxYES_NO| wxICON_QUESTION);
 

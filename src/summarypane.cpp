@@ -286,7 +286,7 @@ void SummaryPane::UpdateSummary()
 	if(t)
 		UpdateComment(wxString(wxConvUTF8.cMB2WC(t->comment().c_str())));
 
-	UpdateTrackerUrl(h.is_valid()?wxString::FromAscii(s.current_tracker.c_str()):_T(""));
+	UpdateTrackerUrl(h.is_valid()?wxString::FromUTF8(s.current_tracker.c_str()):_T(""));
 	//
 	//TODO: findout tracker status
 	//UpdateTrackerStatus();

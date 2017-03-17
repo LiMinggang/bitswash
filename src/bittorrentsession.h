@@ -103,6 +103,7 @@ typedef struct torrent_handle_t {
 /* watch out the s after torrent */
 typedef std::vector<shared_ptr<torrent_t> > torrents_t;
 typedef std::map<wxString, int> torrents_map;
+typedef std::set<wxString> torrents_set;
 
 class BitTorrentSession : public wxThread
 {
@@ -198,7 +199,8 @@ private:
 
 	wxMutex m_torrent_queue_lock;
 	torrents_t m_torrent_queue;
-	torrents_map m_torrent_map;
+	torrents_map m_running_torrent_map;
+	torrents_set m_queue_torrent_set;
 
 	wxApp* m_pParent;
 	Configuration* m_config;
