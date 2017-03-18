@@ -281,6 +281,12 @@ void FileListCtrl::OnLeftDown(wxMouseEvent& event)
 				if( filespriority.size() != torrent_info.num_files() )
 				{
 					nopriority = true;
+					
+					if( filespriority.size() != pTorrent->info->num_files() )
+					{
+						std::vector<int> deffilespriority( pTorrent->info->num_files(), BITTORRENT_FILE_NORMAL );
+						filespriority.swap( deffilespriority );
+					}
 				}
 
 				if (nopriority || ((item < filespriority.size() ) && filespriority[item] != BITTORRENT_FILE_NONE))
@@ -291,6 +297,8 @@ void FileListCtrl::OnLeftDown(wxMouseEvent& event)
 				{
 					filespriority[item] = BITTORRENT_FILE_NORMAL; /*Normal*/
 				}
+
+				wxGetApp().GetBitTorrentSession()->ConfigureTorrentFilesPriority( pTorrent );
 				Refresh(false);
 				return;
 			}
@@ -333,6 +341,7 @@ void FileListCtrl::OnLeftDClick(wxMouseEvent& event)
 				//std::vector<std::string> const& allp = allfiles.paths();
 				wxFileName filename (fname);
 				filename.MakeAbsolute();
+				wxLogDebug(_T("File path %s\n"), filename.GetFullPath().c_str());
 				if(wxFileName::FileExists(filename.GetFullPath()))
 				{
 					wxLaunchDefaultApplication(filename.GetFullPath()); 
@@ -492,6 +501,7 @@ void FileListCtrl::OnMenuOpenPath( wxCommandEvent& event )
 				//std::vector<std::string> const& allp = allfiles.paths();
 				wxFileName filename (fname);
 				filename.MakeAbsolute();
+				wxLogDebug(_T("File path %s\n"), filename.GetFullPath().c_str());
 #if  defined(__WXMSW__) 
 				wxExecute(_T("Explorer ")+filename.GetPath(), wxEXEC_ASYNC, NULL); 
 #elif defined(__APPLE__)
