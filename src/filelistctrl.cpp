@@ -337,7 +337,7 @@ void FileListCtrl::OnLeftDClick(wxMouseEvent& event)
 			if(nopriority || filespriority.at(selectedfiles) != BITTORRENT_FILE_NONE)
 			{
 				lt::file_storage const& allfiles = torrentinfo.files();
-				wxString fname = pTorrent->config->GetDownloadPath() + wxFileName::GetPathSeparator(wxPATH_NATIVE) + wxString::FromUTF8((allfiles.file_name(selectedfiles)).c_str());
+				wxString fname = pTorrent->config->GetDownloadPath() + wxConvUTF8.cMB2WC( torrentinfo.name().c_str() ) + wxFileName::GetPathSeparator() + wxString::FromUTF8((allfiles.file_name(selectedfiles)).c_str());
 				//std::vector<std::string> const& allp = allfiles.paths();
 				wxFileName filename (fname);
 				filename.MakeAbsolute();
@@ -494,10 +494,10 @@ void FileListCtrl::OnMenuOpenPath( wxCommandEvent& event )
 			bool nopriority = false;
 			lt::torrent_info const& torrentinfo = *(pTorrent->info);
 			std::vector<int> & filespriority = pTorrent->config->GetFilesPriorities();
-			if(filespriority.at(selectedfiles) != BITTORRENT_FILE_NONE)
+			if(selectedfiles < filespriority.size() && filespriority.at(selectedfiles) != BITTORRENT_FILE_NONE)
 			{
 				lt::file_storage const& allfiles = torrentinfo.files();
-				wxString fname = pTorrent->config->GetDownloadPath() + wxFileName::GetPathSeparator(wxPATH_NATIVE) + wxString::FromUTF8((allfiles.file_name(selectedfiles)).c_str());
+				wxString fname = pTorrent->config->GetDownloadPath() + wxConvUTF8.cMB2WC( torrentinfo.name().c_str() ) + wxFileName::GetPathSeparator() + wxString::FromUTF8((allfiles.file_name(selectedfiles)).c_str());
 				//std::vector<std::string> const& allp = allfiles.paths();
 				wxFileName filename (fname);
 				filename.MakeAbsolute();

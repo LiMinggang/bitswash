@@ -226,8 +226,6 @@ void SummaryPane::UpdateSummary()
 {
 	wxLogDebug(_T("UpdateSummary\n"));
 	shared_ptr<torrent_t> pTorrent = ((MainFrame*)m_pMainFrame)->GetSelectedTorrent();
-	wxChar dirsep = wxFileName::GetPathSeparator(wxPATH_NATIVE);
-
 
 	if ( !pTorrent )
 	{
@@ -250,7 +248,7 @@ void SummaryPane::UpdateSummary()
 		wxLogDebug(_T("UpdateSummary - Update torrent %s\n"), t_name.c_str());
 
 		//if(h.is_valid()) UpdateSaveAs(wxString::FromAscii( pTorrent->handle.save_path().string().c_str()));
-		UpdateSaveAs(pTorrent->config->GetDownloadPath() + dirsep + t_name);
+		UpdateSaveAs(pTorrent->config->GetDownloadPath() + t_name);
 
 		UpdateSize(HumanReadableByte((wxDouble) t->total_size()));
 		if(!s.has_metadata)

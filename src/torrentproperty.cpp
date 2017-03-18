@@ -142,7 +142,8 @@ void TorrentProperty::OnOK(wxCommandEvent& event)
 	shared_ptr<TorrentConfig> pConfig = m_pTorrent->config;
 	Configuration *pMainConfig = wxGetApp().GetConfig();
 
-	pConfig->SetDownloadPath(m_panel_settings->GetDownloadPath());
+	wxFileName fdir(m_panel_settings->GetDownloadPath()); // make sure we got path seperator at the end
+	pConfig->SetDownloadPath(fdir.GetPath());
 
 	//pConfig->SetTorrentCompactAlloc(m_panel_settings->GetCompactAlloc());
 	pConfig->SetTorrentStorageMode(m_panel_settings->GetStorageMode());

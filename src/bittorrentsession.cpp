@@ -726,8 +726,7 @@ void BitTorrentSession::RemoveTorrent( shared_ptr<torrent_t>& torrent, bool dele
 
 	if( deletedata )
 	{
-		wxString download_data = torrent->config->GetDownloadPath() +
-								 wxGetApp().PathSeparator() + ( wxString )torrent->name.c_str() ;
+		wxString download_data = torrent->config->GetDownloadPath() + ( wxString )torrent->name.c_str() ;
 		wxLogInfo( _T( "%s: Remove Data as well in %s\n" ), torrent->name.c_str(), download_data.c_str() );
 
 		if( wxDirExists( download_data ) )
@@ -1380,9 +1379,7 @@ void BitTorrentSession::ConfigureTorrent( shared_ptr<torrent_t>& torrent )
 		wxFileName oldpath(wxString::FromUTF8( existdir.c_str() ) +
 						   wxFileName::GetPathSeparator( wxPATH_NATIVE ) +
 						   wxString( wxConvUTF8.cMB2WC( torrent->info->name().c_str() ) ));
-		wxFileName newpath (torrent->config->GetDownloadPath() +
-						   wxFileName::GetPathSeparator( wxPATH_NATIVE ) +
-						   wxString( wxConvUTF8.cMB2WC( torrent->info->name().c_str() ) )/*.c_str()*/);
+		wxFileName newpath (torrent->config->GetDownloadPath() + wxString( wxConvUTF8.cMB2WC( torrent->info->name().c_str() ) )/*.c_str()*/);
 
 		if( oldpath != newpath )
 		{
@@ -1448,7 +1445,9 @@ void BitTorrentSession::ConfigureTorrent( shared_ptr<torrent_t>& torrent )
 			{
 				wxLogError( _T( "Failed moving save path %s\n" ), torrent->config->GetDownloadPath().c_str() );
 				wxLogWarning( _T( "Restoring download path %s\n" ), oldpath.GetFullPath().c_str() );
-				torrent->config->SetDownloadPath( wxString::FromUTF8( existdir.c_str() ) );
+				
+				wxFileName dpath(wxString::FromUTF8( existdir.c_str() ));
+				torrent->config->SetDownloadPath( dpath.GetPath() );
 				torrent->config->Save();
 				if(oldpath.DirExists() && ( ( prev_state == TORRENT_STATE_START ) ||
 						( prev_state == TORRENT_STATE_FORCE_START ) ))

@@ -216,7 +216,8 @@ void Configuration::Load()
 	m_filelistctrlsetting = m_cfg->Read( _T( "/GUI/filelistctrlsetting" ), wxEmptyString );
 	m_trackerlistctrlsetting = m_cfg->Read( _T( "/GUI/trackerlistctrlsetting" ), wxEmptyString );
 	//config
-	m_downloadpath = m_cfg->Read( _T( "/Config/downloadpath" ), def_download_path );
+	wxFileName dpath(m_cfg->Read( _T( "/Config/downloadpath" ), def_download_path ));
+	m_downloadpath = dpath.GetPath();
 	m_portmin = m_cfg->Read( _T( "/Config/portmin" ), 16881 );
 	m_portmax = m_cfg->Read( _T( "/Config/portmax" ), 16889 );
 	m_refreshtime = m_cfg->Read( _T( "/Config/refreshtime" ), 5 );
