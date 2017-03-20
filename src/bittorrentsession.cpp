@@ -1384,7 +1384,7 @@ void BitTorrentSession::ConfigureTorrent( shared_ptr<torrent_t>& torrent )
 		newpath.MakeAbsolute();
 		oldpath.MakeAbsolute();
 
-		if( oldpath != newpath )
+		if( oldpath.GetPath() != newpath.GetPath() )
 		{
 			bool copysuccess = true;
 			/* move_storage already handled copying files */
@@ -1398,7 +1398,7 @@ void BitTorrentSession::ConfigureTorrent( shared_ptr<torrent_t>& torrent )
 				StopTorrent( torrent );
 			}
 
-			wxLogDebug( _T( "Old path %s, new path %s\n" ), oldpath.GetFullPath().c_str(), newpath.GetFullPath().c_str() );
+			wxLogDebug( _T( "Old path %s, new path %s\n" ), oldpath.GetPath().c_str(), newpath.GetPath().c_str() );
 
 			if(oldpath.DirExists())
 			{
