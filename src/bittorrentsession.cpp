@@ -1376,10 +1376,13 @@ void BitTorrentSession::ConfigureTorrent( shared_ptr<torrent_t>& torrent )
 	{
 		wxASSERT(h.is_valid());
 		std::string existdir = h.status(lt::torrent_handle::query_save_path).save_path;
-		wxFileName oldpath(wxString::FromUTF8( existdir.c_str() ) +
+		wxFileName oldpath, newpath;
+		oldpath.AssignDir(wxString::FromUTF8( existdir.c_str() ) +
 						   wxFileName::GetPathSeparator( wxPATH_NATIVE ) +
 						   wxString( wxConvUTF8.cMB2WC( torrent->info->name().c_str() ) ));
-		wxFileName newpath (torrent->config->GetDownloadPath() + wxString( wxConvUTF8.cMB2WC( torrent->info->name().c_str() ) )/*.c_str()*/);
+		newpath.AssignDir(torrent->config->GetDownloadPath() + wxString( wxConvUTF8.cMB2WC( torrent->info->name().c_str() ) ));
+		newpath.MakeAbsolute();
+		oldpath.MakeAbsolute();
 
 		if( oldpath != newpath )
 		{
