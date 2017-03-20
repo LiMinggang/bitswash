@@ -124,7 +124,7 @@ wxString TorrentListCtrl::GetItemValue( long item, long columnid ) const
 
 	if( !torrentstoped )
 	{
-		torrentstatus = torrenthandle.status();
+		torrentstatus = torrenthandle.status(lt::torrent_handle::query_distributed_copies);
 		torrentstats.progress = torrentstatus.progress;
 		torrentstats.total_download = torrentstatus.total_payload_download;
 		torrentstats.total_upload = torrentstatus.total_payload_upload;

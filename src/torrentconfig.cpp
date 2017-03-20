@@ -35,12 +35,12 @@
 
 namespace lt = libtorrent;
 
-TorrentConfig::TorrentConfig( const wxString& TorrentName )
-	: wxFileConfig( wxEmptyString, wxEmptyString, TorrentName, wxEmptyString, wxCONFIG_USE_LOCAL_FILE | wxCONFIG_USE_RELATIVE_PATH )
+TorrentConfig::TorrentConfig( const wxString& torrentName )
+	: wxFileConfig( wxEmptyString, wxEmptyString, torrentName, wxEmptyString, wxCONFIG_USE_LOCAL_FILE | wxCONFIG_USE_RELATIVE_PATH )
 {
 	//ctor
 	m_maincfg = wxGetApp().GetConfig();
-	m_configfile = wxGetApp().SaveTorrentsPath() + wxFileName::GetPathSeparator( wxPATH_NATIVE ) + TorrentName + _T( ".conf" );
+	m_configfile = wxGetApp().SaveTorrentsPath() + torrentName + _T( ".conf" );
 
 	if( !wxFileName::FileExists( m_configfile ) )
 	{
@@ -51,7 +51,7 @@ TorrentConfig::TorrentConfig( const wxString& TorrentName )
 	}
 
 	wxFileInputStream fis( m_configfile );
-	m_torrentname = TorrentName;
+	m_torrentname = torrentName;
 	wxLogDebug( _T( "Init TorrentConfig %s\n" ), m_configfile.c_str() );
 	m_cfg =  new wxFileConfig( ( wxInputStream & )fis );
 	m_selected_file_size = 0;

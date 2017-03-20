@@ -150,7 +150,8 @@ void *BitTorrentSession::Entry()
 	//( ( BitSwash* )m_pParent )->BTInitDone();
 	bts_event evt;
 	wxMessageQueueError result = wxMSGQUEUE_NO_ERROR;
-	time_t starttime = wxDateTime::GetTimeNow();
+	time_t starttime = wxDateTime::GetTimeNow(), now;
+	bool check_now = true;
 
 	do
 	{
@@ -159,20 +160,37 @@ void *BitTorrentSession::Entry()
 		if(result == wxMSGQUEUE_NO_ERROR)
 		{
 			wxLogDebug( _T( "BitTorrentSession Thread BT Alert\n!" ));
-			if(evt == BTS_EVENT_ALERT)
+			switch(evt)
 			{
-				HandleTorrentAlert();
-			}
+				case BTS_EVENT_ALERT:
+				{
+					HandleTorrentAlert();
+					break;
+				}
+				case BTS_EVENT_QUEUEUPDATE:
+				{
+					check_now = true;
+					break;
+				}
+				default:
+					break;
+			}				
 		}
-		time_t now = wxDateTime::GetTimeNow();
-		int timediff = now - starttime;
-		if(timediff >= 5000)
+
+		if(!check_now)
 		{
-			starttime = now;
+			now = wxDateTime::GetTimeNow();
+			int timediff = now - starttime;
+			check_now = (timediff >= 5);
+		}
+
+		if(check_now)
+		{
 			//DumpTorrents();
 			wxLogDebug( _T( "BitTorrentSession check item\n" ));
 			CheckQueueItem();
 			wxLogDebug( _T( "BitTorrentSession check item done\n" ));
+			starttime = wxDateTime::GetTimeNow();
 		}
 
 		if( TestDestroy() )
@@ -553,7 +571,7 @@ void BitTorrentSession::AddTorrentSession( shared_ptr<torrent_t>& torrent )
 {
 	lt::torrent_handle &handle = torrent->handle;
 	wxLogDebug( _T( "AddTorrent %s into session\n" ), torrent->name.c_str() );
-	wxString fastresumefile = wxGetApp().SaveTorrentsPath() + wxGetApp().PathSeparator() + torrent->hash + _T( ".fastresume" );
+	wxString fastresumefile = wxGetApp().SaveTorrentsPath() + torrent->hash + _T( ".fastresume" );
 	lt::entry resume_data;
 
 	if( wxFileExists( fastresumefile ) )
@@ -653,6 +671,8 @@ bool BitTorrentSession::AddTorrent( shared_ptr<torrent_t>& torrent )
 		{
 			AddTorrentSession( torrent );
 		}
+		else
+			PostQueueUpdateEvent();
 
 		{
 			wxMutexLocker ml( m_torrent_queue_lock );
@@ -675,7 +695,7 @@ void BitTorrentSession::RemoveTorrent( shared_ptr<torrent_t>& torrent, bool dele
 
 	if( idx < 0 )
 	{
-		wxLogError( _T( "QueueTorrent %s: Torrent not found in queue\n" ), torrent->name.c_str() );
+		wxLogError( _T( "RemoveTorrent %s: Torrent not found in queue\n" ), torrent->name.c_str() );
 		return ;
 	}
 	wxLogInfo( _T( "%s: Removing Torrent\n" ), torrent->name.c_str() );
@@ -687,8 +707,17 @@ void BitTorrentSession::RemoveTorrent( shared_ptr<torrent_t>& torrent, bool dele
 		m_libbtsession->remove_torrent( h );
 	}
 
+	enum torrent_state state = ( enum torrent_state ) torrent->config->GetTorrentState();
+
+	//XXX redundant ? StartTorrent below will call the same thing
+	if( ( state == TORRENT_STATE_START ) ||
+			( state == TORRENT_STATE_FORCE_START ) ||
+				( state == TORRENT_STATE_PAUSE ) )
+	{
+		PostQueueUpdateEvent();
+	}
+
 	wxString app_prefix = wxGetApp().SaveTorrentsPath() +
-							  wxGetApp().PathSeparator() +
 							  wxString(torrent->hash);
 	wxString fastresumefile = app_prefix + _T( ".fastresume" );
 	wxString resumefile = app_prefix + _T( ".resume" );
@@ -817,7 +846,8 @@ void BitTorrentSession::ScanTorrentsDirectory( const wxString& dirname )
 	wxASSERT( m_libbtsession != NULL );
 	wxDir torrents_dir( dirname );
 	wxString filename;
-	wxString fullpath;
+	//wxString fullpath;
+	wxFileName fn;
 	shared_ptr<torrent_t> torrent;
 
 	if( !torrents_dir.IsOpened() )
@@ -830,9 +860,10 @@ void BitTorrentSession::ScanTorrentsDirectory( const wxString& dirname )
 
 	while( cont )
 	{
-		fullpath = dirname + wxGetApp().PathSeparator() + filename;
-		wxLogDebug( _T( "Saved Torrent: %s\n" ), fullpath.c_str() );
-		torrent =  ParseTorrent( fullpath );
+		//fullpath = dirname + filename;
+		fn.Assign(dirname, filename);
+		wxLogDebug( _T( "Saved Torrent: %s\n" ), fn.GetFullPath().c_str() );
+		torrent =  ParseTorrent(fn.GetFullPath());
 
 		if (torrent->config->GetTorrentState() == TORRENT_STATE_QUEUE) /*Fist time added torrent, it's not in libtorrent*/
 			torrent->config->SetTorrentState(TORRENT_STATE_START);
@@ -842,7 +873,7 @@ void BitTorrentSession::ScanTorrentsDirectory( const wxString& dirname )
 		cont = torrents_dir.GetNext( &filename );
 	}
 
-	filename = wxGetApp().SaveTorrentsPath() + wxGetApp().PathSeparator() + APPBINNAME + _T( ".magneturi" );
+	filename = wxGetApp().SaveTorrentsPath() + APPBINNAME + _T( ".magneturi" );
 	wxTextFile magneturifile( filename );
 	if( magneturifile.Exists() )
 	{
@@ -987,7 +1018,7 @@ void BitTorrentSession::SaveAllTorrent()
 			lt::torrent_status st = h.status( lt::torrent_handle::query_save_path );
 			//std::vector<char> out;
 			//bencode(std::back_inserter(out), *rd->resume_data);
-			wxString resumefile = wxGetApp().SaveTorrentsPath() + wxGetApp().PathSeparator() + lt::to_hex( st.info_hash.to_string() ) + _T( ".resume" );
+			wxString resumefile = wxGetApp().SaveTorrentsPath() + lt::to_hex( st.info_hash.to_string() ) + _T( ".resume" );
 			std::ofstream out( ( const char* )resumefile.mb_str( wxConvFile ), std::ios_base::binary );
 			out.unsetf( std::ios_base::skipws );
 			bencode( std::ostream_iterator<char>( out ), *rd->resume_data );
@@ -996,11 +1027,11 @@ void BitTorrentSession::SaveAllTorrent()
 
 	// save dead magnet uri
 	size_t counts = magneturi.GetCount();
-	wxString filename = wxGetApp().SaveTorrentsPath() + wxGetApp().PathSeparator() + APPBINNAME + _T( ".magneturi" );
+	wxString filename = wxGetApp().SaveTorrentsPath() + APPBINNAME + _T( ".magneturi" );
 	wxTextFile magneturifile( filename );
 	if(counts > 0)
 	{
-		wxString filename = wxGetApp().SaveTorrentsPath() + wxGetApp().PathSeparator() + APPBINNAME + _T( ".magneturi" );
+		wxString filename = wxGetApp().SaveTorrentsPath() + APPBINNAME + _T( ".magneturi" );
 		wxTextFile magneturifile( filename );
 		if( !magneturifile.Exists() )
 		{
@@ -1190,7 +1221,8 @@ void BitTorrentSession::StartTorrent( shared_ptr<torrent_t>& torrent, bool force
 		torrent->config->SetTorrentState(force ? TORRENT_STATE_FORCE_START : TORRENT_STATE_START);
 		torrent->config->Save();
 		ConfigureTorrent(torrent);
-		handle.resume();
+		if(handle.status().paused)
+			handle.resume();
 	}
 }
 
@@ -1211,6 +1243,15 @@ void BitTorrentSession::StopTorrent( shared_ptr<torrent_t>& torrent )
 		torrent->handle = invalid_handle;
 	}
 
+	enum torrent_state state = ( enum torrent_state ) torrent->config->GetTorrentState();
+
+	//XXX redundant ? StartTorrent below will call the same thing
+	if( ( state == TORRENT_STATE_START ) ||
+			( state == TORRENT_STATE_FORCE_START ))
+	{
+		PostQueueUpdateEvent();
+	}
+
 	torrent->config->SetTorrentState( TORRENT_STATE_STOP );
 	torrent->config->Save();
 }
@@ -1219,15 +1260,16 @@ void BitTorrentSession::QueueTorrent( shared_ptr<torrent_t>& torrent )
 {
 	//wxLogInfo(_T("%s: Queue"), torrent->name.c_str());
 	lt::torrent_handle& handle = torrent->handle;
-	/*
-	if(!handle.is_valid())
+
+	if (handle.is_valid())
 	{
-	    AddTorrentSession(torrent);
+		handle.pause();
+	}
+	else
+	{
+		AddTorrentSession(torrent);
 	}
 
-	if(!handle.is_paused() )
-	    handle.pause();
-	*/
 	torrent->config->SetTorrentState( TORRENT_STATE_QUEUE );
 	torrent->config->Save();
 }
@@ -1401,7 +1443,7 @@ void BitTorrentSession::ConfigureTorrent( shared_ptr<torrent_t>& torrent )
 
 			if(oldpath.DirExists())
 			{
-				copysuccess = ( CopyDirectory( oldpath.GetPath(), newpath.GetPath() ) != 0 );
+				copysuccess = ( CopyDirectory( oldpath.GetPath( wxPATH_GET_VOLUME | wxPATH_GET_SEPARATOR ), newpath.GetPath( wxPATH_GET_VOLUME | wxPATH_GET_SEPARATOR ) ) != 0 );
 
 				if( copysuccess )
 				{
@@ -1686,7 +1728,7 @@ void BitTorrentSession::CheckQueueItem()
 #if 0
 					//periodic save fastresume data
 					//
-					wxString fastresumefile = wxGetApp().SaveTorrentsPath() + wxGetApp().PathSeparator() + torrent->hash + _T( ".fastresume" );
+					wxString fastresumefile = wxGetApp().SaveTorrentsPath() + torrent->hash + _T( ".fastresume" );
 					time_t modtime = wxFileModificationTime( fastresumefile );
 
 					if( modtime != -1 )
@@ -1721,7 +1763,7 @@ void BitTorrentSession::CheckQueueItem()
 #if 0
 				//periodic save fastresume data
 				//
-				wxString fastresumefile = wxGetApp().SaveTorrentsPath() + wxGetApp().PathSeparator() + torrent->hash + _T( ".fastresume" );
+				wxString fastresumefile = wxGetApp().SaveTorrentsPath() + torrent->hash + _T( ".fastresume" );
 				time_t modtime = wxFileModificationTime( fastresumefile );
 
 				if( modtime != -1 )
@@ -2017,7 +2059,7 @@ bool BitTorrentSession::HandleAddTorrentAlert(lt::add_torrent_alert *p)
 
 		if(torrent)
 		{
-			//wxString torrent_backup = wxGetApp().SaveTorrentsPath() + wxGetApp().PathSeparator() + torrent->hash + _T( ".torrent" );
+			//wxString torrent_backup = wxGetApp().SaveTorrentsPath() + torrent->hash + _T( ".torrent" );
 			torrent->handle = p->handle;
 			torrent->isvalid = true;
 			enum torrent_state state = ( enum torrent_state ) torrent->config->GetTorrentState();
@@ -2088,7 +2130,7 @@ bool BitTorrentSession::HandleMetaDataAlert(lt::metadata_received_alert *p)
 	if(it != m_running_torrent_map.end())
 	{
 		shared_ptr<torrent_t>& torrent = m_torrent_queue[it->second];
-		wxString torrent_backup = wxGetApp().SaveTorrentsPath() + wxGetApp().PathSeparator() + wxString(torrent->hash) + _T( ".torrent" );
+		wxString torrent_backup = wxGetApp().SaveTorrentsPath() + wxString(torrent->hash) + _T( ".torrent" );
 		torrent->handle = p->handle;
 		torrent->info = p->handle.torrent_file();
 		lt::torrent_status st = p->handle.status(lt::torrent_handle::query_name);

@@ -229,7 +229,6 @@ bool BitSwash::OnInit()
 	m_btinitdone = false;
 	//log to stderr
 	m_logold = wxLog::SetActiveTarget( new wxLogStderr() );
-	wxChar dirsep = wxFileName::GetPathSeparator( wxPATH_NATIVE );
 #ifdef USERDATADIR
 	wxString confDirName = _T( USERDATADIR );
 #elif defined(__WXMSW__)
@@ -243,9 +242,13 @@ bool BitSwash::OnInit()
 		if( !b ) wxLogError( _T( "Failed to create directory " ) + confDirName );
 	}
 	// change working directory to ~/.bitswash
-	wxSetWorkingDirectory( confDirName );
+	filename.AssignDir(confDirName);
+	filename.MakeAbsolute();
+	confDirName = filename.GetPath( wxPATH_GET_VOLUME | wxPATH_GET_SEPARATOR );
+	wxSetWorkingDirectory( confDirName);
 	m_datapath = confDirName;
-	m_configpath = confDirName + dirsep + APPBINNAME + _T( ".conf" );
+	filename.Assign(confDirName, wxString(APPBINNAME) + _T( ".conf" ));
+	m_configpath = filename.GetFullPath();
 	if( !wxFileName::FileExists( m_configpath ) )
 	{
 		wxFile *f = new wxFile();
@@ -268,14 +271,20 @@ bool BitSwash::OnInit()
 	/* end workaround */
 	SetLogLevel();
 	SetLocale( m_config->GetLanguage() );
-	m_dhtstatepath = confDirName +  APPBINNAME + _T( ".dhtstate" );
-	m_savetorrentspath = confDirName + _T( "torrents" ) ;
+	filename.Assign(confDirName, wxString(APPBINNAME) + _T( ".dhtstate" ));
+	m_dhtstatepath = filename.GetFullPath();
+	filename.AssignDir(confDirName);
+	filename.AssignDir(filename.GetPath( wxPATH_GET_VOLUME | wxPATH_GET_SEPARATOR ) + _T( "torrents" ));
+	m_savetorrentspath = filename.GetPath( wxPATH_GET_VOLUME | wxPATH_GET_SEPARATOR );
 	if( !wxFileName::DirExists( m_savetorrentspath ) )
 	{
 		bool b = wxFileName::Mkdir( m_savetorrentspath );
 		if( !b ) wxLogError( _T( "Failed to create directory " ) + m_savetorrentspath );
 	}
-	m_logpath = confDirName + _T( "logs" ) ;
+	
+	filename.AssignDir(confDirName);
+	filename.AssignDir(filename.GetPath( wxPATH_GET_VOLUME | wxPATH_GET_SEPARATOR ) + _T( "logs" ));
+	m_logpath = filename.GetPath( wxPATH_GET_VOLUME | wxPATH_GET_SEPARATOR );
 	if( !wxFileName::DirExists( m_logpath ) )
 	{
 		bool b = wxFileName::Mkdir( m_logpath );
@@ -361,7 +370,6 @@ int BitSwash::OnExit()
 
 void BitSwash::LoadFlags()
 {
-	wxChar dirsep = wxFileName::GetPathSeparator( wxPATH_NATIVE );
     wxMemoryInputStream fstream(&un_bin[0], sizeof(un_bin)/sizeof(un_bin[0]));
 	wxImage empty(fstream);
 	int emptyidx = 0;
@@ -486,7 +494,6 @@ void BitSwash::SetLogLevel()
 void BitSwash::LoadIcons()
 {
 	int i;
-	wxChar dirsep = wxFileName::GetPathSeparator( wxPATH_NATIVE );
 
 	for( i = 0; i < BITSWASH_ICON_MAX; ++i )
 	{
@@ -535,7 +542,7 @@ bool BitSwash::OnCmdLineParsed( wxCmdLineParser& cmdParser )
 
 		//WildCard
 		wxArrayString files;
-		size_t nums = wxDir::GetAllFiles(filename.GetPath(), &files, fname, flags);
+		size_t nums = wxDir::GetAllFiles(filename.GetPath( wxPATH_GET_VOLUME | wxPATH_GET_SEPARATOR ), &files, fname, flags);
 
 		for (size_t i = 0; i < nums; ++i)
 		{

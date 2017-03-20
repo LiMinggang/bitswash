@@ -81,6 +81,7 @@ enum BTS_EVENT_TYPE
 	BTS_EVENT_INVALID = 0,
 	BTS_EVENT_TIMER,
 	BTS_EVENT_ALERT,
+	BTS_EVENT_QUEUEUPDATE,
 	};
 
 typedef wxUint32 bts_event;
@@ -172,6 +173,11 @@ public:
 		{
 			static bts_event lbtAlert(BTS_EVENT_ALERT);
 			PostEvent(lbtAlert);
+		}
+	void PostQueueUpdateEvent()
+		{
+			static bts_event queueChange(BTS_EVENT_QUEUEUPDATE);
+			PostEvent(queueChange);
 		}
 	
 	wxDouble GetDownloadRate() { return m_download_rate; }
