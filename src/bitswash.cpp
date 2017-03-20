@@ -233,7 +233,7 @@ bool BitSwash::OnInit()
 #ifdef USERDATADIR
 	wxString confDirName = _T( USERDATADIR );
 #elif defined(__WXMSW__)
-	wxString confDirName = wxStandardPaths::Get().GetDataDir();
+	wxString confDirName = g_BitSwashAppDir;
 #else
 	wxString confDirName = wxStandardPaths::Get().GetUserDataDir();
 #endif
@@ -268,14 +268,14 @@ bool BitSwash::OnInit()
 	/* end workaround */
 	SetLogLevel();
 	SetLocale( m_config->GetLanguage() );
-	m_dhtstatepath = confDirName + dirsep + APPBINNAME + _T( ".dhtstate" );
-	m_savetorrentspath = confDirName + dirsep + _T( "torrents" ) ;
+	m_dhtstatepath = confDirName +  APPBINNAME + _T( ".dhtstate" );
+	m_savetorrentspath = confDirName + _T( "torrents" ) ;
 	if( !wxFileName::DirExists( m_savetorrentspath ) )
 	{
 		bool b = wxFileName::Mkdir( m_savetorrentspath );
 		if( !b ) wxLogError( _T( "Failed to create directory " ) + m_savetorrentspath );
 	}
-	m_logpath = confDirName + dirsep + _T( "logs" ) ;
+	m_logpath = confDirName + _T( "logs" ) ;
 	if( !wxFileName::DirExists( m_logpath ) )
 	{
 		bool b = wxFileName::Mkdir( m_logpath );

@@ -245,7 +245,7 @@ wxString & GetExecutablePath()
 
 		wxChar buf[512];
 		*buf = wxT('\0');
-		GetModuleFileName(NULL,	buf, 511);
+		GetModuleFileName(NULL, buf, 511);
 		path = buf;
 
 #elif defined(__WXMAC__)

@@ -255,7 +255,9 @@ TorrentSettingPane::TorrentSettingPane( wxWindow* parent, shared_ptr<torrent_t>&
 
 wxString TorrentSettingPane::GetDownloadPath()
 {
-	return m_combo_saveas->GetValue();
+	wxFileName fn;
+	fn.AssignDir(m_combo_saveas->GetValue());
+	return fn.GetPathWithSep();
 }
 
 /*

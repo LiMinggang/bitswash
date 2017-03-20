@@ -102,7 +102,9 @@ void TorrentConfig::Load()
 {
 	wxString tmp_stats;
 	m_qindex = m_cfg->Read( _T( "/Torrent/qindex" ), -1 );
-	m_downloadpath = m_cfg->Read( _T( "/Torrent/downloadpath" ), m_maincfg->GetDownloadPath() );
+	wxFileName fn;
+	fn.AssignDir(m_cfg->Read( _T( "/Torrent/downloadpath" ), m_maincfg->GetDownloadPath() ));
+	m_downloadpath = fn.GetPathWithSep();
 	m_cfg->Read( _T( "/Torrent/compact_alloc" ), &m_compactalloc, m_maincfg->GetCompactAlloc() );
 	m_storagemode = ( lt::storage_mode_t ) m_cfg->Read( _T( "/Torrent/storagemode" ), ( long ) m_maincfg->GetDefaultStorageMode() );
 	m_torrent_state = m_cfg->Read( _T( "/Torrent/state" ), m_maincfg->GetDefaultState() );

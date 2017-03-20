@@ -499,7 +499,7 @@ void FileListCtrl::OnMenuOpenPath( wxCommandEvent& event )
 				lt::file_storage const& allfiles = torrentinfo.files();
 				wxString fname = pTorrent->config->GetDownloadPath() + wxConvUTF8.cMB2WC( torrentinfo.name().c_str() ) + wxFileName::GetPathSeparator() + wxString::FromUTF8((allfiles.file_name(selectedfiles)).c_str());
 				//std::vector<std::string> const& allp = allfiles.paths();
-				wxFileName filename (fname);
+				wxFileName filename(fname);
 				filename.MakeAbsolute();
 				wxLogDebug(_T("File path %s\n"), filename.GetFullPath().c_str());
 #if  defined(__WXMSW__) 

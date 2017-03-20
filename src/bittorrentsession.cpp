@@ -556,11 +556,6 @@ void BitTorrentSession::AddTorrentSession( shared_ptr<torrent_t>& torrent )
 	wxString fastresumefile = wxGetApp().SaveTorrentsPath() + wxGetApp().PathSeparator() + torrent->hash + _T( ".fastresume" );
 	lt::entry resume_data;
 
-	if(m_queue_torrent_set.find(wxString(torrent->hash)) != m_queue_torrent_set.end())
-	{
-		return;
-	}
-
 	if( wxFileExists( fastresumefile ) )
 	{
 		wxLogInfo( _T( "%s: Read fast resume data\n" ), torrent->name.c_str() );
@@ -1176,6 +1171,11 @@ void BitTorrentSession::StartTorrent( shared_ptr<torrent_t>& torrent, bool force
 	wxLogInfo( _T( "%s: Start %s\n" ), torrent->name.c_str(), force ? _T( "force" ) : _T( "" ) );
 	lt::torrent_handle& handle = torrent->handle;
 
+	if(m_queue_torrent_set.find(wxString(torrent->hash)) != m_queue_torrent_set.end())
+	{
+		return;
+	}
+
 	if( !handle.is_valid() || ( ( handle.status(lt::torrent_handle::query_save_path).save_path).empty() ) )
 	{
 		AddTorrentSession( torrent );
@@ -1378,7 +1378,6 @@ void BitTorrentSession::ConfigureTorrent( shared_ptr<torrent_t>& torrent )
 		std::string existdir = h.status(lt::torrent_handle::query_save_path).save_path;
 		wxFileName oldpath, newpath;
 		oldpath.AssignDir(wxString::FromUTF8( existdir.c_str() ) +
-						   wxFileName::GetPathSeparator( wxPATH_NATIVE ) +
 						   wxString( wxConvUTF8.cMB2WC( torrent->info->name().c_str() ) ));
 		newpath.AssignDir(torrent->config->GetDownloadPath() + wxString( wxConvUTF8.cMB2WC( torrent->info->name().c_str() ) ));
 		newpath.MakeAbsolute();
@@ -1449,8 +1448,9 @@ void BitTorrentSession::ConfigureTorrent( shared_ptr<torrent_t>& torrent )
 				wxLogError( _T( "Failed moving save path %s\n" ), torrent->config->GetDownloadPath().c_str() );
 				wxLogWarning( _T( "Restoring download path %s\n" ), oldpath.GetFullPath().c_str() );
 				
-				wxFileName dpath(wxString::FromUTF8( existdir.c_str() ));
-				torrent->config->SetDownloadPath( dpath.GetPath() );
+				wxFileName dpath;
+				dpath.AssignDir(wxString::FromUTF8( existdir.c_str() ));
+				torrent->config->SetDownloadPath( dpath.GetPathWithSep() );
 				torrent->config->Save();
 				if(oldpath.DirExists() && ( ( prev_state == TORRENT_STATE_START ) ||
 						( prev_state == TORRENT_STATE_FORCE_START ) ))
