@@ -146,7 +146,17 @@ wxString TorrentListCtrl::GetItemValue( long item, long columnid ) const
 	switch( columnid )
 	{
 	case TORRENTLIST_COLUMN_INDEX:
-		ret = wxString::Format( _T( "%d" ), torrent->config->GetQIndex() );
+		{
+			int idx = torrent->config->GetQIndex();
+			if(idx >= 0)
+			{
+				ret = wxString::Format( _T( "%d" ), torrent->config->GetQIndex() );
+			}
+			else
+			{
+				ret = wxT("--");
+			}
+		}
 		break;
 
 	case TORRENTLIST_COLUMN_TORRENT:
