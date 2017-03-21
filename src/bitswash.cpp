@@ -343,8 +343,8 @@ int BitSwash::OnExit()
 	if( m_btsession->IsAlive() )
 	{
 		m_btsession->Delete();
-		wxLogDebug( _T( "BitTorrent session exited with code %ld\n" ),
-					( long )m_btsession->Wait() );
+		wxLogDebug( _T( "BitTorrent session exited with code %s\n" ),
+					wxLongLong((wxLongLong_t)m_btsession->Wait()).ToString().c_str() );
 	}
 #if 0
 	for( i = 0; i < BITSWASH_ICON_MAX; i++ )
@@ -418,7 +418,7 @@ int BitSwash::GetCountryFlag( const wxString& code )
 	std::map<wxString, int>::iterator it = CountryCodeIndexMap.find( code );
 	if( it != CountryCodeIndexMap.end() )
 	{
-		wxASSERT( it->second < N_COUNTRY );
+		wxASSERT( (unsigned int)it->second < N_COUNTRY );
 		return CountryFlags[it->second].imgidx;
 	}
 	/*for (i=0; i< N_COUNTRY ; i++)

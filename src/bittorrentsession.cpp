@@ -2066,16 +2066,23 @@ bool BitTorrentSession::HandleAddTorrentAlert(lt::add_torrent_alert *p)
 
 			if( torrent->config->GetQIndex() == -1 )
 			{
-				torrents_t::const_reverse_iterator i = m_torrent_queue.rbegin();
+				torrents_t::const_reverse_iterator it = m_torrent_queue.rbegin();
 
-				if( i == m_torrent_queue.rend() )
+				if( it == m_torrent_queue.rend() )
 				{
 					torrent->config->SetQIndex( 0 );
 				}
 				else
 				{
-					shared_ptr<torrent_t> last_handle = *i;
-					torrent->config->SetQIndex( last_handle->config->GetQIndex() + 1 );
+					while( it != m_torrent_queue.rend() )
+					{
+						if((*it)->config->GetQIndex() != -1)
+						{
+							torrent->config->SetQIndex( (*it)->config->GetQIndex() + 1 );
+							break;
+						}
+						++it;
+					}
 				}
 			}
 
