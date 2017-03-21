@@ -268,8 +268,8 @@ TorrentSettingPane::TorrentSettingPane( wxWindow* parent, shared_ptr<torrent_t>&
 	
 	//parent->Layout();
 	//m_torrentsettings_sizer->Fit(this);
-	Bind( wxEVT_COMMAND_BUTTON_CLICKED,  &TorrentSettingPane::OnFileButton, this, ID_SHOW_DIRECTORY );
-	Bind( wxEVT_COMMAND_TEXT_UPDATED,  &TorrentSettingPane::OnSaveDirectoryChanged, this, ID_TORRENT_DIRECTORY );
+	Bind( wxEVT_BUTTON,  &TorrentSettingPane::OnFileButton, this, ID_SHOW_DIRECTORY );
+	Bind( wxEVT_TEXT,  &TorrentSettingPane::OnSaveDirectoryChanged, this, ID_TORRENT_DIRECTORY );
 }
 
 wxString TorrentSettingPane::GetDownloadPath()

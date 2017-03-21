@@ -243,6 +243,7 @@ private:
 	long m_prevselecteditem;
 	bool m_closed;
 	MagnetUriHanlder* m_magneturi_handler;
+
 	DECLARE_EVENT_TABLE()
 };
 

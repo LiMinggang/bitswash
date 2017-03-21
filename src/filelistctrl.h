@@ -32,8 +32,6 @@
 
 #include <libtorrent/torrent_handle.hpp>
 
-
-
 #define ID_FILELIST_CTRL_START wxID_HIGHEST + 1
 
 #include "swashlistctrl.h"
@@ -62,6 +60,12 @@ protected:
 	// FileListCtrl variables
 
 private:
+	typedef struct 
+	{
+		const long evtTag;
+		void (FileListCtrl::*method)( wxCommandEvent &);
+	} wxCmdEvtHandlerMap_t;
+
 	wxString GetItemValue(long item, long columnid) const;
 	void ShowContextMenu(const wxPoint& pos);
 	void OnMenuPriority(wxCommandEvent &event);
@@ -69,9 +73,19 @@ private:
 	shared_ptr<torrent_t> m_pTorrent;
 	wxImageList m_imageList;
     wxMenu m_contextmenu;
+	static wxCmdEvtHandlerMap_t m_menuItems[];
+
+	static const long FILELISTCTRL_MENU_PRIORITY0;
+	static const long FILELISTCTRL_MENU_PRIORITY1;
+	static const long FILELISTCTRL_MENU_PRIORITY2;
+	static const long FILELISTCTRL_MENU_PRIORITY3;
+	static const long FILELISTCTRL_MENU_PRIORITY4;
+	static const long FILELISTCTRL_MENU_PRIORITY5;
+	static const long FILELISTCTRL_MENU_PRIORITY6;
+	static const long FILELISTCTRL_MENU_PRIORITY7;
+	static const long FILELISTCTRL_MENU_OPENPATH;
 
 	DECLARE_NO_COPY_CLASS(FileListCtrl)
-	DECLARE_EVENT_TABLE()
 };	
 	
 	

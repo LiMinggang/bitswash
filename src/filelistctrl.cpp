@@ -36,33 +36,30 @@
 
 namespace lt = libtorrent;
 
-enum
-{
-	FILELISTCTRL_MENU_PRIORITY0 = 10000,
-	FILELISTCTRL_MENU_PRIORITY1,
-	FILELISTCTRL_MENU_PRIORITY2,
-	FILELISTCTRL_MENU_PRIORITY3,
-	FILELISTCTRL_MENU_PRIORITY4,
-	FILELISTCTRL_MENU_PRIORITY5,
-	FILELISTCTRL_MENU_PRIORITY6,
-	FILELISTCTRL_MENU_PRIORITY7,
-	FILELISTCTRL_MENU_OPENPATH,
-};
+const long FileListCtrl::FILELISTCTRL_MENU_PRIORITY0 = wxNewId();
+const long FileListCtrl::FILELISTCTRL_MENU_PRIORITY1 = wxNewId();
+const long FileListCtrl::FILELISTCTRL_MENU_PRIORITY2 = wxNewId();
+const long FileListCtrl::FILELISTCTRL_MENU_PRIORITY3 = wxNewId();
+const long FileListCtrl::FILELISTCTRL_MENU_PRIORITY4 = wxNewId();
+const long FileListCtrl::FILELISTCTRL_MENU_PRIORITY5 = wxNewId();
+const long FileListCtrl::FILELISTCTRL_MENU_PRIORITY6 = wxNewId();
+const long FileListCtrl::FILELISTCTRL_MENU_PRIORITY7 = wxNewId();
+const long FileListCtrl::FILELISTCTRL_MENU_OPENPATH = wxNewId();
 
-BEGIN_EVENT_TABLE( FileListCtrl, SwashListCtrl )
-	EVT_MENU( FILELISTCTRL_MENU_PRIORITY0, FileListCtrl::OnMenuPriority )
-	EVT_MENU( FILELISTCTRL_MENU_PRIORITY1, FileListCtrl::OnMenuPriority )
-	EVT_MENU( FILELISTCTRL_MENU_PRIORITY2, FileListCtrl::OnMenuPriority )
-	EVT_MENU( FILELISTCTRL_MENU_PRIORITY3, FileListCtrl::OnMenuPriority )
-	EVT_MENU( FILELISTCTRL_MENU_PRIORITY4, FileListCtrl::OnMenuPriority )
-	EVT_MENU( FILELISTCTRL_MENU_PRIORITY5, FileListCtrl::OnMenuPriority )
-	EVT_MENU( FILELISTCTRL_MENU_PRIORITY6, FileListCtrl::OnMenuPriority )
-	EVT_MENU( FILELISTCTRL_MENU_PRIORITY7, FileListCtrl::OnMenuPriority )
-	EVT_MENU( FILELISTCTRL_MENU_OPENPATH,  FileListCtrl::OnMenuOpenPath )
-	EVT_LEFT_DOWN(FileListCtrl::OnLeftDown)
-END_EVENT_TABLE()
 // FileListCtrl
 
+FileListCtrl::wxCmdEvtHandlerMap_t FileListCtrl::m_menuItems[]=
+{
+	{FILELISTCTRL_MENU_PRIORITY0, &FileListCtrl::OnMenuPriority},
+	{FILELISTCTRL_MENU_PRIORITY1, &FileListCtrl::OnMenuPriority},
+	{FILELISTCTRL_MENU_PRIORITY2, &FileListCtrl::OnMenuPriority},
+	{FILELISTCTRL_MENU_PRIORITY3, &FileListCtrl::OnMenuPriority},
+	{FILELISTCTRL_MENU_PRIORITY4, &FileListCtrl::OnMenuPriority},
+	{FILELISTCTRL_MENU_PRIORITY5, &FileListCtrl::OnMenuPriority},
+	{FILELISTCTRL_MENU_PRIORITY6, &FileListCtrl::OnMenuPriority},
+	{FILELISTCTRL_MENU_PRIORITY7, &FileListCtrl::OnMenuPriority},
+	{FILELISTCTRL_MENU_OPENPATH,  &FileListCtrl::OnMenuOpenPath},
+};
 
 enum torrentlistcolumnid
 {
@@ -117,6 +114,11 @@ FileListCtrl::FileListCtrl( wxWindow *parent,
     m_contextmenu.Append( FILELISTCTRL_MENU_PRIORITY7, _( "Highest Priority" ) );
 	m_contextmenu.AppendSeparator();
     m_contextmenu.Append( FILELISTCTRL_MENU_OPENPATH, _( "Open containing folder" ) );
+	for(size_t i = 0; i < sizeof(filelistcols)/sizeof(filelistcols[0]); ++i)
+	{
+		Bind( wxEVT_MENU, m_menuItems[i].method, this, m_menuItems[i].evtTag );
+	}
+	Bind( wxEVT_LEFT_DOWN, &FileListCtrl::OnLeftDown, this );
 }
 
 FileListCtrl::~FileListCtrl()
