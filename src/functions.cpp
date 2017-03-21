@@ -54,7 +54,6 @@ wxString HumanReadableByte(wxDouble byte)
 	vl = byte;
 	for (i=0; i< MAX_UNITS ; i++) 
 	{
-
 		if (byte < ivl ) break;
 
 		vl = byte / ivl ;

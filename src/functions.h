@@ -20,6 +20,7 @@
 
 #include <wx/wx.h>
 #include <wx/string.h>
+#include <wx/event.h>
 
 wxString HumanReadableByte(wxDouble byte);
 wxString HumanReadableTime(unsigned long second);
