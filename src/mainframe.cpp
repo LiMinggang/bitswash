@@ -602,7 +602,7 @@ void MainFrame::ReceiveTorrent( wxString fileorurl )
 {
 	if( g_BitSwashMainFrame )
 	{
-		wxStringTokenizer tkz( fileorurl, ' ' );
+		wxStringTokenizer tkz( fileorurl, '|' );
 		wxString filename;
 
 		while( tkz.HasMoreTokens() )
