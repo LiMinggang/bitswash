@@ -668,7 +668,7 @@ void MainFrame::OpenTorrent()
 {
 	wxString wildcards =
 #ifdef __WXMOTIF__
-		_T( "Torrent files (*.torrent)|*.torrent|All files (%s)|%s" );
+		_T( "Torrent files (*.torrent)|*.torrent|All files (*)|*" );
 #else
 		wxString::Format(
 			_T( "Torrent files (*.torrent)|*.torrent|All files (%s)|%s" ),
