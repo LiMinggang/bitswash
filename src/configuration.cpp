@@ -146,8 +146,6 @@ void Configuration::Save()
 	m_cfg->Write( _T( "/Session/free_torrent_hashes" ), m_free_torrent_hashes );
 	//legacy
 	//if( m_storagemode != lt::storage_mode_compact )
-		m_compactalloc = false;
-	m_cfg->Write( _T( "/Torrent/compact_alloc" ), ( bool )m_compactalloc );
 	m_cfg->Write( _T( "/Torrent/storagemode" ), ( long )m_storagemode );
 	m_cfg->Write( _T( "/Torrent/global_upload_limit" ), m_global_upload_limit );
 	m_cfg->Write( _T( "/Torrent/global_download_limit" ), m_global_download_limit );
@@ -189,10 +187,15 @@ void Configuration::Save()
 void Configuration::Load()
 {
 #ifdef __WXMSW__
-	wxString def_download_path = wxStandardPaths::Get().GetDataDir() + wxFileName::GetPathSeparator() + _T( "Downloads" );
+	wxString def_download_path = wxStandardPaths::Get().GetDataDir();
 #else
-	wxString def_download_path = wxStandardPaths::Get().GetUserConfigDir() + wxFileName::GetPathSeparator() + _T( "Downloads" );
+	wxString def_download_path = wxStandardPaths::Get().GetUserConfigDir();
 #endif
+	wxFileName dn;
+	dn.AssignDir(def_download_path);
+	dn.AssignDir(dn.GetPath(wxPATH_GET_VOLUME | wxPATH_GET_SEPARATOR) + _T("Downloads"));
+	def_download_path = dn.GetPath(wxPATH_GET_VOLUME | wxPATH_GET_SEPARATOR);
+
 	//GUI
 	int default_width = wxSystemSettings::GetMetric( wxSYS_SCREEN_X );
 	int default_height = wxSystemSettings::GetMetric( wxSYS_SCREEN_Y ) ;
@@ -273,7 +276,6 @@ void Configuration::Load()
 	m_language = m_cfg->Read( _T( "/Config/language" ), _T( "" ) );
 	//session
 	//
-	m_cfg->Read( _T( "/Torrent/compact_alloc" ), &m_compactalloc, false );
 	m_tracker_completion_timeout = m_cfg->Read( _T( "/Session/tracker_completion_timeout" ), 60 );
 	m_tracker_receive_timeout = m_cfg->Read( _T( "/Session/tracker_receive_timeout" ), 20 );
 	m_stop_tracker_timeout = m_cfg->Read( _T( "/Session/stop_tracker_timeout" ), 5 );

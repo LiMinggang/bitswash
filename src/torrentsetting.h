@@ -36,21 +36,12 @@
 #include "configuration.h"
 #include "autosizeinput.h"
 
-#ifndef ID_TORRENTSETTING_START
-#define ID_TORRENTSETTING_START wxID_HIGHEST
-#endif
-
 class TorrentSettingPane : public wxPanel
 {
 	public:
-		enum {
-			ID_TORRENTSETTING_FILEBUTTON = ID_TORRENTSETTING_START
-		};
 		TorrentSettingPane( wxWindow* parent, shared_ptr<torrent_t>& pTorrent = shared_ptr<torrent_t>(), int id = wxID_ANY, wxPoint pos = wxDefaultPosition, wxSize size = wxDefaultSize, int style = wxTAB_TRAVERSAL);
 
 		wxString GetDownloadPath();
-		/* libtorrent r1749 */
-		//bool GetCompactAlloc();
 		libtorrent::storage_mode_t GetStorageMode();
 
 		bool GetStartTorrent();
@@ -65,12 +56,17 @@ class TorrentSettingPane : public wxPanel
 	private:
 		shared_ptr<torrent_t> m_pTorrent;
 		void OnFileButton(wxCommandEvent& event);
+		void OnSaveDirectoryChanged(wxCommandEvent& event);
 		/* torrent settings */
 		wxPanel* m_pane_info1;
 		wxStaticText* m_pane_label_settings;
 				
 		wxStaticText* m_staticStorageMode;
 		wxStaticText* m_staticSaveAs;
+		
+		wxStaticText* m_label_diskfreespace;
+		wxStaticText* m_label_freespace;
+
 		wxComboBox* m_combo_saveas;
 		wxButton* m_button_showdir;
 		/* libtorrent r1749 */
@@ -91,8 +87,17 @@ class TorrentSettingPane : public wxPanel
 
 		AutoSizeInput* m_autoDownLimit;
 		AutoSizeInput* m_autoUpLimit;
-		
-	DECLARE_EVENT_TABLE()
+
+		static const long ID_STATICTEXT7;
+		static const long ID_STATICTEXT8;
+		static const long ID_BWLIST_CTRL_START;
+		static const long ID_FLIST_CTRL_START;
+		static const long ID_PLIST_CTRL_START;
+		static const long ID_TORRENTSETTING_START;
+		static const long ID_SETTINGS_START;
+		static const long ID_SHOW_DIRECTORY;
+		static const long ID_TORRENT_DIRECTORY;
+	//DECLARE_EVENT_TABLE()
 };
 
 

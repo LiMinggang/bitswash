@@ -143,9 +143,6 @@ class Configuration : public wxFileConfig
 
         // libtorrent
 
-		bool GetCompactAlloc() { return m_compactalloc; }
-		void SetCompactAlloc(bool compactalloc) { m_compactalloc = compactalloc; } 
-
 		libtorrent::storage_mode_t GetDefaultStorageMode() { return m_storagemode; }
 		void SetDefaultStorageMode(libtorrent::storage_mode_t storagemode) { m_storagemode = storagemode; } 
 
@@ -382,7 +379,6 @@ class Configuration : public wxFileConfig
 		wxString m_language;
 	
         	//Session
-		bool 	m_compactalloc;
 		libtorrent::storage_mode_t m_storagemode;
 		int 	m_global_upload_limit; 
 		int 	m_global_download_limit;

@@ -42,12 +42,6 @@ using std::shared_ptr;
 
 #include <libtorrent/session.hpp>
 
-#define ID_BWLIST_CTRL_START wxID_HIGHEST + 100
-#define ID_FLIST_CTRL_START wxID_HIGHEST + 200
-#define ID_PLIST_CTRL_START wxID_HIGHEST + 300
-#define ID_TORRENTSETTING_START wxID_HIGHEST + 400
-#define ID_SETTINGS_START wxID_HIGHEST + 500
-
 #ifdef __WXMSW__
 	#include <wx/msw/winundef.h>
 #endif

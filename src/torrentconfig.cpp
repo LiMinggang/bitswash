@@ -71,11 +71,6 @@ void TorrentConfig::Save()
 	m_cfg->Write( _T( "/Torrent/qindex" ), m_qindex );
 	m_cfg->Write( _T( "/Torrent/downloadpath" ), m_downloadpath );
 
-	/* legacy */
-	//if( m_storagemode != lt::storage_mode_compact )
-	{ m_compactalloc = false; }
-
-	m_cfg->Write( _T( "/Torrent/compact_alloc" ), ( bool )m_compactalloc );
 	m_cfg->Write( _T( "/Torrent/storagemode" ), ( long )m_storagemode );
 	m_cfg->Write( _T( "/Torrent/state" ), m_torrent_state );
 	m_cfg->Write( _T( "/Torrent/ratio" ), m_torrent_ratio );
@@ -105,7 +100,6 @@ void TorrentConfig::Load()
 	wxFileName fn;
 	fn.AssignDir(m_cfg->Read( _T( "/Torrent/downloadpath" ), m_maincfg->GetDownloadPath() ));
 	m_downloadpath = fn.GetPathWithSep();
-	m_cfg->Read( _T( "/Torrent/compact_alloc" ), &m_compactalloc, m_maincfg->GetCompactAlloc() );
 	m_storagemode = ( lt::storage_mode_t ) m_cfg->Read( _T( "/Torrent/storagemode" ), ( long ) m_maincfg->GetDefaultStorageMode() );
 	m_torrent_state = m_cfg->Read( _T( "/Torrent/state" ), m_maincfg->GetDefaultState() );
 	m_torrent_ratio = m_cfg->Read( _T( "/Torrent/ratio" ), m_maincfg->GetDefaultRatio() );

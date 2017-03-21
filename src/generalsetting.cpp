@@ -85,8 +85,6 @@ GeneralSettingPane::GeneralSettingPane( wxWindow* parent,
 	
 	fgSizerGeneral->AddSpacer( 5 );
 
-//	fgSizerGeneral->AddSpacer( 5 );
-
 	m_static_fastresume_save_time= new wxStaticText( this, wxID_ANY, _("Save Fastresume every (s):"), wxDefaultPosition, wxDefaultSize, 0 );
 	
 	fgSizerGeneral->Add( m_static_fastresume_save_time, 0, wxALL|wxALIGN_CENTER_VERTICAL, 5 );
@@ -113,7 +111,7 @@ GeneralSettingPane::GeneralSettingPane( wxWindow* parent,
 
 	m_check_runatstartup->SetValue(m_pcfg->GetRunAtStartup());
 	
-	fgSizerGeneral->Add( m_check_runatstartup, 0, wxALL, 5 );	
+	fgSizerGeneral->Add( m_check_runatstartup, 0, wxALL, 5 );
 #endif
 
 	fgSizerGeneral->AddSpacer( 5 );

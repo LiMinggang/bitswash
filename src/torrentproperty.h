@@ -26,9 +26,11 @@ class TorrentProperty: public wxDialog
 
 		//(*Declarations(TorrentProperty)
 		wxStaticText* m_label_comment;
+		wxStaticText* m_label_diskfreespace;
 		wxPanel* m_pane_info;
 		wxPanel* Panel1;
 		wxStaticText* m_label_torrentsize;
+		wxStaticText* m_label_freespace;
 		wxStaticText* m_label_torrentname;
 		wxNotebook* m_notebook_property;
 		wxStaticText* m_label_size;
@@ -50,6 +52,8 @@ class TorrentProperty: public wxDialog
 		static const long ID_TEXTCTRL1;
 		static const long ID_STATICTEXT5;
 		static const long ID_STATICTEXT6;
+		static const long ID_STATICTEXT7;
+		static const long ID_STATICTEXT8;
 		static const long ID_NOTEBOOK1;
 		static const long ID_BUTTONDOWNLOADNONE;
 		static const long ID_BUTTONDOWNLOADALL;

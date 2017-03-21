@@ -155,11 +155,9 @@ void *BitTorrentSession::Entry()
 
 	do
 	{
-		wxLogDebug( _T( "BitTorrentSession Thread Receive queue\n" ));
 		result = m_evt_queue.ReceiveTimeout( 1000, evt );
 		if(result == wxMSGQUEUE_NO_ERROR)
 		{
-			wxLogDebug( _T( "BitTorrentSession Thread BT Alert\n!" ));
 			switch(evt)
 			{
 				case BTS_EVENT_ALERT:
@@ -174,7 +172,7 @@ void *BitTorrentSession::Entry()
 				}
 				default:
 					break;
-			}				
+			}
 		}
 
 		if(!check_now)
@@ -187,15 +185,12 @@ void *BitTorrentSession::Entry()
 		if(check_now)
 		{
 			//DumpTorrents();
-			wxLogDebug( _T( "BitTorrentSession check item\n" ));
 			CheckQueueItem();
-			wxLogDebug( _T( "BitTorrentSession check item done\n" ));
 			starttime = wxDateTime::GetTimeNow();
 		}
 
 		if( TestDestroy() )
 		{ break; }
-		wxLogDebug( _T( "BitTorrentSession Thread Receive queue done\n" ));
 	}
 	while(result != wxMSGQUEUE_MISC_ERROR);
 
@@ -623,10 +618,6 @@ void BitTorrentSession::AddTorrentSession( shared_ptr<torrent_t>& torrent )
 		case lt::storage_mode_sparse:
 			strStorageMode = _( "Sparse" );
 			break;
-
-		/*case lt::storage_mode_compact:
-			strStorageMode = _( "Compact" );
-			break;*/
 
 		default:
 			eStorageMode = lt::storage_mode_sparse;

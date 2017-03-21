@@ -22,6 +22,8 @@ const long TorrentProperty::ID_STATICTEXT4 = wxNewId();
 const long TorrentProperty::ID_TEXTCTRL1 = wxNewId();
 const long TorrentProperty::ID_STATICTEXT5 = wxNewId();
 const long TorrentProperty::ID_STATICTEXT6 = wxNewId();
+const long TorrentProperty::ID_STATICTEXT7 = wxNewId();
+const long TorrentProperty::ID_STATICTEXT8 = wxNewId();
 const long TorrentProperty::ID_NOTEBOOK1 = wxNewId();
 const long TorrentProperty::ID_BUTTONDOWNLOADNONE = wxNewId();
 const long TorrentProperty::ID_BUTTONDOWNLOADALL = wxNewId();
@@ -84,6 +86,11 @@ TorrentProperty::TorrentProperty(shared_ptr<torrent_t>& pTorrent, wxWindow* pare
 	wxString t_size = HumanReadableByte((wxDouble)torrent_info.total_size());
 	m_label_torrentsize = new wxStaticText(this, ID_STATICTEXT6, t_size, wxDefaultPosition, wxDefaultSize, 0, _T("ID_STATICTEXT6"));
 	fgSizer11->Add(m_label_torrentsize, 1, wxALL|wxEXPAND, 5);
+	m_label_freespace = new wxStaticText(this, ID_STATICTEXT7, _("Disk Free Space:"), wxDefaultPosition, wxDefaultSize, 0, _T("ID_STATICTEXT7"));
+	fgSizer11->Add(m_label_freespace, 1, wxALL|wxALIGN_LEFT|wxALIGN_CENTER_VERTICAL, 5);
+	
+	m_label_diskfreespace = new wxStaticText(this, ID_STATICTEXT8, _("0 Byte(s)"), wxDefaultPosition, wxDefaultSize, 0, _T("ID_STATICTEXT8"));
+	fgSizer11->Add(m_label_diskfreespace, 1, wxALL|wxALIGN_LEFT|wxALIGN_CENTER_VERTICAL, 5);
 	m_torrentsettings_sizer->Add(fgSizer11, 0, wxALL|wxEXPAND, 5);
 	m_notebook_property = new wxNotebook(this, ID_NOTEBOOK1, wxDefaultPosition, wxDefaultSize, 0, _T("ID_NOTEBOOK1"));
 	m_notebook_property->SetMinSize( wxSize( 400,-1 ) );
@@ -102,6 +109,28 @@ TorrentProperty::TorrentProperty(shared_ptr<torrent_t>& pTorrent, wxWindow* pare
 	
 	m_notebook_property->SetSelection(0);
 	m_torrentsettings_sizer->Add( m_notebook_property, 1, wxEXPAND | wxALL, 5 );
+
+	if(m_panel_settings->GetDownloadPath() != wxEmptyString)
+	{
+		wxFileName fdir;
+		fdir.AssignDir(m_panel_settings->GetDownloadPath()); // make sure we got path seperator at the end
+		fdir.MakeAbsolute();
+		size_t dcount = fdir.GetDirCount( );
+		while(dcount-- > 0)
+		{
+			if(!fdir.DirExists()) fdir.RemoveLastDir();
+			else break;
+		}
+		if(fdir.DirExists())
+		{
+			wxLongLong free(0);  
+			if(wxGetDiskSpace( fdir.GetPathWithSep(), NULL, &free))
+			{
+				m_label_diskfreespace->SetLabelText(HumanReadableByte(wxDouble(free.ToDouble())));
+			}
+		}
+	}
+
 	BoxSizer1 = new wxBoxSizer(wxHORIZONTAL);
 	ButtonSelectNone = new wxButton(this, ID_BUTTONDOWNLOADNONE, _("Select None"), wxDefaultPosition, wxDefaultSize, 0, wxDefaultValidator, _T("ID_BUTTONSELECTNONE"));
 	BoxSizer1->Add(ButtonSelectNone, 0, wxALL|wxALIGN_CENTER_HORIZONTAL|wxALIGN_CENTER_VERTICAL, 5);

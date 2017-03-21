@@ -34,9 +34,15 @@ namespace lt = libtorrent;
 
 //CLASS TorrentSettingPane
 //
-BEGIN_EVENT_TABLE(TorrentSettingPane, wxPanel)
-	EVT_BUTTON(10000, TorrentSettingPane::OnFileButton)
-END_EVENT_TABLE()
+const long TorrentSettingPane::ID_STATICTEXT7 = wxNewId();
+const long TorrentSettingPane::ID_STATICTEXT8 = wxNewId();
+const long TorrentSettingPane::ID_BWLIST_CTRL_START = wxNewId();
+const long TorrentSettingPane::ID_FLIST_CTRL_START = wxNewId();
+const long TorrentSettingPane::ID_PLIST_CTRL_START = wxNewId();
+const long TorrentSettingPane::ID_TORRENTSETTING_START = wxNewId();
+const long TorrentSettingPane::ID_SETTINGS_START = wxNewId();
+const long TorrentSettingPane::ID_SHOW_DIRECTORY = wxNewId();
+const long TorrentSettingPane::ID_TORRENT_DIRECTORY = wxNewId();
 
 TorrentSettingPane::TorrentSettingPane( wxWindow* parent, shared_ptr<torrent_t>& pTorrent, int id, wxPoint pos, wxSize size, int style) : 
 		wxPanel(parent, id, pos, size, style)
@@ -68,7 +74,7 @@ TorrentSettingPane::TorrentSettingPane( wxWindow* parent, shared_ptr<torrent_t>&
 	m_torrentsettings_sizer->Add( m_pane_info1, 1, wxEXPAND | wxALL, 5 );
 
 	wxFlexGridSizer* fgSaveAs;
-	fgSaveAs = new wxFlexGridSizer( 1, 3, 5, 5 );
+	fgSaveAs = new wxFlexGridSizer( 0, 3, 5, 5 );
 	fgSaveAs->AddGrowableCol( 1 );
 	fgSaveAs->SetFlexibleDirection( wxBOTH );
 	
@@ -78,7 +84,7 @@ TorrentSettingPane::TorrentSettingPane( wxWindow* parent, shared_ptr<torrent_t>&
 	std::vector<wxString>& historypath = pcfg->GetSavePathHistory();
 	
 	wxString t_saveas = m_pTorrent?m_pTorrent->config->GetDownloadPath():pcfg->GetDownloadPath();
-	m_combo_saveas = new wxComboBox( this, wxID_ANY, t_saveas, wxDefaultPosition, wxDefaultSize, 0, NULL, 0 );
+	m_combo_saveas = new wxComboBox( this, ID_TORRENT_DIRECTORY, t_saveas, wxDefaultPosition, wxDefaultSize, 0, NULL, 0 );
 	
 	m_combo_saveas->SetMinSize(wxSize(260,-1));
 	m_combo_saveas->Append( t_saveas );
@@ -94,9 +100,38 @@ TorrentSettingPane::TorrentSettingPane( wxWindow* parent, shared_ptr<torrent_t>&
 	m_combo_saveas->SetValue(t_saveas);
 	fgSaveAs->Add( m_combo_saveas, 0, wxALL, 5 );
 	
-	m_button_showdir = new wxButton( this, 10000, wxT("..."), wxDefaultPosition, wxSize( 30,-1 ), 0 );
+	m_button_showdir = new wxButton( this, ID_SHOW_DIRECTORY, wxT("..."), wxDefaultPosition, wxSize( 30,-1 ), 0 );
 	fgSaveAs->Add( m_button_showdir, 0, wxALL, 5 );
 	
+	m_label_freespace = new wxStaticText(this, ID_STATICTEXT7, _("Disk Free Space:"), wxDefaultPosition, wxDefaultSize, 0, _T("ID_STATICTEXT7"));
+	fgSaveAs->Add(m_label_freespace, 1, wxALL|wxALIGN_LEFT|wxALIGN_CENTER_VERTICAL, 5);
+
+	wxString downloadPath = m_combo_saveas->GetValue(), freeSpace = _("0 Byte(s)");
+	if(downloadPath != wxEmptyString)
+	{
+		wxFileName fdir;
+		fdir.AssignDir(downloadPath); // make sure we got path seperator at the end
+		fdir.MakeAbsolute();
+		size_t dcount = fdir.GetDirCount( );
+		while(dcount-- > 0)
+		{
+			if(!fdir.DirExists()) fdir.RemoveLastDir();
+			else break;
+		}
+
+		if(fdir.DirExists())
+		{
+			wxLongLong free(0);  
+			if(wxGetDiskSpace( fdir.GetPathWithSep(), NULL, &free))
+			{
+				freeSpace = HumanReadableByte(wxDouble(free.ToDouble()));
+			}
+		}
+	}
+
+	m_label_diskfreespace = new wxStaticText(this, ID_STATICTEXT8, freeSpace, wxDefaultPosition, wxDefaultSize, 0, _T("ID_STATICTEXT8"));
+	fgSaveAs->Add(m_label_diskfreespace, 1, wxALL|wxALIGN_LEFT|wxALIGN_CENTER_VERTICAL, 5);
+
 	fgTorrentSettings->Add( fgSaveAs, 1, wxEXPAND, 5 );
 	
 	wxFlexGridSizer* fgCompact;
@@ -163,24 +198,11 @@ TorrentSettingPane::TorrentSettingPane( wxWindow* parent, shared_ptr<torrent_t>&
 	
 	m_arrStorageMode.Add(_("Full"));
 	m_arrStorageMode.Add(_("Sparse"));
-//	m_arrStorageMode.Add(_("Compact"));
 
 	m_combo_storagemode = new wxComboBox( this, wxID_ANY, wxEmptyString, wxDefaultPosition, wxSize(80,-1), m_arrStorageMode, wxCB_READONLY );
 	
 	/* legacy */
-	bool bCompactMode = false;
-	enum lt::storage_mode_t e_storagemode = lt::storage_mode_sparse;
-
-	/*bCompactMode = m_pTorrent?m_pTorrent->config->GetTorrentCompactAlloc():pcfg->GetCompactAlloc();
-
-	if(bCompactMode)
-	{
-		e_storagemode = lt::storage_mode_compact;
-	}
-	else*/
-	{
-		e_storagemode = m_pTorrent?m_pTorrent->config->GetTorrentStorageMode():pcfg->GetDefaultStorageMode();
-	}
+	enum lt::storage_mode_t e_storagemode = m_pTorrent?m_pTorrent->config->GetTorrentStorageMode():pcfg->GetDefaultStorageMode();
 
 	wxString strStorageMode;
 	switch (e_storagemode)
@@ -191,9 +213,6 @@ TorrentSettingPane::TorrentSettingPane( wxWindow* parent, shared_ptr<torrent_t>&
 		case lt::storage_mode_sparse:
 			strStorageMode = _("Sparse");
 			break;
-		/*case lt::storage_mode_compact:
-			strStorageMode = _("Compact");
-			break;*/
 		default:
 			strStorageMode = _("Sparse");
 			break;
@@ -247,10 +266,10 @@ TorrentSettingPane::TorrentSettingPane( wxWindow* parent, shared_ptr<torrent_t>&
 
 	//parent->SetSizer( m_torrentsettings_sizer );
 	
-
 	//parent->Layout();
 	//m_torrentsettings_sizer->Fit(this);
-
+	Bind( wxEVT_COMMAND_BUTTON_CLICKED,  &TorrentSettingPane::OnFileButton, this, ID_SHOW_DIRECTORY );
+	Bind( wxEVT_COMMAND_TEXT_UPDATED,  &TorrentSettingPane::OnSaveDirectoryChanged, this, ID_TORRENT_DIRECTORY );
 }
 
 wxString TorrentSettingPane::GetDownloadPath()
@@ -331,4 +350,29 @@ void TorrentSettingPane::OnFileButton(wxCommandEvent& event)
 
 }
 
+void TorrentSettingPane::OnSaveDirectoryChanged(wxCommandEvent& event)
+{
+	wxString downloadPath = m_combo_saveas->GetValue();
+	if(downloadPath != wxEmptyString)
+	{
+		wxFileName fdir;
+		fdir.AssignDir(downloadPath); // make sure we got path seperator at the end
+		fdir.MakeAbsolute();
+		size_t dcount = fdir.GetDirCount( );
+		while(dcount-- > 0)
+		{
+			if(!fdir.DirExists()) fdir.RemoveLastDir();
+			else break;
+		}
+
+		if(fdir.DirExists())
+		{
+			wxLongLong free(0);  
+			if(wxGetDiskSpace( fdir.GetPathWithSep(), NULL, &free))
+			{
+				m_label_diskfreespace->SetLabelText(HumanReadableByte(wxDouble(free.ToDouble())));
+			}
+		}
+	}
+}
 
