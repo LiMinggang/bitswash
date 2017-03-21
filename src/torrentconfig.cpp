@@ -77,6 +77,8 @@ void TorrentConfig::Save()
 	m_cfg->Write( _T( "/Torrent/upload_limit" ), m_torrent_upload_limit );
 	m_cfg->Write( _T( "/Torrent/download_limit" ), m_torrent_download_limit );
 	m_cfg->Write( _T( "/Torrent/max_connections" ), m_torrent_max_connections );
+	m_cfg->Write( _T( "/Torrent/selected_size_h" ), wxLongLong(m_selected_file_size).GetHi() );
+	m_cfg->Write( _T( "/Torrent/selected_size_l" ), wxLongLong(m_selected_file_size).GetLo() );
 
 	if( m_torrent_max_uploads < 2 ) { m_torrent_max_uploads = 2; }
 
@@ -106,6 +108,11 @@ void TorrentConfig::Load()
 	m_torrent_upload_limit = m_cfg->Read( _T( "/Torrent/upload_limit" ), m_maincfg->GetDefaultUploadLimit() );
 	m_torrent_download_limit = m_cfg->Read( _T( "/Torrent/download_limit" ), m_maincfg->GetDefaultDownloadLimit() );
 	m_torrent_max_connections = m_cfg->Read( _T( "/Torrent/max_connections" ), m_maincfg->GetMaxConnections() );
+
+	long s_hi = m_cfg->Read( _T( "/Torrent/selected_size_h" ), 0L );
+	unsigned long s_lo = m_cfg->Read( _T( "/Torrent/selected_size_l" ), 0L );
+	if(s_hi || s_lo) m_selected_file_size = wxLongLong(s_hi, s_lo).GetValue();
+
 	m_torrent_max_uploads = m_cfg->Read( _T( "/Torrent/max_uploads" ), m_maincfg->GetMaxUploads() );
 
 	if( m_torrent_max_uploads < 2 ) { m_torrent_max_uploads = 2; }

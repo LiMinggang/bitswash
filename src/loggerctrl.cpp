@@ -54,8 +54,6 @@ LoggerCtrl::LoggerCtrl( wxWindow *parent, wxLog* oldlog,
 	: wxPanel( parent, id, pos, size, style ),
 	  m_issuspend( 0 )
 {
-	int w, h;
-	GetClientSize( &w, &h );
 	m_oldlog = oldlog;
 	m_pMainFrame = ( wxFrame* ) wxGetApp().GetTopWindow();
 	m_pcfg = ( ( MainFrame* )m_pMainFrame )->GetConfig();
@@ -94,7 +92,7 @@ LoggerCtrl::LoggerCtrl( wxWindow *parent, wxLog* oldlog,
 	fgSizerLog = new wxFlexGridSizer( 1, 3, 0, 0 );
 	fgSizerLog->AddGrowableCol( 2 );
 	fgSizerLog->SetFlexibleDirection( wxBOTH );
-	m_log_text = new wxTextCtrl( m_panelLog, LOGGER_CTRL_TEXTAREA, wxEmptyString, wxDefaultPosition, wxSize( 600, 200 ), wxTE_MULTILINE | wxTE_READONLY | wxTE_DONTWRAP );
+	m_log_text = new wxTextCtrl( m_panelLog, LOGGER_CTRL_TEXTAREA, wxEmptyString, wxDefaultPosition, wxSize( size.GetWidth()-50, 200 ), wxTE_MULTILINE | wxTE_READONLY | wxTE_DONTWRAP );
 	fgSizerLog->Add( m_log_text, 1, wxALL, 5 );
 	m_panelLog->SetSizer( fgSizerLog );
 	m_panelLog->Layout();
@@ -126,7 +124,9 @@ void LoggerCtrl::OnSize( wxSizeEvent& event )
 	m_panelLog->SetSize( wxSize( p_width, p_height - ctrlheight ) );
 	m_panelLog->Layout();
 	m_panelLog->SetPosition( wxPoint( 0, ctrlheight ) );
-	m_log_text->SetSize( wxSize( m_panelLog->GetSize().GetWidth() - 5, m_panelLog->GetSize().GetHeight() - 5 ) );
+	wxSize c_size = m_panelLog->GetSize();
+	m_log_text->SetSize( wxSize(c_size.GetWidth() - 5, c_size.GetHeight() - 5 ) );
+	//m_panelLog->GetSizer()->Fit(m_panelLog);
 }
 
 void LoggerCtrl::OnSeverityChoice( wxCommandEvent& event )

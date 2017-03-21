@@ -79,7 +79,9 @@ SwashListCtrl::SwashListCtrl( wxWindow *parent,
 #ifdef __POCKETPC__
 	EnableContextMenu();
 #endif
+#ifdef _DEBUG
 	wxLogDebug( _T( "SwashListCtrl creator, setting %s\n" ), settings.c_str() );
+#endif
 	m_settings = settings;
 	/* XXX initialize list column based on array */
 	Init( num_cols, columns );
@@ -205,7 +207,9 @@ bool SwashListCtrl::Create( wxWindow* parent, wxWindowID id, const wxPoint& pos,
 			listitem.SetText( wxGetTranslation( m_columns[i].title ) );
 			listitem.SetId( m_columns[i].id );
 			InsertColumn( j, listitem );
+#ifdef _DEBUG
 			wxLogDebug( _T( "Insert column %d name %s id %d\n" ), j, listitem.GetText(), listitem.GetId() );
+#endif
 			m_columns[i].column = j;
 
 			if( m_columns[i].width )
@@ -226,14 +230,19 @@ bool SwashListCtrl::Create( wxWindow* parent, wxWindowID id, const wxPoint& pos,
 
 SwashListCtrl::~SwashListCtrl()
 {
+#ifdef _DEBUG
 	wxLogDebug( _T( "SwashListCtrl::Destructor\n" ) );
+#endif
 }
 
 void SwashListCtrl::OnCacheHint( wxListEvent& event )
 {
 	m_showfrom = event.GetCacheFrom();
 	m_showto  = event.GetCacheTo();
+	
+#ifdef _DEBUG
 	wxLogDebug( _T( "SwashListCtrl::OnCacheHint %d-%d\n" ), m_showfrom, m_showto );
+#endif
 }
 
 void SwashListCtrl::SetColumnImage( int col, int image )
@@ -251,7 +260,9 @@ void SwashListCtrl::OnColClick( wxListEvent& event )
 	static bool x = false;
 	x = !x;
 	SetColumnImage( col, x ? 0 : -1 );
+#ifdef _DEBUG
 	wxLogDebug( wxT( "OnColumnClick at %d.\n" ), col );
+#endif
 }
 
 void SwashListCtrl::OnColumnSelected( wxCommandEvent& event )
@@ -260,7 +271,10 @@ void SwashListCtrl::OnColumnSelected( wxCommandEvent& event )
 	long insert = 0;
 	int i;
 	colnum = event.GetId() - SWASHLIST_POPUP_START;
+	
+#ifdef _DEBUG
 	wxLogDebug( _T( "Command colnum %d start %d id %d (%d) %s\n" ), colnum, SWASHLIST_POPUP_START, event.GetId(), ( event.GetId() - SWASHLIST_POPUP_START ), ( event.IsChecked() ? _T( "checked" ) : _T( "uncheck" ) ) );
+#endif
 
 	if( event.IsChecked() )
 	{
@@ -291,8 +305,9 @@ void SwashListCtrl::OnColumnSelected( wxCommandEvent& event )
 						if( item.GetText() == wxGetTranslation( m_columns[i].title ) )
 						{ insert = j; }
 					}
-
+#ifdef _DEBUG
 					wxLogDebug( _T( "Insert before %s %d\n" ), m_columns[i].name.c_str(), insert );
+#endif
 					break;
 				}
 			}
@@ -314,7 +329,9 @@ void SwashListCtrl::OnColumnSelected( wxCommandEvent& event )
 				m_columns[i].column++;
 			}
 		}
+#ifdef _DEBUG
 		wxLogDebug( _T( "Insert column %s in position %d\n" ), listitem.GetText().c_str(), insert );
+#endif
 		InsertColumn( insert, listitem );
 
 		if( m_columns[colnum].width )
@@ -396,21 +413,26 @@ void SwashListCtrl::OnColRightClick( wxListEvent& event )
 			 ( wxCommandEventFunction )&SwashListCtrl::OnColumnSelected );
 	// Show popupmenu at position
 	PopupMenu( &menu, event.GetPoint() );
+#ifdef _DEBUG
 	wxLogDebug( wxT( "OnColumnRightClick at %d.\n" ), event.GetColumn() );
+#endif
 }
 
 void SwashListCtrl::LogColEvent( const wxListEvent& event, const wxChar *name )
 {
+#ifdef _DEBUG
 	const int col = event.GetColumn();
 	wxLogDebug( wxT( "%s: column %d (width = %d or %d).\n" ),
 				name,
 				col,
 				event.GetItem().GetWidth(),
 				GetColumnWidth( col ) );
+#endif
 }
 
 void SwashListCtrl::OnColBeginDrag( wxListEvent& event )
 {
+#ifdef _DEBUG
 	LogColEvent( event, wxT( "OnColBeginDrag" ) );
 	/*
 	if ( event.GetColumn() == 0 )
@@ -420,78 +442,103 @@ void SwashListCtrl::OnColBeginDrag( wxListEvent& event )
 	    event.Veto();
 	}
 	*/
+#endif
 }
 
 void SwashListCtrl::OnColDragging( wxListEvent& event )
 {
+#ifdef _DEBUG
 	LogColEvent( event, wxT( "OnColDragging" ) );
+#endif
 }
 
 void SwashListCtrl::OnColEndDrag( wxListEvent& event )
 {
+#ifdef _DEBUG
 	LogColEvent( event, wxT( "OnColEndDrag" ) );
+#endif
 }
 
 void SwashListCtrl::OnBeginDrag( wxListEvent& event )
 {
+#ifdef _DEBUG
 	const wxPoint& pt = event.m_pointDrag;
 	int flags;
 	LogColEvent( event, wxT( "OnBeginDrag" ) );
 	wxLogDebug( wxT( "OnBeginDrag at (%d, %d), item %ld." ),
 				pt.x, pt.y, HitTest( pt, flags ) );
+#endif
 }
 
 void SwashListCtrl::OnBeginRDrag( wxListEvent& event )
 {
+#ifdef _DEBUG
 	LogColEvent( event, wxT( "OnBeginRDrag" ) );
 	wxLogDebug( wxT( "OnBeginRDrag at %d,%d.\n" ),
 				event.m_pointDrag.x, event.m_pointDrag.y );
+#endif
 }
 
 void SwashListCtrl::OnBeginLabelEdit( wxListEvent& event )
 {
+#ifdef _DEBUG
 	wxLogDebug( wxT( "OnBeginLabelEdit: %s\n" ), event.m_item.m_text.c_str() );
+#endif
 }
 
 void SwashListCtrl::OnEndLabelEdit( wxListEvent& event )
 {
+#ifdef _DEBUG
 	wxLogDebug( wxT( "OnEndLabelEdit: %s\n" ),
 				event.IsEditCancelled() ? _T( "[cancelled]" )
 				: event.m_item.m_text.c_str() );
+#endif
 }
 
 void SwashListCtrl::OnDeleteItem( wxListEvent& event )
 {
+#ifdef _DEBUG
 	LogListEvent( event, _T( "OnDeleteItem" ) );
 	wxLogDebug( wxT( "Number of items when delete event is sent: %d\n" ), GetItemCount() );
+#endif
 }
 
 void SwashListCtrl::OnDeleteAllItems( wxListEvent& event )
 {
+#ifdef _DEBUG
 	LogListEvent( event, _T( "OnDeleteAllItems" ) );
+#endif
 }
 
 
 void SwashListCtrl::OnSelected( wxListEvent& event )
 {
+#ifdef _DEBUG
 	LogListEvent( event, _T( "OnSelected" ) );
+#endif
 	MainFrame* pMainFrame = ( MainFrame* )( wxGetApp().GetTopWindow() );
 	pMainFrame->OnListItemClick( event.GetIndex() );
 }
 
 void SwashListCtrl::OnDeselected( wxListEvent& event )
 {
+#ifdef _DEBUG
 	LogListEvent( event, _T( "OnDeselected" ) );
+#endif
 }
 
 void SwashListCtrl::OnActivated( wxListEvent& event )
 {
+#ifdef _DEBUG
 	LogListEvent( event, _T( "OnActivated" ) );
+#endif
 }
 
 void SwashListCtrl::OnFocused( wxListEvent& event )
 {
+#ifdef _DEBUG
 	LogListEvent( event, _T( "OnFocused" ) );
+#endif
 	event.Skip();
 }
 
@@ -542,14 +589,10 @@ void SwashListCtrl::OnRightClick( wxMouseEvent& event )
 		event.Skip();
 		return;
 	}
-
+#ifdef _DEBUG
 	int flags;
 	long subitem = -1;
-#if wxCHECK_VERSION(2,8,0)
 	long item = HitTest( event.GetPosition(), flags, &subitem );
-#else
-	long item = HitTest( event.GetPosition(), flags );
-#endif
 	wxString where;
 
 	switch( flags )
@@ -593,6 +636,7 @@ void SwashListCtrl::OnRightClick( wxMouseEvent& event )
 
 	wxLogDebug( _T( "Right click %s item %s, subitem %s\n" ),
 				where.c_str(), ( wxLongLong( item ).ToString() ).c_str(), ( wxLongLong( subitem ).ToString() ).c_str() );
+#endif
 }
 
 void SwashListCtrl::OnLeftDClick(wxMouseEvent& event)
@@ -603,13 +647,11 @@ void SwashListCtrl::OnLeftDClick(wxMouseEvent& event)
 		return;
 	}
 
+#ifdef _DEBUG
+
 	int flags;
 	long subitem = -1;
-#if wxCHECK_VERSION(2,8,0)
 	long item = HitTest( event.GetPosition(), flags, &subitem );
-#else
-	long item = HitTest( event.GetPosition(), flags );
-#endif
 	wxString where;
 
 	switch( flags )
@@ -653,13 +695,16 @@ void SwashListCtrl::OnLeftDClick(wxMouseEvent& event)
 
 	wxLogDebug( _T( "Left double click %s item %s, subitem %s\n" ),
 				where.c_str(), ( wxLongLong( item ).ToString() ).c_str(), ( wxLongLong( subitem ).ToString() ).c_str() );
+#endif
 }
 
 void SwashListCtrl::LogListEvent( const wxListEvent& event, const wxChar *eventName )
 {
+#ifdef _DEBUG
 	wxLogDebug( _T( "Item %s: %s (item text = %s, data = %s)\n" ),
 				( wxLongLong( event.GetIndex() ).ToString() ).c_str(), eventName,
 				event.GetText().c_str(), ( wxLongLong( event.GetData() ).ToString() ).c_str() );
+#endif
 }
 
 wxString SwashListCtrl::OnGetItemText( long item, long column ) const
@@ -735,7 +780,9 @@ void SwashListCtrl::UpdateSwashList()
 	{ return ; }
 
 	m_showto = ( m_showto >= GetItemCount() ) ? ( GetItemCount() - 1 ) : m_showto;
+#ifdef _DEBUG
 	wxLogDebug( _T( "UpdateSwashList %d - %d\n" ), m_showfrom, m_showto );
+#endif
 
 	if( m_showfrom > m_showto )
 	{ m_showfrom = m_showto; }

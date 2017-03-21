@@ -103,7 +103,7 @@ TorrentSettingPane::TorrentSettingPane( wxWindow* parent, shared_ptr<torrent_t>&
 	m_button_showdir = new wxButton( this, ID_SHOW_DIRECTORY, wxT("..."), wxDefaultPosition, wxSize( 30,-1 ), 0 );
 	fgSaveAs->Add( m_button_showdir, 0, wxALL, 5 );
 	
-	m_label_freespace = new wxStaticText(this, ID_STATICTEXT7, _("Disk Free Space:"), wxDefaultPosition, wxDefaultSize, 0, _T("ID_STATICTEXT7"));
+	m_label_freespace = new wxStaticText(this, ID_STATICTEXT7, _("Free:"), wxDefaultPosition, wxDefaultSize, 0, _T("ID_STATICTEXT7"));
 	fgSaveAs->Add(m_label_freespace, 1, wxALL|wxALIGN_LEFT|wxALIGN_CENTER_VERTICAL, 5);
 
 	wxString downloadPath = m_combo_saveas->GetValue(), freeSpace = _("0 Byte(s)");

@@ -73,7 +73,7 @@ private:
 	shared_ptr<torrent_t> m_pTorrent;
 	wxImageList m_imageList;
     wxMenu m_contextmenu;
-	static wxCmdEvtHandlerMap_t m_menuItems[];
+	static wxCmdEvtHandlerMap_t m_menu_evt_map[];
 
 	static const long FILELISTCTRL_MENU_PRIORITY0;
 	static const long FILELISTCTRL_MENU_PRIORITY1;

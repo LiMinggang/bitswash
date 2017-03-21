@@ -52,11 +52,7 @@ SwashSetting::SwashSetting( wxWindow* parent, Configuration *pcfg, int id, wxStr
 	wxFlexGridSizer* fgInner;
 	fgInner = new wxFlexGridSizer( 1, 1, 0, 0 );
 	
-#if wxCHECK_VERSION(2,8,0)
 	m_listbookmenu = new wxTreebook( m_panel_main, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxLB_DEFAULT );
-#else
-	m_listbookmenu = new wxListbook( m_panel_main, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxLB_DEFAULT );
-#endif
 
 	m_listbookmenu->SetImageList(wxGetApp().GetSettingIconsList() );
 

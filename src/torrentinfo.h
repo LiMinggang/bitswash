@@ -37,18 +37,14 @@
 
 #define TORRENT_INFO_ID wxID_HIGHEST
 
-#if wxCHECK_VERSION(2,8,0)
 class TorrentInfo : public wxAuiNotebook
-#else
-class TorrentInfo : public wxNotebook
-#endif
 {
 	public:
 		TorrentInfo(wxWindow *parent,
                const wxWindowID id,
                const wxPoint& pos = wxDefaultPosition,
                const wxSize& size = wxDefaultSize,
-               long style = wxNB_TOP | wxNB_FLAT);
+               long style = wxNB_TOP | wxTAB_TRAVERSAL );
                
 		 ~TorrentInfo();
 	
@@ -66,7 +62,7 @@ class TorrentInfo : public wxNotebook
 		PeerListCtrl* m_peerspane;
 		FileListCtrl* m_filespane;
 		TrackerListCtrl* m_trackerspane;
-		void OnNotebookChanged(wxNotebookEvent& event);
+		void OnNotebookChanged(wxAuiNotebookEvent& event);
 		LoggerCtrl* m_logger_panel;
 	
 		wxFrame* m_pMainFrame;

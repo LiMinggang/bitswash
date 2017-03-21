@@ -22,38 +22,13 @@
 
 #ifndef __COMPAT_H__
 #define __COMPAT_H__
-//wx2.8 built in with aui
 #include <wx/toolbar.h>
 
-#if wxCHECK_VERSION(2,8,0)
 #include <wx/aui/aui.h>
 #include <wx/hyperlink.h>
 #define AUIPANEINFO wxAuiPaneInfo()
 
 #define SWASHTOOLBAR_STYLE wxTB_TOP | wxTB_TEXT | wxNO_BORDER | wxTB_HORIZONTAL | wxTB_3DBUTTONS | wxTB_FLAT | wxCLIP_CHILDREN
 #define SWASHAUITOOLBAR_STYPE (wxAUI_TB_HORIZONTAL | wxAUI_TB_PLAIN_BACKGROUND | wxAUI_TB_GRIPPER)
-
-#else
-#include <wx/gbsizer.h>
-#include <wx/timer.h>
-
-#include <wx/pen.h>
-#include <wx/brush.h>
-
-#include "manager.h"
-#include <wx/filedlg.h>
-#include <wx/dirdlg.h>
-#define AUIPANEINFO wxPaneInfo()
-
-#define wxFD_OPEN wxOPEN
-#define wxFD_MULTIPLE wxOPEN
-#define wxFD_CHANGE_DIR wxCHANGE_DIR
-
-#define wxDD_CHANGE_DIR wxDD_DEFAULT_STYLE
-
-#define SWASHTOOLBAR_STYLE wxTB_TEXT | wxNO_BORDER | wxTB_HORIZONTAL | wxTB_3DBUTTONS | wxTB_FLAT | wxCLIP_CHILDREN
-
-#endif
-
 
 #endif

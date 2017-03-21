@@ -48,7 +48,7 @@ const long FileListCtrl::FILELISTCTRL_MENU_OPENPATH = wxNewId();
 
 // FileListCtrl
 
-FileListCtrl::wxCmdEvtHandlerMap_t FileListCtrl::m_menuItems[]=
+FileListCtrl::wxCmdEvtHandlerMap_t FileListCtrl::m_menu_evt_map[]=
 {
 	{FILELISTCTRL_MENU_PRIORITY0, &FileListCtrl::OnMenuPriority},
 	{FILELISTCTRL_MENU_PRIORITY1, &FileListCtrl::OnMenuPriority},
@@ -114,9 +114,9 @@ FileListCtrl::FileListCtrl( wxWindow *parent,
     m_contextmenu.Append( FILELISTCTRL_MENU_PRIORITY7, _( "Highest Priority" ) );
 	m_contextmenu.AppendSeparator();
     m_contextmenu.Append( FILELISTCTRL_MENU_OPENPATH, _( "Open containing folder" ) );
-	for(size_t i = 0; i < sizeof(filelistcols)/sizeof(filelistcols[0]); ++i)
+	for(size_t i = 0; i < sizeof(m_menu_evt_map)/sizeof(m_menu_evt_map[0]); ++i)
 	{
-		Bind( wxEVT_MENU, m_menuItems[i].method, this, m_menuItems[i].evtTag );
+		Bind( wxEVT_MENU, m_menu_evt_map[i].method, this, m_menu_evt_map[i].evtTag );
 	}
 	Bind( wxEVT_LEFT_DOWN, &FileListCtrl::OnLeftDown, this );
 }

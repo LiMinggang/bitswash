@@ -26,9 +26,7 @@
 
 #include <wx/wx.h>
 #include <wx/listbook.h>
-#if wxCHECK_VERSION(2,8,0)
 #include <wx/treebook.h>
-#endif
 #include <wx/listctrl.h>
 #include <wx/panel.h>
 #include <wx/sizer.h>
@@ -62,11 +60,7 @@ class SwashSetting : public wxDialog
 		void OnOK(wxCommandEvent& event);
 		void OnCancel(wxCommandEvent& event);
 		wxPanel* m_panel_main;
-#if wxCHECK_VERSION(2,8,0)
 		wxTreebook* m_listbookmenu;
-#else 		
-		wxListbook* m_listbookmenu;
-#endif
 		wxStdDialogButtonSizer* m_szokcancel;
 		
 		Configuration *m_pcfg;

@@ -36,12 +36,8 @@ enum bw_torrentinfo_page {
 	BW_TORRENTINFO_CHUNK,
 };
 
-#if wxCHECK_VERSION(2,8,0)
 BEGIN_EVENT_TABLE(TorrentInfo, wxAuiNotebook)
-#else
-BEGIN_EVENT_TABLE(TorrentInfo, wxNotebook)
-#endif
-	EVT_NOTEBOOK_PAGE_CHANGED(TORRENT_INFO_ID, TorrentInfo::OnNotebookChanged)
+	EVT_AUINOTEBOOK_PAGE_CHANGED(TORRENT_INFO_ID, TorrentInfo::OnNotebookChanged)
 END_EVENT_TABLE()
 
 
@@ -50,36 +46,26 @@ TorrentInfo::TorrentInfo(wxWindow *parent,
                const wxPoint& pos,
                const wxSize& size,
                long style) 
-#if wxCHECK_VERSION(2,8,0)
-: wxAuiNotebook(parent, id,  pos, size)
-#else
-: wxNotebook(parent, id,  pos, size)
-#endif
+: wxAuiNotebook(parent, id,  pos, size, style)
 {
-		Configuration* config = wxGetApp().GetConfig();
+	Configuration* config = wxGetApp().GetConfig();
 
-		m_pMainFrame = (wxFrame*)parent;
+	m_pMainFrame = (wxFrame*)parent;
 
-		m_summarypane = new SummaryPane(this, wxID_ANY, wxDefaultPosition, wxSize(size.GetWidth(), -1));
-	    InsertPage(BW_TORRENTINFO_SUMMARY, m_summarypane, _("Status") );
+	m_summarypane = new SummaryPane(this, wxID_ANY, wxDefaultPosition, wxSize(size.GetWidth(), -1));
+    InsertPage(BW_TORRENTINFO_SUMMARY, m_summarypane, _("Status") );
 
-		m_peerspane = new PeerListCtrl(this, config->GetPeerListCtrlSetting(), wxID_ANY);
-    	InsertPage(BW_TORRENTINFO_PEERLIST, m_peerspane , _("Peers") );
-		m_filespane = new FileListCtrl(this, config->GetFileListCtrlSetting(), wxID_ANY);
-    	InsertPage(BW_TORRENTINFO_FILELIST, m_filespane, _("Files") );
+	m_peerspane = new PeerListCtrl(this, config->GetPeerListCtrlSetting(), wxID_ANY);
+	InsertPage(BW_TORRENTINFO_PEERLIST, m_peerspane , _("Peers") );
+	m_filespane = new FileListCtrl(this, config->GetFileListCtrlSetting(), wxID_ANY);
+	InsertPage(BW_TORRENTINFO_FILELIST, m_filespane, _("Files") );
 
-		m_trackerspane = new TrackerListCtrl(this, config->GetTrackerListCtrlSetting(), wxID_ANY);
-    	InsertPage(BW_TORRENTINFO_TRACKERLIST, m_trackerspane, _("Trackers") );
+	m_trackerspane = new TrackerListCtrl(this, config->GetTrackerListCtrlSetting(), wxID_ANY);
+	InsertPage(BW_TORRENTINFO_TRACKERLIST, m_trackerspane, _("Trackers") );
 
-		m_logger_panel = new LoggerCtrl (this, wxLog::GetActiveTarget(), wxID_ANY, wxDefaultPosition, wxDefaultSize );
+	m_logger_panel = new LoggerCtrl (this, wxLog::GetActiveTarget(), wxID_ANY, wxDefaultPosition, wxSize(size.GetWidth(), -1) );
 
-    	InsertPage(BW_TORRENTINFO_LOGGER, m_logger_panel, _("Log") );
-
-
-		//wxLogMessage(_T("Page count %d"), GetPageCount());
-				
-
-
+	InsertPage(BW_TORRENTINFO_LOGGER, m_logger_panel, _("Log") );
 }
 
 
@@ -124,6 +110,7 @@ void TorrentInfo::UpdateTorrentInfo(bool updateall)
 		default:
 			break;
 	}	
+
 	if (updateall) 
 	{
 		if(!summary_updated && (m_summarypane != NULL))
@@ -141,7 +128,8 @@ void TorrentInfo::UpdateTorrentInfo(bool updateall)
 
 }
 
-void TorrentInfo::OnNotebookChanged(wxNotebookEvent& event)
+void TorrentInfo::OnNotebookChanged(wxAuiNotebookEvent& event)
 {
 	UpdateTorrentInfo(false);
 }
+

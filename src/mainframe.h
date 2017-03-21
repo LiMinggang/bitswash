@@ -71,42 +71,6 @@ wxDECLARE_EVENT( SHOW_HIDE_TRAYICON, wxCommandEvent );
 class MainFrame: public wxFrame
 {
 public:
-	enum
-	{
-		ID_FILE_EXIT = wxID_EXIT,
-		ID_HELP_ABOUT = wxID_ABOUT,
-		ID_FILE_OPEN_URL = wxID_HIGHEST + 1,
-		ID_FILE_OPEN_TORRENT,
-		ID_FILE_CREATE_TORRENT,
-
-		ID_VIEW_STATUS,
-		ID_VIEW_TOOLBAR,
-		ID_VIEW_FAVORITE,
-		ID_TORRENT_START,
-		ID_TORRENT_FORCE_START,
-		ID_TORRENT_PAUSE,
-		ID_TORRENT_STOP,
-		ID_TORRENT_OPENDIR,
-		ID_TORRENT_PROPERTIES,
-		ID_TORRENT_REMOVE,
-		ID_TORRENT_REMOVEDATA,
-		ID_TORRENT_MOVEUP,
-		ID_TORRENT_MOVEDOWN,
-		ID_TORRENT_REANNOUNCE,
-		ID_TORRENT_RECHECK,
-		ID_OPTIONS_PREFERENCES,
-		ID_HELP_BITSWASH_HELP,
-		ID_HELP_HOMEPAGE,
-
-		/* TIMER */
-		ID_TIMER_GUI_UPDATE,
-		ID_TIMER_BT_UPDATE,
-
-		ID_OPTIONS_LANGUAGE,
-		/* plenty of languages follows
-		 * next item should starts with +100 or so
-		 */
-	};
 	MainFrame( wxFrame *frame, const wxString& title );
 	~MainFrame();
 
@@ -141,6 +105,8 @@ public:
 	void OnListItemClick( long item );
 
 	static void ReceiveTorrent( wxString fileorurl );
+	static const long ID_OPTIONS_PREFERENCES; // Share with Tray Icon;
+
 private:
 
 	wxMenuBar* CreateMainMenuBar();
@@ -243,8 +209,49 @@ private:
 	long m_prevselecteditem;
 	bool m_closed;
 	MagnetUriHanlder* m_magneturi_handler;
+	typedef struct 
+	{
+		const long evtTag;
+		void (MainFrame::*method)( wxCommandEvent &);
+	} wxCmdEvtHandlerMap_t;
+    static wxCmdEvtHandlerMap_t m_menu_evt_map[];
+	typedef struct 
+	{
+		const long evtTag;
+		void (MainFrame::*method)( wxUpdateUIEvent &);
+	} wxUIUpdateEvtHandlerMap_t;
+	static wxUIUpdateEvtHandlerMap_t m_menu_ui_updater_map[];
 
-	DECLARE_EVENT_TABLE()
+	static const long ID_FILE_EXIT;
+	static const long ID_HELP_ABOUT;
+
+	static const long ID_FILE_OPEN_URL;
+	static const long ID_FILE_OPEN_TORRENT;
+	static const long ID_FILE_CREATE_TORRENT;
+
+	static const long ID_VIEW_STATUS;
+	static const long ID_VIEW_TOOLBAR;
+	static const long ID_VIEW_FAVORITE;
+	static const long ID_TORRENT_START;
+	static const long ID_TORRENT_FORCE_START;
+	static const long ID_TORRENT_PAUSE;
+	static const long ID_TORRENT_STOP;
+	static const long ID_TORRENT_OPENDIR;
+	static const long ID_TORRENT_PROPERTIES;
+	static const long ID_TORRENT_REMOVE;
+	static const long ID_TORRENT_REMOVEDATA;
+	static const long ID_TORRENT_MOVEUP;
+	static const long ID_TORRENT_MOVEDOWN;
+	static const long ID_TORRENT_REANNOUNCE;
+	static const long ID_TORRENT_RECHECK;
+	static const long ID_HELP_BITSWASH_HELP;
+	static const long ID_HELP_HOMEPAGE;
+
+	/* TIMER */
+	static const long ID_TIMER_GUI_UPDATE;
+	static const long ID_TIMER_BT_UPDATE;
+
+	static const long ID_OPTIONS_LANGUAGE;
 };
 
 #endif // _MAINFRAME_H_

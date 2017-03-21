@@ -46,7 +46,7 @@ wxString HumanReadableByte(wxDouble byte)
 {
 	wxDouble vl =0 ;
 
-	wxDouble ivl = 1024;
+	wxLongLong ivl = 1024, step = 1024;
 	int i=0;
 	wxString res;
 	//std::cout << byte << "\n";
@@ -54,10 +54,10 @@ wxString HumanReadableByte(wxDouble byte)
 	vl = byte;
 	for (i=0; i< MAX_UNITS ; i++) 
 	{
-		if (byte < ivl ) break;
+		if (byte < wxDouble(ivl.ToDouble()) ) break;
 
-		vl = byte / ivl ;
-		ivl *= ivl;
+		vl = byte / wxDouble(ivl.ToDouble()) ;
+		ivl *= step;
 	}
 	if (!i)
 		res = wxString::Format(_T("%.0lf B"), vl );

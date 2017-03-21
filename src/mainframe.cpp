@@ -93,51 +93,73 @@ const struct swashlang languages[] =
 };
 #endif
 
-BEGIN_EVENT_TABLE( MainFrame, wxFrame )
-	EVT_MENU( ID_FILE_CREATE_TORRENT, MainFrame::ToDo )
-	EVT_MENU( ID_FILE_OPEN_TORRENT, MainFrame::OnMenuOpenTorrent )
-	EVT_MENU( ID_FILE_OPEN_URL, MainFrame::OnMenuOpenTorrentUrl )
-	EVT_MENU( ID_FILE_EXIT, MainFrame::OnQuit )
-	EVT_MENU( ID_VIEW_FAVORITE, MainFrame::ToDo )
-	EVT_MENU( ID_VIEW_STATUS, MainFrame::OnMenuViewStatusBar )
-	EVT_MENU( ID_VIEW_TOOLBAR, MainFrame::OnMenuViewToolbar )
-	EVT_MENU( ID_TORRENT_START, MainFrame::OnMenuTorrentStart )
-	EVT_MENU( ID_TORRENT_FORCE_START, MainFrame::OnMenuTorrentStart )
-	EVT_MENU( ID_TORRENT_PAUSE, MainFrame::OnMenuTorrentPause )
-	EVT_MENU( ID_TORRENT_STOP, MainFrame::OnMenuTorrentStop )
-	EVT_MENU( ID_TORRENT_PROPERTIES, MainFrame::OnMenuTorrentProperties )
-	EVT_MENU( ID_TORRENT_REMOVE, MainFrame::OnMenuTorrentRemove )
-	EVT_MENU( ID_TORRENT_REMOVEDATA, MainFrame::OnMenuTorrentRemoveData )
-	EVT_MENU( ID_TORRENT_MOVEUP, MainFrame::OnMenuTorrentMoveUp )
-	EVT_MENU( ID_TORRENT_MOVEDOWN, MainFrame::OnMenuTorrentMoveDown )
-	EVT_MENU( ID_TORRENT_REANNOUNCE, MainFrame::OnMenuTorrentReannounce )
-	EVT_MENU( ID_TORRENT_RECHECK, MainFrame::OnMenuTorrentRecheck )
-	EVT_MENU( ID_TORRENT_OPENDIR, MainFrame::OnMenuTorrentOpenDir )
-	EVT_MENU( ID_OPTIONS_PREFERENCES, MainFrame::OnMenuPreferences )
-	EVT_MENU( ID_HELP_BITSWASH_HELP, MainFrame::OnMenuHelp )
-	EVT_MENU( ID_HELP_HOMEPAGE, MainFrame::OnHelpHomepage )
-	EVT_MENU( ID_HELP_ABOUT, MainFrame::OnAbout )
-	EVT_MENU_OPEN( MainFrame::OnMenuOpen )
+const long MainFrame::ID_FILE_EXIT = wxID_EXIT;
+const long MainFrame::ID_HELP_ABOUT = wxID_ABOUT;
+const long MainFrame::ID_FILE_OPEN_URL = wxNewId();
+const long MainFrame::ID_FILE_OPEN_TORRENT = wxNewId();
+const long MainFrame::ID_FILE_CREATE_TORRENT = wxNewId();
+const long MainFrame::ID_VIEW_STATUS = wxNewId();
+const long MainFrame::ID_VIEW_TOOLBAR = wxNewId();
+const long MainFrame::ID_VIEW_FAVORITE = wxNewId();
+const long MainFrame::ID_TORRENT_START = wxNewId();
+const long MainFrame::ID_TORRENT_FORCE_START = wxNewId();
+const long MainFrame::ID_TORRENT_PAUSE = wxNewId();
+const long MainFrame::ID_TORRENT_STOP = wxNewId();
+const long MainFrame::ID_TORRENT_OPENDIR = wxNewId();
+const long MainFrame::ID_TORRENT_PROPERTIES = wxNewId();
+const long MainFrame::ID_TORRENT_REMOVE = wxNewId();
+const long MainFrame::ID_TORRENT_REMOVEDATA = wxNewId();
+const long MainFrame::ID_TORRENT_MOVEUP = wxNewId();
+const long MainFrame::ID_TORRENT_MOVEDOWN = wxNewId();
+const long MainFrame::ID_TORRENT_REANNOUNCE = wxNewId();
+const long MainFrame::ID_TORRENT_RECHECK = wxNewId();
+const long MainFrame::ID_OPTIONS_PREFERENCES = wxNewId();
+const long MainFrame::ID_HELP_BITSWASH_HELP = wxNewId();
+const long MainFrame::ID_HELP_HOMEPAGE = wxNewId();
+const long MainFrame::ID_TIMER_GUI_UPDATE = wxNewId();
+const long MainFrame::ID_TIMER_BT_UPDATE = wxNewId();
+const long MainFrame::ID_OPTIONS_LANGUAGE = wxNewId();
 
-	EVT_UPDATE_UI( ID_TORRENT_START, MainFrame::OnUpdateUI_MenuTorrent )
-	EVT_UPDATE_UI( ID_TORRENT_FORCE_START, MainFrame::OnUpdateUI_MenuTorrent )
-	EVT_UPDATE_UI( ID_TORRENT_PAUSE, MainFrame::OnUpdateUI_MenuTorrent )
-	EVT_UPDATE_UI( ID_TORRENT_STOP, MainFrame::OnUpdateUI_MenuTorrent )
+MainFrame::wxCmdEvtHandlerMap_t MainFrame::m_menu_evt_map[]=
+{
+	{ ID_FILE_CREATE_TORRENT, &MainFrame::ToDo },
+	{ ID_FILE_OPEN_TORRENT, &MainFrame::OnMenuOpenTorrent },
+	{ ID_FILE_OPEN_URL, &MainFrame::OnMenuOpenTorrentUrl },
+	{ ID_FILE_EXIT, &MainFrame::OnQuit },
+	{ ID_VIEW_FAVORITE, &MainFrame::ToDo },
+	{ ID_VIEW_STATUS, &MainFrame::OnMenuViewStatusBar },
+	{ ID_VIEW_TOOLBAR, &MainFrame::OnMenuViewToolbar },
+	{ ID_TORRENT_START, &MainFrame::OnMenuTorrentStart },
+	{ ID_TORRENT_FORCE_START, &MainFrame::OnMenuTorrentStart },
+	{ ID_TORRENT_PAUSE, &MainFrame::OnMenuTorrentPause },
+	{ ID_TORRENT_STOP, &MainFrame::OnMenuTorrentStop },
+	{ ID_TORRENT_PROPERTIES, &MainFrame::OnMenuTorrentProperties },
+	{ ID_TORRENT_REMOVE, &MainFrame::OnMenuTorrentRemove },
+	{ ID_TORRENT_REMOVEDATA, &MainFrame::OnMenuTorrentRemoveData },
+	{ ID_TORRENT_MOVEUP, &MainFrame::OnMenuTorrentMoveUp },
+	{ ID_TORRENT_MOVEDOWN, &MainFrame::OnMenuTorrentMoveDown },
+	{ ID_TORRENT_REANNOUNCE, &MainFrame::OnMenuTorrentReannounce },
+	{ ID_TORRENT_RECHECK, &MainFrame::OnMenuTorrentRecheck },
+	{ ID_TORRENT_OPENDIR, &MainFrame::OnMenuTorrentOpenDir },
+	{ ID_OPTIONS_PREFERENCES, &MainFrame::OnMenuPreferences },
+	{ ID_HELP_BITSWASH_HELP, &MainFrame::OnMenuHelp },
+	{ ID_HELP_HOMEPAGE, &MainFrame::OnHelpHomepage },
+	{ ID_HELP_ABOUT, &MainFrame::OnAbout },
+};
 
-	EVT_UPDATE_UI( ID_TORRENT_MOVEUP, MainFrame::OnUpdateUI_MenuTorrent )
-	EVT_UPDATE_UI( ID_TORRENT_MOVEDOWN, MainFrame::OnUpdateUI_MenuTorrent )
-	EVT_UPDATE_UI( ID_TORRENT_REANNOUNCE, MainFrame::OnUpdateUI_MenuTorrent )
-	EVT_UPDATE_UI( ID_TORRENT_RECHECK, MainFrame::OnUpdateUI_MenuTorrent )
-	EVT_UPDATE_UI( ID_TORRENT_OPENDIR, MainFrame::OnUpdateUI_MenuTorrent )
+MainFrame::wxUIUpdateEvtHandlerMap_t MainFrame::m_menu_ui_updater_map[] =
+{
+	{ ID_TORRENT_START, &MainFrame::OnUpdateUI_MenuTorrent },
+	{ ID_TORRENT_FORCE_START, &MainFrame::OnUpdateUI_MenuTorrent },
+	{ ID_TORRENT_PAUSE, &MainFrame::OnUpdateUI_MenuTorrent },
+	{ ID_TORRENT_STOP, &MainFrame::OnUpdateUI_MenuTorrent },
 
-	EVT_SIZE( MainFrame::OnSize )
-	EVT_MOVE( MainFrame::OnMove )
-	EVT_TIMER( ID_TIMER_GUI_UPDATE, MainFrame::OnRefreshTimer )
-
-	EVT_CLOSE( MainFrame::OnClose )
-	EVT_ICONIZE( MainFrame::OnMinimize )
-
-END_EVENT_TABLE()
+	{ ID_TORRENT_MOVEUP, &MainFrame::OnUpdateUI_MenuTorrent },
+	{ ID_TORRENT_MOVEDOWN, &MainFrame::OnUpdateUI_MenuTorrent },
+	{ ID_TORRENT_REANNOUNCE, &MainFrame::OnUpdateUI_MenuTorrent },
+	{ ID_TORRENT_RECHECK, &MainFrame::OnUpdateUI_MenuTorrent },
+	{ ID_TORRENT_OPENDIR, &MainFrame::OnUpdateUI_MenuTorrent },
+};
 
 MainFrame * g_BitSwashMainFrame = 0;
 
@@ -217,7 +239,25 @@ MainFrame::MainFrame( wxFrame *frame, const wxString& title )
 		m_magneturi_handler = new MagnetUriHanlder(this);
 		wxFileSystem::AddHandler(m_magneturi_handler);
 	}
-		
+
+	for(size_t i = 0; i < sizeof(m_menu_evt_map)/sizeof(m_menu_evt_map[0]); ++i)
+	{
+		Bind( wxEVT_MENU, m_menu_evt_map[i].method, this, m_menu_evt_map[i].evtTag );
+	}
+
+	for(size_t i = 0; i < sizeof(m_menu_ui_updater_map)/sizeof(m_menu_ui_updater_map[0]); ++i)
+	{
+		Bind( wxEVT_UPDATE_UI, m_menu_ui_updater_map[i].method, this, m_menu_ui_updater_map[i].evtTag );
+	}
+	
+	Bind( wxEVT_MENU_OPEN, &MainFrame::OnMenuOpen, this );
+	
+	Bind( wxEVT_SIZE, &MainFrame::OnSize, this );
+	Bind( wxEVT_MOVE, &MainFrame::OnMove, this );
+	Bind( wxEVT_TIMER, &MainFrame::OnRefreshTimer, this, ID_TIMER_GUI_UPDATE );
+
+	Bind(wxEVT_CLOSE_WINDOW, &MainFrame::OnClose, this );
+	Bind( wxEVT_ICONIZE, &MainFrame::OnMinimize, this );
 	//Refresh torrent list on timer
 	//
 }
@@ -580,11 +620,7 @@ void MainFrame::CreateTorrentInfo()
 	m_torrentinfo = new TorrentInfo( this, TORRENT_INFO_ID,
 									 wxDefaultPosition,
 									 wxSize( client_size.GetWidth(), -1 ),
-#if WXVER >= 280
-									 wxAUI_NB_DEFAULT_STYLE | wxAUI_NB_TAB_EXTERNAL_MOVE | wxNO_BORDER
-#else
-									 wxNO_BORDER
-#endif
+									 wxAUI_NB_TOP|wxNO_BORDER|wxTAB_TRAVERSAL
 								   );
 }
 

@@ -93,7 +93,7 @@ TorrentProperty::TorrentProperty(shared_ptr<torrent_t>& pTorrent, wxWindow* pare
 	fgSizer11->Add(m_label_diskfreespace, 1, wxALL|wxALIGN_LEFT|wxALIGN_CENTER_VERTICAL, 5);
 	m_torrentsettings_sizer->Add(fgSizer11, 0, wxALL|wxEXPAND, 5);
 	m_notebook_property = new wxNotebook(this, ID_NOTEBOOK1, wxDefaultPosition, wxDefaultSize, 0, _T("ID_NOTEBOOK1"));
-	m_notebook_property->SetMinSize( wxSize( 400,-1 ) );
+	m_notebook_property->SetMinSize( wxSize( 600,-1 ) );
 	
 	m_filespane= new FileListCtrl( m_notebook_property, wxEmptyString, wxID_ANY );
 
