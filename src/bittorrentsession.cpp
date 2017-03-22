@@ -1310,13 +1310,23 @@ void BitTorrentSession::MoveTorrentUp( shared_ptr<torrent_t>& torrent )
 		return;
 	}
 
+	long qindex = torrent->config->GetQIndex();
+	if(qindex < 0)
+	{
+		wxLogInfo( _T( "Torrent is not in download que %d-%s\n" ), idx, torrent->name.c_str() );
+		return;
+	}
+
 	torrents_t::iterator torrent_it = m_torrent_queue.begin() + idx - 1 ;
 	shared_ptr<torrent_t> prev_torrent( *( torrent_it ) );
 	WXLOGDEBUG(( _T( "Prev %d now %d\n" ), prev_torrent->config->GetQIndex(), torrent->config->GetQIndex() ));
 	long prev_qindex = prev_torrent->config->GetQIndex();
-	long qindex = torrent->config->GetQIndex();
 	torrent->config->SetQIndex( prev_qindex );
 	torrent->config->Save();
+	if(torrent->handle.is_valid())
+	{
+		torrent->handle.queue_position_up();
+	}
 	prev_torrent->config->SetQIndex( qindex );
 	prev_torrent->config->Save();
 	{
@@ -1352,14 +1362,31 @@ void BitTorrentSession::MoveTorrentDown( shared_ptr<torrent_t>& torrent )
 		wxLogInfo( _T( "Torrent is at bottom position %d-%s\n" ), idx, torrent->name.c_str() );
 		return;
 	}
+	long qindex = torrent->config->GetQIndex();
+	if(qindex < 0)
+	{
+		wxLogInfo( _T( "Torrent is not in download que %d-%s\n" ), idx, torrent->name.c_str() );
+		return;
+	}
 
-	torrents_t::iterator torrent_it = m_torrent_queue.begin() + idx  ;
+	torrents_t::iterator torrent_it = m_torrent_queue.begin() + idx;
 	shared_ptr<torrent_t> next_torrent( *( torrent_it + 1 ) );
 	WXLOGDEBUG(( _T( "Next %d now %d\n" ), next_torrent->config->GetQIndex(), torrent->config->GetQIndex() ));
 	long next_qindex = next_torrent->config->GetQIndex();
-	long qindex = torrent->config->GetQIndex();
+	
+	if( next_qindex < 0 )
+	{
+		wxLogInfo( _T( "Torrent is at queue end %d-%s\n" ), idx, torrent->name.c_str() );
+		return;
+	}
 	torrent->config->SetQIndex( next_qindex );
 	torrent->config->Save();
+
+	if(torrent->handle.is_valid())
+	{
+		torrent->handle.queue_position_down();
+	}
+
 	next_torrent->config->SetQIndex( qindex );
 	next_torrent->config->Save();
 	{
