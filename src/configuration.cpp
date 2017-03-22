@@ -100,7 +100,7 @@ void Configuration::Save()
 		}
 	}
 	
-	m_cfg->Write( _T( "/Config/associate_torrent" ), ( bool )m_run_at_startup );
+	m_cfg->Write( _T( "/Config/associate_torrent" ), ( bool )m_associate_torrent);
 	if(m_associate_torrent)
 		AddType( _T(".torrent") );
 	else

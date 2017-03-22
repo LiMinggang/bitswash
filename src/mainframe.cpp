@@ -249,7 +249,7 @@ MainFrame::MainFrame( wxFrame *frame, const wxString& title )
 	{
 		Bind( wxEVT_UPDATE_UI, m_menu_ui_updater_map[i].method, this, m_menu_ui_updater_map[i].evtTag );
 	}
-	
+
 	Bind( wxEVT_MENU_OPEN, &MainFrame::OnMenuOpen, this );
 	
 	Bind( wxEVT_SIZE, &MainFrame::OnSize, this );
@@ -295,6 +295,8 @@ void MainFrame::OnClose( wxCloseEvent& event )
 
 	if( m_swashsetting ) { delete m_swashsetting; }
 
+	if(m_magneturi_handler)
+		wxFileSystem::RemoveHandler(m_magneturi_handler);
 	Destroy();
 	m_closed = true;
 }
