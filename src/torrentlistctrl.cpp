@@ -102,18 +102,16 @@ TorrentListCtrl::~TorrentListCtrl()
 
 wxString TorrentListCtrl::GetItemValue( long item, long columnid ) const
 {
-	TorrentListCtrl* pThis = const_cast<TorrentListCtrl*>( this );
 	MainFrame* pMainFrame = ( MainFrame* )( wxGetApp().GetTopWindow() );
-	const std::vector<shared_ptr<torrent_t> > *torrentlistitems = pMainFrame->GetTorrentList();
 
-	if( torrentlistitems == NULL )
+	//wxLogDebug(_T("TorrentListCtrl::Showing %d items column %d"), torrentlistitems->size(), columnid);
+	shared_ptr<torrent_t> torrent = pMainFrame->GetTorrent( item );
+	if(!torrent)
 	{
 		wxLogError( _T( "TorrentListCtrl: Couldn't retrieve torrent queue\n" ) );
 		return _T( "" );
 	}
 
-	//wxLogDebug(_T("TorrentListCtrl::Showing %d items column %d"), torrentlistitems->size(), columnid);
-	shared_ptr<torrent_t> torrent = torrentlistitems->at( item );
 	stats_t& torrentstats = torrent->config->GetTorrentStats();
 	lt::torrent_handle &torrenthandle = torrent->handle;
 	shared_ptr<const lt::torrent_info> torrentinfo = torrent->info;

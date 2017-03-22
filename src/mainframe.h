@@ -81,7 +81,7 @@ public:
 	void UpdateSelectedTorrent();
 
 	shared_ptr<torrent_t> GetSelectedTorrent() ;
-	const torrents_t * GetTorrentList() { return m_btsession->GetTorrentQueue();  }
+	shared_ptr<torrent_t> GetTorrent(int idx) { return m_btsession->GetTorrent(idx);}
 	const PeerListCtrl::peer_list_t* GetPeersList() { return &m_peerlistitems;  }
 
 	wxMutex& GetListLock() {return  m_listlock; }

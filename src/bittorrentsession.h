@@ -137,7 +137,6 @@ public:
 	void LoadMagnetUri( const wxString& magneturi );
 	bool SaveTorrent(shared_ptr<torrent_t>& torrent, const wxString& filename);
 	
-	torrents_t * GetTorrentQueue() {return &m_torrent_queue;}
 	size_t GetTorrentQueueSize() {return m_torrent_queue.size();}
 
 	void StartTorrent(shared_ptr<torrent_t>& torrent, bool force);

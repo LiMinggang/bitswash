@@ -205,12 +205,12 @@ MainFrame::MainFrame( wxFrame *frame, const wxString& title )
 	m_btsession = wxGetApp().GetBitTorrentSession();
 	CreateToolBar();
 	//XXX category
-	/* layer 1 put side bar occupied whole vertical zone
 	m_mgr.AddPane(CreateSideTreeCtrl(), AUIPANEINFO.
 	              Name(_T("category")).Caption(_("Category")).
 	              Left().Layer(1).Position(0).
 	              MinimizeButton(true).CloseButton(false));
 
+	/* layer 1 put side bar occupied whole vertical zone
 	m_mgr.AddPane(CreateSideTreeCtrl(), AUIPANEINFO.
 	              Name(_T("category")).Caption(_("Category")).
 	              Left().Layer(0).Position(0).
@@ -893,7 +893,6 @@ void MainFrame::UpdateUI(bool force/* = false*/)
 		//torrents_t *torrentqueue = m_btsession->GetTorrentQueue();
 		///torrents_t::const_iterator torrent_it = torrentqueue->begin();
 		/* XXX more filtering/sorting */
-		//m_btsession->GetTorrentQueue( m_torrentlistitems );
 		WXLOGDEBUG(( _T( "Refreshing torrent list size %s\n" ), ( wxLongLong( torrent_queue_size ).ToString() ).c_str() ));
 		m_torrentlistctrl->SetItemCount( torrent_queue_size );
 
