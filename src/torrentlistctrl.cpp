@@ -268,8 +268,8 @@ wxString TorrentListCtrl::GetItemValue( long item, long columnid ) const
 		break;
 
 	case TORRENTLIST_COLUMN_COPIES:
-		if( torrentstoped )
-		{ ret = _T( "0" ); }
+		if( torrentstoped || torrentstatus.distributed_copies < 0.f)
+		{ ret = _T( "--" ); }
 		else
 		{ ret = wxString::Format( _T( "%.02f" ), torrentstatus.distributed_copies ); }
 
