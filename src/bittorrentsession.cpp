@@ -135,7 +135,7 @@ static const char PEER_ID[] = "SW";
 
 void *BitTorrentSession::Entry()
 {
-	wxLogDebug( _T( "BitTorrentSession Thread lt::entry pid 0x%lx priority %u.\n" ), GetId(), GetPriority() );
+	WXLOGDEBUG(( _T( "BitTorrentSession Thread lt::entry pid 0x%lx priority %u.\n" ), GetId(), GetPriority() ));
 	ConfigureSession();
 
 	// Resume main thread
@@ -205,7 +205,7 @@ void BitTorrentSession::OnExit()
 	//
 	//wxCriticalSectionLocker locker(wxGetApp().m_btcritsect);
 	//save DHT lt::entry
-	wxLogDebug( _T( "BitTorrent Session exiting\n" ) );
+	WXLOGDEBUG(( _T( "BitTorrent Session exiting\n" ) ));
 
 	if( m_config->GetDHTEnabled() )
 	{
@@ -565,7 +565,7 @@ void BitTorrentSession::StartNatpmp()
 void BitTorrentSession::AddTorrentSession( shared_ptr<torrent_t>& torrent )
 {
 	lt::torrent_handle &handle = torrent->handle;
-	wxLogDebug( _T( "AddTorrent %s into session\n" ), torrent->name.c_str() );
+	WXLOGDEBUG(( _T( "AddTorrent %s into session\n" ), torrent->name.c_str() ));
 	wxString fastresumefile = wxGetApp().SaveTorrentsPath() + torrent->hash + _T( ".fastresume" );
 	lt::entry resume_data;
 
@@ -643,7 +643,7 @@ void BitTorrentSession::AddTorrentSession( shared_ptr<torrent_t>& torrent )
 
 bool BitTorrentSession::AddTorrent( shared_ptr<torrent_t>& torrent )
 {
-	wxLogDebug( _T( "Add Torrent %s\n" ),  torrent->name.c_str() );
+	WXLOGDEBUG(( _T( "Add Torrent %s\n" ),  torrent->name.c_str() ));
 
 	try
 	{
@@ -853,7 +853,7 @@ void BitTorrentSession::ScanTorrentsDirectory( const wxString& dirname )
 	{
 		//fullpath = dirname + filename;
 		fn.Assign(dirname, filename);
-		wxLogDebug( _T( "Saved Torrent: %s\n" ), fn.GetFullPath().c_str() );
+		WXLOGDEBUG(( _T( "Saved Torrent: %s\n" ), fn.GetFullPath().c_str() ));
 		torrent =  ParseTorrent(fn.GetFullPath());
 
 		if (torrent->config->GetTorrentState() == TORRENT_STATE_QUEUE) /*Fist time added torrent, it's not in libtorrent*/
@@ -922,7 +922,7 @@ char const* timestamp()
 //posibly called in interval fashion
 void BitTorrentSession::SaveAllTorrent()
 {
-	wxLogDebug( _T( "Saving torrent info\n" ) );
+	WXLOGDEBUG(( _T( "Saving torrent info\n" ) ));
 	// keep track of the number of resume data
 	// alerts to wait for
 	int num_paused = 0;
@@ -981,8 +981,8 @@ void BitTorrentSession::SaveAllTorrent()
 			if( tp )
 			{
 				++num_paused;
-				wxLogDebug( _T( "\nleft: %d failed: %d pause: %d\n" )
-							, num_outstanding_resume_data, num_failed, num_paused );
+				WXLOGDEBUG(( _T( "\nleft: %d failed: %d pause: %d\n" )
+							, num_outstanding_resume_data, num_failed, num_paused ));
 				continue;
 			}
 
@@ -990,8 +990,8 @@ void BitTorrentSession::SaveAllTorrent()
 			{
 				++num_failed;
 				--num_outstanding_resume_data;
-				wxLogDebug( _T( "\nleft: %d failed: %d pause: %d\n" )
-							, num_outstanding_resume_data, num_failed, num_paused );
+				WXLOGDEBUG(( _T( "\nleft: %d failed: %d pause: %d\n" )
+							, num_outstanding_resume_data, num_failed, num_paused ));
 				continue;
 			}
 
@@ -1000,8 +1000,8 @@ void BitTorrentSession::SaveAllTorrent()
 			if( rd == 0 ) { continue; }
 
 			--num_outstanding_resume_data;
-			wxLogDebug( _T( "\nleft: %d failed: %d pause: %d\n" )
-						, num_outstanding_resume_data, num_failed, num_paused );
+			WXLOGDEBUG(( _T( "\nleft: %d failed: %d pause: %d\n" )
+						, num_outstanding_resume_data, num_failed, num_paused ));
 
 			if( !rd->resume_data ) { continue; }
 
@@ -1087,7 +1087,7 @@ void BitTorrentSession::DumpTorrents()
 shared_ptr<torrent_t> BitTorrentSession::ParseTorrent( const wxString& filename )
 {
 	shared_ptr<torrent_t> torrent( new torrent_t() );
-	wxLogDebug( _T( "Parse Torrent: %s\n" ), filename.c_str() );
+	WXLOGDEBUG(( _T( "Parse Torrent: %s\n" ), filename.c_str() ));
 
 	try
 	{
@@ -1302,7 +1302,7 @@ void BitTorrentSession::MoveTorrentUp( shared_ptr<torrent_t>& torrent )
 
 	torrents_t::iterator torrent_it = m_torrent_queue.begin() + idx - 1 ;
 	shared_ptr<torrent_t> prev_torrent( *( torrent_it ) );
-	wxLogDebug( _T( "Prev %d now %d\n" ), prev_torrent->config->GetQIndex(), torrent->config->GetQIndex() );
+	WXLOGDEBUG(( _T( "Prev %d now %d\n" ), prev_torrent->config->GetQIndex(), torrent->config->GetQIndex() ));
 	long prev_qindex = prev_torrent->config->GetQIndex();
 	long qindex = torrent->config->GetQIndex();
 	torrent->config->SetQIndex( prev_qindex );
@@ -1345,7 +1345,7 @@ void BitTorrentSession::MoveTorrentDown( shared_ptr<torrent_t>& torrent )
 
 	torrents_t::iterator torrent_it = m_torrent_queue.begin() + idx  ;
 	shared_ptr<torrent_t> next_torrent( *( torrent_it + 1 ) );
-	wxLogDebug( _T( "Next %d now %d\n" ), next_torrent->config->GetQIndex(), torrent->config->GetQIndex() );
+	WXLOGDEBUG(( _T( "Next %d now %d\n" ), next_torrent->config->GetQIndex(), torrent->config->GetQIndex() ));
 	long next_qindex = next_torrent->config->GetQIndex();
 	long qindex = torrent->config->GetQIndex();
 	torrent->config->SetQIndex( next_qindex );
@@ -1403,7 +1403,7 @@ void BitTorrentSession::ConfigureTorrentTrackers( shared_ptr<torrent_t>& torrent
 void BitTorrentSession::ConfigureTorrent( shared_ptr<torrent_t>& torrent )
 {
 	lt::torrent_handle &h = torrent->handle;
-	wxLogDebug( _T( "%s: Configure\n" ), torrent->name.c_str() );
+	WXLOGDEBUG(( _T( "%s: Configure\n" ), torrent->name.c_str() ));
 
 	if(torrent->info)
 	{
@@ -1430,7 +1430,7 @@ void BitTorrentSession::ConfigureTorrent( shared_ptr<torrent_t>& torrent )
 				StopTorrent( torrent );
 			}
 
-			wxLogDebug( _T( "Old path %s, new path %s\n" ), oldpath.GetPath().c_str(), newpath.GetPath().c_str() );
+			WXLOGDEBUG(( _T( "Old path %s, new path %s\n" ), oldpath.GetPath().c_str(), newpath.GetPath().c_str() ));
 
 			if(oldpath.DirExists())
 			{
@@ -1504,13 +1504,13 @@ void BitTorrentSession::ConfigureTorrent( shared_ptr<torrent_t>& torrent )
 		h.set_max_uploads( torrent->config->GetTorrentMaxUploads() );
 		h.set_max_connections( torrent->config->GetTorrentMaxConnections() );
 		//h.set_ratio( torrent->config->GetTorrentRatio() );
-		wxLogDebug( _T( "%s: Upload Limit %s download limit %s, max uploads %s, max connections %s, ratio %lf\n" ),
+		WXLOGDEBUG(( _T( "%s: Upload Limit %s download limit %s, max uploads %s, max connections %s, ratio %lf\n" ),
 					torrent->name.c_str(),
 					( wxLongLong( h.upload_limit() ).ToString() ).c_str(),
 					( wxLongLong( h.download_limit() ).ToString() ).c_str(),
 					( wxLongLong( torrent->config->GetTorrentMaxUploads() ).ToString() ).c_str(),
 					( wxLongLong( torrent->config->GetTorrentMaxConnections() ).ToString() ).c_str(),
-					( float )torrent->config->GetTorrentRatio() / 100 );
+					( float )torrent->config->GetTorrentRatio() / 100 ));
 		if(torrent->info)
 		{
 			ConfigureTorrentFilesPriority( torrent );
@@ -1674,13 +1674,13 @@ void BitTorrentSession::CheckQueueItem()
 	int start_count = 0;
 	int i = 0;
 	int maxstart = m_config->GetMaxStart();
-	//wxLogDebug(_T("CheckQueueItem %d\n"), m_torrent_queue.size());
+	//WXLOGDEBUG((_T("CheckQueueItem %d\n"), m_torrent_queue.size());
 	wxMutexLocker ml( m_torrent_queue_lock );
 
 	for( torrent_it = m_torrent_queue.begin(); torrent_it != m_torrent_queue.end(); ++torrent_it )
 	{
 		shared_ptr<torrent_t>& torrent = *torrent_it;
-		wxLogDebug( _T( "Processing torrent %s\n" ), torrent->name.c_str() );
+		WXLOGDEBUG(( _T( "Processing torrent %s\n" ), torrent->name.c_str() ));
 
 		switch( torrent->config->GetTorrentState() )
 		{

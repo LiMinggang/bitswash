@@ -279,13 +279,6 @@ wxString TorrentSettingPane::GetDownloadPath()
 	return fn.GetPathWithSep();
 }
 
-/*
-bool TorrentSettingPane::GetCompactAlloc()
-{
-	return m_check_compact->IsChecked();
-}
-*/
-
 lt::storage_mode_t TorrentSettingPane::GetStorageMode()
 {
 	//return (lt::storage_mode_t)m_combo_storagemode->GetValue();
@@ -301,7 +294,6 @@ bool TorrentSettingPane::GetUseDefault()
 {
 	return m_check_usedefault->IsChecked();
 }
-
 
 long TorrentSettingPane::GetDownloadRate()
 {
@@ -330,8 +322,6 @@ int TorrentSettingPane::GetRatio()
 
 void TorrentSettingPane::OnFileButton(wxCommandEvent& event)
 {
-	wxLogDebug(_T("OnFileButton"));
-
 #if WXVER >= 280
 	long dirstyle = wxDD_DEFAULT_STYLE| wxDD_DIR_MUST_EXIST |wxDD_CHANGE_DIR;
 #else
@@ -347,7 +337,6 @@ void TorrentSettingPane::OnFileButton(wxCommandEvent& event)
 		m_combo_saveas->SetValue(newpath);	
 	}
 	event.Skip();
-
 }
 
 void TorrentSettingPane::OnSaveDirectoryChanged(wxCommandEvent& event)

@@ -31,4 +31,9 @@ void SystemOpenURL(wxString url);
 wxString & GetExecutablePath();
 bool isUrl(const wxString &s, bool isScheme = true);
 
+#ifdef _DEBUG
+#define WXLOGDEBUG(a) wxLogDebug a
+#else
+#define WXLOGDEBUG(a)
+#endif
 #endif // FUNCTIONS_H
