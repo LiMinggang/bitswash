@@ -25,11 +25,6 @@
 
 #include "urldialog.h"
 
-BEGIN_EVENT_TABLE(UrlDialog, wxDialog)
-	EVT_BUTTON(wxID_OK, UrlDialog::OnOk)
-	EVT_BUTTON(wxID_CANCEL, UrlDialog::OnCancel)
-END_EVENT_TABLE()
-
 UrlDialog::UrlDialog( wxString* url, wxWindow* parent, int id,  wxString title, wxPoint pos, wxSize size, int style ) : wxDialog( parent, id, title, pos, size, style )
 {
 	m_url = url;
@@ -69,6 +64,9 @@ UrlDialog::UrlDialog( wxString* url, wxWindow* parent, int id,  wxString title, 
 	this->SetSizer( fgSizerURLMain );
 	this->Layout();
 	fgSizerURLMain->Fit( this );
+
+	Bind( wxEVT_BUTTON, &UrlDialog::OnOk, this, wxID_OK);
+	Bind( wxEVT_BUTTON, &UrlDialog::OnCancel, this, wxID_CANCEL);
 }
 
 void UrlDialog::OnOk(wxCommandEvent& event)

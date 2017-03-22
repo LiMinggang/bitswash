@@ -34,12 +34,9 @@
 #include "connectionsetting.h"
 #include "functions.h"
 
-BEGIN_EVENT_TABLE(ConnectionSettingPane, wxPanel)
-END_EVENT_TABLE()
 //CLASS ConnectionSettingPane
 ConnectionSettingPane::ConnectionSettingPane( wxWindow* parent, int id, wxPoint pos, wxSize size, int style) : wxPanel(parent, id, pos, size, style)
 {
-	
 	MainFrame* pMainFrame = (MainFrame*)wxGetApp().GetTopWindow();
 	Configuration* pcfg = pMainFrame->GetConfig();
 
@@ -206,3 +203,4 @@ int ConnectionSettingPane::GetMaxHalfOpen()
 {
 	return m_spinMaxHalfOpen->GetValue();
 }
+

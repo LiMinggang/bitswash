@@ -1095,7 +1095,7 @@ shared_ptr<torrent_t> BitTorrentSession::ParseTorrent( const wxString& filename 
 		//in.unsetf( std::ios_base::skipws );
 		//lt::entry e = lt::bdecode( std::istream_iterator<char>( in ), std::istream_iterator<char>() );
 		lt::error_code ec;
-		shared_ptr<const lt::torrent_info> t(new lt::torrent_info( filename.ToStdString(), ec));
+		shared_ptr<const lt::torrent_info> t(new lt::torrent_info(wxString(filename.mb_str(wxConvUTF8)).ToStdString(), ec));
 		if(ec)
 			wxLogError( wxString::FromUTF8( ec.message().c_str() ) );
 		torrent->info = t;

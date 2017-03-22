@@ -30,37 +30,6 @@
 #include "swashlistctrl.h"
 #include "mainframe.h"
 
-BEGIN_EVENT_TABLE( SwashListCtrl, wxListView )
-	EVT_LIST_BEGIN_DRAG( wxID_ANY, SwashListCtrl::OnBeginDrag )
-	EVT_LIST_BEGIN_RDRAG( wxID_ANY, SwashListCtrl::OnBeginRDrag )
-	EVT_LIST_BEGIN_LABEL_EDIT( wxID_ANY, SwashListCtrl::OnBeginLabelEdit )
-	EVT_LIST_END_LABEL_EDIT( wxID_ANY, SwashListCtrl::OnEndLabelEdit )
-	EVT_LIST_DELETE_ITEM( wxID_ANY, SwashListCtrl::OnDeleteItem )
-	EVT_LIST_DELETE_ALL_ITEMS( wxID_ANY, SwashListCtrl::OnDeleteAllItems )
-
-	EVT_LIST_ITEM_SELECTED( wxID_ANY, SwashListCtrl::OnSelected )
-	EVT_LIST_ITEM_DESELECTED( wxID_ANY, SwashListCtrl::OnDeselected )
-	EVT_LIST_KEY_DOWN( wxID_ANY, SwashListCtrl::OnListKeyDown )
-	EVT_LIST_ITEM_ACTIVATED( wxID_ANY, SwashListCtrl::OnActivated )
-	EVT_LIST_ITEM_FOCUSED( wxID_ANY, SwashListCtrl::OnFocused )
-
-	EVT_LIST_COL_CLICK( wxID_ANY, SwashListCtrl::OnColClick )
-	EVT_LIST_COL_RIGHT_CLICK( wxID_ANY, SwashListCtrl::OnColRightClick )
-	EVT_LIST_COL_BEGIN_DRAG( wxID_ANY, SwashListCtrl::OnColBeginDrag )
-	EVT_LIST_COL_DRAGGING( wxID_ANY, SwashListCtrl::OnColDragging )
-	EVT_LIST_COL_END_DRAG( wxID_ANY, SwashListCtrl::OnColEndDrag )
-
-	EVT_LIST_CACHE_HINT( wxID_ANY, SwashListCtrl::OnCacheHint )
-
-#if USE_CONTEXT_MENU
-	EVT_CONTEXT_MENU( SwashListCtrl::OnContextMenu )
-#endif
-
-	EVT_CHAR( SwashListCtrl::OnChar )
-
-	EVT_RIGHT_DOWN( SwashListCtrl::OnRightClick )
-	EVT_LEFT_DCLICK( SwashListCtrl::OnLeftDClick )
-END_EVENT_TABLE()
 // SwashListCtrl
 
 SwashListCtrl::SwashListCtrl( wxWindow *parent,
@@ -86,6 +55,36 @@ SwashListCtrl::SwashListCtrl( wxWindow *parent,
 	/* XXX initialize list column based on array */
 	Init( num_cols, columns );
 	Create( parent, id, pos, size, style );
+
+	Bind( wxEVT_LIST_BEGIN_DRAG, &SwashListCtrl::OnBeginDrag,this );
+	Bind( wxEVT_LIST_BEGIN_RDRAG, &SwashListCtrl::OnBeginRDrag,this );
+	Bind( wxEVT_LIST_BEGIN_LABEL_EDIT, &SwashListCtrl::OnBeginLabelEdit,this );
+	Bind( wxEVT_LIST_END_LABEL_EDIT, &SwashListCtrl::OnEndLabelEdit,this );
+	Bind( wxEVT_LIST_DELETE_ITEM, &SwashListCtrl::OnDeleteItem,this );
+	Bind( wxEVT_LIST_DELETE_ALL_ITEMS, &SwashListCtrl::OnDeleteAllItems,this );
+
+	Bind( wxEVT_LIST_ITEM_SELECTED, &SwashListCtrl::OnSelected,this );
+	Bind( wxEVT_LIST_ITEM_DESELECTED, &SwashListCtrl::OnDeselected,this );
+	Bind( wxEVT_LIST_KEY_DOWN, &SwashListCtrl::OnListKeyDown,this );
+	Bind( wxEVT_LIST_ITEM_ACTIVATED, &SwashListCtrl::OnActivated,this );
+	Bind( wxEVT_LIST_ITEM_FOCUSED, &SwashListCtrl::OnFocused,this );
+
+	Bind( wxEVT_LIST_COL_CLICK, &SwashListCtrl::OnColClick,this );
+	Bind( wxEVT_LIST_COL_RIGHT_CLICK, &SwashListCtrl::OnColRightClick,this );
+	Bind( wxEVT_LIST_COL_BEGIN_DRAG, &SwashListCtrl::OnColBeginDrag,this );
+	Bind( wxEVT_LIST_COL_DRAGGING, &SwashListCtrl::OnColDragging,this );
+	Bind( wxEVT_LIST_COL_END_DRAG, &SwashListCtrl::OnColEndDrag,this );
+
+	Bind( wxEVT_LIST_CACHE_HINT, &SwashListCtrl::OnCacheHint,this );
+
+#if USE_CONTEXT_MENU
+	Bind( wxEVT_CONTEXT_MENU, &SwashListCtrl::OnContextMenu,this );
+#endif
+
+	Bind( wxEVT_CHAR, &SwashListCtrl::OnChar,this );
+
+	Bind( wxEVT_RIGHT_DOWN, &SwashListCtrl::OnRightClick,this );
+	Bind( wxEVT_LEFT_DCLICK, &SwashListCtrl::OnLeftDClick,this );
 }
 
 void SwashListCtrl::Init( long num_cols, SwashColumnItem *columns )

@@ -29,8 +29,6 @@
 
 namespace lt = libtorrent;
 
-BEGIN_EVENT_TABLE( TorrentListCtrl, SwashListCtrl )
-END_EVENT_TABLE()
 // TorrentListCtrl
 
 enum torrentlistcolumnid

@@ -32,22 +32,19 @@
 
 class UrlDialog: public wxDialog 
 {
+public:
+	UrlDialog( wxString* url, wxWindow* parent,  int id = wxID_ANY, wxString title = _T("Enter Torrent URL"), wxPoint pos = wxDefaultPosition, wxSize size = wxDefaultSize, int style = wxDEFAULT_DIALOG_STYLE );
 
-	public:
-		UrlDialog( wxString* url, wxWindow* parent,  int id = wxID_ANY, wxString title = _T("Enter Torrent URL"), wxPoint pos = wxDefaultPosition, wxSize size = wxDefaultSize, int style = wxDEFAULT_DIALOG_STYLE );
-	
-	protected:
-	
-	private:
-		void OnOk(wxCommandEvent& event);
-		void OnCancel(wxCommandEvent& event);
-		wxString* m_url;
-		wxPanel* m_panelURL;
-		wxStaticText* m_staticURL;
-		wxTextCtrl* m_textURL;
-		wxStdDialogButtonSizer* m_sdbOkCancel;
-	
-	DECLARE_EVENT_TABLE()
+protected:
+
+private:
+	void OnOk(wxCommandEvent& event);
+	void OnCancel(wxCommandEvent& event);
+	wxString* m_url;
+	wxPanel* m_panelURL;
+	wxStaticText* m_staticURL;
+	wxTextCtrl* m_textURL;
+	wxStdDialogButtonSizer* m_sdbOkCancel;
 };
 
 #endif

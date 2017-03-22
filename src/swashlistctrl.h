@@ -178,8 +178,6 @@ protected:
 
 	SwashColumnItem *m_columns;
 	int m_numberofcolumns;
-
-    DECLARE_EVENT_TABLE()
 };
 
 

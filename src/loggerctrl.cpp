@@ -28,23 +28,11 @@
 #include "mainframe.h"
 #include "loggerctrl.h"
 
-enum
-{
-	LOGGER_CTRL_CHOICE_SEVERITY  = wxID_HIGHEST,
-	LOGGER_CTRL_CHECK_LOGFILE,
-	LOGGER_CTRL_BUTTON_CLEARLOG,
-	LOGGER_CTRL_BUTTON_SUSPEND,
-	LOGGER_CTRL_TEXTAREA
-};
-
-BEGIN_EVENT_TABLE( LoggerCtrl, wxPanel )
-	EVT_CHOICE( LOGGER_CTRL_CHOICE_SEVERITY, LoggerCtrl::OnSeverityChoice )
-	EVT_CHECKBOX( LOGGER_CTRL_CHECK_LOGFILE, LoggerCtrl::OnLogFileCheck )
-	EVT_BUTTON( LOGGER_CTRL_BUTTON_CLEARLOG, LoggerCtrl::OnClearLog )
-	EVT_TOGGLEBUTTON( LOGGER_CTRL_BUTTON_SUSPEND, LoggerCtrl::OnSuspend )
-	EVT_SIZE( LoggerCtrl::OnSize )
-	EVT_TEXT( LOGGER_CTRL_TEXTAREA, LoggerCtrl::OnLogText )
-END_EVENT_TABLE()
+const long LoggerCtrl::LOGGER_CTRL_CHOICE_SEVERITY = wxNewId();
+const long LoggerCtrl::LOGGER_CTRL_CHECK_LOGFILE = wxNewId();
+const long LoggerCtrl::LOGGER_CTRL_BUTTON_CLEARLOG = wxNewId();
+const long LoggerCtrl::LOGGER_CTRL_BUTTON_SUSPEND = wxNewId();
+const long LoggerCtrl::LOGGER_CTRL_TEXTAREA = wxNewId();
 
 LoggerCtrl::LoggerCtrl( wxWindow *parent, wxLog* oldlog,
 						const wxWindowID id,
@@ -101,6 +89,13 @@ LoggerCtrl::LoggerCtrl( wxWindow *parent, wxLog* oldlog,
 	this->SetSizer( fgSizerMain );
 	this->Layout();
 	fgSizerMain->Fit( this );
+
+	Bind( wxEVT_CHOICE, &LoggerCtrl::OnSeverityChoice, this, LOGGER_CTRL_CHOICE_SEVERITY );
+	Bind( wxEVT_CHECKBOX, &LoggerCtrl::OnLogFileCheck, this, LOGGER_CTRL_CHECK_LOGFILE );
+	Bind( wxEVT_BUTTON, &LoggerCtrl::OnClearLog, this, LOGGER_CTRL_BUTTON_CLEARLOG );
+	Bind( wxEVT_TOGGLEBUTTON, &LoggerCtrl::OnSuspend, this, LOGGER_CTRL_BUTTON_SUSPEND );
+	Bind( wxEVT_SIZE, &LoggerCtrl::OnSize, this );
+	Bind( wxEVT_TEXT, &LoggerCtrl::OnLogText, this, LOGGER_CTRL_TEXTAREA );
 }
 
 LoggerCtrl::~LoggerCtrl()

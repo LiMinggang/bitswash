@@ -35,39 +35,36 @@
 #include "filelistctrl.h"
 #include "loggerctrl.h"
 
-#define TORRENT_INFO_ID wxID_HIGHEST
-
 class TorrentInfo : public wxAuiNotebook
 {
-	public:
-		TorrentInfo(wxWindow *parent,
-               const wxWindowID id,
-               const wxPoint& pos = wxDefaultPosition,
-               const wxSize& size = wxDefaultSize,
-               long style = wxNB_TOP | wxTAB_TRAVERSAL );
-               
-		 ~TorrentInfo();
-	
-		 void UpdateTorrentInfo(bool updateall);
-		 wxFrame* GetMainFrame() { return m_pMainFrame; }
-		 LoggerCtrl* GetLogger() { return m_logger_panel;}
+public:
+	TorrentInfo(wxWindow *parent,
+           const wxWindowID id,
+           const wxPoint& pos = wxDefaultPosition,
+           const wxSize& size = wxDefaultSize,
+           long style = wxNB_TOP | wxTAB_TRAVERSAL );
+           
+	 ~TorrentInfo();
 
-		 PeerListCtrl* GetPeerListCtrl() { return m_peerspane ; }
-		 FileListCtrl* GetFileListCtrl() { return m_filespane ; }
-		 SummaryPane* GetSummaryPane() { return m_summarypane ;}
-		 TrackerListCtrl* GetTrackerListCtrl() { return m_trackerspane;}
-	
-	private:
-		SummaryPane* m_summarypane;
-		PeerListCtrl* m_peerspane;
-		FileListCtrl* m_filespane;
-		TrackerListCtrl* m_trackerspane;
-		void OnNotebookChanged(wxAuiNotebookEvent& event);
-		LoggerCtrl* m_logger_panel;
-	
-		wxFrame* m_pMainFrame;
+	 void UpdateTorrentInfo(bool updateall);
+	 wxFrame* GetMainFrame() { return m_pMainFrame; }
+	 LoggerCtrl* GetLogger() { return m_logger_panel;}
 
-		DECLARE_EVENT_TABLE()
+	 PeerListCtrl* GetPeerListCtrl() { return m_peerspane ; }
+	 FileListCtrl* GetFileListCtrl() { return m_filespane ; }
+	 SummaryPane* GetSummaryPane() { return m_summarypane ;}
+	 TrackerListCtrl* GetTrackerListCtrl() { return m_trackerspane;}
+	 static const long TORRENT_INFO_ID;
+
+private:
+	SummaryPane* m_summarypane;
+	PeerListCtrl* m_peerspane;
+	FileListCtrl* m_filespane;
+	TrackerListCtrl* m_trackerspane;
+	void OnNotebookChanged(wxAuiNotebookEvent& event);
+	LoggerCtrl* m_logger_panel;
+
+	wxFrame* m_pMainFrame;
 };
 
 

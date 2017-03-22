@@ -34,48 +34,46 @@
 
 #include "configuration.h"
 
-#ifndef ID_EXTENSIONSETTING_START
-#define ID_EXTENSIONSETTING_START wxID_HIGHEST
-#endif
-
 class ExtensionSettingPane :  public wxPanel
 {
-	public:
-		ExtensionSettingPane( wxWindow* parent, int id = wxID_ANY, wxPoint pos = wxDefaultPosition, wxSize size = wxDefaultSize, int style = wxTAB_TRAVERSAL);
+public:
+	ExtensionSettingPane( wxWindow* parent, int id = wxID_ANY, wxPoint pos = wxDefaultPosition, wxSize size = wxDefaultSize, int style = wxTAB_TRAVERSAL);
 
-		bool GetEnableMetadata();
-		bool GetEnablePex();
-		bool GetEnableEncryption();
-		bool GetForceEncryption();
-		bool GetEnableUpnp();
-		bool GetEnableNatpmp();
-		bool GetEnableLsd();
+	bool GetEnableMetadata();
+	bool GetEnablePex();
+	bool GetEnableEncryption();
+	bool GetForceEncryption();
+	bool GetEnableUpnp();
+	bool GetEnableNatpmp();
+	bool GetEnableLsd();
 
-	private:
-		wxFrame* m_pMainFrame;
-		Configuration *m_pcfg;
+private:
+	wxFrame* m_pMainFrame;
+	Configuration *m_pcfg;
 
-		wxPanel* m_pane_infoextension;
-		wxStaticText* m_static_infoextension;
-		wxCheckBox* m_check_metadata;
-		wxCheckBox* m_check_pex;
-		wxPanel* m_pane_infoencryption;
-		wxStaticText* m_static_infoencryption;
-		wxCheckBox* m_check_pe;
-		wxCheckBox* m_check_pe_notforce;
-		wxPanel* m_pane_infonetwork;
-		wxStaticText* m_static_infonat;
-		wxCheckBox* m_check_upnp;
-		wxCheckBox* m_check_natpmp;
-		wxCheckBox* m_check_lsd;
+	wxPanel* m_pane_infoextension;
+	wxStaticText* m_static_infoextension;
+	wxCheckBox* m_check_metadata;
+	wxCheckBox* m_check_pex;
+	wxPanel* m_pane_infoencryption;
+	wxStaticText* m_static_infoencryption;
+	wxCheckBox* m_check_pe;
+	wxCheckBox* m_check_pe_notforce;
+	wxPanel* m_pane_infonetwork;
+	wxStaticText* m_static_infonat;
+	wxCheckBox* m_check_upnp;
+	wxCheckBox* m_check_natpmp;
+	wxCheckBox* m_check_lsd;
 
-		void OnEnablePe(wxCommandEvent& event);
-		void OnCheckUpnp(wxCommandEvent& event);
-		void OnCheckNatpmp(wxCommandEvent& event);
-		void OnCheckLsd(wxCommandEvent& event);
-	private:
-		DECLARE_EVENT_TABLE()
-	
+	void OnEnablePe(wxCommandEvent& event);
+	void OnCheckUpnp(wxCommandEvent& event);
+	void OnCheckNatpmp(wxCommandEvent& event);
+	void OnCheckLsd(wxCommandEvent& event);
+private:
+	static const long EXTENSION_ID_ENABLEPE;
+	static const long EXTENSION_ID_CHECK_UPNP;
+	static const long EXTENSION_ID_CHECK_NATPMP;
+	static const long EXTENSION_ID_CHECK_LSD;
 };
 
 

@@ -29,11 +29,6 @@ const long TorrentProperty::ID_BUTTONDOWNLOADNONE = wxNewId();
 const long TorrentProperty::ID_BUTTONDOWNLOADALL = wxNewId();
 //*)
 
-BEGIN_EVENT_TABLE(TorrentProperty,wxDialog)
-	//(*EventTable(TorrentProperty)
-	//*)
-END_EVENT_TABLE()
-
 TorrentProperty::TorrentProperty(shared_ptr<torrent_t>& pTorrent, wxWindow* parent,wxWindowID id,const wxPoint& pos,const wxSize& size)
 {
 	wxASSERT( pTorrent );

@@ -30,11 +30,6 @@
 #include "swashsetting.h"
 #include "bittorrentsession.h"
 
-BEGIN_EVENT_TABLE(SwashSetting, wxDialog)
-	EVT_BUTTON(wxID_OK, SwashSetting::OnOK)
-	EVT_BUTTON(wxID_CANCEL, SwashSetting::OnCancel)
-END_EVENT_TABLE()
-
 SwashSetting::SwashSetting( wxWindow* parent, Configuration *pcfg, int id, wxString title, wxPoint pos, wxSize size, int style ) : wxDialog( parent, id, title, pos, size, style )
 {
 	//wxASSERT(pcfg == NULL);
@@ -84,6 +79,9 @@ SwashSetting::SwashSetting( wxWindow* parent, Configuration *pcfg, int id, wxStr
 	this->SetSizer( fgMain );
 	this->Layout();
 	fgMain->Fit(this);
+	
+	Bind( wxEVT_BUTTON, &SwashSetting::OnOK, this, wxID_OK);
+	Bind( wxEVT_BUTTON, &SwashSetting::OnCancel, this, wxID_CANCEL);
 }
 
 SwashSetting::~SwashSetting()

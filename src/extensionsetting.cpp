@@ -29,22 +29,10 @@
 #include "mainframe.h"
 #include "extensionsetting.h"
 
-enum
-{
-    EXTENSION_ID_ENABLEPE  = wxID_HIGHEST,
-    EXTENSION_ID_CHECK_UPNP,
-    EXTENSION_ID_CHECK_NATPMP,
-    EXTENSION_ID_CHECK_LSD
-};
-
-BEGIN_EVENT_TABLE( ExtensionSettingPane, wxPanel )
-    EVT_CHECKBOX( EXTENSION_ID_ENABLEPE, ExtensionSettingPane::OnEnablePe )
-#if 0
-    EVT_CHECKBOX( EXTENSION_ID_CHECK_UPNP, ExtensionSettingPane::OnCheckUpnp )
-    EVT_CHECKBOX( EXTENSION_ID_CHECK_NATPMP, ExtensionSettingPane::OnCheckNatpmp )
-    EVT_CHECKBOX( EXTENSION_ID_CHECK_LSD, ExtensionSettingPane::OnCheckLsd )
-#endif
-END_EVENT_TABLE()
+const long ExtensionSettingPane::EXTENSION_ID_ENABLEPE = wxNewId();
+const long ExtensionSettingPane::EXTENSION_ID_CHECK_UPNP = wxNewId();
+const long ExtensionSettingPane::EXTENSION_ID_CHECK_NATPMP = wxNewId();
+const long ExtensionSettingPane::EXTENSION_ID_CHECK_LSD = wxNewId();
 
 ExtensionSettingPane::ExtensionSettingPane( wxWindow* parent,
         int id,
@@ -121,6 +109,12 @@ ExtensionSettingPane::ExtensionSettingPane( wxWindow* parent,
     this->SetSizer( fgSizerMain );
     this->Layout();
     fgSizerMain->Fit( this );
+    Bind( wxEVT_CHECKBOX, &ExtensionSettingPane::OnEnablePe, this, EXTENSION_ID_ENABLEPE );
+#if 0
+    Bind( wxEVT_CHECKBOX, &ExtensionSettingPane::OnCheckUpnp, this, EXTENSION_ID_CHECK_UPNP );
+    Bind( wxEVT_CHECKBOX, &ExtensionSettingPane::OnCheckNatpmp, this, EXTENSION_ID_CHECK_NATPMP );
+    Bind( wxEVT_CHECKBOX, &ExtensionSettingPane::OnCheckLsd, this, EXTENSION_ID_CHECK_LSD );
+#endif
 }
 
 bool ExtensionSettingPane::GetEnableMetadata()

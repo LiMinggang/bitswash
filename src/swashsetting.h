@@ -51,30 +51,28 @@ class AutoSizeInput;
 class SwashSetting : public wxDialog 
 {
 
-	public:
-		SwashSetting( wxWindow* parent, Configuration* pcfg, int id = wxID_ANY, wxString title = _("Preference"), wxPoint pos = wxDefaultPosition, wxSize size = wxDefaultSize, int style = wxDEFAULT_DIALOG_STYLE );
-		~SwashSetting();
-	protected:
+public:
+	SwashSetting( wxWindow* parent, Configuration* pcfg, int id = wxID_ANY, wxString title = _("Preference"), wxPoint pos = wxDefaultPosition, wxSize size = wxDefaultSize, int style = wxDEFAULT_DIALOG_STYLE );
+	~SwashSetting();
+protected:
 
-	private:
-		void OnOK(wxCommandEvent& event);
-		void OnCancel(wxCommandEvent& event);
-		wxPanel* m_panel_main;
-		wxTreebook* m_listbookmenu;
-		wxStdDialogButtonSizer* m_szokcancel;
-		
-		Configuration *m_pcfg;
-
-		void Todo() { wxLogMessage(_T("Todo")) ; }	
-
-		TorrentSettingPane* m_pane_torrentsettings;
-		ConnectionSettingPane* m_pane_connectionsettings;
-		GeneralSettingPane* m_pane_generalsettings;
-		ExtensionSettingPane* m_pane_extensionsettings;
+private:
+	void OnOK(wxCommandEvent& event);
+	void OnCancel(wxCommandEvent& event);
+	wxPanel* m_panel_main;
+	wxTreebook* m_listbookmenu;
+	wxStdDialogButtonSizer* m_szokcancel;
 	
-	private:
-	DECLARE_EVENT_TABLE()
-		
+	Configuration *m_pcfg;
+
+	void Todo() { wxLogMessage(_T("Todo")) ; }	
+
+	TorrentSettingPane* m_pane_torrentsettings;
+	ConnectionSettingPane* m_pane_connectionsettings;
+	GeneralSettingPane* m_pane_generalsettings;
+	ExtensionSettingPane* m_pane_extensionsettings;
+
+private:
 };
 
 

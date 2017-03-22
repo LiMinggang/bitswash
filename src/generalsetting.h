@@ -94,7 +94,8 @@ private:
 
 	void OnUseSystray(wxCommandEvent& event);
 private:
-	DECLARE_EVENT_TABLE()
+	static const long GENERAL_ID_USESYSTRAY;
+	static const long GENERAL_ID_LOGTOFILE;
 };
 #endif	//_GENERALSETTING_H_
 

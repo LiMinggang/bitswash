@@ -36,13 +36,10 @@ enum bw_torrentinfo_page {
 	BW_TORRENTINFO_CHUNK,
 };
 
-BEGIN_EVENT_TABLE(TorrentInfo, wxAuiNotebook)
-	EVT_AUINOTEBOOK_PAGE_CHANGED(TORRENT_INFO_ID, TorrentInfo::OnNotebookChanged)
-END_EVENT_TABLE()
-
+const long TorrentInfo::TORRENT_INFO_ID = wxNewId();
 
 TorrentInfo::TorrentInfo(wxWindow *parent,
-                const wxWindowID id,
+               const wxWindowID id,
                const wxPoint& pos,
                const wxSize& size,
                long style) 
@@ -66,19 +63,19 @@ TorrentInfo::TorrentInfo(wxWindow *parent,
 	m_logger_panel = new LoggerCtrl (this, wxLog::GetActiveTarget(), wxID_ANY, wxDefaultPosition, wxSize(size.GetWidth(), -1) );
 
 	InsertPage(BW_TORRENTINFO_LOGGER, m_logger_panel, _("Log") );
+	Bind(wxEVT_AUINOTEBOOK_PAGE_CHANGED, &TorrentInfo::OnNotebookChanged, this, TORRENT_INFO_ID);
 }
-
 
 TorrentInfo::~TorrentInfo()
 {
-	
 }
 
 void TorrentInfo::UpdateTorrentInfo(bool updateall) 
 {
 	bool summary_updated, peers_updated, files_updated, trackers_updated;
 	summary_updated = peers_updated = files_updated = trackers_updated = false;
-	switch(GetSelection()){
+	switch(GetSelection())
+	{
 		case BW_TORRENTINFO_SUMMARY:
 			if(m_summarypane != NULL)
 			{
@@ -109,7 +106,7 @@ void TorrentInfo::UpdateTorrentInfo(bool updateall)
 			break;
 		default:
 			break;
-	}	
+	}
 
 	if (updateall) 
 	{
@@ -125,11 +122,9 @@ void TorrentInfo::UpdateTorrentInfo(bool updateall)
 		if(!trackers_updated && (m_trackerspane != NULL))
 			m_trackerspane->UpdateSwashList();
 	} 
-
 }
 
 void TorrentInfo::OnNotebookChanged(wxAuiNotebookEvent& event)
 {
 	UpdateTorrentInfo(false);
 }
-

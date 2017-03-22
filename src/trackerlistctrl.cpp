@@ -37,15 +37,7 @@ enum
 	TRACKERLISTCTRL_MENU_COPY,
 };
 
-
-BEGIN_EVENT_TABLE(TrackerListCtrl, SwashListCtrl)
-	EVT_MENU(TRACKERLISTCTRL_MENU_ADD, TrackerListCtrl::OnMenuEdit)
-	EVT_MENU(TRACKERLISTCTRL_MENU_EDIT, TrackerListCtrl::OnMenuEdit)
-	EVT_MENU(TRACKERLISTCTRL_MENU_DELETE, TrackerListCtrl::OnMenuEdit)
-	EVT_MENU(TRACKERLISTCTRL_MENU_COPY, TrackerListCtrl::OnMenuEdit)
-END_EVENT_TABLE()
 // TrackerListCtrl
-
 
 enum torrentlistcolumnid {
 	TRACKERLIST_COLUMN_URL = 0,
@@ -77,9 +69,11 @@ TrackerListCtrl::TrackerListCtrl(wxWindow *parent,
 			: SwashListCtrl(parent, SWASHLISTCOL_SIZE(trackerlistcols), trackerlistcols, settings, id, pos, size, style),
 			m_pTorrent(NULL)
 {
-
+	Bind( wxEVT_MENU, &TrackerListCtrl::OnMenuEdit, this, TRACKERLISTCTRL_MENU_ADD);
+	Bind( wxEVT_MENU, &TrackerListCtrl::OnMenuEdit, this, TRACKERLISTCTRL_MENU_EDIT);
+	Bind( wxEVT_MENU, &TrackerListCtrl::OnMenuEdit, this, TRACKERLISTCTRL_MENU_DELETE);
+	Bind( wxEVT_MENU, &TrackerListCtrl::OnMenuEdit, this, TRACKERLISTCTRL_MENU_COPY);
 }
-
 
 TrackerListCtrl::~TrackerListCtrl()
 {

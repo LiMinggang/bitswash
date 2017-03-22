@@ -97,7 +97,6 @@ class TorrentSettingPane : public wxPanel
 		static const long ID_SETTINGS_START;
 		static const long ID_SHOW_DIRECTORY;
 		static const long ID_TORRENT_DIRECTORY;
-	//DECLARE_EVENT_TABLE()
 };
 
 

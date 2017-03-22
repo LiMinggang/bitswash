@@ -42,66 +42,68 @@
 
 class LoggerCtrl: public wxPanel, wxLog
 {
-		
-	public:
-	
-		LoggerCtrl(wxWindow *parent, wxLog* oldlog,
-				const wxWindowID id = wxID_ANY,
-				const wxPoint& pos = wxDefaultPosition,
-				const wxSize& size = wxDefaultSize,
-				long style = wxTAB_TRAVERSAL);
+public:
 
-		~LoggerCtrl();
+	LoggerCtrl(wxWindow *parent, wxLog* oldlog,
+			const wxWindowID id = wxID_ANY,
+			const wxPoint& pos = wxDefaultPosition,
+			const wxSize& size = wxDefaultSize,
+			long style = wxTAB_TRAVERSAL);
 
-		wxTextCtrl* GetLoggerTextCtrl() { return m_log_text; }
-        int GetNumberOfLogLines() {return m_log_text->GetNumberOfLines();}
-		void Update();
+	~LoggerCtrl();
 
-	private:
-		wxFrame* m_pMainFrame;
-		Configuration* m_pcfg;
-		wxLog* m_oldlog;
+	wxTextCtrl* GetLoggerTextCtrl() { return m_log_text; }
+    int GetNumberOfLogLines() {return m_log_text->GetNumberOfLines();}
+	void Update();
 
-		wxPanel* m_panelCtrl;
-		wxStaticText* m_static_severity;
-		wxChoice* m_choice_logseverity;
-		wxCheckBox* m_checkLogFile;
-		wxButton* m_button_clearlog;
-		wxToggleButton* m_button_suspend;
-		wxPanel* m_panelLog;
-		wxTextCtrl* m_log_text;
+private:
+	wxFrame* m_pMainFrame;
+	Configuration* m_pcfg;
+	wxLog* m_oldlog;
 
-		bool m_logtofile;
+	wxPanel* m_panelCtrl;
+	wxStaticText* m_static_severity;
+	wxChoice* m_choice_logseverity;
+	wxCheckBox* m_checkLogFile;
+	wxButton* m_button_clearlog;
+	wxToggleButton* m_button_suspend;
+	wxPanel* m_panelLog;
+	wxTextCtrl* m_log_text;
 
-		struct log_data {
-			wxLogLevel level;
-			wxString msg;
-		};
+	bool m_logtofile;
 
-		bool m_issuspend;
-		std::vector<struct log_data> m_suspended_logdata;
+	struct log_data {
+		wxLogLevel level;
+		wxString msg;
+	};
+
+	bool m_issuspend;
+	std::vector<struct log_data> m_suspended_logdata;
 #if WXWIN_COMPATIBILITY_2_8
-		virtual void DoLog(wxLogLevel level, const wxChar *szString, time_t t);
+	virtual void DoLog(wxLogLevel level, const wxChar *szString, time_t t);
 
-		virtual void DoLogString( const wxChar *szString, time_t WXUNUSED(t));
+	virtual void DoLogString( const wxChar *szString, time_t WXUNUSED(t));
 #else
-		virtual void DoLogTextAtLevel(wxLogLevel level, const wxString& msg);
-		
-		virtual void DoLogText(const wxString& msg);
+	virtual void DoLogTextAtLevel(wxLogLevel level, const wxString& msg);
+	
+	virtual void DoLogText(const wxString& msg);
 #endif
-		void OnSize(wxSizeEvent& event);
-		void OnSeverityChoice(wxCommandEvent& event);
-		void OnLogFileCheck(wxCommandEvent& event);
-		void OnClearLog(wxCommandEvent& event);
-		void OnLogText(wxCommandEvent& event);
-		void OnSuspend(wxCommandEvent& event);
+	void OnSize(wxSizeEvent& event);
+	void OnSeverityChoice(wxCommandEvent& event);
+	void OnLogFileCheck(wxCommandEvent& event);
+	void OnClearLog(wxCommandEvent& event);
+	void OnLogText(wxCommandEvent& event);
+	void OnSuspend(wxCommandEvent& event);
 
-		void RotateLog(int line);
-		void PopSuspendedLog();
-		void LogToFile(wxString msg);
+	void RotateLog(int line);
+	void PopSuspendedLog();
+	void LogToFile(wxString msg);
 
-
-	DECLARE_EVENT_TABLE()
+	static const long LOGGER_CTRL_CHOICE_SEVERITY;
+	static const long LOGGER_CTRL_CHECK_LOGFILE;
+	static const long LOGGER_CTRL_BUTTON_CLEARLOG;
+	static const long LOGGER_CTRL_BUTTON_SUSPEND;
+	static const long LOGGER_CTRL_TEXTAREA;
 };
 
 

@@ -619,7 +619,7 @@ void MainFrame::CreateTorrentPanel()
 void MainFrame::CreateTorrentInfo()
 {
 	wxSize client_size = GetClientSize();
-	m_torrentinfo = new TorrentInfo( this, TORRENT_INFO_ID,
+	m_torrentinfo = new TorrentInfo( this, TorrentInfo::TORRENT_INFO_ID,
 									 wxDefaultPosition,
 									 wxSize( client_size.GetWidth(), -1 ),
 									 wxAUI_NB_TOP|wxNO_BORDER|wxTAB_TRAVERSAL

@@ -35,8 +35,6 @@
 
 namespace lt = libtorrent;
 
-BEGIN_EVENT_TABLE(PeerListCtrl, SwashListCtrl)
-END_EVENT_TABLE()
 // PeerListCtrl
 
 enum peerlistcolumnid {

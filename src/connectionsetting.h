@@ -40,48 +40,43 @@
 
 class ConnectionSettingPane : public wxPanel
 {
-	public:
-		ConnectionSettingPane( wxWindow* parent, int id = wxID_ANY, wxPoint pos = wxDefaultPosition, wxSize size = wxDefaultSize, int style = wxTAB_TRAVERSAL);
+public:
+	ConnectionSettingPane( wxWindow* parent, int id = wxID_ANY, wxPoint pos = wxDefaultPosition, wxSize size = wxDefaultSize, int style = wxTAB_TRAVERSAL);
 
-		int GetPortFrom();
-		int GetPortTo();
-		bool GetDHTState();
-		int GetDHTPort();
-		long GetDownloadLimit();
-		long GetUploadLimit();
-		int GetMaxUploads();
-		int GetMaxConnections();
-		int GetMaxHalfOpen();
+	int GetPortFrom();
+	int GetPortTo();
+	bool GetDHTState();
+	int GetDHTPort();
+	long GetDownloadLimit();
+	long GetUploadLimit();
+	int GetMaxUploads();
+	int GetMaxConnections();
+	int GetMaxHalfOpen();
 
-		
-	private: 
-		/* connection settings */
-		wxPanel* m_pane_infoport;
-		wxStaticText* m_static_infoport;
-		wxStaticText* m_staticPortRange;
-		wxSpinCtrl* m_spinPortFrom;
-		wxStaticText* m_staticPortRangeTo;
-		wxSpinCtrl* m_spinPortTo;
-		wxCheckBox* m_checkDHT;
-		wxSpinCtrl* m_spinDHTPort;
-		wxStaticLine* m_staticline1;
-		wxPanel* m_pane_infolimit;
-		wxStaticText* m_static_infoport1;
-		wxStaticText* m_staticDownLimit;
-		wxStaticText* m_staticUpLimit;
-		wxStaticText* m_staticMaxUploads;
-		wxSpinCtrl* m_spinMaxUploads;
-		wxStaticText* m_staticMaxConnections;
-		wxSpinCtrl* m_spinMaxConnections;
-		wxStaticText* m_staticMaxHalfOpen;
-		wxSpinCtrl* m_spinMaxHalfOpen;
+private: 
+	/* connection settings */
+	wxPanel* m_pane_infoport;
+	wxStaticText* m_static_infoport;
+	wxStaticText* m_staticPortRange;
+	wxSpinCtrl* m_spinPortFrom;
+	wxStaticText* m_staticPortRangeTo;
+	wxSpinCtrl* m_spinPortTo;
+	wxCheckBox* m_checkDHT;
+	wxSpinCtrl* m_spinDHTPort;
+	wxStaticLine* m_staticline1;
+	wxPanel* m_pane_infolimit;
+	wxStaticText* m_static_infoport1;
+	wxStaticText* m_staticDownLimit;
+	wxStaticText* m_staticUpLimit;
+	wxStaticText* m_staticMaxUploads;
+	wxSpinCtrl* m_spinMaxUploads;
+	wxStaticText* m_staticMaxConnections;
+	wxSpinCtrl* m_spinMaxConnections;
+	wxStaticText* m_staticMaxHalfOpen;
+	wxSpinCtrl* m_spinMaxHalfOpen;
 
-		AutoSizeInput* m_autoDownLimit;
-		AutoSizeInput* m_autoUpLimit;
-		
-
-
-	DECLARE_EVENT_TABLE()
+	AutoSizeInput* m_autoDownLimit;
+	AutoSizeInput* m_autoUpLimit;
 };
 
 #endif	//_CONNECTIONSETTING_H_

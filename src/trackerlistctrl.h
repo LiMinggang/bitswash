@@ -69,7 +69,6 @@ public:
 		shared_ptr<torrent_t> m_pTorrent;
 
     	DECLARE_NO_COPY_CLASS(TrackerListCtrl)
-    	DECLARE_EVENT_TABLE()
 };	
 	
 	

@@ -58,7 +58,6 @@ private:
 	wxMenu* m_torrentmenu;
 
     DECLARE_NO_COPY_CLASS(TorrentListCtrl)
-    DECLARE_EVENT_TABLE()
 };
 
 

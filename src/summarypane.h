@@ -33,75 +33,73 @@
 
 class SummaryPane :  public wxScrolledWindow
 {
-	public:
-		SummaryPane(wxWindow *parent,
-                	const wxWindowID id,
-               		const wxPoint& pos = wxDefaultPosition,
-               		const wxSize& size = wxDefaultSize,
-               		long style = wxTAB_TRAVERSAL);
+public:
+	SummaryPane(wxWindow *parent,
+            	const wxWindowID id,
+           		const wxPoint& pos = wxDefaultPosition,
+           		const wxSize& size = wxDefaultSize,
+           		long style = wxTAB_TRAVERSAL);
 
-		~SummaryPane();
+	~SummaryPane();
 
-		void UpdateSummary();
+	void UpdateSummary();
+
+	// SummaryPane interface
+
+protected:
+	wxPanel* m_pane_info;
+	wxStaticText* m_pane_label_info;
+	wxStaticText* m_label_saveas;
+	wxStaticText* m_label_size;
+	wxStaticText* m_label_pieces;
+	wxStaticText* m_label_peers;
+	wxStaticText* m_label_seeds;
+	wxStaticText* m_label_downspeed;
+	wxStaticText* m_label_upspeed;
+	wxStaticText* m_label_downlimit;
+	wxStaticText* m_label_uplimit;
+	wxStaticText* m_label_downloaded;
+	wxStaticText* m_label_uploaded;
+	wxStaticText* m_label_ratio;
+	wxStaticText* m_label_hash;
+	wxStaticText* m_label_comment_static;
+	wxTextCtrl* m_text_comment;
+	wxPanel* m_pane_tracker;
+	wxStaticText* m_pane_label_tracker;
+	wxStaticText* m_label_tracker_url;
+	wxStaticText* m_label_trackerstatus;
+	wxStaticText* m_label_nextupdate;
+	wxStaticText* m_label_dht;
+
+private:
+	// SummaryPane variables
+	void OnFocus(wxFocusEvent& event);
 	
-		// SummaryPane interface
-	
-	protected:
-		wxPanel* m_pane_info;
-		wxStaticText* m_pane_label_info;
-		wxStaticText* m_label_saveas;
-		wxStaticText* m_label_size;
-		wxStaticText* m_label_pieces;
-		wxStaticText* m_label_peers;
-		wxStaticText* m_label_seeds;
-		wxStaticText* m_label_downspeed;
-		wxStaticText* m_label_upspeed;
-		wxStaticText* m_label_downlimit;
-		wxStaticText* m_label_uplimit;
-		wxStaticText* m_label_downloaded;
-		wxStaticText* m_label_uploaded;
-		wxStaticText* m_label_ratio;
-		wxStaticText* m_label_hash;
-		wxStaticText* m_label_comment_static;
-		wxTextCtrl* m_text_comment;
-		wxPanel* m_pane_tracker;
-		wxStaticText* m_pane_label_tracker;
-		wxStaticText* m_label_tracker_url;
-		wxStaticText* m_label_trackerstatus;
-		wxStaticText* m_label_nextupdate;
-		wxStaticText* m_label_dht;
-	
-	private:
-		// SummaryPane variables
-		void OnFocus(wxFocusEvent& event);
-		
-		void UpdateSaveAs(wxString s);	
-		void UpdateSize(wxString s);	
-		void UpdatePieces(wxString s);	
-		void UpdateHash(wxString s);	
-		void UpdatePeers(wxString s);	
-		void UpdateSeeds(wxString s);	
-		void UpdateDownSpeed(wxString s);	
-		void UpdateUpSpeed(wxString s);	
-		void UpdateDownLimit(wxString s);	
-		void UpdateUpLimit(wxString s);	
-		void UpdateDownloaded(wxString s);	
-		void UpdateUploaded(wxString s);	
-		void UpdateRatio(wxString s);	
-		void UpdateComment(wxString s);	
+	void UpdateSaveAs(wxString s);	
+	void UpdateSize(wxString s);	
+	void UpdatePieces(wxString s);	
+	void UpdateHash(wxString s);	
+	void UpdatePeers(wxString s);	
+	void UpdateSeeds(wxString s);	
+	void UpdateDownSpeed(wxString s);	
+	void UpdateUpSpeed(wxString s);	
+	void UpdateDownLimit(wxString s);	
+	void UpdateUpLimit(wxString s);	
+	void UpdateDownloaded(wxString s);	
+	void UpdateUploaded(wxString s);	
+	void UpdateRatio(wxString s);	
+	void UpdateComment(wxString s);	
 
-		void UpdateTrackerUrl(wxString s); 
-		void UpdateTrackerStatus(wxString s); 
-		void UpdateNextUpdate(wxString s); 
-		void UpdateDht(wxString s); 
-		void ResetSummary();
+	void UpdateTrackerUrl(wxString s); 
+	void UpdateTrackerStatus(wxString s); 
+	void UpdateNextUpdate(wxString s); 
+	void UpdateDht(wxString s); 
+	void ResetSummary();
 
-		wxFrame* m_pMainFrame;
+	wxFrame* m_pMainFrame;
 
 
-	private:
-		DECLARE_EVENT_TABLE()
-	
+private:
 };
 
 

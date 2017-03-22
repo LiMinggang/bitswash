@@ -31,27 +31,23 @@
 
 class SwashStatBar: public wxStatusBar
 {
-	public:
-		SwashStatBar(wxWindow* parent);
-		virtual ~SwashStatBar();
-		void UpdateStatBar();
+public:
+	SwashStatBar(wxWindow* parent);
+	virtual ~SwashStatBar();
+	void UpdateStatBar();
 
-	private:
-		enum
-		{
-			BAR_FIELD_MESSAGE = 0,
-			BAR_FIELD_DOWNLOADRATE,	
-			BAR_FIELD_UPLOADRATE,	
-			BAR_FIELD_PEERS,
-			BAR_FIELD_INCOMING,
-			BAR_FIELD_MAX,
-		} SwashBarField;
+private:
+	enum
+	{
+		BAR_FIELD_MESSAGE = 0,
+		BAR_FIELD_DOWNLOADRATE,	
+		BAR_FIELD_UPLOADRATE,	
+		BAR_FIELD_PEERS,
+		BAR_FIELD_INCOMING,
+		BAR_FIELD_MAX,
+	} SwashBarField;
 
-		wxFrame* m_pMainFrame;
-
-		DECLARE_EVENT_TABLE()
-		//dtor
-		
+	wxFrame* m_pMainFrame;
 };
 
 #endif // BITSWASH_H

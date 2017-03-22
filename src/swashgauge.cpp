@@ -5,10 +5,6 @@
 
 #include "swashgauge.h"
 
-BEGIN_EVENT_TABLE(SwashGauge, wxWindow)
-	EVT_PAINT(SwashGauge::OnPaint)
-END_EVENT_TABLE()
-		
 SwashGauge::SwashGauge(wxWindow* parent, 
 					const wxWindowID id, 
 					int max,
@@ -38,11 +34,11 @@ SwashGauge::SwashGauge(wxWindow* parent,
 	dc.GetTextExtent(text, &w, &h);
 	dc.DrawText(text, rect.GetWidth()/2 - w/2, rect.GetHeight()/2 - h/2);
 
+	Bind(wxEVT_PAINT, &SwashGauge::OnPaint, this);
 }
 
 SwashGauge::~SwashGauge()
 {
-
 }
 
 void SwashGauge::OnPaint(wxPaintEvent &event)

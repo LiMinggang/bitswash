@@ -45,10 +45,6 @@
 
 namespace lt = libtorrent;
 
-BEGIN_EVENT_TABLE(SummaryPane, wxScrolledWindow)
-	//EVT_SET_FOCUS(SummaryPane::OnFocus)
-END_EVENT_TABLE()
-
 SummaryPane::SummaryPane(wxWindow *parent,
                 const wxWindowID id,
                const wxPoint& pos,

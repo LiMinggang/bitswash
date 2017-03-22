@@ -32,24 +32,24 @@
 /*custom class auto adjust value and convert units*/
 class AutoSizeInput : public wxPanel
 {
-	public:
-		AutoSizeInput(wxWindow* parent, wxString unitbase = _T("B"), int usize = 3, int id = wxID_ANY, wxPoint pos = wxDefaultPosition, wxSize size = wxDefaultSize, int style = wxTAB_TRAVERSAL);
-		void SetValue(long val);
-		long GetValue();
+public:
+	AutoSizeInput(wxWindow* parent, wxString unitbase = _T("B"), int usize = 3, int id = wxID_ANY, wxPoint pos = wxDefaultPosition, wxSize size = wxDefaultSize, int style = wxTAB_TRAVERSAL);
+	void SetValue(long val);
+	long GetValue();
 
-	protected:
-		wxSpinCtrl* m_spinValue;
-		wxComboBox* m_comboUnit;
-		int m_comboidx; /* overcome limitation of combo index */
-		
-	private:
-		void OnSpinUpdate(wxSpinEvent &event);
-		void OnComboUpdate(wxCommandEvent &event);
-		long m_value;
-		int m_unit_size;
-		wxString m_unit_base;
-
-	DECLARE_EVENT_TABLE()
+protected:
+	wxSpinCtrl* m_spinValue;
+	wxComboBox* m_comboUnit;
+	int m_comboidx; /* overcome limitation of combo index */
+	
+private:
+	void OnSpinUpdate(wxSpinEvent &event);
+	void OnComboUpdate(wxCommandEvent &event);
+	long m_value;
+	int m_unit_size;
+	wxString m_unit_base;
+	static const long AUTOSIZE_ID_SPIN;
+	static const long AUTOSIZE_ID_COMBO;
 };
 
 #endif //__AUTOSIZEINPUT_H__

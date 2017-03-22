@@ -49,8 +49,12 @@ private:
 	void OnMenuPreference(wxCommandEvent&);
 	virtual wxMenu *CreatePopupMenu();
 
-
-	DECLARE_EVENT_TABLE()
+	static const long TRAY_RESTORE;
+	static const long TRAY_EXIT;
+	static const long TRAY_HIDETASKBAR;
+	static const long TRAY_OPENTORRENT;
+	static const long TRAY_OPENTORRENTURL;
+	static const long TRAY_PREFERENCE;
 };
 
 

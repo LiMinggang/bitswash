@@ -23,17 +23,10 @@
 
 #include "autosizeinput.h"
 
-enum {
-	AUTOSIZE_ID_SPIN  = wxID_HIGHEST,
-	AUTOSIZE_ID_COMBO
-};
+const long AutoSizeInput::AUTOSIZE_ID_SPIN = wxNewId();;
+const long AutoSizeInput::AUTOSIZE_ID_COMBO = wxNewId();;
 
 /* CLASS AutoSizeInput */
-BEGIN_EVENT_TABLE(AutoSizeInput, wxPanel)
-	EVT_SPINCTRL(AUTOSIZE_ID_SPIN, AutoSizeInput::OnSpinUpdate)
-	EVT_COMBOBOX(AUTOSIZE_ID_COMBO, AutoSizeInput::OnComboUpdate)
-END_EVENT_TABLE()
-
 #define MAX_UNITS 5
 static wxChar units[MAX_UNITS][2] = { _T(""), _T("K"), _T("M"), _T("G"), _T("T") };
 
@@ -63,7 +56,8 @@ AutoSizeInput::AutoSizeInput( wxWindow* parent, wxString unitbase, int usize, in
 	this->Layout();
 
 	fgSizer->Fit(this);
-
+	Bind( wxEVT_SPINCTRL, &AutoSizeInput::OnSpinUpdate, this, AUTOSIZE_ID_SPIN );
+	Bind( wxEVT_COMBOBOX, &AutoSizeInput::OnComboUpdate, this, AUTOSIZE_ID_COMBO );
 }
 		
 void AutoSizeInput::SetValue(long val) 

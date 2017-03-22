@@ -24,32 +24,27 @@
 #include "swashtrayicon.h"
 #include "mainframe.h"
 
-enum {
-	TRAY_RESTORE = wxID_HIGHEST,
-	TRAY_EXIT,
-	TRAY_HIDETASKBAR,
-	TRAY_OPENTORRENT,
-	TRAY_OPENTORRENTURL,
-	TRAY_PREFERENCE
-};
-
-
-BEGIN_EVENT_TABLE(SwashTrayIcon, wxTaskBarIcon)
-	EVT_MENU(TRAY_RESTORE, SwashTrayIcon::OnMenuRestore)
-	EVT_MENU(TRAY_EXIT,	SwashTrayIcon::OnMenuExit)
-	EVT_MENU(TRAY_HIDETASKBAR,SwashTrayIcon::OnMenuHideTaskbar)
-	EVT_UPDATE_UI(TRAY_HIDETASKBAR,SwashTrayIcon::OnMenuUICheckmark)
-	EVT_TASKBAR_LEFT_UP(SwashTrayIcon::OnLeftButton)
-	EVT_MENU(TRAY_OPENTORRENT, SwashTrayIcon::OnMenuOpenTorrent)
-	EVT_MENU(TRAY_OPENTORRENTURL, SwashTrayIcon::OnMenuOpenTorrentUrl)
-	EVT_MENU(TRAY_PREFERENCE, SwashTrayIcon::OnMenuPreference)
-END_EVENT_TABLE()
+const long SwashTrayIcon::TRAY_RESTORE = wxNewId();
+const long SwashTrayIcon::TRAY_EXIT = wxNewId();
+const long SwashTrayIcon::TRAY_HIDETASKBAR = wxNewId();
+const long SwashTrayIcon::TRAY_OPENTORRENT = wxNewId();
+const long SwashTrayIcon::TRAY_OPENTORRENTURL = wxNewId();
+const long SwashTrayIcon::TRAY_PREFERENCE = wxNewId();
 
 SwashTrayIcon::SwashTrayIcon(wxFrame* parent) 
 { 
 	m_pMainFrame = parent;
 
-	m_hidetaskbar =	((MainFrame*)m_pMainFrame)->GetConfig()->GetHideTaskbar();
+	m_hidetaskbar = ((MainFrame*)m_pMainFrame)->GetConfig()->GetHideTaskbar();
+	
+	Bind( wxEVT_MENU, &SwashTrayIcon::OnMenuRestore, this, TRAY_RESTORE );
+	Bind( wxEVT_MENU,	&SwashTrayIcon::OnMenuExit, this, TRAY_EXIT );
+	Bind( wxEVT_MENU,&SwashTrayIcon::OnMenuHideTaskbar, this, TRAY_HIDETASKBAR );
+	Bind( wxEVT_UPDATE_UI,&SwashTrayIcon::OnMenuUICheckmark, this, TRAY_HIDETASKBAR );
+	Bind( wxEVT_TASKBAR_LEFT_UP, &SwashTrayIcon::OnLeftButton, this );
+	Bind( wxEVT_MENU, &SwashTrayIcon::OnMenuOpenTorrent, this, TRAY_OPENTORRENT );
+	Bind( wxEVT_MENU, &SwashTrayIcon::OnMenuOpenTorrentUrl, this, TRAY_OPENTORRENTURL );
+	Bind( wxEVT_MENU, &SwashTrayIcon::OnMenuPreference, this, TRAY_PREFERENCE );
 }
 
 void SwashTrayIcon::OnMenuRestore(wxCommandEvent& )

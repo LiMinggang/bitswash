@@ -29,15 +29,8 @@
 #include "generalsetting.h"
 #include "functions.h"
 
-enum 
-{ 
-	GENERAL_ID_USESYSTRAY  = wxID_HIGHEST,
-	GENERAL_ID_LOGTOFILE  
-};
-
-BEGIN_EVENT_TABLE(GeneralSettingPane, wxPanel)
-	EVT_CHECKBOX(GENERAL_ID_USESYSTRAY, GeneralSettingPane::OnUseSystray)
-END_EVENT_TABLE()
+const long GeneralSettingPane::GENERAL_ID_USESYSTRAY = wxNewId();
+const long GeneralSettingPane::GENERAL_ID_LOGTOFILE = wxNewId();
 
 GeneralSettingPane::GeneralSettingPane( wxWindow* parent,
 			int id, 
@@ -204,6 +197,8 @@ GeneralSettingPane::GeneralSettingPane( wxWindow* parent,
 	
 	this->SetSizer( fgSizerMain );
 	this->Layout();
+
+	Bind(wxEVT_CHECKBOX, &GeneralSettingPane::OnUseSystray, this, GENERAL_ID_USESYSTRAY );
 }
 
 int GeneralSettingPane::GetMaxStart() 

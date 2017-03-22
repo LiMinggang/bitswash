@@ -39,34 +39,31 @@
 
 class PeerListCtrl : public SwashListCtrl
 {
-
 public:
-	
-		PeerListCtrl(wxWindow *parent,
-			const wxString settings,
-			const wxWindowID id,
-			const wxPoint& pos = wxDefaultPosition,
-			const wxSize& size = wxDefaultSize,
-			long style = wxLC_VIRTUAL | wxLC_REPORT | wxSUNKEN_BORDER);
+	PeerListCtrl(wxWindow *parent,
+		const wxString settings,
+		const wxWindowID id,
+		const wxPoint& pos = wxDefaultPosition,
+		const wxSize& size = wxDefaultSize,
+		long style = wxLC_VIRTUAL | wxLC_REPORT | wxSUNKEN_BORDER);
 
-		 ~PeerListCtrl();
+	 ~PeerListCtrl();
 
-		typedef std::vector<libtorrent::peer_info> peer_list_t;
-	
-	protected:
-		// PeerListCtrl variables
-	
-	private:
+	typedef std::vector<libtorrent::peer_info> peer_list_t;
 
-		wxString GetItemValue(long item, long columnid) const;
+protected:
+	// PeerListCtrl variables
+
+private:
+
+	wxString GetItemValue(long item, long columnid) const;
 #if WXVER >= 280
-		int GetItemColumnImage(long item, long columnid) const;
+	int GetItemColumnImage(long item, long columnid) const;
 #else
-		int OnGetItemImage(long item) const;
+	int OnGetItemImage(long item) const;
 #endif
 
-		DECLARE_NO_COPY_CLASS(PeerListCtrl)
-		DECLARE_EVENT_TABLE()
+	DECLARE_NO_COPY_CLASS(PeerListCtrl)
 };	
 #endif	//_PEERLISTCTRL_H_
 

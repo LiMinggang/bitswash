@@ -187,7 +187,7 @@ bool BitSwash::OnInit()
 			for( size_t i = 0; i < m_FileNames.GetCount(); ++i )
 			{
 				//The name is what follows the last \ or /
-				fnames +=  m_FileNames[i] + wxT( ' ' );
+				fnames +=  m_FileNames[i] + wxT( '|' );
 			}
 
 			connection->Execute( fnames );
