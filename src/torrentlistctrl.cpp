@@ -108,7 +108,7 @@ wxString TorrentListCtrl::GetItemValue( long item, long columnid ) const
 	shared_ptr<torrent_t> torrent = pMainFrame->GetTorrent( item );
 	if(!torrent)
 	{
-		wxLogError( _T( "TorrentListCtrl: Couldn't retrieve torrent queue\n" ) );
+		wxLogError( _T( "TorrentListCtrl: Couldn't retrieve torrent %d\n" ), item );
 		return _T( "" );
 	}
 
@@ -137,6 +137,7 @@ wxString TorrentListCtrl::GetItemValue( long item, long columnid ) const
 		_( "Allocating" ),
 		_( "Checking resume data" )
 	};
+
 	wxString ret;
 
 	switch( columnid )

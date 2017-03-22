@@ -770,20 +770,28 @@ void BitTorrentSession::RemoveTorrent( shared_ptr<torrent_t>& torrent, bool dele
 	}
 }
 
-shared_ptr<torrent_t> BitTorrentSession::FindTorrent( const wxString &hash ) const
+shared_ptr<torrent_t> BitTorrentSession::FindTorrent( const wxString &hash )
 {
 	shared_ptr<torrent_t> torrent;
-	int idx = find_torrent_from_hash( hash );
+	{
+		wxMutexLocker ml(m_torrent_queue_lock);
+		int idx = find_torrent_from_hash(hash);
 
-	if( idx >= 0 ) { torrent = m_torrent_queue.at( idx ); }
+		if (idx >= 0) { torrent = m_torrent_queue.at(idx); }
+	}
 
 	return torrent;
 }
 
-shared_ptr<torrent_t> BitTorrentSession::GetTorrent( int idx ) const
+shared_ptr<torrent_t> BitTorrentSession::GetTorrent( int idx )
 {
 	shared_ptr<torrent_t> torrent;
-	if( idx >= 0 && idx < m_torrent_queue.size()) { torrent = m_torrent_queue.at( idx ); }
+
+	wxMutexLocker ml( m_torrent_queue_lock );
+	if( idx >= 0 && idx < m_torrent_queue.size())
+	{
+		torrent = m_torrent_queue.at( idx );
+	}
 
 	return torrent;
 }
@@ -897,6 +905,12 @@ void BitTorrentSession::ScanTorrentsDirectory( const wxString& dirname )
 			m_running_torrent_map[m_torrent_queue.at( i )->hash] = i;
 		}
 	}
+}
+
+size_t BitTorrentSession::GetTorrentQueueSize()
+{
+	wxMutexLocker ml( m_torrent_queue_lock );
+	return m_torrent_queue.size();
 }
 
 //find and return index of torrent handle from hash string
@@ -2059,22 +2073,18 @@ bool BitTorrentSession::HandleAddTorrentAlert(lt::add_torrent_alert *p)
 			{
 				torrents_t::const_reverse_iterator it = m_torrent_queue.rbegin();
 
-				if( it == m_torrent_queue.rend() )
+				int qidx = 0;
+				while( it != m_torrent_queue.rend() )
 				{
-					torrent->config->SetQIndex( 0 );
-				}
-				else
-				{
-					while( it != m_torrent_queue.rend() )
+					if((*it)->config->GetQIndex() != -1)
 					{
-						if((*it)->config->GetQIndex() != -1)
-						{
-							torrent->config->SetQIndex( (*it)->config->GetQIndex() + 1 );
-							break;
-						}
-						++it;
+						qidx = (*it)->config->GetQIndex() + 1;
+						break;
 					}
+					++it;
 				}
+
+				torrent->config->SetQIndex( qidx );
 			}
 
 			if(torrent->info)

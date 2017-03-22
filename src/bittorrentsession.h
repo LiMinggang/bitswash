@@ -127,8 +127,8 @@ public:
 	void AddTorrentSession(shared_ptr<torrent_t>& torrent);
 	bool AddTorrent(shared_ptr<torrent_t>& torrent);
 	void RemoveTorrent(shared_ptr<torrent_t>& torrent, bool deletedata);
-	shared_ptr<torrent_t> FindTorrent(const wxString &hash) const;
-	shared_ptr<torrent_t> GetTorrent(int idx) const;
+	shared_ptr<torrent_t> FindTorrent(const wxString &hash);
+	shared_ptr<torrent_t> GetTorrent(int idx);
 	void MergeTorrent(shared_ptr<torrent_t>& dst_torrent, shared_ptr<torrent_t>& src_torrent);
 	void MergeTorrent(shared_ptr<torrent_t>& dst_torrent, MagnetUri& src_magneturi);
 
@@ -137,7 +137,7 @@ public:
 	void LoadMagnetUri( const wxString& magneturi );
 	bool SaveTorrent(shared_ptr<torrent_t>& torrent, const wxString& filename);
 	
-	size_t GetTorrentQueueSize() {return m_torrent_queue.size();}
+	size_t GetTorrentQueueSize();
 
 	void StartTorrent(shared_ptr<torrent_t>& torrent, bool force);
 	void StopTorrent(shared_ptr<torrent_t>& torrent);
