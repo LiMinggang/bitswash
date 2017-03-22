@@ -124,7 +124,7 @@ public:
 	void StartUpnp();
 	void StartNatpmp();
 	
-	void AddTorrentSession(shared_ptr<torrent_t>& torrent);
+	void AddTorrentToSession(shared_ptr<torrent_t>& torrent);
 	bool AddTorrent(shared_ptr<torrent_t>& torrent);
 	void RemoveTorrent(shared_ptr<torrent_t>& torrent, bool deletedata);
 	shared_ptr<torrent_t> FindTorrent(const wxString &hash);

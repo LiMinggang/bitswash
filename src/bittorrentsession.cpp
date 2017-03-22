@@ -162,6 +162,7 @@ void *BitTorrentSession::Entry()
 			{
 				case BTS_EVENT_ALERT:
 				{
+					check_now = true;
 					HandleTorrentAlert();
 					break;
 				}
@@ -562,7 +563,7 @@ void BitTorrentSession::StartNatpmp()
 	}
 }
 
-void BitTorrentSession::AddTorrentSession( shared_ptr<torrent_t>& torrent )
+void BitTorrentSession::AddTorrentToSession( shared_ptr<torrent_t>& torrent )
 {
 	lt::torrent_handle &handle = torrent->handle;
 	WXLOGDEBUG(( _T( "AddTorrent %s into session\n" ), torrent->name.c_str() ));
@@ -660,7 +661,7 @@ bool BitTorrentSession::AddTorrent( shared_ptr<torrent_t>& torrent )
 				( state == TORRENT_STATE_FORCE_START ) ||
 				( state == TORRENT_STATE_PAUSE ) )
 		{
-			AddTorrentSession( torrent );
+			AddTorrentToSession( torrent );
 		}
 		else
 			PostQueueUpdateEvent();
@@ -840,6 +841,7 @@ void BitTorrentSession::MergeTorrent( shared_ptr<torrent_t>& dst_torrent, Magnet
 		}
 	}
 }
+
 void BitTorrentSession::ScanTorrentsDirectory( const wxString& dirname )
 {
 	wxASSERT( m_libbtsession != NULL );
@@ -1105,17 +1107,12 @@ shared_ptr<torrent_t> BitTorrentSession::ParseTorrent( const wxString& filename 
 
 	try
 	{
-		//std::ifstream in( ( const char* )filename.mb_str( wxConvFile ), std::ios_base::binary );
-		//in.unsetf( std::ios_base::skipws );
-		//lt::entry e = lt::bdecode( std::istream_iterator<char>( in ), std::istream_iterator<char>() );
 		lt::error_code ec;
 		shared_ptr<const lt::torrent_info> t(new lt::torrent_info(wxString(filename.mb_str(wxConvUTF8)).ToStdString(), ec));
 		if(ec)
 			wxLogError( wxString::FromUTF8( ec.message().c_str() ) );
 		torrent->info = t;
 		torrent->name = wxString( wxConvUTF8.cMB2WC( t->name().c_str() ) );
-		//std::stringstream hash_stream;
-		//hash_stream << t->info_hash();
 		torrent->hash = t->info_hash();
 		torrent->config.reset( new TorrentConfig( wxString(torrent->hash) ) );
 
@@ -1161,7 +1158,6 @@ shared_ptr<torrent_t> BitTorrentSession::LoadMagnetUri( MagnetUri& magneturi )
 
 			// Adding torrent to BitTorrent session
 			torrent->config->SetTorrentState( TORRENT_STATE_START );
-			//torrent->handle.resolve_countries( true );
 			torrent->magneturi = magneturi.url();
 
 
@@ -1214,7 +1210,7 @@ void BitTorrentSession::StartTorrent( shared_ptr<torrent_t>& torrent, bool force
 
 	if( !handle.is_valid() || ( ( handle.status(lt::torrent_handle::query_save_path).save_path).empty() ) )
 	{
-		AddTorrentSession( torrent );
+		AddTorrentToSession( torrent );
 	}
 
 	//lt::torrent_status st = handle.status();
@@ -1272,7 +1268,7 @@ void BitTorrentSession::QueueTorrent( shared_ptr<torrent_t>& torrent )
 	}
 	else
 	{
-		AddTorrentSession(torrent);
+		AddTorrentToSession(torrent);
 	}
 
 	torrent->config->SetTorrentState( TORRENT_STATE_QUEUE );
@@ -1286,7 +1282,7 @@ void BitTorrentSession::PauseTorrent( shared_ptr<torrent_t>& torrent )
 
 	if( !handle.is_valid() )
 	{
-		AddTorrentSession( torrent );
+		AddTorrentToSession( torrent );
 	}
 
 	//if( !handle.is_paused() )
@@ -1479,7 +1475,7 @@ void BitTorrentSession::ConfigureTorrent( shared_ptr<torrent_t>& torrent )
 					
 					if( !h.is_valid() || ( ( h.status(lt::torrent_handle::query_save_path).save_path).empty() ) )
 					{
-						AddTorrentSession( torrent );
+						AddTorrentToSession( torrent );
 					}
 					/*if( h.is_valid() )
 					{
@@ -1504,7 +1500,7 @@ void BitTorrentSession::ConfigureTorrent( shared_ptr<torrent_t>& torrent )
 				{
 					if( !h.is_valid() || ( ( h.status(lt::torrent_handle::query_save_path).save_path).empty() ) )
 					{
-						AddTorrentSession( torrent );
+						AddTorrentToSession( torrent );
 					}
 				}
 			}
@@ -2066,7 +2062,10 @@ bool BitTorrentSession::HandleAddTorrentAlert(lt::add_torrent_alert *p)
 		{
 			//wxString torrent_backup = wxGetApp().SaveTorrentsPath() + torrent->hash + _T( ".torrent" );
 			torrent->handle = p->handle;
+			wxASSERT(p->handle.is_valid());
 			torrent->isvalid = true;
+			torrent->handle.auto_managed(false);
+			torrent->handle.pause();
 			enum torrent_state state = ( enum torrent_state ) torrent->config->GetTorrentState();
 
 			if( torrent->config->GetQIndex() == -1 )
@@ -2114,9 +2113,9 @@ bool BitTorrentSession::HandleAddTorrentAlert(lt::add_torrent_alert *p)
 				torrent->config->SetSelectedSize(total_selected);
 			}
 
-			if( state == TORRENT_STATE_FORCE_START || state == TORRENT_STATE_START )
+			if( state == TORRENT_STATE_FORCE_START )
 			{
-				StartTorrent( torrent, ( state == TORRENT_STATE_FORCE_START ) );
+				StartTorrent( torrent, true );
 			}
 		}
 	}
