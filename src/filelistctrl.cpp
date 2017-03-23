@@ -129,7 +129,6 @@ wxString FileListCtrl::GetItemValue( long item, long columnid ) const
 {
 	wxString ret(_T( "" ));
 	//XXX backward compatible
-	bool nopriority = false;
 	//wxLogDebug( _T( "FileListCtrl column %ld of item %ld" ), columnid, item );
 	shared_ptr<torrent_t> pTorrent(m_pTorrent);
 
@@ -141,15 +140,6 @@ wxString FileListCtrl::GetItemValue( long item, long columnid ) const
 
 	if( !pTorrent )
 	{ return ret; }
-
-	lt::torrent_handle h = pTorrent->handle;
-	lt::torrent_info const& torrent_info = *( pTorrent->info );
-	std::vector<int> filespriority = pTorrent->config->GetFilesPriorities();
-
-	if( filespriority.size() != torrent_info.num_files() )
-	{
-		nopriority = true;
-	}
 
 	// some priority has no name and not made an option yet
 	//
@@ -165,38 +155,61 @@ wxString FileListCtrl::GetItemValue( long item, long columnid ) const
 		_( "Higest" )
 	};
 
-	std::vector<boost::int64_t> f_progress;
-	lt::file_storage const& allfiles = torrent_info.files();
-
-	if( h.is_valid() )
-	{ h.file_progress( f_progress, lt::torrent_handle::piece_granularity); }
-
 	switch( columnid )
 	{
 	case FILELIST_COLUMN_FILE:
-		ret = wxString( wxConvUTF8.cMB2WC( (allfiles.file_name(item)).c_str() ) );
-		break;
-
+		{
+			lt::torrent_info const& torrent_info = *( pTorrent->info );
+			lt::file_storage const& allfiles = torrent_info.files();
+			ret = wxString( wxConvUTF8.cMB2WC( (allfiles.file_name(item)).c_str() ) );
+			break;
+		}
 	case FILELIST_COLUMN_SIZE:
-		ret = HumanReadableByte( ( wxDouble ) (allfiles.file_size(item)) );
-		break;
-
+		{
+			lt::torrent_info const& torrent_info = *( pTorrent->info );
+			lt::file_storage const& allfiles = torrent_info.files();
+			ret = HumanReadableByte( ( wxDouble ) (allfiles.file_size(item)) );
+			break;
+		}
 	case FILELIST_COLUMN_DOWNLOAD:
-		if( nopriority )
-		{ ret = priority[BITTORRENT_FILE_NORMAL]; }
-		else
-		{ ret = priority[filespriority[item]]; }
+		{
+			bool nopriority = false;
+			lt::torrent_info const& torrent_info = *( pTorrent->info );
+			std::vector<int> filespriority = pTorrent->config->GetFilesPriorities();
+			
+			if( filespriority.size() != torrent_info.num_files() )
+			{
+				nopriority = true;
+			}
+			if( nopriority )
+			{ ret = priority[BITTORRENT_FILE_NORMAL]; }
+			else
+			{
+				wxASSERT(item < filespriority.size());
+				wxASSERT(filespriority[item] < sizeof(priority));
+				ret = priority[filespriority[item]];
+			}
 
-		break;
-
+			break;
+		}
 	case FILELIST_COLUMN_PROGRESS:
-		if( h.is_valid() )
-		{ return wxString::Format( _T( "%.02f%%" ), ( (( wxDouble ) f_progress[item])/ ((wxDouble)allfiles.file_size(item)) * 100 ) ); }
-		else
-		{ ret = _T( "0.00" ); }
+		{
+			lt::torrent_handle h = pTorrent->handle;
+			lt::torrent_info const& torrent_info = *(pTorrent->info);
+			lt::file_storage const& allfiles = torrent_info.files();
 
-		break;
+			if( h.is_valid() )
+			{
+				std::vector<boost::int64_t> f_progress;
+				h.file_progress( f_progress, lt::torrent_handle::piece_granularity);
+				wxASSERT(item < f_progress.size());
+				return wxString::Format( _T( "%.02f%%" ), ( (( wxDouble ) f_progress[item])/ ((wxDouble)allfiles.file_size(item)) * 100 ) );
+			}
+			else
+			{ ret = _T( "0.00" ); }
 
+			break;
+		}
 	default:
 		break;
 	}
