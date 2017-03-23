@@ -52,7 +52,7 @@ TorrentConfig::TorrentConfig( const wxString& torrentName )
 
 	wxFileInputStream fis( m_configfile );
 	m_torrentname = torrentName;
-	wxLogDebug( _T( "Init TorrentConfig %s\n" ), m_configfile.c_str() );
+	//wxLogDebug( _T( "Init TorrentConfig %s\n" ), m_configfile.c_str() );
 	m_cfg =  new wxFileConfig( ( wxInputStream & )fis );
 	m_selected_file_size = 0;
 	//m_cfg = (wxConfig*)wxConfig::Get(m_appname);
@@ -167,7 +167,7 @@ void TorrentConfig::WriteTrackersUrl()
 		trackers += wxString::FromUTF8( t_url.c_str() ) + _T( "|" ) + wxString::Format( _T( "%d" ), t_tier ) + _T( ";" );
 	}
 
-	wxLogDebug( _T( "Writing trackers %s\n" ), trackers.c_str() );
+	//wxLogDebug( _T( "Writing trackers %s\n" ), trackers.c_str() );
 	trackers = trackers.BeforeLast( ';' );
 	m_cfg->Write( _T( "/Torrent/trackers" ), trackers );
 }

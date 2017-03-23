@@ -220,7 +220,7 @@ SummaryPane::~SummaryPane()
 
 void SummaryPane::UpdateSummary()
 {
-	wxLogDebug(_T("UpdateSummary\n"));
+	//wxLogDebug(_T("UpdateSummary\n"));
 	shared_ptr<torrent_t> pTorrent = ((MainFrame*)m_pMainFrame)->GetSelectedTorrent();
 
 	if ( !pTorrent )
@@ -241,7 +241,7 @@ void SummaryPane::UpdateSummary()
 	if(t)
 	{
 		wxString t_name = wxString(wxConvUTF8.cMB2WC(t->name().c_str()));
-		wxLogDebug(_T("UpdateSummary - Update torrent %s\n"), t_name.c_str());
+		//wxLogDebug(_T("UpdateSummary - Update torrent %s\n"), t_name.c_str());
 
 		//if(h.is_valid()) UpdateSaveAs(wxString::FromAscii( pTorrent->handle.save_path().string().c_str()));
 		UpdateSaveAs(pTorrent->config->GetDownloadPath() + t_name);
@@ -296,15 +296,6 @@ void SummaryPane::UpdateSummary()
 	m_summarypane_sizer->FitInside(this);
 
 	//SetScrollbars(20,20,5,5);
-
-}
-
-void SummaryPane::OnFocus(wxFocusEvent& event)
-{
-	wxLogDebug(_T("OnFocus\n"));
-	//UpdateSummary();
-	//this->Layout();
-	//event.Skip();
 
 }
 

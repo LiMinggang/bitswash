@@ -126,36 +126,28 @@ void LoggerCtrl::OnSize( wxSizeEvent& event )
 
 void LoggerCtrl::OnSeverityChoice( wxCommandEvent& event )
 {
-	wxLogDebug( _T( "Severity update %d\n" ), m_choice_logseverity->GetCurrentSelection() );
+	//wxLogDebug( _T( "Severity update %d\n" ), m_choice_logseverity->GetCurrentSelection() );
 	m_pcfg->SetLogSeverity( m_choice_logseverity->GetCurrentSelection() );
 	( ( MainFrame* )m_pMainFrame )->SetLogSeverity();
 }
 
 void LoggerCtrl::OnLogFileCheck( wxCommandEvent& event )
 {
-	wxLogDebug( _T( "OnLogFileCheck\n" ) );
+	//wxLogDebug( _T( "OnLogFileCheck\n" ) );
 	bool logtofile = m_checkLogFile->GetValue();
 	m_pcfg->SetLogFile( logtofile );
-	if( logtofile )
-	{
-		wxLogDebug( _T( "LogToFile\n" ) );
-	}
-	else
-	{
-		wxLogDebug( _T( "Not LogToFile\n" ) );
-	}
 	m_logtofile = logtofile;
 }
 
 void LoggerCtrl::OnClearLog( wxCommandEvent& event )
 {
-	wxLogDebug( _T( "Clear Log\n" ) );
+	//wxLogDebug( _T( "Clear Log\n" ) );
 	m_log_text->Clear();
 }
 
 void LoggerCtrl::OnSuspend( wxCommandEvent& event )
 {
-	wxLogDebug( _T( "Suspend Log\n" ) );
+	//wxLogDebug( _T( "Suspend Log\n" ) );
 	if( m_button_suspend->GetValue() )
 		m_issuspend = true;
 	else
@@ -209,7 +201,7 @@ void LoggerCtrl::DoLogString( const wxChar *szString, time_t WXUNUSED( t ) )
 	std::cout << __func__
 			  << ": str " << st.c_str() << std::endl;
 #endif
-	wxString msg;
+	static wxString msg;
 	TimeStamp( &msg );
 	msg += szString;
 	//Use WriteText will prevent scrolling

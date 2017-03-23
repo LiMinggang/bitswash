@@ -242,7 +242,7 @@ int PeerListCtrl::GetItemColumnImage(long item, long columnid) const
 
 	lt::peer_info peer_info = peers_list->at(item);
 
-	wxLogDebug(_T("PeerListCtrl GetItemColumnImage Column %ld of item %ld\n" ), columnid, item);
+	//wxLogDebug(_T("PeerListCtrl GetItemColumnImage Column %ld of item %ld\n" ), columnid, item);
 
 	switch (columnid)
 	{
@@ -263,7 +263,7 @@ int PeerListCtrl::GetItemColumnImage(long item, long columnid) const
 			{
 				//ctry[2] = '\0';
 				int index = bitSwachApp.GetCountryFlag(ctry);
-				wxLogDebug(_T("Image idx %s %d\n" ), ctry.c_str(), index);
+				//wxLogDebug(_T("Image idx %s %d\n" ), ctry.c_str(), index);
 				return index;
 			}
 			else

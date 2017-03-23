@@ -73,7 +73,6 @@ protected:
 
 private:
 	// SummaryPane variables
-	void OnFocus(wxFocusEvent& event);
 	
 	void UpdateSaveAs(wxString s);	
 	void UpdateSize(wxString s);	

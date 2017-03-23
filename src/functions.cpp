@@ -194,11 +194,11 @@ void SystemOpenURL(wxString url)
 
 	if (wxGetEnv(_T("GNOME_DESKTOP_SESSION_ID"), &desktop_session))
 	{
-			wxLogDebug(_T("GNOME_DESKTOP_SESSION_ID=%s\n" ), desktop_session.c_str());
+			//wxLogDebug(_T("GNOME_DESKTOP_SESSION_ID=%s\n" ), desktop_session.c_str());
 			wxString cmd = wxEmptyString;
 			cmd.sprintf(_T("%s %s"), _T("gnome-open"), url.c_str());
 
-			wxLogDebug(_T("Open url %s cmd %s\n" ), url.c_str(), cmd.c_str());
+			//wxLogDebug(_T("Open url %s cmd %s\n" ), url.c_str(), cmd.c_str());
 			::wxExecute(cmd);
 	}
 	else
@@ -211,7 +211,7 @@ void SystemOpenURL(wxString url)
 				wxString cmd;
 				if (filetype->GetOpenCommand (&cmd, wxFileType::MessageParameters (url))) {
 				//cmd.Replace(_T("file://"), wxEmptyString);
-				wxLogDebug(_T("Open url %s cmd %s\n" ), url.c_str(), cmd.c_str());
+				//wxLogDebug(_T("Open url %s cmd %s\n" ), url.c_str(), cmd.c_str());
 				::wxExecute(cmd);
 				}
 				delete filetype;
@@ -225,7 +225,7 @@ void SystemOpenURL(wxString url)
         	wxString cmd;
         	if (filetype->GetOpenCommand (&cmd, wxFileType::MessageParameters (url))) {
             	//cmd.Replace(_T("file://"), wxEmptyString);
-				wxLogDebug(_T("Open url %s cmd %s\n" ), url.c_str(), cmd.c_str());
+				//wxLogDebug(_T("Open url %s cmd %s\n" ), url.c_str(), cmd.c_str());
 
             	::wxExecute(cmd);
         	}

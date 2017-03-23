@@ -46,7 +46,7 @@ Configuration::Configuration( const wxString& AppName )
 	m_configfile        = wxGetApp().ConfigPath();
 	wxFileInputStream fis( m_configfile );
 	m_appname = AppName;
-	wxLogDebug( _T( "Init Configuration %s\n" ), AppName.c_str() );
+	//wxLogDebug( _T( "Init Configuration %s\n" ), AppName.c_str() );
 	//m_cfg = (wxConfig *) new wxFileConfig( (wxInputStream &)fis);
 	m_cfg = new wxFileConfig( ( wxInputStream & )fis );
 	Load();

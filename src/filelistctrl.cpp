@@ -224,7 +224,7 @@ int FileListCtrl::GetItemColumnImage(long item, long columnid) const
 	{
 		//XXX backward compatible
 		bool nopriority = false;
-		wxLogDebug( _T( "FileListCtrl column %ld of item %ld\n" ), columnid, item );
+		//wxLogDebug( _T( "FileListCtrl column %ld of item %ld\n" ), columnid, item );
 		shared_ptr<torrent_t> pTorrent(m_pTorrent);
 
 		if (!pTorrent)
@@ -356,7 +356,7 @@ void FileListCtrl::OnLeftDClick(wxMouseEvent& event)
 				//std::vector<std::string> const& allp = allfiles.paths();
 				wxFileName filename (fname);
 				filename.MakeAbsolute();
-				wxLogDebug(_T("File path %s\n"), filename.GetFullPath().c_str());
+				//wxLogDebug(_T("File path %s\n"), filename.GetFullPath().c_str());
 				if(wxFileName::FileExists(filename.GetFullPath()))
 				{
 					wxLaunchDefaultApplication(filename.GetFullPath()); 
@@ -516,7 +516,7 @@ void FileListCtrl::OnMenuOpenPath( wxCommandEvent& event )
 				//std::vector<std::string> const& allp = allfiles.paths();
 				wxFileName filename(fname);
 				filename.MakeAbsolute();
-				wxLogDebug(_T("File path %s\n"), filename.GetFullPath().c_str());
+				//wxLogDebug(_T("File path %s\n"), filename.GetFullPath().c_str());
 #if  defined(__WXMSW__) 
 				wxExecute(_T("Explorer ")+filename.GetPath(), wxEXEC_ASYNC, NULL); 
 #elif defined(__APPLE__)

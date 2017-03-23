@@ -161,8 +161,7 @@ TorrentProperty::~TorrentProperty()
 
 void TorrentProperty::OnOK(wxCommandEvent& event)
 {
-	wxLogDebug(_T("OnOk"));
-
+	//wxLogDebug(_T("OnOk"));
 	shared_ptr<TorrentConfig> pConfig = m_pTorrent->config;
 	Configuration *pMainConfig = wxGetApp().GetConfig();
 
@@ -199,7 +198,7 @@ void TorrentProperty::OnCancel(wxCommandEvent& event)
 
 void TorrentProperty::OnFocus(wxFocusEvent& event)
 {
-	wxLogDebug(_T("TorrentProperty OnFocus %d"), m_notebook_property->GetSelection());
+	//wxLogDebug(_T("TorrentProperty OnFocus %d"), m_notebook_property->GetSelection());
 	if(m_notebook_property->GetSelection() == 0)
 	{
 		m_filespane->UpdateSwashList();

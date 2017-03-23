@@ -86,7 +86,7 @@ wxString TrackerListCtrl::GetItemValue(long item, long columnid) const
 
 	wxString ret;
 
-	wxLogDebug(_T("TrackerListCtrl column %ld of item %ld"), columnid, item);
+	//wxLogDebug(_T("TrackerListCtrl column %ld of item %ld"), columnid, item);
 	shared_ptr<torrent_t> pTorrent;
 	
 	if (m_pTorrent)
@@ -194,7 +194,7 @@ void TrackerListCtrl::OnMenuEdit(wxCommandEvent& event)
 		
 	}
 
-	wxLogDebug(_T("edit tracker no %d, cmd %d"), item, cmd);
+	//wxLogDebug(_T("edit tracker no %d, cmd %d"), item, cmd);
 
 	std::vector<lt::announce_entry>& trackers = pTorrent->config->GetTrackersURL();
 
@@ -215,7 +215,7 @@ void TrackerListCtrl::OnMenuEdit(wxCommandEvent& event)
 				lt::announce_entry e(newtrackerurl_cstr);
 				e.tier = (trackers.size() * 10);
 				trackers.push_back(e);
-				wxLogDebug(_T("Add new tracker %s tier %d, trackers.size %d"), newtrackerurl.c_str(), e.tier , trackers.size()) ;
+				//wxLogDebug(_T("Add new tracker %s tier %d, trackers.size %d"), newtrackerurl.c_str(), e.tier , trackers.size()) ;
 				
 				//pTorrent->config->SetTrackersURL(trackers);
 				pTorrent->config->Save();

@@ -333,7 +333,7 @@ void TorrentSettingPane::OnFileButton(wxCommandEvent& event)
 	if (dir_dlg.ShowModal() == wxID_OK) 
 	{
 		wxString newpath = dir_dlg.GetPath();
-		wxLogDebug(_T("DirDlg return %s"), newpath.c_str());
+		//wxLogDebug(_T("DirDlg return %s"), newpath.c_str());
 		m_combo_saveas->SetValue(newpath);	
 	}
 	event.Skip();

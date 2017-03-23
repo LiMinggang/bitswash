@@ -2028,7 +2028,7 @@ void BitTorrentSession::HandleTorrentAlert()
 				default:
 					{
 						event_string << _T("[") << (*it)->type() << _T("]") << wxString::FromUTF8((*it)->message().c_str());
-						if(event_string.IsEmpty()) return;
+						//if(event_string.IsEmpty()) return;
 					}
 					break;
 			}
