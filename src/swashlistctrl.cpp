@@ -56,35 +56,35 @@ SwashListCtrl::SwashListCtrl( wxWindow *parent,
 	Init( num_cols, columns );
 	Create( parent, id, pos, size, style );
 
-	Bind( wxEVT_LIST_BEGIN_DRAG, &SwashListCtrl::OnBeginDrag,this );
-	Bind( wxEVT_LIST_BEGIN_RDRAG, &SwashListCtrl::OnBeginRDrag,this );
-	Bind( wxEVT_LIST_BEGIN_LABEL_EDIT, &SwashListCtrl::OnBeginLabelEdit,this );
-	Bind( wxEVT_LIST_END_LABEL_EDIT, &SwashListCtrl::OnEndLabelEdit,this );
-	Bind( wxEVT_LIST_DELETE_ITEM, &SwashListCtrl::OnDeleteItem,this );
-	Bind( wxEVT_LIST_DELETE_ALL_ITEMS, &SwashListCtrl::OnDeleteAllItems,this );
+	Bind( wxEVT_LIST_BEGIN_DRAG, &SwashListCtrl::OnBeginDrag, this );
+	Bind( wxEVT_LIST_BEGIN_RDRAG, &SwashListCtrl::OnBeginRDrag, this );
+	Bind( wxEVT_LIST_BEGIN_LABEL_EDIT, &SwashListCtrl::OnBeginLabelEdit, this );
+	Bind( wxEVT_LIST_END_LABEL_EDIT, &SwashListCtrl::OnEndLabelEdit, this );
+	Bind( wxEVT_LIST_DELETE_ITEM, &SwashListCtrl::OnDeleteItem, this );
+	Bind( wxEVT_LIST_DELETE_ALL_ITEMS, &SwashListCtrl::OnDeleteAllItems, this );
 
-	Bind( wxEVT_LIST_ITEM_SELECTED, &SwashListCtrl::OnSelected,this );
-	Bind( wxEVT_LIST_ITEM_DESELECTED, &SwashListCtrl::OnDeselected,this );
-	Bind( wxEVT_LIST_KEY_DOWN, &SwashListCtrl::OnListKeyDown,this );
-	Bind( wxEVT_LIST_ITEM_ACTIVATED, &SwashListCtrl::OnActivated,this );
-	Bind( wxEVT_LIST_ITEM_FOCUSED, &SwashListCtrl::OnFocused,this );
+	Bind( wxEVT_LIST_ITEM_SELECTED, &SwashListCtrl::OnSelected, this );
+	Bind( wxEVT_LIST_ITEM_DESELECTED, &SwashListCtrl::OnDeselected, this );
+	Bind( wxEVT_LIST_KEY_DOWN, &SwashListCtrl::OnListKeyDown, this );
+	Bind( wxEVT_LIST_ITEM_ACTIVATED, &SwashListCtrl::OnActivated, this );
+	Bind( wxEVT_LIST_ITEM_FOCUSED, &SwashListCtrl::OnFocused, this );
 
-	Bind( wxEVT_LIST_COL_CLICK, &SwashListCtrl::OnColClick,this );
-	Bind( wxEVT_LIST_COL_RIGHT_CLICK, &SwashListCtrl::OnColRightClick,this );
-	Bind( wxEVT_LIST_COL_BEGIN_DRAG, &SwashListCtrl::OnColBeginDrag,this );
-	Bind( wxEVT_LIST_COL_DRAGGING, &SwashListCtrl::OnColDragging,this );
-	Bind( wxEVT_LIST_COL_END_DRAG, &SwashListCtrl::OnColEndDrag,this );
+	Bind( wxEVT_LIST_COL_CLICK, &SwashListCtrl::OnColClick, this );
+	Bind( wxEVT_LIST_COL_RIGHT_CLICK, &SwashListCtrl::OnColRightClick, this );
+	Bind( wxEVT_LIST_COL_BEGIN_DRAG, &SwashListCtrl::OnColBeginDrag, this );
+	Bind( wxEVT_LIST_COL_DRAGGING, &SwashListCtrl::OnColDragging, this );
+	Bind( wxEVT_LIST_COL_END_DRAG, &SwashListCtrl::OnColEndDrag, this );
 
-	Bind( wxEVT_LIST_CACHE_HINT, &SwashListCtrl::OnCacheHint,this );
+	Bind( wxEVT_LIST_CACHE_HINT, &SwashListCtrl::OnCacheHint, this );
 
 #if USE_CONTEXT_MENU
-	Bind( wxEVT_CONTEXT_MENU, &SwashListCtrl::OnContextMenu,this );
+	Bind( wxEVT_CONTEXT_MENU, &SwashListCtrl::OnContextMenu, this );
 #endif
 
-	Bind( wxEVT_CHAR, &SwashListCtrl::OnChar,this );
+	Bind( wxEVT_CHAR, &SwashListCtrl::OnChar, this );
 
-	Bind( wxEVT_RIGHT_DOWN, &SwashListCtrl::OnRightClick,this );
-	Bind( wxEVT_LEFT_DCLICK, &SwashListCtrl::OnLeftDClick,this );
+	Bind( wxEVT_RIGHT_DOWN, &SwashListCtrl::OnRightClick, this );
+	Bind( wxEVT_LEFT_DCLICK, &SwashListCtrl::OnLeftDClick, this );
 }
 
 void SwashListCtrl::Init( long num_cols, SwashColumnItem *columns )
@@ -191,7 +191,6 @@ wxString SwashListCtrl::Settings() const
 	return settings;
 }
 
-
 bool SwashListCtrl::Create( wxWindow* parent, wxWindowID id, const wxPoint& pos, const wxSize& size, long style )
 {
 	wxListView::Create( parent, id, pos, size, style );
@@ -254,12 +253,12 @@ void SwashListCtrl::SetColumnImage( int col, int image )
 
 void SwashListCtrl::OnColClick( wxListEvent& event )
 {
+#ifdef _DEBUG
 	int col = event.GetColumn();
 	// set or unset image
-	static bool x = false;
-	x = !x;
-	SetColumnImage( col, x ? 0 : -1 );
-#ifdef _DEBUG
+	//static bool x = false;
+	//x = !x;
+	//SetColumnImage( col, x ? 0 : -1 );
 	wxLogDebug( wxT( "OnColumnClick at %d.\n" ), col );
 #endif
 }
@@ -376,7 +375,6 @@ void SwashListCtrl::OnColumnSelected( wxCommandEvent& event )
 		}
 	}
 }
-
 
 void SwashListCtrl::OnColRightClick( wxListEvent& event )
 {
