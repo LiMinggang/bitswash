@@ -2140,9 +2140,9 @@ bool BitTorrentSession::HandleAddTorrentAlert(lt::add_torrent_alert *p)
 				torrent->config->SetSelectedSize(total_selected);
 			}
 
-			if( state == TORRENT_STATE_FORCE_START )
+			if( state == TORRENT_STATE_FORCE_START || state == TORRENT_STATE_START )
 			{
-				StartTorrent( torrent, true );
+				StartTorrent( torrent, (state == TORRENT_STATE_FORCE_START) );
 			}
 		}
 	}
