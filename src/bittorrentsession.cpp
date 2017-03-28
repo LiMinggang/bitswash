@@ -1704,9 +1704,9 @@ void BitTorrentSession::ConfigureTorrent( int idx )
  */
 void BitTorrentSession::CheckQueueItem()
 {
-	torrents_t start_torrents;
-	torrents_t queue_torrents;
-	torrents_t::iterator torrent_it;
+	std::vector<int> start_torrents, queue_torrents;
+	int idx = 0;
+	
 	int pause_count = 0;
 	int start_count = 0;
 	int i = 0;
@@ -1714,9 +1714,9 @@ void BitTorrentSession::CheckQueueItem()
 	//WXLOGDEBUG((_T("CheckQueueItem %d\n"), m_torrent_queue.size());
 	wxMutexLocker ml( m_torrent_queue_lock );
 
-	for( torrent_it = m_torrent_queue.begin(); torrent_it != m_torrent_queue.end(); ++torrent_it )
+	for( idx = 0; idx < m_torrent_queue.size(); ++idx )
 	{
-		shared_ptr<torrent_t>& torrent = *torrent_it;
+		shared_ptr<torrent_t>& torrent = m_torrent_queue[idx];
 		WXLOGDEBUG(( _T( "Processing torrent %s\n" ), torrent->name.c_str() ));
 
 		switch( torrent->config->GetTorrentState() )
@@ -1779,7 +1779,7 @@ void BitTorrentSession::CheckQueueItem()
 				/* make this an option */
 				if( !exseed )
 				{
-					start_torrents.push_back( torrent );
+					start_torrents.push_back( idx );
 					start_count++;
 				}
 
@@ -1814,7 +1814,7 @@ void BitTorrentSession::CheckQueueItem()
 
 		case TORRENT_STATE_QUEUE:
 			{
-				queue_torrents.push_back( torrent );
+				queue_torrents.push_back( idx );
 				pause_count++;
 				break;
 			}
@@ -1831,7 +1831,8 @@ void BitTorrentSession::CheckQueueItem()
 
 		while( ( start_count-- > maxstart ) && ( i >= 0 ) )
 		{
-			QueueTorrent( start_torrents[i--] );
+			QueueTorrent( m_torrent_queue[start_torrents[i]] );
+			--i;
 		}
 	}
 	else if( ( start_count < maxstart ) && ( queue_torrents.size() > 0 ) )
@@ -1840,7 +1841,8 @@ void BitTorrentSession::CheckQueueItem()
 
 		while( ( start_count++ < maxstart ) && ( i <  queue_torrents.size() ) )
 		{
-			StartTorrent( queue_torrents[i++], false );
+			StartTorrent( m_torrent_queue[queue_torrents[i]], false );
+			i++;
 		}
 	}
 }

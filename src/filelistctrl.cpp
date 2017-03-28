@@ -105,15 +105,15 @@ FileListCtrl::FileListCtrl( wxWindow *parent,
 	/*1*/m_imageList.Add(wxIcon(checked_xpm));
 	/*2*/m_imageList.Add(wxIcon(unchecked_dis_xpm));
 	/*3*/m_imageList.Add(wxIcon(checked_dis_xpm));
-    
-    /* XXX openfile */
-    m_contextmenu.Append( FILELISTCTRL_MENU_PRIORITY0, _( "Do not download" ) );
-    m_contextmenu.AppendSeparator();
-    m_contextmenu.Append( FILELISTCTRL_MENU_PRIORITY1, _( "Lowest Priority" ) );
-    m_contextmenu.Append( FILELISTCTRL_MENU_PRIORITY4, _( "Normal Priority" ) );
-    m_contextmenu.Append( FILELISTCTRL_MENU_PRIORITY7, _( "Highest Priority" ) );
+
+	/* XXX openfile */
+	m_contextmenu.Append( FILELISTCTRL_MENU_PRIORITY0, _( "Do not download" ) );
 	m_contextmenu.AppendSeparator();
-    m_contextmenu.Append( FILELISTCTRL_MENU_OPENPATH, _( "Open containing folder" ) );
+	m_contextmenu.Append( FILELISTCTRL_MENU_PRIORITY1, _( "Lowest Priority" ) );
+	m_contextmenu.Append( FILELISTCTRL_MENU_PRIORITY4, _( "Normal Priority" ) );
+	m_contextmenu.Append( FILELISTCTRL_MENU_PRIORITY7, _( "Highest Priority" ) );
+	m_contextmenu.AppendSeparator();
+	m_contextmenu.Append( FILELISTCTRL_MENU_OPENPATH, _( "Open containing folder" ) );
 	for(size_t i = 0; i < sizeof(m_menu_evt_map)/sizeof(m_menu_evt_map[0]); ++i)
 	{
 		Bind( wxEVT_MENU, m_menu_evt_map[i].method, this, m_menu_evt_map[i].evtTag );
@@ -134,7 +134,7 @@ wxString FileListCtrl::GetItemValue( long item, long columnid ) const
 
 	if (!pTorrent)
 	{
-        MainFrame* pMainFrame = ( MainFrame* )( wxGetApp().GetTopWindow() );
+		MainFrame* pMainFrame = ( MainFrame* )( wxGetApp().GetTopWindow() );
 		pTorrent = pMainFrame->GetSelectedTorrent();
 	}
 
@@ -322,7 +322,7 @@ void FileListCtrl::OnLeftDown(wxMouseEvent& event)
 	default: 
 		break;
 	}
-    event.Skip();
+	event.Skip();
 }
 
 void FileListCtrl::OnLeftDClick(wxMouseEvent& event)
@@ -439,9 +439,9 @@ void FileListCtrl::OnMenuPriority( wxCommandEvent& event )
 	{ pTorrent = m_pTorrent; }
 	else
 	{
-        MainFrame* pMainFrame = ( MainFrame* )wxGetApp().GetTopWindow();
-	    pTorrent = pMainFrame->GetSelectedTorrent();
-    }
+		MainFrame* pMainFrame = ( MainFrame* )wxGetApp().GetTopWindow();
+		pTorrent = pMainFrame->GetSelectedTorrent();
+	}
 
 	if( !pTorrent )
 	{ return; }
@@ -453,7 +453,7 @@ void FileListCtrl::OnMenuPriority( wxCommandEvent& event )
 
 	if( filespriority.size() != pTorrent->info->num_files() )
 	{
-        std::vector<int> deffilespriority( pTorrent->info->num_files(), BITTORRENT_FILE_NORMAL );
+		std::vector<int> deffilespriority( pTorrent->info->num_files(), BITTORRENT_FILE_NORMAL );
 		filespriority.swap( deffilespriority );
 	}
 
@@ -497,9 +497,9 @@ void FileListCtrl::OnMenuOpenPath( wxCommandEvent& event )
 	{ pTorrent = m_pTorrent; }
 	else
 	{
-        MainFrame* pMainFrame = ( MainFrame* )wxGetApp().GetTopWindow();
-	    pTorrent = pMainFrame->GetSelectedTorrent();
-    }
+		MainFrame* pMainFrame = ( MainFrame* )wxGetApp().GetTopWindow();
+		pTorrent = pMainFrame->GetSelectedTorrent();
+	}
 
 	if( pTorrent )
 	{

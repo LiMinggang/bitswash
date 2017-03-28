@@ -1118,7 +1118,7 @@ void MainFrame::OnUpdateUI_MenuTorrent( wxUpdateUIEvent& event )
 						shared_ptr<torrent_t> torrent = m_btsession->GetTorrent( selecteditems[i] );
 						if(!torrent || !torrent->isvalid)
 						{
-							return;
+							break;
 						}
 						torrent_state = torrent->config->GetTorrentState();
 						if( ID_TORRENT_START == menuId )
@@ -1131,7 +1131,7 @@ void MainFrame::OnUpdateUI_MenuTorrent( wxUpdateUIEvent& event )
 							else
 							{
 								lt::torrent_handle &torrenthandle = torrent->handle;
-								if(( torrenthandle.status().paused ))
+								if((torrenthandle.is_valid() && torrenthandle.status().paused ))
 								{
 									enable = true;
 									break;
