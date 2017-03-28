@@ -925,6 +925,10 @@ void MainFrame::UpdateUI(bool force/* = false*/)
 						}
 					}
 				}
+				else
+				{
+					m_peerlistctrl->SetItemCount( 0 );
+				}
 
 				/* get files list */
 				
