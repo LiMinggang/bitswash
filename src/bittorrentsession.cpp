@@ -1834,6 +1834,14 @@ void BitTorrentSession::CheckQueueItem()
 			QueueTorrent( m_torrent_queue[start_torrents[i]] );
 			--i;
 		}
+
+		while( ( start_count-- > 0 ) && ( i >= 0 ) )
+		{
+			shared_ptr<torrent_t>& torrent = m_torrent_queue[start_torrents[i]];
+			if(!torrent->handle.is_valid())
+				StartTorrent( torrent, (torrent->config->GetTorrentState() == TORRENT_STATE_FORCE_START));
+			--i;
+		}
 	}
 	else if( ( start_count < maxstart ) && ( queue_torrents.size() > 0 ) )
 	{
