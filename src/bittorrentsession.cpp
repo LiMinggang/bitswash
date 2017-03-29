@@ -644,7 +644,7 @@ void BitTorrentSession::AddTorrentToSession( shared_ptr<torrent_t>& torrent )
 
 bool BitTorrentSession::AddTorrent( shared_ptr<torrent_t>& torrent )
 {
-	wxLogWarning(( _T( "Add Torrent %s\n" ),  torrent->name.c_str() ));
+	wxLogWarning(( _T( "Add Torrent %s, state %d\n" ),  torrent->name.c_str(), torrent->config->GetTorrentState() ));
 
 	try
 	{
