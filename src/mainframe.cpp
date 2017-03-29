@@ -218,7 +218,7 @@ MainFrame::MainFrame( wxFrame *frame, const wxString& title )
 	              */
 	CreateTorrentPanel();
 	m_mgr.SetFlags( m_mgr.GetFlags() | wxAUI_MGR_ALLOW_ACTIVE_PANE );
-#ifdef NDEBUG //XXX asert failure fired in gtk debug library.
+#ifndef _DEBUG //XXX asert failure fired in gtk debug library.
 	m_oldlog = wxLog::SetActiveTarget( ( wxLog* )m_torrentinfo->GetLogger() );
 #endif
 
@@ -1150,7 +1150,7 @@ void MainFrame::OnUpdateUI_MenuTorrent( wxUpdateUIEvent& event )
 							else
 								if( ID_TORRENT_PAUSE == menuId )
 								{
-									if( torrent_state == TORRENT_STATE_START )
+									if( torrent_state == TORRENT_STATE_START || torrent_state == TORRENT_STATE_FORCE_START)
 									{
 										enable = true;
 										break;

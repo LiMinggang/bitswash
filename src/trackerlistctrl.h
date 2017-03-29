@@ -64,7 +64,7 @@ public:
 	private:
 		wxString GetItemValue(long item, long columnid) const;
 		void ShowContextMenu(const wxPoint& pos);
-		void OnMenuEdit(wxCommandEvent &event);
+		void OnMenuTracker(wxCommandEvent &event);
 
 		shared_ptr<torrent_t> m_pTorrent;
 

@@ -35,6 +35,7 @@ enum
 	TRACKERLISTCTRL_MENU_EDIT ,
 	TRACKERLISTCTRL_MENU_DELETE,
 	TRACKERLISTCTRL_MENU_COPY,
+	TRACKERLISTCTRL_MENU_REANNOUCE,
 };
 
 // TrackerListCtrl
@@ -69,10 +70,11 @@ TrackerListCtrl::TrackerListCtrl(wxWindow *parent,
 			: SwashListCtrl(parent, SWASHLISTCOL_SIZE(trackerlistcols), trackerlistcols, settings, id, pos, size, style),
 			m_pTorrent(NULL)
 {
-	Bind( wxEVT_MENU, &TrackerListCtrl::OnMenuEdit, this, TRACKERLISTCTRL_MENU_ADD);
-	Bind( wxEVT_MENU, &TrackerListCtrl::OnMenuEdit, this, TRACKERLISTCTRL_MENU_EDIT);
-	Bind( wxEVT_MENU, &TrackerListCtrl::OnMenuEdit, this, TRACKERLISTCTRL_MENU_DELETE);
-	Bind( wxEVT_MENU, &TrackerListCtrl::OnMenuEdit, this, TRACKERLISTCTRL_MENU_COPY);
+	Bind( wxEVT_MENU, &TrackerListCtrl::OnMenuTracker, this, TRACKERLISTCTRL_MENU_ADD);
+	Bind( wxEVT_MENU, &TrackerListCtrl::OnMenuTracker, this, TRACKERLISTCTRL_MENU_EDIT);
+	Bind( wxEVT_MENU, &TrackerListCtrl::OnMenuTracker, this, TRACKERLISTCTRL_MENU_DELETE);
+	Bind( wxEVT_MENU, &TrackerListCtrl::OnMenuTracker, this, TRACKERLISTCTRL_MENU_COPY);
+	Bind( wxEVT_MENU, &TrackerListCtrl::OnMenuTracker, this, TRACKERLISTCTRL_MENU_REANNOUCE);
 }
 
 TrackerListCtrl::~TrackerListCtrl()
@@ -157,6 +159,9 @@ void TrackerListCtrl::ShowContextMenu(const wxPoint& pos)
     wxMenu menu;
 
 	/* XXX openfile */
+	
+    menu.Append(TRACKERLISTCTRL_MENU_REANNOUCE, _("Reannounce"));
+	menu.AppendSeparator();
     menu.Append(TRACKERLISTCTRL_MENU_ADD, _("Add"));
     menu.Append(TRACKERLISTCTRL_MENU_COPY, _("Copy"));
     menu.Append(TRACKERLISTCTRL_MENU_EDIT, _("Edit"));
@@ -167,7 +172,7 @@ void TrackerListCtrl::ShowContextMenu(const wxPoint& pos)
 
 
 /* update files priority to torrent config */
-void TrackerListCtrl::OnMenuEdit(wxCommandEvent& event)
+void TrackerListCtrl::OnMenuTracker(wxCommandEvent& event)
 {
 	//int cmd = event.GetId() - TRACKERLISTCTRL_MENU_ADD;
 	int cmd = event.GetId(); 
@@ -187,7 +192,7 @@ void TrackerListCtrl::OnMenuEdit(wxCommandEvent& event)
 
 	int item = GetFirstSelected();
 
-	if(( (cmd == TRACKERLISTCTRL_MENU_EDIT) || (cmd == TRACKERLISTCTRL_MENU_EDIT ) )  )
+	if( (cmd == TRACKERLISTCTRL_MENU_EDIT) || (cmd == TRACKERLISTCTRL_MENU_COPY ) || (cmd == TRACKERLISTCTRL_MENU_DELETE ) )
 	{
 		if (item < 0)
 			return;
@@ -307,12 +312,19 @@ void TrackerListCtrl::OnMenuEdit(wxCommandEvent& event)
 			}
 			break;
 		}
+		case TRACKERLISTCTRL_MENU_REANNOUCE:
+		{
+			lt::torrent_handle& handle = pTorrent->handle;
+			if(handle.is_valid())
+			{
+				handle.force_reannounce(0, item);
+			}
+			break;
+		}
 		default:
 			break;
 	}
 
-
 	if(refreshtrk) wxGetApp().GetBitTorrentSession()->ConfigureTorrentTrackers(pTorrent);
-
 }
 
