@@ -566,7 +566,7 @@ void BitTorrentSession::StartNatpmp()
 void BitTorrentSession::AddTorrentToSession( shared_ptr<torrent_t>& torrent )
 {
 	lt::torrent_handle &handle = torrent->handle;
-	WXLOGDEBUG(( _T( "AddTorrent %s into session\n" ), torrent->name.c_str() ));
+	wxLogWarning(( _T( "AddTorrent %s into session\n" ), torrent->name.c_str() ));
 	wxString fastresumefile = wxGetApp().SaveTorrentsPath() + torrent->hash + _T( ".fastresume" );
 	lt::entry resume_data;
 
@@ -644,7 +644,7 @@ void BitTorrentSession::AddTorrentToSession( shared_ptr<torrent_t>& torrent )
 
 bool BitTorrentSession::AddTorrent( shared_ptr<torrent_t>& torrent )
 {
-	WXLOGDEBUG(( _T( "Add Torrent %s\n" ),  torrent->name.c_str() ));
+	wxLogWarning(( _T( "Add Torrent %s\n" ),  torrent->name.c_str() ));
 
 	try
 	{
@@ -690,7 +690,7 @@ void BitTorrentSession::RemoveTorrent( shared_ptr<torrent_t>& torrent, bool dele
 		wxLogError( _T( "RemoveTorrent %s: Torrent not found in queue\n" ), torrent->name.c_str() );
 		return ;
 	}
-	wxLogInfo( _T( "%s: Removing Torrent\n" ), torrent->name.c_str() );
+	WXLOGDEBUG(( _T( "%s: Removing Torrent\n" ), torrent->name.c_str() ));
 
 	lt::torrent_handle& h = torrent->handle;
 	if( h.is_valid() )

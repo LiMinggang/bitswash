@@ -169,6 +169,8 @@ wxString TorrentListCtrl::GetItemValue( long item, long columnid ) const
 				 ( torrentstoped ) )
 		{
 			ret = _( "Stopped" );
+			if( ( torrent->config->GetTorrentState() != TORRENT_STATE_STOP ) &&
+				 ( torrentstoped ) ) wxLogError( _T( "TorrentListCtrl: torrent%d's handle.is not valid\n" ), item );
 		}
 		else
 		{
