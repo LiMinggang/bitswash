@@ -1314,5 +1314,73 @@
     <None Include="libtorrent\include\libtorrent\Makefile.in">
       <Filter>Header Files\libtorrent</Filter>
     </None>
+    <None Include="src\wx\msw\hand.cur">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="src\wx\msw\bullseye.cur">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="src\wx\msw\pencil.cur">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="src\wx\msw\magnif1.cur">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="src\wx\msw\roller.cur">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="src\wx\msw\pbrush.cur">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="src\wx\msw\pntleft.cur">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="src\wx\msw\pntright.cur">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="src\wx\msw\blank.cur">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="src\wx\msw\cross.cur">
+      <Filter>Resource Files</Filter>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="bitswash_48x48.ico">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="src\wx\msw\std.ico">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="src\wx\msw\folder1.ico">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="src\wx\msw\folder2.ico">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="src\wx\msw\file1.ico">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="src\wx\msw\computer.ico">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="src\wx\msw\drive.ico">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="src\wx\msw\cdrom.ico">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="src\wx\msw\floppy.ico">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="src\wx\msw\removble.ico">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="src\wx\msw\csquery.bmp">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="src\wx\msw\colours.bmp">
+      <Filter>Resource Files</Filter>
+    </Image>
   </ItemGroup>
 </Project>
