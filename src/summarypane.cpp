@@ -285,7 +285,7 @@ void SummaryPane::UpdateSummary()
 	//TODO: findout tracker status
 	//UpdateTrackerStatus();
 	//
-	UpdateNextUpdate(h.is_valid()?wxString::Format(_T("%s"), wxLongLong(s.next_announce.count() ).ToString().c_str()):_T(""));
+	UpdateNextUpdate(h.is_valid()?wxString::Format(_T("%s"), HumanReadableTime(s.next_announce.count())):_T(""));
 
 	// TODO: DHT status?
 	//UpdateDht();
