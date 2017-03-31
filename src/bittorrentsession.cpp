@@ -1809,6 +1809,9 @@ void BitTorrentSession::CheckQueueItem()
 					SaveTorrentResumeData( torrent );
 				}
 #endif
+				if (!((m_torrent_queue[idx])->handle.is_valid()))
+					StartTorrent((m_torrent_queue[idx]), true);
+
 				break;
 			}
 
