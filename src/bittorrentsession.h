@@ -127,7 +127,7 @@ public:
 	void AddTorrentToSession(shared_ptr<torrent_t>& torrent);
 	bool AddTorrent(shared_ptr<torrent_t>& torrent);
 	void RemoveTorrent(shared_ptr<torrent_t>& torrent, bool deletedata);
-	shared_ptr<torrent_t> FindTorrent(const wxString &hash);
+	int FindTorrent(const wxString &hash);
 	shared_ptr<torrent_t> GetTorrent(int idx);
 	void MergeTorrent(shared_ptr<torrent_t>& dst_torrent, shared_ptr<torrent_t>& src_torrent);
 	void MergeTorrent(shared_ptr<torrent_t>& dst_torrent, MagnetUri& src_magneturi);

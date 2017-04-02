@@ -659,9 +659,9 @@ void MainFrame::AddTorrent( wxString filename, bool usedefault )
 
 	if( torrent->isvalid )
 	{
-		shared_ptr<torrent_t> tmp_torrent = m_btsession->FindTorrent( wxString(torrent->hash) );
+		int idx = m_btsession->FindTorrent( wxString(torrent->hash) );
 
-		if( !tmp_torrent )
+		if( idx < 0 )
 		{
 			if( !m_config->GetUseDefault() )
 			{
@@ -689,10 +689,13 @@ void MainFrame::AddTorrent( wxString filename, bool usedefault )
 		}
 		else
 		{
+			m_torrentlistctrl->Select( idx, true );
 			int answer = wxMessageBox( _("Torrent Exists. Do you want to update trackers/seeds from the torrent?"), _("Confirm"), wxYES_NO, this );
 
 			if( answer == wxYES )
 			{
+				shared_ptr<torrent_t> tmp_torrent = m_btsession->GetTorrent(idx);
+				wxASSERT(tmp_torrent);
 				m_btsession->MergeTorrent( tmp_torrent, torrent );
 			}
 		}
@@ -749,11 +752,11 @@ void MainFrame::OpenMagnetURI(const wxString & magneturi)
 
 	if( magnetUri.isValid() )
 	{
-		shared_ptr<torrent_t> torrent = m_btsession->FindTorrent( magnetUri.hash() );
+		int idx = m_btsession->FindTorrent( magnetUri.hash() );
 
-		if( !torrent )
+		if( idx < 0 )
 		{
-			torrent = m_btsession->LoadMagnetUri( magnetUri );
+			shared_ptr<torrent_t> torrent = m_btsession->LoadMagnetUri( magnetUri );
 
 			if( torrent && torrent->isvalid )
 			{
@@ -772,10 +775,13 @@ void MainFrame::OpenMagnetURI(const wxString & magneturi)
 		}
 		else
 		{
+			m_torrentlistctrl->Select( idx, true );
 			int answer = wxMessageBox( _("Torrent Exists. Do you want to update trackers/seeds from the torrent?"), _("Confirm"), wxYES_NO, this );
 
 			if( answer == wxYES )
 			{
+				shared_ptr<torrent_t> torrent = m_btsession->GetTorrent(idx);
+				wxASSERT(torrent);
 				m_btsession->MergeTorrent( torrent, magnetUri );
 			}
 		}

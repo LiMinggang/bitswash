@@ -771,17 +771,12 @@ void BitTorrentSession::RemoveTorrent( shared_ptr<torrent_t>& torrent, bool dele
 	}
 }
 
-shared_ptr<torrent_t> BitTorrentSession::FindTorrent( const wxString &hash )
+int BitTorrentSession::FindTorrent( const wxString &hash )
 {
-	shared_ptr<torrent_t> torrent;
-	{
-		wxMutexLocker ml(m_torrent_queue_lock);
-		int idx = find_torrent_from_hash(hash);
+	wxMutexLocker ml(m_torrent_queue_lock);
+	int idx = find_torrent_from_hash(hash);
 
-		if (idx >= 0) { torrent = m_torrent_queue.at(idx); }
-	}
-
-	return torrent;
+	return idx;
 }
 
 shared_ptr<torrent_t> BitTorrentSession::GetTorrent( int idx )
