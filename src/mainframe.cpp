@@ -1369,7 +1369,7 @@ void MainFrame::RemoveTorrent( bool deletedata )
 		int offset = 0;
 
 		/* remove data in ui list, and bt list */
-		for( i = 0; i < selecteditems.size(); i++ )
+		for( i = selecteditems.size() - 1; i >= 0; i-- )
 		{
 			//shared_ptr<torrent_t> torrent = m_torrentlistitems[selecteditems[i] - (offset++)];
 			m_btsession->RemoveTorrent( selecteditems[i], deletedata );
