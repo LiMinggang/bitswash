@@ -78,7 +78,7 @@ private:
 	};
 
 	bool m_issuspend;
-	std::vector<struct log_data> m_suspended_logdata;
+	std::list<struct log_data> m_suspended_logdata;
 #if WXWIN_COMPATIBILITY_2_8
 	virtual void DoLog(wxLogLevel level, const wxChar *szString, time_t t);
 
@@ -99,6 +99,7 @@ private:
 	void PopSuspendedLog();
 	void LogToFile(wxString msg);
 
+	static const long LOGGER_CTRL_MAX_PENDING_LINES;
 	static const long LOGGER_CTRL_CHOICE_SEVERITY;
 	static const long LOGGER_CTRL_CHECK_LOGFILE;
 	static const long LOGGER_CTRL_BUTTON_CLEARLOG;

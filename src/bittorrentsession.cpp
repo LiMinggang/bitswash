@@ -148,13 +148,13 @@ void *BitTorrentSession::Entry()
 	ScanTorrentsDirectory( wxGetApp().SaveTorrentsPath() );
 
 	//( ( BitSwash* )m_pParent )->BTInitDone();
-	bts_event evt;
+	bts_event evt = BTS_EVENT_INVALID;
 	wxMessageQueueError result = wxMSGQUEUE_NO_ERROR;
 	time_t starttime = wxDateTime::GetTimeNow(), now;
 	bool check_now = true;
-
 	do
 	{
+		evt = BTS_EVENT_INVALID;
 		result = m_evt_queue.ReceiveTimeout( 1000, evt );
 		if(result == wxMSGQUEUE_NO_ERROR)
 		{
@@ -162,7 +162,6 @@ void *BitTorrentSession::Entry()
 			{
 				case BTS_EVENT_ALERT:
 				{
-					check_now = true;
 					HandleTorrentAlert();
 					break;
 				}
@@ -188,6 +187,7 @@ void *BitTorrentSession::Entry()
 			//DumpTorrents();
 			CheckQueueItem();
 			starttime = wxDateTime::GetTimeNow();
+			check_now = false;
 		}
 
 		if( TestDestroy() )
@@ -663,8 +663,6 @@ bool BitTorrentSession::AddTorrent( shared_ptr<torrent_t>& torrent )
 		{
 			AddTorrentToSession( torrent );
 		}
-		else
-			PostQueueUpdateEvent();
 
 		{
 			wxMutexLocker ml( m_torrent_queue_lock );
@@ -1713,7 +1711,7 @@ void BitTorrentSession::CheckQueueItem()
 	{
 		shared_ptr<torrent_t>& torrent = m_torrent_queue[idx];
 		WXLOGDEBUG(( _T( "Processing torrent %s\n" ), torrent->name.c_str() ));
-
+ 
 		switch( torrent->config->GetTorrentState() )
 		{
 		case TORRENT_STATE_START:
@@ -1823,6 +1821,19 @@ void BitTorrentSession::CheckQueueItem()
 		}
 	}
 
+	int check_count = start_count;
+	if( check_count > maxstart ) check_count = maxstart;
+	i = 0;
+	while( i < check_count )
+	{
+		shared_ptr<torrent_t>& torrent = m_torrent_queue[start_torrents[i]];
+		if(!torrent->handle.is_valid())
+		{
+			StartTorrent( torrent, false );
+		}
+		++i;
+	}
+
 	if( start_count > maxstart )
 	{
 		i = start_torrents.size() - 1;
@@ -1830,14 +1841,6 @@ void BitTorrentSession::CheckQueueItem()
 		while( ( start_count-- > maxstart ) && ( i >= 0 ) )
 		{
 			QueueTorrent( m_torrent_queue[start_torrents[i]] );
-			--i;
-		}
-
-		while( ( start_count-- > 0 ) && ( i >= 0 ) )
-		{
-			shared_ptr<torrent_t>& torrent = m_torrent_queue[start_torrents[i]];
-			if(!torrent->handle.is_valid())
-				StartTorrent( torrent, (torrent->config->GetTorrentState() == TORRENT_STATE_FORCE_START));
 			--i;
 		}
 	}
@@ -2102,6 +2105,7 @@ bool BitTorrentSession::HandleAddTorrentAlert(lt::add_torrent_alert *p)
 			torrent->handle.auto_managed(false);
 			torrent->handle.pause();
 			enum torrent_state state = ( enum torrent_state ) torrent->config->GetTorrentState();
+			wxLogError( _T( "HandleAddTorrentAlert %s\n" ), torrent->name.c_str() );
 
 			if( torrent->config->GetQIndex() == -1 )
 			{

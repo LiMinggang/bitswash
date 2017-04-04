@@ -167,7 +167,7 @@ public:
 	void HandleTorrentAlert();
 	bool HandleAddTorrentAlert(libtorrent::add_torrent_alert *p);
 	bool HandleMetaDataAlert(libtorrent::metadata_received_alert *p);
-	void PostEvent(bts_event & evt) {m_evt_queue.Post(evt);}
+	void PostEvent(bts_event & evt) { m_evt_queue.Post(evt);}
 	void PostLibTorrentAlertEvent()
 		{
 			static bts_event lbtAlert(BTS_EVENT_ALERT);

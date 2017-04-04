@@ -28,6 +28,8 @@
 #include "mainframe.h"
 #include "loggerctrl.h"
 
+const long LoggerCtrl::LOGGER_CTRL_MAX_PENDING_LINES = 40 * 1000;
+
 const long LoggerCtrl::LOGGER_CTRL_CHOICE_SEVERITY = wxNewId();
 const long LoggerCtrl::LOGGER_CTRL_CHECK_LOGFILE = wxNewId();
 const long LoggerCtrl::LOGGER_CTRL_BUTTON_CLEARLOG = wxNewId();
@@ -178,6 +180,8 @@ void LoggerCtrl::DoLog( wxLogLevel level, const wxChar *szString, time_t t )
 		struct log_data logdata;
 		logdata.level = level;
 		logdata.msg = msg;
+		if(m_suspended_logdata.size() >= LOGGER_CTRL_MAX_PENDING_LINES)
+			m_suspended_logdata.pop_front();
 		m_suspended_logdata.push_back( logdata );
 	}
 	else
@@ -219,6 +223,9 @@ void LoggerCtrl::DoLogTextAtLevel( wxLogLevel level, const wxString& msg )
 		struct log_data logdata;
 		logdata.level = level;
 		logdata.msg = msg;
+		
+		if(m_suspended_logdata.size() >= LOGGER_CTRL_MAX_PENDING_LINES)
+			m_suspended_logdata.pop_front();
 		m_suspended_logdata.push_back( logdata );
 	}
 	else
@@ -247,18 +254,24 @@ void LoggerCtrl::DoLogText( const wxString& msg )
 #endif
 void LoggerCtrl::RotateLog( int line )
 {
-	wxASSERT( ( size_t )line < m_pcfg->GetLogLineCount() );
-	size_t n = m_log_text->GetNumberOfLines() + ( size_t )line;
-	if( n > m_pcfg->GetLogLineCount() )
+	if( ( size_t )line < m_pcfg->GetLogLineCount() )
 	{
-		int l = m_log_text->XYToPosition( 0, line );
-		m_log_text->Remove( 0, l );
+		size_t n = m_log_text->GetNumberOfLines() + ( size_t )line;
+		if( n > m_pcfg->GetLogLineCount() )
+		{
+			int l = m_log_text->XYToPosition( 0, line );
+			m_log_text->Remove( 0, l );
+		}
+	}
+	else
+	{
+		m_log_text->Clear();
 	}
 }
 
 void LoggerCtrl::PopSuspendedLog()
 {
-	std::vector<struct log_data>::const_iterator logdata_i;
+	std::list<struct log_data>::const_iterator logdata_i;
 	if( m_issuspend || m_suspended_logdata.size() <= 0 )
 		return;
 	RotateLog( m_suspended_logdata.size() );

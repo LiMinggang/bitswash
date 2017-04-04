@@ -735,6 +735,7 @@ void MainFrame::OpenTorrent()
 						( int )n, paths[n].c_str(), filenames[n].c_str() ));
 			AddTorrent( paths[n], false );
 		}
+		if(count) m_btsession->PostQueueUpdateEvent();
 	}
 }
 
@@ -765,7 +766,8 @@ void MainFrame::OpenMagnetURI(const wxString & magneturi)
 					wxString torrent_backup = wxGetApp().SaveTorrentsPath() + wxString(torrent->hash) + _T( ".torrent" );
 					m_btsession->SaveTorrent( torrent, torrent_backup );
 				}
-				
+
+				m_btsession->PostQueueUpdateEvent();
 				UpdateUI();
 			}
 			else
@@ -835,6 +837,8 @@ void MainFrame::DownloadTorrent(wxURL & url)
 			 * add torrent to session
 			 */
 			AddTorrent( tmpfile, false );
+			m_btsession->PostQueueUpdateEvent();
+			
 		}
 	}
 }
