@@ -205,10 +205,10 @@ MainFrame::MainFrame( wxFrame *frame, const wxString& title )
 	m_btsession = wxGetApp().GetBitTorrentSession();
 	CreateToolBar();
 	//XXX category
-	m_mgr.AddPane(CreateSideTreeCtrl(), AUIPANEINFO.
+	/*mgr.AddPane(CreateSideTreeCtrl(), AUIPANEINFO.
 	              Name(_T("category")).Caption(_("Category")).
 	              Left().Layer(1).Position(0).
-	              MinimizeButton(true).CloseButton(false));
+	              MinimizeButton(true).CloseButton(false));*/
 
 	/* layer 1 put side bar occupied whole vertical zone
 	m_mgr.AddPane(CreateSideTreeCtrl(), AUIPANEINFO.
@@ -944,7 +944,7 @@ void MainFrame::UpdateUI(bool force/* = false*/)
 				
 				WXLOGDEBUG(( _T( "get files list\n" )));
 				{
-					//m_filelistctrl->SetStaticHandle(m_torrentlistitems[selecteditems[0]]);
+					m_filelistctrl->SetStaticHandle(torrent);
 					m_filelistctrl->SetItemCount( (torrent->info) ? torrent->info->num_files() : 0 );
 				}
 				{

@@ -76,7 +76,7 @@ static SwashColumnItem filelistcols[] =
 	{ id: FILELIST_COLUMN_SELECTED, name: _T( "Indicator" ), title: _T( "" ), tooltip: _T( "" ), width: 24, show: true },
 	{ id: FILELIST_COLUMN_FILE, name: _( "File" ), title: _( "File" ), tooltip: _( "Files in torrent" ), width: 315, show: true},
 	{ id: FILELIST_COLUMN_SIZE, name: _( "Size" ), title: _( "Size" ), tooltip: _( "File size" ), width: 88, show: true},
-	{ id: FILELIST_COLUMN_FILE, name: _( "Download" ), title: _( "Download" ), tooltip: _( "File priority" ), width: 88, show: true},
+	{ id: FILELIST_COLUMN_DOWNLOAD, name: _( "Download" ), title: _( "Download" ), tooltip: _( "File priority" ), width: 88, show: true},
 	{ id: FILELIST_COLUMN_PROGRESS, name: _( "Progress" ), title: _( "Progress" ), tooltip: _( "File download progress" ), width: 88, show: true },
 };
 #else
@@ -85,7 +85,7 @@ static SwashColumnItem filelistcols[] =
 	{ FILELIST_COLUMN_SELECTED, _T( "Indicator" ), _T( "" ), _T( "" ), 24, true },
 	{ FILELIST_COLUMN_FILE,  _( "File" ), _( "File" ), _( "Files in torrent" ), 315, true},
 	{ FILELIST_COLUMN_SIZE, _( "Size" ), _( "Size" ), _( "File size" ), 88, true},
-	{ FILELIST_COLUMN_FILE, _( "Download" ),  _( "Download" ), _( "File priority" ), 88, true},
+	{ FILELIST_COLUMN_DOWNLOAD, _( "Download" ),  _( "Download" ), _( "File priority" ), 88, true},
 	{ FILELIST_COLUMN_PROGRESS,  _( "Progress" ), _( "Progress" ), _( "File download progress" ),  88, true },
 };
 
@@ -140,6 +140,8 @@ wxString FileListCtrl::GetItemValue( long item, long columnid ) const
 
 	if( !pTorrent )
 	{ return ret; }
+
+	wxASSERT(item < pTorrent->info->num_files());
 
 	// some priority has no name and not made an option yet
 	//
