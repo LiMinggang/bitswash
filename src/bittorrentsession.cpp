@@ -2086,6 +2086,7 @@ bool BitTorrentSession::HandleAddTorrentAlert(lt::add_torrent_alert *p)
 		InfoHash thash(p->handle.info_hash());
 		m_queue_torrent_set.erase(wxString(thash));
 		shared_ptr<torrent_t> torrent;
+		int idx = 0;
 		{
 			wxMutexLocker ml( m_torrent_queue_lock );
 			int idx = find_torrent_from_hash( thash );
@@ -2109,9 +2110,10 @@ bool BitTorrentSession::HandleAddTorrentAlert(lt::add_torrent_alert *p)
 
 			if( torrent->config->GetQIndex() == -1 )
 			{
+				wxMutexLocker ml( m_torrent_queue_lock );
 				torrents_t::const_reverse_iterator it = m_torrent_queue.rbegin();
 
-				int qidx = 0;
+				int qidx = 0, index = m_torrent_queue.size();
 				while( it != m_torrent_queue.rend() )
 				{
 					if((*it)->config->GetQIndex() != -1)
@@ -2120,9 +2122,19 @@ bool BitTorrentSession::HandleAddTorrentAlert(lt::add_torrent_alert *p)
 						break;
 					}
 					++it;
+					--index;
 				}
 
 				torrent->config->SetQIndex( qidx );
+
+				if( index != m_torrent_queue.size() )
+				{
+					--it;
+					m_torrent_queue[index] = torrent;
+					m_torrent_queue[idx] = *it;
+					m_running_torrent_map[wxString(torrent->hash)] = index;
+					m_running_torrent_map[wxString((*it)->hash)] = idx;
+				}
 			}
 
 			if(torrent->info)
