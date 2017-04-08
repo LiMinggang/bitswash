@@ -1196,10 +1196,10 @@ void BitTorrentSession::StartTorrent( shared_ptr<torrent_t>& torrent, bool force
 	wxLogInfo( _T( "%s: Start %s\n" ), torrent->name.c_str(), force ? _T( "force" ) : _T( "" ) );
 	lt::torrent_handle& handle = torrent->handle;
 
-	if(m_queue_torrent_set.find(wxString(torrent->hash)) != m_queue_torrent_set.end())
-	{
-		return;
-	}
+	//if(m_queue_torrent_set.find(wxString(torrent->hash)) != m_queue_torrent_set.end())
+	//{
+	//	return;
+	//}
 
 	if( !handle.is_valid() || ( ( handle.status(lt::torrent_handle::query_save_path).save_path).empty() ) )
 	{
