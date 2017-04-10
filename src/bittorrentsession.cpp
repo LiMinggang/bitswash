@@ -2128,7 +2128,7 @@ bool BitTorrentSession::HandleAddTorrentAlert(lt::add_torrent_alert *p)
 
 				torrent->config->SetQIndex( qidx );
 
-				if( index != m_torrent_queue.size() )
+				if(( index != m_torrent_queue.size()) && (index != idx))
 				{
 					--it;
 					m_torrent_queue[index] = torrent;
