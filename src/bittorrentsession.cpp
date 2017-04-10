@@ -2084,12 +2084,13 @@ bool BitTorrentSession::HandleAddTorrentAlert(lt::add_torrent_alert *p)
 		//std::stringstream hash_stream;
 		//hash_stream << p->handle.info_hash();
 		InfoHash thash(p->handle.info_hash());
-		m_queue_torrent_set.erase(wxString(thash));
+		wxString shash(thash);
+		m_queue_torrent_set.erase(shash);
 		shared_ptr<torrent_t> torrent;
 		int idx = 0;
 		{
 			wxMutexLocker ml( m_torrent_queue_lock );
-			int idx = find_torrent_from_hash( thash );
+			int idx = find_torrent_from_hash( shash );
 
 			if(idx >= 0)
 			{
