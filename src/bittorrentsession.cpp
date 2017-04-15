@@ -910,7 +910,7 @@ size_t BitTorrentSession::GetTorrentQueueSize()
 }
 
 //find and return index of torrent handle from hash string
-int BitTorrentSession::find_torrent_from_hash( const wxString& hash ) const
+int BitTorrentSession::find_torrent_from_hash( const wxString& hash )
 {
 	int j = -1;
 	wxMutexLocker ml( m_torrent_queue_lock );
