@@ -700,12 +700,6 @@ void BitTorrentSession::RemoveTorrent( shared_ptr<torrent_t>& torrent, bool dele
 	enum torrent_state state = ( enum torrent_state ) torrent->config->GetTorrentState();
 
 	//XXX redundant ? StartTorrent below will call the same thing
-	if( ( state == TORRENT_STATE_START ) ||
-			( state == TORRENT_STATE_FORCE_START ) ||
-				( state == TORRENT_STATE_PAUSE ) )
-	{
-		PostQueueUpdateEvent();
-	}
 
 	wxString app_prefix = wxGetApp().SaveTorrentsPath() +
 							  wxString(torrent->hash);
@@ -766,6 +760,13 @@ void BitTorrentSession::RemoveTorrent( shared_ptr<torrent_t>& torrent, bool dele
 		wxMutexLocker ml( m_torrent_queue_lock );
 		m_running_torrent_map.erase( wxString(( *torrent_it )->hash) );
 		m_torrent_queue.erase( torrent_it );
+	}
+
+	if( ( state == TORRENT_STATE_START ) ||
+			( state == TORRENT_STATE_FORCE_START ) ||
+				( state == TORRENT_STATE_PAUSE ) )
+	{
+		PostQueueUpdateEvent();
 	}
 }
 
@@ -912,6 +913,7 @@ size_t BitTorrentSession::GetTorrentQueueSize()
 int BitTorrentSession::find_torrent_from_hash( const wxString& hash ) const
 {
 	int j = -1;
+	wxMutexLocker ml( m_torrent_queue_lock );
 	torrents_map::const_iterator it = m_running_torrent_map.find( hash );
 
 	if( it != m_running_torrent_map.end() ) { j = it->second; }
