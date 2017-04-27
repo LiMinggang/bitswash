@@ -146,6 +146,7 @@ public:
 	void MoveTorrentUp(shared_ptr<torrent_t>& torrent);
 	void MoveTorrentDown(shared_ptr<torrent_t>& torrent);
 	void ReannounceTorrent(shared_ptr<torrent_t>& torrent);
+	void RecheckTorrent(shared_ptr<torrent_t>& torrent);
 	void ConfigureTorrent(shared_ptr<torrent_t>& torrent);
 	void ConfigureTorrentFilesPriority(shared_ptr<torrent_t>& torrent);
 	void ConfigureTorrentTrackers(shared_ptr<torrent_t>& torrent);
@@ -158,6 +159,7 @@ public:
 	void MoveTorrentUp( int idx );
 	void MoveTorrentDown( int idx );
 	void ReannounceTorrent( int idx );
+	void RecheckTorrent(int idx);
 	void ConfigureTorrentFilesPriority( int idx );
 	void ConfigureTorrentTrackers( int idx );
 	void ConfigureTorrent( int idx );

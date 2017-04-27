@@ -648,26 +648,25 @@ bool BitTorrentSession::AddTorrent( shared_ptr<torrent_t>& torrent )
 
 	try
 	{
-		if( find_torrent_from_hash( wxString(torrent->hash) ) >= 0 )
 		{
-			wxLogWarning( _T( "Torrent %s already exists\n" ), torrent->name.c_str() );
-			return false;
+			wxMutexLocker ml( m_torrent_queue_lock );
+			if( find_torrent_from_hash( wxString(torrent->hash) ) >= 0 )
+			{
+				wxLogWarning( _T( "Torrent %s already exists\n" ), torrent->name.c_str() );
+				return false;
+			}
+			
+			m_torrent_queue.push_back( torrent );
+			m_running_torrent_map.insert( std::pair<wxString, int>( wxString(torrent->hash), (int)(m_torrent_queue.size() - 1 )) );
 		}
-
 		enum torrent_state state = ( enum torrent_state ) torrent->config->GetTorrentState();
-
+		
 		//XXX redundant ? StartTorrent below will call the same thing
 		if( ( state == TORRENT_STATE_START ) ||
 				( state == TORRENT_STATE_FORCE_START ) ||
 				( state == TORRENT_STATE_PAUSE ) )
 		{
 			AddTorrentToSession( torrent );
-		}
-
-		{
-			wxMutexLocker ml( m_torrent_queue_lock );
-			m_torrent_queue.push_back( torrent );
-			m_running_torrent_map.insert( std::pair<wxString, int>( wxString(torrent->hash), (int)(m_torrent_queue.size() - 1 )) );
 		}
 	}
 	catch( std::exception& e )
@@ -681,14 +680,21 @@ bool BitTorrentSession::AddTorrent( shared_ptr<torrent_t>& torrent )
 
 void BitTorrentSession::RemoveTorrent( shared_ptr<torrent_t>& torrent, bool deletedata )
 {
-	int idx = find_torrent_from_hash( wxString(torrent->hash) );
-
-	if( idx < 0 )
-	{
-		wxLogError( _T( "RemoveTorrent %s: Torrent not found in queue\n" ), torrent->name.c_str() );
-		return ;
-	}
 	WXLOGDEBUG(( _T( "%s: Removing Torrent\n" ), torrent->name.c_str() ));
+
+	{
+		wxMutexLocker ml( m_torrent_queue_lock );
+		int idx = find_torrent_from_hash( wxString(torrent->hash) );
+
+		if( idx < 0 )
+		{
+			wxLogError( _T( "RemoveTorrent %s: Torrent not found in queue\n" ), torrent->name.c_str() );
+			return ;
+		}
+		torrents_t::iterator torrent_it = m_torrent_queue.begin() + idx;
+		m_running_torrent_map.erase( wxString(( *torrent_it )->hash) );
+		m_torrent_queue.erase( torrent_it );
+	}
 
 	lt::torrent_handle& h = torrent->handle;
 	if( h.is_valid() )
@@ -698,14 +704,6 @@ void BitTorrentSession::RemoveTorrent( shared_ptr<torrent_t>& torrent, bool dele
 	}
 
 	enum torrent_state state = ( enum torrent_state ) torrent->config->GetTorrentState();
-
-	//XXX redundant ? StartTorrent below will call the same thing
-	if( ( state == TORRENT_STATE_START ) ||
-			( state == TORRENT_STATE_FORCE_START ) ||
-				( state == TORRENT_STATE_PAUSE ) )
-	{
-		PostQueueUpdateEvent();
-	}
 
 	wxString app_prefix = wxGetApp().SaveTorrentsPath() +
 							  wxString(torrent->hash);
@@ -761,11 +759,12 @@ void BitTorrentSession::RemoveTorrent( shared_ptr<torrent_t>& torrent, bool dele
 		{ wxLogInfo( _T( "%s: No downloaded data to remove\n" ), torrent->name.c_str() ); }
 	}
 
-	torrents_t::iterator torrent_it = m_torrent_queue.begin() + idx;
+	//XXX redundant ? StartTorrent below will call the same thing
+	if( ( state == TORRENT_STATE_START ) ||
+			( state == TORRENT_STATE_FORCE_START ) ||
+				( state == TORRENT_STATE_PAUSE ) )
 	{
-		wxMutexLocker ml( m_torrent_queue_lock );
-		m_running_torrent_map.erase( wxString(( *torrent_it )->hash) );
-		m_torrent_queue.erase( torrent_it );
+		PostQueueUpdateEvent();
 	}
 }
 
@@ -942,33 +941,35 @@ void BitTorrentSession::SaveAllTorrent()
 	int num_outstanding_resume_data = 0;
 	wxArrayString magneturi;
 
-	for( torrents_t::iterator i = m_torrent_queue.begin();
-			i != m_torrent_queue.end();
-			++i )
 	{
-		shared_ptr<torrent_t> torrent = *i;
-		torrent->config->SetQIndex( idx++ );
-		torrent->config->Save();
-		
-
-		if( !torrent->handle.is_valid() || \
-				!torrent->handle.status().has_metadata || \
-				( !( ( torrent->handle.status() ).need_save_resume ) ) || \
-				torrent->config->GetTorrentState() == TORRENT_STATE_STOP )
+		wxMutexLocker ml( m_torrent_queue_lock );
+		for( torrents_t::iterator i = m_torrent_queue.begin();
+				i != m_torrent_queue.end();
+				++i )
 		{
-			if((!torrent->magneturi.IsEmpty()) && torrent->handle.is_valid()
-				&& !torrent->handle.status().has_metadata)
+			shared_ptr<torrent_t> torrent = *i;
+			torrent->config->SetQIndex( idx++ );
+			torrent->config->Save();
+
+			if( !torrent->handle.is_valid() || \
+					!torrent->handle.status().has_metadata || \
+					( !( ( torrent->handle.status() ).need_save_resume ) ) || \
+					torrent->config->GetTorrentState() == TORRENT_STATE_STOP )
 			{
-				magneturi.Add(torrent->magneturi);
+				if((!torrent->magneturi.IsEmpty()) && torrent->handle.is_valid()
+					&& !torrent->handle.status().has_metadata)
+				{
+					magneturi.Add(torrent->magneturi);
+				}
+
+				continue;
 			}
 
-			continue;
+			torrent->handle.pause();
+			SaveTorrentResumeData( torrent );
+			++num_outstanding_resume_data;
+			m_libbtsession->remove_torrent( torrent->handle );
 		}
-
-		torrent->handle.pause();
-		SaveTorrentResumeData( torrent );
-		++num_outstanding_resume_data;
-		m_libbtsession->remove_torrent( torrent->handle );
 	}
 
 	while( num_outstanding_resume_data > 0 )
@@ -1127,11 +1128,17 @@ shared_ptr<torrent_t> BitTorrentSession::ParseTorrent( const wxString& filename 
 
 shared_ptr<torrent_t> BitTorrentSession::LoadMagnetUri( MagnetUri& magneturi )
 {
-	shared_ptr<torrent_t> torrent( new torrent_t() );
-	if(m_queue_torrent_set.find(wxString(torrent->hash)) == m_queue_torrent_set.end())
+	bool notfound = false;
+	shared_ptr<torrent_t> torrent;
+	{
+		wxMutexLocker ml( m_torrent_queue_lock );
+		notfound = (m_queue_torrent_set.find(wxString(magneturi.hash())) == m_queue_torrent_set.end());
+	}
+	if(notfound)
 	{
 		try
 		{
+			torrent.reset(new torrent_t());
 			lt::add_torrent_params p = magneturi.addTorrentParams();
 			// Limits
 			//p.max_connections = maxConnectionsPerTorrent();
@@ -1156,12 +1163,10 @@ shared_ptr<torrent_t> BitTorrentSession::LoadMagnetUri( MagnetUri& magneturi )
 
 			torrent->isvalid = false;
 			m_libbtsession->async_add_torrent( p );
+			wxMutexLocker ml( m_torrent_queue_lock );
 			m_queue_torrent_set.insert(wxString(torrent->hash));
-			{
-				wxMutexLocker ml( m_torrent_queue_lock );
-				m_torrent_queue.push_back( torrent );
-				m_running_torrent_map.insert( std::pair<wxString, int>( wxString(torrent->hash), (int)(m_torrent_queue.size() - 1 )) );
-			}
+			m_torrent_queue.push_back( torrent );
+			m_running_torrent_map.insert( std::pair<wxString, int>( wxString(torrent->hash), (int)(m_torrent_queue.size() - 1 )) );
 		}
 		catch( std::exception &e )
 		{
@@ -1287,21 +1292,25 @@ void BitTorrentSession::PauseTorrent( shared_ptr<torrent_t>& torrent )
 
 void BitTorrentSession::MoveTorrentUp( shared_ptr<torrent_t>& torrent )
 {
-	int idx = find_torrent_from_hash( wxString(torrent->hash));
-
-	if( idx < 0 )
+	int idx = -1;
 	{
-		wxLogError( _T( "MoveTorrentUp %s: Torrent not found in queue\n" ), torrent->name.c_str() );
+		wxMutexLocker ml( m_torrent_queue_lock );
+		idx = find_torrent_from_hash( wxString(torrent->hash));
+	}
+	if( idx <= 0 )
+	{
+		if( idx == 0 )
+		{
+			wxLogInfo( _T( "Torrent is at top position %d-%s\n" ), idx, torrent->name.c_str() );
+		}
+		else
+		{
+			wxLogError( _T( "MoveTorrentUp %s: Torrent not found in queue\n" ), torrent->name.c_str() );
+		}
 		return ;
 	}
 
 	wxLogInfo( _T( "%s: Moving Torrent Up\n" ), torrent->name.c_str() );
-
-	if( idx == 0 )
-	{
-		wxLogInfo( _T( "Torrent is at top position %d-%s\n" ), idx, torrent->name.c_str() );
-		return;
-	}
 
 	long qindex = torrent->config->GetQIndex();
 	if(qindex < 0)
@@ -1310,6 +1319,7 @@ void BitTorrentSession::MoveTorrentUp( shared_ptr<torrent_t>& torrent )
 		return;
 	}
 
+	wxMutexLocker ml( m_torrent_queue_lock );
 	torrents_t::iterator torrent_it = m_torrent_queue.begin() + idx - 1 ;
 	shared_ptr<torrent_t> prev_torrent( *( torrent_it ) );
 	WXLOGDEBUG(( _T( "Prev %d now %d\n" ), prev_torrent->config->GetQIndex(), torrent->config->GetQIndex() ));
@@ -1322,21 +1332,22 @@ void BitTorrentSession::MoveTorrentUp( shared_ptr<torrent_t>& torrent )
 	}
 	prev_torrent->config->SetQIndex( qindex );
 	prev_torrent->config->Save();
-	{
-		wxMutexLocker ml( m_torrent_queue_lock );
-		m_torrent_queue[idx - 1] = torrent;
-		m_torrent_queue[idx] = prev_torrent;
-		m_running_torrent_map[wxString(torrent->hash)] = idx - 1;
-		m_running_torrent_map[wxString(prev_torrent->hash)] = idx;
-	}
-	//m_torrent_queue.erase( torrent_it );
-	//torrent_it = m_torrent_queue.begin() + idx;
-	//m_torrent_queue.insert( torrent_it, prev_torrent );
+	m_torrent_queue[idx - 1] = torrent;
+	m_torrent_queue[idx] = prev_torrent;
+	m_running_torrent_map[wxString(torrent->hash)] = idx - 1;
+	m_running_torrent_map[wxString(prev_torrent->hash)] = idx;
+//m_torrent_queue.erase( torrent_it );
+//torrent_it = m_torrent_queue.begin() + idx;
+//m_torrent_queue.insert( torrent_it, prev_torrent );
 }
 
 void BitTorrentSession::MoveTorrentDown( shared_ptr<torrent_t>& torrent )
 {
-	int idx = find_torrent_from_hash( wxString(torrent->hash));
+	int idx = -1;
+	{
+		wxMutexLocker ml( m_torrent_queue_lock );
+		idx = find_torrent_from_hash( wxString(torrent->hash));
+	}
 
 	if( idx < 0 )
 	{
@@ -1348,13 +1359,13 @@ void BitTorrentSession::MoveTorrentDown( shared_ptr<torrent_t>& torrent )
 	 * deference from queue
 	 */
 	//torrent_t *torrent = torrent;
-	wxLogInfo( _T( "%s: Moving Torrent Down\n" ), torrent->name.c_str() );
 
 	if( idx == ( m_torrent_queue.size() - 1 ) )
 	{
 		wxLogInfo( _T( "Torrent is at bottom position %d-%s\n" ), idx, torrent->name.c_str() );
 		return;
 	}
+
 	long qindex = torrent->config->GetQIndex();
 	if(qindex < 0)
 	{
@@ -1362,6 +1373,9 @@ void BitTorrentSession::MoveTorrentDown( shared_ptr<torrent_t>& torrent )
 		return;
 	}
 
+	wxLogInfo( _T( "%s: Moving Torrent Down\n" ), torrent->name.c_str() );
+	
+	wxMutexLocker ml( m_torrent_queue_lock );
 	torrents_t::iterator torrent_it = m_torrent_queue.begin() + idx;
 	shared_ptr<torrent_t> next_torrent( *( torrent_it + 1 ) );
 	WXLOGDEBUG(( _T( "Next %d now %d\n" ), next_torrent->config->GetQIndex(), torrent->config->GetQIndex() ));
@@ -1382,16 +1396,13 @@ void BitTorrentSession::MoveTorrentDown( shared_ptr<torrent_t>& torrent )
 
 	next_torrent->config->SetQIndex( qindex );
 	next_torrent->config->Save();
-	{
-		wxMutexLocker ml( m_torrent_queue_lock );
-		m_torrent_queue[idx] = next_torrent;
-		m_torrent_queue[idx + 1] = torrent;
-		m_running_torrent_map[wxString(torrent->hash)] = idx + 1;
-		m_running_torrent_map[wxString(next_torrent->hash)] = idx;
-	}
-	//m_torrent_queue.erase( torrent_it );
-	//torrent_it = m_torrent_queue.begin() + idx + 1 ;
-	//m_torrent_queue.insert( torrent_it, torrent );
+	m_torrent_queue[idx] = next_torrent;
+	m_torrent_queue[idx + 1] = torrent;
+	m_running_torrent_map[wxString(torrent->hash)] = idx + 1;
+	m_running_torrent_map[wxString(next_torrent->hash)] = idx;
+//m_torrent_queue.erase( torrent_it );
+//torrent_it = m_torrent_queue.begin() + idx + 1 ;
+//m_torrent_queue.insert( torrent_it, torrent );
 }
 
 void BitTorrentSession::ReannounceTorrent( shared_ptr<torrent_t>& torrent )
@@ -1403,6 +1414,48 @@ void BitTorrentSession::ReannounceTorrent( shared_ptr<torrent_t>& torrent )
 	{
 		h.force_reannounce();
 	}
+}
+
+void BitTorrentSession::RecheckTorrent( shared_ptr<torrent_t>& torrent )
+{
+	if(!torrent || !torrent->isvalid)
+	{
+		return;
+	}
+	enum torrent_state prev_state = ( enum torrent_state ) torrent->config->GetTorrentState();
+	
+	if( ( prev_state == TORRENT_STATE_START ) ||
+			( prev_state == TORRENT_STATE_FORCE_START ) ||
+			( prev_state == TORRENT_STATE_PAUSE ) )
+	{
+		wxLogInfo( _T( "%s: Stop for checking\n" ), torrent->name.c_str() );
+		StopTorrent( torrent );
+	}
+	
+	wxString fastresumefile = wxGetApp().SaveTorrentsPath() + wxString(torrent->hash) + _T( ".fastresume" );
+	
+	if( wxFileExists( fastresumefile ) )
+	{
+		wxLogWarning( _T( "%s: Remove fast resume data\n" ), torrent->name.c_str() );
+	
+		if( ! wxRemoveFile( fastresumefile ) )
+		{
+			wxLogError( _T( "%s: Remove fast resume data: failed\n" ), torrent->name.c_str() );
+		}
+	}
+	
+	if( ( prev_state == TORRENT_STATE_START ) ||
+			( prev_state == TORRENT_STATE_FORCE_START ) )
+	{
+		wxLogInfo( _T( "%s: Stop for checking\n" ), torrent->name.c_str() );
+		StartTorrent( torrent, ( prev_state == TORRENT_STATE_FORCE_START ) );
+	}
+	else
+		if( prev_state == TORRENT_STATE_PAUSE )
+		{
+			PauseTorrent( torrent );
+		}
+
 }
 
 void BitTorrentSession::ConfigureTorrentFilesPriority( shared_ptr<torrent_t>& torrent )
@@ -1648,6 +1701,17 @@ void BitTorrentSession::ReannounceTorrent( int idx )
 	}
 
 	ReannounceTorrent( m_torrent_queue[idx] );
+}
+
+void BitTorrentSession::RecheckTorrent( int idx )
+{
+	if( idx < 0 || idx >= m_torrent_queue.size())
+	{
+		wxLogError( _T( "%d: Invalid torrent index\n" ), idx );
+		return ;
+	}
+
+	RecheckTorrent( m_torrent_queue[idx] );
 }
 
 void BitTorrentSession::ConfigureTorrentFilesPriority( int idx )
@@ -2085,21 +2149,14 @@ bool BitTorrentSession::HandleAddTorrentAlert(lt::add_torrent_alert *p)
 		//hash_stream << p->handle.info_hash();
 		InfoHash thash(p->handle.info_hash());
 		wxString shash(thash);
-		m_queue_torrent_set.erase(shash);
 		shared_ptr<torrent_t> torrent;
-		int idx = 0;
-		{
-			wxMutexLocker ml( m_torrent_queue_lock );
-			int idx = find_torrent_from_hash( shash );
+		wxMutexLocker ml( m_torrent_queue_lock );
+		m_queue_torrent_set.erase(shash);
+		int idx = find_torrent_from_hash( shash );
 
-			if(idx >= 0)
-			{
-				torrent = m_torrent_queue.at(idx);
-			}
-		}
-
-		if(torrent)
+		if(idx >= 0)
 		{
+			torrent = m_torrent_queue.at(idx);
 			//wxString torrent_backup = wxGetApp().SaveTorrentsPath() + torrent->hash + _T( ".torrent" );
 			torrent->handle = p->handle;
 			wxASSERT(p->handle.is_valid());
@@ -2111,7 +2168,6 @@ bool BitTorrentSession::HandleAddTorrentAlert(lt::add_torrent_alert *p)
 
 			if( torrent->config->GetQIndex() == -1 )
 			{
-				wxMutexLocker ml( m_torrent_queue_lock );
 				torrents_t::const_reverse_iterator it = m_torrent_queue.rbegin();
 
 				int qidx = 0, index = m_torrent_queue.size();
@@ -2168,6 +2224,14 @@ bool BitTorrentSession::HandleAddTorrentAlert(lt::add_torrent_alert *p)
 			if( state == TORRENT_STATE_FORCE_START || state == TORRENT_STATE_START )
 			{
 				StartTorrent( torrent, (state == TORRENT_STATE_FORCE_START) );
+			}
+		}
+		else
+		{
+			if( p->handle.is_valid() )
+			{
+				p->handle.pause();
+				m_libbtsession->remove_torrent( p->handle );
 			}
 		}
 	}

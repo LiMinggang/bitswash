@@ -1500,48 +1500,11 @@ void MainFrame::OnMenuTorrentRecheck( wxCommandEvent& event )
 
 	/* reannounce selected torrent(s) */
 	{
-		for( i = 0; i < selecteditems.size(); i++ )
+		for( i = selecteditems.size() - 1; i >= 0; --i )
 		{
 			//m_btsession->ReannounceTorrent((m_torrentlistitems[selecteditems[i]]));
 			//XXX Workaround for libtorrent lack of recheck redo if supported in core
-			shared_ptr<torrent_t> torrent = m_btsession->GetTorrent( selecteditems[i] );
-			if(!torrent || !torrent->isvalid)
-			{
-				return;
-			}
-			enum torrent_state prev_state = ( enum torrent_state ) torrent->config->GetTorrentState();
-
-			if( ( prev_state == TORRENT_STATE_START ) ||
-					( prev_state == TORRENT_STATE_FORCE_START ) ||
-					( prev_state == TORRENT_STATE_PAUSE ) )
-			{
-				wxLogInfo( _T( "%s: Stop for checking\n" ), torrent->name.c_str() );
-				m_btsession->StopTorrent( torrent );
-			}
-
-			wxString fastresumefile = wxGetApp().SaveTorrentsPath() + wxString(torrent->hash) + _T( ".fastresume" );
-
-			if( wxFileExists( fastresumefile ) )
-			{
-				wxLogWarning( _T( "%s: Remove fast resume data\n" ), torrent->name.c_str() );
-
-				if( ! wxRemoveFile( fastresumefile ) )
-				{
-					wxLogError( _T( "%s: Remove fast resume data: failed\n" ), torrent->name.c_str() );
-				}
-			}
-
-			if( ( prev_state == TORRENT_STATE_START ) ||
-					( prev_state == TORRENT_STATE_FORCE_START ) )
-			{
-				wxLogInfo( _T( "%s: Stop for checking\n" ), torrent->name.c_str() );
-				m_btsession->StartTorrent( torrent, ( prev_state == TORRENT_STATE_FORCE_START ) );
-			}
-			else
-				if( prev_state == TORRENT_STATE_PAUSE )
-				{
-					m_btsession->PauseTorrent( torrent );
-				}
+			m_btsession->RecheckTorrent(selecteditems[i]);
 		}
 	}
 }
