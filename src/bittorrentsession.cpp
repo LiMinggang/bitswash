@@ -759,7 +759,6 @@ void BitTorrentSession::RemoveTorrent( shared_ptr<torrent_t>& torrent, bool dele
 		{ wxLogInfo( _T( "%s: No downloaded data to remove\n" ), torrent->name.c_str() ); }
 	}
 
-	//XXX redundant ? StartTorrent below will call the same thing
 	if( ( state == TORRENT_STATE_START ) ||
 			( state == TORRENT_STATE_FORCE_START ) ||
 				( state == TORRENT_STATE_PAUSE ) )
@@ -908,9 +907,10 @@ size_t BitTorrentSession::GetTorrentQueueSize()
 }
 
 //find and return index of torrent handle from hash string
-int BitTorrentSession::find_torrent_from_hash( const wxString& hash ) const
+int BitTorrentSession::find_torrent_from_hash( const wxString& hash )
 {
 	int j = -1;
+	wxMutexLocker ml( m_torrent_queue_lock );
 	torrents_map::const_iterator it = m_running_torrent_map.find( hash );
 
 	if( it != m_running_torrent_map.end() ) { j = it->second; }
@@ -950,6 +950,7 @@ void BitTorrentSession::SaveAllTorrent()
 			shared_ptr<torrent_t> torrent = *i;
 			torrent->config->SetQIndex( idx++ );
 			torrent->config->Save();
+			
 
 			if( !torrent->handle.is_valid() || \
 					!torrent->handle.status().has_metadata || \
@@ -1085,6 +1086,7 @@ void BitTorrentSession::SaveTorrentResumeData( shared_ptr<torrent_t>& torrent )
 
 void BitTorrentSession::DumpTorrents()
 {
+	wxMutexLocker ml( m_torrent_queue_lock );
 	for( torrents_t::iterator i = m_torrent_queue.begin();
 			i != m_torrent_queue.end(); ++i )
 	{
@@ -1604,103 +1606,77 @@ void BitTorrentSession::ConfigureTorrent( shared_ptr<torrent_t>& torrent )
 
 void BitTorrentSession::RemoveTorrent( int idx, bool deletedata )
 {
-	if( idx < 0 || idx >= m_torrent_queue.size())
-	{
-		wxLogError( _T( "%d: Invalid torrent index\n" ), idx );
-		return ;
-	}
-
-	RemoveTorrent( m_torrent_queue[idx], deletedata);
+	shared_ptr<torrent_t> torrent = GetTorrent( idx );
+	if(torrent)
+		RemoveTorrent( torrent, deletedata);
 }
 
 void BitTorrentSession::StartTorrent( int idx, bool force )
 {
-	if( idx < 0 || idx >= m_torrent_queue.size())
+	shared_ptr<torrent_t> torrent = GetTorrent( idx );
+	if(torrent && torrent->isvalid)
 	{
-		wxLogError( _T( "%d: Invalid torrent index\n" ), idx );
-		return ;
+		StartTorrent( torrent, force );
 	}
-
-	if(m_torrent_queue[idx]->isvalid)
-		StartTorrent( m_torrent_queue[idx], force );
 }
 
 void BitTorrentSession::StopTorrent( int idx )
 {
-	if( idx < 0 || idx >= m_torrent_queue.size())
-	{
-		wxLogError( _T( "%d: Invalid torrent index\n" ), idx );
-		return ;
-	}
-
-	StopTorrent( m_torrent_queue[idx] );
+	shared_ptr<torrent_t> torrent = GetTorrent( idx );
+	if(torrent)
+		StopTorrent( torrent );
 }
 
 void BitTorrentSession::QueueTorrent( int idx )
 {
-	if( idx < 0 || idx >= m_torrent_queue.size())
+	shared_ptr<torrent_t> torrent = GetTorrent( idx );
+	if(torrent && torrent->isvalid)
 	{
-		wxLogError( _T( "%d: Invalid torrent index\n" ), idx );
-		return ;
+		QueueTorrent( torrent );
 	}
-
-	if(m_torrent_queue[idx]->isvalid)
-		QueueTorrent( m_torrent_queue[idx] );
 }
 
 void BitTorrentSession::PauseTorrent( int idx )
 {
-	if( idx < 0 || idx >= m_torrent_queue.size())
-	{
-		wxLogError( _T( "%d: Invalid torrent index\n" ), idx );
-		return ;
-	}
-
-	PauseTorrent( m_torrent_queue[idx] );
+	shared_ptr<torrent_t> torrent = GetTorrent( idx );
+	if(torrent)
+		PauseTorrent( torrent );
 }
 
 void BitTorrentSession::MoveTorrentUp( int idx )
 {
-	if( idx < 0 || idx >= m_torrent_queue.size())
-	{
-		wxLogError( _T( "%d: Invalid torrent index\n" ), idx );
-		return ;
-	}
-
 	if( idx == 0 )
 	{
 		wxLogInfo( _T( "Torrent is at top position %d\n" ), idx );
 		return;
 	}
-	MoveTorrentUp( m_torrent_queue[idx] );
+	shared_ptr<torrent_t> torrent = GetTorrent( idx );
+	if(torrent)
+		MoveTorrentUp( torrent );
 }
 
 void BitTorrentSession::MoveTorrentDown( int idx )
 {
-	if( idx < 0 || idx >= m_torrent_queue.size())
 	{
-		wxLogError( _T( "%d: Invalid torrent index\n" ), idx );
-		return ;
+		wxMutexLocker ml( m_torrent_queue_lock );
+		bool CanNotMoveDown = (idx >= ( m_torrent_queue.size() - 1 ));
+		if(CanNotMoveDown)
+		{
+			wxLogInfo( _T( "Torrent is at bottom position %d\n" ), idx );
+			return;
+		}
 	}
 
-	if( idx == ( m_torrent_queue.size() - 1 ) )
-	{
-		wxLogInfo( _T( "Torrent is at bottom position %d\n" ), idx );
-		return;
-	}
-
-	MoveTorrentDown( m_torrent_queue[idx] );
+	shared_ptr<torrent_t> torrent = GetTorrent( idx );
+	if(torrent)
+		MoveTorrentDown( torrent );
 }
 
 void BitTorrentSession::ReannounceTorrent( int idx )
 {
-	if( idx < 0 || idx >= m_torrent_queue.size())
-	{
-		wxLogError( _T( "%d: Invalid torrent index\n" ), idx );
-		return ;
-	}
-
-	ReannounceTorrent( m_torrent_queue[idx] );
+	shared_ptr<torrent_t> torrent = GetTorrent( idx );
+	if(torrent)
+		ReannounceTorrent( torrent );
 }
 
 void BitTorrentSession::RecheckTorrent( int idx )
@@ -1716,35 +1692,23 @@ void BitTorrentSession::RecheckTorrent( int idx )
 
 void BitTorrentSession::ConfigureTorrentFilesPriority( int idx )
 {
-	if( idx < 0 || idx >= m_torrent_queue.size())
-	{
-		wxLogError( _T( "%d: Invalid torrent index\n" ), idx );
-		return ;
-	}
-
-	ConfigureTorrentFilesPriority( m_torrent_queue[idx] );
+	shared_ptr<torrent_t> torrent = GetTorrent( idx );
+	if(torrent)
+		ConfigureTorrentFilesPriority( torrent );
 }
 
 void BitTorrentSession::ConfigureTorrentTrackers( int idx )
 {
-	if( idx < 0 || idx >= m_torrent_queue.size())
-	{
-		wxLogError( _T( "%d: Invalid torrent index\n" ), idx );
-		return ;
-	}
-
-	ConfigureTorrentTrackers( m_torrent_queue[idx] );
+	shared_ptr<torrent_t> torrent = GetTorrent( idx );
+	if(torrent)
+		ConfigureTorrentTrackers( torrent );
 }
 
 void BitTorrentSession::ConfigureTorrent( int idx )
 {
-	if( idx < 0 || idx >= m_torrent_queue.size())
-	{
-		wxLogError( _T( "%d: Invalid torrent index\n" ), idx );
-		return ;
-	}
-
-	ConfigureTorrent( m_torrent_queue[idx] );
+	shared_ptr<torrent_t> torrent = GetTorrent( idx );
+	if(torrent)
+		ConfigureTorrent( torrent );
 }
 
 /* start or stop queued item based on several criteria
@@ -2077,7 +2041,8 @@ void BitTorrentSession::HandleTorrentAlert()
 							torrents_map::iterator it = m_running_torrent_map.find(wxString(thash));
 							if(it != m_running_torrent_map.end())
 							{
-								SaveTorrentResumeData(m_torrent_queue[it->second]);
+								shared_ptr<torrent_t> torrent = BitTorrentSession::GetTorrent( it->second );
+								SaveTorrentResumeData(torrent);
 							}
 						}
 						event_string << h.status(lt::torrent_handle::query_name).name << _T( ": " ) << wxString::FromUTF8(p->message().c_str());
@@ -2184,7 +2149,7 @@ bool BitTorrentSession::HandleAddTorrentAlert(lt::add_torrent_alert *p)
 
 				torrent->config->SetQIndex( qidx );
 
-				if( index != m_torrent_queue.size() )
+				if(( index != m_torrent_queue.size()) && (index != idx))
 				{
 					--it;
 					m_torrent_queue[index] = torrent;
@@ -2252,7 +2217,7 @@ bool BitTorrentSession::HandleMetaDataAlert(lt::metadata_received_alert *p)
 	torrents_map::iterator it = m_running_torrent_map.find(wxString(thash));
 	if(it != m_running_torrent_map.end())
 	{
-		shared_ptr<torrent_t>& torrent = m_torrent_queue[it->second];
+		shared_ptr<torrent_t> torrent = GetTorrent(it->second);
 		wxString torrent_backup = wxGetApp().SaveTorrentsPath() + wxString(torrent->hash) + _T( ".torrent" );
 		torrent->handle = p->handle;
 		torrent->info = p->handle.torrent_file();

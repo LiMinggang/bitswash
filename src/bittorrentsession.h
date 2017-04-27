@@ -192,7 +192,7 @@ public:
 
 private:
 	void ScanTorrentsDirectory(const wxString& dirname);
-	int find_torrent_from_hash(const wxString& hash) const;
+	int find_torrent_from_hash(const wxString& hash);
 
 	void SaveTorrentResumeData(shared_ptr<torrent_t>& torrent);
 	void SaveAllTorrent();
