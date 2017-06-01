@@ -126,6 +126,12 @@ namespace libtorrent
 #pragma GCC diagnostic ignored "-Winvalid-offsetof"
 #endif
 
+#ifdef TORRENT_WINDOWS
+#define CLOSE_FILE_INTERVAL 120
+#else
+#define CLOSE_FILE_INTERVAL 0
+#endif
+
 	namespace {
 
 	using aux::session_impl;
@@ -142,7 +148,7 @@ namespace libtorrent
 		SET_NOPREV(proxy_username, "", &session_impl::update_proxy),
 		SET_NOPREV(proxy_password, "", &session_impl::update_proxy),
 		SET_NOPREV(i2p_hostname, "", &session_impl::update_i2p_bridge),
-		SET_NOPREV(peer_fingerprint, "-LT1120-", &session_impl::update_peer_fingerprint),
+		SET_NOPREV(peer_fingerprint, "-LT1130-", &session_impl::update_peer_fingerprint),
 		SET_NOPREV(dht_bootstrap_nodes, "dht.libtorrent.org:25401", &session_impl::update_dht_bootstrap_nodes)
 	};
 
@@ -270,7 +276,7 @@ namespace libtorrent
 		SET(active_tracker_limit, 1600, 0),
 		SET(active_lsd_limit, 60, 0),
 		SET(active_limit, 15, &session_impl::trigger_auto_manage),
-		SET_NOPREV(active_loaded_limit, 100, &session_impl::trigger_auto_manage),
+		SET_NOPREV(active_loaded_limit, 0, &session_impl::trigger_auto_manage),
 		SET(auto_manage_interval, 30, 0),
 		SET(seed_time_limit, 24 * 60 * 60, 0),
 		SET(auto_scrape_interval, 1800, 0),
@@ -350,6 +356,7 @@ namespace libtorrent
 		SET_NOPREV(cache_size_volatile, 256, 0),
 		SET_NOPREV(urlseed_max_request_bytes, 16 * 1024 * 1024, 0),
 		SET_NOPREV(web_seed_name_lookup_retry, 1800, 0),
+		SET_NOPREV(close_file_interval, CLOSE_FILE_INTERVAL, &session_impl::update_close_file_interval),
 	};
 
 #undef SET

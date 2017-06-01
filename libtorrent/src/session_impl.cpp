@@ -57,24 +57,6 @@ POSSIBILITY OF SUCH DAMAGE.
 #include <valgrind/memcheck.h>
 #endif
 
-#if TORRENT_USE_RLIMIT
-
-#ifdef __GNUC__
-#pragma GCC diagnostic push
-#pragma GCC diagnostic ignored "-Wlong-long"
-#endif // __GNUC__
-
-#include <sys/resource.h>
-
-// capture this here where warnings are disabled (the macro generates warnings)
-const rlim_t rlim_infinity = RLIM_INFINITY;
-
-#ifdef __GNUC__
-#pragma GCC diagnostic pop
-#endif // __GNUC__
-
-#endif // TORRENT_USE_RLIMIT
-
 #include "libtorrent/aux_/disable_warnings_pop.hpp"
 
 #include "libtorrent/aux_/openssl.hpp"
@@ -373,6 +355,7 @@ namespace aux {
 		, m_global_class(0)
 		, m_tcp_peer_class(0)
 		, m_local_peer_class(0)
+		, m_host_resolver(m_io_service)
 		, m_tracker_manager(m_udp_socket, m_stats_counters, m_host_resolver
 			, m_settings
 #if !defined TORRENT_DISABLE_LOGGING || TORRENT_USE_ASSERTS
@@ -386,7 +369,6 @@ namespace aux {
 #if TORRENT_USE_I2P
 		, m_i2p_conn(m_io_service)
 #endif
-		, m_socks_listen_port(0)
 		, m_interface_index(0)
 		, m_unchoke_time_scaler(0)
 		, m_auto_manage_time_scaler(0)
@@ -426,7 +408,7 @@ namespace aux {
 		, m_boost_connections(0)
 		, m_timer(m_io_service)
 		, m_lsd_announce_timer(m_io_service)
-		, m_host_resolver(m_io_service)
+		, m_close_file_timer(m_io_service)
 		, m_next_downloading_connect_torrent(0)
 		, m_next_finished_connect_torrent(0)
 		, m_download_connect_attempts(0)
@@ -537,13 +519,13 @@ namespace aux {
 #endif // TORRENT_DISABLE_LOGGING
 
 		// ---- auto-cap max connections ----
-		int max_files = max_open_files();
+		int const max_files = max_open_files();
 		// deduct some margin for epoll/kqueue, log files,
 		// futexes, shared objects etc.
 		// 80% of the available file descriptors should go to connections
-		m_settings.set_int(settings_pack::connections_limit, (std::min)(
+		m_settings.set_int(settings_pack::connections_limit, std::min(
 			m_settings.get_int(settings_pack::connections_limit)
-			, (std::max)(5, (max_files - 20) * 8 / 10)));
+			, std::max(5, (max_files - 20) * 8 / 10)));
 		// 20% goes towards regular files (see disk_io_thread)
 #ifndef TORRENT_DISABLE_LOGGING
 		session_log("   max connections: %d", m_settings.get_int(settings_pack::connections_limit));
@@ -1094,6 +1076,8 @@ namespace aux {
 		// about to send event=stopped to
 		m_host_resolver.abort();
 
+		m_close_file_timer.cancel();
+
 		// abort the main thread
 		m_abort = true;
 		error_code ec;
@@ -1125,12 +1109,6 @@ namespace aux {
 			TORRENT_ASSERT(!ec);
 		}
 		m_listen_sockets.clear();
-		if (m_socks_listen_socket && m_socks_listen_socket->is_open())
-		{
-			m_socks_listen_socket->close(ec);
-			TORRENT_ASSERT(!ec);
-		}
-		m_socks_listen_socket.reset();
 
 #if TORRENT_USE_I2P
 		if (m_i2p_listen_socket && m_i2p_listen_socket->is_open())
@@ -2238,7 +2216,6 @@ retry:
 			, end(m_listen_sockets.end()); i != end; ++i)
 			async_accept(i->sock, i->ssl);
 
-		open_new_incoming_socks_connection();
 #if TORRENT_USE_I2P
 		open_new_incoming_i2p_connection();
 #endif
@@ -2283,93 +2260,6 @@ retry:
 				, ssl_port, ssl_port);
 #endif
 		}
-	}
-
-	void session_impl::open_new_incoming_socks_connection()
-	{
-		int const proxy_type = m_settings.get_int(settings_pack::proxy_type);
-
-		if (proxy_type != settings_pack::socks5
-			&& proxy_type != settings_pack::socks5_pw
-			&& proxy_type != settings_pack::socks4)
-			return;
-
-		if (m_socks_listen_socket) return;
-
-		m_socks_listen_socket = boost::make_shared<socket_type>(boost::ref(m_io_service));
-		bool const ret = instantiate_connection(m_io_service, proxy()
-			, *m_socks_listen_socket, NULL, NULL, false, false);
-		TORRENT_ASSERT_VAL(ret, ret);
-		TORRENT_UNUSED(ret);
-
-#if defined TORRENT_ASIO_DEBUGGING
-		add_outstanding_async("session_impl::on_socks_listen");
-#endif
-		socks5_stream& s = *m_socks_listen_socket->get<socks5_stream>();
-
-		m_socks_listen_port = m_listen_interface.port();
-		if (m_socks_listen_port == 0) m_socks_listen_port = 2000 + random() % 60000;
-		s.async_listen(tcp::endpoint(address_v4::any(), m_socks_listen_port)
-			, boost::bind(&session_impl::on_socks_listen, this
-				, m_socks_listen_socket, _1));
-	}
-
-	void session_impl::on_socks_listen(boost::shared_ptr<socket_type> const& sock
-		, error_code const& e)
-	{
-#if defined TORRENT_ASIO_DEBUGGING
-		complete_async("session_impl::on_socks_listen");
-#endif
-
-		TORRENT_ASSERT(sock == m_socks_listen_socket || !m_socks_listen_socket);
-
-		if (e)
-		{
-			m_socks_listen_socket.reset();
-			if (e == boost::asio::error::operation_aborted) return;
-			if (m_alerts.should_post<listen_failed_alert>())
-				m_alerts.emplace_alert<listen_failed_alert>("socks5"
-					, -1, listen_failed_alert::accept, e
-					, listen_failed_alert::socks5);
-			return;
-		}
-
-		error_code ec;
-		tcp::endpoint ep = sock->local_endpoint(ec);
-		TORRENT_ASSERT(!ec);
-		TORRENT_UNUSED(ec);
-
-		if (m_alerts.should_post<listen_succeeded_alert>())
-			m_alerts.emplace_alert<listen_succeeded_alert>(
-				ep, listen_succeeded_alert::socks5);
-
-#if defined TORRENT_ASIO_DEBUGGING
-		add_outstanding_async("session_impl::on_socks_accept");
-#endif
-		socks5_stream& s = *m_socks_listen_socket->get<socks5_stream>();
-		s.async_accept(boost::bind(&session_impl::on_socks_accept, this
-				, m_socks_listen_socket, _1));
-	}
-
-	void session_impl::on_socks_accept(boost::shared_ptr<socket_type> const& s
-		, error_code const& e)
-	{
-#if defined TORRENT_ASIO_DEBUGGING
-		complete_async("session_impl::on_socks_accept");
-#endif
-		TORRENT_ASSERT(s == m_socks_listen_socket || !m_socks_listen_socket);
-		m_socks_listen_socket.reset();
-		if (e == boost::asio::error::operation_aborted) return;
-		if (e)
-		{
-			if (m_alerts.should_post<listen_failed_alert>())
-				m_alerts.emplace_alert<listen_failed_alert>("socks5"
-					, -1, listen_failed_alert::accept, e
-					, listen_failed_alert::socks5);
-			return;
-		}
-		open_new_incoming_socks_connection();
-		incoming_connection(s);
 	}
 
 	void session_impl::update_i2p_bridge()
@@ -3565,6 +3455,16 @@ retry:
 //		m_peer_pool.release_memory();
 	}
 
+	void session_impl::on_close_file(error_code const& e)
+	{
+		if (e) return;
+
+		m_disk_thread.files().close_oldest();
+
+		// re-issue the timer
+		update_close_file_interval();
+	}
+
 	namespace {
 	// returns the index of the first set bit.
 	int log2(boost::uint32_t v)
@@ -3796,6 +3696,7 @@ retry:
 			else
 			{
 				t->resume();
+				if (!t->should_check_files()) continue;
 				t->start_checking();
 				--limit;
 			}
@@ -4860,8 +4761,10 @@ retry:
 		}
 #endif
 
+#ifndef TORRENT_NO_DEPRECATE
 		if (m_alerts.should_post<torrent_added_alert>())
 			m_alerts.emplace_alert<torrent_added_alert>(handle);
+#endif
 
 		// if this was an existing torrent, we can't start it again, or add
 		// another set of plugins etc. we're done
@@ -5454,11 +5357,21 @@ retry:
 		}
 	}
 
+	void session_impl::update_close_file_interval()
+	{
+		int const interval = m_settings.get_int(settings_pack::close_file_interval);
+		if (interval == 0 || m_abort)
+		{
+			m_close_file_timer.cancel();
+			return;
+		}
+		error_code ec;
+		m_close_file_timer.expires_from_now(seconds(interval), ec);
+		m_close_file_timer.async_wait(make_tick_handler(boost::bind(&session_impl::on_close_file, this, _1)));
+	}
+
 	void session_impl::update_proxy()
 	{
-		// in case we just set a socks proxy, we might have to
-		// open the socks incoming connection
-		if (!m_socks_listen_socket) open_new_incoming_socks_connection();
 		m_udp_socket.set_proxy_settings(proxy());
 
 #ifdef TORRENT_USE_OPENSSL
@@ -5550,12 +5463,6 @@ retry:
 
 	boost::uint16_t session_impl::listen_port() const
 	{
-		// if peer connections are set up to be received over a socks
-		// proxy, and it's the same one as we're using for the tracker
-		// just tell the tracker the socks5 port we're listening on
-		if (m_socks_listen_socket && m_socks_listen_socket->is_open())
-			return m_socks_listen_socket->local_endpoint().port();
-
 		// if not, don't tell the tracker anything if we're in force_proxy
 		// mode. We don't want to leak our listen port since it can
 		// potentially identify us if it is leaked elsewere
@@ -5567,12 +5474,6 @@ retry:
 	boost::uint16_t session_impl::ssl_listen_port() const
 	{
 #ifdef TORRENT_USE_OPENSSL
-		// if peer connections are set up to be received over a socks
-		// proxy, and it's the same one as we're using for the tracker
-		// just tell the tracker the socks5 port we're listening on
-		if (m_socks_listen_socket && m_socks_listen_socket->is_open())
-			return m_socks_listen_port;
-
 		// if not, don't tell the tracker anything if we're in force_proxy
 		// mode. We don't want to leak our listen port since it can
 		// potentially identify us if it is leaked elsewere
@@ -6547,9 +6448,7 @@ retry:
 			return;
 		}
 
-		if (m_upnp)
-			m_upnp->set_user_agent("");
-		m_settings.set_str(settings_pack::user_agent, "");
+		if (m_upnp) m_upnp->set_user_agent("");
 		url_random(m_peer_id.data(), m_peer_id.data() + 20);
 	}
 
@@ -7121,7 +7020,9 @@ retry:
 		TORRENT_ASSERT(is_single_thread());
 
 		int loaded_limit = m_settings.get_int(settings_pack::active_loaded_limit);
-		TORRENT_ASSERT(m_num_save_resume <= loaded_limit);
+		TORRENT_ASSERT(loaded_limit == 0
+			|| !m_user_load_torrent
+			|| m_num_save_resume <= loaded_limit);
 //		if (m_num_save_resume < loaded_limit)
 //			TORRENT_ASSERT(m_save_resume_queue.empty());
 

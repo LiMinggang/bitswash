@@ -42,7 +42,7 @@
 <tr><th class="docinfo-name">Author:</th>
 <td>Arvid Norberg, <a class="last reference external" href="mailto:arvid&#64;libtorrent.org">arvid&#64;libtorrent.org</a></td></tr>
 <tr><th class="docinfo-name">Version:</th>
-<td>1.1.2</td></tr>
+<td>1.1.3</td></tr>
 </tbody>
 </table>
 <p><a class="reference external" href="reference.html">home</a></p>
@@ -51,39 +51,39 @@
 <div class="contents topic" id="table-of-contents">
 <p class="topic-title first">Table of contents</p>
 <ul class="simple">
-<li><a class="reference internal" href="#core" id="id395">Core</a><ul>
-<li><a class="reference internal" href="#add-torrent-params" id="id396">add_torrent_params</a></li>
-<li><a class="reference internal" href="#announce-entry" id="id397">announce_entry</a></li>
-<li><a class="reference internal" href="#cache-status" id="id398">cache_status</a></li>
-<li><a class="reference internal" href="#bt-peer-connection-handle" id="id399">bt_peer_connection_handle</a></li>
-<li><a class="reference internal" href="#peer-info" id="id400">peer_info</a></li>
-<li><a class="reference internal" href="#peer-request" id="id401">peer_request</a></li>
-<li><a class="reference internal" href="#session-proxy" id="id402">session_proxy</a></li>
-<li><a class="reference internal" href="#session" id="id403">session</a></li>
-<li><a class="reference internal" href="#session-handle" id="id404">session_handle</a></li>
-<li><a class="reference internal" href="#stats-metric" id="id405">stats_metric</a></li>
-<li><a class="reference internal" href="#block-info" id="id406">block_info</a></li>
-<li><a class="reference internal" href="#partial-piece-info" id="id407">partial_piece_info</a></li>
-<li><a class="reference internal" href="#torrent-handle" id="id408">torrent_handle</a></li>
-<li><a class="reference internal" href="#web-seed-entry" id="id409">web_seed_entry</a></li>
-<li><a class="reference internal" href="#torrent-info" id="id410">torrent_info</a></li>
-<li><a class="reference internal" href="#torrent-status" id="id411">torrent_status</a></li>
-<li><a class="reference internal" href="#dht-storage-counters" id="id412">dht_storage_counters</a></li>
-<li><a class="reference internal" href="#dht-storage-interface" id="id413">dht_storage_interface</a></li>
-<li><a class="reference internal" href="#generate-fingerprint" id="id414">generate_fingerprint()</a></li>
-<li><a class="reference internal" href="#to-hex" id="id415">to_hex()</a></li>
-<li><a class="reference internal" href="#from-hex" id="id416">from_hex()</a></li>
-<li><a class="reference internal" href="#make-magnet-uri" id="id417">make_magnet_uri()</a></li>
-<li><a class="reference internal" href="#parse-magnet-uri" id="id418">parse_magnet_uri()</a></li>
-<li><a class="reference internal" href="#session-stats-metrics" id="id419">session_stats_metrics()</a></li>
-<li><a class="reference internal" href="#find-metric-idx" id="id420">find_metric_idx()</a></li>
-<li><a class="reference internal" href="#hash-value" id="id421">hash_value()</a></li>
-<li><a class="reference internal" href="#is-utp-stream-logging" id="id422">is_utp_stream_logging()</a></li>
-<li><a class="reference internal" href="#set-utp-stream-logging" id="id423">set_utp_stream_logging()</a></li>
-<li><a class="reference internal" href="#version" id="id424">version()</a></li>
-<li><a class="reference internal" href="#dht-default-storage-constructor" id="id425">dht_default_storage_constructor()</a></li>
-<li><a class="reference internal" href="#sign-mutable-item" id="id426">sign_mutable_item()</a></li>
-<li><a class="reference internal" href="#verify-message" id="id427">verify_message()</a></li>
+<li><a class="reference internal" href="#core" id="id397">Core</a><ul>
+<li><a class="reference internal" href="#add-torrent-params" id="id398">add_torrent_params</a></li>
+<li><a class="reference internal" href="#announce-entry" id="id399">announce_entry</a></li>
+<li><a class="reference internal" href="#cache-status" id="id400">cache_status</a></li>
+<li><a class="reference internal" href="#bt-peer-connection-handle" id="id401">bt_peer_connection_handle</a></li>
+<li><a class="reference internal" href="#peer-info" id="id402">peer_info</a></li>
+<li><a class="reference internal" href="#peer-request" id="id403">peer_request</a></li>
+<li><a class="reference internal" href="#session-proxy" id="id404">session_proxy</a></li>
+<li><a class="reference internal" href="#session" id="id405">session</a></li>
+<li><a class="reference internal" href="#session-handle" id="id406">session_handle</a></li>
+<li><a class="reference internal" href="#stats-metric" id="id407">stats_metric</a></li>
+<li><a class="reference internal" href="#block-info" id="id408">block_info</a></li>
+<li><a class="reference internal" href="#partial-piece-info" id="id409">partial_piece_info</a></li>
+<li><a class="reference internal" href="#torrent-handle" id="id410">torrent_handle</a></li>
+<li><a class="reference internal" href="#web-seed-entry" id="id411">web_seed_entry</a></li>
+<li><a class="reference internal" href="#torrent-info" id="id412">torrent_info</a></li>
+<li><a class="reference internal" href="#torrent-status" id="id413">torrent_status</a></li>
+<li><a class="reference internal" href="#dht-storage-counters" id="id414">dht_storage_counters</a></li>
+<li><a class="reference internal" href="#dht-storage-interface" id="id415">dht_storage_interface</a></li>
+<li><a class="reference internal" href="#generate-fingerprint" id="id416">generate_fingerprint()</a></li>
+<li><a class="reference internal" href="#to-hex" id="id417">to_hex()</a></li>
+<li><a class="reference internal" href="#from-hex" id="id418">from_hex()</a></li>
+<li><a class="reference internal" href="#make-magnet-uri" id="id419">make_magnet_uri()</a></li>
+<li><a class="reference internal" href="#parse-magnet-uri" id="id420">parse_magnet_uri()</a></li>
+<li><a class="reference internal" href="#session-stats-metrics" id="id421">session_stats_metrics()</a></li>
+<li><a class="reference internal" href="#find-metric-idx" id="id422">find_metric_idx()</a></li>
+<li><a class="reference internal" href="#hash-value" id="id423">hash_value()</a></li>
+<li><a class="reference internal" href="#is-utp-stream-logging" id="id424">is_utp_stream_logging()</a></li>
+<li><a class="reference internal" href="#set-utp-stream-logging" id="id425">set_utp_stream_logging()</a></li>
+<li><a class="reference internal" href="#version" id="id426">version()</a></li>
+<li><a class="reference internal" href="#dht-default-storage-constructor" id="id427">dht_default_storage_constructor()</a></li>
+<li><a class="reference internal" href="#sign-mutable-item" id="id428">sign_mutable_item()</a></li>
+<li><a class="reference internal" href="#verify-message" id="id429">verify_message()</a></li>
 </ul>
 </li>
 </ul>
@@ -480,8 +480,10 @@ is the only known property of the torrent. i.e. you don't have a
 <tt class="docutils literal">set_download_limit()</tt> functions on <a class="reference external" href="reference-Core.html#torrent_handle">torrent_handle</a>. These values let
 you initialize these settings when the torrent is added, instead of
 calling these functions immediately following adding it.</p>
-<p class="last">-1 means unlimited on these settings just like their counterpart
+<p>-1 means unlimited on these settings just like their counterpart
 functions on <a class="reference external" href="reference-Core.html#torrent_handle">torrent_handle</a></p>
+<p class="last">For fine grained control over rate limits, including making them apply
+to local peers, see <a class="reference external" href="manual-ref.html#peer-classes">peer classes</a>.</p>
 </dd>
 </dl>
 <a name="announce_entry"></a></div>
@@ -730,7 +732,7 @@ struct cache_status
    std::vector&lt;cached_piece_info&gt; pieces;
 };
 </pre>
-<a name="cache_status()"></a><div class="section" id="id34">
+<a name="cache_status()"></a><div class="section" id="id35">
 <h3>cache_status()</h3>
 <pre class="literal-block">
 <strong>cache_status</strong> ();
@@ -1414,7 +1416,7 @@ class session: public boost::noncopyable, public session_handle
    session_proxy <strong>abort</strong> ();
 };
 </pre>
-<a name="session()"></a><div class="section" id="id63">
+<a name="session()"></a><div class="section" id="id64">
 <h3>session()</h3>
 <pre class="literal-block">
 <strong>session</strong> (settings_pack const&amp; pack = settings_pack()
@@ -1431,7 +1433,7 @@ nat-pmp) and default plugins (ut_metadata, ut_pex and smart_ban). The
 default is to start those features. If you do not want them to start,
 pass 0 as the flags parameter.</p>
 <a name="session()"></a></div>
-<div class="section" id="id68">
+<div class="section" id="id69">
 <h3>session()</h3>
 <pre class="literal-block">
 <strong>session</strong> (settings_pack const&amp; pack
@@ -1453,7 +1455,7 @@ destruct the <a class="reference external" href="reference-Core.html#session">se
 destruct the <a class="reference external" href="reference-Core.html#session_proxy">session_proxy</a> object.</p>
 </div>
 <a name="~session()"></a></div>
-<div class="section" id="id76">
+<div class="section" id="id77">
 <h3>~session()</h3>
 <pre class="literal-block">
 <strong>~session</strong> ();
@@ -1741,6 +1743,8 @@ paused.</p>
 <pre class="literal-block">
 void <strong>set_load_function</strong> (user_load_function_t fun);
 </pre>
+<p><em>the feature of dynamically loading/unloading torrents is deprecated
+and discouraged</em></p>
 <p>This function enables <a class="reference external" href="manual-ref.html#dynamic-loading-of-torrent-files">dynamic loading of torrent files</a>. When a
 torrent is unloaded but needs to be availabe in memory, this function
 is called <strong>from within the libtorrent network thread</strong>. From within
@@ -1818,7 +1822,7 @@ void <strong>dht_get_item</strong> (sha1_hash const&amp; target);
 <p>query the DHT for an immutable item at the <tt class="docutils literal">target</tt> hash.
 the result is posted as a <a class="reference external" href="reference-Alerts.html#dht_immutable_item_alert">dht_immutable_item_alert</a>.</p>
 <a name="dht_get_item()"></a></div>
-<div class="section" id="id134">
+<div class="section" id="id135">
 <h3>dht_get_item()</h3>
 <pre class="literal-block">
 void <strong>dht_get_item</strong> (boost::array&lt;char, 32&gt; key
@@ -1840,7 +1844,7 @@ the returned hash is the key that is to be used to look the item
 up again. It's just the sha-1 hash of the bencoded form of the
 structure.</p>
 <a name="dht_put_item()"></a></div>
-<div class="section" id="id136">
+<div class="section" id="id137">
 <h3>dht_put_item()</h3>
 <pre class="literal-block">
 void <strong>dht_put_item</strong> (boost::array&lt;char, 32&gt; key
@@ -2739,7 +2743,7 @@ struct torrent_handle
    };
 };
 </pre>
-<a name="torrent_handle()"></a><div class="section" id="id207">
+<a name="torrent_handle()"></a><div class="section" id="id208">
 <h3>torrent_handle()</h3>
 <pre class="literal-block">
 <strong>torrent_handle</strong> ();
@@ -2975,7 +2979,7 @@ std::set&lt;std::string&gt; <strong>http_seeds</strong> () const;
 they operate on <a class="reference external" href="http://bittorrent.org/beps/bep_0017.html">BEP 17</a> web seeds instead of <a class="reference external" href="http://bittorrent.org/beps/bep_0019.html">BEP 19</a>.</p>
 <p>See <a class="reference external" href="manual-ref.html#http-seeding">http seeding</a> for more information.</p>
 <a name="add_extension()"></a></div>
-<div class="section" id="id238">
+<div class="section" id="id239">
 <h3>add_extension()</h3>
 <pre class="literal-block">
 void <strong>add_extension</strong> (
@@ -3523,6 +3527,7 @@ rate limit. The torrent can never upload more than the global rate
 limit.</p>
 <p><tt class="docutils literal">upload_limit</tt> and <tt class="docutils literal">download_limit</tt> will return the current limit
 setting, for upload and download, respectively.</p>
+<p>Local peers are not rate limited by default. see <a class="reference external" href="manual-ref.html#peer-classes">peer classes</a>.</p>
 <a name="set_pinned()"></a></div>
 <div class="section" id="set-pinned">
 <h3>set_pinned()</h3>
@@ -3712,7 +3717,7 @@ bool <strong>operator==</strong> (const torrent_handle&amp; h) const;
 <p>comparison operators. The order of the torrents is unspecified
 but stable.</p>
 <a name="native_handle()"></a></div>
-<div class="section" id="id288">
+<div class="section" id="id290">
 <h3>native_handle()</h3>
 <pre class="literal-block">
 boost::shared_ptr&lt;torrent&gt; <strong>native_handle</strong> () const;
@@ -3721,7 +3726,7 @@ boost::shared_ptr&lt;torrent&gt; <strong>native_handle</strong> () const;
 dispatch function. This type does not have a stable API and should
 be relied on as little as possible.</p>
 <a name="flags_t"></a></div>
-<div class="section" id="id290">
+<div class="section" id="id292">
 <h3>enum flags_t</h3>
 <p>Declared in &quot;<a class="reference external" href="../include/libtorrent/torrent_handle.hpp">libtorrent/torrent_handle.hpp</a>&quot;</p>
 <table border="1" class="docutils">
@@ -3943,14 +3948,14 @@ struct web_seed_entry
    boost::uint8_t type;
 };
 </pre>
-<a name="operator==()"></a><div class="section" id="id301">
+<a name="operator==()"></a><div class="section" id="id303">
 <h3>operator==()</h3>
 <pre class="literal-block">
 bool <strong>operator==</strong> (web_seed_entry const&amp; e) const;
 </pre>
 <p>URL and type comparison</p>
 <a name="operator<()"></a></div>
-<div class="section" id="id302">
+<div class="section" id="id304">
 <h3>operator&lt;()</h3>
 <pre class="literal-block">
 bool <strong>operator&lt;</strong> (web_seed_entry const&amp; e) const;
@@ -4070,7 +4075,7 @@ class torrent_info
    bool <strong>parse_torrent_file</strong> (bdecode_node const&amp; libtorrent, error_code&amp; ec, int flags);
 };
 </pre>
-<a name="torrent_info()"></a><div class="section" id="id307">
+<a name="torrent_info()"></a><div class="section" id="id309">
 <h3>torrent_info()</h3>
 <pre class="literal-block">
 <strong>torrent_info</strong> (std::string const&amp; filename, int flags = 0);
@@ -4108,7 +4113,7 @@ an error occurs. These overloads are not available when building
 without exception support.</p>
 <p>The <tt class="docutils literal">flags</tt> argument is currently unused.</p>
 <a name="~torrent_info()"></a></div>
-<div class="section" id="id315">
+<div class="section" id="id317">
 <h3>~torrent_info()</h3>
 <pre class="literal-block">
 <strong>~torrent_info</strong> ();
@@ -4135,7 +4140,7 @@ to request files with the original names. Filename may be changed using
 <p>For more information on the <a class="reference external" href="reference-Storage.html#file_storage">file_storage</a> object, see the separate
 document on how to create torrents.</p>
 <a name="rename_file()"></a></div>
-<div class="section" id="id321">
+<div class="section" id="id323">
 <h3>rename_file()</h3>
 <pre class="literal-block">
 void <strong>rename_file</strong> (int index, std::string const&amp; new_filename);
@@ -4244,7 +4249,7 @@ argument and gives you the exact size of that piece. It will always be
 the same as <tt class="docutils literal">piece_length()</tt> except in the case of the last piece,
 which may be smaller.</p>
 <a name="info_hash()"></a></div>
-<div class="section" id="id328">
+<div class="section" id="id330">
 <h3>info_hash()</h3>
 <pre class="literal-block">
 const sha1_hash&amp; <strong>info_hash</strong> () const;
@@ -4299,7 +4304,7 @@ std::string <strong>ssl_cert</strong> () const;
 torrent. Otherwise returns an empty string. The certificate is
 the the public certificate in x509 format.</p>
 <a name="is_valid()"></a></div>
-<div class="section" id="id331">
+<div class="section" id="id333">
 <h3>is_valid()</h3>
 <pre class="literal-block">
 bool <strong>is_valid</strong> () const;
@@ -4545,7 +4550,7 @@ struct torrent_status
    sha1_hash info_hash;
 };
 </pre>
-<a name="operator==()"></a><div class="section" id="id339">
+<a name="operator==()"></a><div class="section" id="id341">
 <h3>operator==()</h3>
 <pre class="literal-block">
 bool <strong>operator==</strong> (torrent_status const&amp; st) const;
@@ -4553,7 +4558,7 @@ bool <strong>operator==</strong> (torrent_status const&amp; st) const;
 <p>compares if the torrent status objects come from the same torrent. i.e.
 only the <a class="reference external" href="reference-Core.html#torrent_handle">torrent_handle</a> field is compared.</p>
 <a name="state_t"></a></div>
-<div class="section" id="id341">
+<div class="section" id="id343">
 <h3>enum state_t</h3>
 <p>Declared in &quot;<a class="reference external" href="../include/libtorrent/torrent_status.hpp">libtorrent/torrent_status.hpp</a>&quot;</p>
 <table border="1" class="docutils">

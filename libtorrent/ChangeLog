@@ -1,3 +1,21 @@
+1.1.3 release
+
+	* removed (broken) support for incoming connections over socks5
+	* restore announce_entry's timestamp fields to posix time in python binding
+	* deprecate torrent_added_alert (in favor of add_torrent_alert)
+	* fix python binding for parse_magnet_uri
+	* fix minor robustness issue in DHT bootstrap logic
+	* fix issue where torrent_status::num_seeds could be negative
+	* document deprecation of dynamic loading/unloading of torrents
+	* include user-agent in tracker announces in anonymous_mode for private torrents
+	* add support for IPv6 peers from udp trackers
+	* correctly URL encode the IPv6 argument to trackers
+	* fix default file pool size on windows
+	* fix bug where settings_pack::file_pool_size setting was not being honored
+	* add feature to periodically close files (to make windows clear disk cache)
+	* fix bug in torrent_handle::file_status
+	* fix issue with peers not updated on metadata from magnet links
+
 1.1.2 release
 
 	* default TOS marking to 0x20

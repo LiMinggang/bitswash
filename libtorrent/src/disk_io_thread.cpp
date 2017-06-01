@@ -57,10 +57,6 @@ POSSIBILITY OF SUCH DAMAGE.
 
 #include "libtorrent/debug.hpp"
 
-#if TORRENT_USE_RLIMIT
-#include <sys/resource.h>
-#endif
-
 #define DEBUG_DISK_THREAD 0
 
 #if __cplusplus >= 201103L || defined __clang__
@@ -167,15 +163,6 @@ namespace libtorrent
 		error_code ec;
 		m_disk_cache.set_settings(m_settings, ec);
 		TORRENT_ASSERT(!ec);
-
-		// deduct some margin for epoll/kqueue, log files,
-		// futexes, shared objects etc.
-		// 80% of the available file descriptors should go to connections
-		// 20% goes towards regular files
-		const int max_files = (std::min)((std::max)(5
-				, (max_open_files() - 20) * 2 / 10)
-			, m_file_pool.size_limit());
-		m_file_pool.resize(max_files);
 	}
 
 	disk_io_thread::~disk_io_thread()
@@ -282,6 +269,7 @@ namespace libtorrent
 		apply_pack(pack, m_settings);
 		error_code ec;
 		m_disk_cache.set_settings(m_settings, ec);
+		m_file_pool.resize(m_settings.get_int(settings_pack::file_pool_size));
 #ifndef TORRENT_NO_DEPRECATE
 		if (ec && alerts.should_post<mmap_cache_alert>())
 		{

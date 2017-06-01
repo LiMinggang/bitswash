@@ -196,9 +196,6 @@ std::vector<libtorrent::dht_lookup> dht_active_requests;
 std::vector<libtorrent::dht_routing_bucket> dht_routing_table;
 #endif
 
-torrent_view view;
-session_view ses_view;
-
 int load_file(std::string const& filename, std::vector<char>& v
 	, libtorrent::error_code& ec, int limit = 8000000)
 {
@@ -641,20 +638,6 @@ void signal_handler(int signo)
 	quit = true;
 }
 
-void load_torrent(libtorrent::sha1_hash const& ih, std::vector<char>& buf, libtorrent::error_code& ec)
-{
-	files_t::iterator i = hash_to_filename.find(ih);
-	if (i == hash_to_filename.end())
-	{
-		// for magnet links and torrents downloaded via
-		// URL, the metadata is saved in the resume file
-		// TODO: pick up metadata from the resume file
-		ec.assign(boost::system::errc::no_such_file_or_directory, boost::system::generic_category());
-		return;
-	}
-	load_file(i->second, buf, ec);
-}
-
 // if non-empty, a peer that will be added to all torrents
 std::string peer;
 
@@ -924,7 +907,8 @@ int save_file(std::string const& filename, std::vector<char>& v)
 
 // returns true if the alert was handled (and should not be printed to the log)
 // returns false if the alert was not handled
-bool handle_alert(libtorrent::session& ses, libtorrent::alert* a
+bool handle_alert(torrent_view& view, session_view& ses_view
+	, libtorrent::session& ses, libtorrent::alert* a
 	, handles_t& files, std::set<libtorrent::torrent_handle>& non_files)
 {
 	using namespace libtorrent;
@@ -1229,7 +1213,7 @@ int main(int argc, char* argv[])
 
 	if (argc == 1)
 	{
-		fprintf(stderr, "usage: client_test [OPTIONS] [TORRENT|MAGNETURL|URL]\n\n"
+		fprintf(stderr, "usage: client_test [OPTIONS] [TORRENT|MAGNETURL]\n\n"
 			"OPTIONS:\n"
 			"\n CLIENT OPTIONS\n"
 			"  -f <log file>         logs all events to the given file\n"
@@ -1269,11 +1253,6 @@ int main(int argc, char* argv[])
 			"  -^ <limit>            Set the max number of active seeds\n"
 			"\n NETWORK OPTIONS\n"
 			"  -p <port>             sets the listen port\n"
-#ifndef TORRENT_NO_DEPRECATE
-			"  -o <limit>            limits the number of simultaneous\n"
-			"                        half-open TCP connections to the\n"
-			"                        given number.\n"
-#endif
 			"  -w <seconds>          sets the retry time for failed web seeds\n"
 			"  -x <file>             loads an emule IP-filter file\n"
 			"  -P <host:port>        Use the specified SOCKS5 proxy\n"
@@ -1315,6 +1294,9 @@ int main(int argc, char* argv[])
 
 	using namespace libtorrent;
 	namespace lt = libtorrent;
+
+	torrent_view view;
+	session_view ses_view;
 
 	settings_pack settings;
 	settings.set_int(settings_pack::cache_size, cache_size);
@@ -1367,7 +1349,6 @@ int main(int argc, char* argv[])
 				p.flags |= add_torrent_params::flag_paused;
 				p.flags &= ~add_torrent_params::flag_duplicate_is_error;
 				p.flags |= add_torrent_params::flag_auto_managed;
-				p.flags |= add_torrent_params::flag_pinned;
 				magnet_links.push_back(p);
 				continue;
 			}
@@ -1384,9 +1365,6 @@ int main(int argc, char* argv[])
 		switch (argv[i][1])
 		{
 			case 'f': g_log_file = fopen(arg, "w+"); break;
-#ifndef TORRENT_NO_DEPRECATE
-			case 'o': settings.set_int(settings_pack::half_open_limit, atoi(arg)); break;
-#endif
 			case 'h': settings.set_bool(settings_pack::allow_multiple_connections_per_ip, true); --i; break;
 			case 'p': listen_port = atoi(arg); break;
 			case 'k': high_performance_seed(settings); --i; break;
@@ -1575,9 +1553,8 @@ int main(int argc, char* argv[])
 	if (rate_limit_locals)
 	{
 		ip_filter pcf;
-		// 1 is the global peer class. This should be done properly in the future
 		pcf.add_rule(address_v4::from_string("0.0.0.0")
-			, address_v4::from_string("255.255.255.255"), 1);
+			, address_v4::from_string("255.255.255.255"), 1 << lt::session::global_peer_class_id);
 #if TORRENT_USE_IPV6
 		pcf.add_rule(address_v6::from_string("::")
 			, address_v6::from_string("ffff:ffff:ffff:ffff:ffff:ffff:ffff:ffff"), 1);
@@ -1586,7 +1563,6 @@ int main(int argc, char* argv[])
 	}
 
 	ses.set_ip_filter(loaded_ip_filter);
-	ses.set_load_function(&load_torrent);
 
 	error_code ec;
 
@@ -1613,9 +1589,7 @@ int main(int argc, char* argv[])
 	for (std::vector<std::string>::iterator i = torrents.begin()
 		, end(torrents.end()); i != end; ++i)
 	{
-		if (std::strstr(i->c_str(), "http://") == i->c_str()
-			|| std::strstr(i->c_str(), "https://") == i->c_str()
-			|| std::strstr(i->c_str(), "magnet:") == i->c_str())
+		if (std::strstr(i->c_str(), "magnet:") == i->c_str())
 		{
 			add_torrent_params p;
 			if (seed_mode) p.flags |= add_torrent_params::flag_seed_mode;
@@ -1626,19 +1600,16 @@ int main(int argc, char* argv[])
 			p.url = *i;
 
 			std::vector<char> buf;
-			if (std::strstr(i->c_str(), "magnet:") == i->c_str())
-			{
-				add_torrent_params tmp;
-				ec.clear();
-				parse_magnet_uri(*i, tmp, ec);
+			add_torrent_params tmp;
+			ec.clear();
+			parse_magnet_uri(*i, tmp, ec);
 
-				if (ec) continue;
+			if (ec) continue;
 
-				std::string filename = path_append(save_path, path_append(".resume"
-					, to_hex(tmp.info_hash.to_string()) + ".resume"));
+			std::string filename = path_append(save_path, path_append(".resume"
+				, to_hex(tmp.info_hash.to_string()) + ".resume"));
 
-				load_file(filename, p.resume_data, ec);
-			}
+			load_file(filename, p.resume_data, ec);
 
 			printf("adding URL: %s\n", i->c_str());
 			ses.async_add_torrent(p);
@@ -1981,7 +1952,7 @@ int main(int argc, char* argv[])
 		{
 			TORRENT_TRY
 			{
-				if (!::handle_alert(ses, *i, files, non_files))
+				if (!::handle_alert(view, ses_view, ses, *i, files, non_files))
 				{
 					// if we didn't handle the alert, print it to the log
 					std::string event_string;
@@ -2344,7 +2315,7 @@ int main(int argc, char* argv[])
 		for (std::vector<alert*>::iterator i = alerts.begin()
 			, end(alerts.end()); i != end; ++i)
 		{
-			if (!::handle_alert(ses, *i, files, non_files))
+			if (!::handle_alert(view, ses_view, ses, *i, files, non_files))
 			{
 				// if we didn't handle the alert, print it to the log
 				std::string event_string;

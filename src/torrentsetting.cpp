@@ -45,7 +45,7 @@ const long TorrentSettingPane::ID_SHOW_DIRECTORY = wxNewId();
 const long TorrentSettingPane::ID_TORRENT_DIRECTORY = wxNewId();
 
 TorrentSettingPane::TorrentSettingPane( wxWindow* parent, shared_ptr<torrent_t>& pTorrent, int id, wxPoint pos, wxSize size, int style) : 
-		wxPanel(parent, id, pos, size, style)
+		wxPanel(parent, id, pos, size, style) , m_directory_change_func(nullptr)
 {
 
 	Configuration* pcfg = ((MainFrame*)(wxGetApp().GetTopWindow()))->GetConfig();

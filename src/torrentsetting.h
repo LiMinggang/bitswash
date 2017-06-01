@@ -36,6 +36,8 @@
 #include "configuration.h"
 #include "autosizeinput.h"
 
+typedef void ( *OnSaveDirectoryChangePtr )( const wxString &newdirectory );
+
 class TorrentSettingPane : public wxPanel
 {
 	public:
@@ -53,6 +55,7 @@ class TorrentSettingPane : public wxPanel
 		int GetRatio();
 
 		void SetTorrentHandle(shared_ptr<torrent_t>& pTorrent) { m_pTorrent= pTorrent; }
+		void SetTorrentDirectoryChange(OnSaveDirectoryChangePtr pFunc) { m_directory_change_func= pFunc; }
 	private:
 		shared_ptr<torrent_t> m_pTorrent;
 		void OnFileButton(wxCommandEvent& event);
@@ -97,6 +100,8 @@ class TorrentSettingPane : public wxPanel
 		static const long ID_SETTINGS_START;
 		static const long ID_SHOW_DIRECTORY;
 		static const long ID_TORRENT_DIRECTORY;
+
+		OnSaveDirectoryChangePtr m_directory_change_func;
 };
 
 

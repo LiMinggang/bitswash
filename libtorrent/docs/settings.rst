@@ -172,7 +172,7 @@ sets the i2p_ SAM bridge to connect to. set the port with the
 +------------------+--------+------------+
 | name             | type   | default    |
 +==================+========+============+
-| peer_fingerprint | string | "-LT1120-" |
+| peer_fingerprint | string | "-LT1130-" |
 +------------------+--------+------------+
 
 this is the fingerprint for the client. It will be used as the
@@ -1516,9 +1516,7 @@ anti virus software hooks on every file close, and scans the file
 for viruses. deferring the closing of the files will be the
 difference between a usable system and a completely hogged down
 system. Most operating systems also has a limit on the total number
-of file descriptors a process may have open. It is usually a good
-idea to find this limit and set the number of connections and the
-number of files limits so their sum is slightly below it.
+of file descriptors a process may have open.
 
 .. _max_failcount:
 
@@ -2017,7 +2015,7 @@ details, see QBSS_.
 +----------------------+------+---------+
 | active_limit         | int  | 15      |
 +----------------------+------+---------+
-| active_loaded_limit  | int  | 100     |
+| active_loaded_limit  | int  | 0       |
 +----------------------+------+---------+
 
 for auto managed torrents, these are the limits they are subject
@@ -2528,6 +2526,9 @@ bytes per second. By default peers on the local network are not rate
 limited.
 
 A value of 0 means unlimited.
+
+For fine grained control over rate limits, including making them apply
+to local peers, see peer-classes_.
 
 .. _dht_upload_rate_limit:
 
@@ -3189,4 +3190,24 @@ twice.
 +----------------------------+------+---------+
 
 time to wait until a new retry of a web seed name lookup
+
+.. _close_file_interval:
+
+.. raw:: html
+
+	<a name="close_file_interval"></a>
+
++---------------------+------+---------------------+
+| name                | type | default             |
++=====================+======+=====================+
+| close_file_interval | int  | CLOSE_FILE_INTERVAL |
++---------------------+------+---------------------+
+
+the number of seconds between closing the file opened the longest
+ago. 0 means to disable the feature. The purpose of this is to
+periodically close files to trigger the operating system flushing
+disk cache. Specifically it has been observed to be required on
+windows to not have the disk cache grow indefinitely.
+This defaults to 120 seconds on windows, and disabled on other
+systems.
 

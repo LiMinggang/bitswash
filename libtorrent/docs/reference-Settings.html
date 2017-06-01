@@ -42,7 +42,7 @@
 <tr><th class="docinfo-name">Author:</th>
 <td>Arvid Norberg, <a class="last reference external" href="mailto:arvid&#64;libtorrent.org">arvid&#64;libtorrent.org</a></td></tr>
 <tr><th class="docinfo-name">Version:</th>
-<td>1.1.2</td></tr>
+<td>1.1.3</td></tr>
 </tbody>
 </table>
 <p><a class="reference external" href="reference.html">home</a></p>
@@ -51,12 +51,12 @@
 <div class="contents topic" id="table-of-contents">
 <p class="topic-title first">Table of contents</p>
 <ul class="simple">
-<li><a class="reference internal" href="#settings" id="id78">Settings</a><ul>
-<li><a class="reference internal" href="#dht-settings" id="id79">dht_settings</a></li>
-<li><a class="reference internal" href="#settings-pack" id="id80">settings_pack</a></li>
-<li><a class="reference internal" href="#min-memory-usage-high-performance-seed" id="id81">min_memory_usage() high_performance_seed()</a></li>
-<li><a class="reference internal" href="#setting-by-name-name-for-setting" id="id82">setting_by_name() name_for_setting()</a></li>
-<li><a class="reference internal" href="#default-settings" id="id83">default_settings()</a></li>
+<li><a class="reference internal" href="#settings" id="id80">Settings</a><ul>
+<li><a class="reference internal" href="#dht-settings" id="id81">dht_settings</a></li>
+<li><a class="reference internal" href="#settings-pack" id="id82">settings_pack</a></li>
+<li><a class="reference internal" href="#min-memory-usage-high-performance-seed" id="id83">min_memory_usage() high_performance_seed()</a></li>
+<li><a class="reference internal" href="#setting-by-name-name-for-setting" id="id84">setting_by_name() name_for_setting()</a></li>
+<li><a class="reference internal" href="#default-settings" id="id85">default_settings()</a></li>
 </ul>
 </li>
 </ul>
@@ -454,7 +454,7 @@ connecting to it. see proxy_type</p>
 <tbody valign="top">
 <tr><td>peer_fingerprint</td>
 <td>string</td>
-<td>&quot;-LT1120-&quot;</td>
+<td>&quot;-LT1130-&quot;</td>
 </tr>
 </tbody>
 </table>
@@ -2237,9 +2237,7 @@ anti virus software hooks on every file close, and scans the file
 for viruses. deferring the closing of the files will be the
 difference between a usable system and a completely hogged down
 system. Most operating systems also has a limit on the total number
-of file descriptors a process may have open. It is usually a good
-idea to find this limit and set the number of connections and the
-number of files limits so their sum is slightly below it.</p>
+of file descriptors a process may have open.</p>
 <a name="max_failcount"></a><table border="1" class="docutils">
 <colgroup>
 <col width="50%" />
@@ -2847,7 +2845,7 @@ details, see <a class="reference external" href="http://qbone.internet2.edu/qbss
 </tr>
 <tr><td>active_loaded_limit</td>
 <td>int</td>
-<td>100</td>
+<td>0</td>
 </tr>
 </tbody>
 </table>
@@ -3476,6 +3474,8 @@ the session-global limits of upload and download rate limits, in
 bytes per second. By default peers on the local network are not rate
 limited.</p>
 <p>A value of 0 means unlimited.</p>
+<p>For fine grained control over rate limits, including making them apply
+to local peers, see <a class="reference external" href="manual-ref.html#peer-classes">peer classes</a>.</p>
 <a name="dht_upload_rate_limit"></a><table border="1" class="docutils">
 <colgroup>
 <col width="61%" />
@@ -4320,6 +4320,32 @@ twice.</p>
 </tbody>
 </table>
 <p>time to wait until a new retry of a web seed name lookup</p>
+<a name="close_file_interval"></a><table border="1" class="docutils">
+<colgroup>
+<col width="44%" />
+<col width="13%" />
+<col width="44%" />
+</colgroup>
+<thead valign="bottom">
+<tr><th class="head">name</th>
+<th class="head">type</th>
+<th class="head">default</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr><td>close_file_interval</td>
+<td>int</td>
+<td>CLOSE_FILE_INTERVAL</td>
+</tr>
+</tbody>
+</table>
+<p>the number of seconds between closing the file opened the longest
+ago. 0 means to disable the feature. The purpose of this is to
+periodically close files to trigger the operating system flushing
+disk cache. Specifically it has been observed to be required on
+windows to not have the disk cache grow indefinitely.
+This defaults to 120 seconds on windows, and disabled on other
+systems.</p>
 <pre class="literal-block">
 struct settings_pack
 {
@@ -4564,6 +4590,7 @@ struct settings_pack
       cache_size_volatile,
       urlseed_max_request_bytes,
       web_seed_name_lookup_retry,
+      close_file_interval,
       max_int_setting_internal,
    };
 
@@ -4640,7 +4667,7 @@ void <strong>clear</strong> ();
 </pre>
 <p>clear the settings pack from all settings</p>
 <a name="clear()"></a></div>
-<div class="section" id="id33">
+<div class="section" id="id34">
 <h3>clear()</h3>
 <pre class="literal-block">
 void <strong>clear</strong> (int name);
@@ -5453,9 +5480,7 @@ anti virus software hooks on every file close, and scans the file
 for viruses. deferring the closing of the files will be the
 difference between a usable system and a completely hogged down
 system. Most operating systems also has a limit on the total number
-of file descriptors a process may have open. It is usually a good
-idea to find this limit and set the number of connections and the
-number of files limits so their sum is slightly below it.</td>
+of file descriptors a process may have open.</td>
 </tr>
 <tr><td>max_failcount</td>
 <td>15</td>
@@ -6014,7 +6039,9 @@ share_mode_target is set to more than 3, nothing is downloaded.</td>
 the session-global limits of upload and download rate limits, in
 bytes per second. By default peers on the local network are not rate
 limited.</p>
-<p class="last">A value of 0 means unlimited.</p>
+<p>A value of 0 means unlimited.</p>
+<p class="last">For fine grained control over rate limits, including making them apply
+to local peers, see <a class="reference external" href="manual-ref.html#peer-classes">peer classes</a>.</p>
 </td>
 </tr>
 <tr><td>download_rate_limit</td>
@@ -6379,8 +6406,18 @@ twice.</td>
 <td>128</td>
 <td>time to wait until a new retry of a web seed name lookup</td>
 </tr>
-<tr><td>max_int_setting_internal</td>
+<tr><td>close_file_interval</td>
 <td>129</td>
+<td>the number of seconds between closing the file opened the longest
+ago. 0 means to disable the feature. The purpose of this is to
+periodically close files to trigger the operating system flushing
+disk cache. Specifically it has been observed to be required on
+windows to not have the disk cache grow indefinitely.
+This defaults to 120 seconds on windows, and disabled on other
+systems.</td>
+</tr>
+<tr><td>max_int_setting_internal</td>
+<td>130</td>
 <td>&nbsp;</td>
 </tr>
 </tbody>

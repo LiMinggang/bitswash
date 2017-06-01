@@ -42,42 +42,42 @@
 <tr><th class="docinfo-name">Author:</th>
 <td>Arvid Norberg, <a class="last reference external" href="mailto:arvid&#64;libtorrent.org">arvid&#64;libtorrent.org</a></td></tr>
 <tr><th class="docinfo-name">Version:</th>
-<td>1.1.2</td></tr>
+<td>1.1.3</td></tr>
 </tbody>
 </table>
 <div class="contents topic" id="table-of-contents">
 <p class="topic-title first">Table of contents</p>
 <ul class="simple">
-<li><a class="reference internal" href="#overview" id="id1222">overview</a></li>
-<li><a class="reference internal" href="#things-to-keep-in-mind" id="id1223">things to keep in mind</a></li>
-<li><a class="reference internal" href="#network-primitives" id="id1224">network primitives</a></li>
-<li><a class="reference internal" href="#exceptions" id="id1225">exceptions</a></li>
-<li><a class="reference internal" href="#magnet-links" id="id1226">magnet links</a></li>
-<li><a class="reference internal" href="#queuing" id="id1227">queuing</a></li>
-<li><a class="reference internal" href="#fast-resume" id="id1228">fast resume</a></li>
-<li><a class="reference internal" href="#storage-allocation" id="id1229">storage allocation</a></li>
-<li><a class="reference internal" href="#http-seeding" id="id1230">HTTP seeding</a></li>
-<li><a class="reference internal" href="#dynamic-loading-of-torrent-files" id="id1231">dynamic loading of torrent files</a></li>
-<li><a class="reference internal" href="#piece-picker" id="id1232">piece picker</a></li>
-<li><a class="reference internal" href="#predictive-piece-announce" id="id1233">predictive piece announce</a></li>
-<li><a class="reference internal" href="#peer-classes" id="id1234">peer classes</a></li>
-<li><a class="reference internal" href="#ssl-torrents" id="id1235">SSL torrents</a></li>
-<li><a class="reference internal" href="#session-statistics" id="id1236">session statistics</a></li>
-<li><a class="reference internal" href="#core" id="id1237">Core</a></li>
-<li><a class="reference internal" href="#plugins" id="id1238">Plugins</a></li>
-<li><a class="reference internal" href="#plugin-interface" id="id1239">plugin-interface</a></li>
-<li><a class="reference internal" href="#custom-alerts" id="id1240">custom alerts</a></li>
-<li><a class="reference internal" href="#create-torrents" id="id1241">Create Torrents</a></li>
-<li><a class="reference internal" href="#error-codes" id="id1242">Error Codes</a></li>
-<li><a class="reference internal" href="#storage" id="id1243">Storage</a></li>
-<li><a class="reference internal" href="#custom-storage" id="id1244">Custom Storage</a></li>
-<li><a class="reference internal" href="#utility" id="id1245">Utility</a></li>
-<li><a class="reference internal" href="#bencoding" id="id1246">Bencoding</a></li>
-<li><a class="reference internal" href="#alerts" id="id1247">Alerts</a></li>
-<li><a class="reference internal" href="#filter" id="id1248">Filter</a></li>
-<li><a class="reference internal" href="#id1113" id="id1249">Settings</a></li>
-<li><a class="reference internal" href="#bdecoding" id="id1250">Bdecoding</a></li>
-<li><a class="reference internal" href="#ed25519" id="id1251">ed25519</a></li>
+<li><a class="reference internal" href="#overview" id="id1225">overview</a></li>
+<li><a class="reference internal" href="#things-to-keep-in-mind" id="id1226">things to keep in mind</a></li>
+<li><a class="reference internal" href="#network-primitives" id="id1227">network primitives</a></li>
+<li><a class="reference internal" href="#exceptions" id="id1228">exceptions</a></li>
+<li><a class="reference internal" href="#magnet-links" id="id1229">magnet links</a></li>
+<li><a class="reference internal" href="#queuing" id="id1230">queuing</a></li>
+<li><a class="reference internal" href="#fast-resume" id="id1231">fast resume</a></li>
+<li><a class="reference internal" href="#storage-allocation" id="id1232">storage allocation</a></li>
+<li><a class="reference internal" href="#http-seeding" id="id1233">HTTP seeding</a></li>
+<li><a class="reference internal" href="#dynamic-loading-of-torrent-files" id="id1234">dynamic loading of torrent files</a></li>
+<li><a class="reference internal" href="#piece-picker" id="id1235">piece picker</a></li>
+<li><a class="reference internal" href="#predictive-piece-announce" id="id1236">predictive piece announce</a></li>
+<li><a class="reference internal" href="#peer-classes" id="id1237">peer classes</a></li>
+<li><a class="reference internal" href="#ssl-torrents" id="id1238">SSL torrents</a></li>
+<li><a class="reference internal" href="#session-statistics" id="id1239">session statistics</a></li>
+<li><a class="reference internal" href="#core" id="id1240">Core</a></li>
+<li><a class="reference internal" href="#plugins" id="id1241">Plugins</a></li>
+<li><a class="reference internal" href="#plugin-interface" id="id1242">plugin-interface</a></li>
+<li><a class="reference internal" href="#custom-alerts" id="id1243">custom alerts</a></li>
+<li><a class="reference internal" href="#create-torrents" id="id1244">Create Torrents</a></li>
+<li><a class="reference internal" href="#error-codes" id="id1245">Error Codes</a></li>
+<li><a class="reference internal" href="#storage" id="id1246">Storage</a></li>
+<li><a class="reference internal" href="#custom-storage" id="id1247">Custom Storage</a></li>
+<li><a class="reference internal" href="#utility" id="id1248">Utility</a></li>
+<li><a class="reference internal" href="#bencoding" id="id1249">Bencoding</a></li>
+<li><a class="reference internal" href="#alerts" id="id1250">Alerts</a></li>
+<li><a class="reference internal" href="#filter" id="id1251">Filter</a></li>
+<li><a class="reference internal" href="#id1114" id="id1252">Settings</a></li>
+<li><a class="reference internal" href="#bdecoding" id="id1253">Bdecoding</a></li>
+<li><a class="reference internal" href="#ed25519" id="id1254">ed25519</a></li>
 </ul>
 </div>
 <div class="section" id="overview">
@@ -847,6 +847,57 @@ object), and deleted with the <a class="reference external" href="reference-Core
 <p>Custom peer classes can be assigned to torrents, with the ??? call, in which
 case all its peers will belong to the class. They can also be assigned based on
 the peer's IP address. See <a class="reference external" href="reference-Core.html#set_peer_class_filter()">set_peer_class_filter()</a> for more information.</p>
+<div class="section" id="peer-class-examples">
+<h2>peer class examples</h2>
+<p>Here are a few examples of common peer class operations.</p>
+<p>To make the global rate limit apply to local peers as well, update the IP-filter
+based peer class assignment:</p>
+<pre class="code c++ literal-block">
+<span class="name">std</span><span class="operator">::</span><span class="keyword type">uint32_t</span> <span class="keyword">const</span> <span class="name">mask</span> <span class="operator">=</span> <span class="literal number integer">1</span> <span class="operator">&lt;&lt;</span> <span class="name">lt</span><span class="operator">::</span><span class="name">session</span><span class="operator">::</span><span class="name">global_peer_class_id</span><span class="punctuation">;</span>
+<span class="name">ip_filter</span> <span class="name">f</span><span class="punctuation">;</span>
+
+<span class="comment single">// for every IPv4 address, assign the global peer class
+</span><span class="name">f</span><span class="punctuation">.</span><span class="name">add_rule</span><span class="punctuation">(</span><span class="name">address_v4</span><span class="operator">::</span><span class="name">from_string</span><span class="punctuation">(</span><span class="literal string">&quot;0.0.0.0&quot;</span><span class="punctuation">)</span>
+        <span class="punctuation">,</span> <span class="name">address_v4</span><span class="operator">::</span><span class="name">from_string</span><span class="punctuation">(</span><span class="literal string">&quot;255.255.255.255&quot;</span><span class="punctuation">)</span>
+        <span class="punctuation">,</span> <span class="name">mask</span><span class="punctuation">);</span>
+
+<span class="comment single">// for every IPv6 address, assign the global peer class
+</span><span class="name">f</span><span class="punctuation">.</span><span class="name">add_rule</span><span class="punctuation">(</span><span class="name">address_v6</span><span class="operator">::</span><span class="name">from_string</span><span class="punctuation">(</span><span class="literal string">&quot;::&quot;</span><span class="punctuation">)</span>
+        <span class="punctuation">,</span> <span class="name">address_v6</span><span class="operator">::</span><span class="name">from_string</span><span class="punctuation">(</span><span class="literal string">&quot;ffff:ffff:ffff:ffff:ffff:ffff:ffff:ffff&quot;</span><span class="punctuation">)</span>
+        <span class="punctuation">,</span> <span class="name">mask</span><span class="punctuation">);</span>
+<span class="name">ses</span><span class="punctuation">.</span><span class="name">set_peer_class_filter</span><span class="punctuation">(</span><span class="name">f</span><span class="punctuation">);</span>
+</pre>
+<p>To make uTP sockets exempt from rate limiting:</p>
+<pre class="code c++ literal-block">
+<span class="name">peer_class_type_filter</span> <span class="name">flt</span><span class="punctuation">;</span>
+<span class="comment single">// filter out the global and local peer class for uTP sockets, if these
+// classes are set by the IP filter
+</span><span class="name">flt</span><span class="punctuation">.</span><span class="name">disallow</span><span class="punctuation">(</span><span class="name">peer_class_type_filter</span><span class="operator">::</span><span class="name">utp_socket</span><span class="punctuation">,</span> <span class="name">session</span><span class="operator">::</span><span class="name">global_peer_class_id</span><span class="punctuation">);</span>
+<span class="name">flt</span><span class="punctuation">.</span><span class="name">disallow</span><span class="punctuation">(</span><span class="name">peer_class_type_filter</span><span class="operator">::</span><span class="name">utp_socket</span><span class="punctuation">,</span> <span class="name">session</span><span class="operator">::</span><span class="name">local_peer_class_id</span><span class="punctuation">);</span>
+
+<span class="comment single">// this filter should not add the global or local peer class to utp sockets
+</span><span class="name">flt</span><span class="punctuation">.</span><span class="name">remove</span><span class="punctuation">(</span><span class="name">peer_class_type_filter</span><span class="operator">::</span><span class="name">utp_socket</span><span class="punctuation">,</span> <span class="name">session</span><span class="operator">::</span><span class="name">global_peer_class_id</span><span class="punctuation">);</span>
+<span class="name">flt</span><span class="punctuation">.</span><span class="name">remove</span><span class="punctuation">(</span><span class="name">peer_class_type_filter</span><span class="operator">::</span><span class="name">utp_socket</span><span class="punctuation">,</span> <span class="name">session</span><span class="operator">::</span><span class="name">local_peer_class_id</span><span class="punctuation">);</span>
+
+<span class="name">ses</span><span class="punctuation">.</span><span class="name">set_peer_class_type_filter</span><span class="punctuation">(</span><span class="name">flt</span><span class="punctuation">);</span>
+</pre>
+<p>To make all peers on the internal network unthrottled:</p>
+<pre class="code c++ literal-block">
+<span class="name">std</span><span class="operator">::</span><span class="keyword type">uint32_t</span> <span class="keyword">const</span> <span class="name">mask</span> <span class="operator">=</span> <span class="literal number integer">1</span> <span class="operator">&lt;&lt;</span> <span class="name">lt</span><span class="operator">::</span><span class="name">session</span><span class="operator">::</span><span class="name">global_peer_class_id</span><span class="punctuation">;</span>
+<span class="name">ip_filter</span> <span class="name">f</span><span class="punctuation">;</span>
+
+<span class="comment single">// for every IPv4 address, assign the global peer class
+</span><span class="name">f</span><span class="punctuation">.</span><span class="name">add_rule</span><span class="punctuation">(</span><span class="name">address_v4</span><span class="operator">::</span><span class="name">from_string</span><span class="punctuation">(</span><span class="literal string">&quot;0.0.0.0&quot;</span><span class="punctuation">)</span>
+        <span class="punctuation">,</span> <span class="name">address_v4</span><span class="operator">::</span><span class="name">from_string</span><span class="punctuation">(</span><span class="literal string">&quot;255.255.255.255&quot;</span><span class="punctuation">)</span>
+        <span class="punctuation">,</span> <span class="name">mask</span><span class="punctuation">);</span>
+
+<span class="comment single">// for every address on the local metwork, set the mastk to 0
+</span><span class="name">f</span><span class="punctuation">.</span><span class="name">add_rule</span><span class="punctuation">(</span><span class="name">address_v4</span><span class="operator">::</span><span class="name">from_string</span><span class="punctuation">(</span><span class="literal string">&quot;10.0.0.0&quot;</span><span class="punctuation">)</span>
+        <span class="punctuation">,</span> <span class="name">address_v4</span><span class="operator">::</span><span class="name">from_string</span><span class="punctuation">(</span><span class="literal string">&quot;10.255.255.255&quot;</span><span class="punctuation">)</span>
+        <span class="punctuation">,</span> <span class="literal number integer">0</span><span class="punctuation">);</span>
+<span class="name">ses</span><span class="punctuation">.</span><span class="name">set_peer_class_filter</span><span class="punctuation">(</span><span class="name">f</span><span class="punctuation">);</span>
+</pre>
+</div>
 </div>
 <div class="section" id="ssl-torrents">
 <h1>SSL torrents</h1>
@@ -3289,8 +3340,10 @@ is the only known property of the torrent. i.e. you don't have a
 <tt class="docutils literal">set_download_limit()</tt> functions on <a class="reference external" href="reference-Core.html#torrent_handle">torrent_handle</a>. These values let
 you initialize these settings when the torrent is added, instead of
 calling these functions immediately following adding it.</p>
-<p class="last">-1 means unlimited on these settings just like their counterpart
+<p>-1 means unlimited on these settings just like their counterpart
 functions on <a class="reference external" href="reference-Core.html#torrent_handle">torrent_handle</a></p>
+<p class="last">For fine grained control over rate limits, including making them apply
+to local peers, see <a class="reference external" href="manual-ref.html#peer-classes">peer classes</a>.</p>
 </dd>
 </dl>
 <a name="announce_entry"></a></div>
@@ -3539,7 +3592,7 @@ struct cache_status
    std::vector&lt;cached_piece_info&gt; pieces;
 };
 </pre>
-<a name="cache_status()"></a><div class="section" id="id114">
+<a name="cache_status()"></a><div class="section" id="id115">
 <h3>cache_status()</h3>
 <pre class="literal-block">
 <strong>cache_status</strong> ();
@@ -4223,7 +4276,7 @@ class session: public boost::noncopyable, public session_handle
    session_proxy <strong>abort</strong> ();
 };
 </pre>
-<a name="session()"></a><div class="section" id="id143">
+<a name="session()"></a><div class="section" id="id144">
 <h3>session()</h3>
 <pre class="literal-block">
 <strong>session</strong> (settings_pack const&amp; pack = settings_pack()
@@ -4240,7 +4293,7 @@ nat-pmp) and default plugins (ut_metadata, ut_pex and smart_ban). The
 default is to start those features. If you do not want them to start,
 pass 0 as the flags parameter.</p>
 <a name="session()"></a></div>
-<div class="section" id="id148">
+<div class="section" id="id149">
 <h3>session()</h3>
 <pre class="literal-block">
 <strong>session</strong> (settings_pack const&amp; pack
@@ -4262,7 +4315,7 @@ destruct the <a class="reference external" href="reference-Core.html#session">se
 destruct the <a class="reference external" href="reference-Core.html#session_proxy">session_proxy</a> object.</p>
 </div>
 <a name="~session()"></a></div>
-<div class="section" id="id156">
+<div class="section" id="id157">
 <h3>~session()</h3>
 <pre class="literal-block">
 <strong>~session</strong> ();
@@ -4550,6 +4603,8 @@ paused.</p>
 <pre class="literal-block">
 void <strong>set_load_function</strong> (user_load_function_t fun);
 </pre>
+<p><em>the feature of dynamically loading/unloading torrents is deprecated
+and discouraged</em></p>
 <p>This function enables <a class="reference external" href="manual-ref.html#dynamic-loading-of-torrent-files">dynamic loading of torrent files</a>. When a
 torrent is unloaded but needs to be availabe in memory, this function
 is called <strong>from within the libtorrent network thread</strong>. From within
@@ -4627,7 +4682,7 @@ void <strong>dht_get_item</strong> (sha1_hash const&amp; target);
 <p>query the DHT for an immutable item at the <tt class="docutils literal">target</tt> hash.
 the result is posted as a <a class="reference external" href="reference-Alerts.html#dht_immutable_item_alert">dht_immutable_item_alert</a>.</p>
 <a name="dht_get_item()"></a></div>
-<div class="section" id="id214">
+<div class="section" id="id215">
 <h3>dht_get_item()</h3>
 <pre class="literal-block">
 void <strong>dht_get_item</strong> (boost::array&lt;char, 32&gt; key
@@ -4649,7 +4704,7 @@ the returned hash is the key that is to be used to look the item
 up again. It's just the sha-1 hash of the bencoded form of the
 structure.</p>
 <a name="dht_put_item()"></a></div>
-<div class="section" id="id216">
+<div class="section" id="id217">
 <h3>dht_put_item()</h3>
 <pre class="literal-block">
 void <strong>dht_put_item</strong> (boost::array&lt;char, 32&gt; key
@@ -5548,7 +5603,7 @@ struct torrent_handle
    };
 };
 </pre>
-<a name="torrent_handle()"></a><div class="section" id="id287">
+<a name="torrent_handle()"></a><div class="section" id="id288">
 <h3>torrent_handle()</h3>
 <pre class="literal-block">
 <strong>torrent_handle</strong> ();
@@ -5784,7 +5839,7 @@ std::set&lt;std::string&gt; <strong>http_seeds</strong> () const;
 they operate on <a class="reference external" href="http://bittorrent.org/beps/bep_0017.html">BEP 17</a> web seeds instead of <a class="reference external" href="http://bittorrent.org/beps/bep_0019.html">BEP 19</a>.</p>
 <p>See <a class="reference external" href="manual-ref.html#http-seeding">http seeding</a> for more information.</p>
 <a name="add_extension()"></a></div>
-<div class="section" id="id318">
+<div class="section" id="id319">
 <h3>add_extension()</h3>
 <pre class="literal-block">
 void <strong>add_extension</strong> (
@@ -6332,6 +6387,7 @@ rate limit. The torrent can never upload more than the global rate
 limit.</p>
 <p><tt class="docutils literal">upload_limit</tt> and <tt class="docutils literal">download_limit</tt> will return the current limit
 setting, for upload and download, respectively.</p>
+<p>Local peers are not rate limited by default. see <a class="reference external" href="manual-ref.html#peer-classes">peer classes</a>.</p>
 <a name="set_pinned()"></a></div>
 <div class="section" id="set-pinned">
 <h3>set_pinned()</h3>
@@ -6521,7 +6577,7 @@ bool <strong>operator==</strong> (const torrent_handle&amp; h) const;
 <p>comparison operators. The order of the torrents is unspecified
 but stable.</p>
 <a name="native_handle()"></a></div>
-<div class="section" id="id368">
+<div class="section" id="id370">
 <h3>native_handle()</h3>
 <pre class="literal-block">
 boost::shared_ptr&lt;torrent&gt; <strong>native_handle</strong> () const;
@@ -6530,7 +6586,7 @@ boost::shared_ptr&lt;torrent&gt; <strong>native_handle</strong> () const;
 dispatch function. This type does not have a stable API and should
 be relied on as little as possible.</p>
 <a name="flags_t"></a></div>
-<div class="section" id="id370">
+<div class="section" id="id372">
 <h3>enum flags_t</h3>
 <p>Declared in &quot;<a class="reference external" href="../include/libtorrent/torrent_handle.hpp">libtorrent/torrent_handle.hpp</a>&quot;</p>
 <table border="1" class="docutils">
@@ -6752,14 +6808,14 @@ struct web_seed_entry
    boost::uint8_t type;
 };
 </pre>
-<a name="operator==()"></a><div class="section" id="id381">
+<a name="operator==()"></a><div class="section" id="id383">
 <h3>operator==()</h3>
 <pre class="literal-block">
 bool <strong>operator==</strong> (web_seed_entry const&amp; e) const;
 </pre>
 <p>URL and type comparison</p>
 <a name="operator<()"></a></div>
-<div class="section" id="id382">
+<div class="section" id="id384">
 <h3>operator&lt;()</h3>
 <pre class="literal-block">
 bool <strong>operator&lt;</strong> (web_seed_entry const&amp; e) const;
@@ -6879,7 +6935,7 @@ class torrent_info
    bool <strong>parse_torrent_file</strong> (bdecode_node const&amp; libtorrent, error_code&amp; ec, int flags);
 };
 </pre>
-<a name="torrent_info()"></a><div class="section" id="id387">
+<a name="torrent_info()"></a><div class="section" id="id389">
 <h3>torrent_info()</h3>
 <pre class="literal-block">
 <strong>torrent_info</strong> (std::string const&amp; filename, int flags = 0);
@@ -6917,7 +6973,7 @@ an error occurs. These overloads are not available when building
 without exception support.</p>
 <p>The <tt class="docutils literal">flags</tt> argument is currently unused.</p>
 <a name="~torrent_info()"></a></div>
-<div class="section" id="id395">
+<div class="section" id="id397">
 <h3>~torrent_info()</h3>
 <pre class="literal-block">
 <strong>~torrent_info</strong> ();
@@ -6944,7 +7000,7 @@ to request files with the original names. Filename may be changed using
 <p>For more information on the <a class="reference external" href="reference-Storage.html#file_storage">file_storage</a> object, see the separate
 document on how to create torrents.</p>
 <a name="rename_file()"></a></div>
-<div class="section" id="id401">
+<div class="section" id="id403">
 <h3>rename_file()</h3>
 <pre class="literal-block">
 void <strong>rename_file</strong> (int index, std::string const&amp; new_filename);
@@ -7053,7 +7109,7 @@ argument and gives you the exact size of that piece. It will always be
 the same as <tt class="docutils literal">piece_length()</tt> except in the case of the last piece,
 which may be smaller.</p>
 <a name="info_hash()"></a></div>
-<div class="section" id="id408">
+<div class="section" id="id410">
 <h3>info_hash()</h3>
 <pre class="literal-block">
 const sha1_hash&amp; <strong>info_hash</strong> () const;
@@ -7108,7 +7164,7 @@ std::string <strong>ssl_cert</strong> () const;
 torrent. Otherwise returns an empty string. The certificate is
 the the public certificate in x509 format.</p>
 <a name="is_valid()"></a></div>
-<div class="section" id="id411">
+<div class="section" id="id413">
 <h3>is_valid()</h3>
 <pre class="literal-block">
 bool <strong>is_valid</strong> () const;
@@ -7354,7 +7410,7 @@ struct torrent_status
    sha1_hash info_hash;
 };
 </pre>
-<a name="operator==()"></a><div class="section" id="id419">
+<a name="operator==()"></a><div class="section" id="id421">
 <h3>operator==()</h3>
 <pre class="literal-block">
 bool <strong>operator==</strong> (torrent_status const&amp; st) const;
@@ -7362,7 +7418,7 @@ bool <strong>operator==</strong> (torrent_status const&amp; st) const;
 <p>compares if the torrent status objects come from the same torrent. i.e.
 only the <a class="reference external" href="reference-Core.html#torrent_handle">torrent_handle</a> field is compared.</p>
 <a name="state_t"></a></div>
-<div class="section" id="id421">
+<div class="section" id="id423">
 <h3>enum state_t</h3>
 <p>Declared in &quot;<a class="reference external" href="../include/libtorrent/torrent_status.hpp">libtorrent/torrent_status.hpp</a>&quot;</p>
 <table border="1" class="docutils">
@@ -8533,7 +8589,7 @@ check, respectively. The <tt class="docutils literal">index</tt> is the piece in
 It is possible to access the list of peers that participated in sending the
 piece through the <tt class="docutils literal">torrent</tt> and the <tt class="docutils literal">piece_picker</tt>.</p>
 <a name="tick()"></a></div>
-<div class="section" id="id531">
+<div class="section" id="id533">
 <h3>tick()</h3>
 <pre class="literal-block">
 virtual void <strong>tick</strong> ();
@@ -8796,7 +8852,7 @@ virtual bool <strong>on_unknown_message</strong> (int <em>/*length*/</em>, int <
 <p>this is not called for web seeds</p>
 <a name="on_piece_failed()"></a>
 <a name="on_piece_pass()"></a></div>
-<div class="section" id="id545">
+<div class="section" id="id547">
 <h3>on_piece_failed() on_piece_pass()</h3>
 <pre class="literal-block">
 virtual void <strong>on_piece_pass</strong> (int <em>/*index*/</em>);
@@ -8805,7 +8861,7 @@ virtual void <strong>on_piece_failed</strong> (int <em>/*index*/</em>);
 <p>called when a piece that this peer participated in either
 fails or passes the hash_check</p>
 <a name="tick()"></a></div>
-<div class="section" id="id546">
+<div class="section" id="id548">
 <h3>tick()</h3>
 <pre class="literal-block">
 virtual void <strong>tick</strong> ();
@@ -8988,7 +9044,7 @@ struct create_torrent
    };
 };
 </pre>
-<a name="create_torrent()"></a><div class="section" id="id565">
+<a name="create_torrent()"></a><div class="section" id="id567">
 <h3>create_torrent()</h3>
 <pre class="literal-block">
 <strong>create_torrent</strong> (torrent_info const&amp; ti);
@@ -9103,7 +9159,7 @@ a directory containing a directory with the same name as this torrent, and all t
 files of the torrent in it.</p>
 <p>The second function, <tt class="docutils literal">add_http_seed()</tt> adds an HTTP seed instead.</p>
 <a name="add_node()"></a></div>
-<div class="section" id="id572">
+<div class="section" id="id574">
 <h3>add_node()</h3>
 <pre class="literal-block">
 void <strong>add_node</strong> (std::pair&lt;std::string, int&gt; const&amp; node);
@@ -9193,7 +9249,7 @@ to share files with this torrent. A torrent may have more than one
 collection and more than one similar torrents. For more information,
 see <a class="reference external" href="http://www.bittorrent.org/beps/bep_0038.html">BEP 38</a>.</p>
 <a name="flags_t"></a></div>
-<div class="section" id="id576">
+<div class="section" id="id578">
 <h3>enum flags_t</h3>
 <p>Declared in &quot;<a class="reference external" href="../include/libtorrent/create_torrent.hpp">libtorrent/create_torrent.hpp</a>&quot;</p>
 <table border="1" class="docutils">
@@ -9468,7 +9524,7 @@ boost::system::error_category&amp; <strong>upnp_category</strong> ();
 </tbody>
 </table>
 <a name="error_code_enum"></a></div>
-<div class="section" id="id597">
+<div class="section" id="id599">
 <h2>enum error_code_enum</h2>
 <p>Declared in &quot;<a class="reference external" href="../include/libtorrent/error_code.hpp">libtorrent/error_code.hpp</a>&quot;</p>
 <table border="1" class="docutils">
@@ -10224,7 +10280,7 @@ URL. i.e. it doesn't contain &quot;announce.</td>
 </tbody>
 </table>
 <a name="error_code_enum"></a></div>
-<div class="section" id="id623">
+<div class="section" id="id625">
 <h2>enum error_code_enum</h2>
 <p>Declared in &quot;<a class="reference external" href="../include/libtorrent/gzip.hpp">libtorrent/gzip.hpp</a>&quot;</p>
 <table border="1" class="docutils">
@@ -10434,7 +10490,7 @@ maximum size, and was rejected.</td>
 </tbody>
 </table>
 <a name="error_code_enum"></a></div>
-<div class="section" id="id627">
+<div class="section" id="id629">
 <h2>enum error_code_enum</h2>
 <p>Declared in &quot;<a class="reference external" href="../include/libtorrent/upnp.hpp">libtorrent/upnp.hpp</a>&quot;</p>
 <table border="1" class="docutils">
@@ -10607,7 +10663,7 @@ class file_storage
    };
 };
 </pre>
-<a name="is_valid()"></a><div class="section" id="id637">
+<a name="is_valid()"></a><div class="section" id="id639">
 <h3>is_valid()</h3>
 <pre class="literal-block">
 bool <strong>is_valid</strong> () const;
@@ -10666,7 +10722,7 @@ the same root directory.</p>
 This shared path element is also set to the name of the torrent. It
 can be changed by calling <tt class="docutils literal">set_name</tt>.</p>
 <a name="rename_file()"></a></div>
-<div class="section" id="id643">
+<div class="section" id="id645">
 <h3>rename_file()</h3>
 <pre class="literal-block">
 void <strong>rename_file</strong> (int index, std::string const&amp; new_filename);
@@ -10674,7 +10730,7 @@ void <strong>rename_file</strong> (int index, std::string const&amp; new_filenam
 <p>renames the file at <tt class="docutils literal">index</tt> to <tt class="docutils literal">new_filename</tt>. Keep in mind
 that filenames are expected to be UTF-8 encoded.</p>
 <a name="map_block()"></a></div>
-<div class="section" id="id644">
+<div class="section" id="id646">
 <h3>map_block()</h3>
 <pre class="literal-block">
 std::vector&lt;file_slice&gt; <strong>map_block</strong> (int piece, boost::int64_t offset
@@ -10689,7 +10745,7 @@ torrents address space. <tt class="docutils literal">piece</tt> may not be negat
 <tt class="docutils literal">piece</tt> * piece_size + <tt class="docutils literal">offset</tt> + <tt class="docutils literal">size</tt></blockquote>
 <p>may not exceed the total size of the torrent.</p>
 <a name="map_file()"></a></div>
-<div class="section" id="id647">
+<div class="section" id="id649">
 <h3>map_file()</h3>
 <pre class="literal-block">
 peer_request <strong>map_file</strong> (int file, boost::int64_t offset, int size) const;
@@ -10701,7 +10757,7 @@ is meant to hold bittorrent block requests, which may not be larger
 than 16 kiB. Mapping a range larger than that may return an overflown
 integer.</p>
 <a name="num_files()"></a></div>
-<div class="section" id="id650">
+<div class="section" id="id652">
 <h3>num_files()</h3>
 <pre class="literal-block">
 int <strong>num_files</strong> () const;
@@ -10752,7 +10808,7 @@ void <strong>set_name</strong> (std::string const&amp; n);
 <p>set and get the name of this torrent. For multi-file torrents, this is also
 the name of the root directory all the files are stored in.</p>
 <a name="swap()"></a></div>
-<div class="section" id="id653">
+<div class="section" id="id655">
 <h3>swap()</h3>
 <pre class="literal-block">
 void <strong>swap</strong> (file_storage&amp; ti);
@@ -10890,7 +10946,7 @@ void <strong>apply_pointer_offset</strong> (ptrdiff_t off);
 <p>if the backing buffer changed for this storage, this is the pointer
 offset to add to any pointers to make them point into the new buffer</p>
 <a name="flags_t"></a></div>
-<div class="section" id="id655">
+<div class="section" id="id657">
 <h3>enum flags_t</h3>
 <p>Declared in &quot;<a class="reference external" href="../include/libtorrent/file_storage.hpp">libtorrent/file_storage.hpp</a>&quot;</p>
 <table border="1" class="docutils">
@@ -11146,7 +11202,7 @@ struct disk_buffer_holder
    block_cache_reference <strong>ref</strong> () const;
 };
 </pre>
-<a name="disk_buffer_holder()"></a><div class="section" id="id674">
+<a name="disk_buffer_holder()"></a><div class="section" id="id676">
 <h3>disk_buffer_holder()</h3>
 <pre class="literal-block">
 <strong>disk_buffer_holder</strong> (buffer_allocator_interface&amp; alloc, disk_io_job const&amp; j);
@@ -11155,7 +11211,7 @@ struct disk_buffer_holder
 using a disk buffer pool directly (there's only one
 disk_buffer_pool per <a class="reference external" href="reference-Core.html#session">session</a>)</p>
 <a name="~disk_buffer_holder()"></a></div>
-<div class="section" id="id676">
+<div class="section" id="id678">
 <h3>~disk_buffer_holder()</h3>
 <pre class="literal-block">
 <strong>~disk_buffer_holder</strong> ();
@@ -11178,7 +11234,7 @@ char* <strong>get</strong> () const;
 </pre>
 <p>return a pointer to the held buffer</p>
 <a name="reset()"></a></div>
-<div class="section" id="id677">
+<div class="section" id="id679">
 <h3>reset()</h3>
 <pre class="literal-block">
 void <strong>reset</strong> (char* buf = 0);
@@ -11188,7 +11244,7 @@ void <strong>reset</strong> (disk_io_job const&amp; j);
 (or NULL by default). If it's already holding a
 disk buffer, it will first be freed.</p>
 <a name="swap()"></a></div>
-<div class="section" id="id678">
+<div class="section" id="id680">
 <h3>swap()</h3>
 <pre class="literal-block">
 void <strong>swap</strong> (disk_buffer_holder&amp; h);
@@ -11215,6 +11271,7 @@ struct file_pool : boost::noncopyable
    void <strong>release</strong> (void* st, int file_index);
    void <strong>resize</strong> (int size);
    int <strong>size_limit</strong> () const;
+   void <strong>close_oldest</strong> ();
 };
 </pre>
 <a name="~file_pool()"></a>
@@ -11237,7 +11294,7 @@ file_handle <strong>open_file</strong> (void* st, std::string const&amp; p
 <a class="reference external" href="reference-Storage.html#file_storage">file_storage</a> <tt class="docutils literal">fs</tt> opened at save path <tt class="docutils literal">p</tt>. <tt class="docutils literal">m</tt> is the
 file open mode (see <a class="reference external" href="file::open_mode_t">file::open_mode_t</a>).</p>
 <a name="release()"></a></div>
-<div class="section" id="id682">
+<div class="section" id="id684">
 <h3>release()</h3>
 <pre class="literal-block">
 void <strong>release</strong> (void* st = NULL);
@@ -11261,6 +11318,16 @@ int <strong>size_limit</strong> () const;
 </pre>
 <p>returns the current limit of number of allowed open file handles held
 by the <a class="reference external" href="reference-Custom_Storage.html#file_pool">file_pool</a>.</p>
+<a name="close_oldest()"></a></div>
+<div class="section" id="close-oldest">
+<h3>close_oldest()</h3>
+<pre class="literal-block">
+void <strong>close_oldest</strong> ();
+</pre>
+<p>close the file that was opened least recently (i.e. not <em>accessed</em>
+least recently). The purpose is to make the OS (really just windows)
+clear and flush its disk cache associated with this file. We don't want
+any file to stay open for too long, allowing the disk cache to accrue.</p>
 <a name="storage_interface"></a></div>
 </div>
 <div class="section" id="storage-interface">
@@ -11382,7 +11449,7 @@ virtual void <strong>set_file_priority</strong> (std::vector&lt;boost::uint8_t&g
 guaranteed to be the only running function on this storage
 when called</p>
 <a name="move_storage()"></a></div>
-<div class="section" id="id687">
+<div class="section" id="id689">
 <h3>move_storage()</h3>
 <pre class="literal-block">
 virtual int <strong>move_storage</strong> (std::string const&amp; save_path, int flags
@@ -11442,7 +11509,7 @@ to files belonging to this storage. The default implementation just
 calls file_pool::release_files().</p>
 <p>If an error occurs, <tt class="docutils literal">storage_error</tt> should be set to reflect it.</p>
 <a name="rename_file()"></a></div>
-<div class="section" id="id688">
+<div class="section" id="id690">
 <h3>rename_file()</h3>
 <pre class="literal-block">
 virtual void <strong>rename_file</strong> (int index, std::string const&amp; new_filename
@@ -11478,7 +11545,7 @@ struct disk_buffer_pool : boost::noncopyable
 };
 </pre>
 <a name="tick()"></a></div>
-<div class="section" id="id689">
+<div class="section" id="id691">
 <h3>tick()</h3>
 <pre class="literal-block">
 virtual bool <strong>tick</strong> ();
@@ -11534,7 +11601,7 @@ class default_storage : public storage_interface, boost::noncopyable
    static bool <strong>disk_write_access_log</strong> ();
 };
 </pre>
-<a name="default_storage()"></a><div class="section" id="id692">
+<a name="default_storage()"></a><div class="section" id="id694">
 <h3>default_storage()</h3>
 <pre class="literal-block">
 <strong>default_storage</strong> (storage_params const&amp; params);
@@ -11551,7 +11618,7 @@ an empty vector. Any file whose index is not represented by the vector
 (because the vector is too short) are assumed to have priority 1.
 this is used to treat files with priority 0 slightly differently.</p>
 <a name="files()"></a></div>
-<div class="section" id="id696">
+<div class="section" id="id698">
 <h3>files()</h3>
 <pre class="literal-block">
 file_storage const&amp; <strong>files</strong> () const;
@@ -11632,7 +11699,7 @@ struct bitfield
    int <strong>count</strong> () const;
 };
 </pre>
-<a name="bitfield()"></a><div class="section" id="id707">
+<a name="bitfield()"></a><div class="section" id="id709">
 <h3>bitfield()</h3>
 <pre class="literal-block">
 <strong>bitfield</strong> (int bits);
@@ -11658,7 +11725,7 @@ void <strong>assign</strong> (char const* b, int bits);
 <p>copy <a class="reference external" href="reference-Utility.html#bitfield">bitfield</a> from buffer <tt class="docutils literal">b</tt> of <tt class="docutils literal">bits</tt> number of bits, rounded up to
 the nearest byte boundary.</p>
 <a name="operator[]()"></a></div>
-<div class="section" id="id713">
+<div class="section" id="id715">
 <h3>operator[]()</h3>
 <pre class="literal-block">
 bool <strong>operator[]</strong> (int index) const;
@@ -11702,7 +11769,7 @@ char const* <strong>data</strong> () const;
 </pre>
 <p>returns a pointer to the internal buffer of the <a class="reference external" href="reference-Utility.html#bitfield">bitfield</a>.</p>
 <a name="operator=()"></a></div>
-<div class="section" id="id718">
+<div class="section" id="id720">
 <h3>operator=()</h3>
 <pre class="literal-block">
 bitfield&amp; <strong>operator=</strong> (bitfield const&amp; rhs);
@@ -11746,7 +11813,7 @@ class hasher
    <strong>~hasher</strong> ();
 };
 </pre>
-<a name="hasher()"></a><div class="section" id="id724">
+<a name="hasher()"></a><div class="section" id="id726">
 <h3>hasher()</h3>
 <pre class="literal-block">
 <strong>hasher</strong> (const char* data, int len);
@@ -11770,7 +11837,7 @@ sha1_hash <strong>final</strong> ();
 <p>returns the SHA-1 digest of the buffers previously passed to
 <a class="reference external" href="reference-Utility.html#update()">update()</a> and the <a class="reference external" href="reference-Utility.html#hasher">hasher</a> constructor.</p>
 <a name="reset()"></a></div>
-<div class="section" id="id727">
+<div class="section" id="id729">
 <h3>reset()</h3>
 <pre class="literal-block">
 void <strong>reset</strong> ();
@@ -11821,7 +11888,7 @@ class sha1_hash
    std::string <strong>to_string</strong> () const;
 };
 </pre>
-<a name="sha1_hash()"></a><div class="section" id="id731">
+<a name="sha1_hash()"></a><div class="section" id="id733">
 <h3>sha1_hash()</h3>
 <pre class="literal-block">
 <strong>sha1_hash</strong> ();
@@ -11873,14 +11940,14 @@ bool <strong>is_all_zeros</strong> () const;
 </pre>
 <p>return true if the sha1-hash is all zero.</p>
 <a name="operator<<=()"></a></div>
-<div class="section" id="id732">
+<div class="section" id="id734">
 <h3>operator&lt;&lt;=()</h3>
 <pre class="literal-block">
 sha1_hash&amp; <strong>operator&lt;&lt;=</strong> (int n);
 </pre>
 <p>shift left <tt class="docutils literal">n</tt> bits.</p>
 <a name="operator>>=()"></a></div>
-<div class="section" id="id733">
+<div class="section" id="id735">
 <h3>operator&gt;&gt;=()</h3>
 <pre class="literal-block">
 sha1_hash&amp; <strong>operator&gt;&gt;=</strong> (int n);
@@ -11889,7 +11956,7 @@ sha1_hash&amp; <strong>operator&gt;&gt;=</strong> (int n);
 <a name="operator!=()"></a>
 <a name="operator<()"></a>
 <a name="operator==()"></a></div>
-<div class="section" id="id734">
+<div class="section" id="id736">
 <h3>operator!=() operator&lt;() operator==()</h3>
 <pre class="literal-block">
 bool <strong>operator!=</strong> (sha1_hash const&amp; n) const;
@@ -11898,49 +11965,49 @@ bool <strong>operator==</strong> (sha1_hash const&amp; n) const;
 </pre>
 <p>standard comparison operators</p>
 <a name="operator~()"></a></div>
-<div class="section" id="id735">
+<div class="section" id="id737">
 <h3>operator~()</h3>
 <pre class="literal-block">
 sha1_hash <strong>operator~</strong> () const;
 </pre>
 <p>returns a bit-wise negated copy of the sha1-hash</p>
 <a name="operator^()"></a></div>
-<div class="section" id="id736">
+<div class="section" id="id738">
 <h3>operator^()</h3>
 <pre class="literal-block">
 sha1_hash <strong>operator^</strong> (sha1_hash const&amp; n) const;
 </pre>
 <p>returns the bit-wise XOR of the two sha1-hashes.</p>
 <a name="operator^=()"></a></div>
-<div class="section" id="id737">
+<div class="section" id="id739">
 <h3>operator^=()</h3>
 <pre class="literal-block">
 sha1_hash&amp; <strong>operator^=</strong> (sha1_hash const&amp; n);
 </pre>
 <p>in-place bit-wise XOR with the passed in <a class="reference external" href="reference-Utility.html#sha1_hash">sha1_hash</a>.</p>
 <a name="operator&()"></a></div>
-<div class="section" id="id739">
+<div class="section" id="id741">
 <h3>operator&amp;()</h3>
 <pre class="literal-block">
 sha1_hash <strong>operator&amp;</strong> (sha1_hash const&amp; n) const;
 </pre>
 <p>returns the bit-wise AND of the two sha1-hashes.</p>
 <a name="operator&=()"></a></div>
-<div class="section" id="id740">
+<div class="section" id="id742">
 <h3>operator&amp;=()</h3>
 <pre class="literal-block">
 sha1_hash&amp; <strong>operator&amp;=</strong> (sha1_hash const&amp; n);
 </pre>
 <p>in-place bit-wise AND of the passed in <a class="reference external" href="reference-Utility.html#sha1_hash">sha1_hash</a></p>
 <a name="operator|=()"></a></div>
-<div class="section" id="id742">
+<div class="section" id="id744">
 <h3>operator|=()</h3>
 <pre class="literal-block">
 sha1_hash&amp; <strong>operator|=</strong> (sha1_hash const&amp; n);
 </pre>
 <p>in-place bit-wise OR of the two sha1-hash.</p>
 <a name="operator[]()"></a></div>
-<div class="section" id="id743">
+<div class="section" id="id745">
 <h3>operator[]()</h3>
 <pre class="literal-block">
 boost::uint8_t&amp; <strong>operator[]</strong> (int i);
@@ -11969,14 +12036,14 @@ std::string <strong>to_string</strong> () const;
 It's still a binary string with 20 binary characters.</p>
 <a name="hash_value()"></a></div>
 </div>
-<div class="section" id="id744">
+<div class="section" id="id746">
 <h2>hash_value()</h2>
 <p>Declared in &quot;<a class="reference external" href="../include/libtorrent/sha1_hash.hpp">libtorrent/sha1_hash.hpp</a>&quot;</p>
 <pre class="literal-block">
 inline std::size_t <strong>hash_value</strong> (sha1_hash const&amp; b);
 </pre>
 <a name="operator<<()"></a></div>
-<div class="section" id="id746">
+<div class="section" id="id748">
 <h2>operator&lt;&lt;()</h2>
 <p>Declared in &quot;<a class="reference external" href="../include/libtorrent/sha1_hash.hpp">libtorrent/sha1_hash.hpp</a>&quot;</p>
 <pre class="literal-block">
@@ -11984,7 +12051,7 @@ inline std::ostream&amp; <strong>operator&lt;&lt;</strong> (std::ostream&amp; os
 </pre>
 <p>print a <a class="reference external" href="reference-Utility.html#sha1_hash">sha1_hash</a> object to an ostream as 40 hexadecimal digits</p>
 <a name="operator>>()"></a></div>
-<div class="section" id="id749">
+<div class="section" id="id751">
 <h2>operator&gt;&gt;()</h2>
 <p>Declared in &quot;<a class="reference external" href="../include/libtorrent/sha1_hash.hpp">libtorrent/sha1_hash.hpp</a>&quot;</p>
 <pre class="literal-block">
@@ -12079,14 +12146,14 @@ class entry
    mutable boost::uint8_t m_type_queried:1;
 };
 </pre>
-<a name="type()"></a><div class="section" id="id762">
+<a name="type()"></a><div class="section" id="id764">
 <h3>type()</h3>
 <pre class="literal-block">
 data_type <strong>type</strong> () const;
 </pre>
 <p>returns the concrete type of the <a class="reference external" href="reference-Bencoding.html#entry">entry</a></p>
 <a name="entry()"></a></div>
-<div class="section" id="id764">
+<div class="section" id="id766">
 <h3>entry()</h3>
 <pre class="literal-block">
 <strong>entry</strong> (list_type const&amp;);
@@ -12099,7 +12166,7 @@ data_type <strong>type</strong> () const;
 The content of the argument is copied into the
 newly constructed <a class="reference external" href="reference-Bencoding.html#entry">entry</a></p>
 <a name="entry()"></a></div>
-<div class="section" id="id766">
+<div class="section" id="id768">
 <h3>entry()</h3>
 <pre class="literal-block">
 <strong>entry</strong> (data_type t);
@@ -12107,7 +12174,7 @@ newly constructed <a class="reference external" href="reference-Bencoding.html#e
 <p>construct an empty <a class="reference external" href="reference-Bencoding.html#entry">entry</a> of the specified type.
 see <a class="reference external" href="reference-Bencoding.html#data_type">data_type</a> enum.</p>
 <a name="operator=()"></a></div>
-<div class="section" id="id769">
+<div class="section" id="id771">
 <h3>operator=()</h3>
 <pre class="literal-block">
 void <strong>operator=</strong> (string_type const&amp;);
@@ -12179,14 +12246,14 @@ this:</p>
 <p>To make it easier to extract information from a torrent file, the
 class <a class="reference external" href="reference-Core.html#torrent_info">torrent_info</a> exists.</p>
 <a name="swap()"></a></div>
-<div class="section" id="id773">
+<div class="section" id="id775">
 <h3>swap()</h3>
 <pre class="literal-block">
 void <strong>swap</strong> (entry&amp; e);
 </pre>
 <p>swaps the content of <em>this</em> with <tt class="docutils literal">e</tt>.</p>
 <a name="operator[]()"></a></div>
-<div class="section" id="id774">
+<div class="section" id="id776">
 <h3>operator[]()</h3>
 <pre class="literal-block">
 entry&amp; <strong>operator[]</strong> (std::string const&amp; key);
@@ -12218,7 +12285,7 @@ they will throw <tt class="docutils literal"><span class="pre">libtorrent::type_
 the element cannot be found, they will return 0. If an element with
 the given key is found, the return a pointer to it.</p>
 <a name="to_string()"></a></div>
-<div class="section" id="id777">
+<div class="section" id="id779">
 <h3>to_string()</h3>
 <pre class="literal-block">
 std::string <strong>to_string</strong> () const;
@@ -12320,7 +12387,7 @@ entry e = bdecode(buf, buf + data_size);
 <p>If <tt class="docutils literal">bdecode()</tt> encounters invalid encoded data in the range given to it
 it will return a default constructed <tt class="docutils literal">entry</tt> object.</p>
 <a name="operator<<()"></a></div>
-<div class="section" id="id784">
+<div class="section" id="id786">
 <h2>operator&lt;&lt;()</h2>
 <p>Declared in &quot;<a class="reference external" href="../include/libtorrent/entry.hpp">libtorrent/entry.hpp</a>&quot;</p>
 <pre class="literal-block">
@@ -12400,7 +12467,7 @@ time_point <strong>timestamp</strong> () const;
 </pre>
 <p>a timestamp is automatically created in the constructor</p>
 <a name="type()"></a></div>
-<div class="section" id="id811">
+<div class="section" id="id813">
 <h3>type()</h3>
 <pre class="literal-block">
 virtual int <strong>type</strong> () const = 0;
@@ -12612,7 +12679,7 @@ struct torrent_alert : alert
    torrent_handle handle;
 };
 </pre>
-<a name="message()"></a><div class="section" id="id833">
+<a name="message()"></a><div class="section" id="id835">
 <h3>message()</h3>
 <pre class="literal-block">
 virtual std::string <strong>message</strong> () const override;
@@ -12674,24 +12741,8 @@ struct tracker_alert : torrent_alert
 char const* <strong>tracker_url</strong> () const;
 </pre>
 <p>returns a null-terminated string of the tracker's URL</p>
-<a name="torrent_added_alert"></a></div>
-</div>
-<div class="section" id="torrent-added-alert">
-<h2>torrent_added_alert</h2>
-<p>Declared in &quot;<a class="reference external" href="../include/libtorrent/alert_types.hpp">libtorrent/alert_types.hpp</a>&quot;</p>
-<p>The <tt class="docutils literal">torrent_added_alert</tt> is posted once every time a torrent is successfully
-added. It doesn't contain any members of its own, but inherits the torrent handle
-from its base class.
-It's posted when the <tt class="docutils literal">status_notification</tt> bit is set in the alert_mask.</p>
-<pre class="literal-block">
-struct torrent_added_alert final : torrent_alert
-{
-   virtual std::string <strong>message</strong> () const override;
-
-   static const int static_category = alert::status_notification;
-};
-</pre>
 <a name="torrent_removed_alert"></a></div>
+</div>
 <div class="section" id="torrent-removed-alert">
 <h2>torrent_removed_alert</h2>
 <p>Declared in &quot;<a class="reference external" href="../include/libtorrent/alert_types.hpp">libtorrent/alert_types.hpp</a>&quot;</p>
@@ -13056,7 +13107,7 @@ struct scrape_failed_alert final : tracker_alert
    error_code error;
 };
 </pre>
-<a name="error_message()"></a><div class="section" id="id868">
+<a name="error_message()"></a><div class="section" id="id869">
 <h3>error_message()</h3>
 <pre class="literal-block">
 char const* <strong>error_message</strong> () const;
@@ -13609,7 +13660,7 @@ char const* <strong>server_url</strong> () const;
 </pre>
 <p>the URL the error is associated with</p>
 <a name="error_message()"></a></div>
-<div class="section" id="id940">
+<div class="section" id="id941">
 <h3>error_message()</h3>
 <pre class="literal-block">
 char const* <strong>error_message</strong> () const;
@@ -13935,7 +13986,7 @@ struct listen_succeeded_alert final : alert
    socket_type_t sock_type;
 };
 </pre>
-<a name="socket_type_t"></a><div class="section" id="id965">
+<a name="socket_type_t"></a><div class="section" id="id966">
 <h3>enum socket_type_t</h3>
 <p>Declared in &quot;<a class="reference external" href="../include/libtorrent/alert_types.hpp">libtorrent/alert_types.hpp</a>&quot;</p>
 <table border="1" class="docutils">
@@ -14138,7 +14189,7 @@ struct fastresume_rejected_alert final : torrent_alert
    char const* operation;
 };
 </pre>
-<a name="file_path()"></a><div class="section" id="id983">
+<a name="file_path()"></a><div class="section" id="id984">
 <h3>file_path()</h3>
 <pre class="literal-block">
 char const* <strong>file_path</strong> () const;
@@ -14509,7 +14560,7 @@ struct torrent_error_alert final : torrent_alert
    error_code error;
 };
 </pre>
-<a name="filename()"></a><div class="section" id="id1015">
+<a name="filename()"></a><div class="section" id="id1016">
 <h3>filename()</h3>
 <pre class="literal-block">
 char const* <strong>filename</strong> () const;
@@ -14686,7 +14737,7 @@ struct dht_error_alert final : alert
    op_t operation;
 };
 </pre>
-<a name="op_t"></a><div class="section" id="id1037">
+<a name="op_t"></a><div class="section" id="id1038">
 <h3>enum op_t</h3>
 <p>Declared in &quot;<a class="reference external" href="../include/libtorrent/alert_types.hpp">libtorrent/alert_types.hpp</a>&quot;</p>
 <table border="1" class="docutils">
@@ -14934,7 +14985,7 @@ struct torrent_log_alert final : torrent_alert
    static const int static_category = alert::torrent_log_notification;
 };
 </pre>
-<a name="msg()"></a><div class="section" id="id1055">
+<a name="msg()"></a><div class="section" id="id1056">
 <h3>msg()</h3>
 <pre class="literal-block">
 char const* <strong>msg</strong> () const;
@@ -14969,7 +15020,7 @@ struct peer_log_alert final : peer_alert
    direction_t direction;
 };
 </pre>
-<a name="msg()"></a><div class="section" id="id1059">
+<a name="msg()"></a><div class="section" id="id1060">
 <h3>msg()</h3>
 <pre class="literal-block">
 char const* <strong>msg</strong> () const;
@@ -15199,7 +15250,7 @@ struct dht_log_alert final : alert
    dht_module_t module;
 };
 </pre>
-<a name="log_message()"></a><div class="section" id="id1071">
+<a name="log_message()"></a><div class="section" id="id1072">
 <h3>log_message()</h3>
 <pre class="literal-block">
 char const* <strong>log_message</strong> () const;
@@ -15288,7 +15339,7 @@ respectively. This buffer is only valid for as long as the <a class="reference e
 is valid, which is owned by libtorrent and reclaimed whenever
 <a class="reference external" href="reference-Core.html#pop_alerts()">pop_alerts()</a> is called on the <a class="reference external" href="reference-Core.html#session">session</a>.</p>
 <a name="direction_t"></a></div>
-<div class="section" id="id1079">
+<div class="section" id="id1080">
 <h3>enum direction_t</h3>
 <p>Declared in &quot;<a class="reference external" href="../include/libtorrent/alert_types.hpp">libtorrent/alert_types.hpp</a>&quot;</p>
 <table border="1" class="docutils">
@@ -15727,7 +15778,7 @@ class port_filter
    };
 };
 </pre>
-<a name="add_rule()"></a><div class="section" id="id1105">
+<a name="add_rule()"></a><div class="section" id="id1106">
 <h3>add_rule()</h3>
 <pre class="literal-block">
 void <strong>add_rule</strong> (boost::uint16_t first, boost::uint16_t last, boost::uint32_t flags);
@@ -15736,7 +15787,7 @@ void <strong>add_rule</strong> (boost::uint16_t first, boost::uint16_t last, boo
 <tt class="docutils literal">flags</tt> overwriting any existing rule for those ports. The range
 is inclusive, i.e. the port <tt class="docutils literal">last</tt> also has the flag set on it.</p>
 <a name="access()"></a></div>
-<div class="section" id="id1106">
+<div class="section" id="id1107">
 <h3>access()</h3>
 <pre class="literal-block">
 int <strong>access</strong> (boost::uint16_t port) const;
@@ -15745,7 +15796,7 @@ int <strong>access</strong> (boost::uint16_t port) const;
 or not. The returned value is the flags set for this port.
 see acces_flags.</p>
 <a name="access_flags"></a></div>
-<div class="section" id="id1107">
+<div class="section" id="id1108">
 <h3>enum access_flags</h3>
 <p>Declared in &quot;<a class="reference external" href="../include/libtorrent/ip_filter.hpp">libtorrent/ip_filter.hpp</a>&quot;</p>
 <table border="1" class="docutils">
@@ -15772,7 +15823,7 @@ range should not be connected to</td>
 </div>
 </div>
 </div>
-<div class="section" id="id1113">
+<div class="section" id="id1114">
 <h1>Settings</h1>
 <p>You have some control over <a class="reference external" href="reference-Core.html#session">session</a> configuration through the session::apply_settings()
 member function. To change one or more configuration options, create a <a class="reference external" href="reference-Settings.html#settings_pack">settings_pack</a>
@@ -15816,7 +15867,7 @@ struct dht_settings
    int item_lifetime;
 };
 </pre>
-<a name="dht_settings()"></a><div class="section" id="id1119">
+<a name="dht_settings()"></a><div class="section" id="id1120">
 <h3>dht_settings()</h3>
 <pre class="literal-block">
 <strong>dht_settings</strong> ();
@@ -16167,7 +16218,7 @@ connecting to it. see proxy_type</p>
 <tbody valign="top">
 <tr><td>peer_fingerprint</td>
 <td>string</td>
-<td>&quot;-LT1120-&quot;</td>
+<td>&quot;-LT1130-&quot;</td>
 </tr>
 </tbody>
 </table>
@@ -17950,9 +18001,7 @@ anti virus software hooks on every file close, and scans the file
 for viruses. deferring the closing of the files will be the
 difference between a usable system and a completely hogged down
 system. Most operating systems also has a limit on the total number
-of file descriptors a process may have open. It is usually a good
-idea to find this limit and set the number of connections and the
-number of files limits so their sum is slightly below it.</p>
+of file descriptors a process may have open.</p>
 <a name="max_failcount"></a><table border="1" class="docutils">
 <colgroup>
 <col width="50%" />
@@ -18560,7 +18609,7 @@ details, see <a class="reference external" href="http://qbone.internet2.edu/qbss
 </tr>
 <tr><td>active_loaded_limit</td>
 <td>int</td>
-<td>100</td>
+<td>0</td>
 </tr>
 </tbody>
 </table>
@@ -19189,6 +19238,8 @@ the session-global limits of upload and download rate limits, in
 bytes per second. By default peers on the local network are not rate
 limited.</p>
 <p>A value of 0 means unlimited.</p>
+<p>For fine grained control over rate limits, including making them apply
+to local peers, see <a class="reference external" href="manual-ref.html#peer-classes">peer classes</a>.</p>
 <a name="dht_upload_rate_limit"></a><table border="1" class="docutils">
 <colgroup>
 <col width="61%" />
@@ -20033,6 +20084,32 @@ twice.</p>
 </tbody>
 </table>
 <p>time to wait until a new retry of a web seed name lookup</p>
+<a name="close_file_interval"></a><table border="1" class="docutils">
+<colgroup>
+<col width="44%" />
+<col width="13%" />
+<col width="44%" />
+</colgroup>
+<thead valign="bottom">
+<tr><th class="head">name</th>
+<th class="head">type</th>
+<th class="head">default</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr><td>close_file_interval</td>
+<td>int</td>
+<td>CLOSE_FILE_INTERVAL</td>
+</tr>
+</tbody>
+</table>
+<p>the number of seconds between closing the file opened the longest
+ago. 0 means to disable the feature. The purpose of this is to
+periodically close files to trigger the operating system flushing
+disk cache. Specifically it has been observed to be required on
+windows to not have the disk cache grow indefinitely.
+This defaults to 120 seconds on windows, and disabled on other
+systems.</p>
 <pre class="literal-block">
 struct settings_pack
 {
@@ -20277,6 +20354,7 @@ struct settings_pack
       cache_size_volatile,
       urlseed_max_request_bytes,
       web_seed_name_lookup_retry,
+      close_file_interval,
       max_int_setting_internal,
    };
 
@@ -20346,14 +20424,14 @@ struct settings_pack
    };
 };
 </pre>
-<a name="clear()"></a><div class="section" id="id1147">
+<a name="clear()"></a><div class="section" id="id1149">
 <h3>clear()</h3>
 <pre class="literal-block">
 void <strong>clear</strong> ();
 </pre>
 <p>clear the settings pack from all settings</p>
 <a name="clear()"></a></div>
-<div class="section" id="id1148">
+<div class="section" id="id1150">
 <h3>clear()</h3>
 <pre class="literal-block">
 void <strong>clear</strong> (int name);
@@ -21166,9 +21244,7 @@ anti virus software hooks on every file close, and scans the file
 for viruses. deferring the closing of the files will be the
 difference between a usable system and a completely hogged down
 system. Most operating systems also has a limit on the total number
-of file descriptors a process may have open. It is usually a good
-idea to find this limit and set the number of connections and the
-number of files limits so their sum is slightly below it.</td>
+of file descriptors a process may have open.</td>
 </tr>
 <tr><td>max_failcount</td>
 <td>15</td>
@@ -21727,7 +21803,9 @@ share_mode_target is set to more than 3, nothing is downloaded.</td>
 the session-global limits of upload and download rate limits, in
 bytes per second. By default peers on the local network are not rate
 limited.</p>
-<p class="last">A value of 0 means unlimited.</p>
+<p>A value of 0 means unlimited.</p>
+<p class="last">For fine grained control over rate limits, including making them apply
+to local peers, see <a class="reference external" href="manual-ref.html#peer-classes">peer classes</a>.</p>
 </td>
 </tr>
 <tr><td>download_rate_limit</td>
@@ -22092,8 +22170,18 @@ twice.</td>
 <td>128</td>
 <td>time to wait until a new retry of a web seed name lookup</td>
 </tr>
-<tr><td>max_int_setting_internal</td>
+<tr><td>close_file_interval</td>
 <td>129</td>
+<td>the number of seconds between closing the file opened the longest
+ago. 0 means to disable the feature. The purpose of this is to
+periodically close files to trigger the operating system flushing
+disk cache. Specifically it has been observed to be required on
+windows to not have the disk cache grow indefinitely.
+This defaults to 120 seconds on windows, and disabled on other
+systems.</td>
+</tr>
+<tr><td>max_int_setting_internal</td>
+<td>130</td>
 <td>&nbsp;</td>
 </tr>
 </tbody>
@@ -22513,7 +22601,7 @@ struct bdecode_node
    };
 };
 </pre>
-<a name="bdecode_node()"></a><div class="section" id="id1200">
+<a name="bdecode_node()"></a><div class="section" id="id1203">
 <h3>bdecode_node()</h3>
 <pre class="literal-block">
 <strong>bdecode_node</strong> ();
@@ -22530,7 +22618,7 @@ bdecode_node&amp; <strong>operator=</strong> (bdecode_node const&amp;);
 <p>For owning nodes, the copy will create a copy of the tree, but the
 underlying buffer remains the same.</p>
 <a name="type()"></a></div>
-<div class="section" id="id1201">
+<div class="section" id="id1204">
 <h3>type()</h3>
 <pre class="literal-block">
 type_t <strong>type</strong> () const;
@@ -22636,7 +22724,7 @@ char const* <strong>string_ptr</strong> () const;
 the string values. Note that <tt class="docutils literal">string_ptr()</tt> is <em>not</em> null-terminated.
 <tt class="docutils literal">string_length()</tt> returns the number of bytes in the string.</p>
 <a name="clear()"></a></div>
-<div class="section" id="id1205">
+<div class="section" id="id1208">
 <h3>clear()</h3>
 <pre class="literal-block">
 void <strong>clear</strong> ();
@@ -22644,14 +22732,14 @@ void <strong>clear</strong> ();
 <p>resets the <tt class="docutils literal">bdecoded_node</tt> to a default constructed state. If this is
 an owning node, the tree is freed and all child nodes are invalidated.</p>
 <a name="swap()"></a></div>
-<div class="section" id="id1206">
+<div class="section" id="id1209">
 <h3>swap()</h3>
 <pre class="literal-block">
 void <strong>swap</strong> (bdecode_node&amp; n);
 </pre>
 <p>Swap contents.</p>
 <a name="reserve()"></a></div>
-<div class="section" id="id1207">
+<div class="section" id="id1210">
 <h3>reserve()</h3>
 <pre class="literal-block">
 void <strong>reserve</strong> (int tokens);
@@ -22671,7 +22759,7 @@ void <strong>switch_underlying_buffer</strong> (char const* buf);
 operation is only defined on owning root nodes, i.e. the one passed in to
 decode().</p>
 <a name="type_t"></a></div>
-<div class="section" id="id1209">
+<div class="section" id="id1212">
 <h3>enum type_t</h3>
 <p>Declared in &quot;<a class="reference external" href="../include/libtorrent/bdecode.hpp">libtorrent/bdecode.hpp</a>&quot;</p>
 <table border="1" class="docutils">

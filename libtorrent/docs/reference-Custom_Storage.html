@@ -42,7 +42,7 @@
 <tr><th class="docinfo-name">Author:</th>
 <td>Arvid Norberg, <a class="last reference external" href="mailto:arvid&#64;libtorrent.org">arvid&#64;libtorrent.org</a></td></tr>
 <tr><th class="docinfo-name">Version:</th>
-<td>1.1.2</td></tr>
+<td>1.1.3</td></tr>
 </tbody>
 </table>
 <p><a class="reference external" href="reference.html">home</a></p>
@@ -225,6 +225,7 @@ struct file_pool : boost::noncopyable
    void <strong>release</strong> (void* st, int file_index);
    void <strong>resize</strong> (int size);
    int <strong>size_limit</strong> () const;
+   void <strong>close_oldest</strong> ();
 };
 </pre>
 <a name="~file_pool()"></a>
@@ -271,6 +272,16 @@ int <strong>size_limit</strong> () const;
 </pre>
 <p>returns the current limit of number of allowed open file handles held
 by the <a class="reference external" href="reference-Custom_Storage.html#file_pool">file_pool</a>.</p>
+<a name="close_oldest()"></a></div>
+<div class="section" id="close-oldest">
+<h3>close_oldest()</h3>
+<pre class="literal-block">
+void <strong>close_oldest</strong> ();
+</pre>
+<p>close the file that was opened least recently (i.e. not <em>accessed</em>
+least recently). The purpose is to make the OS (really just windows)
+clear and flush its disk cache associated with this file. We don't want
+any file to stay open for too long, allowing the disk cache to accrue.</p>
 <a name="storage_interface"></a></div>
 </div>
 <div class="section" id="storage-interface">

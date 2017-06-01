@@ -42,7 +42,7 @@
 <tr><th class="docinfo-name">Author:</th>
 <td>Arvid Norberg, <a class="last reference external" href="mailto:arvid&#64;libtorrent.org">arvid&#64;libtorrent.org</a></td></tr>
 <tr><th class="docinfo-name">Version:</th>
-<td>1.1.2</td></tr>
+<td>1.1.3</td></tr>
 </tbody>
 </table>
 <p><a class="reference external" href="reference.html">home</a></p>
@@ -51,99 +51,98 @@
 <div class="contents topic" id="table-of-contents">
 <p class="topic-title first">Table of contents</p>
 <ul class="simple">
-<li><a class="reference internal" href="#alerts" id="id307">Alerts</a><ul>
-<li><a class="reference internal" href="#alert" id="id308">alert</a></li>
-<li><a class="reference internal" href="#torrent-alert" id="id309">torrent_alert</a></li>
-<li><a class="reference internal" href="#peer-alert" id="id310">peer_alert</a></li>
-<li><a class="reference internal" href="#tracker-alert" id="id311">tracker_alert</a></li>
-<li><a class="reference internal" href="#torrent-added-alert" id="id312">torrent_added_alert</a></li>
-<li><a class="reference internal" href="#torrent-removed-alert" id="id313">torrent_removed_alert</a></li>
-<li><a class="reference internal" href="#read-piece-alert" id="id314">read_piece_alert</a></li>
-<li><a class="reference internal" href="#file-completed-alert" id="id315">file_completed_alert</a></li>
-<li><a class="reference internal" href="#file-renamed-alert" id="id316">file_renamed_alert</a></li>
-<li><a class="reference internal" href="#file-rename-failed-alert" id="id317">file_rename_failed_alert</a></li>
-<li><a class="reference internal" href="#performance-alert" id="id318">performance_alert</a></li>
-<li><a class="reference internal" href="#state-changed-alert" id="id319">state_changed_alert</a></li>
-<li><a class="reference internal" href="#tracker-error-alert" id="id320">tracker_error_alert</a></li>
-<li><a class="reference internal" href="#tracker-warning-alert" id="id321">tracker_warning_alert</a></li>
-<li><a class="reference internal" href="#scrape-reply-alert" id="id322">scrape_reply_alert</a></li>
-<li><a class="reference internal" href="#scrape-failed-alert" id="id323">scrape_failed_alert</a></li>
-<li><a class="reference internal" href="#tracker-reply-alert" id="id324">tracker_reply_alert</a></li>
-<li><a class="reference internal" href="#dht-reply-alert" id="id325">dht_reply_alert</a></li>
-<li><a class="reference internal" href="#tracker-announce-alert" id="id326">tracker_announce_alert</a></li>
-<li><a class="reference internal" href="#hash-failed-alert" id="id327">hash_failed_alert</a></li>
-<li><a class="reference internal" href="#peer-ban-alert" id="id328">peer_ban_alert</a></li>
-<li><a class="reference internal" href="#peer-unsnubbed-alert" id="id329">peer_unsnubbed_alert</a></li>
-<li><a class="reference internal" href="#peer-snubbed-alert" id="id330">peer_snubbed_alert</a></li>
-<li><a class="reference internal" href="#peer-error-alert" id="id331">peer_error_alert</a></li>
-<li><a class="reference internal" href="#peer-connect-alert" id="id332">peer_connect_alert</a></li>
-<li><a class="reference internal" href="#peer-disconnected-alert" id="id333">peer_disconnected_alert</a></li>
-<li><a class="reference internal" href="#invalid-request-alert" id="id334">invalid_request_alert</a></li>
-<li><a class="reference internal" href="#torrent-finished-alert" id="id335">torrent_finished_alert</a></li>
-<li><a class="reference internal" href="#piece-finished-alert" id="id336">piece_finished_alert</a></li>
-<li><a class="reference internal" href="#request-dropped-alert" id="id337">request_dropped_alert</a></li>
-<li><a class="reference internal" href="#block-timeout-alert" id="id338">block_timeout_alert</a></li>
-<li><a class="reference internal" href="#block-finished-alert" id="id339">block_finished_alert</a></li>
-<li><a class="reference internal" href="#block-downloading-alert" id="id340">block_downloading_alert</a></li>
-<li><a class="reference internal" href="#unwanted-block-alert" id="id341">unwanted_block_alert</a></li>
-<li><a class="reference internal" href="#storage-moved-alert" id="id342">storage_moved_alert</a></li>
-<li><a class="reference internal" href="#storage-moved-failed-alert" id="id343">storage_moved_failed_alert</a></li>
-<li><a class="reference internal" href="#torrent-deleted-alert" id="id344">torrent_deleted_alert</a></li>
-<li><a class="reference internal" href="#torrent-delete-failed-alert" id="id345">torrent_delete_failed_alert</a></li>
-<li><a class="reference internal" href="#save-resume-data-alert" id="id346">save_resume_data_alert</a></li>
-<li><a class="reference internal" href="#save-resume-data-failed-alert" id="id347">save_resume_data_failed_alert</a></li>
-<li><a class="reference internal" href="#torrent-paused-alert" id="id348">torrent_paused_alert</a></li>
-<li><a class="reference internal" href="#torrent-resumed-alert" id="id349">torrent_resumed_alert</a></li>
-<li><a class="reference internal" href="#torrent-checked-alert" id="id350">torrent_checked_alert</a></li>
-<li><a class="reference internal" href="#url-seed-alert" id="id351">url_seed_alert</a></li>
-<li><a class="reference internal" href="#file-error-alert" id="id352">file_error_alert</a></li>
-<li><a class="reference internal" href="#metadata-failed-alert" id="id353">metadata_failed_alert</a></li>
-<li><a class="reference internal" href="#metadata-received-alert" id="id354">metadata_received_alert</a></li>
-<li><a class="reference internal" href="#udp-error-alert" id="id355">udp_error_alert</a></li>
-<li><a class="reference internal" href="#external-ip-alert" id="id356">external_ip_alert</a></li>
-<li><a class="reference internal" href="#listen-failed-alert" id="id357">listen_failed_alert</a></li>
-<li><a class="reference internal" href="#listen-succeeded-alert" id="id358">listen_succeeded_alert</a></li>
-<li><a class="reference internal" href="#portmap-error-alert" id="id359">portmap_error_alert</a></li>
-<li><a class="reference internal" href="#portmap-alert" id="id360">portmap_alert</a></li>
-<li><a class="reference internal" href="#portmap-log-alert" id="id361">portmap_log_alert</a></li>
-<li><a class="reference internal" href="#fastresume-rejected-alert" id="id362">fastresume_rejected_alert</a></li>
-<li><a class="reference internal" href="#peer-blocked-alert" id="id363">peer_blocked_alert</a></li>
-<li><a class="reference internal" href="#dht-announce-alert" id="id364">dht_announce_alert</a></li>
-<li><a class="reference internal" href="#dht-get-peers-alert" id="id365">dht_get_peers_alert</a></li>
-<li><a class="reference internal" href="#stats-alert" id="id366">stats_alert</a></li>
-<li><a class="reference internal" href="#cache-flushed-alert" id="id367">cache_flushed_alert</a></li>
-<li><a class="reference internal" href="#anonymous-mode-alert" id="id368">anonymous_mode_alert</a></li>
-<li><a class="reference internal" href="#lsd-peer-alert" id="id369">lsd_peer_alert</a></li>
-<li><a class="reference internal" href="#trackerid-alert" id="id370">trackerid_alert</a></li>
-<li><a class="reference internal" href="#dht-bootstrap-alert" id="id371">dht_bootstrap_alert</a></li>
-<li><a class="reference internal" href="#torrent-error-alert" id="id372">torrent_error_alert</a></li>
-<li><a class="reference internal" href="#torrent-need-cert-alert" id="id373">torrent_need_cert_alert</a></li>
-<li><a class="reference internal" href="#incoming-connection-alert" id="id374">incoming_connection_alert</a></li>
-<li><a class="reference internal" href="#add-torrent-alert" id="id375">add_torrent_alert</a></li>
-<li><a class="reference internal" href="#state-update-alert" id="id376">state_update_alert</a></li>
-<li><a class="reference internal" href="#session-stats-alert" id="id377">session_stats_alert</a></li>
-<li><a class="reference internal" href="#dht-error-alert" id="id378">dht_error_alert</a></li>
-<li><a class="reference internal" href="#dht-immutable-item-alert" id="id379">dht_immutable_item_alert</a></li>
-<li><a class="reference internal" href="#dht-mutable-item-alert" id="id380">dht_mutable_item_alert</a></li>
-<li><a class="reference internal" href="#dht-put-alert" id="id381">dht_put_alert</a></li>
-<li><a class="reference internal" href="#i2p-alert" id="id382">i2p_alert</a></li>
-<li><a class="reference internal" href="#dht-outgoing-get-peers-alert" id="id383">dht_outgoing_get_peers_alert</a></li>
-<li><a class="reference internal" href="#log-alert" id="id384">log_alert</a></li>
-<li><a class="reference internal" href="#torrent-log-alert" id="id385">torrent_log_alert</a></li>
-<li><a class="reference internal" href="#peer-log-alert" id="id386">peer_log_alert</a></li>
-<li><a class="reference internal" href="#lsd-error-alert" id="id387">lsd_error_alert</a></li>
-<li><a class="reference internal" href="#dht-lookup" id="id388">dht_lookup</a></li>
-<li><a class="reference internal" href="#dht-routing-bucket" id="id389">dht_routing_bucket</a></li>
-<li><a class="reference internal" href="#dht-stats-alert" id="id390">dht_stats_alert</a></li>
-<li><a class="reference internal" href="#incoming-request-alert" id="id391">incoming_request_alert</a></li>
-<li><a class="reference internal" href="#dht-log-alert" id="id392">dht_log_alert</a></li>
-<li><a class="reference internal" href="#dht-pkt-alert" id="id393">dht_pkt_alert</a></li>
-<li><a class="reference internal" href="#dht-get-peers-reply-alert" id="id394">dht_get_peers_reply_alert</a></li>
-<li><a class="reference internal" href="#dht-direct-response-alert" id="id395">dht_direct_response_alert</a></li>
-<li><a class="reference internal" href="#picker-log-alert" id="id396">picker_log_alert</a></li>
-<li><a class="reference internal" href="#alert-cast" id="id397">alert_cast()</a></li>
-<li><a class="reference internal" href="#operation-name" id="id398">operation_name()</a></li>
-<li><a class="reference internal" href="#enum-operation-t" id="id399">enum operation_t</a></li>
+<li><a class="reference internal" href="#alerts" id="id306">Alerts</a><ul>
+<li><a class="reference internal" href="#alert" id="id307">alert</a></li>
+<li><a class="reference internal" href="#torrent-alert" id="id308">torrent_alert</a></li>
+<li><a class="reference internal" href="#peer-alert" id="id309">peer_alert</a></li>
+<li><a class="reference internal" href="#tracker-alert" id="id310">tracker_alert</a></li>
+<li><a class="reference internal" href="#torrent-removed-alert" id="id311">torrent_removed_alert</a></li>
+<li><a class="reference internal" href="#read-piece-alert" id="id312">read_piece_alert</a></li>
+<li><a class="reference internal" href="#file-completed-alert" id="id313">file_completed_alert</a></li>
+<li><a class="reference internal" href="#file-renamed-alert" id="id314">file_renamed_alert</a></li>
+<li><a class="reference internal" href="#file-rename-failed-alert" id="id315">file_rename_failed_alert</a></li>
+<li><a class="reference internal" href="#performance-alert" id="id316">performance_alert</a></li>
+<li><a class="reference internal" href="#state-changed-alert" id="id317">state_changed_alert</a></li>
+<li><a class="reference internal" href="#tracker-error-alert" id="id318">tracker_error_alert</a></li>
+<li><a class="reference internal" href="#tracker-warning-alert" id="id319">tracker_warning_alert</a></li>
+<li><a class="reference internal" href="#scrape-reply-alert" id="id320">scrape_reply_alert</a></li>
+<li><a class="reference internal" href="#scrape-failed-alert" id="id321">scrape_failed_alert</a></li>
+<li><a class="reference internal" href="#tracker-reply-alert" id="id322">tracker_reply_alert</a></li>
+<li><a class="reference internal" href="#dht-reply-alert" id="id323">dht_reply_alert</a></li>
+<li><a class="reference internal" href="#tracker-announce-alert" id="id324">tracker_announce_alert</a></li>
+<li><a class="reference internal" href="#hash-failed-alert" id="id325">hash_failed_alert</a></li>
+<li><a class="reference internal" href="#peer-ban-alert" id="id326">peer_ban_alert</a></li>
+<li><a class="reference internal" href="#peer-unsnubbed-alert" id="id327">peer_unsnubbed_alert</a></li>
+<li><a class="reference internal" href="#peer-snubbed-alert" id="id328">peer_snubbed_alert</a></li>
+<li><a class="reference internal" href="#peer-error-alert" id="id329">peer_error_alert</a></li>
+<li><a class="reference internal" href="#peer-connect-alert" id="id330">peer_connect_alert</a></li>
+<li><a class="reference internal" href="#peer-disconnected-alert" id="id331">peer_disconnected_alert</a></li>
+<li><a class="reference internal" href="#invalid-request-alert" id="id332">invalid_request_alert</a></li>
+<li><a class="reference internal" href="#torrent-finished-alert" id="id333">torrent_finished_alert</a></li>
+<li><a class="reference internal" href="#piece-finished-alert" id="id334">piece_finished_alert</a></li>
+<li><a class="reference internal" href="#request-dropped-alert" id="id335">request_dropped_alert</a></li>
+<li><a class="reference internal" href="#block-timeout-alert" id="id336">block_timeout_alert</a></li>
+<li><a class="reference internal" href="#block-finished-alert" id="id337">block_finished_alert</a></li>
+<li><a class="reference internal" href="#block-downloading-alert" id="id338">block_downloading_alert</a></li>
+<li><a class="reference internal" href="#unwanted-block-alert" id="id339">unwanted_block_alert</a></li>
+<li><a class="reference internal" href="#storage-moved-alert" id="id340">storage_moved_alert</a></li>
+<li><a class="reference internal" href="#storage-moved-failed-alert" id="id341">storage_moved_failed_alert</a></li>
+<li><a class="reference internal" href="#torrent-deleted-alert" id="id342">torrent_deleted_alert</a></li>
+<li><a class="reference internal" href="#torrent-delete-failed-alert" id="id343">torrent_delete_failed_alert</a></li>
+<li><a class="reference internal" href="#save-resume-data-alert" id="id344">save_resume_data_alert</a></li>
+<li><a class="reference internal" href="#save-resume-data-failed-alert" id="id345">save_resume_data_failed_alert</a></li>
+<li><a class="reference internal" href="#torrent-paused-alert" id="id346">torrent_paused_alert</a></li>
+<li><a class="reference internal" href="#torrent-resumed-alert" id="id347">torrent_resumed_alert</a></li>
+<li><a class="reference internal" href="#torrent-checked-alert" id="id348">torrent_checked_alert</a></li>
+<li><a class="reference internal" href="#url-seed-alert" id="id349">url_seed_alert</a></li>
+<li><a class="reference internal" href="#file-error-alert" id="id350">file_error_alert</a></li>
+<li><a class="reference internal" href="#metadata-failed-alert" id="id351">metadata_failed_alert</a></li>
+<li><a class="reference internal" href="#metadata-received-alert" id="id352">metadata_received_alert</a></li>
+<li><a class="reference internal" href="#udp-error-alert" id="id353">udp_error_alert</a></li>
+<li><a class="reference internal" href="#external-ip-alert" id="id354">external_ip_alert</a></li>
+<li><a class="reference internal" href="#listen-failed-alert" id="id355">listen_failed_alert</a></li>
+<li><a class="reference internal" href="#listen-succeeded-alert" id="id356">listen_succeeded_alert</a></li>
+<li><a class="reference internal" href="#portmap-error-alert" id="id357">portmap_error_alert</a></li>
+<li><a class="reference internal" href="#portmap-alert" id="id358">portmap_alert</a></li>
+<li><a class="reference internal" href="#portmap-log-alert" id="id359">portmap_log_alert</a></li>
+<li><a class="reference internal" href="#fastresume-rejected-alert" id="id360">fastresume_rejected_alert</a></li>
+<li><a class="reference internal" href="#peer-blocked-alert" id="id361">peer_blocked_alert</a></li>
+<li><a class="reference internal" href="#dht-announce-alert" id="id362">dht_announce_alert</a></li>
+<li><a class="reference internal" href="#dht-get-peers-alert" id="id363">dht_get_peers_alert</a></li>
+<li><a class="reference internal" href="#stats-alert" id="id364">stats_alert</a></li>
+<li><a class="reference internal" href="#cache-flushed-alert" id="id365">cache_flushed_alert</a></li>
+<li><a class="reference internal" href="#anonymous-mode-alert" id="id366">anonymous_mode_alert</a></li>
+<li><a class="reference internal" href="#lsd-peer-alert" id="id367">lsd_peer_alert</a></li>
+<li><a class="reference internal" href="#trackerid-alert" id="id368">trackerid_alert</a></li>
+<li><a class="reference internal" href="#dht-bootstrap-alert" id="id369">dht_bootstrap_alert</a></li>
+<li><a class="reference internal" href="#torrent-error-alert" id="id370">torrent_error_alert</a></li>
+<li><a class="reference internal" href="#torrent-need-cert-alert" id="id371">torrent_need_cert_alert</a></li>
+<li><a class="reference internal" href="#incoming-connection-alert" id="id372">incoming_connection_alert</a></li>
+<li><a class="reference internal" href="#add-torrent-alert" id="id373">add_torrent_alert</a></li>
+<li><a class="reference internal" href="#state-update-alert" id="id374">state_update_alert</a></li>
+<li><a class="reference internal" href="#session-stats-alert" id="id375">session_stats_alert</a></li>
+<li><a class="reference internal" href="#dht-error-alert" id="id376">dht_error_alert</a></li>
+<li><a class="reference internal" href="#dht-immutable-item-alert" id="id377">dht_immutable_item_alert</a></li>
+<li><a class="reference internal" href="#dht-mutable-item-alert" id="id378">dht_mutable_item_alert</a></li>
+<li><a class="reference internal" href="#dht-put-alert" id="id379">dht_put_alert</a></li>
+<li><a class="reference internal" href="#i2p-alert" id="id380">i2p_alert</a></li>
+<li><a class="reference internal" href="#dht-outgoing-get-peers-alert" id="id381">dht_outgoing_get_peers_alert</a></li>
+<li><a class="reference internal" href="#log-alert" id="id382">log_alert</a></li>
+<li><a class="reference internal" href="#torrent-log-alert" id="id383">torrent_log_alert</a></li>
+<li><a class="reference internal" href="#peer-log-alert" id="id384">peer_log_alert</a></li>
+<li><a class="reference internal" href="#lsd-error-alert" id="id385">lsd_error_alert</a></li>
+<li><a class="reference internal" href="#dht-lookup" id="id386">dht_lookup</a></li>
+<li><a class="reference internal" href="#dht-routing-bucket" id="id387">dht_routing_bucket</a></li>
+<li><a class="reference internal" href="#dht-stats-alert" id="id388">dht_stats_alert</a></li>
+<li><a class="reference internal" href="#incoming-request-alert" id="id389">incoming_request_alert</a></li>
+<li><a class="reference internal" href="#dht-log-alert" id="id390">dht_log_alert</a></li>
+<li><a class="reference internal" href="#dht-pkt-alert" id="id391">dht_pkt_alert</a></li>
+<li><a class="reference internal" href="#dht-get-peers-reply-alert" id="id392">dht_get_peers_reply_alert</a></li>
+<li><a class="reference internal" href="#dht-direct-response-alert" id="id393">dht_direct_response_alert</a></li>
+<li><a class="reference internal" href="#picker-log-alert" id="id394">picker_log_alert</a></li>
+<li><a class="reference internal" href="#alert-cast" id="id395">alert_cast()</a></li>
+<li><a class="reference internal" href="#operation-name" id="id396">operation_name()</a></li>
+<li><a class="reference internal" href="#enum-operation-t" id="id397">enum operation_t</a></li>
 </ul>
 </li>
 </ul>
@@ -490,24 +489,8 @@ struct tracker_alert : torrent_alert
 char const* <strong>tracker_url</strong> () const;
 </pre>
 <p>returns a null-terminated string of the tracker's URL</p>
-<a name="torrent_added_alert"></a></div>
-</div>
-<div class="section" id="torrent-added-alert">
-<h2>torrent_added_alert</h2>
-<p>Declared in &quot;<a class="reference external" href="../include/libtorrent/alert_types.hpp">libtorrent/alert_types.hpp</a>&quot;</p>
-<p>The <tt class="docutils literal">torrent_added_alert</tt> is posted once every time a torrent is successfully
-added. It doesn't contain any members of its own, but inherits the torrent handle
-from its base class.
-It's posted when the <tt class="docutils literal">status_notification</tt> bit is set in the alert_mask.</p>
-<pre class="literal-block">
-struct torrent_added_alert final : torrent_alert
-{
-   virtual std::string <strong>message</strong> () const override;
-
-   static const int static_category = alert::status_notification;
-};
-</pre>
 <a name="torrent_removed_alert"></a></div>
+</div>
 <div class="section" id="torrent-removed-alert">
 <h2>torrent_removed_alert</h2>
 <p>Declared in &quot;<a class="reference external" href="../include/libtorrent/alert_types.hpp">libtorrent/alert_types.hpp</a>&quot;</p>
@@ -872,7 +855,7 @@ struct scrape_failed_alert final : tracker_alert
    error_code error;
 };
 </pre>
-<a name="error_message()"></a><div class="section" id="id79">
+<a name="error_message()"></a><div class="section" id="id78">
 <h3>error_message()</h3>
 <pre class="literal-block">
 char const* <strong>error_message</strong> () const;
@@ -1425,7 +1408,7 @@ char const* <strong>server_url</strong> () const;
 </pre>
 <p>the URL the error is associated with</p>
 <a name="error_message()"></a></div>
-<div class="section" id="id151">
+<div class="section" id="id150">
 <h3>error_message()</h3>
 <pre class="literal-block">
 char const* <strong>error_message</strong> () const;
@@ -1751,7 +1734,7 @@ struct listen_succeeded_alert final : alert
    socket_type_t sock_type;
 };
 </pre>
-<a name="socket_type_t"></a><div class="section" id="id176">
+<a name="socket_type_t"></a><div class="section" id="id175">
 <h3>enum socket_type_t</h3>
 <p>Declared in &quot;<a class="reference external" href="../include/libtorrent/alert_types.hpp">libtorrent/alert_types.hpp</a>&quot;</p>
 <table border="1" class="docutils">
@@ -1954,7 +1937,7 @@ struct fastresume_rejected_alert final : torrent_alert
    char const* operation;
 };
 </pre>
-<a name="file_path()"></a><div class="section" id="id194">
+<a name="file_path()"></a><div class="section" id="id193">
 <h3>file_path()</h3>
 <pre class="literal-block">
 char const* <strong>file_path</strong> () const;
@@ -2325,7 +2308,7 @@ struct torrent_error_alert final : torrent_alert
    error_code error;
 };
 </pre>
-<a name="filename()"></a><div class="section" id="id226">
+<a name="filename()"></a><div class="section" id="id225">
 <h3>filename()</h3>
 <pre class="literal-block">
 char const* <strong>filename</strong> () const;
@@ -2502,7 +2485,7 @@ struct dht_error_alert final : alert
    op_t operation;
 };
 </pre>
-<a name="op_t"></a><div class="section" id="id248">
+<a name="op_t"></a><div class="section" id="id247">
 <h3>enum op_t</h3>
 <p>Declared in &quot;<a class="reference external" href="../include/libtorrent/alert_types.hpp">libtorrent/alert_types.hpp</a>&quot;</p>
 <table border="1" class="docutils">
@@ -2750,7 +2733,7 @@ struct torrent_log_alert final : torrent_alert
    static const int static_category = alert::torrent_log_notification;
 };
 </pre>
-<a name="msg()"></a><div class="section" id="id266">
+<a name="msg()"></a><div class="section" id="id265">
 <h3>msg()</h3>
 <pre class="literal-block">
 char const* <strong>msg</strong> () const;
@@ -2785,7 +2768,7 @@ struct peer_log_alert final : peer_alert
    direction_t direction;
 };
 </pre>
-<a name="msg()"></a><div class="section" id="id270">
+<a name="msg()"></a><div class="section" id="id269">
 <h3>msg()</h3>
 <pre class="literal-block">
 char const* <strong>msg</strong> () const;
@@ -3015,7 +2998,7 @@ struct dht_log_alert final : alert
    dht_module_t module;
 };
 </pre>
-<a name="log_message()"></a><div class="section" id="id282">
+<a name="log_message()"></a><div class="section" id="id281">
 <h3>log_message()</h3>
 <pre class="literal-block">
 char const* <strong>log_message</strong> () const;
@@ -3104,7 +3087,7 @@ respectively. This buffer is only valid for as long as the <a class="reference e
 is valid, which is owned by libtorrent and reclaimed whenever
 <a class="reference external" href="reference-Core.html#pop_alerts()">pop_alerts()</a> is called on the <a class="reference external" href="reference-Core.html#session">session</a>.</p>
 <a name="direction_t"></a></div>
-<div class="section" id="id290">
+<div class="section" id="id289">
 <h3>enum direction_t</h3>
 <p>Declared in &quot;<a class="reference external" href="../include/libtorrent/alert_types.hpp">libtorrent/alert_types.hpp</a>&quot;</p>
 <table border="1" class="docutils">

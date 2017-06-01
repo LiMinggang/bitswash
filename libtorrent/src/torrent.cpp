@@ -1364,6 +1364,7 @@ namespace libtorrent
 		if (m_file_progress.empty())
 		{
 			TORRENT_ASSERT(has_picker());
+			if (!need_loaded()) return;
 			m_file_progress.init(picker(), m_torrent_file->files());
 		}
 
@@ -3136,6 +3137,8 @@ namespace libtorrent
 			&& m_apply_ip_filter)
 			req.filter = m_ip_filter;
 
+		req.private_torrent = m_torrent_file->priv();
+
 		req.info_hash = m_torrent_file->info_hash();
 		req.pid = m_ses.get_peer_id();
 		req.downloaded = m_stat.total_payload_download() - m_total_failed_bytes;
@@ -3341,6 +3344,7 @@ namespace libtorrent
 		req.info_hash = m_torrent_file->info_hash();
 		req.kind |= tracker_request::scrape_request;
 		req.url = m_trackers[idx].url;
+		req.private_torrent = m_torrent_file->priv();
 #ifndef TORRENT_NO_DEPRECATE
 		req.auth = tracker_login();
 #endif
@@ -3638,6 +3642,9 @@ namespace libtorrent
 				// and they should be announced to in parallel
 
 				tracker_request req = r;
+
+				req.private_torrent = m_torrent_file->priv();
+
 				// tell the tracker to bind to the opposite protocol type
 				req.bind_ip = tracker_ip.is_v4()
 					? m_ses.get_ipv6_interface().address()
@@ -8770,6 +8777,7 @@ namespace libtorrent
 		}
 #endif
 
+		bool const notify_initialized = !m_connections_initialized;
 		m_connections_initialized = true;
 		m_files_checked = true;
 
@@ -8783,7 +8791,7 @@ namespace libtorrent
 
 			// all peer connections have to initialize themselves now that the metadata
 			// is available
-			if (!m_connections_initialized)
+			if (notify_initialized)
 			{
 				if (pc->is_disconnecting()) continue;
 				pc->on_metadata_impl();
