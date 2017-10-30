@@ -42,8 +42,6 @@ POSSIBILITY OF SUCH DAMAGE.
 #include "libtorrent/alert_types.hpp"
 #include "libtorrent/create_torrent.hpp"
 #include "libtorrent/socket_io.hpp" // print_endpoint
-#include "libtorrent/socket_type.hpp"
-#include "libtorrent/instantiate_connection.hpp"
 #include "libtorrent/ip_filter.hpp"
 #include "libtorrent/session_stats.hpp"
 #include "libtorrent/thread.hpp"
@@ -58,11 +56,6 @@ POSSIBILITY OF SUCH DAMAGE.
 #include "test.hpp"
 #include "test_utils.hpp"
 #include "setup_transfer.hpp"
-
-#ifdef TORRENT_USE_OPENSSL
-#include <boost/asio/ssl/stream.hpp>
-#include <boost/asio/ssl/context.hpp>
-#endif
 
 #ifndef _WIN32
 #include <spawn.h>
@@ -595,7 +588,8 @@ boost::shared_ptr<T> clone_ptr(boost::shared_ptr<T> const& ptr)
 unsigned char random_byte()
 { return std::rand() & 0xff; }
 
-void create_random_files(std::string const& path, const int file_sizes[], int num_files)
+void create_random_files(std::string const& path, const int file_sizes[], int num_files
+	, file_storage* fs)
 {
 	error_code ec;
 	char* random_data = (char*)malloc(300000);
@@ -613,6 +607,7 @@ void create_random_files(std::string const& path, const int file_sizes[], int nu
 		full_path = combine_path(full_path, filename);
 
 		int to_write = file_sizes[i];
+		if (fs) fs->add_file(full_path, to_write);
 		file f(full_path, file::write_only, ec);
 		if (ec) fprintf(stderr, "failed to create file \"%s\": (%d) %s\n"
 			, full_path.c_str(), ec.value(), ec.message().c_str());

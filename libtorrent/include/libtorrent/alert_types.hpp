@@ -585,7 +585,7 @@ namespace libtorrent
 		virtual std::string message() const TORRENT_OVERRIDE;
 
 		// tells how many peers the tracker returned in this response. This is
-		// not expected to be more thant the ``num_want`` settings. These are not necessarily
+		// not expected to be greater than the ``num_want`` settings. These are not necessarily
 		// all new peers, some of them may already be connected.
 		int num_peers;
 	};
@@ -786,7 +786,7 @@ namespace libtorrent
 		bool peer_interested;
 
 		// if this is true, the peer is not allowed to download this piece because
-		// of superseeding rules.
+		// of super-seeding rules.
 		bool withheld;
 	};
 
@@ -913,17 +913,18 @@ namespace libtorrent
 		int piece_index;
 	};
 
-	// The ``storage_moved_alert`` is generated when all the disk IO has completed and the
-	// files have been moved, as an effect of a call to ``torrent_handle::move_storage``. This
-	// is useful to synchronize with the actual disk. The ``path`` member is the new path of
-	// the storage.
+	// The ``storage_moved_alert`` is generated when all the disk IO has
+	// completed and the files have been moved, as an effect of a call to
+	// ``torrent_handle::move_storage``. This is useful to synchronize with the
+	// actual disk. The ``storage_path()`` member return the new path of the
+	// storage.
 	struct TORRENT_EXPORT storage_moved_alert TORRENT_FINAL : torrent_alert
 	{
 		// internal
 		storage_moved_alert(aux::stack_allocator& alloc
 			, torrent_handle const& h, std::string const& p);
 
-		TORRENT_DEFINE_ALERT(storage_moved_alert, 33)
+		TORRENT_DEFINE_ALERT_PRIO(storage_moved_alert, 33)
 
 		static const int static_category = alert::storage_notification;
 		virtual std::string message() const TORRENT_OVERRIDE;
@@ -950,7 +951,7 @@ namespace libtorrent
 			, std::string const& file
 			, char const* op);
 
-		TORRENT_DEFINE_ALERT(storage_moved_failed_alert, 34)
+		TORRENT_DEFINE_ALERT_PRIO(storage_moved_failed_alert, 34)
 
 		static const int static_category = alert::storage_notification;
 		virtual std::string message() const TORRENT_OVERRIDE;
@@ -1444,7 +1445,7 @@ namespace libtorrent
 
 	private:
 
-		// TODO: 2 should the alert baseclass have this object instead?
+		// TODO: 2 should the alert base class have this object instead?
 		aux::stack_allocator const& m_alloc;
 
 		int m_log_idx;
@@ -1885,7 +1886,7 @@ namespace libtorrent
 	};
 
 #ifndef TORRENT_NO_DEPRECATE
-	struct TORRENT_DEPRECATED TORRENT_EXPORT mmap_cache_alert TORRENT_FINAL : alert
+	struct TORRENT_DEPRECATED_EXPORT mmap_cache_alert TORRENT_FINAL : alert
 	{
 		mmap_cache_alert(aux::stack_allocator& alloc
 			, error_code const& ec);
@@ -2007,7 +2008,7 @@ namespace libtorrent
 		virtual std::string message() const TORRENT_OVERRIDE;
 
 		// the target hash of the immutable item. This must
-		// match the sha-1 hash of the bencoded form of ``item``.
+		// match the SHA-1 hash of the bencoded form of ``item``.
 		sha1_hash target;
 
 		// the data for this item

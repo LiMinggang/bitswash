@@ -40,6 +40,7 @@ POSSIBILITY OF SUCH DAMAGE.
 #include "libtorrent/torrent.hpp"
 #include "libtorrent/peer_info.hpp"
 #include "libtorrent/extensions.hpp"
+#include "libtorrent/magnet_uri.hpp"
 #include "settings.hpp"
 #include <boost/tuple/tuple.hpp>
 #include <boost/make_shared.hpp>
@@ -392,7 +393,7 @@ TORRENT_TEST(torrent_total_size_zero)
 	TEST_CHECK(ec);
 }
 
-TORRENT_TEST(queue)
+void test_queue(add_torrent_params p)
 {
 	lt::settings_pack pack = settings();
 	// we're not testing the hash check, just accept the data we write
@@ -411,7 +412,6 @@ TORRENT_TEST(queue)
 		std::vector<char> buf;
 		bencode(std::back_inserter(buf), t.generate());
 		boost::shared_ptr<torrent_info> ti = boost::make_shared<torrent_info>(&buf[0], buf.size());
-		add_torrent_params p;
 		p.ti = ti;
 		p.save_path = ".";
 		torrents.push_back(ses.add_torrent(p));
@@ -500,5 +500,34 @@ TORRENT_TEST(queue)
 	TEST_EQUAL(torrents[2].queue_position(), 2);
 	TEST_EQUAL(torrents[4].queue_position(), 3);
 	TEST_EQUAL(torrents[3].queue_position(), 4);
+}
+
+TORRENT_TEST(queue)
+{
+	test_queue(add_torrent_params());
+}
+
+TORRENT_TEST(queue_paused)
+{
+	add_torrent_params p;
+	p.flags |= add_torrent_params::flag_paused;
+	p.flags &= ~add_torrent_params::flag_auto_managed;
+	test_queue(p);
+}
+
+TORRENT_TEST(test_move_storage_no_metadata)
+{
+	lt::session ses(settings());
+	add_torrent_params p;
+	p.save_path = "save_path";
+	error_code ec;
+	parse_magnet_uri("magnet?xt=urn:btih:abababababababababababababababababababab", p, ec);
+	torrent_handle h = ses.add_torrent(p);
+
+	TEST_EQUAL(h.status().save_path, complete("save_path"));
+
+	h.move_storage("save_path_1");
+
+	TEST_EQUAL(h.status().save_path, complete("save_path_1"));
 }
 

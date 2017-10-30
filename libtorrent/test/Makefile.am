@@ -10,6 +10,7 @@ test_programs = \
   test_file                  \
   test_privacy               \
   test_priority              \
+  test_remove_torrent        \
   test_auto_unchoke          \
   test_checking              \
   test_fast_extension        \
@@ -108,6 +109,8 @@ EXTRA_DIST = Jamfile \
   test_torrents/url_seed_multi_space.torrent \
   test_torrents/url_seed_multi_space_nolist.torrent \
   test_torrents/whitespace_url.torrent \
+  test_torrents/invalid_filename.torrent \
+  test_torrents/invalid_filename2.torrent \
   mutable_test_torrents/test1.torrent \
   mutable_test_torrents/test1_pad_files.torrent \
   mutable_test_torrents/test1_single.torrent\
@@ -197,6 +200,7 @@ test_stat_cache_SOURCES = test_stat_cache.cpp
 test_file_SOURCES = test_file.cpp
 test_privacy_SOURCES = test_privacy.cpp
 test_priority_SOURCES = test_priority.cpp
+test_remove_torrent_SOURCES = test_remove_torrent.cpp
 test_auto_unchoke_SOURCES = test_auto_unchoke.cpp
 test_checking_SOURCES = test_checking.cpp
 test_enum_net_SOURCES = test_enum_net.cpp

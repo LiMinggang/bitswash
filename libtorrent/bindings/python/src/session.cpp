@@ -9,15 +9,15 @@
 #include <libtorrent/error_code.hpp>
 #include <libtorrent/ip_filter.hpp>
 #include <libtorrent/disk_io_thread.hpp>
-#include <libtorrent/aux_/session_settings.hpp>
 #include <libtorrent/extensions.hpp>
 #include <libtorrent/bdecode.hpp>
 #include <libtorrent/bencode.hpp>
-#include <libtorrent/aux_/session_impl.hpp> // for settings_map()
 #include <libtorrent/torrent_info.hpp>
 #include <libtorrent/kademlia/item.hpp> // for sign_mutable_item
 #include <libtorrent/time.hpp>
 #include <libtorrent/session_stats.hpp>
+#include <libtorrent/session_status.hpp>
+#include <libtorrent/peer_class_type_filter.hpp>
 
 #ifndef TORRENT_NO_DEPRECATE
 #include <libtorrent/extensions/lt_trackers.hpp>
@@ -107,11 +107,10 @@ namespace
 
 	void make_settings_pack(lt::settings_pack& p, dict const& sett_dict)
 	{
-		list iterkeys = (list)sett_dict.keys();
-		int const len = boost::python::len(iterkeys);
-		for (int i = 0; i < len; i++)
+		stl_input_iterator<std::string> i(sett_dict.keys()), end;
+		for (; i != end; ++i)
 		{
-			std::string const key = extract<std::string>(iterkeys[i]);
+			std::string const key = *i;
 
 			int sett = setting_by_name(key);
 			if (sett < 0)
@@ -613,6 +612,72 @@ namespace
 		ses.load_state(e, flags);
 	}
 
+	dict get_peer_class(lt::session& ses, int const pc)
+	{
+		lt::peer_class_info pci;
+		{
+			allow_threading_guard guard;
+			pci = ses.get_peer_class(pc);
+		}
+		dict ret;
+		ret["ignore_unchoke_slots"] = pci.ignore_unchoke_slots;
+		ret["connection_limit_factor"] = pci.connection_limit_factor;
+		ret["label"] = pci.label;
+		ret["upload_limit"] = pci.upload_limit;
+		ret["download_limit"] = pci.download_limit;
+		ret["upload_priority"] = pci.upload_priority;
+		ret["download_priority"] = pci.download_priority;
+		return ret;
+	}
+
+	void set_peer_class(lt::session& ses, int const pc, dict info)
+	{
+		lt::peer_class_info pci;
+		stl_input_iterator<std::string> i(info.keys()), end;
+		for (; i != end; ++i)
+		{
+			std::string const key = *i;
+
+			object const value = info[key];
+			if (key == "ignore_unchoke_slots")
+			{
+				pci.ignore_unchoke_slots = extract<bool>(value);
+			}
+			else if (key == "connection_limit_factor")
+			{
+				pci.connection_limit_factor = extract<int>(value);
+			}
+			else if (key == "label")
+			{
+				pci.label = extract<std::string>(value);
+			}
+			else if (key == "upload_limit")
+			{
+				pci.upload_limit = extract<int>(value);
+			}
+			else if (key == "download_limit")
+			{
+				pci.download_limit = extract<int>(value);
+			}
+			else if (key == "upload_priority")
+			{
+				pci.upload_priority = extract<int>(value);
+			}
+			else if (key == "download_priority")
+			{
+				pci.download_priority = extract<int>(value);
+			}
+			else
+			{
+				PyErr_SetString(PyExc_KeyError, ("unknown name in peer_class_info: " + key).c_str());
+				throw_error_already_set();
+			}
+		}
+
+		allow_threading_guard guard;
+		ses.set_peer_class(pc, pci);
+	}
+
 #ifndef TORRENT_DISABLE_DHT
     void dht_get_mutable_item(lt::session& ses, std::string key, std::string salt)
     {
@@ -649,7 +714,7 @@ namespace
                          , salt);
     }
 #endif
-} // namespace unnamed
+} // anonymous namespace
 
 
 void bind_session()
@@ -800,7 +865,25 @@ void bind_session()
 #endif
     ;
 
-    class_<lt::session, boost::noncopyable>("session", no_init)
+    class_<lt::peer_class_type_filter>("peer_class_type_filter")
+        .def(init<>())
+        .def("add", &lt::peer_class_type_filter::add)
+        .def("remove", &lt::peer_class_type_filter::remove)
+        .def("disallow", &lt::peer_class_type_filter::disallow)
+        .def("allow", &lt::peer_class_type_filter::allow)
+        .def("apply", &lt::peer_class_type_filter::apply)
+        ;
+
+    enum_<lt::peer_class_type_filter::socket_type_t>("socket_type_t")
+        .value("tcp_socket", peer_class_type_filter::tcp_socket)
+        .value("utp_socket", peer_class_type_filter::utp_socket)
+        .value("ssl_tcp_socket", peer_class_type_filter::ssl_tcp_socket)
+        .value("ssl_utp_socket", peer_class_type_filter::ssl_utp_socket)
+        .value("i2p_socket", peer_class_type_filter::i2p_socket)
+        ;
+
+    {
+    scope ses = class_<lt::session, boost::noncopyable>("session", no_init)
         .def("__init__", boost::python::make_constructor(&make_session
                 , default_call_policies()
                 , (arg("settings")
@@ -894,6 +977,12 @@ void bind_session()
         .def("get_cache_info", &get_cache_info1, (arg("handle") = torrent_handle(), arg("flags") = 0))
         .def("add_port_mapping", allow_threads(&lt::session::add_port_mapping))
         .def("delete_port_mapping", allow_threads(&lt::session::delete_port_mapping))
+        .def("set_peer_class_filter", &lt::session::set_peer_class_filter)
+        .def("set_peer_class_type_filter", &lt::session::set_peer_class_type_filter)
+        .def("create_peer_class", &lt::session::create_peer_class)
+        .def("delete_peer_class", &lt::session::delete_peer_class)
+        .def("get_peer_class", &get_peer_class)
+        .def("set_peer_class", &set_peer_class)
 
 #ifndef TORRENT_NO_DEPRECATE
         .def(
@@ -943,6 +1032,11 @@ void bind_session()
         .def("set_peer_id", allow_threads(&lt::session::set_peer_id))
 #endif // TORRENT_NO_DEPRECATE
         ;
+
+    ses.attr("global_peer_class_id") = int(session::global_peer_class_id);
+    ses.attr("tcp_peer_class_id") = int(session::tcp_peer_class_id);
+    ses.attr("local_peer_class_id") = int(session::local_peer_class_id);
+    }
 
     enum_<lt::session::protocol_type>("protocol_type")
         .value("udp", lt::session::udp)

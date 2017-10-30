@@ -3,16 +3,16 @@ libtorrent manual
 =================
 
 :Author: Arvid Norberg, arvid@libtorrent.org
-:Version: 1.1.3
+:Version: 1.1.5
 
 .. contents:: Table of contents
   :depth: 2
   :backlinks: none
 
 The following troubleshooting chart may help in finding out why torrents fail
-to download. It is not complete, please submit suggestions via mail to
-arvid@libtorrent.org or to the `mailing list`_. Ideally in the form of patches
-against ``docs/troubleshooting.dot``.
+to download. It is not complete, please submit suggestions via pull requests at
+https://github.com/arvidn/libtorrent or to the `mailing list`_. Ideally in the
+form of patches against ``docs/troubleshooting.dot``.
 
 .. _`mailing list`: http://lists.sourceforge.net/lists/listinfo/libtorrent-discuss
 

@@ -135,7 +135,7 @@ void natpmp::start()
 	for (std::vector<mapping_t>::iterator i = m_mappings.begin()
 		, end(m_mappings.end()); i != end; ++i)
 	{
-		if (i->protocol != none
+		if (i->protocol == none
 			|| i->action != mapping_t::action_none)
 			continue;
 		i->action = mapping_t::action_add;
@@ -279,7 +279,8 @@ void natpmp::try_next_mapping(int i, mutex::scoped_lock& l)
 
 	std::vector<mapping_t>::iterator m = std::find_if(
 		m_mappings.begin(), m_mappings.end()
-		, boost::bind(&mapping_t::action, _1) != int(mapping_t::action_none));
+		, boost::bind(&mapping_t::action, _1) != int(mapping_t::action_none)
+		&& boost::bind(&mapping_t::protocol, _1) != int(none));
 
 	if (m == m_mappings.end())
 	{

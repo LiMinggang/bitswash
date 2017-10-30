@@ -101,10 +101,10 @@ namespace libtorrent
 			save_feeds TORRENT_DEPRECATED_ENUM =        0x080,
 			save_proxy TORRENT_DEPRECATED_ENUM =        0x008,
 			save_i2p_proxy TORRENT_DEPRECATED_ENUM =    0x010,
-			save_dht_proxy TORRENT_DEPRECATED_ENUM = save_proxy,
-			save_peer_proxy TORRENT_DEPRECATED_ENUM = save_proxy,
-			save_web_proxy TORRENT_DEPRECATED_ENUM = save_proxy,
-			save_tracker_proxy TORRENT_DEPRECATED_ENUM = save_proxy
+			save_dht_proxy TORRENT_DEPRECATED_ENUM = 0x008, // save_proxy
+			save_peer_proxy TORRENT_DEPRECATED_ENUM = 0x008, // save_proxy
+			save_web_proxy TORRENT_DEPRECATED_ENUM = 0x008, // save_proxy
+			save_tracker_proxy TORRENT_DEPRECATED_ENUM = 0x008 // save_proxy
 #endif
 		};
 
@@ -263,7 +263,7 @@ namespace libtorrent
 		// and discouraged*
 		//
 		// This function enables dynamic-loading-of-torrent-files_. When a
-		// torrent is unloaded but needs to be availabe in memory, this function
+		// torrent is unloaded but needs to be available in memory, this function
 		// is called **from within the libtorrent network thread**. From within
 		// this thread, you can **not** use any of the public APIs of libtorrent
 		// itself. The the info-hash of the torrent is passed in to the function
@@ -407,7 +407,7 @@ namespace libtorrent
 
 		// store the given bencoded data as an immutable item in the DHT.
 		// the returned hash is the key that is to be used to look the item
-		// up again. It's just the sha-1 hash of the bencoded form of the
+		// up again. It's just the SHA-1 hash of the bencoded form of the
 		// structure.
 		sha1_hash dht_put_item(entry data);
 
@@ -424,7 +424,7 @@ namespace libtorrent
 		// 	to be set to the value to be stored by the function.
 		//
 		// boost::array<char,64>& signature
-		// 	the signature authenticating the current value. This may be zeroes
+		// 	the signature authenticating the current value. This may be zeros
 		// 	if there is currently no value stored. The function is expected to
 		// 	fill in this buffer with the signature of the new value to store.
 		// 	To generate the signature, you may want to use the
@@ -444,7 +444,7 @@ namespace libtorrent
 		// it is critical to not perform any blocking operations. Ideally not
 		// even locking a mutex. Pass any data required for this function along
 		// with the function object's context and make the function entirely
-		// self-contained. The only reason data blobs' values are computed
+		// self-contained. The only reason data blob's value is computed
 		// via a function instead of just passing in the new value is to avoid
 		// race conditions. If you want to *update* the value in the DHT, you
 		// must first retrieve it, then modify it, then write it back. The way
@@ -483,11 +483,11 @@ namespace libtorrent
 		// in libtorrent are:
 		//
 		// metadata extension
-		// 	Allows peers to download the metadata (.torren files) from the swarm
+		// 	Allows peers to download the metadata (.torrent files) from the swarm
 		// 	directly. Makes it possible to join a swarm with just a tracker and
 		// 	info-hash.
 		//
-		// ::
+		// .. code:: c++
 		//
 		// 	#include <libtorrent/extensions/metadata_transfer.hpp>
 		// 	ses.add_extension(&libtorrent::create_metadata_plugin);
@@ -495,7 +495,7 @@ namespace libtorrent
 		// uTorrent metadata
 		// 	Same as ``metadata extension`` but compatible with uTorrent.
 		//
-		// ::
+		// .. code:: c++
 		//
 		// 	#include <libtorrent/extensions/ut_metadata.hpp>
 		// 	ses.add_extension(&libtorrent::create_ut_metadata_plugin);
@@ -503,7 +503,7 @@ namespace libtorrent
 		// uTorrent peer exchange
 		// 	Exchanges peers between clients.
 		//
-		// ::
+		// .. code:: c++
 		//
 		// 	#include <libtorrent/extensions/ut_pex.hpp>
 		// 	ses.add_extension(&libtorrent::create_ut_pex_plugin);
@@ -513,7 +513,7 @@ namespace libtorrent
 		// 	that sends bad data with very high accuracy. Should
 		// 	eliminate most problems on poisoned torrents.
 		//
-		// ::
+		// .. code:: c++
 		//
 		// 	#include <libtorrent/extensions/smart_ban.hpp>
 		// 	ses.add_extension(&libtorrent::create_smart_ban_plugin);
@@ -629,7 +629,9 @@ namespace libtorrent
 		// For more info, see ip_filter.
 		//
 		// For example, to make all peers in the range 200.1.1.0 - 200.1.255.255
-		// belong to their own peer class, apply the following filter::
+		// belong to their own peer class, apply the following filter:
+		// 
+		// .. code:: c++
 		//
 		// 	ip_filter f;
 		// 	int my_class = ses.create_peer_class("200.1.x.x IP range");
@@ -669,7 +671,7 @@ namespace libtorrent
 		void set_peer_class_type_filter(peer_class_type_filter const& f);
 
 		// Creates a new peer class (see peer-classes_) with the given name. The
-		// returned integer is the new peer class' identifier. Peer classes may
+		// returned integer is the new peer class identifier. Peer classes may
 		// have the same name, so each invocation of this function creates a new
 		// class and returns a unique identifier.
 		//

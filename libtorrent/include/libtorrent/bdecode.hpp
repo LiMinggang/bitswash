@@ -292,9 +292,9 @@ struct TORRENT_EXPORT bdecode_node
 	// size of the list. ``size()`` returns the size of the list.
 	bdecode_node list_at(int i) const;
 	std::string list_string_value_at(int i
-		, char const* default_val = "");
+		, char const* default_val = "") const;
 	boost::int64_t list_int_value_at(int i
-		, boost::int64_t default_val = 0);
+		, boost::int64_t default_val = 0) const;
 	int list_size() const;
 
 	// Functions with the ``dict_`` prefix operates on dictionaries. They are
@@ -339,7 +339,7 @@ struct TORRENT_EXPORT bdecode_node
 	// Swap contents.
 	void swap(bdecode_node& n);
 
-	// pre-allocate memory for the specified numbers of tokens. This is
+	// preallocate memory for the specified numbers of tokens. This is
 	// useful if you know approximately how many tokens are in the file
 	// you are about to parse. Doing so will save realloc operations
 	// while parsing. You should only call this on the root node, before

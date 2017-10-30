@@ -76,6 +76,18 @@ POSSIBILITY OF SUCH DAMAGE.
 #include "libtorrent/debug.hpp"
 #include "libtorrent/aux_/file_progress.hpp"
 
+#ifdef TORRENT_USE_OPENSSL
+// there is no forward declaration header for asio
+namespace boost {
+namespace asio {
+namespace ssl {
+	struct context;
+	class verify_context;
+}
+}
+}
+#endif
+
 #if TORRENT_COMPLETE_TYPES_REQUIRED
 #include "libtorrent/peer_connection.hpp"
 #endif
@@ -1030,7 +1042,7 @@ namespace libtorrent
 
 		// renames the file with the given index to the new name
 		// the name may include a directory path
-		// returns false on failure
+		// posts alert to indicate success or failure
 		void rename_file(int index, std::string const& name);
 
 		// unless this returns true, new connections must wait
@@ -1167,6 +1179,10 @@ namespace libtorrent
 		void on_save_resume_data(disk_io_job const* j);
 		void on_file_renamed(disk_io_job const* j);
 		void on_cache_flushed(disk_io_job const* j);
+
+		// this is used when a torrent is being removed.It synchronizes with the
+		// disk thread
+		void on_torrent_aborted();
 
 		// upload and download rate limits for the torrent
 		void set_limit_impl(int limit, int channel, bool state_update = true);
@@ -1742,6 +1758,10 @@ namespace libtorrent
 
 		// set to true when torrent is start()ed. It may only be started once
 		bool m_was_started;
+
+		// this is set to true while we're looping over m_connections. We may not
+		// mutate the list while doing this
+		mutable int m_iterating_connections;
 #endif
 	};
 

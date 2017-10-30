@@ -134,6 +134,8 @@ static test_torrent_t test_torrents[] =
 	{ "unordered.torrent" },
 	{ "symlink_zero_size.torrent" },
 	{ "pad_file_no_path.torrent" },
+	{ "invalid_filename.torrent" },
+	{ "invalid_filename2.torrent" },
 };
 
 struct test_failing_torrent_t
@@ -326,6 +328,11 @@ TORRENT_TEST(sanitize_path_trailing_spaces)
 TORRENT_TEST(sanitize_path)
 {
 	std::string path;
+
+	sanitize_append_path_element(path, "\0\0\xed\0\x80", 5);
+	TEST_EQUAL(path, "_");
+
+	path.clear();
 	sanitize_append_path_element(path, "/a/", 3);
 	sanitize_append_path_element(path, "b", 1);
 	sanitize_append_path_element(path, "c", 1);
@@ -468,7 +475,7 @@ TORRENT_TEST(sanitize_path)
 	// 5-byte utf-8 sequence (not allowed)
 	path.clear();
 	sanitize_append_path_element(path, "filename\xf8\x9f\x9f\x9f\x9f" "foobar", 19);
-	TEST_EQUAL(path, "filename_____foobar");
+	TEST_EQUAL(path, "filename_foobar");
 
 	// redundant (overlong) 2-byte sequence
 	// ascii code 0x2e encoded with a leading 0
@@ -487,6 +494,34 @@ TORRENT_TEST(sanitize_path)
 	path.clear();
 	sanitize_append_path_element(path, "filename\xf0\x80\x80\xae", 12);
 	TEST_EQUAL(path, "filename_");
+
+	// a filename where every character is filtered is not replaced by an understcore
+	path.clear();
+	sanitize_append_path_element(path, "//\\", 3);
+	TEST_EQUAL(path, "");
+
+	// make sure suspicious unicode characters are filtered out
+	path.clear();
+	// that's utf-8 for U+200e LEFT-TO-RIGHT MARK
+	sanitize_append_path_element(path, "foo\xe2\x80\x8e" "bar", 9);
+	TEST_EQUAL(path, "foobar");
+
+	// make sure suspicious unicode characters are filtered out
+	path.clear();
+	// that's utf-8 for U+202b RIGHT-TO-LEFT EMBEDDING
+	sanitize_append_path_element(path, "foo\xe2\x80\xab" "bar", 9);
+	TEST_EQUAL(path, "foobar");
+}
+
+TORRENT_TEST(sanitize_path_zeroes)
+{
+	std::string path;
+	sanitize_append_path_element(path, "\0foo", 4);
+	TEST_EQUAL(path, "foo");
+
+	path.clear();
+	sanitize_append_path_element(path, "\0\0\0\0", 4);
+	TEST_EQUAL(path, "");
 }
 
 TORRENT_TEST(verify_encoding)
@@ -568,6 +603,12 @@ TORRENT_TEST(verify_encoding)
 	TEST_CHECK(!verify_encoding(test));
 	fprintf(stdout, "%s\n", test.c_str());
 	TEST_CHECK(test == "filename____");
+
+	// missing byte header
+	test = "filename\xed\0\x80";
+	TEST_CHECK(!verify_encoding(test));
+	fprintf(stdout, "%s\n", test.c_str());
+	TEST_CHECK(test == "filename_");
 }
 
 TORRENT_TEST(parse_torrents)
@@ -729,6 +770,14 @@ TORRENT_TEST(parse_torrents)
 		{
 			TEST_EQUAL(ti->num_files(), 2);
 			TEST_EQUAL(ti->files().file_path(1), combine_path(".pad", "0"));
+		}
+		else if (std::string(test_torrents[i].file) == "invalid_filename.torrent")
+		{
+			TEST_EQUAL(ti->num_files(), 2);
+		}
+		else if (std::string(test_torrents[i].file) == "invalid_filename2.torrent")
+		{
+			TEST_EQUAL(ti->num_files(), 3);
 		}
 
 		file_storage const& fs = ti->files();

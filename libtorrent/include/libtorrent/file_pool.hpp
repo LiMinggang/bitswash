@@ -126,7 +126,7 @@ namespace libtorrent
 
 	private:
 
-		void remove_oldest(mutex::scoped_lock& l);
+		file_handle remove_oldest(mutex::scoped_lock&);
 
 		int m_size;
 		bool m_low_prio_io;
@@ -144,7 +144,7 @@ namespace libtorrent
 		};
 
 		// maps storage pointer, file index pairs to the
-		// lru entry for the file
+		// LRU entry for the file
 		typedef std::map<std::pair<void*, int>, lru_file_entry> file_set;
 
 		file_set m_files;

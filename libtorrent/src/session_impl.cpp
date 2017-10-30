@@ -150,8 +150,13 @@ namespace
 #include <openssl/crypto.h>
 #include <openssl/rand.h>
 
-namespace
-{
+// by openssl changelog at https://www.openssl.org/news/changelog.html
+// Changes between 1.0.2h and 1.1.0  [25 Aug 2016]
+// - Most global cleanup functions are no longer required because they are handled
+//   via auto-deinit. Affected function CRYPTO_cleanup_all_ex_data()
+#if !defined(OPENSSL_API_COMPAT) || OPENSSL_API_COMPAT < 0x10100000L
+namespace {
+
 	// openssl requires this to clean up internal
 	// structures it allocates
 	struct openssl_cleanup
@@ -159,6 +164,7 @@ namespace
 		~openssl_cleanup() { CRYPTO_cleanup_all_ex_data(); }
 	} openssl_global_destructor;
 }
+#endif
 
 #endif // TORRENT_USE_OPENSSL
 
@@ -1294,7 +1300,7 @@ namespace aux {
 	{
 		TORRENT_ASSERT(is_single_thread());
 		// if you hit this assert, you're deleting a non-existent peer class
-		TORRENT_ASSERT(m_classes.at(cid));
+		TORRENT_ASSERT_PRECOND(m_classes.at(cid));
 		if (m_classes.at(cid) == 0) return;
 		m_classes.decref(cid);
 	}
@@ -1304,7 +1310,7 @@ namespace aux {
 		peer_class_info ret;
 		peer_class* pc = m_classes.at(cid);
 		// if you hit this assert, you're passing in an invalid cid
-		TORRENT_ASSERT(pc);
+		TORRENT_ASSERT_PRECOND(pc);
 		if (pc == 0)
 		{
 #ifdef TORRENT_DEBUG
@@ -1351,7 +1357,7 @@ namespace aux {
 	{
 		peer_class* pc = m_classes.at(cid);
 		// if you hit this assert, you're passing in an invalid cid
-		TORRENT_ASSERT(pc);
+		TORRENT_ASSERT_PRECOND(pc);
 		if (pc == 0) return;
 
 		pc->set_info(&pci);
@@ -1743,8 +1749,9 @@ namespace aux {
 			error_code err;
 #ifdef TORRENT_WINDOWS
 			ret.sock->set_option(exclusive_address_use(true), err);
-#endif
+#else
 			ret.sock->set_option(tcp::acceptor::reuse_address(true), err);
+#endif
 		}
 
 #if TORRENT_USE_IPV6
@@ -2249,7 +2256,8 @@ retry:
 		if ((mask & 2) && m_upnp)
 		{
 			if (m_tcp_mapping[1] != -1) m_upnp->delete_mapping(m_tcp_mapping[1]);
-			m_tcp_mapping[1] = m_upnp->add_mapping(upnp::tcp, tcp_port, tcp_port);
+			m_tcp_mapping[1] = m_upnp->add_mapping(upnp::tcp, tcp_port
+				, tcp::endpoint(m_listen_interface.address(), tcp_port));
 #ifdef TORRENT_USE_OPENSSL
 			if (m_ssl_tcp_mapping[1] != -1)
 			{
@@ -2257,7 +2265,7 @@ retry:
 				m_ssl_tcp_mapping[1] = -1;
 			}
 			if (ssl_port > 0) m_ssl_tcp_mapping[1] = m_upnp->add_mapping(upnp::tcp
-				, ssl_port, ssl_port);
+				, ssl_port, tcp::endpoint(m_listen_interface.address(), ssl_port));
 #endif
 		}
 	}
@@ -4869,8 +4877,7 @@ retry:
 
 	std::pair<boost::shared_ptr<torrent>, bool>
 	session_impl::add_torrent_impl(
-		add_torrent_params& params
-		, error_code& ec)
+		add_torrent_params& params, error_code& ec)
 	{
 		TORRENT_ASSERT(!params.save_path.empty());
 
@@ -5052,10 +5059,18 @@ retry:
 
 	void session_impl::update_outgoing_interfaces()
 	{
-		std::string net_interfaces = m_settings.get_str(settings_pack::outgoing_interfaces);
+		std::string const net_interfaces = m_settings.get_str(settings_pack::outgoing_interfaces);
 
 		// declared in string_util.hpp
 		parse_comma_separated_string(net_interfaces, m_net_interfaces);
+
+#ifndef TORRENT_DISABLE_LOGGING
+		if (!net_interfaces.empty() && m_net_interfaces.empty())
+		{
+			session_log("ERROR: failed to parse outgoing interface list: %s"
+				, net_interfaces.c_str());
+		}
+#endif
 	}
 
 	tcp::endpoint session_impl::bind_outgoing_socket(socket_type& s, address
@@ -5066,8 +5081,9 @@ retry:
 		{
 #ifdef TORRENT_WINDOWS
 			s.set_option(exclusive_address_use(true), ec);
-#endif
+#else
 			s.set_option(tcp::acceptor::reuse_address(true), ec);
+#endif
 			// ignore errors because the underlying socket may not
 			// be opened yet. This happens when we're routing through
 			// a proxy. In that case, we don't yet know the address of
@@ -5247,13 +5263,18 @@ retry:
 	void session_impl::update_listen_interfaces()
 	{
 
-		std::string net_interfaces = m_settings.get_str(settings_pack::listen_interfaces);
+		std::string const net_interfaces = m_settings.get_str(settings_pack::listen_interfaces);
 		std::vector<std::pair<std::string, int> > new_listen_interfaces;
 
 		// declared in string_util.hpp
 		parse_comma_separated_string_port(net_interfaces, new_listen_interfaces);
 
 #ifndef TORRENT_DISABLE_LOGGING
+		if (!net_interfaces.empty() && new_listen_interfaces.empty())
+		{
+			session_log("ERROR: failed to parse listen_interfaces setting: %s"
+				, net_interfaces.c_str());
+		}
 		session_log("update listen interfaces: %s", net_interfaces.c_str());
 #endif
 
@@ -5433,6 +5454,13 @@ retry:
 		std::string const& node_list = m_settings.get_str(settings_pack::dht_bootstrap_nodes);
 		std::vector<std::pair<std::string, int> > nodes;
 		parse_comma_separated_string_port(node_list, nodes);
+
+#ifndef TORRENT_DISABLE_LOGGING
+		if (!node_list.empty() && nodes.empty())
+		{
+			session_log("ERROR: failed to parse DHT bootstrap list: %s", node_list.c_str());
+		}
+#endif
 
 		for (int i = 0; i < nodes.size(); ++i)
 		{
@@ -5992,7 +6020,8 @@ retry:
 	void session_impl::maybe_update_udp_mapping(int const nat, bool const ssl
 		, int const local_port, int const external_port)
 	{
-		int local, external, protocol;
+		int external, protocol;
+		tcp::endpoint local_ep;
 #ifdef TORRENT_USE_OPENSSL
 		int* mapping = ssl ? m_ssl_udp_mapping : m_udp_mapping;
 #else
@@ -6001,6 +6030,7 @@ retry:
 #endif
 		if (nat == 0 && m_natpmp)
 		{
+			int local = 0;
 			if (mapping[nat] != -1)
 			{
 				if (m_natpmp->get_mapping(mapping[nat], local, external, protocol))
@@ -6012,23 +6042,24 @@ retry:
 				m_natpmp->delete_mapping(mapping[nat]);
 			}
 			mapping[nat] = m_natpmp->add_mapping(natpmp::udp
-				, local_port, external_port);
+				, external_port, local_port);
 			return;
 		}
 		else if (nat == 1 && m_upnp)
 		{
 			if (mapping[nat] != -1)
 			{
-				if (m_upnp->get_mapping(mapping[nat], local, external, protocol))
+				if (m_upnp->get_mapping(mapping[nat], local_ep, external, protocol))
 				{
 					// we already have a mapping. If it's the same, don't do anything
-					if (local == local_port && external == external_port && protocol == natpmp::udp)
+					if (local_ep.port() == local_port && external == external_port && protocol == natpmp::udp)
 						return;
 				}
 				m_upnp->delete_mapping(mapping[nat]);
 			}
+			local_ep.port(local_port);
 			mapping[nat] = m_upnp->add_mapping(upnp::udp
-				, local_port, external_port);
+				, external_port, local_ep);
 			return;
 		}
 	}
@@ -6784,13 +6815,13 @@ retry:
 		if (m_udp_socket.is_open())
 		{
 			m_udp_mapping[1] = m_upnp->add_mapping(upnp::udp
-				, m_listen_interface.port(), m_listen_interface.port());
+				, m_listen_interface.port(), m_listen_interface);
 		}
 #ifdef TORRENT_USE_OPENSSL
 		if (m_ssl_udp_socket.is_open() && ssl_port > 0)
 		{
 			m_ssl_udp_mapping[1] = m_upnp->add_mapping(upnp::udp
-				, ssl_port, ssl_port);
+				, ssl_port, tcp::endpoint(m_listen_interface.address(), ssl_port));
 		}
 #endif
 		return m_upnp.get();
@@ -6801,9 +6832,9 @@ retry:
 	{
 		int ret = 0;
 		if (m_upnp) ret = m_upnp->add_mapping(static_cast<upnp::protocol_type>(t), external_port
-			, local_port);
-		if (m_natpmp) ret = m_natpmp->add_mapping(static_cast<natpmp::protocol_type>(t), external_port
-			, local_port);
+			, tcp::endpoint(m_listen_interface.address(), local_port));
+		if (m_natpmp) ret = m_natpmp->add_mapping(static_cast<natpmp::protocol_type>(t)
+			, external_port, local_port);
 		return ret;
 	}
 

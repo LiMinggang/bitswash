@@ -155,8 +155,6 @@ namespace libtorrent
 		struct tracker_logger;
 #endif
 
-		TORRENT_EXPORT std::pair<bencode_map_entry*, int> settings_map();
-
 		// this is the link between the main thread and the
 		// thread started to run the main downloader loop
 		struct TORRENT_EXTRA_EXPORT session_impl TORRENT_FINAL
@@ -172,9 +170,6 @@ namespace libtorrent
 			// maximum length of query names which can be registered by extensions
 			enum { max_dht_query_length = 15 };
 
-#ifdef TORRENT_DEBUG
-//			friend class ::libtorrent::peer_connection;
-#endif
 #if TORRENT_USE_INVARIANT_CHECKS
 			friend class libtorrent::invariant_access;
 #endif
@@ -212,8 +207,8 @@ namespace libtorrent
 
 			void open_listen_port();
 
-			torrent_peer_allocator_interface* get_peer_allocator() TORRENT_OVERRIDE
-			{ return &m_peer_allocator; }
+			torrent_peer_allocator_interface& get_peer_allocator() TORRENT_OVERRIDE
+			{ return m_peer_allocator; }
 
 			io_service& get_io_service() TORRENT_OVERRIDE { return m_io_service; }
 			resolver_interface& get_resolver() TORRENT_OVERRIDE { return m_host_resolver; }

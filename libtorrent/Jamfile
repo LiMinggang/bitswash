@@ -30,7 +30,6 @@ else
 {
 	local boost-lib-search-path =
 		<search>/opt/local/lib
-		<search>/usr/lib
 		<search>/usr/local/lib
 		<search>/sw/lib
 		<search>/usr/g++/lib
@@ -58,44 +57,17 @@ else
 		: : $(boost-include-path) ;
 }
 
-VERSION = 1.1.3 ;
+VERSION = 1.1.5 ;
 
-# rule for linking the correct libraries depending
-# on features and target-os
 rule linking ( properties * )
 {
 	local result ;
-
-	# openssl libraries, if enabled
-	if <crypto>openssl in $(properties)
-	{
-		# exclude gcc from a regular windows build to make mingw
-		# link against the regular unix library name
-		if <target-os>windows in $(properties)
-		   && ! <toolset>gcc in $(properties)
-		{
-			result += <library>ssleay32
-				<library>libeay32
-				<library>advapi32
-				<library>user32
-				<library>shell32
-				<library>gdi32
-			;
-		}
-		else
-		{
-			result += <library>crypto <library>ssl ;
-		}
-	}
-
 	if <simulator>on in $(properties)
 	{
 		result += <library>/libsimulator//simulator ;
 	}
 
-	# dbghelp doesn't appear to exist in mingw
 	if <target-os>windows in $(properties)
-		&& ! <toolset>gcc in $(properties)
 		&& ( <variant>debug in $(properties)
 			|| <asserts>on in $(properties)
 			|| <asserts>production in $(properties)
@@ -361,7 +333,7 @@ rule building ( properties * )
 	return $(result) ;
 }
 
-rule tag ( name : type  ? : property-set )
+rule tag ( name : type ? : property-set )
 {
 	name = [ virtual-target.add-prefix-and-suffix $(name) : $(type) : $(property-set) ] ;
 
@@ -374,12 +346,81 @@ rule tag ( name : type  ? : property-set )
 	return $(name) ;
 }
 
+# the search path to pick up the openssl libraries from. This is the <search>
+# property of those libraries
+rule openssl-lib-path ( properties * )
+{
+	local OPENSSL_LIB = [ feature.get-values <openssl-lib> : $(properties) ] ;
+
+	if <target-os>darwin in $(properties) && $(OPENSSL_LIB) = ""
+	{
+		# on macOS, default to pick up openssl from the homebrew installation
+		# brew install openssl
+		OPENSSL_LIB = /usr/local/opt/openssl/lib ;
+	}
+	else if <target-os>windows in $(properties)
+		&& <toolset>gcc in $(properties)
+		&& $(OPENSSL_LIB) = ""
+	{
+		# on mingw, assume openssl is installed in c:\OpenSSL-Win32 by default
+		OPENSSL_LIB = c:\\OpenSSL-Win32\\lib ;
+	}
+	else if <target-os>windows in $(properties) && $(OPENSSL_LIB) = ""
+	{
+		# on windows, just assume openssl is installed to c:\openssl
+		if <address-model>64 in $(properties)
+		{ OPENSSL_LIB = c:\\openssl\\lib64 ; }
+		else
+		{ OPENSSL_LIB = c:\\openssl\\lib ; }
+	}
+
+	local result ;
+	result += <search>$(OPENSSL_LIB) ;
+	return $(result) ;
+}
+
+# the include path to pick up openssl headers from. This is the
+# usage-requirement for the openssl-related libraries
+rule openssl-include-path ( properties * )
+{
+	local OPENSSL_INCLUDE = [ feature.get-values <openssl-include> : $(properties) ] ;
+
+	if <target-os>darwin in $(properties) && $(OPENSSL_INCLUDE) = ""
+	{
+		# on macOS, default to pick up openssl from the homebrew installation
+		# brew install openssl
+		OPENSSL_INCLUDE = /usr/local/opt/openssl/include ;
+	}
+	else if <target-os>windows in $(properties)
+		&& <toolset>gcc in $(properties)
+		&& $(OPENSSL_INCLUDE) = ""
+	{
+		# on mingw, assume openssl is installed in c:\OpenSSL-Win32 by default
+		OPENSSL_INCLUDE = c:\\OpenSSL-Win32\\include ;
+	}
+	else if <target-os>windows in $(properties) && $(OPENSSL_INCLUDE) = ""
+	{
+		# on windows, just assume openssl is installed to c:\openssl
+		# not sure if there's a better way to find out where it may be
+		if <address-model>64 in $(properties)
+		{ OPENSSL_INCLUDE = c:\\openssl\\include64 ; }
+		else
+		{ OPENSSL_INCLUDE = c:\\openssl\\include ; }
+	}
+
+	local result ;
+	result += <include>$(OPENSSL_INCLUDE) ;
+	return $(result) ;
+}
+
+feature openssl-lib : : free path ;
+feature openssl-include : : free path ;
+
 feature ipv6 : on off : composite propagated link-incompatible ;
 feature.compose <ipv6>off : <define>TORRENT_USE_IPV6=0 ;
 
-feature sanitize : off address bounds undefined thread rtc : composite propagated link-incompatible ;
+feature sanitize : off address undefined thread rtc : composite propagated link-incompatible ;
 # sanitize is a clang and GCC feature
-feature.compose <sanitize>bounds : <cflags>-fsanitize=bounds <cflags>-fsanitize-undefined-trap-on-error <linkflags>-fsanitize=bounds <linkflags>-fsanitize-undefined-trap-on-error ;
 feature.compose <sanitize>undefined : <cflags>-fsanitize=undefined <linkflags>-fsanitize=undefined ;
 feature.compose <sanitize>thread : <cflags>-fsanitize=thread <linkflags>-fsanitize=thread ;
 feature.compose <sanitize>address : <cflags>-fsanitize=address <linkflags>-fsanitize=address ;
@@ -471,6 +512,8 @@ feature crypto : built-in openssl gcrypt : composite propagated ;
 feature.compose <crypto>openssl : <define>TORRENT_USE_OPENSSL ;
 feature.compose <crypto>gcrypt : <define>TORRENT_USE_GCRYPT ;
 
+feature openssl-version : 1.1 pre1.1 : composite propagated ;
+
 feature resolve-countries : on off : composite propagated link-incompatible ;
 feature.compose <resolve-countries>off : <define>TORRENT_DISABLE_RESOLVE_COUNTRIES ;
 
@@ -518,13 +561,51 @@ variant test_barebones : debug
 	  <export-extra>on <debug-iterators>on <threading>multi <asserts>on
 	;
 
-# required for openssl on windows
-lib ssleay32 : : <name>ssleay32 ;
-lib libeay32 : : <name>libeay32 ;
+# windows variants for libssl and libcrypto (they have different names and some
+# additional dependencies)
 lib advapi32 : : <name>advapi32 ;
 lib user32 : : <name>user32 ;
 lib shell32 : : <name>shell32 ;
 lib gdi32 : : <name>gdi32 ;
+lib z : : <link>shared <name>z ;
+
+lib crypto
+	: # sources
+	: # requirements
+	<target-os>windows
+	<openssl-version>pre1.1
+	<name>libeay32
+	<conditional>@openssl-lib-path
+	: # default-build
+	: # usage-requirements
+	<conditional>@openssl-include-path
+	<library>advapi32
+	<library>user32
+	<library>shell32
+	<library>gdi32
+	;
+
+lib ssl
+	: # sources
+	: # requirements
+	<target-os>windows
+	<openssl-version>pre1.1
+	<name>ssleay32
+	<use>crypto
+	<conditional>@openssl-lib-path
+	: # default-build
+	: # usage-requirments
+	<conditional>@openssl-include-path
+	<library>advapi32
+	<library>user32
+	<library>shell32
+	<library>gdi32
+	;
+
+
+lib crypto : : <name>crypto <use>z <conditional>@openssl-lib-path : : <conditional>@openssl-include-path ;
+lib ssl : : <name>ssl <use>crypto <conditional>@openssl-lib-path : : <conditional>@openssl-include-path ;
+
 lib dbghelp : : <name>dbghelp ;
 
 # required for networking on beos
@@ -534,11 +615,8 @@ lib gcc : : <name>gcc <link>static ;
 # when using iconv
 lib libiconv : : <name>iconv <link>shared <search>/usr/local/lib ;
 
-# openssl on linux/bsd/macos etc.
+# openssl on linux/bsd etc.
 lib gcrypt : : <name>gcrypt <link>shared <search>/opt/local/lib ;
-lib z : : <link>shared <name>z <search>/usr/lib ;
-lib crypto : : <name>crypto <link>shared <search>/usr/lib <use>z : : <include>/opt/local/include ;
-lib ssl : : <name>ssl <link>shared <use>crypto <search>/opt/local/lib : : <include>/opt/local/include ;
 lib dl : : <link>shared <name>dl ;
 
 # time functions used on linux require librt
@@ -744,6 +822,8 @@ lib torrent
 	<link>shared:<define>TORRENT_BUILDING_SHARED
 	<define>BOOST_NO_DEPRECATED
 	<link>shared:<define>BOOST_SYSTEM_SOURCE
+	<crypto>openssl:<library>ssl
+	<crypto>openssl:<library>crypto
 
 	<dht>on:<source>src/kademlia/$(KADEMLIA_SOURCES).cpp
 	<dht>on:<source>ed25519/src/$(ED25519_SOURCES).cpp

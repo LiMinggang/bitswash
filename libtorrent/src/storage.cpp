@@ -524,7 +524,10 @@ namespace libtorrent
 			m_allocate_files = false;
 #endif
 
-		m_file_created.resize(files().num_files(), false);
+		{
+			mutex::scoped_lock l(m_file_created_mutex);
+			m_file_created.resize(files().num_files(), false);
+		}
 
 		// first, create all missing directories
 		std::string last_path;
@@ -540,7 +543,8 @@ namespace libtorrent
 			// ignore pad files
 			if (files().pad_file_at(file_index)) continue;
 
-			if (m_stat_cache.get_filesize(file_index) == stat_cache::not_in_cache)
+			boost::int64_t cached_size = m_stat_cache.get_filesize(file_index);
+			if (cached_size == stat_cache::not_in_cache)
 			{
 				file_status s;
 				std::string file_path = files().file_path(file_index, m_save_path);
@@ -548,6 +552,7 @@ namespace libtorrent
 				if (!ec)
 				{
 					m_stat_cache.set_cache(file_index, s.file_size, s.mtime);
+					cached_size = s.file_size;
 				}
 				else if (ec.ec != boost::system::errc::no_such_file_or_directory)
 				{
@@ -556,13 +561,17 @@ namespace libtorrent
 					ec.operation = storage_error::stat;
 					break;
 				}
+				else
+				{
+					cached_size = stat_cache::no_exist;
+				}
 			}
 
 			// if the file already exists, but is larger than what
 			// it's supposed to be, truncate it
-			// if the file is empty, just create it either way.
-			if ((!ec && m_stat_cache.get_filesize(file_index) > files().file_size(file_index))
-				|| files().file_size(file_index) == 0)
+			// if the file is empty and doesn't already exist, create it
+			if ((!ec && cached_size > files().file_size(file_index))
+				|| (files().file_size(file_index) == 0 && cached_size == stat_cache::no_exist))
 			{
 				std::string file_path = files().file_path(file_index, m_save_path);
 				std::string dir = parent_path(file_path);
@@ -744,6 +753,8 @@ namespace libtorrent
 		// make sure we don't have the files open
 		m_pool.release(this);
 
+		m_stat_cache.clear();
+
 #if defined TORRENT_DEBUG_FILE_LEAKS
 		print_open_files("release files", m_files.name().c_str());
 #endif
@@ -911,11 +922,11 @@ namespace libtorrent
 				stat_file(fs.file_path(i, m_save_path), &s, error);
 				if (s.file_size >= 0 && !error)
 				{
-					TORRENT_ASSERT(s.file_size == file_size);
+					TORRENT_ASSERT_VAL(s.file_size == file_size, file_size);
 				}
 				else
 				{
-					TORRENT_ASSERT(file_size == 0);
+					TORRENT_ASSERT_VAL(file_size == 0, file_size);
 				}
 			}
 #endif
@@ -1236,6 +1247,8 @@ namespace libtorrent
 			if (flags == dont_replace && exists(new_path))
 			{
 				if (ret == piece_manager::no_error) ret = piece_manager::need_full_check;
+				// this is a new file, clear our cached version
+				m_stat_cache.set_dirty(i);
 				continue;
 			}
 
@@ -1247,7 +1260,12 @@ namespace libtorrent
 			// if the source file doesn't exist. That's not a problem
 			// we just ignore that file
 			if (e == boost::system::errc::no_such_file_or_directory)
+			{
 				e.clear();
+				// the source file doesn't exist, but it may exist at the
+				// destination, we don't know.
+				m_stat_cache.set_dirty(i);
+			}
 			else if (e
 				&& e != boost::system::errc::invalid_argument
 				&& e != boost::system::errc::permission_denied)
@@ -1494,6 +1512,7 @@ namespace libtorrent
 
 		if (m_allocate_files && (mode & file::rw_mask) != file::read_only)
 		{
+			mutex::scoped_lock l(m_file_created_mutex);
 			if (m_file_created.size() != files().num_files())
 				m_file_created.resize(files().num_files(), false);
 
@@ -1504,10 +1523,11 @@ namespace libtorrent
 			// the file right away, to allocate it on the filesystem.
 			if (m_file_created[file] == false)
 			{
+				m_file_created.set_bit(file);
+				l.unlock();
 				error_code e;
 				boost::int64_t const size = files().file_size(file);
 				h->set_size(size, e);
-				m_file_created.set_bit(file);
 				if (e)
 				{
 					ec.ec = e;

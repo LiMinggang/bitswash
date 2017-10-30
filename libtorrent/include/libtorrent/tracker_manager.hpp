@@ -51,7 +51,14 @@ POSSIBILITY OF SUCH DAMAGE.
 #include <boost/unordered_map.hpp>
 
 #ifdef TORRENT_USE_OPENSSL
-#include <boost/asio/ssl/context.hpp>
+// there is no forward declaration header for asio
+namespace boost {
+namespace asio {
+namespace ssl {
+	struct context;
+}
+}
+}
 #endif
 
 #include "libtorrent/aux_/disable_warnings_pop.hpp"
@@ -101,6 +108,7 @@ namespace libtorrent
 			, send_stats(true)
 			, private_torrent(false)
 			, triggered_manually(false)
+			, second_announce(false)
 #ifdef TORRENT_USE_OPENSSL
 			, ssl_ctx(0)
 #endif
@@ -167,6 +175,11 @@ namespace libtorrent
 		// this is set to true if this request was triggered by a "manual" call to
 		// scrape_tracker() or force_reannounce()
 		bool triggered_manually;
+
+		// this is set when announcing to the next address family. There are only
+		// two address families now, so when this is set, we won't trigger another
+		// automatic announce
+		bool second_announce;
 
 #ifdef TORRENT_USE_OPENSSL
 		boost::asio::ssl::context* ssl_ctx;

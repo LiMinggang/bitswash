@@ -1,3 +1,48 @@
+
+1.1.5 release
+
+	* fix infinite loop when parsing certain invalid magnet links
+	* fix parsing of torrents with certain invalid filenames
+	* fix leak of torrent_peer objecs (entries in peer_list)
+	* fix leak of peer_class objects (when setting per-torrent rate limits)
+	* expose peer_class API to python binding
+	* fix integer overflow in whole_pieces_threshold logic
+	* fix uTP path MTU discovery issue on windows (DF bit was not set correctly)
+	* fix python binding for torrent_handle, to be hashable
+	* fix IPv6 tracker support by performing the second announce in more cases
+	* fix utf-8 encoding check in torrent parser
+	* fix infinite loop when parsing maliciously crafted torrents
+	* fix invalid read in parse_int in bdecoder
+	* fix issue with very long tracker- and web seed URLs
+	* don't attempt to create empty files on startup, if they already exist
+	* fix force-recheck issue (new files would not be picked up)
+	* fix inconsistency in file_priorities and override_resume_data behavior
+	* fix paused torrents not generating a state update when their ul/dl rate
+	  transitions to zero
+
+1.1.4 release
+
+	* corrected missing const qualifiers on bdecode_node
+	* fix changing queue position of paused torrents (1.1.3 regression)
+	* fix re-check issue after move_storage
+	* handle invalid arguments to set_piece_deadline()
+	* move_storage did not work for torrents without metadata
+	* improve shutdown time by only announcing to trackers whose IP we know
+	* fix python3 portability issue in python binding
+	* delay 5 seconds before reconnecting socks5 proxy for UDP ASSOCIATE
+	* fix NAT-PMP crash when removing a mapping at the wrong time
+	* improve path sanitization (filter unicode text direction characters)
+	* deprecate partial_piece_info::piece_state
+	* bind upnp requests to correct local address
+	* save resume data when removing web seeds
+	* fix proxying of https connections
+	* fix race condition in disk I/O storage class
+	* fix http connection timeout on multi-homed hosts
+	* removed depdendency on boost::uintptr_t for better compatibility
+	* fix memory leak in the disk cache
+	* fix double free in disk cache
+	* forward declaring libtorrent types is discouraged. a new fwd.hpp header is provided
+
 1.1.3 release
 
 	* removed (broken) support for incoming connections over socks5

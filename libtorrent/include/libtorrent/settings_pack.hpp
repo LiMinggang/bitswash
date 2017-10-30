@@ -849,13 +849,13 @@ namespace libtorrent
 			// suggest messages to create a bias of its peers to request certain
 			// pieces. The modes are:
 			// 
-			// * ``no_piece_suggestsions`` which is the default and will not send
+			// * ``no_piece_suggestions`` which is the default and will not send
 			//   out suggest messages.
 			// * ``suggest_read_cache`` which will send out suggest messages for
 			//   the most recent pieces that are in the read cache.
 			suggest_mode,
 
-			// ``max_queued_disk_bytes`` is the number maximum number of bytes, to
+			// ``max_queued_disk_bytes`` is the maximum number of bytes, to
 			// be written to disk, that can wait in the disk I/O thread queue.
 			// This queue is only for waiting for the disk I/O thread to receive
 			// the job and either write it to disk or insert it in the write
@@ -900,7 +900,7 @@ namespace libtorrent
 			// 
 			// * ``fixed_slots_choker`` is the traditional choker with a fixed
 			//   number of unchoke slots (as specified by
-			//   ``session::set_max_uploads()``).
+			//   ``settings_pack::unchoke_slots_limit``).
 			// 
 			// * ``rate_based_choker`` opens up unchoke slots based on the upload
 			//   rate achieved to peers. The more slots that are opened, the
@@ -1481,8 +1481,10 @@ namespace libtorrent
 			// when a seeding torrent reaches either the share ratio (bytes up /
 			// bytes down) or the seed time ratio (seconds as seed / seconds as
 			// downloader) or the seed time limit (seconds as seed) it is
-			// considered done, and it will leave room for other torrents these
-			// are specified as percentages
+			// considered done, and it will leave room for other torrents. These
+			// are specified as percentages. Torrents that are considered done will
+			// still be allowed to be seeded, they just won't have priority anymore.
+			// For more, see queuing_.
 			share_ratio_limit,
 			seed_time_ratio_limit,
 

@@ -118,12 +118,12 @@ namespace libtorrent
 			checking_resume_data
 		};
 
+#ifndef TORRENT_NO_DEPRECATE
 		// may be set to an error code describing why the torrent was paused, in
 		// case it was paused by an error. If the torrent is not paused or if it's
 		// paused but not because of an error, this error_code is not set.
 		// if the error is attributed specifically to a file, error_file is set to
 		// the index of that file in the .torrent file.
-#ifndef TORRENT_NO_DEPRECATE
 		std::string error;
 #else
 		// internal
@@ -342,7 +342,7 @@ namespace libtorrent
 		// piece(s). Divide this number by 1000 to get the fraction.
 		// 
 		// For example, if ``distributed_full_copies`` is 2 and
-		// ``distrbuted_fraction`` is 500, it means that the rarest pieces have
+		// ``distributed_fraction`` is 500, it means that the rarest pieces have
 		// only 2 copies among the peers this torrent is connected to, and that
 		// 50% of all the pieces have more than two copies.
 		// 

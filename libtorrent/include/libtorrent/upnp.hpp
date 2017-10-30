@@ -36,7 +36,6 @@ POSSIBILITY OF SUCH DAMAGE.
 #include "libtorrent/socket.hpp"
 #include "libtorrent/error_code.hpp"
 #include "libtorrent/broadcast_socket.hpp"
-#include "libtorrent/http_connection.hpp"
 #include "libtorrent/thread.hpp"
 #include "libtorrent/deadline_timer.hpp"
 #include "libtorrent/enum_net.hpp"
@@ -51,6 +50,8 @@ POSSIBILITY OF SUCH DAMAGE.
 
 namespace libtorrent
 {
+	struct http_connection;
+	class http_parser;
 
 	namespace upnp_errors
 	{
@@ -187,13 +188,13 @@ public:
 	// portmap_alert_ respectively. If The mapping fails immediately, the return value
 	// is -1, which means failure. There will not be any error alert notification for
 	// mappings that fail with a -1 return value.
-	int add_mapping(protocol_type p, int external_port, int local_port);
+	int add_mapping(protocol_type p, int external_port, tcp::endpoint local_ep);
 
 	// This function removes a port mapping. ``mapping_index`` is the index that refers
 	// to the mapping you want to remove, which was returned from add_mapping().
 	void delete_mapping(int mapping_index);
 
-	bool get_mapping(int mapping_index, int& local_port, int& external_port, int& protocol) const;
+	bool get_mapping(int mapping_index, tcp::endpoint& local_ep, int& external_port, int& protocol) const;
 
 	void discover_device();
 	void close();
@@ -261,11 +262,10 @@ private:
 		global_mapping_t()
 			: protocol(none)
 			, external_port(0)
-			, local_port(0)
 		{}
 		int protocol;
 		int external_port;
-		int local_port;
+		tcp::endpoint local_ep;
 	};
 
 	struct mapping_t
@@ -273,7 +273,6 @@ private:
 		enum action_t { action_none, action_add, action_delete };
 		mapping_t()
 			: action(action_none)
-			, local_port(0)
 			, external_port(0)
 			, protocol(none)
 			, failcount(0)
@@ -282,11 +281,11 @@ private:
 		// the time the port mapping will expire
 		time_point expires;
 
-		int action;
-
-		// the local port for this mapping. If this is set
+		// the local port for this mapping. The port is set
 		// to 0, the mapping is not in use
-		int local_port;
+		tcp::endpoint local_ep;
+
+		int action;
 
 		// the external (on the NAT router) port
 		// for the mapping. This is the port we
@@ -302,26 +301,13 @@ private:
 
 	struct rootdevice
 	{
-		rootdevice(): port(0)
-			, lease_duration(default_lease_time)
-			, supports_specific_external(true)
-			, disabled(false)
-			, non_router(false)
-		{
-#if TORRENT_USE_ASSERTS
-			magic = 1337;
-#endif
-		}
+		rootdevice();
 
 #if TORRENT_USE_ASSERTS
-		~rootdevice()
-		{
-			TORRENT_ASSERT(magic == 1337);
-			magic = 0;
-		}
+		~rootdevice();
 #if __cplusplus >= 201103L
-		rootdevice(rootdevice const&) = default;
-		rootdevice& operator=(rootdevice const&) = default;
+		rootdevice(rootdevice const&);
+		rootdevice& operator=(rootdevice const&);
 #endif
 #endif
 
@@ -363,13 +349,7 @@ private:
 #if TORRENT_USE_ASSERTS
 		int magic;
 #endif
-		void close() const
-		{
-			TORRENT_ASSERT(magic == 1337);
-			if (!upnp_connection) return;
-			upnp_connection->close();
-			upnp_connection.reset();
-		}
+		void close() const;
 
 		bool operator<(rootdevice const& rhs) const
 		{ return url < rhs.url; }

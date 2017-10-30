@@ -157,8 +157,7 @@ namespace libtorrent
 			// add_torrent_params configuring the torrent override the corresponding
 			// configuration from the resume file, with the one exception of save
 			// resume data, which has its own flag (for historic reasons).
-			// If this flag is set, but file_priorities is empty, file priorities
-			// are still loaded from the resume data, if present.
+			// "file_priorities" and "save_path" are not affected by this flag.
 			flag_override_resume_data = 0x002,
 
 			// If ``flag_upload_mode`` is set, the torrent will be initialized in
@@ -316,7 +315,7 @@ namespace libtorrent
 		// 	paths. This means they must use backslashes as directory separators
 		// 	and may not contain the special directories "." or "..".
 		// 
-		// Setting this to an absolute path is slightly more performant than a
+		// Setting this to an absolute path performs slightly better than a
 		// relative path.
 		std::string save_path;
 
@@ -347,7 +346,9 @@ namespace libtorrent
 
 		// can be set to control the initial file priorities when adding a
 		// torrent. The semantics are the same as for
-		// ``torrent_handle::prioritize_files()``.
+		// ``torrent_handle::prioritize_files()``. The file priorities specified
+		// in here take precedence over those specified in the resume data, if
+		// any.
 		std::vector<boost::uint8_t> file_priorities;
 
 		// torrent extension construction functions can be added to this vector

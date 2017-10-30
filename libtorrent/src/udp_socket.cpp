@@ -74,6 +74,7 @@ udp_socket::udp_socket(io_service& ios)
 	, m_restart_v6(false)
 #endif
 	, m_socks5_sock(ios)
+	, m_retry_timer(ios)
 	, m_resolver(ios)
 	, m_queue_packets(false)
 	, m_tunnel_packets(false)
@@ -799,8 +800,9 @@ void udp_socket::bind(udp::endpoint const& ep, error_code& ec)
 		error_code err;
 #ifdef TORRENT_WINDOWS
 		m_ipv4_sock.set_option(exclusive_address_use(true), err);
-#endif
+#else
 		m_ipv4_sock.set_option(boost::asio::socket_base::reuse_address(true), err);
+#endif
 
 		m_ipv4_sock.bind(ep, ec);
 		if (ec) return;
@@ -825,8 +827,9 @@ void udp_socket::bind(udp::endpoint const& ep, error_code& ec)
 		error_code err;
 #ifdef TORRENT_WINDOWS
 		m_ipv6_sock.set_option(exclusive_address_use(true), err);
-#endif
+#else
 		m_ipv6_sock.set_option(boost::asio::socket_base::reuse_address(true), err);
+#endif
 		m_ipv6_sock.set_option(boost::asio::ip::v6_only(true), err);
 
 		m_ipv6_sock.bind(ep6, ec);
@@ -1462,7 +1465,15 @@ void udp_socket::hung_up(error_code const& e)
 
 	if (e == boost::asio::error::operation_aborted || m_abort) return;
 
-	// the socks connection was closed, re-open it
+	// the socks connection was closed, re-open it in a bit
+	m_retry_timer.expires_from_now(seconds(5));
+	m_retry_timer.async_wait(boost::bind(&udp_socket::retry_socks_connect
+		, this, _1));
+}
+
+void udp_socket::retry_socks_connect(error_code const& ec)
+{
+	if (ec) return;
 	set_proxy_settings(m_proxy_settings);
 }
 

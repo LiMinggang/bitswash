@@ -59,6 +59,8 @@ POSSIBILITY OF SUCH DAMAGE.
 #include <boost/bind.hpp>
 #include <boost/assert.hpp>
 #include <boost/unordered_set.hpp>
+#include <boost/array.hpp>
+#include <boost/cstdint.hpp>
 
 #include <iterator>
 #include <algorithm>
@@ -81,15 +83,33 @@ namespace libtorrent
 
 	namespace {
 
-	bool valid_path_character(char c)
+	bool valid_path_character(boost::int32_t const c)
 	{
 #ifdef TORRENT_WINDOWS
 		static const char invalid_chars[] = "?<>\"|\b*:";
 #else
 		static const char invalid_chars[] = "";
 #endif
-		if (c >= 0 && c < 32) return false;
-		return std::strchr(invalid_chars, c) == 0;
+		if (c < 32) return false;
+		if (c > 127) return true;
+		return std::strchr(invalid_chars, static_cast<char>(c)) == NULL;
+	}
+
+	bool filter_path_character(boost::int32_t const c)
+	{
+		// these unicode characters change the writing writing direction of the
+		// string and can be used for attacks:
+		// https://security.stackexchange.com/questions/158802/how-can-this-executable-have-an-avi-extension
+		static const boost::array<boost::int32_t, 7> bad_cp = {{0x202a, 0x202b, 0x202c, 0x202d, 0x202e, 0x200e, 0x200f}};
+		if (std::find(bad_cp.begin(), bad_cp.end(), c) != bad_cp.end()) return true;
+
+#ifdef TORRENT_WINDOWS
+		static const char invalid_chars[] = "/\\:";
+#else
+		static const char invalid_chars[] = "/\\";
+#endif
+		if (c > 127) return false;
+		return std::strchr(invalid_chars, static_cast<char>(c)) != NULL;
 	}
 
 	} // anonymous namespace
@@ -167,9 +187,9 @@ namespace libtorrent
 		if (element_len == 1 && element[0] == '.') return;
 
 #ifdef TORRENT_WINDOWS
-#define TORRENT_SEPARATOR "\\"
+#define TORRENT_SEPARATOR '\\'
 #else
-#define TORRENT_SEPARATOR "/"
+#define TORRENT_SEPARATOR '/'
 #endif
 		path.reserve(path.size() + element_len + 2);
 		int added_separator = 0;
@@ -223,118 +243,39 @@ namespace libtorrent
 		// the number of dots we've added
 		char num_dots = 0;
 		bool found_extension = false;
-		for (int i = 0; i < element_len; ++i)
+
+		int seq_len = 0;
+		for (int i = 0; i < element_len; i += seq_len)
 		{
-			if (element[i] == '/'
-				|| element[i] == '\\'
-#ifdef TORRENT_WINDOWS
-				|| element[i] == ':'
-#endif
-				)
+			boost::int32_t code_point;
+			boost::tie(code_point, seq_len) = parse_utf8_codepoint(element + i, element_len - i);
+
+			if (code_point >= 0 && filter_path_character(code_point))
+			{
 				continue;
+			}
 
-			if (element[i] == '.') ++num_dots;
-
-			int last_len = 0;
-
-			if ((element[i] & 0x80) == 0)
+			if (code_point < 0 || !valid_path_character(code_point))
 			{
-				// 1 byte
-				if (valid_path_character(element[i]))
-				{
-					path += element[i];
-				}
-				else
-				{
-					path += '_';
-				}
-				last_len = 1;
-			}
-			else if ((element[i] & 0xe0) == 0xc0)
-			{
-				// 2 bytes
-				if (element_len - i < 2
-					|| (element[i+1] & 0xc0) != 0x80)
-				{
-					path += '_';
-					last_len = 1;
-				}
-				else if ((element[i] & 0x1f) == 0)
-				{
-					// overlong sequences are invalid
-					path += '_';
-					last_len = 1;
-				}
-				else
-				{
-					path += element[i];
-					path += element[i+1];
-					last_len = 2;
-				}
-				i += 1;
-			}
-			else if ((element[i] & 0xf0) == 0xe0)
-			{
-				// 3 bytes
-				if (element_len - i < 3
-					|| (element[i+1] & 0xc0) != 0x80
-					|| (element[i+2] & 0xc0) != 0x80
-					)
-				{
-					path += '_';
-					last_len = 1;
-				}
-				else if ((element[i] & 0x0f) == 0)
-				{
-					// overlong sequences are invalid
-					path += '_';
-					last_len = 1;
-				}
-				else
-				{
-					path += element[i];
-					path += element[i+1];
-					path += element[i+2];
-					last_len = 3;
-				}
-				i += 2;
-			}
-			else if ((element[i] & 0xf8) == 0xf0)
-			{
-				// 4 bytes
-				if (element_len - i < 4
-					|| (element[i+1] & 0xc0) != 0x80
-					|| (element[i+2] & 0xc0) != 0x80
-					|| (element[i+3] & 0xc0) != 0x80
-					)
-				{
-					path += '_';
-					last_len = 1;
-				}
-				else if ((element[i] & 0x07) == 0
-					&& (element[i+1] & 0x3f) == 0)
-				{
-					// overlong sequences are invalid
-					path += '_';
-					last_len = 1;
-				}
-				else
-				{
-					path += element[i];
-					path += element[i+1];
-					path += element[i+2];
-					path += element[i+3];
-					last_len = 4;
-				}
-				i += 3;
-			}
-			else
-			{
+				// invalid utf8 sequence, replace with "_"
 				path += '_';
-				last_len = 1;
+				++added;
+				++unicode_chars;
+				continue;
 			}
 
-			added += last_len;
+			TORRENT_ASSERT(isLegalUTF8(reinterpret_cast<UTF8 const*>(element + i), seq_len));
+
+			// validation passed, add it to the output string
+			for (int k = i; k < i + seq_len; ++k)
+			{
+				TORRENT_ASSERT(element[k] != 0);
+				path.push_back(element[k]);
+			}
+
+			if (code_point == '.') ++num_dots;
+
+			added += seq_len;
 			++unicode_chars;
 
 			// any given path element should not
@@ -476,6 +417,11 @@ namespace libtorrent
 
 			filename = p.string_ptr() + info_ptr_diff;
 			filename_len = p.string_length();
+			while (filename_len > 0 && filename[0] == TORRENT_SEPARATOR)
+			{
+				filename += 1;
+				filename_len -= 1;
+			}
 			sanitize_append_path_element(path, p.string_ptr(), p.string_length());
 		}
 		else
@@ -485,6 +431,7 @@ namespace libtorrent
 
 			if (p && p.list_size() > 0)
 			{
+				std::size_t const orig_path_len = path.size();
 				int const preallocate = path.size() + path_length(p, ec);
 				if (ec) return false;
 				path.reserve(preallocate);
@@ -497,7 +444,20 @@ namespace libtorrent
 						filename = e.string_ptr() + info_ptr_diff;
 						filename_len = e.string_length();
 					}
+					while (filename_len > 0 && filename[0] == TORRENT_SEPARATOR)
+					{
+						filename += 1;
+						filename_len -= 1;
+					}
 					sanitize_append_path_element(path, e.string_ptr(), e.string_length());
+				}
+
+				// if all path elements were sanitized away, we need to use another
+				// name instead
+				if (path.size() == orig_path_len)
+				{
+					path += TORRENT_SEPARATOR;
+					path += "_";
 				}
 			}
 			else if (file_flags & file_storage::flag_pad_file)
@@ -559,65 +519,6 @@ namespace libtorrent
 			, mtime, symlink_path);
 		return true;
 	}
-
-#if TORRENT_HAS_BOOST_UNORDERED
-	struct string_hash_no_case
-	{
-		size_t operator()(std::string const& s) const
-		{
-			char const* s1 = s.c_str();
-			size_t ret = 5381;
-			int c;
-
-			while ((c = *s1++))
-				ret = (ret * 33) ^ to_lower(c);
-
-			return ret;
-		}
-	};
-
-	struct string_eq_no_case
-	{
-		bool operator()(std::string const& lhs, std::string const& rhs) const
-		{
-			char c1, c2;
-			char const* s1 = lhs.c_str();
-			char const* s2 = rhs.c_str();
-
-			while (*s1 != 0 && *s2 != 0)
-			{
-				c1 = to_lower(*s1);
-				c2 = to_lower(*s2);
-				if (c1 != c2) return false;
-				++s1;
-				++s2;
-			}
-			return *s1 == *s2;
-		}
-	};
-
-#else
-	struct string_less_no_case
-	{
-		bool operator()(std::string const& lhs, std::string const& rhs) const
-		{
-			char c1, c2;
-			char const* s1 = lhs.c_str();
-			char const* s2 = rhs.c_str();
-
-			while (*s1 != 0 || *s2 != 0)
-			{
-				c1 = to_lower(*s1);
-				c2 = to_lower(*s2);
-				if (c1 < c2) return true;
-				if (c1 > c2) return false;
-				++s1;
-				++s2;
-			}
-			return false;
-		}
-	};
-#endif
 
 	// root_dir is the name of the torrent, unless this is a single file
 	// torrent, in which case it's empty.
@@ -740,7 +641,7 @@ namespace libtorrent
 		{
 			// as long as this file already exists
 			// increase the counter
-			boost::uint32_t h = m_files.file_path_hash(i, empty_str);
+			boost::uint32_t const h = m_files.file_path_hash(i, empty_str);
 			if (!files.insert(h).second)
 			{
 				// This filename appears to already exist!
@@ -777,7 +678,7 @@ namespace libtorrent
 			{
 				p = parent_path(p);
 				// we don't want trailing slashes here
-				TORRENT_ASSERT(p[p.size() - 1] == *TORRENT_SEPARATOR);
+				TORRENT_ASSERT(p[p.size() - 1] == TORRENT_SEPARATOR);
 				p.resize(p.size() - 1);
 				files.insert(p);
 			}
@@ -1243,7 +1144,7 @@ namespace libtorrent
 		file_storage files;
 		files.set_piece_length(piece_length);
 
-		// extract file name (or the directory name if it's a multifile libtorrent)
+		// extract file name (or the directory name if it's a multi file libtorrent)
 		bdecode_node name_ent = info.dict_find_string("name.utf-8");
 		if (!name_ent) name_ent = info.dict_find_string("name");
 		if (!name_ent)
@@ -1286,11 +1187,34 @@ namespace libtorrent
 			}
 			m_multifile = true;
 		}
-		TORRENT_ASSERT(!files.name().empty());
+		if (files.num_files() == 0)
+		{
+			ec = errors::no_files_in_torrent;
+			// mark the torrent as invalid
+			m_files.set_piece_length(0);
+			return false;
+		}
+		if (files.name().empty())
+		{
+			ec = errors::torrent_missing_name;
+			// mark the torrent as invalid
+			m_files.set_piece_length(0);
+			return false;
+		}
 
-		// extract sha-1 hashes for all pieces
+		// extract SHA-1 hashes for all pieces
 		// we want this division to round upwards, that's why we have the
 		// extra addition
+
+		if (files.total_size() >=
+			static_cast<boost::int64_t>(std::numeric_limits<int>::max()
+			- files.piece_length()) * files.piece_length())
+		{
+			ec = errors::too_many_pieces_in_torrent;
+			// mark the torrent as invalid
+			m_files.set_piece_length(0);
+			return false;
+		}
 
 		files.set_num_pieces(int((files.total_size() + files.piece_length() - 1)
 			/ files.piece_length()));
@@ -1300,6 +1224,15 @@ namespace libtorrent
 		if (!pieces && !root_hash)
 		{
 			ec = errors::torrent_missing_pieces;
+			// mark the torrent as invalid
+			m_files.set_piece_length(0);
+			return false;
+		}
+
+		// we expect the piece hashes to be < 2 GB in size
+		if (files.num_pieces() >= std::numeric_limits<int>::max() / 20)
+		{
+			ec = errors::too_many_pieces_in_torrent;
 			// mark the torrent as invalid
 			m_files.set_piece_length(0);
 			return false;

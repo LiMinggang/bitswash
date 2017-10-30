@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 2.6)
 project(libtorrent)
 set (SOVERSION "8")
-set (VERSION "1.1.3")
+set (VERSION "1.1.5")
 
 set(sources
 	web_connection_base
@@ -176,7 +176,7 @@ if (NOT CMAKE_BUILD_TYPE)
 endif()
 
 # add_definitions() doesn't seem to let you say wich build type to apply it to
-set(CMAKE_C_FLAGS_DEBUG "${CMAKE_C_FLAGS_DEBUG} -DTORRENT_DEBUG")
+set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -DTORRENT_DEBUG")
 if(UNIX)
 	set(CMAKE_C_FLAGS_RELWITHDEBINFO "-Os -g")
 	set(CMAKE_CXX_FLAGS_RELWITHDEBINFO "${CMAKE_C_FLAGS_RELWITHDEBINFO}")
@@ -268,12 +268,16 @@ target_link_libraries(torrent-rasterbar ${Boost_LIBRARIES} ${CMAKE_THREAD_LIBS_I
 
 if (WIN32)
 	target_link_libraries(torrent-rasterbar wsock32 ws2_32 Iphlpapi)
+	target_link_libraries(torrent-rasterbar debug dbghelp)
 	add_definitions(-D_WIN32_WINNT=0x0600)
 	# prevent winsock1 to be included
 	add_definitions(-DWIN32_LEAN_AND_MEAN)
 	if (MSVC)
 		add_definitions(-DBOOST_ALL_NO_LIB)
-		set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /MP") # multicore compilation
+		# for multicore compilation
+		set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /MP")
+		# increase the number of sections for obj files
+		set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /bigobj")
 	endif()
 endif()
 
@@ -375,7 +379,7 @@ if(build_tests)
 	add_library(test_common OBJECT test/main.cpp test/test.cpp
 		test/setup_transfer.cpp test/dht_server.cpp test/udp_tracker.cpp
 		test/peer_server.cpp test/web_seed_suite.cpp test/swarm_suite.cpp
-		test/test_utils.cpp)
+		test/test_utils.cpp test/make_torrent.cpp test/settings.cpp)
 	enable_testing()
 
 	foreach(s ${tests})
