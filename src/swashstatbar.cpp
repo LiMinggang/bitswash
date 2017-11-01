@@ -32,7 +32,7 @@
 #include "swashstatbar.h"
 #include "mainframe.h"
 
-SwashStatBar::SwashStatBar(wxWindow* parent): wxStatusBar(parent, wxID_ANY)
+SwashStatBar::SwashStatBar(wxWindow* parent): wxStatusBar(parent, wxID_ANY), SwashBarField(BAR_FIELD_MAX)
 {
 	static const int widths[BAR_FIELD_MAX] = { -1, 100, 100, 160, 50 };
 

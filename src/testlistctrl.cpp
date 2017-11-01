@@ -44,7 +44,9 @@ TestListCtrl::~TestListCtrl()
 	m_gauge_list.clear();
 	m_gauge_list.swap(m_gauge_list);
 #endif
+#if _DEBUG
 	wxLogMessage(_T("TestListCtrl::Descructor"));
+#endif
 }
 
 void TestListCtrl::OnPaint( wxPaintEvent &WXUNUSED(event))
@@ -85,16 +87,20 @@ void TestListCtrl::OnPaint( wxPaintEvent &WXUNUSED(event))
 	}
 	
 
-
-	wxLogMessage(_T("OnPaint"));	
+#if _DEBUG
+	wxLogMessage(_T("OnPaint"));
+#endif
 }
 
 wxString TestListCtrl::OnGetItemText(long item, long column) const
 {
-	TestListCtrl* pThis = const_cast<TestListCtrl*>(this);
-	wxRect rect;
+	//TestListCtrl* pThis = const_cast<TestListCtrl*>(this);
+#if _DEBUG
+    wxRect rect;
 	//GetItemRect(item, rect);
+
 	wxLogMessage(_T("TestListCtrl:: GetItemText %d, %d Rect x %d y %d w %d h %d"), item, column, rect.x, rect.y, rect.width, rect.height );
+#endif
 
 	/*
 	wxGauge *tmpGauge = new wxGauge(pThis, wxID_ANY, 100, wxPoint(rect.x + 4, rect.y + 2), wxSize(rect.width -15, rect.height -4));

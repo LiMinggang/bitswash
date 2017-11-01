@@ -222,7 +222,7 @@ bool BitSwash::OnInit()
 	wxHandleFatalExceptions();
 	//==========================================================================
 
-	int initcountdown = 1;
+	//int initcountdown = 1;
 	SetVendorName( APPNAME );
 	SetAppName( APPBINNAME );
 	m_locale = NULL;

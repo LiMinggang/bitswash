@@ -91,7 +91,7 @@ TorrentSettingPane::TorrentSettingPane( wxWindow* parent, shared_ptr<torrent_t>&
 
 	std::vector<wxString>::reverse_iterator path;
 
-	for(path = historypath.rbegin(); path != historypath.rend(); path++)
+	for(path = historypath.rbegin(); path != historypath.rend(); ++path)
 	{
 		if((t_saveas.Cmp(*path)) == 0)
 			continue;

@@ -567,6 +567,7 @@ void BitTorrentSession::AddTorrentToSession( shared_ptr<torrent_t>& torrent )
 {
 	lt::torrent_handle &handle = torrent->handle;
 	wxLogWarning(( _T( "AddTorrent %s into session\n" ), torrent->name.c_str() ));
+	wxASSERT(wxString(torrent->hash) != _T("0000000000000000000000000000000000000000"));
 	wxString fastresumefile = wxGetApp().SaveTorrentsPath() + torrent->hash + _T( ".fastresume" );
 	lt::entry resume_data;
 
@@ -855,7 +856,7 @@ void BitTorrentSession::ScanTorrentsDirectory( const wxString& dirname )
 		//fullpath = dirname + filename;
 		fn.Assign(dirname, filename);
 		WXLOGDEBUG(( _T( "Saved Torrent: %s\n" ), fn.GetFullPath().c_str() ));
-		torrent =  ParseTorrent(fn.GetFullPath());
+		torrent = ParseTorrent(fn.GetFullPath());
 
 		if (torrent->config->GetTorrentState() == TORRENT_STATE_QUEUE) /*Fist time added torrent, it's not in libtorrent*/
 			torrent->config->SetTorrentState(TORRENT_STATE_START);
@@ -1107,18 +1108,21 @@ shared_ptr<torrent_t> BitTorrentSession::ParseTorrent( const wxString& filename 
 		shared_ptr<const lt::torrent_info> t(new lt::torrent_info(wxString(filename.mb_str(wxConvUTF8)).ToStdString(), ec));
 		if(ec)
 			wxLogError( wxString::FromUTF8( ec.message().c_str() ) );
-		torrent->info = t;
-		torrent->name = wxString( wxConvUTF8.cMB2WC( t->name().c_str() ) );
-		torrent->hash = t->info_hash();
-		torrent->config.reset( new TorrentConfig( wxString(torrent->hash) ) );
-
-		if( torrent->config->GetTrackersURL().size() <= 0 )
+		else
 		{
-			std::vector<lt::announce_entry> trackers = t->trackers();
-			torrent->config->SetTrackersURL( trackers );
-		}
+			torrent->info = t;
+			torrent->name = wxString( wxConvUTF8.cMB2WC( t->name().c_str() ) );
+			torrent->hash = t->info_hash();
+			torrent->config.reset( new TorrentConfig( wxString(torrent->hash) ) );
 
-		torrent->isvalid = true;
+			if( torrent->config->GetTrackersURL().size() <= 0 )
+			{
+				std::vector<lt::announce_entry> trackers = t->trackers();
+				torrent->config->SetTrackersURL( trackers );
+			}
+
+			torrent->isvalid = true;
+		}
 	}
 	catch( std::exception &e )
 	{
@@ -1229,6 +1233,7 @@ void BitTorrentSession::StartTorrent( shared_ptr<torrent_t>& torrent, bool force
 
 void BitTorrentSession::StopTorrent( shared_ptr<torrent_t>& torrent )
 {
+	wxASSERT(torrent);
 	wxLogInfo( _T( "%s:Stop\n" ), torrent->name.c_str() );
 	lt::torrent_handle& handle = torrent->handle;
 	lt::torrent_handle invalid_handle;
@@ -1244,17 +1249,20 @@ void BitTorrentSession::StopTorrent( shared_ptr<torrent_t>& torrent )
 		torrent->handle = invalid_handle;
 	}
 
-	enum torrent_state state = ( enum torrent_state ) torrent->config->GetTorrentState();
-
-	//XXX redundant ? StartTorrent below will call the same thing
-	if( ( state == TORRENT_STATE_START ) ||
-			( state == TORRENT_STATE_FORCE_START ))
+	if(torrent->config)
 	{
-		PostQueueUpdateEvent();
-	}
+		enum torrent_state state = ( enum torrent_state ) torrent->config->GetTorrentState();
 
-	torrent->config->SetTorrentState( TORRENT_STATE_STOP );
-	torrent->config->Save();
+		//XXX redundant ? StartTorrent below will call the same thing
+		if( ( state == TORRENT_STATE_START ) ||
+				( state == TORRENT_STATE_FORCE_START ))
+		{
+			PostQueueUpdateEvent();
+		}
+
+		torrent->config->SetTorrentState( TORRENT_STATE_STOP );
+		torrent->config->Save();
+	}
 }
 
 void BitTorrentSession::QueueTorrent( shared_ptr<torrent_t>& torrent )

@@ -137,7 +137,7 @@ void SwashListCtrl::Init( long num_cols, SwashColumnItem *columns )
 
 long SwashListCtrl::ColumnId( long column ) const
 {
-	SwashListCtrl* pThis = const_cast<SwashListCtrl*>( this );
+	//SwashListCtrl* pThis = const_cast<SwashListCtrl*>( this );
 	int i = 0;
 
 	for( i = 0; i < m_numberofcolumns; i++ )
@@ -163,7 +163,6 @@ wxString SwashListCtrl::Settings() const
 
 		if( m_columns[i].show )
 		{
-			int j = 0;
 			settings += wxString::Format( _T( "%d" ), pThis->GetColumnWidth( m_columns[i].column ) );
 		}
 		else
@@ -645,7 +644,6 @@ void SwashListCtrl::OnLeftDClick(wxMouseEvent& event)
 	}
 
 #ifdef _DEBUG
-
 	int flags;
 	long subitem = -1;
 	long item = HitTest( event.GetPosition(), flags, &subitem );
@@ -706,8 +704,8 @@ void SwashListCtrl::LogListEvent( const wxListEvent& event, const wxChar *eventN
 
 wxString SwashListCtrl::OnGetItemText( long item, long column ) const
 {
-	SwashListCtrl* pThis = const_cast<SwashListCtrl*>( this );
-	long index_item = item;
+	//SwashListCtrl* pThis = const_cast<SwashListCtrl*>( this );
+	//long index_item = item;
 	wxListItem listitem;
 	//  pThis->GetColumn(column, listitem);
 	//wxLogDebug(_T("OnGetItemText: Item %d column %d listitem %s ColumnCount %d id %d"), item, column, listitem.GetText().c_str(), pThis->GetColumnCount(), listitem.GetId());
@@ -726,7 +724,7 @@ int SwashListCtrl::GetItemColumnImage( long item, long columnid ) const
 
 int SwashListCtrl::OnGetItemColumnImage( long item, long column ) const
 {
-	long index_item = item;
+	//long index_item = item;
 	wxListItem listitem;
 	GetColumn( column, listitem );
 	//wxLogDebug(_T("OnGetItemText: Item %d column %d"), item, column);
@@ -739,7 +737,7 @@ wxListItemAttr *SwashListCtrl::OnGetItemAttr( long item ) const
 	/* alternate color on msw is kinda.. weird */
 	return ( wxListItemAttr * )&m_attreven;
 #else
-	return item % 2 ? ( wxListItemAttr * )&m_attreven : ( wxListItemAttr * )&m_attrodd;
+	return ( item % 2 ) ? ( wxListItemAttr * )&m_attreven : ( wxListItemAttr * )&m_attrodd;
 #endif
 }
 
@@ -771,7 +769,7 @@ void SwashListCtrl::ShowContextMenu( const wxPoint& pos )
 
 void SwashListCtrl::UpdateSwashList()
 {
-	SwashListCtrl* pThis = const_cast<SwashListCtrl*>( this );
+	//SwashListCtrl* pThis = const_cast<SwashListCtrl*>( this );
 
 	if( GetItemCount() == 0 )
 	{ return ; }
