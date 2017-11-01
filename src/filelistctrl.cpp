@@ -204,11 +204,11 @@ wxString FileListCtrl::GetItemValue( long item, long columnid ) const
 			{
 				std::vector<boost::int64_t> f_progress;
 				h.file_progress( f_progress, lt::torrent_handle::piece_granularity);
-				wxASSERT(item < f_progress.size());
-				return wxString::Format( _T( "%.02f%%" ), ( (( wxDouble ) f_progress[item])/ ((wxDouble)allfiles.file_size(item)) * 100 ) );
+				if(item < f_progress.size())
+					return wxString::Format( _T( "%.02f%%" ), ( (( wxDouble ) f_progress[item])/ ((wxDouble)allfiles.file_size(item)) * 100 ) );
 			}
-			else
-			{ ret = _T( "0.00" ); }
+
+			ret = _T( "0.00" );
 
 			break;
 		}

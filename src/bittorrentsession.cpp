@@ -410,6 +410,32 @@ void BitTorrentSession::Configure(lt::settings_pack &settingsPack)
 		settingsPack.set_str(lt::settings_pack::dht_bootstrap_nodes, "dht.libtorrent.org:25401,router.bittorrent.com:6881,router.utorrent.com:6881,dht.transmissionbt.com:6881,dht.aelitis.com:6881");
 	}
 	settingsPack.set_bool(lt::settings_pack::enable_lsd, m_config->GetEnableLsd());
+	settingsPack.set_int(lt::settings_pack::choking_algorithm, lt::settings_pack::fixed_slots_choker);
+	settingsPack.set_int(lt::settings_pack::seed_choking_algorithm, lt::settings_pack::fastest_upload);
+	/*
+	switch (chokingAlgorithm()) {
+    case ChokingAlgorithm::FixedSlots:
+    default:
+        settingsPack.set_int(lt::settings_pack::choking_algorithm, lt::settings_pack::fixed_slots_choker);
+        break;
+    case ChokingAlgorithm::RateBased:
+        settingsPack.set_int(lt::settings_pack::choking_algorithm, lt::settings_pack::rate_based_choker);
+        break;
+    }
+
+    switch (seedChokingAlgorithm()) {
+    case SeedChokingAlgorithm::RoundRobin:
+        settingsPack.set_int(lt::settings_pack::seed_choking_algorithm, lt::settings_pack::round_robin);
+        break;
+    case SeedChokingAlgorithm::FastestUpload:
+    default:
+        settingsPack.set_int(lt::settings_pack::seed_choking_algorithm, lt::settings_pack::fastest_upload);
+        break;
+    case SeedChokingAlgorithm::AntiLeech:
+        settingsPack.set_int(lt::settings_pack::seed_choking_algorithm, lt::settings_pack::anti_leech);
+        break;
+    }
+	*/
 }
 
 void BitTorrentSession::ConfigureSession()
@@ -1235,6 +1261,8 @@ void BitTorrentSession::StopTorrent( shared_ptr<torrent_t>& torrent )
 {
 	wxASSERT(torrent);
 	wxLogInfo( _T( "%s:Stop\n" ), torrent->name.c_str() );
+	wxASSERT(torrent->isvalid);
+	wxASSERT(torrent->config);
 	lt::torrent_handle& handle = torrent->handle;
 	lt::torrent_handle invalid_handle;
 
@@ -1268,6 +1296,8 @@ void BitTorrentSession::StopTorrent( shared_ptr<torrent_t>& torrent )
 void BitTorrentSession::QueueTorrent( shared_ptr<torrent_t>& torrent )
 {
 	//wxLogInfo(_T("%s: Queue"), torrent->name.c_str());
+	wxASSERT(torrent->isvalid);
+	wxASSERT(torrent->config);
 	lt::torrent_handle& handle = torrent->handle;
 
 	if (handle.is_valid())
@@ -1286,6 +1316,8 @@ void BitTorrentSession::QueueTorrent( shared_ptr<torrent_t>& torrent )
 void BitTorrentSession::PauseTorrent( shared_ptr<torrent_t>& torrent )
 {
 	wxLogInfo( _T( "%s: Pause\n" ), torrent->name.c_str() );
+	wxASSERT(torrent->isvalid);
+	wxASSERT(torrent->config);
 	lt::torrent_handle& handle = torrent->handle;
 
 	if( !handle.is_valid() )

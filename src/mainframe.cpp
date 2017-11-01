@@ -888,7 +888,7 @@ void MainFrame::OnListItemClick( long item )
 	{ return; }
 
 	m_prevselecteditem = item;
-	UpdateUI();
+	UpdateUI(true);
 }
 
 void MainFrame::UpdateUI(bool force/* = false*/)
@@ -941,7 +941,6 @@ void MainFrame::UpdateUI(bool force/* = false*/)
 				}
 
 				/* get files list */
-				
 				WXLOGDEBUG(( _T( "get files list\n" )));
 				{
 					m_filelistctrl->SetStaticHandle(torrent);
