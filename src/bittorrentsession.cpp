@@ -737,6 +737,7 @@ void BitTorrentSession::RemoveTorrent( shared_ptr<torrent_t>& torrent, bool dele
 		m_torrent_queue.erase( torrent_it );
 	}
 
+	wxASSERT(torrent);
 	lt::torrent_handle& h = torrent->handle;
 	if( h.is_valid() )
 	{
