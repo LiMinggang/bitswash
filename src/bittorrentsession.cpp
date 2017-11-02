@@ -154,44 +154,57 @@ void *BitTorrentSession::Entry()
 	bool check_now = true;
 	do
 	{
-		evt = BTS_EVENT_INVALID;
-		result = m_evt_queue.ReceiveTimeout( 1000, evt );
-		if(result == wxMSGQUEUE_NO_ERROR)
+		try
 		{
-			switch(evt)
+			evt = BTS_EVENT_INVALID;
+			result = m_evt_queue.ReceiveTimeout( 1000, evt );
+			if(result == wxMSGQUEUE_NO_ERROR)
 			{
-				case BTS_EVENT_ALERT:
+				switch(evt)
 				{
-					HandleTorrentAlert();
-					break;
+					case BTS_EVENT_ALERT:
+					{
+						HandleTorrentAlert();
+						break;
+					}
+					case BTS_EVENT_QUEUEUPDATE:
+					{
+						check_now = true;
+						break;
+					}
+					default:
+						break;
 				}
-				case BTS_EVENT_QUEUEUPDATE:
-				{
-					check_now = true;
-					break;
-				}
-				default:
-					break;
 			}
-		}
 
-		if(!check_now)
+			if(!check_now)
+			{
+				now = wxDateTime::GetTimeNow();
+				int timediff = now - starttime;
+				check_now = (timediff >= 5);
+			}
+
+			if(check_now)
+			{
+				//DumpTorrents();
+				CheckQueueItem();
+				starttime = wxDateTime::GetTimeNow();
+				check_now = false;
+			}
+
+			if( TestDestroy() )
+			{ break; }
+		}		
+		catch( std::exception& e )
 		{
-			now = wxDateTime::GetTimeNow();
-			int timediff = now - starttime;
-			check_now = (timediff >= 5);
+			wxLogError( _T( "%s\n" ), e.what() );
+			break;
 		}
-
-		if(check_now)
+		catch(...)
 		{
-			//DumpTorrents();
-			CheckQueueItem();
-			starttime = wxDateTime::GetTimeNow();
-			check_now = false;
+			wxLogError( _T( "FATAL ERROR!! exiting...\n" ) );
+			break;
 		}
-
-		if( TestDestroy() )
-		{ break; }
 	}
 	while(result != wxMSGQUEUE_MISC_ERROR);
 
@@ -222,15 +235,19 @@ void BitTorrentSession::OnExit()
 		}
 		catch( std::exception& e )
 		{
-			wxLogError( _T( "%s\n" ), e.what() );
+			wxLogError( _T( "Save DHT error: %s\n" ), e.what() );
+		}
+		catch(...)
+		{
+			wxLogError( _T( "Save DHT error!! exiting...\n" ) );
 		}
 	}
 
 	SaveAllTorrent();
 	m_evt_queue.Clear();
 	std::vector<lt::alert*> alerts;
-	m_libbtsession->pop_alerts( &alerts );
 	m_libbtsession->set_alert_notify(null_notify_func_t());
+	m_libbtsession->pop_alerts( &alerts );
 	delete m_libbtsession;
 	{
 		wxMutexLocker ml( m_torrent_queue_lock );
@@ -1800,7 +1817,8 @@ void BitTorrentSession::CheckQueueItem()
 	{
 		shared_ptr<torrent_t>& torrent = m_torrent_queue[idx];
 		WXLOGDEBUG(( _T( "Processing torrent %s\n" ), torrent->name.c_str() ));
- 
+		wxASSERT(torrent);
+ 		wxASSERT(torrent->config);
 		switch( torrent->config->GetTorrentState() )
 		{
 		case TORRENT_STATE_START:
