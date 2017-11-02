@@ -173,6 +173,7 @@ void *BitTorrentSession::Entry()
 						break;
 					}
 					default:
+						wxASSERT(0);
 						break;
 				}
 			}
@@ -1924,6 +1925,7 @@ void BitTorrentSession::CheckQueueItem()
 			}
 
 		default:
+			wxASSERT(0);
 			//do nothing
 			break;
 		}
@@ -2170,8 +2172,8 @@ void BitTorrentSession::HandleTorrentAlert()
 				case lt::block_downloading_alert::alert_type:
 				case lt::udp_error_alert::alert_type:
 				case lt::log_alert::alert_type:
-					log_severity = 1;
 				default:
+					log_severity = 1;
 					{
 						event_string << _T("[") << (*it)->type() << _T("]") << wxString::FromUTF8((*it)->message().c_str());
 						//if(event_string.IsEmpty()) return;

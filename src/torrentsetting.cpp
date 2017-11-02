@@ -211,8 +211,6 @@ TorrentSettingPane::TorrentSettingPane( wxWindow* parent, shared_ptr<torrent_t>&
 			strStorageMode = _("Full");
 			break;
 		case lt::storage_mode_sparse:
-			strStorageMode = _("Sparse");
-			break;
 		default:
 			strStorageMode = _("Sparse");
 			break;

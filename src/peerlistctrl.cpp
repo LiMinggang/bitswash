@@ -221,6 +221,7 @@ wxString PeerListCtrl::GetItemValue(long item, long columnid) const
 		ret = wxString::Format(_T("%d/%d"), peer_info.downloading_progress, peer_info.downloading_total);
 		break;
 	default:
+		wxASSERT(0);
 		ret = _T("");
 	}
 
