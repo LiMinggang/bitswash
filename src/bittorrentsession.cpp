@@ -506,14 +506,14 @@ void BitTorrentSession::SetConnection()
 	if( ( portmin < 0 ) || ( portmin > 65535 ) )
 	{
 		portmin = 6881 ;
-		m_config->SetPortMin( portmin );
 	}
+	m_config->SetPortMin( portmin );
 
 	if( ( portmax < 0 ) || ( portmax > 65535 ) || ( portmax < portmin ) )
 	{
 		portmax = portmin + 8;
-		m_config->SetPortMax( portmax );
 	}
+	m_config->SetPortMax( portmax );
 
 	/*error_code ec;
 	m_libbtsession->listen_on( std::make_pair( portmin, portmax ), ec,
@@ -593,7 +593,7 @@ void BitTorrentSession::AddTorrentToSession( shared_ptr<torrent_t>& torrent )
 {
 	lt::torrent_handle &handle = torrent->handle;
 	wxLogWarning(( _T( "AddTorrent %s into session\n" ), torrent->name.c_str() ));
-	wxASSERT(wxString(torrent->hash) != _T("0000000000000000000000000000000000000000"));
+	wxASSERT_MSG((wxString(torrent->hash) != _T("0000000000000000000000000000000000000000")), _("BitTorrentSession::AddTorrentToSession torrent hash is invalid!")+torrent->name);
 	wxString fastresumefile = wxGetApp().SaveTorrentsPath() + torrent->hash + _T( ".fastresume" );
 	lt::entry resume_data;
 
@@ -644,9 +644,6 @@ void BitTorrentSession::AddTorrentToSession( shared_ptr<torrent_t>& torrent )
 			break;
 
 		case lt::storage_mode_sparse:
-			strStorageMode = _( "Sparse" );
-			break;
-
 		default:
 			eStorageMode = lt::storage_mode_sparse;
 			strStorageMode = _( "Sparse" );
@@ -708,7 +705,7 @@ bool BitTorrentSession::AddTorrent( shared_ptr<torrent_t>& torrent )
 void BitTorrentSession::RemoveTorrent( shared_ptr<torrent_t>& torrent, bool deletedata )
 {
 	WXLOGDEBUG(( _T( "%s: Removing Torrent\n" ), torrent->name.c_str() ));
-
+	wxASSERT(torrent);
 	{
 		wxMutexLocker ml( m_torrent_queue_lock );
 		int idx = find_torrent_from_hash( wxString(torrent->hash) );
@@ -727,9 +724,12 @@ void BitTorrentSession::RemoveTorrent( shared_ptr<torrent_t>& torrent, bool dele
 	if( h.is_valid() )
 	{
 		h.pause();
-		m_libbtsession->remove_torrent( h );
+		int options = 0;
+		if( deletedata ) options = lt::session::delete_files;
+		m_libbtsession->remove_torrent( h, options );
 	}
 
+	wxASSERT(torrent->config);
 	enum torrent_state state = ( enum torrent_state ) torrent->config->GetTorrentState();
 
 	wxString app_prefix = wxGetApp().SaveTorrentsPath() +
@@ -767,9 +767,16 @@ void BitTorrentSession::RemoveTorrent( shared_ptr<torrent_t>& torrent, bool dele
 	{
 		wxString download_data = torrent->config->GetDownloadPath() + ( wxString )torrent->name.c_str() ;
 		wxLogInfo( _T( "%s: Remove Data as well in %s\n" ), torrent->name.c_str(), download_data.c_str() );
+		
 
 		if( wxDirExists( download_data ) )
 		{
+			wxFileName fn(torrent->config->GetDownloadPath());
+			wxFileName cwd(wxFileName::GetCwd(fn.GetVolume()));
+			if(fn.GetLongPath() == cwd.GetLongPath())
+			{
+				wxSetWorkingDirectory (fn.GetVolume() + wxFileName::GetPathSeparator());
+			}
 			if( !RemoveDirectory( download_data ) )
 			{
 				wxLogError( _T( "%s: Error removing directory %s error %s\n" ), torrent->name.c_str(), download_data.c_str(), wxSysErrorMsg( wxSysErrorCode() ) );
@@ -1139,15 +1146,22 @@ shared_ptr<torrent_t> BitTorrentSession::ParseTorrent( const wxString& filename 
 			torrent->info = t;
 			torrent->name = wxString( wxConvUTF8.cMB2WC( t->name().c_str() ) );
 			torrent->hash = t->info_hash();
-			torrent->config.reset( new TorrentConfig( wxString(torrent->hash) ) );
-
-			if( torrent->config->GetTrackersURL().size() <= 0 )
+			if( wxString(torrent->hash) != _T("0000000000000000000000000000000000000000"))
 			{
-				std::vector<lt::announce_entry> trackers = t->trackers();
-				torrent->config->SetTrackersURL( trackers );
-			}
+				torrent->config.reset( new TorrentConfig( wxString(torrent->hash) ) );
 
-			torrent->isvalid = true;
+				if( torrent->config->GetTrackersURL().size() <= 0 )
+				{
+					std::vector<lt::announce_entry> trackers = t->trackers();
+					torrent->config->SetTrackersURL( trackers );
+				}
+
+				torrent->isvalid = true;
+			}
+			else
+			{
+				wxMessageBox( _( "Parse torrent failed:The torrent is invalid!" ), _( "Error" ),  wxOK | wxICON_ERROR );
+			}
 		}
 	}
 	catch( std::exception &e )
@@ -1165,44 +1179,51 @@ shared_ptr<torrent_t> BitTorrentSession::LoadMagnetUri( MagnetUri& magneturi )
 	{
 		wxMutexLocker ml( m_torrent_queue_lock );
 		notfound = (m_queue_torrent_set.find(wxString(magneturi.hash())) == m_queue_torrent_set.end());
-	}
-	if(notfound)
-	{
-		try
+		if(notfound)
 		{
-			torrent.reset(new torrent_t());
-			lt::add_torrent_params p = magneturi.addTorrentParams();
-			// Limits
-			//p.max_connections = maxConnectionsPerTorrent();
-			//p.max_uploads = maxUploadsPerTorrent();
-			//shared_ptr<lt::torrent_info> t(new lt::torrent_info( sha1_hash( magneturi.hash() ) ));
-			//torrent->info = t;
-			torrent->name = magneturi.name();
-			torrent->hash = magneturi.hash();
-			torrent->config.reset( new TorrentConfig( wxString(torrent->hash) ) );
-			p.save_path = ( const char* )torrent->config->GetDownloadPath().mb_str( wxConvUTF8 );
+			try
+			{
+				torrent.reset(new torrent_t());
+				lt::add_torrent_params p = magneturi.addTorrentParams();
+				// Limits
+				//p.max_connections = maxConnectionsPerTorrent();
+				//p.max_uploads = maxUploadsPerTorrent();
+				//shared_ptr<lt::torrent_info> t(new lt::torrent_info( sha1_hash( magneturi.hash() ) ));
+				//torrent->info = t;
+				torrent->name = magneturi.name();
+				torrent->hash = magneturi.hash();
+				if( wxString(torrent->hash) != _T("0000000000000000000000000000000000000000"))
+				{
+					torrent->config.reset( new TorrentConfig( wxString(torrent->hash) ) );
+					p.save_path = ( const char* )torrent->config->GetDownloadPath().mb_str( wxConvUTF8 );
 
-			p.flags |= lt::add_torrent_params::flag_paused; // Start in pause
-			p.flags &= ~lt::add_torrent_params::flag_auto_managed; // Because it is added in paused state
-			p.flags &= ~lt::add_torrent_params::flag_duplicate_is_error; // Already checked
-			// Solution to avoid accidental file writes
-			p.flags |= lt::add_torrent_params::flag_upload_mode;
+					p.flags |= lt::add_torrent_params::flag_paused; // Start in pause
+					p.flags &= ~lt::add_torrent_params::flag_auto_managed; // Because it is added in paused state
+					p.flags &= ~lt::add_torrent_params::flag_duplicate_is_error; // Already checked
+					// Solution to avoid accidental file writes
+					p.flags |= lt::add_torrent_params::flag_upload_mode;
 
-			// Adding torrent to BitTorrent session
-			torrent->config->SetTorrentState( TORRENT_STATE_START );
-			torrent->magneturi = magneturi.url();
+					// Adding torrent to BitTorrent session
+					torrent->config->SetTorrentState( TORRENT_STATE_START );
+					torrent->magneturi = magneturi.url();
 
 
-			torrent->isvalid = false;
-			m_libbtsession->async_add_torrent( p );
-			wxMutexLocker ml( m_torrent_queue_lock );
-			m_queue_torrent_set.insert(wxString(torrent->hash));
-			m_torrent_queue.push_back( torrent );
-			m_running_torrent_map.insert( std::pair<wxString, int>( wxString(torrent->hash), (int)(m_torrent_queue.size() - 1 )) );
-		}
-		catch( std::exception &e )
-		{
-			wxLogError( wxString::FromUTF8( e.what() ) + _T("\n") );
+					torrent->isvalid = false;
+					m_libbtsession->async_add_torrent( p );
+					wxMutexLocker ml( m_torrent_queue_lock );
+					m_queue_torrent_set.insert(wxString(torrent->hash));
+					m_torrent_queue.push_back( torrent );
+					m_running_torrent_map.insert( std::pair<wxString, int>( wxString(torrent->hash), (int)(m_torrent_queue.size() - 1 )) );
+				}
+				else
+				{
+					wxMessageBox( _( "Parse magnet URI failed:The torrent is invalid!" ), _( "Error" ),  wxOK | wxICON_ERROR );
+				}
+			}
+			catch( std::exception &e )
+			{
+				wxLogError( wxString::FromUTF8( e.what() ) + _T("\n") );
+			}
 		}
 	}
 
@@ -1941,7 +1962,7 @@ void BitTorrentSession::HandleTorrentAlert()
 			switch ((*it)->type())
 			{
 				case lt::add_torrent_alert::alert_type:
-					if( lt::add_torrent_alert* p = dynamic_cast<lt::add_torrent_alert*>( *it ) )
+					if( lt::add_torrent_alert* p = lt::alert_cast<lt::add_torrent_alert>( *it ) )
 					{
 						if (p->error)
 						{
@@ -1956,121 +1977,121 @@ void BitTorrentSession::HandleTorrentAlert()
 					}
 					break;
 				case lt::torrent_finished_alert::alert_type:
-					if( lt::torrent_finished_alert* p = dynamic_cast<lt::torrent_finished_alert*>( *it ) )
+					if( lt::torrent_finished_alert* p = lt::alert_cast<lt::torrent_finished_alert>( *it ) )
 					{
 						lt::torrent_status st = (p->handle).status(lt::torrent_handle::query_name);
 						event_string << st.name << _T(": ") << wxString::FromUTF8(p->message().c_str());
 					}
 					break;
 				case lt::peer_ban_alert::alert_type:
-					if( lt::peer_ban_alert* p = dynamic_cast<lt::peer_ban_alert*>( *it ) )
+					if( lt::peer_ban_alert* p = lt::alert_cast<lt::peer_ban_alert>( *it ) )
 					{
 						event_string << _T( "Peer: (" ) << p->ip.address().to_string() << _T( ")" ) << wxString::FromUTF8(p->message().c_str());
 					}
 					break;
 				case lt::peer_error_alert::alert_type:
-					if( lt::peer_error_alert* p = dynamic_cast<lt::peer_error_alert*>( *it ) )
+					if( lt::peer_error_alert* p = lt::alert_cast<lt::peer_error_alert>( *it ) )
 					{
 						log_severity = 4;
 						event_string << _T( "Peer: " ) << identify_client( p->pid ) << _T( ": " ) << wxString::FromUTF8(p->message().c_str());
 					}
 					break;
 				case lt::peer_blocked_alert::alert_type:
-					if( lt::peer_blocked_alert* p = dynamic_cast<lt::peer_blocked_alert*>( *it ) )
+					if( lt::peer_blocked_alert* p = lt::alert_cast<lt::peer_blocked_alert>( *it ) )
 					{
 						log_severity = 3;
 						event_string << _T( "Peer: (" ) << p->ip.to_string() << _T( ")" ) << wxString::FromUTF8(p->message().c_str());
 					}
 					break;
 				case lt::invalid_request_alert::alert_type:
-					if( lt::invalid_request_alert* p = dynamic_cast<lt::invalid_request_alert*>( *it ) )
+					if( lt::invalid_request_alert* p = lt::alert_cast<lt::invalid_request_alert>( *it ) )
 					{
 						log_severity = 4;
 						event_string << identify_client( p->pid ) << _T( ": " ) << wxString::FromUTF8(p->message().c_str());
 					}
 					break;
 				case lt::tracker_warning_alert::alert_type:
-					if( lt::tracker_warning_alert* p = dynamic_cast<lt::tracker_warning_alert*>( *it ) )
+					if( lt::tracker_warning_alert* p = lt::alert_cast<lt::tracker_warning_alert>( *it ) )
 					{
 						log_severity = 3;
 						event_string << _T( "Tracker: " ) << wxString::FromUTF8(p->message().c_str());
 					}
 					break;
 				case lt::tracker_reply_alert::alert_type:
-					if( lt::tracker_reply_alert* p = dynamic_cast<lt::tracker_reply_alert*>( *it ) )
+					if( lt::tracker_reply_alert* p = lt::alert_cast<lt::tracker_reply_alert>( *it ) )
 					{
 						event_string << _T( "Tracker:" ) << wxString::FromUTF8(p->message().c_str()) << p->num_peers << _T( " number of peers " );
 					}
 					break;
 				case lt::url_seed_alert::alert_type:
-					if( lt::url_seed_alert* p = dynamic_cast<lt::url_seed_alert*>( *it ) )
+					if( lt::url_seed_alert* p = lt::alert_cast<lt::url_seed_alert>( *it ) )
 					{
 						event_string << _T( "Url seed '" ) << p->server_url() << _T( "': " ) << wxString::FromUTF8(p->message().c_str());
 					}
 					break;
 				case lt::listen_failed_alert::alert_type:
-					if( lt::listen_failed_alert* p = dynamic_cast<lt::listen_failed_alert*>( *it ) )
+					if( lt::listen_failed_alert* p = lt::alert_cast<lt::listen_failed_alert>( *it ) )
 					{
 						log_severity = 4;
 						event_string << _T( "Listen failed: " ) << wxString::FromUTF8(p->message().c_str());
 					}
 					break;
 				case lt::portmap_error_alert::alert_type:
-					if( lt::portmap_error_alert* p = dynamic_cast<lt::portmap_error_alert*>( *it ) )
+					if( lt::portmap_error_alert* p = lt::alert_cast<lt::portmap_error_alert>( *it ) )
 					{
 						log_severity = 4;
 						event_string << _T( "Portmap error: " ) << wxString::FromUTF8(p->message().c_str());
 					}
 					break;
 				case lt::portmap_alert::alert_type:
-					if( lt::portmap_alert* p = dynamic_cast<lt::portmap_alert*>( *it ) )
+					if( lt::portmap_alert* p = lt::alert_cast<lt::portmap_alert>( *it ) )
 					{
 						event_string << _T( "Portmap: " ) << wxString::FromUTF8(p->message().c_str());
 					}
 					break;
 				case lt::tracker_announce_alert::alert_type:
-					if( lt::tracker_announce_alert* p = dynamic_cast<lt::tracker_announce_alert*>( *it ) )
+					if( lt::tracker_announce_alert* p = lt::alert_cast<lt::tracker_announce_alert>( *it ) )
 					{
 						event_string << _T( "Tracker: " ) << wxString::FromUTF8(p->message().c_str());
 					}
 					break;
 				case lt::file_error_alert::alert_type:
-					if( lt::file_error_alert* p = dynamic_cast<lt::file_error_alert*>( *it ) )
+					if( lt::file_error_alert* p = lt::alert_cast<lt::file_error_alert>( *it ) )
 					{
 						log_severity = 4;
 						event_string << _T( "File error: " ) << wxString::FromUTF8(p->message().c_str());
 					}
 					break;
 				case lt::hash_failed_alert::alert_type:
-					if( lt::hash_failed_alert* p = dynamic_cast<lt::hash_failed_alert*>( *it ) )
+					if( lt::hash_failed_alert* p = lt::alert_cast<lt::hash_failed_alert>( *it ) )
 					{
 						log_severity = 4;
 						event_string << _T( "Hash: " ) << wxString::FromUTF8(p->message().c_str());
 					}
 					break;
 				case lt::metadata_failed_alert::alert_type:
-					if( lt::metadata_failed_alert* p = dynamic_cast<lt::metadata_failed_alert*>( *it ) )
+					if( lt::metadata_failed_alert* p = lt::alert_cast<lt::metadata_failed_alert>( *it ) )
 					{
 						log_severity = 4;
 						event_string << _T( "Metadata: " ) << wxString::FromUTF8(p->message().c_str());
 					}
 					break;
 				case lt::metadata_received_alert::alert_type:
-					if( lt::metadata_received_alert* p = dynamic_cast<lt::metadata_received_alert*>( *it ) )
+					if( lt::metadata_received_alert* p = lt::alert_cast<lt::metadata_received_alert>( *it ) )
 					{
 						event_string << _T( "Metadata: " ) << wxString::FromUTF8(p->message().c_str());
 						HandleMetaDataAlert(p);
 					}
 					break;
 				case lt::fastresume_rejected_alert::alert_type:
-					if( lt::fastresume_rejected_alert* p = dynamic_cast<lt::fastresume_rejected_alert*>( *it ) )
+					if( lt::fastresume_rejected_alert* p = lt::alert_cast<lt::fastresume_rejected_alert>( *it ) )
 					{
 						log_severity = 3;
 						event_string << _T( "Fastresume: " ) << wxString::FromUTF8(p->message().c_str());
 					}
 					break;
 				case lt::save_resume_data_alert::alert_type:
-					if( lt::save_resume_data_alert *p = dynamic_cast<lt::save_resume_data_alert*>( *it ) )
+					if( lt::save_resume_data_alert *p = lt::alert_cast<lt::save_resume_data_alert>( *it ) )
 					{
 						lt::torrent_handle& h = p->handle;
 
@@ -2078,18 +2099,44 @@ void BitTorrentSession::HandleTorrentAlert()
 						{
 							InfoHash thash(h.info_hash());
 							//save_resume_data to disk
+							wxMutexLocker ml( m_torrent_queue_lock );
 							torrents_map::iterator it = m_running_torrent_map.find(wxString(thash));
 							if(it != m_running_torrent_map.end())
 							{
 								shared_ptr<torrent_t> torrent = BitTorrentSession::GetTorrent( it->second );
+								wxASSERT(torrent);
 								SaveTorrentResumeData(torrent);
 							}
 						}
 						event_string << h.status(lt::torrent_handle::query_name).name << _T( ": " ) << wxString::FromUTF8(p->message().c_str());
 					}
 					break;
+				case lt::save_resume_data_failed_alert::alert_type:
+					if (lt::save_resume_data_failed_alert* p = lt::alert_cast<lt::save_resume_data_failed_alert>( *it ))
+					{
+						lt::torrent_handle & h = p->handle;
+						log_severity = 1;
+						event_string << _T("FAILED TO SAVE RESUME DATA:: ") << wxString::FromUTF8(p->message().c_str());
+
+						if (h.is_valid())
+						{
+							log_severity = 4;
+							InfoHash thash(h.info_hash());
+							wxMutexLocker ml( m_torrent_queue_lock );
+							torrents_map::iterator it = m_running_torrent_map.find(wxString(thash));
+							if(it != m_running_torrent_map.end())
+							{
+								m_libbtsession->remove_torrent(h);
+								shared_ptr<torrent_t> torrent = BitTorrentSession::GetTorrent( it->second );
+								wxASSERT(torrent);
+								torrent->config->SetTorrentState( TORRENT_STATE_STOP );
+								torrent->config->Save();
+							}
+						}
+					}
+					break;
 				case lt::session_stats_alert::alert_type:
-					if (lt::session_stats_alert* p = dynamic_cast<lt::session_stats_alert *>(*it))
+					if (lt::session_stats_alert* p = lt::alert_cast<lt::session_stats_alert>( *it ))
 					{
 						UpdateCounters(p->values, sizeof(p->values)/sizeof(p->values[0])
 							, lt::duration_cast<lt::microseconds>(p->timestamp().time_since_epoch()).count());

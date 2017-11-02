@@ -157,18 +157,17 @@ wxString FileListCtrl::GetItemValue( long item, long columnid ) const
 		_( "Higest" )
 	};
 
+	lt::torrent_info const& torrent_info = *( pTorrent->info );
 	switch( columnid )
 	{
 	case FILELIST_COLUMN_FILE:
 		{
-			lt::torrent_info const& torrent_info = *( pTorrent->info );
 			lt::file_storage const& allfiles = torrent_info.files();
 			ret = wxString( wxConvUTF8.cMB2WC( (allfiles.file_name(item)).c_str() ) );
 			break;
 		}
 	case FILELIST_COLUMN_SIZE:
 		{
-			lt::torrent_info const& torrent_info = *( pTorrent->info );
 			lt::file_storage const& allfiles = torrent_info.files();
 			ret = HumanReadableByte( ( wxDouble ) (allfiles.file_size(item)) );
 			break;
@@ -176,7 +175,6 @@ wxString FileListCtrl::GetItemValue( long item, long columnid ) const
 	case FILELIST_COLUMN_DOWNLOAD:
 		{
 			bool nopriority = false;
-			lt::torrent_info const& torrent_info = *( pTorrent->info );
 			std::vector<int> filespriority = pTorrent->config->GetFilesPriorities();
 			
 			if( filespriority.size() != torrent_info.num_files() )
@@ -197,7 +195,6 @@ wxString FileListCtrl::GetItemValue( long item, long columnid ) const
 	case FILELIST_COLUMN_PROGRESS:
 		{
 			lt::torrent_handle h = pTorrent->handle;
-			lt::torrent_info const& torrent_info = *(pTorrent->info);
 			lt::file_storage const& allfiles = torrent_info.files();
 
 			if( h.is_valid() )
