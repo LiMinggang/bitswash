@@ -38,8 +38,11 @@ GeneralSettingPane::GeneralSettingPane( wxWindow* parent,
 			wxSize size, 
 			int style): wxPanel(parent, id, pos, size, style)
 {
-	m_pMainFrame = (wxFrame*)wxGetApp().GetTopWindow();
-	m_pcfg = ((MainFrame*)m_pMainFrame)->GetConfig();
+	m_pMainFrame = dynamic_cast<wxFrame *>( wxGetApp().GetTopWindow() );
+	wxASSERT(m_pMainFrame != 0);
+	MainFrame* pMainFrame = dynamic_cast<MainFrame *>( m_pMainFrame );
+	wxASSERT(pMainFrame != 0);
+	m_pcfg = pMainFrame->GetConfig();
 
 	wxFlexGridSizer* fgSizerMain;
 	fgSizerMain = new wxFlexGridSizer( 0, 1, 0, 0 );

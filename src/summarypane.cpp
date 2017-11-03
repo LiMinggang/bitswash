@@ -51,8 +51,9 @@ SummaryPane::SummaryPane(wxWindow *parent,
                const wxSize& size,
                long style): wxScrolledWindow(parent, id, pos, size,  wxVSCROLL /* | wxFULL_REPAINT_ON_RESIZE */)
 {
-
-	m_pMainFrame = ((TorrentInfo*)parent)->GetMainFrame();
+	TorrentInfo* tInfo = dynamic_cast<TorrentInfo *> (parent);
+	wxASSERT(tInfo != 0);
+	m_pMainFrame = tInfo->GetMainFrame();
 
 	int w,h;
 

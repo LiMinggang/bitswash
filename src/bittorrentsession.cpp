@@ -469,7 +469,6 @@ void BitTorrentSession::ConfigureSession()
 	if( m_config->GetDHTEnabled() )
 	{
 		lt::entry dht_state;
-		long dhtport = m_config->GetDHTPort();
 		wxString dhtstatefile = wxGetApp().DHTStatePath();
 		struct lt::dht_settings DHTSettings;
 
@@ -991,11 +990,11 @@ void BitTorrentSession::SaveAllTorrent()
 	int num_failed = 0;
 	m_libbtsession->pause();
 	/* take this opportunity to sync torrent index back to zero */
-	int idx = 0;
 	int num_outstanding_resume_data = 0;
 	wxArrayString magneturi;
 
 	{
+		int idx = 0;
 		wxMutexLocker ml( m_torrent_queue_lock );
 		for( torrents_t::iterator i = m_torrent_queue.begin();
 				i != m_torrent_queue.end();

@@ -102,7 +102,8 @@ TorrentListCtrl::~TorrentListCtrl()
 
 wxString TorrentListCtrl::GetItemValue( long item, long columnid ) const
 {
-	MainFrame* pMainFrame = ( MainFrame* )( wxGetApp().GetTopWindow() );
+	MainFrame* pMainFrame = dynamic_cast<MainFrame *> ( wxGetApp().GetTopWindow() );
+	wxASSERT(pMainFrame != 0);
 
 	//wxLogDebug(_T("TorrentListCtrl::Showing %d items column %d"), torrentlistitems->size(), columnid);
 	shared_ptr<torrent_t> torrent = pMainFrame->GetTorrent( item );
