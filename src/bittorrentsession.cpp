@@ -793,7 +793,8 @@ void BitTorrentSession::RemoveTorrent( shared_ptr<torrent_t>& torrent, bool dele
 			wxFileName fn(torrent->config->GetDownloadPath());
 			wxFileName cwd(wxFileName::GetCwd(fn.GetVolume()));
 			if(fn.GetLongPath() == cwd.GetLongPath())
-			{
+			{
+
 				wxSetWorkingDirectory (fn.GetVolume() + wxFileName::GetPathSeparator());
 			}
 			if( !RemoveDirectory( download_data ) )
@@ -1925,7 +1926,6 @@ void BitTorrentSession::CheckQueueItem()
 			}
 
 		default:
-			wxASSERT(0);
 			//do nothing
 			break;
 		}

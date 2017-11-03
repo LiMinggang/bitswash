@@ -212,7 +212,6 @@ wxString FileListCtrl::GetItemValue( long item, long columnid ) const
 				break;
 			}
 		default:
-			wxASSERT(0);
 			break;
 		}
 	}
