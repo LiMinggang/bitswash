@@ -206,6 +206,8 @@ void *BitTorrentSession::Entry()
 			wxLogError( _T( "FATAL ERROR!! exiting...\n" ) );
 			break;
 		}
+
+		WXLOGDEBUG(( _T( "BitTorrentSession Thread msg queue result %d.\n" ), result ));
 	}
 	while(result != wxMSGQUEUE_MISC_ERROR);
 
@@ -1070,6 +1072,7 @@ void BitTorrentSession::SaveAllTorrent()
 			if( !rd->resume_data ) { continue; }
 
 			lt::torrent_handle h = rd->handle;
+			wxASSERT(h.is_valid());
 			lt::torrent_status st = h.status( lt::torrent_handle::query_save_path );
 			//std::vector<char> out;
 			//bencode(std::back_inserter(out), *rd->resume_data);

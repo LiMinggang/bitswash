@@ -89,7 +89,7 @@ typedef wxUint32 bts_event;
 typedef struct torrent_handle_t {
 
 	torrent_handle_t() :
-		isvalid(false)/*, config(0)*/, filesortcol(0)
+		isvalid(false)/*, config(0)*/
 	{}
 
 	wxString name;
@@ -99,7 +99,6 @@ typedef struct torrent_handle_t {
 	shared_ptr<const libtorrent::torrent_info> info;
 	shared_ptr<TorrentConfig> config;
 	std::vector<long> fileindex;
-	long filesortcol;
 	bool isvalid;
 } torrent_t ;
 

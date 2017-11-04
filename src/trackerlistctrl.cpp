@@ -156,16 +156,19 @@ wxString TrackerListCtrl::GetItemValue(long item, long columnid) const
 
 void TrackerListCtrl::ShowContextMenu(const wxPoint& pos)
 {
-    wxMenu menu;
+	static wxMenu menu( ( long )0 );
+	static bool needInit = true;
 
-	/* XXX openfile */
-	
-    menu.Append(TRACKERLISTCTRL_MENU_REANNOUCE, _("Reannounce"));
-	menu.AppendSeparator();
-    menu.Append(TRACKERLISTCTRL_MENU_ADD, _("Add"));
-    menu.Append(TRACKERLISTCTRL_MENU_COPY, _("Copy"));
-    menu.Append(TRACKERLISTCTRL_MENU_EDIT, _("Edit"));
-    menu.Append(TRACKERLISTCTRL_MENU_DELETE, _("Delete"));
+	if( needInit )
+	{
+	    menu.Append(TRACKERLISTCTRL_MENU_REANNOUCE, _("Reannounce"));
+		menu.AppendSeparator();
+	    menu.Append(TRACKERLISTCTRL_MENU_ADD, _("Add"));
+	    menu.Append(TRACKERLISTCTRL_MENU_COPY, _("Copy"));
+	    menu.Append(TRACKERLISTCTRL_MENU_EDIT, _("Edit"));
+	    menu.Append(TRACKERLISTCTRL_MENU_DELETE, _("Delete"));
+		needInit = false;
+	}
 
     PopupMenu(&menu, pos);
 }
@@ -183,7 +186,8 @@ void TrackerListCtrl::OnMenuTracker(wxCommandEvent& event)
 		pTorrent = m_pTorrent;
 	else
 	{
-		MainFrame* pMainFrame = (MainFrame*)wxGetApp().GetTopWindow();
+		MainFrame* pMainFrame = dynamic_cast< MainFrame* >( wxGetApp().GetTopWindow() );
+		wxASSERT(pMainFrame != 0);
 		pTorrent = pMainFrame->GetSelectedTorrent();
 	}
 
