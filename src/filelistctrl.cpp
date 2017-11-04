@@ -89,6 +89,15 @@ static SwashColumnItem filelistcols[] =
 	{ FILELIST_COLUMN_PROGRESS,  _( "Progress" ), _( "Progress" ), _( "File download progress" ),  88, true },
 };
 
+// sort using a custom function object
+struct fsDsc{
+	bool operator()(long a, long b) const
+	{	
+		return allfiles->file_size(a) > allfiles->file_size(b);
+	}
+	lt::file_storage const * allfiles;
+} ;
+
 #endif
 FileListCtrl::FileListCtrl( wxWindow *parent,
 							const wxString settings,
@@ -119,10 +128,42 @@ FileListCtrl::FileListCtrl( wxWindow *parent,
 		Bind( wxEVT_MENU, m_menu_evt_map[i].method, this, m_menu_evt_map[i].evtTag );
 	}
 	Bind( wxEVT_LEFT_DOWN, &FileListCtrl::OnLeftDown, this );
+	m_sortcol = FILELIST_COLUMN_SIZE;
 }
 
 FileListCtrl::~FileListCtrl()
 {
+}
+
+long FileListCtrl::ConvertItemId(shared_ptr<torrent_t>& torrent, long item) const
+{
+	if(torrent->fileindex.size() != torrent->info->num_files())
+	{
+		torrent->fileindex.resize(torrent->info->num_files());
+		torrent->filesortcol = 0;
+		for(int i = 0; i < torrent->fileindex.size(); ++i)
+		{
+			torrent->fileindex[i] = i;
+		}
+	}
+
+	if(m_sortcol != torrent->filesortcol)
+	{
+		switch(m_sortcol)
+		{
+			case FILELIST_COLUMN_FILE:
+			case FILELIST_COLUMN_SIZE:
+			case FILELIST_COLUMN_DOWNLOAD:
+			case FILELIST_COLUMN_PROGRESS:
+			default:
+				fsDsc st;
+				st.allfiles = &(torrent->info->files());
+				std::sort(torrent->fileindex.begin(), torrent->fileindex.end(), st);
+		}
+		torrent->filesortcol = m_sortcol;
+	}
+
+	return torrent->fileindex[item];
 }
 
 wxString FileListCtrl::GetItemValue( long item, long columnid ) const
@@ -134,7 +175,8 @@ wxString FileListCtrl::GetItemValue( long item, long columnid ) const
 
 	if (!pTorrent)
 	{
-		MainFrame* pMainFrame = ( MainFrame* )( wxGetApp().GetTopWindow() );
+		MainFrame* pMainFrame = dynamic_cast< MainFrame* >( wxGetApp().GetTopWindow() );
+		wxASSERT(pMainFrame != 0);
 		pTorrent = pMainFrame->GetSelectedTorrent();
 	}
 
@@ -160,6 +202,8 @@ wxString FileListCtrl::GetItemValue( long item, long columnid ) const
 	lt::torrent_info const& torrent_info = *( pTorrent->info );
 	if(torrent_info.is_valid())
 	{
+		item = ConvertItemId(pTorrent, item);
+
 		switch( columnid )
 		{
 		case FILELIST_COLUMN_FILE:
@@ -240,6 +284,7 @@ int FileListCtrl::GetItemColumnImage(long item, long columnid) const
 			lt::torrent_info const& torrent_info = *(pTorrent->info);
 			std::vector<int> filespriority = pTorrent->config->GetFilesPriorities();
 
+			item = ConvertItemId(pTorrent, item);
 			if (filespriority.size() != torrent_info.num_files())
 			{
 				nopriority = true;
@@ -293,6 +338,7 @@ void FileListCtrl::OnLeftDown(wxMouseEvent& event)
 
 			if (pTorrent)
 			{
+				item = ConvertItemId(pTorrent, item);
 				lt::torrent_info const& torrent_info = *(pTorrent->info);
 				std::vector<int>& filespriority = pTorrent->config->GetFilesPriorities();
 				if( filespriority.size() != torrent_info.num_files() )
@@ -351,6 +397,7 @@ void FileListCtrl::OnLeftDClick(wxMouseEvent& event)
 				nopriority = true;
 			}
 
+			selectedfiles = ConvertItemId(pTorrent, selectedfiles);
 			if(nopriority || filespriority.at(selectedfiles) != BITTORRENT_FILE_NONE)
 			{
 				lt::file_storage const& allfiles = torrentinfo.files();
@@ -410,6 +457,7 @@ void FileListCtrl::ShowContextMenu( const wxPoint& pos )
 
 		if( selectedfiles != -1 )
 		{
+			selectedfiles = ConvertItemId(pTorrent, selectedfiles);
 			file_it = filespriority.begin() + selectedfiles;
 			disable_priority = (*file_it + FILELISTCTRL_MENU_PRIORITY0);
 			enable_openpath = (enable_openpath && (*file_it));
@@ -463,7 +511,7 @@ void FileListCtrl::OnMenuPriority( wxCommandEvent& event )
 
 	while( selectedfiles != -1 )
 	{
-		file_it = filespriority.begin() + selectedfiles;
+		file_it = filespriority.begin() + ConvertItemId(pTorrent, selectedfiles);
 		*file_it = priority;
 		selectedfiles = GetNextSelected( selectedfiles );
 	}
@@ -511,6 +559,7 @@ void FileListCtrl::OnMenuOpenPath( wxCommandEvent& event )
 			bool nopriority = false;
 			lt::torrent_info const& torrentinfo = *(pTorrent->info);
 			std::vector<int> & filespriority = pTorrent->config->GetFilesPriorities();
+			selectedfiles = ConvertItemId(pTorrent, selectedfiles);
 			if(selectedfiles < filespriority.size() && filespriority.at(selectedfiles) != BITTORRENT_FILE_NONE)
 			{
 				lt::file_storage const& allfiles = torrentinfo.files();

@@ -70,10 +70,12 @@ private:
 	void ShowContextMenu(const wxPoint& pos);
 	void OnMenuPriority(wxCommandEvent &event);
 	void OnMenuOpenPath(wxCommandEvent &event);
+	long ConvertItemId(shared_ptr<torrent_t>& torrent, long item) const;
 	shared_ptr<torrent_t> m_pTorrent;
 	wxImageList m_imageList;
     wxMenu m_contextmenu;
 	static wxCmdEvtHandlerMap_t m_menu_evt_map[];
+	long m_sortcol;
 
 	static const long FILELISTCTRL_MENU_PRIORITY0;
 	static const long FILELISTCTRL_MENU_PRIORITY1;
