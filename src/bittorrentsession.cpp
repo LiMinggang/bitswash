@@ -614,23 +614,6 @@ void BitTorrentSession::AddTorrentToSession( shared_ptr<torrent_t>& torrent )
 	wxLogWarning(( _T( "AddTorrent %s into session\n" ), torrent->name.c_str() ));
 	wxASSERT_MSG((wxString(torrent->hash) != _T("0000000000000000000000000000000000000000")), _("BitTorrentSession::AddTorrentToSession torrent hash is invalid!")+torrent->name);
 	wxString fastresumefile = wxGetApp().SaveTorrentsPath() + torrent->hash + _T( ".fastresume" );
-	lt::entry resume_data;
-
-	if( wxFileExists( fastresumefile ) )
-	{
-		wxLogInfo( _T( "%s: Read fast resume data\n" ), torrent->name.c_str() );
-		std::ifstream fastresume_in( ( const char* )fastresumefile.mb_str( wxConvFile ), std::ios_base::binary );
-		fastresume_in.unsetf( std::ios_base::skipws );
-
-		try
-		{
-			resume_data = lt::bdecode( std::istream_iterator<char>( ( fastresume_in ) ), std::istream_iterator<char>() );
-		}
-		catch( std::exception& e )
-		{
-			wxLogError( wxString::FromUTF8( e.what() ) + _T("\n") );
-		}
-	}
 
 	try
 	{
@@ -645,8 +628,24 @@ void BitTorrentSession::AddTorrentToSession( shared_ptr<torrent_t>& torrent )
 		//p.url = wxFileSystem::FileNameToURL(const wxFileName &filename)
 		p.save_path = ( const char* )torrent->config->GetDownloadPath().mb_str( wxConvUTF8 );
 
-		if( resume_data.type() != lt::entry::undefined_t )
-		{ bencode( std::back_inserter( p.resume_data ), resume_data ); }
+		if( wxFileExists( fastresumefile ) )
+		{
+			wxLogInfo( _T( "%s: Read fast resume data\n" ), torrent->name.c_str() );
+			std::ifstream fastresume_in( ( const char* )fastresumefile.mb_str( wxConvFile ), std::ios_base::binary );
+			if(fastresume_in)
+			{
+				fastresume_in.unsetf( std::ios_base::skipws );
+			    // get length of file:
+			    fastresume_in.seekg (0, fastresume_in.end);
+			    int length = fastresume_in.tellg();
+			    fastresume_in.seekg (0, fastresume_in.beg);
+				if(length > 0)
+				{
+					p.resume_data.resize(length);
+					fastresume_in.read (&p.resume_data[0],length);
+				}
+			}
+		}
 
 		if (torrent->config->GetTorrentState() != TORRENT_STATE_PAUSE)
 			p.flags |= lt::add_torrent_params::flag_paused;
@@ -1072,14 +1071,16 @@ void BitTorrentSession::SaveAllTorrent()
 			if( !rd->resume_data ) { continue; }
 
 			lt::torrent_handle h = rd->handle;
-			wxASSERT(h.is_valid());
-			lt::torrent_status st = h.status( lt::torrent_handle::query_save_path );
-			//std::vector<char> out;
-			//bencode(std::back_inserter(out), *rd->resume_data);
-			wxString resumefile = wxGetApp().SaveTorrentsPath() + lt::to_hex( st.info_hash.to_string() ) + _T( ".resume" );
-			std::ofstream out( ( const char* )resumefile.mb_str( wxConvFile ), std::ios_base::binary );
-			out.unsetf( std::ios_base::skipws );
-			bencode( std::ostream_iterator<char>( out ), *rd->resume_data );
+			if(h.is_valid())
+			{
+				lt::torrent_status st = h.status( lt::torrent_handle::query_save_path );
+				//std::vector<char> out;
+				//bencode(std::back_inserter(out), *rd->resume_data);
+				wxString resumefile = wxGetApp().SaveTorrentsPath() + lt::to_hex( st.info_hash.to_string() ) + _T( ".resume" );
+				std::ofstream out( ( const char* )resumefile.mb_str( wxConvFile ), std::ios_base::binary );
+				out.unsetf( std::ios_base::skipws );
+				bencode( std::ostream_iterator<char>( out ), *rd->resume_data );
+			}
 		}
 	}
 
