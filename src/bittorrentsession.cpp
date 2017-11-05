@@ -1020,9 +1020,15 @@ void BitTorrentSession::SaveAllTorrent()
 				continue;
 			}
 
-			torrent->handle.pause();
-			SaveTorrentResumeData( torrent );
-			++num_outstanding_resume_data;
+			if (torrent->handle.is_valid())
+			{
+				lt::torrent_status status = torrent->handle.status();
+				if(status.has_metadata)
+				{
+					torrent->handle.save_resume_data();
+					++num_outstanding_resume_data;
+				}
+			}
 			m_libbtsession->remove_torrent( torrent->handle );
 		}
 	}
@@ -1048,38 +1054,33 @@ void BitTorrentSession::SaveAllTorrent()
 				++num_paused;
 				WXLOGDEBUG(( _T( "\nleft: %d failed: %d pause: %d\n" )
 							, num_outstanding_resume_data, num_failed, num_paused ));
-				continue;
 			}
-
-			if(lt::alert_cast<lt::save_resume_data_failed_alert>( *i ) )
+			else if(lt::alert_cast<lt::save_resume_data_failed_alert>( *i ) )
 			{
 				++num_failed;
 				--num_outstanding_resume_data;
 				WXLOGDEBUG(( _T( "\nleft: %d failed: %d pause: %d\n" )
 							, num_outstanding_resume_data, num_failed, num_paused ));
-				continue;
 			}
-
-			lt::save_resume_data_alert const* rd = lt::alert_cast<lt::save_resume_data_alert>( *i );
-
-			if( rd == 0 ) { continue; }
-
-			--num_outstanding_resume_data;
-			WXLOGDEBUG(( _T( "\nleft: %d failed: %d pause: %d\n" )
-						, num_outstanding_resume_data, num_failed, num_paused ));
-
-			if( !rd->resume_data ) { continue; }
-
-			lt::torrent_handle h = rd->handle;
-			if(h.is_valid())
+			else if (lt::save_resume_data_alert const* rd = lt::alert_cast<lt::save_resume_data_alert>( *i ) )
 			{
-				lt::torrent_status st = h.status( lt::torrent_handle::query_save_path );
-				//std::vector<char> out;
-				//bencode(std::back_inserter(out), *rd->resume_data);
-				wxString resumefile = wxGetApp().SaveTorrentsPath() + lt::to_hex( st.info_hash.to_string() ) + _T( ".resume" );
-				std::ofstream out( ( const char* )resumefile.mb_str( wxConvFile ), std::ios_base::binary );
-				out.unsetf( std::ios_base::skipws );
-				bencode( std::ostream_iterator<char>( out ), *rd->resume_data );
+				--num_outstanding_resume_data;
+				WXLOGDEBUG(( _T( "\nleft: %d failed: %d pause: %d\n" )
+							, num_outstanding_resume_data, num_failed, num_paused ));
+
+				if( !rd->resume_data ) { continue; }
+
+				lt::torrent_handle h = rd->handle;
+				if(h.is_valid())
+				{
+					lt::torrent_status st = h.status( lt::torrent_handle::query_save_path );
+					//std::vector<char> out;
+					//bencode(std::back_inserter(out), *rd->resume_data);
+					wxString resumefile = wxGetApp().SaveTorrentsPath() + lt::to_hex( st.info_hash.to_string() ) + _T( ".resume" );
+					std::ofstream out( ( const char* )resumefile.mb_str( wxConvFile ), std::ios_base::binary );
+					out.unsetf( std::ios_base::skipws );
+					bencode( std::ostream_iterator<char>( out ), *rd->resume_data );
+				}
 			}
 		}
 	}
@@ -2005,6 +2006,7 @@ void BitTorrentSession::HandleTorrentAlert()
 					{
 						lt::torrent_status st = (p->handle).status(lt::torrent_handle::query_name);
 						event_string << st.name << _T(": ") << wxString::FromUTF8(p->message().c_str());
+						(p->handle).save_resume_data();
 					}
 					break;
 				case lt::peer_ban_alert::alert_type:
@@ -2164,6 +2166,14 @@ void BitTorrentSession::HandleTorrentAlert()
 					{
 						UpdateCounters(p->values, sizeof(p->values)/sizeof(p->values[0])
 							, lt::duration_cast<lt::microseconds>(p->timestamp().time_since_epoch()).count());
+						return;
+					}
+					break;
+				case lt::torrent_paused_alert::alert_type:
+					if (lt::torrent_paused_alert* p = lt::alert_cast<lt::torrent_paused_alert>( *it ))
+					{
+						lt::torrent_handle h = p->handle;
+						h.save_resume_data();
 						return;
 					}
 					break;
