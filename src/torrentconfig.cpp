@@ -77,8 +77,9 @@ void TorrentConfig::Save()
 	m_cfg->Write( _T( "/Torrent/upload_limit" ), m_torrent_upload_limit );
 	m_cfg->Write( _T( "/Torrent/download_limit" ), m_torrent_download_limit );
 	m_cfg->Write( _T( "/Torrent/max_connections" ), m_torrent_max_connections );
-	m_cfg->Write( _T( "/Torrent/selected_size_h" ), wxLongLong(m_selected_file_size).GetHi() );
-	m_cfg->Write( _T( "/Torrent/selected_size_l" ), wxLongLong(m_selected_file_size).GetLo() );
+	 wxLongLong fsize(m_selected_file_size);
+	m_cfg->Write( _T( "/Torrent/selected_size_h" ), fsize.GetHi() );
+	m_cfg->Write( _T( "/Torrent/selected_size_l" ), fsize.GetLo() );
 
 	if( m_torrent_max_uploads < 2 ) { m_torrent_max_uploads = 2; }
 
