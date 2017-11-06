@@ -153,8 +153,7 @@ FileListCtrl::FileListCtrl( wxWindow *parent,
 							const wxPoint& pos,
 							const wxSize& size,
 							long style )
-	: SwashListCtrl( parent, SWASHLISTCOL_SIZE( filelistcols ), filelistcols, settings, id, pos, size, style ), m_imageList(16, 16, TRUE),
-	m_sortcol(FILELIST_COLUMN_SIZE), m_lastclickcol(-1)
+	: SwashListCtrl( parent, SWASHLISTCOL_SIZE( filelistcols ), filelistcols, settings, id, pos, size, style ), m_imageList(16, 16, TRUE), m_lastclickcol(-1)
 {
 	SetImageList(&m_imageList, wxIMAGE_LIST_SMALL);
 
@@ -198,7 +197,7 @@ void FileListCtrl::OnColClick(wxListEvent& event)
 
 	static bool second = false;
 	second = (m_lastclickcol == col) ? (!second) : false;
-	switch(m_sortcol)
+	switch(col)
 	{
 		case FILELIST_COLUMN_FILE:
 			if(second)

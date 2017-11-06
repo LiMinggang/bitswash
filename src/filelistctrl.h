@@ -76,7 +76,6 @@ private:
 	wxImageList m_imageList;
     wxMenu m_contextmenu;
 	static wxCmdEvtHandlerMap_t m_menu_evt_map[];
-	long m_sortcol;
 	long m_lastclickcol;
 
 	static const long FILELISTCTRL_MENU_PRIORITY0;

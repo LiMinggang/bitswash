@@ -623,8 +623,9 @@ void BitTorrentSession::AddTorrentToSession( shared_ptr<torrent_t>& torrent )
 		//compact
 		//
 		lt::add_torrent_params p;
-		shared_ptr<lt::torrent_info> t(new lt::torrent_info(*(torrent->info)));
-		p.ti = t;
+		p.ti.reset(new lt::torrent_info(*(torrent->info)));
+		wxASSERT(p.ti);
+		//p.ti = t;
 		//p.url = wxFileSystem::FileNameToURL(const wxFileName &filename)
 		p.save_path = ( const char* )torrent->config->GetDownloadPath().mb_str( wxConvUTF8 );
 
@@ -2123,16 +2124,21 @@ void BitTorrentSession::HandleTorrentAlert()
 
 						if( p->resume_data )
 						{
-							InfoHash thash(h.info_hash());
+							lt::torrent_handle h = p->handle;
 							//save_resume_data to disk
-							wxMutexLocker ml( m_torrent_queue_lock );
-							torrents_map::iterator it = m_running_torrent_map.find(wxString(thash));
-							if(it != m_running_torrent_map.end())
+							if(h.is_valid())
 							{
-								shared_ptr<torrent_t> torrent = BitTorrentSession::GetTorrent( it->second );
-								wxASSERT(torrent);
-								SaveTorrentResumeData(torrent);
+								lt::torrent_status st = h.status( lt::torrent_handle::query_save_path );
+								//std::vector<char> out;
+								//bencode(std::back_inserter(out), *rd->resume_data);
+								wxString resumefile = wxGetApp().SaveTorrentsPath() + lt::to_hex( st.info_hash.to_string() ) + _T( ".resume" );
+								std::ofstream out( ( const char* )resumefile.mb_str( wxConvFile ), std::ios_base::binary );
+								out.unsetf( std::ios_base::skipws );
+								bencode( std::ostream_iterator<char>( out ), *p->resume_data );
 							}
+
+							m_libbtsession->remove_torrent(h);
+								//SaveTorrentResumeData(torrent);
 						}
 						event_string << h.status(lt::torrent_handle::query_name).name << _T( ": " ) << wxString::FromUTF8(p->message().c_str());
 					}
