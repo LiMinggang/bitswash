@@ -47,7 +47,7 @@ TorrentConfig::TorrentConfig( const wxString& torrentName )
 		wxFile *f = new wxFile();
 		bool b = f->Create( m_configfile.c_str() );
 
-		if( !b ) { wxLogError( _T( "Failed to create file " ) + m_configfile +_T("\n")); }
+		if( !b ) { wxLogError( _T( "Failed to create file " ) + m_configfile +_T("\n")); wxASSERT(0);}
 	}
 
 	wxFileInputStream fis( m_configfile );
