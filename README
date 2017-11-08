@@ -27,8 +27,12 @@ New: Checkbox indicator in File list
 New: Click column to sort in File list
 New: Magnet URI support
 New: Fast resume
+New: Single instance
+New: Command line support
+New: Crash dumper
 Fix: Clear zombie torrent in UI controls
 Performance improvement
+Change help&forum to github
 Update libtorrent to 1.1.5
 
 

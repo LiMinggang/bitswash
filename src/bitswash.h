@@ -47,8 +47,8 @@
 #define APPNAME _T("Bitswash")
 #define APPBINNAME _T("bitswash")
 #define RESOURCE_DIR _T("icons")
-#define BITSWASH_HOMEPAGE _T("http://www.bitswash.org")
-#define BITSWASH_HELP_URL _T("http://www.bitswash.org/forum")
+#define BITSWASH_HOMEPAGE _T("https://github.com/LiMinggang/bitswash/issues")
+#define BITSWASH_HELP_URL _T("https://github.com/LiMinggang/bitswash/issues")
 #define BITSWASH_GUIVERSION 3
 //
 //1 - gui versioning introduced
