@@ -79,14 +79,13 @@ TrackerListCtrl::TrackerListCtrl(wxWindow *parent,
 
 TrackerListCtrl::~TrackerListCtrl()
 {
-
 }
 
 wxString TrackerListCtrl::GetItemValue(long item, long columnid) const
 {
 	MainFrame* pMainFrame = (MainFrame*)(wxGetApp().GetTopWindow());
 
-	wxString ret;
+	wxString ret(_T(""));
 
 	//wxLogDebug(_T("TrackerListCtrl column %ld of item %ld"), columnid, item);
 	shared_ptr<torrent_t> pTorrent;
@@ -101,7 +100,7 @@ wxString TrackerListCtrl::GetItemValue(long item, long columnid) const
 	}
 
 	if (!pTorrent)
-		return _T("");
+		return ret;
 
 	wxString t_name = wxEmptyString;
 
@@ -111,7 +110,7 @@ wxString TrackerListCtrl::GetItemValue(long item, long columnid) const
 	{
 		TrackerListCtrl* pThis = const_cast<TrackerListCtrl*>(this);
 		pThis->SetItemCount(trackers.size());
-		return _T("");
+		return ret;
 
 	}
 	lt::announce_entry tracker= trackers.at(item);
@@ -146,7 +145,7 @@ wxString TrackerListCtrl::GetItemValue(long item, long columnid) const
 			break;
 		}
 		default:
-			ret = _T("");
+			;//ret = _T("");
 	
 	}	
 

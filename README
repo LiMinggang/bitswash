@@ -29,10 +29,14 @@ New: Magnet URI support
 New: Fast resume
 New: Single instance
 New: Command line support
+New: Add/remove/copy tracker
 New: Crash dumper
+New: Start on OS startup(Windows only)
+New: Associate .torrent to this application
+New: GeoIP support
 Fix: Clear zombie torrent in UI controls
 Performance improvement
-Change help&forum to github
+Change help&forum URL to github
 Update libtorrent to 1.1.5
 
 
