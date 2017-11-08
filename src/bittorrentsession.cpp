@@ -2137,7 +2137,7 @@ void BitTorrentSession::HandleTorrentAlert()
 								bencode( std::ostream_iterator<char>( out ), *p->resume_data );
 							}
 
-							m_libbtsession->remove_torrent(h);
+							//m_libbtsession->remove_torrent(h);
 								//SaveTorrentResumeData(torrent);
 						}
 						event_string << h.status(lt::torrent_handle::query_name).name << _T( ": " ) << wxString::FromUTF8(p->message().c_str());
