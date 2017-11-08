@@ -186,11 +186,14 @@ void FileListCtrl::OnColClick(wxListEvent& event)
 {
 	shared_ptr<torrent_t> pTorrent(m_pTorrent);
 
-	if (!pTorrent)
+	if (pTorrent.use_count() <= 1)
 	{
 		MainFrame* pMainFrame = dynamic_cast< MainFrame* >( wxGetApp().GetTopWindow() );
 		wxASSERT(pMainFrame != 0);
 		pTorrent = pMainFrame->GetSelectedTorrent();
+		
+		if(m_pTorrent.use_count() == 1)
+			m_pTorrent.reset();
 	}
 
 	int col = event.GetColumn();
@@ -268,7 +271,7 @@ wxString FileListCtrl::GetItemValue( long item, long columnid ) const
 	//wxLogDebug( _T( "FileListCtrl column %ld of item %ld" ), columnid, item );
 	shared_ptr<torrent_t> pTorrent(m_pTorrent);
 
-	if (!pTorrent)
+	if (pTorrent.use_count() <= 1)
 	{
 		MainFrame* pMainFrame = dynamic_cast< MainFrame* >( wxGetApp().GetTopWindow() );
 		wxASSERT(pMainFrame != 0);
@@ -371,7 +374,7 @@ int FileListCtrl::GetItemColumnImage(long item, long columnid) const
 		//wxLogDebug( _T( "FileListCtrl column %ld of item %ld\n" ), columnid, item );
 		shared_ptr<torrent_t> pTorrent(m_pTorrent);
 
-		if (!pTorrent)
+		if (pTorrent.use_count() <= 1)
 		{
 			MainFrame* pMainFrame = dynamic_cast< MainFrame* >( wxGetApp().GetTopWindow() );
 			wxASSERT(pMainFrame != 0);
@@ -432,11 +435,14 @@ void FileListCtrl::OnLeftDown(wxMouseEvent& event)
 			bool nopriority = false;
 			shared_ptr<torrent_t> pTorrent(m_pTorrent);
 
-			if (!pTorrent)
+			if (pTorrent.use_count() <= 1)
 			{
 				MainFrame* pMainFrame = dynamic_cast< MainFrame* >( wxGetApp().GetTopWindow() );
 				wxASSERT(pMainFrame != 0);
 				pTorrent = pMainFrame->GetSelectedTorrent();
+				
+				if(m_pTorrent.use_count() == 1)
+					m_pTorrent.reset();
 			}
 
 			if (pTorrent)
@@ -483,11 +489,14 @@ void FileListCtrl::OnLeftDClick(wxMouseEvent& event)
 {
 	shared_ptr<torrent_t> pTorrent(m_pTorrent);
 
-	if( !pTorrent )
+	if(pTorrent.use_count() <= 1)
 	{
  		MainFrame* pMainFrame = dynamic_cast< MainFrame* >( wxGetApp().GetTopWindow() );
 		wxASSERT(pMainFrame != 0);
 		pTorrent = pMainFrame->GetSelectedTorrent();
+		
+		if(m_pTorrent.use_count() == 1)
+			m_pTorrent.reset();
 	}
 
 	if( pTorrent )
@@ -541,13 +550,15 @@ void FileListCtrl::ShowContextMenu( const wxPoint& pos )
 	if(GetSelectedItemCount() == 1)
 	{
 		shared_ptr<torrent_t> pTorrent;
-		if( m_pTorrent )
+		if( m_pTorrent.use_count() > 1)
 		{ pTorrent = m_pTorrent; }
 		else
 		{
 			MainFrame* pMainFrame = dynamic_cast< MainFrame* >( wxGetApp().GetTopWindow() );
 			wxASSERT(pMainFrame != 0);
 			pTorrent = pMainFrame->GetSelectedTorrent();
+			if(m_pTorrent.use_count() == 1)
+				m_pTorrent.reset();
 		}
 
 		if(!pTorrent) return;
@@ -595,13 +606,16 @@ void FileListCtrl::OnMenuPriority( wxCommandEvent& event )
 	int priority = event.GetId() - FILELISTCTRL_MENU_PRIORITY0;
 	shared_ptr<torrent_t> pTorrent;
 
-	if( m_pTorrent )
+	if( m_pTorrent.use_count() > 1 )
 	{ pTorrent = m_pTorrent; }
 	else
 	{
 		MainFrame* pMainFrame = dynamic_cast< MainFrame* >( wxGetApp().GetTopWindow() );
 		wxASSERT(pMainFrame != 0);
 		pTorrent = pMainFrame->GetSelectedTorrent();
+		
+		if(m_pTorrent.use_count() == 1)
+			m_pTorrent.reset();
 	}
 
 	if( !pTorrent )
@@ -656,13 +670,16 @@ void FileListCtrl::OnMenuOpenPath( wxCommandEvent& event )
 {
 	shared_ptr<torrent_t> pTorrent;
 
-	if( m_pTorrent )
+	if( m_pTorrent.use_count() > 1)
 	{ pTorrent = m_pTorrent; }
 	else
 	{
 		MainFrame* pMainFrame = dynamic_cast< MainFrame* >( wxGetApp().GetTopWindow() );
 		wxASSERT(pMainFrame != 0);
 		pTorrent = pMainFrame->GetSelectedTorrent();
+		
+		if(m_pTorrent.use_count() == 1)
+			m_pTorrent.reset();
 	}
 
 	if( pTorrent )

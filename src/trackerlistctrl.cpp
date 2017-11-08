@@ -91,7 +91,7 @@ wxString TrackerListCtrl::GetItemValue(long item, long columnid) const
 	//wxLogDebug(_T("TrackerListCtrl column %ld of item %ld"), columnid, item);
 	shared_ptr<torrent_t> pTorrent;
 	
-	if (m_pTorrent)
+	if ( m_pTorrent.use_count() > 1)
 	{
 		pTorrent = m_pTorrent;
 	}
@@ -182,13 +182,16 @@ void TrackerListCtrl::OnMenuTracker(wxCommandEvent& event)
 	bool refreshtrk = false;
 	shared_ptr<torrent_t> pTorrent;
 
-	if (m_pTorrent)
+	if ( m_pTorrent.use_count() > 1)
 		pTorrent = m_pTorrent;
 	else
 	{
 		MainFrame* pMainFrame = dynamic_cast< MainFrame* >( wxGetApp().GetTopWindow() );
 		wxASSERT(pMainFrame != 0);
 		pTorrent = pMainFrame->GetSelectedTorrent();
+		
+		if(m_pTorrent.use_count() == 1)
+			m_pTorrent.reset();
 	}
 
 	if (!pTorrent)

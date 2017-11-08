@@ -613,7 +613,7 @@ void BitTorrentSession::AddTorrentToSession( shared_ptr<torrent_t>& torrent )
 	lt::torrent_handle &handle = torrent->handle;
 	wxLogWarning(( _T( "AddTorrent %s into session\n" ), torrent->name.c_str() ));
 	wxASSERT_MSG((wxString(torrent->hash) != _T("0000000000000000000000000000000000000000")), _("BitTorrentSession::AddTorrentToSession torrent hash is invalid!")+torrent->name);
-	wxString fastresumefile = wxGetApp().SaveTorrentsPath() + torrent->hash + _T( ".fastresume" );
+	wxString fastresumefile = wxGetApp().SaveTorrentsPath() + torrent->hash + _T( ".resume" );
 
 	try
 	{
@@ -754,8 +754,8 @@ void BitTorrentSession::RemoveTorrent( shared_ptr<torrent_t>& torrent, bool dele
 
 	wxString app_prefix = wxGetApp().SaveTorrentsPath() +
 							  wxString(torrent->hash);
-	wxString fastresumefile = app_prefix + _T( ".fastresume" );
-	wxString resumefile = app_prefix + _T( ".resume" );
+	wxString fastresumefile = app_prefix + _T( ".resume" );
+	//wxString resumefile = app_prefix + _T( ".resume" );
 	wxString torrentconffile = app_prefix + _T( ".conf" );
 	wxString torrentfile = app_prefix + _T( ".torrent" );
 
@@ -765,11 +765,11 @@ void BitTorrentSession::RemoveTorrent( shared_ptr<torrent_t>& torrent, bool dele
 		wxLogError( _T( "Error removing file %s\n" ), fastresumefile.c_str() );
 	}
 
-	if( ( wxFileExists( resumefile ) ) &&
-			( !wxRemoveFile( resumefile ) ) )
-	{
-		wxLogError( _T( "Error removing file %s\n" ), resumefile.c_str() );
-	}
+	//if( ( wxFileExists( resumefile ) ) &&
+	//		( !wxRemoveFile( resumefile ) ) )
+	//{
+	//	wxLogError( _T( "Error removing file %s\n" ), resumefile.c_str() );
+	//}
 
 	if( ( wxFileExists( torrentconffile ) ) &&
 			( !wxRemoveFile( torrentconffile ) ) )
@@ -1520,7 +1520,7 @@ void BitTorrentSession::RecheckTorrent( shared_ptr<torrent_t>& torrent )
 		StopTorrent( torrent );
 	}
 	
-	wxString fastresumefile = wxGetApp().SaveTorrentsPath() + wxString(torrent->hash) + _T( ".fastresume" );
+	wxString fastresumefile = wxGetApp().SaveTorrentsPath() + wxString(torrent->hash) + _T( ".resume" );
 	
 	if( wxFileExists( fastresumefile ) )
 	{

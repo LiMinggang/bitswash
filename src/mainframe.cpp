@@ -969,6 +969,14 @@ void MainFrame::UpdateUI(bool force/* = false*/)
 			WXLOGDEBUG(( _T( "UpdateSwashList\n" )));
 			m_torrentlistctrl->UpdateSwashList();
 		}
+		else
+		{
+			shared_ptr<torrent_t> torrent;
+			m_filelistctrl->SetStaticHandle(torrent);
+			m_filelistctrl->SetItemCount( 0 );
+			m_trackerlistctrl->SetStaticHandle( torrent );
+			m_trackerlistctrl->SetItemCount( 0 );
+		}
 
 		WXLOGDEBUG(( _T( "UpdateTorrentInfo\n" )));
 		m_torrentinfo->UpdateTorrentInfo( false );
