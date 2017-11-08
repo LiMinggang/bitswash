@@ -30,12 +30,6 @@
 
 const long LoggerCtrl::LOGGER_CTRL_MAX_PENDING_LINES = 40 * 1000;
 
-const long LoggerCtrl::LOGGER_CTRL_CHOICE_SEVERITY = wxNewId();
-const long LoggerCtrl::LOGGER_CTRL_CHECK_LOGFILE = wxNewId();
-const long LoggerCtrl::LOGGER_CTRL_BUTTON_CLEARLOG = wxNewId();
-const long LoggerCtrl::LOGGER_CTRL_BUTTON_SUSPEND = wxNewId();
-const long LoggerCtrl::LOGGER_CTRL_TEXTAREA = wxNewId();
-
 LoggerCtrl::LoggerCtrl( wxWindow *parent, wxLog* oldlog,
 						const wxWindowID id,
 						const wxPoint& pos,
@@ -63,15 +57,15 @@ LoggerCtrl::LoggerCtrl( wxWindow *parent, wxLog* oldlog,
 	fgSizerCtrl->Add( m_static_severity, 0, wxALL | wxALIGN_CENTER_VERTICAL, 5 );
 	wxString m_choice_logseverityChoices[] = { _( "Debug" ), _( "Info" ), _( "Warning" ), _( "Critical" ), _( "Fatal" ), _( "None" ) };
 	int m_choice_logseverityNChoices = sizeof( m_choice_logseverityChoices ) / sizeof( wxString );
-	m_choice_logseverity = new wxChoice( m_panelCtrl, LOGGER_CTRL_CHOICE_SEVERITY, wxDefaultPosition, wxDefaultSize, m_choice_logseverityNChoices, m_choice_logseverityChoices, 0 );
+	m_choice_logseverity = new wxChoice( m_panelCtrl, wxID_ANY, wxDefaultPosition, wxDefaultSize, m_choice_logseverityNChoices, m_choice_logseverityChoices, 0 );
 	m_choice_logseverity->Select( m_pcfg->GetLogSeverity() );
 	fgSizerCtrl->Add( m_choice_logseverity, 0, wxALL | wxALIGN_CENTER_VERTICAL, 5 );
-	m_checkLogFile = new wxCheckBox( m_panelCtrl, LOGGER_CTRL_CHECK_LOGFILE, _( "Log to File" ), wxDefaultPosition, wxDefaultSize, 0 );
+	m_checkLogFile = new wxCheckBox( m_panelCtrl, wxID_ANY, _( "Log to File" ), wxDefaultPosition, wxDefaultSize, 0 );
 	m_checkLogFile->SetValue( m_logtofile );
 	fgSizerCtrl->Add( m_checkLogFile, 0, wxALL | wxALIGN_CENTER_VERTICAL, 5 );
-	m_button_clearlog = new wxButton( m_panelCtrl, LOGGER_CTRL_BUTTON_CLEARLOG, _( "Clear Log" ), wxDefaultPosition, wxDefaultSize, 0 );
+	m_button_clearlog = new wxButton( m_panelCtrl, wxID_ANY, _( "Clear Log" ), wxDefaultPosition, wxDefaultSize, 0 );
 	fgSizerCtrl->Add( m_button_clearlog, 0, wxALL | wxALIGN_CENTER_VERTICAL, 5 );
-	m_button_suspend = new wxToggleButton( m_panelCtrl, LOGGER_CTRL_BUTTON_SUSPEND, _( "Pause Log" ), wxDefaultPosition, wxDefaultSize, 0 );
+	m_button_suspend = new wxToggleButton( m_panelCtrl, wxID_ANY, _( "Pause Log" ), wxDefaultPosition, wxDefaultSize, 0 );
 	fgSizerCtrl->Add( m_button_suspend, 0, wxALL | wxALIGN_CENTER_VERTICAL | wxALIGN_RIGHT, 5 );
 	m_panelCtrl->SetSizer( fgSizerCtrl );
 	m_panelCtrl->Layout();
@@ -82,7 +76,7 @@ LoggerCtrl::LoggerCtrl( wxWindow *parent, wxLog* oldlog,
 	fgSizerLog = new wxFlexGridSizer( 1, 3, 0, 0 );
 	fgSizerLog->AddGrowableCol( 2 );
 	fgSizerLog->SetFlexibleDirection( wxBOTH );
-	m_log_text = new wxTextCtrl( m_panelLog, LOGGER_CTRL_TEXTAREA, wxEmptyString, wxDefaultPosition, wxSize( size.GetWidth()-50, 200 ), wxTE_MULTILINE | wxTE_READONLY | wxTE_DONTWRAP );
+	m_log_text = new wxTextCtrl( m_panelLog, wxID_ANY, wxEmptyString, wxDefaultPosition, wxSize( size.GetWidth()-50, 200 ), wxTE_MULTILINE | wxTE_READONLY | wxTE_DONTWRAP );
 	fgSizerLog->Add( m_log_text, 1, wxALL, 5 );
 	m_panelLog->SetSizer( fgSizerLog );
 	m_panelLog->Layout();
@@ -92,12 +86,12 @@ LoggerCtrl::LoggerCtrl( wxWindow *parent, wxLog* oldlog,
 	this->Layout();
 	fgSizerMain->Fit( this );
 
-	Bind( wxEVT_CHOICE, &LoggerCtrl::OnSeverityChoice, this, LOGGER_CTRL_CHOICE_SEVERITY );
-	Bind( wxEVT_CHECKBOX, &LoggerCtrl::OnLogFileCheck, this, LOGGER_CTRL_CHECK_LOGFILE );
-	Bind( wxEVT_BUTTON, &LoggerCtrl::OnClearLog, this, LOGGER_CTRL_BUTTON_CLEARLOG );
-	Bind( wxEVT_TOGGLEBUTTON, &LoggerCtrl::OnSuspend, this, LOGGER_CTRL_BUTTON_SUSPEND );
+	Bind( wxEVT_CHOICE, &LoggerCtrl::OnSeverityChoice, this, m_choice_logseverity->GetId() );
+	Bind( wxEVT_CHECKBOX, &LoggerCtrl::OnLogFileCheck, this, m_checkLogFile->GetId() );
+	Bind( wxEVT_BUTTON, &LoggerCtrl::OnClearLog, this, m_button_clearlog->GetId() );
+	Bind( wxEVT_TOGGLEBUTTON, &LoggerCtrl::OnSuspend, this, m_button_suspend->GetId() );
 	Bind( wxEVT_SIZE, &LoggerCtrl::OnSize, this );
-	Bind( wxEVT_TEXT, &LoggerCtrl::OnLogText, this, LOGGER_CTRL_TEXTAREA );
+	Bind( wxEVT_TEXT, &LoggerCtrl::OnLogText, this, m_log_text->GetId() );
 }
 
 LoggerCtrl::~LoggerCtrl()

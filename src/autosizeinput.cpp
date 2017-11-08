@@ -23,9 +23,6 @@
 
 #include "autosizeinput.h"
 
-const long AutoSizeInput::AUTOSIZE_ID_SPIN = wxNewId();;
-const long AutoSizeInput::AUTOSIZE_ID_COMBO = wxNewId();;
-
 /* CLASS AutoSizeInput */
 #define MAX_UNITS 5
 static wxChar units[MAX_UNITS][2] = { _T(""), _T("K"), _T("M"), _T("G"), _T("T") };
@@ -38,11 +35,11 @@ AutoSizeInput::AutoSizeInput( wxWindow* parent, wxString unitbase, int usize, in
 	
 	m_unit_size = usize;
 
-	m_spinValue = new wxSpinCtrl( this, AUTOSIZE_ID_SPIN, wxEmptyString, wxDefaultPosition, wxSize(100,-1), wxSP_ARROW_KEYS, -1, 99999999, -1);
+	m_spinValue = new wxSpinCtrl( this, wxID_ANY, wxEmptyString, wxDefaultPosition, wxSize(100,-1), wxSP_ARROW_KEYS, -1, 99999999, -1);
 	
 	fgSizer->Add( m_spinValue, 0, wxALL, 2 );
 	
-	m_comboUnit = new wxComboBox( this, AUTOSIZE_ID_COMBO, unitbase, wxDefaultPosition, wxSize(80,-1), 0, NULL, wxCB_READONLY );
+	m_comboUnit = new wxComboBox( this, wxID_ANY, unitbase, wxDefaultPosition, wxSize(80,-1), 0, NULL, wxCB_READONLY );
 
 	m_unit_base = unitbase;
 	
@@ -56,8 +53,8 @@ AutoSizeInput::AutoSizeInput( wxWindow* parent, wxString unitbase, int usize, in
 	this->Layout();
 
 	fgSizer->Fit(this);
-	Bind( wxEVT_SPINCTRL, &AutoSizeInput::OnSpinUpdate, this, AUTOSIZE_ID_SPIN );
-	Bind( wxEVT_COMBOBOX, &AutoSizeInput::OnComboUpdate, this, AUTOSIZE_ID_COMBO );
+	Bind( wxEVT_SPINCTRL, &AutoSizeInput::OnSpinUpdate, this, m_spinValue->GetId() );
+	Bind( wxEVT_COMBOBOX, &AutoSizeInput::OnComboUpdate, this, m_comboUnit->GetId() );
 }
 		
 void AutoSizeInput::SetValue(long val) 

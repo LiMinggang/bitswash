@@ -48,8 +48,6 @@ private:
 	long m_value;
 	int m_unit_size;
 	wxString m_unit_base;
-	static const long AUTOSIZE_ID_SPIN;
-	static const long AUTOSIZE_ID_COMBO;
 };
 
 #endif //__AUTOSIZEINPUT_H__

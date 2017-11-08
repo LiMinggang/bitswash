@@ -100,11 +100,6 @@ private:
 	void LogToFile(wxString msg);
 
 	static const long LOGGER_CTRL_MAX_PENDING_LINES;
-	static const long LOGGER_CTRL_CHOICE_SEVERITY;
-	static const long LOGGER_CTRL_CHECK_LOGFILE;
-	static const long LOGGER_CTRL_BUTTON_CLEARLOG;
-	static const long LOGGER_CTRL_BUTTON_SUSPEND;
-	static const long LOGGER_CTRL_TEXTAREA;
 };
 
 

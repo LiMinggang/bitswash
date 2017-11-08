@@ -29,11 +29,6 @@
 #include "mainframe.h"
 #include "extensionsetting.h"
 
-const long ExtensionSettingPane::EXTENSION_ID_ENABLEPE = wxNewId();
-const long ExtensionSettingPane::EXTENSION_ID_CHECK_UPNP = wxNewId();
-const long ExtensionSettingPane::EXTENSION_ID_CHECK_NATPMP = wxNewId();
-const long ExtensionSettingPane::EXTENSION_ID_CHECK_LSD = wxNewId();
-
 ExtensionSettingPane::ExtensionSettingPane( wxWindow* parent,
         int id,
         wxPoint pos,
@@ -76,7 +71,7 @@ ExtensionSettingPane::ExtensionSettingPane( wxWindow* parent,
     wxFlexGridSizer* fgSizerEncryption;
     fgSizerEncryption = new wxFlexGridSizer( 0, 1, 0, 0 );
     fgSizerEncryption->SetFlexibleDirection( wxBOTH );
-    m_check_pe = new wxCheckBox( this, EXTENSION_ID_ENABLEPE, _( "Enable Encryption" ), wxDefaultPosition, wxDefaultSize, 0 );
+    m_check_pe = new wxCheckBox( this, wxID_ANY, _( "Enable Encryption" ), wxDefaultPosition, wxDefaultSize, 0 );
     m_check_pe->SetValue( m_pcfg->GetEncEnabled() );
     fgSizerEncryption->Add( m_check_pe, 0, wxALL, 5 );
     m_check_pe_notforce = new wxCheckBox( this, wxID_ANY, _( "Accept Unencrypted Peer" ), wxDefaultPosition, wxDefaultSize, 0 );
@@ -96,20 +91,20 @@ ExtensionSettingPane::ExtensionSettingPane( wxWindow* parent,
     wxFlexGridSizer* fgSizerNetwork;
     fgSizerNetwork = new wxFlexGridSizer( 0, 1, 0, 0 );
     fgSizerNetwork->SetFlexibleDirection( wxBOTH );
-    m_check_upnp = new wxCheckBox( this, EXTENSION_ID_CHECK_UPNP, _( "Enable UPnP" ), wxDefaultPosition, wxDefaultSize, 0 );
+    m_check_upnp = new wxCheckBox( this, wxID_ANY, _( "Enable UPnP" ), wxDefaultPosition, wxDefaultSize, 0 );
     m_check_upnp->SetValue( m_pcfg->GetEnableUpnp() );
     fgSizerNetwork->Add( m_check_upnp, 0, wxALL, 5 );
-    m_check_natpmp = new wxCheckBox( this, EXTENSION_ID_CHECK_NATPMP, _( "Enable NAT Port Mapping" ), wxDefaultPosition, wxDefaultSize, 0 );
+    m_check_natpmp = new wxCheckBox( this, wxID_ANY, _( "Enable NAT Port Mapping" ), wxDefaultPosition, wxDefaultSize, 0 );
     m_check_natpmp->SetValue( m_pcfg->GetEnableNatpmp() );
     fgSizerNetwork->Add( m_check_natpmp, 0, wxALL, 5 );
-    m_check_lsd = new wxCheckBox( this, EXTENSION_ID_CHECK_LSD, _( "Enable Local Service Discovery" ), wxDefaultPosition, wxDefaultSize, 0 );
+    m_check_lsd = new wxCheckBox( this, wxID_ANY, _( "Enable Local Service Discovery" ), wxDefaultPosition, wxDefaultSize, 0 );
     m_check_lsd->SetValue( m_pcfg->GetEnableLsd() );
     fgSizerNetwork->Add( m_check_lsd, 0, wxALL, 5 );
     fgSizerMain->Add( fgSizerNetwork, 1, wxEXPAND, 5 );
     this->SetSizer( fgSizerMain );
     this->Layout();
     fgSizerMain->Fit( this );
-    Bind( wxEVT_CHECKBOX, &ExtensionSettingPane::OnEnablePe, this, EXTENSION_ID_ENABLEPE );
+    Bind( wxEVT_CHECKBOX, &ExtensionSettingPane::OnEnablePe, this, m_check_pe->GetId() );
 #if 0
     Bind( wxEVT_CHECKBOX, &ExtensionSettingPane::OnCheckUpnp, this, EXTENSION_ID_CHECK_UPNP );
     Bind( wxEVT_CHECKBOX, &ExtensionSettingPane::OnCheckNatpmp, this, EXTENSION_ID_CHECK_NATPMP );

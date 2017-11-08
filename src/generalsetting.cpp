@@ -29,9 +29,6 @@
 #include "generalsetting.h"
 #include "functions.h"
 
-const long GeneralSettingPane::GENERAL_ID_USESYSTRAY = wxNewId();
-const long GeneralSettingPane::GENERAL_ID_LOGTOFILE = wxNewId();
-
 GeneralSettingPane::GeneralSettingPane( wxWindow* parent,
 			int id, 
 			wxPoint pos, 
@@ -139,7 +136,7 @@ GeneralSettingPane::GeneralSettingPane( wxWindow* parent,
 
 	fgSizerGUI->Add( m_spin_refreshtimer, 0, wxALL, 5 );
 	
-	m_check_usesystray = new wxCheckBox( this, GENERAL_ID_USESYSTRAY, _("Enable Systray Icon"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_check_usesystray = new wxCheckBox( this, wxID_ANY, _("Enable Systray Icon"), wxDefaultPosition, wxDefaultSize, 0 );
 	m_check_usesystray->SetValue(m_pcfg->GetUseSystray());
 	
 	fgSizerGUI->Add( m_check_usesystray, 0, wxALL, 5 );
@@ -190,7 +187,7 @@ GeneralSettingPane::GeneralSettingPane( wxWindow* parent,
 	m_spin_loglinecount->SetValue(m_pcfg->GetLogLineCount());
 	fgSizerLog->Add( m_spin_loglinecount, 0, wxALL, 5 );
 
-	m_check_logtofile= new wxCheckBox( this, GENERAL_ID_LOGTOFILE, _("Log to File:"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_check_logtofile= new wxCheckBox( this, wxID_ANY, _("Log to File:"), wxDefaultPosition, wxDefaultSize, 0 );
 	m_check_logtofile->SetValue(m_pcfg->GetLogFile());
 
 	fgSizerLog->Add( m_check_logtofile, 0, wxALL, 5 );
@@ -201,7 +198,7 @@ GeneralSettingPane::GeneralSettingPane( wxWindow* parent,
 	this->SetSizer( fgSizerMain );
 	this->Layout();
 
-	Bind(wxEVT_CHECKBOX, &GeneralSettingPane::OnUseSystray, this, GENERAL_ID_USESYSTRAY );
+	Bind(wxEVT_CHECKBOX, &GeneralSettingPane::OnUseSystray, this, m_check_usesystray->GetId() );
 }
 
 int GeneralSettingPane::GetMaxStart() 

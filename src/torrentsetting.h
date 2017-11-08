@@ -91,16 +91,6 @@ class TorrentSettingPane : public wxPanel
 		AutoSizeInput* m_autoDownLimit;
 		AutoSizeInput* m_autoUpLimit;
 
-		static const long ID_STATICTEXT7;
-		static const long ID_STATICTEXT8;
-		static const long ID_BWLIST_CTRL_START;
-		static const long ID_FLIST_CTRL_START;
-		static const long ID_PLIST_CTRL_START;
-		static const long ID_TORRENTSETTING_START;
-		static const long ID_SETTINGS_START;
-		static const long ID_SHOW_DIRECTORY;
-		static const long ID_TORRENT_DIRECTORY;
-
 		OnSaveDirectoryChangePtr m_directory_change_func;
 };
 

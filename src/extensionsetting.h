@@ -72,10 +72,6 @@ private:
 	void OnCheckLsd(wxCommandEvent& event);
 	#endif
 private:
-	static const long EXTENSION_ID_ENABLEPE;
-	static const long EXTENSION_ID_CHECK_UPNP;
-	static const long EXTENSION_ID_CHECK_NATPMP;
-	static const long EXTENSION_ID_CHECK_LSD;
 };
 
 
