@@ -26,6 +26,8 @@ New: 64 bits
 New: Checkbox indicator in File list
 New: Click column to sort in File list
 New: Magnet URI support
+New: Fast resume
+Fix: Clear zombie torrent in UI controls
 Performance improvement
 Update libtorrent to 1.1.5
 
