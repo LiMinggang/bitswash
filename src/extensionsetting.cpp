@@ -159,20 +159,22 @@ void ExtensionSettingPane::OnEnablePe( wxCommandEvent& event )
     m_check_pe_notforce->Enable( enablepe );
 }
 
+#if 0
 void ExtensionSettingPane::OnCheckUpnp( wxCommandEvent& event )
 {
-    bool enableupnp = m_check_upnp->GetValue();
+    //bool enableupnp = m_check_upnp->GetValue();
     //((MainFrame*)m_pMainFrame)->StartUpnp(enableupnp);
 }
 
 void ExtensionSettingPane::OnCheckNatpmp( wxCommandEvent& event )
 {
-    bool enablenatpmp = m_check_natpmp->GetValue();
+    //bool enablenatpmp = m_check_natpmp->GetValue();
     //((MainFrame*)m_pMainFrame)->StartNatpmp(enablenatpmp);
 }
 
 void ExtensionSettingPane::OnCheckLsd( wxCommandEvent& event )
 {
-    bool enablelsd = m_check_lsd->GetValue();
+    //bool enablelsd = m_check_lsd->GetValue();
     //((MainFrame*)m_pMainFrame)->StartLsd(enablelsd);
 }
+#endif

@@ -66,9 +66,11 @@ private:
 	wxCheckBox* m_check_lsd;
 
 	void OnEnablePe(wxCommandEvent& event);
+	#if 0
 	void OnCheckUpnp(wxCommandEvent& event);
 	void OnCheckNatpmp(wxCommandEvent& event);
 	void OnCheckLsd(wxCommandEvent& event);
+	#endif
 private:
 	static const long EXTENSION_ID_ENABLEPE;
 	static const long EXTENSION_ID_CHECK_UPNP;
