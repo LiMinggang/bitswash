@@ -25,7 +25,6 @@ static geoipv6_t IPV6_NULL;
 
 #define PACKAGE_VERSION "1.6.10"
 
-
 #if defined(_WIN32)
 #include <io.h>
 
@@ -773,7 +772,7 @@ char *_GeoIP_full_path_to(const char *file_name)
 
 char ** GeoIPDBFileName = NULL;
 
-void _GeoIP_setup_dbfilename()
+void _GeoIP_setup_dbfilename(void)
 {
     if (NULL == GeoIPDBFileName) {
         GeoIPDBFileName = malloc(sizeof(char *) * NUM_DB_TYPES);
@@ -1514,7 +1513,7 @@ GeoIP * GeoIP_open(const char * filename, int flags)
     GeoIP * gi;
     size_t len;
 
-    gi = (GeoIP *)malloc(sizeof(GeoIP));
+    gi = (GeoIP *)calloc(1, sizeof(GeoIP));
     if (gi == NULL) {
         return NULL;
     }
@@ -1528,15 +1527,13 @@ GeoIP * GeoIP_open(const char * filename, int flags)
     gi->GeoIPDatabase = fopen(filename, "rb");
     if (gi->GeoIPDatabase == NULL) {
         DEBUG_MSGF(flags, "Error Opening file %s\n", filename);
-        free(gi->file_path);
-        free(gi);
+        GeoIP_delete(gi);
         return NULL;
     }
 
     if (fstat(fileno(gi->GeoIPDatabase), &buf) == -1) {
         DEBUG_MSGF(flags, "Error stating file %s\n", filename);
-        free(gi->file_path);
-        free(gi);
+        GeoIP_delete(gi);
         return NULL;
     }
 
@@ -1552,8 +1549,7 @@ GeoIP * GeoIP_open(const char * filename, int flags)
                          gi->GeoIPDatabase), 0);
             if (gi->cache == MAP_FAILED) {
                 DEBUG_MSGF(flags, "Error mmaping file %s\n", filename);
-                free(gi->file_path);
-                free(gi);
+                GeoIP_delete(gi);
                 return NULL;
             }
 #endif
@@ -1565,9 +1561,7 @@ GeoIP * GeoIP_open(const char * filename, int flags)
                 if (pread(fileno(gi->GeoIPDatabase), gi->cache, buf.st_size,
                           0) != (ssize_t)buf.st_size) {
                     DEBUG_MSGF(flags, "Error reading file %s\n", filename);
-                    free(gi->cache);
-                    free(gi->file_path);
-                    free(gi);
+                    GeoIP_delete(gi);
                     return NULL;
                 }
             }
@@ -1576,8 +1570,7 @@ GeoIP * GeoIP_open(const char * filename, int flags)
         if (flags & GEOIP_CHECK_CACHE) {
             if (fstat(fileno(gi->GeoIPDatabase), &buf) == -1) {
                 DEBUG_MSGF(flags, "Error stating file %s\n", filename);
-                free(gi->file_path);
-                free(gi);
+                GeoIP_delete(gi);
                 return NULL;
             }
             gi->mtime = buf.st_mtime;
@@ -1588,23 +1581,19 @@ GeoIP * GeoIP_open(const char * filename, int flags)
     gi->charset = GEOIP_CHARSET_ISO_8859_1;
     gi->ext_flags = 1U << GEOIP_TEREDO_BIT;
     _setup_segments(gi);
+    if (gi->databaseSegments == NULL) {
+        DEBUG_MSGF(gi->flags, "Error reading file %s -- corrupt\n",
+                   gi->file_path);
+        GeoIP_delete(gi);
+        return NULL;
+    }
+
 
     idx_size = get_index_size(gi, &buf);
 
     if (idx_size < 0) {
         DEBUG_MSGF(gi->flags, "Error file %s -- corrupt\n", gi->file_path);
-        if (flags & GEOIP_MEMORY_CACHE) {
-            free(gi->cache);
-        }
-#if !defined(_WIN32)
-        else if (gi->cache && (flags & GEOIP_MMAP_CACHE)) {
-            /* MMAP is only avail on UNIX */
-            munmap(gi->cache, gi->size);
-            gi->cache = NULL;
-        }
-#endif
-        free(gi->file_path);
-        free(gi);
+        GeoIP_delete(gi);
         return NULL;
     }
 
@@ -1615,9 +1604,7 @@ GeoIP * GeoIP_open(const char * filename, int flags)
             if (pread(fileno(gi->GeoIPDatabase), gi->index_cache, idx_size,
                       0) != idx_size) {
                 DEBUG_MSGF(gi->flags, "Error reading file %s\n", filename);
-                free(gi->databaseSegments);
-                free(gi->index_cache);
-                free(gi);
+                GeoIP_delete(gi);
                 return NULL;
             }
         }
@@ -1650,15 +1637,9 @@ void GeoIP_delete(GeoIP *gi)
         }
         gi->cache = NULL;
     }
-    if (gi->index_cache != NULL) {
-        free(gi->index_cache);
-    }
-    if (gi->file_path != NULL) {
-        free(gi->file_path);
-    }
-    if (gi->databaseSegments != NULL) {
-        free(gi->databaseSegments);
-    }
+    free(gi->index_cache);
+    free(gi->file_path);
+    free(gi->databaseSegments);
     free(gi);
 }
 
