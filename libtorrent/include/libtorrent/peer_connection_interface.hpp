@@ -38,8 +38,8 @@ POSSIBILITY OF SUCH DAMAGE.
 #include "libtorrent/alert_types.hpp"
 #include "libtorrent/operations.hpp" // for operation_t enum
 
-namespace libtorrent
-{
+namespace libtorrent {
+
 	struct torrent_peer;
 	class stat;
 	struct peer_info;
@@ -56,13 +56,14 @@ namespace libtorrent
 		virtual torrent_peer* peer_info_struct() const = 0;
 		virtual void set_peer_info(torrent_peer* pi) = 0;
 		virtual bool is_outgoing() const = 0;
-		virtual void add_stat(boost::int64_t downloaded, boost::int64_t uploaded) = 0;
+		virtual void add_stat(std::int64_t downloaded, std::int64_t uploaded) = 0;
 		virtual bool fast_reconnect() const = 0;
 		virtual bool is_choked() const = 0;
 		virtual bool failed() const = 0;
 		virtual stat const& statistics() const = 0;
 		virtual void get_peer_info(peer_info& p) const = 0;
 #ifndef TORRENT_DISABLE_LOGGING
+		virtual bool should_log(peer_log_alert::direction_t direction) const = 0;
 		virtual void peer_log(peer_log_alert::direction_t direction
 			, char const* event, char const* fmt = "", ...) const TORRENT_FORMAT(4,5) = 0;
 #endif
@@ -72,4 +73,3 @@ namespace libtorrent
 }
 
 #endif
-

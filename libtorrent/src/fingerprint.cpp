@@ -34,13 +34,14 @@ POSSIBILITY OF SUCH DAMAGE.
 #include "libtorrent/assert.hpp"
 
 namespace libtorrent {
+
 	namespace {
 
 	char version_to_char(int const v)
 	{
 		if (v >= 0 && v < 10) return char('0' + v);
 		else if (v >= 10) return char('A' + (v - 10));
-		TORRENT_ASSERT(false);
+		TORRENT_ASSERT_FAIL();
 		return '0';
 	}
 

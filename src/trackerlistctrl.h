@@ -56,7 +56,7 @@ public:
                
 		~TrackerListCtrl();
 	
-		void SetStaticHandle(shared_ptr<torrent_t>& torrent) { m_pTorrent = torrent; }
+		void SetStaticHandle(std::shared_ptr<torrent_t>& torrent) { m_pTorrent = torrent; }
 		void DeleteStaticHandle() { m_pTorrent.reset(); }
 	protected:
 		// TrackerListCtrl variables
@@ -66,7 +66,7 @@ public:
 		void ShowContextMenu(const wxPoint& pos);
 		void OnMenuTracker(wxCommandEvent &event);
 
-		shared_ptr<torrent_t> m_pTorrent;
+		std::shared_ptr<torrent_t> m_pTorrent;
 
     	DECLARE_NO_COPY_CLASS(TrackerListCtrl)
 };	

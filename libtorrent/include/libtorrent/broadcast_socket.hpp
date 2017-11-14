@@ -38,46 +38,37 @@ POSSIBILITY OF SUCH DAMAGE.
 #include "libtorrent/socket.hpp"
 #include "libtorrent/address.hpp"
 #include "libtorrent/error_code.hpp"
+#include "libtorrent/string_view.hpp"
 
-#include "libtorrent/aux_/disable_warnings_push.hpp"
-
-#include <boost/shared_ptr.hpp>
-#include <boost/function/function3.hpp>
+#include <memory>
 #include <list>
 
-#include "libtorrent/aux_/disable_warnings_pop.hpp"
+namespace libtorrent {
 
-namespace libtorrent
-{
-
-	// TODO: 2 facto these functions out
+	// TODO: 2 factor these functions out
 	TORRENT_EXTRA_EXPORT bool is_local(address const& a);
 	TORRENT_EXTRA_EXPORT bool is_loopback(address const& addr);
-	TORRENT_EXTRA_EXPORT bool is_multicast(address const& addr);
 	TORRENT_EXTRA_EXPORT bool is_any(address const& addr);
 	TORRENT_EXTRA_EXPORT bool is_teredo(address const& addr);
-	TORRENT_EXTRA_EXPORT int cidr_distance(address const& a1, address const& a2);
-	bool is_ip_address(char const* host);
+	TORRENT_EXTRA_EXPORT bool is_ip_address(std::string const& host);
 
 	// determines if the operating system supports IPv6
 	TORRENT_EXTRA_EXPORT bool supports_ipv6();
+	address ensure_v6(address const& a);
 
-	TORRENT_EXTRA_EXPORT int common_bits(unsigned char const* b1
-		, unsigned char const* b2, int n);
-
-	typedef boost::function<void(udp::endpoint const& from
+	typedef std::function<void(udp::endpoint const& from
 		, char* buffer, int size)> receive_handler_t;
 
 	class TORRENT_EXTRA_EXPORT broadcast_socket
 	{
 	public:
-		broadcast_socket(udp::endpoint const& multicast_endpoint);
+		explicit broadcast_socket(udp::endpoint const& multicast_endpoint);
 		~broadcast_socket() { close(); }
 
 		void open(receive_handler_t const& handler, io_service& ios
 			, error_code& ec, bool loopback = true);
 
-		enum flags_t { broadcast = 1 };
+		enum flags_t { flag_broadcast = 1 };
 		void send(char const* buffer, int size, error_code& ec, int flags = 0);
 
 		void close();
@@ -88,11 +79,12 @@ namespace libtorrent
 
 		struct socket_entry
 		{
-			socket_entry(boost::shared_ptr<udp::socket> const& s)
-				: socket(s), broadcast(false) {}
-			socket_entry(boost::shared_ptr<udp::socket> const& s
-				, address_v4 const& mask): socket(s), netmask(mask), broadcast(false) {}
-			boost::shared_ptr<udp::socket> socket;
+			explicit socket_entry(std::shared_ptr<udp::socket> const& s)
+				: socket(s), broadcast(false) { std::memset(buffer, 0, sizeof(buffer)); }
+			socket_entry(std::shared_ptr<udp::socket> const& s
+				, address_v4 const& mask): socket(s), netmask(mask), broadcast(false)
+			{ std::memset(buffer, 0, sizeof(buffer)); }
+			std::shared_ptr<udp::socket> socket;
 			char buffer[1500];
 			udp::endpoint remote;
 			address_v4 netmask;
@@ -113,14 +105,10 @@ namespace libtorrent
 			address_v4 broadcast_address() const
 			{
 				error_code ec;
-#if BOOST_VERSION < 104700
-				return address_v4(socket->local_endpoint(ec).address().to_v4().to_ulong() | ((~netmask.to_ulong()) & 0xffffffff));
-#else
 				return address_v4::broadcast(socket->local_endpoint(ec).address().to_v4(), netmask);
-#endif
 			}
 		};
-	
+
 		void on_receive(socket_entry* s, error_code const& ec
 			, std::size_t bytes_transferred);
 		void open_unicast_socket(io_service& ios, address const& addr
@@ -156,6 +144,5 @@ namespace libtorrent
 		bool m_abort;
 	};
 }
-	
-#endif
 
+#endif

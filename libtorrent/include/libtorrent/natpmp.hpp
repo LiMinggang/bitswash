@@ -36,103 +36,71 @@ POSSIBILITY OF SUCH DAMAGE.
 #include "libtorrent/io_service_fwd.hpp"
 #include "libtorrent/socket.hpp"
 #include "libtorrent/address.hpp"
-#include "libtorrent/thread.hpp"
 #include "libtorrent/error_code.hpp"
 #include "libtorrent/deadline_timer.hpp"
+#include "libtorrent/time.hpp"
+#include "libtorrent/debug.hpp"
+#include "libtorrent/aux_/portmap.hpp"
+#include "libtorrent/aux_/vector.hpp"
 
-#include "libtorrent/aux_/disable_warnings_push.hpp"
+namespace libtorrent {
 
-#include <boost/function/function1.hpp>
-#include <boost/function/function5.hpp>
-#include <boost/enable_shared_from_this.hpp>
-
-#include "libtorrent/aux_/disable_warnings_pop.hpp"
-
-namespace libtorrent
+struct TORRENT_EXTRA_EXPORT natpmp
+	: std::enable_shared_from_this<natpmp>
+	, single_threaded
 {
-
-// int: port mapping index
-// int: external port
-// std::string: error message
-typedef boost::function<void(int, address, int, int, error_code const&)> portmap_callback_t;
-typedef boost::function<void(char const*)> log_callback_t;
-
-class natpmp : public boost::enable_shared_from_this<natpmp>
-{
-public:
-	natpmp(io_service& ios, portmap_callback_t const& cb
-		, log_callback_t const& lcb);
+	natpmp(io_service& ios, aux::portmap_callback& cb);
 
 	void start();
 
 	// maps the ports, if a port is set to 0
 	// it will not be mapped
-	enum protocol_type { none = 0, udp = 1, tcp = 2 };
-	int add_mapping(protocol_type p, int external_port, int local_port);
-	void delete_mapping(int mapping_index);
-	bool get_mapping(int mapping_index, int& local_port, int& external_port, int& protocol) const;
+	port_mapping_t add_mapping(portmap_protocol p, int external_port, tcp::endpoint local_ep);
+	void delete_mapping(port_mapping_t mapping_index);
+	bool get_mapping(port_mapping_t mapping_index, int& local_port, int& external_port
+		, portmap_protocol& protocol) const;
 
 	void close();
 
 private:
 
-	boost::shared_ptr<natpmp> self() { return shared_from_this(); }
+	std::shared_ptr<natpmp> self() { return shared_from_this(); }
 
-	void update_mapping(int i, mutex::scoped_lock& l);
-	void send_map_request(int i, mutex::scoped_lock& l);
-	void send_get_ip_address_request(mutex::scoped_lock& l);
-	void resend_request(int i, error_code const& e);
+	void update_mapping(port_mapping_t i);
+	void send_map_request(port_mapping_t i);
+	void send_get_ip_address_request();
+	void resend_request(port_mapping_t i, error_code const& e);
 	void on_reply(error_code const& e
 		, std::size_t bytes_transferred);
-	void try_next_mapping(int i, mutex::scoped_lock& l);
-	void update_expiration_timer(mutex::scoped_lock& l);
-	void mapping_expired(error_code const& e, int i);
-	void close_impl(mutex::scoped_lock& l);
+	void try_next_mapping(port_mapping_t i);
+	void update_expiration_timer();
+	void mapping_expired(error_code const& e, port_mapping_t i);
+	void close_impl();
 
-	void log(char const* msg, mutex::scoped_lock& l);
-	void disable(error_code const& ec, mutex::scoped_lock& l);
+	void disable(error_code const& ec);
 
-	struct mapping_t
+	struct mapping_t : aux::base_mapping
 	{
-		enum action_t { action_none, action_add, action_delete };
-		mapping_t()
-			: action(action_none)
-			, local_port(0)
-			, external_port(0)
-			, protocol(none)
-			, map_sent(false)
-			, outstanding_request(false)
-		{}
-
-		// indicates that the mapping has changed
-		// and needs an update
-		int action;
-
-		// the time the port mapping will expire
-		time_point expires;
-
 		// the local port for this mapping. If this is set
 		// to 0, the mapping is not in use
-		int local_port;
-
-		// the external (on the NAT router) port
-		// for the mapping. This is the port we
-		// should announce to others
-		int external_port;
-
-		int protocol;
+		int local_port = 0;
 
 		// set to true when the first map request is sent
-		bool map_sent;
+		bool map_sent = false;
 
 		// set to true while we're waiting for a response
-		bool outstanding_request;
+		bool outstanding_request = false;
 	};
 
-	portmap_callback_t m_callback;
-	log_callback_t m_log_callback;
+#ifndef TORRENT_DISABLE_LOGGING
+	bool should_log() const;
+	void log(char const* fmt, ...) const TORRENT_FORMAT(2, 3);
+	void mapping_log(char const* op, mapping_t const& m) const;
+#endif
 
-	std::vector<mapping_t> m_mappings;
+	aux::portmap_callback& m_callback;
+
+	aux::vector<mapping_t, port_mapping_t> m_mappings;
 
 	// the endpoint to the nat router
 	udp::endpoint m_nat_endpoint;
@@ -140,10 +108,10 @@ private:
 	// this is the mapping that is currently
 	// being updated. It is -1 in case no
 	// mapping is being updated at the moment
-	int m_currently_mapping;
+	port_mapping_t m_currently_mapping{-1};
 
 	// current retry count
-	int m_retry_count;
+	int m_retry_count = 0;
 
 	// used to receive responses in
 	char m_response_buffer[16];
@@ -166,17 +134,13 @@ private:
 	deadline_timer m_refresh_timer;
 
 	// the mapping index that will expire next
-	int m_next_refresh;
+	port_mapping_t m_next_refresh{-1};
 
-	bool m_disabled;
+	bool m_disabled = false;
 
-	bool m_abort;
-
-	mutable mutex m_mutex;
+	bool m_abort = false;
 };
 
 }
 
-
 #endif
-

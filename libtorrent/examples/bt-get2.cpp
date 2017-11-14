@@ -41,10 +41,11 @@ POSSIBILITY OF SUCH DAMAGE.
 #include <libtorrent/alert_types.hpp>
 #include <libtorrent/bencode.hpp>
 #include <libtorrent/torrent_status.hpp>
-#include <libtorrent/magnet_uri.hpp>
+#include <libtorrent/read_resume_data.hpp>
+#include <libtorrent/write_resume_data.hpp>
 #include <libtorrent/error_code.hpp>
+#include <libtorrent/magnet_uri.hpp>
 
-namespace lt = libtorrent;
 using clk = std::chrono::steady_clock;
 
 // return the name of a torrent status enum
@@ -76,22 +77,30 @@ int main(int argc, char const* argv[])
 		| lt::alert::status_notification);
 
 	lt::session ses(pack);
-	lt::add_torrent_params atp;
 	clk::time_point last_save_resume = clk::now();
 
 	// load resume data from disk and pass it in as we add the magnet link
 	std::ifstream ifs(".resume_file", std::ios_base::binary);
 	ifs.unsetf(std::ios_base::skipws);
-	atp.resume_data.assign(std::istream_iterator<char>(ifs)
-		, std::istream_iterator<char>());
+	std::vector<char> buf{std::istream_iterator<char>(ifs)
+		, std::istream_iterator<char>()};
+
 	lt::error_code ec;
-	lt::parse_magnet_uri(argv[1], atp, ec);
+	lt::add_torrent_params atp = lt::read_resume_data(buf, ec);
+	if (ec) {
+		std::cerr << "failed to read resume data: " << ec.message() << std::endl;
+		return 1;
+	}
+	lt::add_torrent_params magnet = lt::parse_magnet_uri(argv[1], ec);
+	if (atp.info_hash != magnet.info_hash) {
+		atp = std::move(magnet);
+	}
 	if (ec) {
 		std::cerr << "invalid magnet URI: " << ec.message() << std::endl;
 		return 1;
 	}
 	atp.save_path = "."; // save in current dir
-	ses.async_add_torrent(atp);
+	ses.async_add_torrent(std::move(atp));
 
 	// this is the handle we'll set once we get the notification of it being
 	// added
@@ -118,8 +127,8 @@ int main(int argc, char const* argv[])
 			if (auto rd = lt::alert_cast<lt::save_resume_data_alert>(a)) {
 				std::ofstream of(".resume_file", std::ios_base::binary);
 				of.unsetf(std::ios_base::skipws);
-				lt::bencode(std::ostream_iterator<char>(of)
-					, *rd->resume_data);
+				auto buf = write_resume_data_buf(rd->params);
+				of.write(buf.data(), buf.size());
 			}
 
 			if (auto st = lt::alert_cast<lt::state_update_alert>(a)) {

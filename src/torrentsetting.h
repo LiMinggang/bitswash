@@ -41,7 +41,7 @@ typedef void ( *OnSaveDirectoryChangePtr )( const wxString &newdirectory );
 class TorrentSettingPane : public wxPanel
 {
 	public:
-		TorrentSettingPane( wxWindow* parent, shared_ptr<torrent_t>& pTorrent = shared_ptr<torrent_t>(), int id = wxID_ANY, wxPoint pos = wxDefaultPosition, wxSize size = wxDefaultSize, int style = wxTAB_TRAVERSAL);
+		TorrentSettingPane( wxWindow* parent, std::shared_ptr<torrent_t>& pTorrent = std::shared_ptr<torrent_t>(), int id = wxID_ANY, wxPoint pos = wxDefaultPosition, wxSize size = wxDefaultSize, int style = wxTAB_TRAVERSAL);
 
 		wxString GetDownloadPath();
 		libtorrent::storage_mode_t GetStorageMode();
@@ -54,10 +54,10 @@ class TorrentSettingPane : public wxPanel
 		int GetMaxUpload();
 		int GetRatio();
 
-		void SetTorrentHandle(shared_ptr<torrent_t>& pTorrent) { m_pTorrent= pTorrent; }
+		void SetTorrentHandle(std::shared_ptr<torrent_t>& pTorrent) { m_pTorrent= pTorrent; }
 		void SetTorrentDirectoryChange(OnSaveDirectoryChangePtr pFunc) { m_directory_change_func= pFunc; }
 	private:
-		shared_ptr<torrent_t> m_pTorrent;
+		std::shared_ptr<torrent_t> m_pTorrent;
 		void OnFileButton(wxCommandEvent& event);
 		void OnSaveDirectoryChanged(wxCommandEvent& event);
 		/* torrent settings */

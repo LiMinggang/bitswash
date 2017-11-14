@@ -33,48 +33,31 @@ POSSIBILITY OF SUCH DAMAGE.
 #ifndef TORRENT_ADDRESS_HPP_INCLUDED
 #define TORRENT_ADDRESS_HPP_INCLUDED
 
-#include <boost/version.hpp>
 #include "libtorrent/config.hpp"
-
-#include "libtorrent/aux_/disable_warnings_push.hpp"
-
-#ifdef __OBJC__
-#define Protocol Protocol_
-#endif
-
-#if defined TORRENT_WINDOWS || defined TORRENT_CYGWIN
-// asio assumes that the windows error codes are defined already
-#include <winsock2.h>
-#endif
-
-#include <boost/asio/ip/address.hpp>
 
 #if defined TORRENT_BUILD_SIMULATOR
 #include "simulator/simulator.hpp"
-#endif
-
+#else
+#include "libtorrent/aux_/disable_warnings_push.hpp"
+#include <boost/asio/ip/address.hpp>
 #include "libtorrent/aux_/disable_warnings_pop.hpp"
+#endif // SIMULATOR
 
-#ifdef __OBJC__
-#undef Protocol
-#endif
+namespace libtorrent {
 
-namespace libtorrent
-{
 #if defined TORRENT_BUILD_SIMULATOR
-	typedef sim::asio::ip::address address;
-	typedef sim::asio::ip::address_v4 address_v4;
+	using address = sim::asio::ip::address;
+	using address_v4 = sim::asio::ip::address_v4;
 #if TORRENT_USE_IPV6
-	typedef sim::asio::ip::address_v6 address_v6;
+	using address_v6 = sim::asio::ip::address_v6;
 #endif
 #else
-	typedef boost::asio::ip::address address;
-	typedef boost::asio::ip::address_v4 address_v4;
+	using address = boost::asio::ip::address;
+	using address_v4 = boost::asio::ip::address_v4;
 #if TORRENT_USE_IPV6
-	typedef boost::asio::ip::address_v6 address_v6;
+	using address_v6 = boost::asio::ip::address_v6;
 #endif
 #endif // SIMULATOR
 }
 
 #endif
-

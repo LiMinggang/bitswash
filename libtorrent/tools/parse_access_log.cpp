@@ -33,100 +33,100 @@ POSSIBILITY OF SUCH DAMAGE.
 #include "libtorrent/config.hpp"
 #include "libtorrent/io.hpp"
 #include <cstring>
-#include <boost/bind.hpp>
-#include <stdlib.h>
-#include <stdio.h>
-#include <errno.h>
-#include <assert.h>
+#include <cstdlib>
+#include <cerrno>
+#include <cassert>
 #include <map>
+#include <cstdio>
+#include <cinttypes> // for PRId64 et.al.
 
-using namespace libtorrent;
-using namespace libtorrent::detail; // for write_* and read_*
+using namespace lt;
+using namespace lt::detail; // for write_* and read_*
 
 void print_usage()
 {
-	fprintf(stderr, "usage: parse_access_log log-file\n\n"
+	std::fprintf(stderr, "usage: parse_access_log log-file\n\n"
 		"prints a gnuplot readable data file to stdout\n");
 	exit(1);
 }
 
 struct file_op
 {
-	boost::uint64_t timestamp;
-	boost::uint64_t offset;
-	boost::uint8_t event;
+	std::uint64_t timestamp;
+	std::uint64_t offset;
+	std::uint8_t event;
 };
 
 int main(int argc, char* argv[])
 {
 	if (argc != 2) print_usage();
 
-	FILE* log_file = fopen(argv[1], "r");
-	if (log_file == 0)
+	FILE* log_file = std::fopen(argv[1], "r");
+	if (log_file == nullptr)
 	{
-		fprintf(stderr, "failed to open logfile: %s\n%d: %s\n"
+		std::fprintf(stderr, "failed to open logfile: %s\n%d: %s\n"
 			, argv[1], errno, strerror(errno));
 		return 1;
 	}
 
-	FILE* writes_file = fopen("writes.log", "w+");
-	FILE* reads_file = fopen("reads.log", "w+");
+	FILE* writes_file = std::fopen("writes.log", "w+");
+	FILE* reads_file = std::fopen("reads.log", "w+");
 
-	FILE* writes_elev_file = fopen("writes_elevator.log", "w+");
-	FILE* reads_elev_file = fopen("reads_elevator.log", "w+");
+	FILE* writes_elev_file = std::fopen("writes_elevator.log", "w+");
+	FILE* reads_elev_file = std::fopen("reads_elevator.log", "w+");
 
 
-	typedef std::map<boost::uint32_t, file_op> op_map;
+	typedef std::map<std::uint32_t, file_op> op_map;
 	op_map outstanding_ops;
 
-	boost::uint64_t first_timestamp = 0;
+	std::uint64_t first_timestamp = 0;
 
 	for (;;)
 	{
 		char entry[21];
 		char* ptr = entry;
-		int ret = fread(&entry, 1, sizeof(entry), log_file);
+		int ret = int(fread(&entry, 1, sizeof(entry), log_file));
 		if (ret != sizeof(entry)) break;
 
 		file_op op;
 		op.timestamp = read_uint64(ptr);
 		op.offset = read_uint64(ptr);
-		boost::uint32_t event_id = read_uint32(ptr);
+		std::uint32_t event_id = read_uint32(ptr);
 		op.event = read_uint8(ptr);
 
 		if (first_timestamp == 0) first_timestamp = op.timestamp;
 
-		bool write = op.event & 1;
-		bool complete = op.event & 2;
-		FILE* out_file = 0;
+		bool write = (op.event & 1) != 0;
+		bool complete = (op.event & 2) != 0;
 		if (complete)
 		{
+			FILE* out_file = nullptr;
 			op_map::iterator i = outstanding_ops.find(event_id);
 			if (i != outstanding_ops.end())
 			{
 				if (i->second.timestamp > op.timestamp)
 				{
-					fprintf(stderr, "end-event stamped before "
+					std::fprintf(stderr, "end-event stamped before "
 						"start-event: %" PRId64 " started at: %f\n"
 						, op.offset, double(i->second.timestamp) / 1000000.f);
 					i->second.timestamp = op.timestamp;
 				}
-				
+
 				out_file = write ? writes_file : reads_file;
 				double start_time = double(i->second.timestamp - first_timestamp) / 1000000.0;
 				double end_time = double(op.timestamp - first_timestamp) / 1000000.0;
 				double duration_time = double(op.timestamp - i->second.timestamp) / 1000000.0;
-				fprintf(out_file, "%f\t%" PRId64 "\t%f\n"
+				std::fprintf(out_file, "%f\t%" PRId64 "\t%f\n"
 					, start_time, op.offset, duration_time);
 
 				out_file = write ? writes_elev_file : reads_elev_file;
-				fprintf(out_file, "%f\t%" PRId64 "\n", end_time, op.offset);
+				std::fprintf(out_file, "%f\t%" PRId64 "\n", end_time, op.offset);
 
 				outstanding_ops.erase(i);
 			}
 			else
 			{
-				fprintf(stderr, "no start event for (%u): %" PRId64 " ended at: %f\n"
+				std::fprintf(stderr, "no start event for (%u): %" PRId64 " ended at: %f\n"
 					, event_id, op.offset, double(op.timestamp) / 1000000.f);
 			}
 		}
@@ -135,7 +135,7 @@ int main(int argc, char* argv[])
 			op_map::iterator i = outstanding_ops.find(event_id);
 			if (i != outstanding_ops.end())
 			{
-				fprintf(stderr, "duplicate start event for (%u): %" PRId64 " at: %f"
+				std::fprintf(stderr, "duplicate start event for (%u): %" PRId64 " at: %f"
 					"(current start is at: %f)\n"
 					, event_id, op.offset, double(i->second.timestamp - first_timestamp) / 1000000.f
 					, double(op.timestamp - first_timestamp) / 1000000.f);
@@ -147,13 +147,13 @@ int main(int argc, char* argv[])
 		}
 	}
 
-	fclose(writes_file);
-	fclose(reads_file);
-	fclose(writes_elev_file);
-	fclose(reads_elev_file);
-	fclose(log_file);
+	std::fclose(writes_file);
+	std::fclose(reads_file);
+	std::fclose(writes_elev_file);
+	std::fclose(reads_elev_file);
+	std::fclose(log_file);
 
-	FILE* gnuplot = fopen("file_access.gnuplot", "w+");
+	FILE* gnuplot = std::fopen("file_access.gnuplot", "w+");
 
 	char const* gnuplot_file =
 		"set term png size 1400,1024\n"
@@ -164,11 +164,11 @@ int main(int argc, char* argv[])
 		"set style line 2 lc rgb \"#88ff88\"\n"
 		"set style arrow 1 nohead ls 1\n"
 		"set style arrow 2 nohead ls 2\n"
-		"plot \"writes.log\" using 1:2:3:(0) title \"writes\" with vectors arrowstyle 1, " 
+		"plot \"writes.log\" using 1:2:3:(0) title \"writes\" with vectors arrowstyle 1, "
 			"\"reads.log\" using 1:2:3:(0) title \"reads\" with vectors arrowstyle 2\n";
 
-	fwrite(gnuplot_file, strlen(gnuplot_file), 1, gnuplot);
-	fclose(gnuplot);
+	std::fwrite(gnuplot_file, strlen(gnuplot_file), 1, gnuplot);
+	std::fclose(gnuplot);
 
 	system("gnuplot file_access.gnuplot");
 

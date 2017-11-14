@@ -35,12 +35,11 @@ POSSIBILITY OF SUCH DAMAGE.
 
 #include <set>
 #include <vector>
-#include <boost/unordered_set.hpp>
+#include <unordered_set>
 
 #include "libtorrent/fwd.hpp"
 #include "libtorrent/torrent_status.hpp"
 
-namespace lt = libtorrent;
 
 struct torrent_view
 {
@@ -56,7 +55,6 @@ struct torrent_view
 		torrents_queued,
 		torrents_stopped,
 		torrents_checking,
-		torrents_loaded,
 
 		torrents_max
 	};
@@ -69,7 +67,7 @@ struct torrent_view
 	lt::torrent_status const& get_active_torrent() const;
 	lt::torrent_handle get_active_handle() const;
 
-	void update_torrents(std::vector<lt::torrent_status> const& st);
+	void update_torrents(std::vector<lt::torrent_status> st);
 
 	int height() const;
 
@@ -95,7 +93,7 @@ private:
 	void update_filtered_torrents();
 
 	// all torrents
-	boost::unordered_set<lt::torrent_status> m_all_handles;
+	std::unordered_set<lt::torrent_status> m_all_handles;
 
 	// pointers into m_all_handles of the remaining torrents after filtering
 	std::vector<lt::torrent_status const*> m_filtered_handles;

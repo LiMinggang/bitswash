@@ -60,7 +60,7 @@
 #include <libtorrent/session_status.hpp>
 
 //plugins
-#include <libtorrent/extensions/metadata_transfer.hpp>
+//#include <libtorrent/extensions/metadata_transfer.hpp>
 #include <libtorrent/extensions/ut_pex.hpp>
 
 #include "bitswash.h"
@@ -72,7 +72,7 @@
 #include "magneturi.h"
 #include "magneturihandler.h"
 
-namespace lt = libtorrent;
+//namespace lt = libtorrent;
 
 #ifndef __WXMSW__
 #include "languages.h"
@@ -374,7 +374,7 @@ void MainFrame::OnQuit( wxCommandEvent& event )
 
 void MainFrame::OnMenuTorrentOpenDir( wxCommandEvent& event )
 {
-	shared_ptr<torrent_t> pTorrent = GetSelectedTorrent();
+	std::shared_ptr<torrent_t> pTorrent = GetSelectedTorrent();
 
 	if( pTorrent )
 	{
@@ -655,7 +655,7 @@ void MainFrame::ReceiveTorrent( wxString fileorurl )
 void MainFrame::AddTorrent( wxString filename, bool usedefault )
 {
 	WXLOGDEBUG(( _T( "MainFrame: Add Torrent: %s\n" ), filename.c_str() ));
-	shared_ptr<torrent_t> torrent = m_btsession->ParseTorrent( filename );
+	std::shared_ptr<torrent_t> torrent = m_btsession->ParseTorrent( filename );
 
 	if( torrent->isvalid )
 	{
@@ -694,7 +694,7 @@ void MainFrame::AddTorrent( wxString filename, bool usedefault )
 
 			if( answer == wxYES )
 			{
-				shared_ptr<torrent_t> tmp_torrent = m_btsession->GetTorrent(idx);
+				std::shared_ptr<torrent_t> tmp_torrent = m_btsession->GetTorrent(idx);
 				wxASSERT(tmp_torrent);
 				m_btsession->MergeTorrent( tmp_torrent, torrent );
 			}
@@ -757,7 +757,7 @@ void MainFrame::OpenMagnetURI(const wxString & magneturi)
 
 		if( idx < 0 )
 		{
-			shared_ptr<torrent_t> torrent = m_btsession->LoadMagnetUri( magnetUri );
+			std::shared_ptr<torrent_t> torrent = m_btsession->LoadMagnetUri( magnetUri );
 
 			if( torrent && torrent->isvalid )
 			{
@@ -782,7 +782,7 @@ void MainFrame::OpenMagnetURI(const wxString & magneturi)
 
 			if( answer == wxYES )
 			{
-				shared_ptr<torrent_t> torrent = m_btsession->GetTorrent(idx);
+				std::shared_ptr<torrent_t> torrent = m_btsession->GetTorrent(idx);
 				wxASSERT(torrent);
 				m_btsession->MergeTorrent( torrent, magnetUri );
 			}
@@ -913,7 +913,7 @@ void MainFrame::UpdateUI(bool force/* = false*/)
 			/* selected more than 1 item in the torrent list */
 			if( selecteditems.size() > 0 )
 			{
-				shared_ptr<torrent_t> torrent = m_btsession->GetTorrent( selecteditems[0] );
+				std::shared_ptr<torrent_t> torrent = m_btsession->GetTorrent( selecteditems[0] );
 				if(!torrent || !torrent->isvalid)
 				{
 					return;
@@ -971,7 +971,7 @@ void MainFrame::UpdateUI(bool force/* = false*/)
 		}
 		else
 		{
-			shared_ptr<torrent_t> torrent;
+			std::shared_ptr<torrent_t> torrent;
 			m_filelistctrl->SetStaticHandle(torrent);
 			m_filelistctrl->SetItemCount( 0 );
 			m_trackerlistctrl->SetStaticHandle( torrent );
@@ -1038,7 +1038,7 @@ void MainFrame::TorrentOperationMenu( wxMenu* torrentmenu )
 	{
 		if( selected == 1 )
 		{
-			shared_ptr<torrent_t> pTorrent = GetSelectedTorrent();
+			std::shared_ptr<torrent_t> pTorrent = GetSelectedTorrent();
 
 			if( pTorrent )
 			{
@@ -1055,11 +1055,11 @@ void MainFrame::TorrentOperationMenu( wxMenu* torrentmenu )
 				case TORRENT_STATE_START:
 				case TORRENT_STATE_FORCE_START:
 					{
-						if(!( pTorrent->handle.status().paused ))
+						/*if(!( pTorrent->handle.status().paused ))
 						{
 							menu_status[0] = false;
 							menu_status[1] = false;
-						}
+						}*/
 						break;
 					}
 
@@ -1132,7 +1132,7 @@ void MainFrame::OnUpdateUI_MenuTorrent( wxUpdateUIEvent& event )
 				{
 					for( size_t i = 0; i < total; ++i )
 					{
-						shared_ptr<torrent_t> torrent = m_btsession->GetTorrent( selecteditems[i] );
+						std::shared_ptr<torrent_t> torrent = m_btsession->GetTorrent( selecteditems[i] );
 						if(!torrent || !torrent->isvalid)
 						{
 							break;
@@ -1148,7 +1148,7 @@ void MainFrame::OnUpdateUI_MenuTorrent( wxUpdateUIEvent& event )
 							else
 							{
 								lt::torrent_handle &torrenthandle = torrent->handle;
-								if((torrenthandle.is_valid() && torrenthandle.status().paused ))
+								if((torrenthandle.is_valid() /*&& torrenthandle.status().paused*/ ))
 								{
 									enable = true;
 									break;
@@ -1329,7 +1329,7 @@ void MainFrame::OnMenuTorrentProperties( wxCommandEvent& event )
 	{
 		for( i = 0; i < selecteditems.size(); i++ )
 		{
-			shared_ptr<torrent_t> torrent = m_btsession->GetTorrent( selecteditems[i] );
+			std::shared_ptr<torrent_t> torrent = m_btsession->GetTorrent( selecteditems[i] );
 			if(!torrent || !torrent->isvalid)
 			{
 				return;
@@ -1388,7 +1388,7 @@ void MainFrame::RemoveTorrent( bool deletedata )
 		/* remove data in ui list, and bt list */
 		for( i = selecteditems.size() - 1; i >= 0; i-- )
 		{
-			//shared_ptr<torrent_t> torrent = m_torrentlistitems[selecteditems[i] - (offset++)];
+			//std::shared_ptr<torrent_t> torrent = m_torrentlistitems[selecteditems[i] - (offset++)];
 			m_btsession->RemoveTorrent( selecteditems[i], deletedata );
 		}
 
@@ -1516,9 +1516,9 @@ void MainFrame::OnMenuTorrentRecheck( wxCommandEvent& event )
 	}
 }
 
-shared_ptr<torrent_t> MainFrame::GetSelectedTorrent()
+std::shared_ptr<torrent_t> MainFrame::GetSelectedTorrent()
 {
-	shared_ptr<torrent_t> torrent;
+	std::shared_ptr<torrent_t> torrent;
 
 	const SwashListCtrl::itemlist_t selecteditems = m_torrentlistctrl->GetSelectedItems();
 

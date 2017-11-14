@@ -30,8 +30,7 @@ POSSIBILITY OF SUCH DAMAGE.
 
 */
 
-#include <stdlib.h>
-#include <boost/make_shared.hpp>
+#include <cstdlib>
 #include "libtorrent/entry.hpp"
 #include "libtorrent/bencode.hpp"
 #include "libtorrent/session.hpp"
@@ -39,8 +38,7 @@ POSSIBILITY OF SUCH DAMAGE.
 
 int main(int argc, char* argv[])
 {
-	using namespace libtorrent;
-	namespace lt = libtorrent;
+	using namespace lt;
 
 	if (argc != 2)
 	{
@@ -52,25 +50,26 @@ int main(int argc, char* argv[])
 	settings_pack sett;
 	sett.set_str(settings_pack::listen_interfaces, "0.0.0.0:6881");
 	lt::session s(sett);
+	error_code ec;
 	add_torrent_params p;
 	p.save_path = "./";
-	error_code ec;
-	p.ti = boost::make_shared<torrent_info>(std::string(argv[1]), boost::ref(ec), 0);
+	p.ti = std::make_shared<torrent_info>(std::string(argv[1]), std::ref(ec));
 	if (ec)
 	{
-		fprintf(stderr, "%s\n", ec.message().c_str());
+		std::fprintf(stderr, "%s\n", ec.message().c_str());
 		return 1;
 	}
 	s.add_torrent(p, ec);
 	if (ec)
 	{
-		fprintf(stderr, "%s\n", ec.message().c_str());
+		std::fprintf(stderr, "%s\n", ec.message().c_str());
 		return 1;
 	}
 
 	// wait for the user to end
 	char a;
-	scanf("%c\n", &a);
+	int ret = std::scanf("%c\n", &a);
+	(void)ret; // ignore
 	return 0;
 }
 

@@ -28,6 +28,8 @@ rule link_libtorrent ( properties * )
 project tools
    : requirements
 	<threading>multi
+# disable warning C4275: non DLL-interface classkey 'identifier' used as base for DLL-interface classkey 'identifier'
+	<toolset>msvc:<cflags>/wd4275
 	<conditional>@link_libtorrent
 	: default-build
 	<link>static
@@ -35,4 +37,5 @@ project tools
 
 exe parse_access_log : parse_access_log.cpp ;
 exe dht : dht_put.cpp : <include>../ed25519/src ;
+exe session_log_alerts : session_log_alerts.cpp ;
 

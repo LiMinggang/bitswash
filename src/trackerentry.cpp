@@ -32,7 +32,7 @@
 
 #include "trackerentry.h"
 
-namespace lt = libtorrent;
+//namespace lt = libtorrent;
 
 TrackerEntry::TrackerEntry(const wxString &url)
     : m_nativeEntry(lt::announce_entry(url.ToStdString()))
@@ -63,13 +63,13 @@ TrackerEntry::Status TrackerEntry::status() const
 {
     // lt::announce_entry::is_working() returns
     // true when the tracker hasn't been tried yet.
-    if (m_nativeEntry.verified && m_nativeEntry.is_working())
+    /*if (m_nativeEntry.verified && m_nativeEntry.is_working())
         return Working;
     else if ((m_nativeEntry.fails == 0) && m_nativeEntry.updating)
         return Updating;
     else if (m_nativeEntry.fails == 0)
         return NotContacted;
-    else
+    else*/
         return NotWorking;
 }
 

@@ -32,7 +32,7 @@
 #include "functions.h"
 #include "configuration.h"
 
-namespace lt = libtorrent;
+//namespace lt = libtorrent;
 
 #ifdef __WXMSW__
 wxString Configuration::m_startup_regkey = wxT( "HKEY_CURRENT_USER\\SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Run" );

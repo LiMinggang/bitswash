@@ -27,7 +27,7 @@
 #include "mainframe.h"
 #include "functions.h"
 
-namespace lt = libtorrent;
+//namespace lt = libtorrent;
 
 // TorrentListCtrl
 
@@ -106,7 +106,7 @@ wxString TorrentListCtrl::GetItemValue( long item, long columnid ) const
 	wxASSERT(pMainFrame != 0);
 
 	//wxLogDebug(_T("TorrentListCtrl::Showing %d items column %d"), torrentlistitems->size(), columnid);
-	shared_ptr<torrent_t> torrent = pMainFrame->GetTorrent( item );
+	std::shared_ptr<torrent_t> torrent = pMainFrame->GetTorrent( item );
 	if(!torrent)
 	{
 		wxLogError( _T( "TorrentListCtrl: Couldn't retrieve torrent %d\n" ), item );
@@ -115,7 +115,7 @@ wxString TorrentListCtrl::GetItemValue( long item, long columnid ) const
 
 	stats_t& torrentstats = torrent->config->GetTorrentStats();
 	lt::torrent_handle &torrenthandle = torrent->handle;
-	shared_ptr<const lt::torrent_info> torrentinfo = torrent->info;
+	std::shared_ptr<const lt::torrent_info> torrentinfo = torrent->info;
 	lt::torrent_status torrentstatus;
 	int torrentstoped = !torrenthandle.is_valid();
 
@@ -173,12 +173,12 @@ wxString TorrentListCtrl::GetItemValue( long item, long columnid ) const
 		}
 		else
 		{
-			if( ( torrent->config->GetTorrentState() == TORRENT_STATE_PAUSE ) ||
+			/*if( ( torrent->config->GetTorrentState() == TORRENT_STATE_PAUSE ) ||
 					( torrentstatus.paused ) )
 			{
 				ret = _( "Paused" );
 			}
-			else
+			else*/
 			{
 				if( torrentstatus.state < ( sizeof( state_str ) / ( sizeof( wxChar * ) ) ) )
 				{ ret = wxString::Format( _T( "%s" ), state_str[torrentstatus.state] ); }

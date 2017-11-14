@@ -112,8 +112,6 @@ struct incoming_connection_alert;
 struct add_torrent_alert;
 struct state_update_alert;
 struct session_stats_alert;
-struct torrent_update_alert;
-struct rss_item_alert;
 struct dht_error_alert;
 struct dht_immutable_item_alert;
 struct dht_mutable_item_alert;
@@ -133,8 +131,14 @@ struct dht_pkt_alert;
 struct dht_get_peers_reply_alert;
 struct dht_direct_response_alert;
 struct picker_log_alert;
+struct session_error_alert;
+struct dht_live_nodes_alert;
+struct session_stats_header_alert;
+struct dht_sample_infohashes_alert;
+struct block_uploaded_alert;
 
 // include/libtorrent/announce_entry.hpp
+struct announce_endpoint;
 struct announce_entry;
 
 // include/libtorrent/bdecode.hpp
@@ -146,8 +150,8 @@ struct bitfield;
 // include/libtorrent/create_torrent.hpp
 struct create_torrent;
 
-// include/libtorrent/disk_buffer_holder.hpp
-struct disk_buffer_holder;
+// include/libtorrent/disk_interface.hpp
+struct open_file_state;
 
 // include/libtorrent/disk_io_thread.hpp
 struct cache_status;
@@ -156,7 +160,6 @@ struct cache_status;
 class entry;
 
 // include/libtorrent/error_code.hpp
-struct libtorrent_exception;
 struct storage_error;
 
 // include/libtorrent/extensions.hpp
@@ -175,6 +178,9 @@ class file_storage;
 // include/libtorrent/hasher.hpp
 class hasher;
 
+// include/libtorrent/hasher512.hpp
+class hasher512;
+
 // include/libtorrent/ip_filter.hpp
 struct ip_filter;
 class port_filter;
@@ -185,27 +191,19 @@ struct bt_peer_connection_handle;
 
 // include/libtorrent/peer_info.hpp
 struct peer_info;
-struct peer_list_entry;
 
 // include/libtorrent/peer_request.hpp
 struct peer_request;
 
-// include/libtorrent/rss.hpp
-struct feed_item;
-struct feed_settings;
-struct feed_status;
-struct feed_handle;
-
 // include/libtorrent/session.hpp
 class session_proxy;
+struct session_params;
 class session;
 
 // include/libtorrent/session_handle.hpp
 struct session_handle;
 
 // include/libtorrent/session_settings.hpp
-struct session_settings;
-struct dht_settings;
 struct pe_settings;
 
 // include/libtorrent/session_stats.hpp
@@ -218,14 +216,12 @@ struct session_status;
 // include/libtorrent/settings_pack.hpp
 struct settings_pack;
 
-// include/libtorrent/sha1_hash.hpp
-class sha1_hash;
-
 // include/libtorrent/storage.hpp
 struct storage_interface;
 class default_storage;
 
 // include/libtorrent/storage_defs.hpp
+struct storage_interface;
 struct storage_params;
 
 // include/libtorrent/torrent_handle.hpp
@@ -242,6 +238,12 @@ struct torrent_status;
 
 namespace dht {
 
+// include/libtorrent/kademlia/dht_settings.hpp
+struct dht_settings;
+
+// include/libtorrent/kademlia/dht_state.hpp
+struct dht_state;
+
 // include/libtorrent/kademlia/dht_storage.hpp
 struct dht_storage_counters;
 struct dht_storage_interface;
@@ -253,6 +255,7 @@ struct dht_storage_interface;
 // include/libtorrent/alert_types.hpp
 struct torrent_added_alert;
 struct mmap_cache_alert;
+struct torrent_update_alert;
 
 // include/libtorrent/file_storage.hpp
 struct file_entry;

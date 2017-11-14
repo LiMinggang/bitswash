@@ -31,20 +31,22 @@ POSSIBILITY OF SUCH DAMAGE.
 */
 
 #include "libtorrent/crc32c.hpp"
+#include "libtorrent/aux_/cpuid.hpp"
+#include "libtorrent/assert.hpp"
 #include "test.hpp"
 
 TORRENT_TEST(crc32)
 {
-	using namespace libtorrent;
+	using namespace lt;
 
-	boost::uint32_t out;
+	std::uint32_t out;
 
-	boost::uint32_t in1 = 0x5aa5feef;
+	std::uint32_t in1 = 0x5aa5feef;
 	out = crc32c_32(in1);
 
 	TEST_EQUAL(out, htonl(0xd5b9e35e));
 
-	boost::uint64_t buf[4];
+	std::uint64_t buf[4];
 	memcpy(buf, "\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0"
 		"\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0", 32);
 
@@ -60,5 +62,10 @@ TORRENT_TEST(crc32)
 		"\x10\x11\x12\x13\x14\x15\x16\x17\x18\x19\x1a\x1b\x1c\x1d\x1e\x1f", 32);
 	out = crc32c(buf, 4);
 	TEST_EQUAL(out, htonl(0x4e79dd46));
-}
 
+#if TORRENT_HAS_ARM
+	TORRENT_ASSERT(aux::arm_crc32c_support);
+#else
+	TORRENT_ASSERT(!aux::arm_crc32c_support);
+#endif
+}

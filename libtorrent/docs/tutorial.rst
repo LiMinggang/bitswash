@@ -3,7 +3,7 @@ libtorrent manual
 =================
 
 :Author: Arvid Norberg, arvid@libtorrent.org
-:Version: 1.1.5
+:Version: 1.2.0
 
 .. contents:: Table of contents
   :depth: 2
@@ -31,7 +31,6 @@ For example:
 	#include <libtorrent/torrent_handle.hpp>
 	#include <libtorrent/magnet_uri.hpp>
 
-	namespace lt = libtorrent;
 	int main(int argc, char const* argv[])
 	{
 		if (argc != 2) {
@@ -217,7 +216,7 @@ The save_resume_data_alert_ looks something like this:
 		virtual std::string message() const;
 
 		// points to the resume data.
-		boost::shared_ptr<entry> resume_data;
+		std::shared_ptr<entry> resume_data;
 	};
 
 ``resume_data`` points to an entry_ object. This represents a node or a tree of

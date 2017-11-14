@@ -33,13 +33,12 @@ POSSIBILITY OF SUCH DAMAGE.
 #ifndef TORRENT_PROXY_SETTINGS_HPP_INCLUDED
 #define TORRENT_PROXY_SETTINGS_HPP_INCLUDED
 
-#include "libtorrent/version.hpp"
 #include "libtorrent/config.hpp"
 
 #include <string>
-#include <boost/cstdint.hpp>
 
 namespace libtorrent {
+
 struct settings_pack;
 namespace aux {
 
@@ -55,8 +54,8 @@ namespace aux {
 
 		// construct the proxy_settings object from the settings
 		// this constructor is implemented in session_impl.cpp
-		proxy_settings(settings_pack const& sett);
-		proxy_settings(aux::session_settings const& sett);
+		explicit proxy_settings(settings_pack const& sett);
+		explicit proxy_settings(aux::session_settings const& sett);
 
 		// the name or IP of the proxy server. ``port`` is the port number the
 		// proxy listens to. If required, ``username`` and ``password`` can be
@@ -118,10 +117,10 @@ namespace aux {
 
 		// tells libtorrent what kind of proxy server it is. See proxy_type
 		// enum for options
-		boost::uint8_t type;
+		std::uint8_t type;
 
 		// the port the proxy server is running on
-		boost::uint16_t port;
+		std::uint16_t port;
 
 		// defaults to true. It means that hostnames should be attempted to be
 		// resolved through the proxy instead of using the local DNS service.
@@ -138,8 +137,6 @@ namespace aux {
 	};
 
 
-}
-}
+}}
 
 #endif
-

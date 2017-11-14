@@ -31,7 +31,31 @@
 
 #include "infohash.h"
 
-namespace lt = libtorrent;
+//namespace lt = libtorrent;
+extern std::string to_hex(lt::sha1_hash const& s);
+
+int hex_to_int(char in)
+{
+	if (in >= '0' && in <= '9') return int(in) - '0';
+	if (in >= 'A' && in <= 'F') return int(in) - 'A' + 10;
+	if (in >= 'a' && in <= 'f') return int(in) - 'a' + 10;
+	return -1;
+}
+
+inline bool from_hex(char const *in, int len, char* out)
+{
+	for (auto i = in; i < (in + len); ++i, ++out)
+	{
+		int const t1 = hex_to_int(*i);
+		if (t1 == -1) return false;
+		*out = char(t1 << 4);
+		++i;
+		int const t2 = hex_to_int(*i);
+		if (t2 == -1) return false;
+		*out |= t2 & 15;
+	}
+	return true;
+}
 
 InfoHash::InfoHash()
     : m_valid(false)
@@ -42,8 +66,7 @@ InfoHash::InfoHash(const lt::sha1_hash &nativeHash)
     : m_valid(true)
     , m_nativeHash(nativeHash)
 {
-    char out[(lt::sha1_hash::size * 2) + 1];
-    lt::to_hex((char const*)&m_nativeHash[0], lt::sha1_hash::size, out);
+    std::string out = to_hex(m_nativeHash);
     m_hashString = wxString(out);
 }
 
@@ -53,7 +76,7 @@ InfoHash::InfoHash(const wxString &hashString)
 {
     wxCharBuffer raw = m_hashString.ToAscii();
     if (raw.length() == 40)
-        m_valid = lt::from_hex(raw.data(), 40, (char*)&m_nativeHash[0]);
+        m_valid = from_hex(raw.data(), 40, (char*)&m_nativeHash[0]);
 }
 
 InfoHash::InfoHash(const InfoHash &other)

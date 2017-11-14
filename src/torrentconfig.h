@@ -24,7 +24,7 @@
 #include <map>
 #include <vector>
 #include "libtorrent/announce_entry.hpp"
-
+#include "libtorrent/download_priority.hpp"
 enum
 {
 	BITTORRENT_FILE_NONE     = 0,
@@ -104,8 +104,8 @@ public:
 	stats_t& GetTorrentStats() { return m_torrent_stats; }
 	void SetTorrentStats( stats_t& stats ) { m_torrent_stats = stats;}
 
-	std::vector<int>& GetFilesPriorities() { return m_files_priority ;}
-	void SetFilesPriority( std::vector<int>& files );
+	std::vector<lt::download_priority_t>& GetFilesPriorities() { return m_files_priority ;}
+	void SetFilesPriority( std::vector<lt::download_priority_t>& files );
 	std::vector<libtorrent::announce_entry>& GetTrackersURL() { return m_trackers_url;}
 	void  SetTrackersURL( std::vector<libtorrent::announce_entry>& trackers ) ;
 	void WriteFilesPriority();
@@ -137,7 +137,7 @@ private:
 	int m_torrent_max_uploads;
 	int m_torrent_max_connections;
 	wxULongLong_t m_selected_file_size;
-	std::vector<int> m_files_priority;
+	std::vector<lt::download_priority_t> m_files_priority;
 	std::vector<libtorrent::announce_entry> m_trackers_url;
 	stats_t m_torrent_stats;
 };

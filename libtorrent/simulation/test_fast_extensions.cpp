@@ -41,8 +41,9 @@ POSSIBILITY OF SUCH DAMAGE.
 #include "fake_peer.hpp"
 #include "setup_transfer.hpp" // for ep()
 #include "simulator/utils.hpp"
+#include "libtorrent/string_view.hpp"
 
-namespace lt = libtorrent;
+using namespace lt::literals;
 
 template <typename Sett, typename Alert>
 void run_fake_peer_test(
@@ -65,8 +66,8 @@ void run_fake_peer_test(
 
 	fake_peer p1(sim, "60.0.0.0");
 
-	params.flags &= ~lt::add_torrent_params::flag_auto_managed;
-	params.flags &= ~lt::add_torrent_params::flag_paused;
+	params.flags &= ~lt::torrent_flags::auto_managed;
+	params.flags &= ~lt::torrent_flags::paused;
 	ses->async_add_torrent(params);
 
 	// the alert notification function is called from within libtorrent's
@@ -77,7 +78,7 @@ void run_fake_peer_test(
 	});
 
 	sim::timer t(sim, lt::seconds(1)
-		, [&](boost::system::error_code const& ec)
+		, [&](boost::system::error_code const&)
 	{
 		// shut down
 		zombie = ses->abort();
@@ -108,7 +109,7 @@ TORRENT_TEST(allow_fast)
 		run_fake_peer_test(params, [] (lt::settings_pack& pack) {
 			pack.set_int(lt::settings_pack::allowed_fast_set_size, 13);
 		}
-		, [&] (lt::session& ses, lt::alert const* a, fake_peer& p1)
+		, [&] (lt::session&, lt::alert const* a, fake_peer& p1)
 		{
 			if (auto at = lt::alert_cast<lt::add_torrent_alert>(a))
 			{
@@ -120,9 +121,9 @@ TORRENT_TEST(allow_fast)
 			}
 			else if (auto l = lt::alert_cast<lt::peer_log_alert>(a))
 			{
-				if (strcmp(l->event_type, "ALLOWED_FAST") != 0) return;
+				if (l->event_type != "ALLOWED_FAST"_sv) return;
 
-				int const piece = atoi(l->msg());
+				int const piece = atoi(l->log_message());
 				// make sure we don't get the same allowed piece more than once
 				TEST_EQUAL(local_allowed_fast.count(piece), 0);
 
@@ -171,7 +172,7 @@ TORRENT_TEST(allow_fast_stress)
 	run_fake_peer_test(params, [&] (lt::settings_pack& pack) {
 		pack.set_int(lt::settings_pack::allowed_fast_set_size, num_pieces - 1);
 	}
-	, [&] (lt::session& ses, lt::alert const* a, fake_peer& p1)
+	, [&] (lt::session&, lt::alert const* a, fake_peer& p1)
 	{
 		if (auto at = lt::alert_cast<lt::add_torrent_alert>(a))
 		{
@@ -182,9 +183,9 @@ TORRENT_TEST(allow_fast_stress)
 		}
 		else if (auto l = lt::alert_cast<lt::peer_log_alert>(a))
 		{
-			if (strcmp(l->event_type, "ALLOWED_FAST") != 0) return;
+			if (l->event_type != "ALLOWED_FAST"_sv) return;
 
-			int const piece = atoi(l->msg());
+			int const piece = atoi(l->log_message());
 
 			// make sure we don't get the same allowed piece more than once
 			TEST_EQUAL(allowed_fast.count(piece), 0);

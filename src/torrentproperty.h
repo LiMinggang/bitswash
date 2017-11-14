@@ -21,7 +21,7 @@ class TorrentProperty: public wxDialog
 {
 public:
 
-	TorrentProperty(shared_ptr<torrent_t>& pTorrent, wxWindow* parent,wxWindowID id=wxID_ANY,const wxPoint& pos=wxDefaultPosition,const wxSize& size=wxDefaultSize);
+	TorrentProperty(std::shared_ptr<torrent_t>& pTorrent, wxWindow* parent,wxWindowID id=wxID_ANY,const wxPoint& pos=wxDefaultPosition,const wxSize& size=wxDefaultSize);
 	virtual ~TorrentProperty();
 
 	//(*Declarations(TorrentProperty)
@@ -58,7 +58,7 @@ private:
     void OnDownloadNone(wxCommandEvent& event);
 
 	wxFrame* m_pMainFrame;
-	shared_ptr<torrent_t> m_pTorrent;
+	std::shared_ptr<torrent_t> m_pTorrent;
 };
 
 #endif

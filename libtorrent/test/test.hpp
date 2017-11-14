@@ -40,6 +40,9 @@ POSSIBILITY OF SUCH DAMAGE.
 #include <exception>
 #include <sstream>
 #include <vector>
+#include <cstdio> // for std::snprintf
+#include <cinttypes> // for PRId64 et.al.
+
 #include <boost/preprocessor/cat.hpp>
 
 #include "libtorrent/config.hpp"
@@ -70,6 +73,7 @@ POSSIBILITY OF SUCH DAMAGE.
 void EXPORT report_failure(char const* err, char const* file, int line);
 int EXPORT print_failures();
 int EXPORT test_counter();
+void EXPORT reset_output();
 
 typedef void (*unit_test_fun_t)();
 
@@ -85,6 +89,7 @@ struct unit_test_t
 extern unit_test_t EXPORT _g_unit_tests[1024];
 extern int EXPORT _g_num_unit_tests;
 extern int EXPORT _g_test_failures;
+extern int _g_test_idx;
 
 #define TORRENT_TEST(test_name) \
 	static void BOOST_PP_CAT(unit_test_, test_name)(); \
@@ -107,11 +112,17 @@ extern int EXPORT _g_test_failures;
 #ifdef BOOST_NO_EXCEPTIONS
 #define TEST_CHECK(x) \
 	if (!(x)) \
-		TEST_REPORT_AUX("TEST_CHECK failed: \"" #x "\"", __FILE__, __LINE__);
+		TEST_REPORT_AUX("TEST_ERROR: check failed: \"" #x "\"", __FILE__, __LINE__);
 #define TEST_EQUAL(x, y) \
 	if ((x) != (y)) { \
 		std::stringstream s__; \
-		s__ << "TEST_EQUAL_ERROR:\n" #x ": " << (x) << "\nexpected: " << (y); \
+		s__ << "TEST_ERROR: equal check failed:\n" #x ": " << (x) << "\nexpected: " << (y); \
+		TEST_REPORT_AUX(s__.str().c_str(), __FILE__, __LINE__); \
+	}
+#define TEST_NE(x, y) \
+	if ((x) == (y)) { \
+		std::stringstream s__; \
+		s__ << "TEST_ERROR: not equal check failed:\n" #x ": " << (x) << "\nexpected not equal to: " << (y); \
 		TEST_REPORT_AUX(s__.str().c_str(), __FILE__, __LINE__); \
 	}
 #else
@@ -119,37 +130,53 @@ extern int EXPORT _g_test_failures;
 	try \
 	{ \
 		if (!(x)) \
-			TEST_REPORT_AUX("TEST_CHECK failed: \"" #x "\"", __FILE__, __LINE__); \
+			TEST_REPORT_AUX("TEST_ERROR: check failed: \"" #x "\"", __FILE__, __LINE__); \
 	} \
-	catch (std::exception& e) \
+	catch (std::exception const& e) \
 	{ \
-		TEST_ERROR("Exception thrown: " #x " :" + std::string(e.what())); \
+		TEST_ERROR("TEST_ERROR: Exception thrown: " #x " :" + std::string(e.what())); \
 	} \
 	catch (...) \
 	{ \
-		TEST_ERROR("Exception thrown: " #x); \
+		TEST_ERROR("TEST_ERROR: Exception thrown: " #x); \
 	}
 
 #define TEST_EQUAL(x, y) \
 	try { \
 		if ((x) != (y)) { \
 			std::stringstream s__; \
-			s__ << "TEST_EQUAL_ERROR: " #x ": " << (x) << " expected: " << (y); \
+			s__ << "TEST_ERROR: " #x ": " << (x) << " expected: " << (y); \
 			TEST_REPORT_AUX(s__.str().c_str(), __FILE__, __LINE__); \
 		} \
 	} \
-	catch (std::exception& e) \
+	catch (std::exception const& e) \
 	{ \
-		TEST_ERROR("Exception thrown: " #x " :" + std::string(e.what())); \
+		TEST_ERROR("TEST_ERROR: Exception thrown: " #x " :" + std::string(e.what())); \
 	} \
 	catch (...) \
 	{ \
-		TEST_ERROR("Exception thrown: " #x); \
+		TEST_ERROR("TEST_ERROR: Exception thrown: " #x); \
+	}
+#define TEST_NE(x, y) \
+	try { \
+		if ((x) == (y)) { \
+			std::stringstream s__; \
+			s__ << "TEST_ERROR: " #x ": " << (x) << " expected not equal to: " << (y); \
+			TEST_REPORT_AUX(s__.str().c_str(), __FILE__, __LINE__); \
+		} \
+	} \
+	catch (std::exception const& e) \
+	{ \
+		TEST_ERROR("TEST_ERROR: Exception thrown: " #x " :" + std::string(e.what())); \
+	} \
+	catch (...) \
+	{ \
+		TEST_ERROR("TEST_ERROR: Exception thrown: " #x); \
 	}
 #endif
 
 #define TEST_ERROR(x) \
-	TEST_REPORT_AUX((std::string("ERROR: \"") + (x) + "\"").c_str(), __FILE__, __LINE__)
+	TEST_REPORT_AUX((std::string("TEST_ERROR: \"") + (x) + "\"").c_str(), __FILE__, __LINE__)
 
 #define TEST_NOTHROW(x) \
 	try \
@@ -158,7 +185,7 @@ extern int EXPORT _g_test_failures;
 	} \
 	catch (...) \
 	{ \
-		TEST_ERROR("Exception thrown: " #x); \
+		TEST_ERROR("TEST_ERROR: Exception thrown: " #x); \
 	}
 
 #define TEST_THROW(x) \

@@ -44,7 +44,7 @@ int samples[] =  {
 67, 51, 66, 52, 48, 57, 30, 51, 72, 65, 78, 56, 74, 68, 49, 66,
 63, 57, 61, 62, 64, 62, 61, 52, 67, 64, 59, 61, 69, 60, 54, 69 };
 
-using namespace libtorrent;
+using namespace lt;
 
 // make sure we react quickly for the first few samples
 TORRENT_TEST(reaction_time)
@@ -107,7 +107,7 @@ TORRENT_TEST(sliding_average)
 	TEST_EQUAL(avg.avg_deviation(), 1);
 	avg.add_sample(0);
 	avg.add_sample(0);
-	printf("avg: %d dev: %d\n", avg.mean(), avg.avg_deviation());
+	std::printf("avg: %d dev: %d\n", avg.mean(), avg.avg_deviation());
 	TEST_CHECK(abs(avg.mean() - 250) < 50);
 	TEST_CHECK(abs(avg.avg_deviation() - 250) < 80);
 }

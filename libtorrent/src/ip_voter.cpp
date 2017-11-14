@@ -36,10 +36,8 @@ POSSIBILITY OF SUCH DAMAGE.
 #include "libtorrent/random.hpp" // for random()
 #include "libtorrent/aux_/time.hpp" // for aux::time_now()
 
-#include <boost/bind.hpp>
+namespace libtorrent {
 
-namespace libtorrent
-{
 	ip_voter::ip_voter()
 		: m_total_votes(0)
 		, m_valid_external(false)
@@ -100,7 +98,7 @@ namespace libtorrent
 	}
 
 	bool ip_voter::cast_vote(address const& ip
-		, int source_type, address const& source)
+		, aux::ip_source_t const source_type, address const& source)
 	{
 		if (is_any(ip)) return false;
 		if (is_local(ip)) return false;
@@ -113,22 +111,20 @@ namespace libtorrent
 
 		// this is the key to use for the bloom filters
 		// it represents the identity of the voter
-		sha1_hash k;
-		hash_address(source, k);
+		sha1_hash const k = hash_address(source);
 
 		// do we already have an entry for this external IP?
 		std::vector<external_ip_t>::iterator i = std::find_if(m_external_addresses.begin()
-			, m_external_addresses.end(), boost::bind(&external_ip_t::addr, _1) == ip);
+			, m_external_addresses.end(), [&ip] (external_ip_t const& e) { return e.addr == ip; });
 
 		if (i == m_external_addresses.end())
 		{
 			// each IP only gets to add a new IP once
 			if (m_external_address_voters.find(k)) return maybe_rotate();
-		
+
 			if (m_external_addresses.size() > 40)
 			{
-				if (random() % 100 < 50)
-					return maybe_rotate();
+				if (random(1)) return maybe_rotate();
 
 				// use stable sort here to maintain the fifo-order
 				// of the entries with the same number of votes
@@ -148,7 +144,7 @@ namespace libtorrent
 		// add one more vote to this external IP
 		if (!i->add_vote(k, source_type)) return maybe_rotate();
 		++m_total_votes;
-		
+
 		if (m_valid_external) return maybe_rotate();
 
 		i = std::min_element(m_external_addresses.begin(), m_external_addresses.end());
@@ -156,7 +152,7 @@ namespace libtorrent
 
 		if (i->addr == m_external_address) return maybe_rotate();
 
-		if (m_external_address != address_v4())
+		if (m_external_address != address())
 		{
 			// we have a temporary external address. As soon as we have
 			// more than 25 votes, consider deciding which one to settle for
@@ -168,7 +164,8 @@ namespace libtorrent
 		return true;
 	}
 
-	bool ip_voter::external_ip_t::add_vote(sha1_hash const& k, int type)
+	bool ip_voter::external_ip_t::add_vote(sha1_hash const& k
+		, aux::ip_source_t const type)
 	{
 		sources |= type;
 		if (voters.find(k)) return false;
@@ -177,18 +174,24 @@ namespace libtorrent
 		return true;
 	}
 
-	bool external_ip::cast_vote(address const& ip, int source_type, address const& source)
+	external_ip::external_ip(address const& local4, address const& global4
+		, address const& local6, address const& global6)
+		: m_addresses{{global4, ensure_v6(global6)}, {local4, ensure_v6(local6)}}
 	{
-		return m_vote_group[ip.is_v6()].cast_vote(ip, source_type, source);
+#if TORRENT_USE_IPV6
+		TORRENT_ASSERT(m_addresses[0][1].is_v6());
+		TORRENT_ASSERT(m_addresses[1][1].is_v6());
+#endif
+		TORRENT_ASSERT(m_addresses[0][0].is_v4());
+		TORRENT_ASSERT(m_addresses[1][0].is_v4());
 	}
 
 	address external_ip::external_address(address const& ip) const
 	{
-		address ext = m_vote_group[ip.is_v6()].external_address();
+		address ext = m_addresses[is_local(ip)][ip.is_v6()];
 #if TORRENT_USE_IPV6
 		if (ip.is_v6() && ext == address_v4()) return address_v6();
 #endif
 		return ext;
 	}
 }
-

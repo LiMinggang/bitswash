@@ -81,9 +81,17 @@ names = []
 types = []
 
 for l in f:
-	description_line = l.lstrip().startswith('// ')
+	description_line = l.lstrip().startswith('//')
 
 	l = l.strip()
+
+	if mode == 'ignore':
+		if '#endif' in l: mode = ''
+		continue
+
+	if 'TORRENT_NO_DEPRECATE' in l:
+		mode = 'ignore'
+		continue
 
 	if description_line == True:
 		if len(names) > 0:

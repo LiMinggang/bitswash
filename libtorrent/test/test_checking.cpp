@@ -39,6 +39,8 @@ POSSIBILITY OF SUCH DAMAGE.
 #include "libtorrent/alert_types.hpp"
 #include "libtorrent/torrent_info.hpp"
 #include "libtorrent/torrent_status.hpp"
+#include "libtorrent/hex.hpp" // to_hex
+#include "libtorrent/aux_/path.hpp"
 
 static const int file_sizes[] =
 { 0, 5, 16 - 5, 16000, 17, 10, 8000, 8000, 1,1,1,1,1,100,1,1,1,1,100,1,1,1,1,1,1
@@ -65,10 +67,9 @@ enum
 
 void test_checking(int flags = read_only_files)
 {
-	using namespace libtorrent;
-	namespace lt = libtorrent;
+	using namespace lt;
 
-	fprintf(stdout, "\n==== TEST CHECKING %s%s%s%s=====\n\n"
+	std::printf("\n==== TEST CHECKING %s%s%s%s=====\n\n"
 		, (flags & read_only_files) ? "read-only-files ":""
 		, (flags & corrupt_files) ? "corrupt ":""
 		, (flags & incomplete_files) ? "incomplete ":""
@@ -90,15 +91,15 @@ void test_checking(int flags = read_only_files)
 
 	// calculate the hash for all pieces
 	set_piece_hashes(t, ".", ec);
-	if (ec) fprintf(stdout, "ERROR: set_piece_hashes: (%d) %s\n"
+	if (ec) std::printf("ERROR: set_piece_hashes: (%d) %s\n"
 		, ec.value(), ec.message().c_str());
 
 	std::vector<char> buf;
 	bencode(std::back_inserter(buf), t.generate());
-	boost::shared_ptr<torrent_info> ti(new torrent_info(&buf[0], buf.size(), ec));
+	auto ti = std::make_shared<torrent_info>(buf, ec, from_span);
 
-	fprintf(stdout, "generated torrent: %s test_torrent_dir\n"
-		, to_hex(ti->info_hash().to_string()).c_str());
+	std::printf("generated torrent: %s test_torrent_dir\n"
+		, aux::to_hex(ti->info_hash()).c_str());
 
 	// truncate every file in half
 	if (flags & incomplete_files)
@@ -106,18 +107,18 @@ void test_checking(int flags = read_only_files)
 		for (int i = 0; i < num_files; ++i)
 		{
 			char name[1024];
-			snprintf(name, sizeof(name), "test%d", i);
+			std::snprintf(name, sizeof(name), "test%d", i);
 			char dirname[200];
-			snprintf(dirname, sizeof(dirname), "test_dir%d", i / 5);
+			std::snprintf(dirname, sizeof(dirname), "test_dir%d", i / 5);
 			std::string path = combine_path("test_torrent_dir", dirname);
 			path = combine_path(path, name);
 
 			error_code ec;
-			file f(path, file::read_write, ec);
-			if (ec) fprintf(stdout, "ERROR: opening file \"%s\": (%d) %s\n"
+			file f(path, open_mode::read_write, ec);
+			if (ec) std::printf("ERROR: opening file \"%s\": (%d) %s\n"
 				, path.c_str(), ec.value(), ec.message().c_str());
 			f.set_size(file_sizes[i] / 2, ec);
-			if (ec) fprintf(stdout, "ERROR: truncating file \"%s\": (%d) %s\n"
+			if (ec) std::printf("ERROR: truncating file \"%s\": (%d) %s\n"
 				, path.c_str(), ec.value(), ec.message().c_str());
 		}
 	}
@@ -125,7 +126,7 @@ void test_checking(int flags = read_only_files)
 	// overwrite the files with new random data
 	if (flags & corrupt_files)
 	{
-		fprintf(stdout, "corrupt file test. overwriting files\n");
+		std::printf("corrupt file test. overwriting files\n");
 		// increase the size of some files. When they're read only that forces
 		// the checker to open them in write-mode to truncate them
 		static const int file_sizes2[] =
@@ -137,17 +138,17 @@ void test_checking(int flags = read_only_files)
 	// make the files read only
 	if (flags & read_only_files)
 	{
-		fprintf(stdout, "making files read-only\n");
+		std::printf("making files read-only\n");
 		for (int i = 0; i < num_files; ++i)
 		{
 			char name[1024];
-			snprintf(name, sizeof(name), "test%d", i);
+			std::snprintf(name, sizeof(name), "test%d", i);
 			char dirname[200];
-			snprintf(dirname, sizeof(dirname), "test_dir%d", i / 5);
+			std::snprintf(dirname, sizeof(dirname), "test_dir%d", i / 5);
 
 			std::string path = combine_path("test_torrent_dir", dirname);
 			path = combine_path(path, name);
-			fprintf(stdout, "   %s\n", path.c_str());
+			std::printf("   %s\n", path.c_str());
 
 #ifdef TORRENT_WINDOWS
 			SetFileAttributesA(path.c_str(), FILE_ATTRIBUTE_READONLY);
@@ -160,14 +161,14 @@ void test_checking(int flags = read_only_files)
 	if (flags & force_recheck)
 	{
 		remove_all("test_torrent_dir_tmp", ec);
-		if (ec) fprintf(stdout, "ERROR: removing \"test_torrent_dir_tmp\": (%d) %s\n"
+		if (ec) std::printf("ERROR: removing \"test_torrent_dir_tmp\": (%d) %s\n"
 			, ec.value(), ec.message().c_str());
 		rename("test_torrent_dir", "test_torrent_dir_tmp", ec);
-		if (ec) fprintf(stdout, "ERROR: renaming dir \"test_torrent_dir\": (%d) %s\n"
+		if (ec) std::printf("ERROR: renaming dir \"test_torrent_dir\": (%d) %s\n"
 			, ec.value(), ec.message().c_str());
 	}
 
-	int const mask = alert::all_categories
+	auto const mask = alert::all_categories
 		& ~(alert::progress_notification
 			| alert::performance_warning
 			| alert::stats_notification);
@@ -214,7 +215,7 @@ void test_checking(int flags = read_only_files)
 
 		st = tor1.status();
 
-		printf("%d %f %s\n", st.state, st.progress_ppm / 10000.f, st.errc.message().c_str());
+		std::printf("%d %f %s\n", st.state, st.progress_ppm / 10000.f, st.errc.message().c_str());
 
 		if (
 #ifndef TORRENT_NO_DEPRECATE
@@ -225,14 +226,14 @@ void test_checking(int flags = read_only_files)
 			break;
 
 		if (st.errc) break;
-		test_sleep(500);
+		std::this_thread::sleep_for(lt::milliseconds(500));
 	}
 
 	if (flags & incomplete_files)
 	{
 		TEST_CHECK(!st.is_seeding);
 
-		test_sleep(500);
+		std::this_thread::sleep_for(lt::milliseconds(500));
 		st = tor1.status();
 		TEST_CHECK(!st.is_seeding);
 	}
@@ -248,22 +249,22 @@ void test_checking(int flags = read_only_files)
 			// read-only here, we expect the checking to fail.
 			TEST_CHECK(st.errc);
 			if (st.errc)
-				fprintf(stdout, "error: %s\n", st.errc.message().c_str());
+				std::printf("error: %s\n", st.errc.message().c_str());
 
 			// wait a while to make sure libtorrent survived the error
-			test_sleep(1000);
+			std::this_thread::sleep_for(lt::milliseconds(1000));
 
 			st = tor1.status();
 			TEST_CHECK(!st.is_seeding);
 			TEST_CHECK(st.errc);
 			if (st.errc)
-				fprintf(stdout, "error: %s\n", st.errc.message().c_str());
+				std::printf("error: %s\n", st.errc.message().c_str());
 		}
 		else
 		{
 			TEST_CHECK(!st.errc);
 			if (st.errc)
-				fprintf(stdout, "error: %s\n", st.errc.message().c_str());
+				std::printf("error: %s\n", st.errc.message().c_str());
 		}
 	}
 
@@ -271,7 +272,7 @@ void test_checking(int flags = read_only_files)
 	{
 		TEST_CHECK(st.is_seeding);
 		if (st.errc)
-			fprintf(stdout, "error: %s\n", st.errc.message().c_str());
+			std::printf("error: %s\n", st.errc.message().c_str());
 	}
 
 	// make the files writable again
@@ -280,9 +281,9 @@ void test_checking(int flags = read_only_files)
 		for (int i = 0; i < num_files; ++i)
 		{
 			char name[1024];
-			snprintf(name, sizeof(name), "test%d", i);
+			std::snprintf(name, sizeof(name), "test%d", i);
 			char dirname[200];
-			snprintf(dirname, sizeof(dirname), "test_dir%d", i / 5);
+			std::snprintf(dirname, sizeof(dirname), "test_dir%d", i / 5);
 
 			std::string path = combine_path("test_torrent_dir", dirname);
 			path = combine_path(path, name);
@@ -295,7 +296,7 @@ void test_checking(int flags = read_only_files)
 	}
 
 	remove_all("test_torrent_dir", ec);
-	if (ec) fprintf(stdout, "ERROR: removing test_torrent_dir: (%d) %s\n"
+	if (ec) std::printf("ERROR: removing test_torrent_dir: (%d) %s\n"
 		, ec.value(), ec.message().c_str());
 }
 

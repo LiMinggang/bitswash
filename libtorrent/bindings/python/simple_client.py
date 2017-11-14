@@ -8,29 +8,31 @@ import libtorrent as lt
 import time
 import sys
 
-ses = lt.session()
-ses.listen_on(6881, 6891)
+ses = lt.session({'listen_interfaces':'0.0.0.0:6881'})
 
 info = lt.torrent_info(sys.argv[1])
 h = ses.add_torrent({'ti': info, 'save_path': '.'})
-print('starting', h.name())
+s = h.status()
+print('starting', s.name)
 
-while (not h.is_seed()):
-	s = h.status()
+while (not s.is_seeding):
+    s = h.status()
 
-	state_str = ['queued', 'checking', 'downloading metadata', \
-		'downloading', 'finished', 'seeding', 'allocating', 'checking fastresume']
-	print('\r%.2f%% complete (down: %.1f kB/s up: %.1f kB/s peers: %d) %s' % \
-		(s.progress * 100, s.download_rate / 1000, s.upload_rate / 1000, \
-		s.num_peers, state_str[s.state]), end=' ')
+    state_str = [
+        'queued', 'checking', 'downloading metadata',
+        'downloading', 'finished', 'seeding', 'allocating',
+        'checking fastresume']
+    print('\r%.2f%% complete (down: %.1f kB/s up: %.1f kB/s peers: %d) %s' % (
+        s.progress * 100, s.download_rate / 1000, s.upload_rate / 1000,
+        s.num_peers, state_str[s.state]), end=' ')
 
-	alerts = ses.pop_alerts()
-	for a in alerts:
-		if a.category() & lt.alert.category_t.error_notification:
-			print(a)
+    alerts = ses.pop_alerts()
+    for a in alerts:
+        if a.category() & lt.alert.category_t.error_notification:
+            print(a)
 
-	sys.stdout.flush()
+    sys.stdout.flush()
 
-	time.sleep(1)
+    time.sleep(1)
 
 print(h.name(), 'complete')

@@ -3,13 +3,14 @@
 # Copyright Daniel Wallin 2006. Use, modification and distribution is
 # subject to the Boost Software License, Version 1.0. (See accompanying
 # file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
+from __future__ import print_function
 
 import sys
 import atexit
 import libtorrent as lt
 import time
 import os.path
-import sys
+
 
 class WindowsConsole:
     def __init__(self):
@@ -26,6 +27,7 @@ class WindowsConsole:
         if msvcrt.kbhit():
             return msvcrt.getch()
         return None
+
 
 class UnixConsole:
     def __init__(self):
@@ -51,10 +53,12 @@ class UnixConsole:
         sys.stdout.flush()
 
     def sleep_and_input(self, seconds):
-        read,_,_ = select.select([self.fd.fileno()], [], [], seconds)
+        read, __, __ = select.select(
+            [self.fd.fileno()], [], [], seconds)
         if len(read) > 0:
             return self.fd.read(1)
         return None
+
 
 if os.name == 'nt':
     import Console
@@ -63,8 +67,10 @@ else:
     import termios
     import select
 
+
 def write_line(console, line):
     console.write(line)
+
 
 def add_suffix(val):
     prefix = ['B', 'kB', 'MB', 'GB', 'TB']
@@ -78,14 +84,17 @@ def add_suffix(val):
 
     return '%6.3gPB' % val
 
+
 def progress_bar(progress, width):
     assert(progress <= 1)
     progress_chars = int(progress * width + 0.5)
     return progress_chars * '#' + (width - progress_chars) * '-'
 
+
 def print_peer_info(console, peers):
 
-    out = ' down    (total )   up     (total )  q  r flags  block progress  client\n'
+    out = (' down    (total )   up     (total )'
+           '  q  r flags  block progress  client\n')
 
     for p in peers:
 
@@ -106,7 +115,8 @@ def print_peer_info(console, peers):
 
         if p.downloading_piece_index >= 0:
             assert(p.downloading_progress <= p.downloading_total)
-            out += progress_bar(float(p.downloading_progress) / p.downloading_total, 15)
+            out += progress_bar(float(p.downloading_progress) /
+                                p.downloading_total, 15)
         else:
             out += progress_bar(0, 15)
         out += ' '
@@ -114,7 +124,7 @@ def print_peer_info(console, peers):
         if p.flags & lt.peer_info.handshake:
             id = 'waiting for handshake'
         elif p.flags & lt.peer_info.connecting:
-            id =  'connecting to peer'
+            id = 'connecting to peer'
         else:
             id = p.client
 
@@ -128,7 +138,7 @@ def print_download_queue(console, download_queue):
     out = ""
 
     for e in download_queue:
-        out += '%4d: [' % e['piece_index'];
+        out += '%4d: [' % e['piece_index']
         for b in e['blocks']:
             s = b['state']
             if s == 3:
@@ -144,21 +154,21 @@ def print_download_queue(console, download_queue):
     write_line(console, out)
 
 def add_torrent(ses, filename, options):
-    atp = {}
+    atp = lt.add_torrent_params()
     if filename.startswith('magnet:'):
         atp = lt.parse_magnet_uti(filename)
     else:
-        atp['ti'] = lt.torrent_info(filename)
+        atp.ti = lt.torrent_info(filename)
         try:
-            atp["resume_data"] = open(os.path.join(options.save_path, info.name() + '.fastresume'), 'rb').read()
+            at.resume_data = open(os.path.join(options.save_path, info.name() + '.fastresume'), 'rb').read()
         except:
             pass
 
-    atp["save_path"] = options.save_path
-    atp["storage_mode"] = lt.storage_mode_t.storage_mode_sparse
-    atp["paused"] = False
-    atp["auto_managed"] = True
-    atp["duplicate_is_error"] = True
+    atp.save_path = options.save_path
+    atp.storage_mode = lt.storage_mode_t.storage_mode_sparse
+    atp.flags |= lt.torrent_flags.duplicate_is_error \
+        | lt.torrent_flags.auto_managed \
+        | lt.torrent_flags.duplicate_is_error
     ses.async_add_torrent(atp)
 
 def main():
@@ -166,27 +176,30 @@ def main():
 
     parser = OptionParser()
 
-    parser.add_option('-p', '--port',
-        type='int', help='set listening port')
+    parser.add_option('-p', '--port', type='int', help='set listening port')
 
-    parser.add_option('-d', '--max-download-rate',
-        type='float', help='the maximum download rate given in kB/s. 0 means infinite.')
+    parser.add_option(
+        '-d', '--max-download-rate', type='float',
+        help='the maximum download rate given in kB/s. 0 means infinite.')
 
-    parser.add_option('-u', '--max-upload-rate',
-        type='float', help='the maximum upload rate given in kB/s. 0 means infinite.')
+    parser.add_option(
+        '-u', '--max-upload-rate', type='float',
+        help='the maximum upload rate given in kB/s. 0 means infinite.')
 
-    parser.add_option('-s', '--save-path',
-        type='string', help='the path where the downloaded file/folder should be placed.')
+    parser.add_option(
+        '-s', '--save-path', type='string',
+        help='the path where the downloaded file/folder should be placed.')
 
-    parser.add_option('-r', '--proxy-host',
-        type='string', help='sets HTTP proxy host and port (separated by \':\')')
+    parser.add_option(
+        '-r', '--proxy-host', type='string',
+        help='sets HTTP proxy host and port (separated by \':\')')
 
     parser.set_defaults(
-        port=6881
-      , max_download_rate=0
-      , max_upload_rate=0
-      , save_path='.'
-      , proxy_host=''
+        port=6881,
+        max_download_rate=0,
+        max_upload_rate=0,
+        save_path='.',
+        proxy_host=''
     )
 
     (options, args) = parser.parse_args()
@@ -203,9 +216,9 @@ def main():
         options.max_download_rate = -1
 
     settings = { 'user_agent': 'python_client/' + lt.__version__,
+        'listen_interfaces': '0.0.0.0:%d' % options.port,
         'download_rate_limit': int(options.max_download_rate),
         'upload_rate_limit': int(options.max_upload_rate),
-        'listen_interfaces': '0.0.0.0:%d' % options.port,
         'alert_mask': lt.alert.category_t.all_categories
     }
 
@@ -270,9 +283,9 @@ def main():
             if t.state != lt.torrent_status.seeding:
                 try:
                     out = '\n'
-                    fp = t.handle.file_progress()
+                    fp = h.file_progress()
                     ti = t.torrent_file
-                    for f,p in zip(ti.files(), fp):
+                    for f, p in zip(ti.files(), fp):
                         out += progress_bar(p / float(f.size), 20)
                         out += ' ' + f.path + '\n'
                     write_line(console, out)
@@ -300,8 +313,8 @@ def main():
                 for s in a.status:
                     torrents[s.handle] = s
 
-        if len(alerts_log) > 8:
-            del alerts_log[:len(alerts_log) - 8]
+        if len(alerts_log) > 20:
+            alerts_log = alerts_log[-20:]
 
         for a in alerts_log:
             write_line(console, a + '\n')
@@ -330,6 +343,7 @@ def main():
         alerts = ses.pop_alerts()
         for a in alerts:
             if type(a) == lt.save_resume_data_alert:
+                print(a)
                 data = lt.bencode(a.resume_data)
                 h = a.handle
                 if h in torrents:
@@ -344,4 +358,3 @@ def main():
         time.sleep(0.5)
 
 main()
-

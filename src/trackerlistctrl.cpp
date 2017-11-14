@@ -27,7 +27,7 @@
 #include "trackerlistctrl.h"
 #include "functions.h"
 
-namespace lt = libtorrent;
+//namespace lt = libtorrent;
 
 enum
 {
@@ -88,7 +88,7 @@ wxString TrackerListCtrl::GetItemValue(long item, long columnid) const
 	wxString ret(_T(""));
 
 	//wxLogDebug(_T("TrackerListCtrl column %ld of item %ld"), columnid, item);
-	shared_ptr<torrent_t> pTorrent;
+	std::shared_ptr<torrent_t> pTorrent;
 	
 	if ( m_pTorrent.use_count() > 1)
 	{
@@ -129,8 +129,8 @@ wxString TrackerListCtrl::GetItemValue(long item, long columnid) const
 		{
 			if(tracker.verified)
 			{
-				if(tracker.is_working()) ret = _("Working");
-				else ret = wxString(tracker.last_error.message());
+				/*if(tracker.is_working())*/ ret = _("Working");
+				/*else ret = wxString(tracker.last_error.message());*/
 			}
 			else
 				ret = _("Not connected");
@@ -138,9 +138,9 @@ wxString TrackerListCtrl::GetItemValue(long item, long columnid) const
 		}
 		case TRACKERLIST_COLUMN_NEXT_ANNOUNCE:
 		{
- 			if(tracker.verified && tracker.is_working())
+ 			/*if(tracker.verified && tracker.is_working())
 				ret = HumanReadableTime(tracker.next_announce_in());
-			else
+			else*/
 				ret = _T("N/A");
 			break;
 		}
@@ -179,7 +179,7 @@ void TrackerListCtrl::OnMenuTracker(wxCommandEvent& event)
 	//int cmd = event.GetId() - TRACKERLISTCTRL_MENU_ADD;
 	int cmd = event.GetId(); 
 	bool refreshtrk = false;
-	shared_ptr<torrent_t> pTorrent;
+	std::shared_ptr<torrent_t> pTorrent;
 
 	if ( m_pTorrent.use_count() > 1)
 		pTorrent = m_pTorrent;

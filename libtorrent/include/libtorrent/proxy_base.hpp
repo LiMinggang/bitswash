@@ -39,18 +39,13 @@ POSSIBILITY OF SUCH DAMAGE.
 #include "libtorrent/address.hpp"
 #include "libtorrent/error_code.hpp"
 
-#include "libtorrent/aux_/disable_warnings_push.hpp"
-#include <boost/function/function1.hpp>
-#include <boost/shared_ptr.hpp>
-#include "libtorrent/aux_/disable_warnings_pop.hpp"
-
 namespace libtorrent {
 
-class proxy_base : boost::noncopyable
+class proxy_base
 {
 public:
 
-	typedef boost::function<void(error_code const&)> handler_type;
+	using handler_type = std::function<void(error_code const&)>;
 
 	typedef tcp::socket next_layer_type;
 	typedef tcp::socket::lowest_layer_type lowest_layer_type;
@@ -59,6 +54,8 @@ public:
 
 	explicit proxy_base(io_service& io_service);
 	~proxy_base();
+	proxy_base(proxy_base const&) = delete;
+	proxy_base& operator=(proxy_base const&) = delete;
 
 	void set_proxy(std::string hostname, int port)
 	{
@@ -249,7 +246,7 @@ public:
 
 protected:
 
-	bool handle_error(error_code const& e, boost::shared_ptr<handler_type> const& h);
+	bool handle_error(error_code const& e, handler_type const& h);
 
 	tcp::socket m_sock;
 	std::string m_hostname; // proxy host
@@ -264,4 +261,3 @@ protected:
 }
 
 #endif
-

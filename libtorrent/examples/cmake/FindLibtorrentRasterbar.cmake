@@ -36,13 +36,13 @@ else()
             -DTORRENT_USE_OPENSSL
             -DTORRENT_DISABLE_GEO_IP
             -DBOOST_ASIO_ENABLE_CANCELIO
-            -DUNICODE -D_UNICODE -D_FILE_OFFSET_BITS=64)
+            -D_FILE_OFFSET_BITS=64)
     endif()
 
     if(NOT LibtorrentRasterbar_USE_STATIC_LIBS)
         list(APPEND LibtorrentRasterbar_DEFINITIONS
             -DTORRENT_LINKING_SHARED
-            -DBOOST_SYSTEM_DYN_LINK -DBOOST_CHRONO_DYN_LINK)
+            -DBOOST_SYSTEM_DYN_LINK)
     endif()
 endif()
 
@@ -62,8 +62,8 @@ endif()
 set(LibtorrentRasterbar_LIBRARIES ${LibtorrentRasterbar_LIBRARY} ${CMAKE_THREAD_LIBS_INIT})
 set(LibtorrentRasterbar_INCLUDE_DIRS ${LibtorrentRasterbar_INCLUDE_DIR})
 
-if(NOT Boost_SYSTEM_FOUND OR NOT Boost_CHRONO_FOUND OR NOT Boost_RANDOM_FOUND)
-    find_package(Boost REQUIRED COMPONENTS system chrono random)
+if(NOT Boost_SYSTEM_FOUND OR NOT Boost_RANDOM_FOUND)
+    find_package(Boost REQUIRED COMPONENTS system random)
     set(LibtorrentRasterbar_LIBRARIES
         ${LibtorrentRasterbar_LIBRARIES} ${Boost_LIBRARIES} ${CMAKE_THREAD_LIBS_INIT})
     set(LibtorrentRasterbar_INCLUDE_DIRS
@@ -85,7 +85,6 @@ find_package_handle_standard_args(LibtorrentRasterbar DEFAULT_MSG
                                   LibtorrentRasterbar_LIBRARY
                                   LibtorrentRasterbar_INCLUDE_DIR
                                   Boost_SYSTEM_FOUND
-                                  Boost_CHRONO_FOUND
                                   Boost_RANDOM_FOUND)
 
 mark_as_advanced(LibtorrentRasterbar_INCLUDE_DIR LibtorrentRasterbar_LIBRARY

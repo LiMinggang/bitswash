@@ -33,7 +33,7 @@
 #include "torrentconfig.h"
 #include "configuration.h"
 
-namespace lt = libtorrent;
+//namespace lt = libtorrent;
 
 TorrentConfig::TorrentConfig( const wxString& torrentName )
 	: wxFileConfig( wxEmptyString, wxEmptyString, torrentName, wxEmptyString, wxCONFIG_USE_LOCAL_FILE | wxCONFIG_USE_RELATIVE_PATH )
@@ -139,11 +139,11 @@ void TorrentConfig::Load()
 void TorrentConfig::WriteFilesPriority()
 {
 	wxString filespriority_data = wxEmptyString;
-	std::vector<int>::const_iterator i = m_files_priority.begin();
+	std::vector<lt::download_priority_t>::const_iterator i = m_files_priority.begin();
 
 	for( i = m_files_priority.begin(); i != m_files_priority.end() ; ++i )
 	{
-		filespriority_data << *i << _T( "," );
+		filespriority_data << std::uint8_t(*i) << _T( "," );
 	}
 
 	filespriority_data = filespriority_data.BeforeLast( ',' );
@@ -183,7 +183,7 @@ void TorrentConfig::ReadFilesPriority()
 	while( tokens.HasMoreTokens() )
 	{
 		wxString token = tokens.GetNextToken();
-		m_files_priority.push_back( wxAtoi( token ) );
+		m_files_priority.push_back(lt::download_priority_t(wxAtoi( token )) );
 	}
 }
 
@@ -208,7 +208,7 @@ void TorrentConfig::ReadTrackersUrl()
 		m_trackers_url.push_back( e );
 	}
 }
-void TorrentConfig::SetFilesPriority( std::vector<int>& files )
+void TorrentConfig::SetFilesPriority( std::vector<lt::download_priority_t>& files )
 {
 	m_files_priority.clear();
 	m_files_priority.swap( files ) ;

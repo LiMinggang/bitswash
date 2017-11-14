@@ -25,13 +25,6 @@
 #define _MAINFRAME_H_
 
 #include <set>
-#if __cplusplus <= 199711L
-#include <boost/shared_ptr.hpp>
-using boost::shared_ptr;
-#else
-#include <memory>
-using std::shared_ptr;
-#endif
 
 #include "compat.h"
 #include <wx/hashmap.h>
@@ -80,8 +73,8 @@ public:
 	void UpdateUI(bool force = false);
 	void UpdateSelectedTorrent();
 
-	shared_ptr<torrent_t> GetSelectedTorrent() ;
-	shared_ptr<torrent_t> GetTorrent(int idx) { return m_btsession->GetTorrent(idx);}
+	std::shared_ptr<torrent_t> GetSelectedTorrent() ;
+	std::shared_ptr<torrent_t> GetTorrent(int idx) { return m_btsession->GetTorrent(idx);}
 	const PeerListCtrl::peer_list_t* GetPeersList() { return &m_peerlistitems;  }
 
 	wxMutex& GetListLock() {return  m_listlock; }
@@ -159,7 +152,7 @@ private:
 	void OnUpdateUI_MenuTorrent( wxUpdateUIEvent& event );
 
 	void LoadIcons();
-	//void SaveTorrentResumeData(shared_ptr<ptorrent_t>& torrent);
+	//void SaveTorrentResumeData(std::shared_ptr<ptorrent_t>& torrent);
 	//int find_torrent_from_hash(wxString hash) ;
 
 private:

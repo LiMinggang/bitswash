@@ -30,11 +30,11 @@
 #include "torrentsetting.h"
 #include "functions.h"
 
-namespace lt = libtorrent;
+//namespace lt = libtorrent;
 
 //CLASS TorrentSettingPane
 //
-TorrentSettingPane::TorrentSettingPane( wxWindow* parent, shared_ptr<torrent_t>& pTorrent, int id, wxPoint pos, wxSize size, int style) : 
+TorrentSettingPane::TorrentSettingPane( wxWindow* parent, std::shared_ptr<torrent_t>& pTorrent, int id, wxPoint pos, wxSize size, int style) : 
 		wxPanel(parent, id, pos, size, style) , m_directory_change_func(nullptr)
 {
 

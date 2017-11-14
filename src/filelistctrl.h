@@ -51,7 +51,7 @@ public:
            
 	~FileListCtrl();
 
-	void SetStaticHandle(shared_ptr<torrent_t>& torrent) { m_pTorrent = torrent; }
+	void SetStaticHandle(std::shared_ptr<torrent_t>& torrent) { m_pTorrent = torrent; }
 	void DeleteStaticHandle() { m_pTorrent.reset(); }
 	virtual void OnColClick(wxListEvent& event);
     virtual int GetItemColumnImage(long item, long columnid) const; /* override to get image for shown columns */
@@ -71,8 +71,8 @@ private:
 	void ShowContextMenu(const wxPoint& pos);
 	void OnMenuPriority(wxCommandEvent &event);
 	void OnMenuOpenPath(wxCommandEvent &event);
-	long ConvertItemId(shared_ptr<torrent_t>& torrent, long item) const;
-	shared_ptr<torrent_t> m_pTorrent;
+	long ConvertItemId(std::shared_ptr<torrent_t>& torrent, long item) const;
+	std::shared_ptr<torrent_t> m_pTorrent;
 	wxImageList m_imageList;
     wxMenu m_contextmenu;
 	static wxCmdEvtHandlerMap_t m_menu_evt_map[];

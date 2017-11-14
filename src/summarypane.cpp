@@ -43,7 +43,7 @@
 
 #include "functions.h"
 
-namespace lt = libtorrent;
+//namespace lt = libtorrent;
 
 SummaryPane::SummaryPane(wxWindow *parent,
                 const wxWindowID id,
@@ -222,7 +222,7 @@ SummaryPane::~SummaryPane()
 void SummaryPane::UpdateSummary()
 {
 	//wxLogDebug(_T("UpdateSummary\n"));
-	shared_ptr<torrent_t> pTorrent = ((MainFrame*)m_pMainFrame)->GetSelectedTorrent();
+	std::shared_ptr<torrent_t> pTorrent = ((MainFrame*)m_pMainFrame)->GetSelectedTorrent();
 
 	if ( !pTorrent )
 	{
@@ -233,7 +233,7 @@ void SummaryPane::UpdateSummary()
 
 	lt::torrent_handle h = pTorrent->handle;
 
-	shared_ptr<const lt::torrent_info> t = pTorrent->info;
+	std::shared_ptr<const lt::torrent_info> t = pTorrent->info;
 	lt::torrent_status s;
 
 	if(h.is_valid()) 

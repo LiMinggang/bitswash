@@ -28,13 +28,8 @@
 #include <boost/cstdint.hpp>
 
 #include <vector>
-#if __cplusplus <= 199711L
-#include <boost/shared_ptr.hpp>
-using boost::shared_ptr;
-#else
+
 #include <memory>
-using std::shared_ptr;
-#endif
 
 #include <wx/app.h>
 #include <wx/thread.h>
@@ -96,14 +91,14 @@ typedef struct torrent_handle_t {
 	InfoHash hash;
     wxString magneturi;
 	libtorrent::torrent_handle handle;
-	shared_ptr<const libtorrent::torrent_info> info;
-	shared_ptr<TorrentConfig> config;
+	std::shared_ptr<const libtorrent::torrent_info> info;
+	std::shared_ptr<TorrentConfig> config;
 	std::vector<long> fileindex;
 	bool isvalid;
 } torrent_t ;
 
 /* watch out the s after torrent */
-typedef std::vector<shared_ptr<torrent_t> > torrents_t;
+typedef std::vector<std::shared_ptr<torrent_t> > torrents_t;
 typedef std::map<wxString, int> torrents_map;
 typedef std::set<wxString> torrents_set;
 
@@ -125,32 +120,32 @@ public:
 	void StartUpnp();
 	void StartNatpmp();
 	
-	void AddTorrentToSession(shared_ptr<torrent_t>& torrent);
-	bool AddTorrent(shared_ptr<torrent_t>& torrent);
-	void RemoveTorrent(shared_ptr<torrent_t>& torrent, bool deletedata);
+	void AddTorrentToSession(std::shared_ptr<torrent_t>& torrent);
+	bool AddTorrent(std::shared_ptr<torrent_t>& torrent);
+	void RemoveTorrent(std::shared_ptr<torrent_t>& torrent, bool deletedata);
 	int FindTorrent(const wxString &hash);
-	shared_ptr<torrent_t> GetTorrent(int idx);
-	void MergeTorrent(shared_ptr<torrent_t>& dst_torrent, shared_ptr<torrent_t>& src_torrent);
-	void MergeTorrent(shared_ptr<torrent_t>& dst_torrent, MagnetUri& src_magneturi);
+	std::shared_ptr<torrent_t> GetTorrent(int idx);
+	void MergeTorrent(std::shared_ptr<torrent_t>& dst_torrent, std::shared_ptr<torrent_t>& src_torrent);
+	void MergeTorrent(std::shared_ptr<torrent_t>& dst_torrent, MagnetUri& src_magneturi);
 
-	shared_ptr<torrent_t> ParseTorrent(const wxString& filename);
-	shared_ptr<torrent_t> LoadMagnetUri( MagnetUri& magneturi );
+	std::shared_ptr<torrent_t> ParseTorrent(const wxString& filename);
+	std::shared_ptr<torrent_t> LoadMagnetUri( MagnetUri& magneturi );
 	void LoadMagnetUri( const wxString& magneturi );
-	bool SaveTorrent(shared_ptr<torrent_t>& torrent, const wxString& filename);
+	bool SaveTorrent(std::shared_ptr<torrent_t>& torrent, const wxString& filename);
 	
 	size_t GetTorrentQueueSize();
 
-	void StartTorrent(shared_ptr<torrent_t>& torrent, bool force);
-	void StopTorrent(shared_ptr<torrent_t>& torrent);
-	void QueueTorrent(shared_ptr<torrent_t>& torrent);
-	void PauseTorrent(shared_ptr<torrent_t>& torrent);
-	void MoveTorrentUp(shared_ptr<torrent_t>& torrent);
-	void MoveTorrentDown(shared_ptr<torrent_t>& torrent);
-	void ReannounceTorrent(shared_ptr<torrent_t>& torrent);
-	void RecheckTorrent(shared_ptr<torrent_t>& torrent);
-	void ConfigureTorrent(shared_ptr<torrent_t>& torrent);
-	void ConfigureTorrentFilesPriority(shared_ptr<torrent_t>& torrent);
-	void ConfigureTorrentTrackers(shared_ptr<torrent_t>& torrent);
+	void StartTorrent(std::shared_ptr<torrent_t>& torrent, bool force);
+	void StopTorrent(std::shared_ptr<torrent_t>& torrent);
+	void QueueTorrent(std::shared_ptr<torrent_t>& torrent);
+	void PauseTorrent(std::shared_ptr<torrent_t>& torrent);
+	void MoveTorrentUp(std::shared_ptr<torrent_t>& torrent);
+	void MoveTorrentDown(std::shared_ptr<torrent_t>& torrent);
+	void ReannounceTorrent(std::shared_ptr<torrent_t>& torrent);
+	void RecheckTorrent(std::shared_ptr<torrent_t>& torrent);
+	void ConfigureTorrent(std::shared_ptr<torrent_t>& torrent);
+	void ConfigureTorrentFilesPriority(std::shared_ptr<torrent_t>& torrent);
+	void ConfigureTorrentTrackers(std::shared_ptr<torrent_t>& torrent);
 
 	void RemoveTorrent( int idx, bool deletedata );
 	void StartTorrent( int idx, bool force );
@@ -188,14 +183,13 @@ public:
 	boost::uint64_t GetDhtNodes() { return m_cnt[0][m_dht_nodes_idx]; }
 	bool HasInComingConns() { return (m_cnt[0][m_has_incoming_connections_idx] > 0 ? true : false); }
 	void PostStatusUpdate();
-	void UpdateCounters(boost::uint64_t* stats_counters, int num_cnt
-		, boost::uint64_t t);
+	void UpdateCounters(lt::span<std::int64_t const>& stats_counters, boost::uint64_t t);
 
 private:
 	void ScanTorrentsDirectory(const wxString& dirname);
 	int find_torrent_from_hash(const wxString& hash);
 
-	void SaveTorrentResumeData(shared_ptr<torrent_t>& torrent);
+	void SaveTorrentResumeData(std::shared_ptr<torrent_t>& torrent);
 	void SaveAllTorrent();
 
 	void DumpTorrents();
@@ -219,11 +213,11 @@ private:
 	
 	// there are two sets of counters. the current one and the last one. This
 	// is used to calculate rates
-	std::vector<boost::uint64_t> m_cnt[2];
+	std::vector<std::int64_t> m_cnt[2];
 
 	// the timestamps of the counters in m_cnt[0] and m_cnt[1]
 	// respectively. The timestamps are microseconds since session start
-	boost::uint64_t m_timestamp[2];
+	std::uint64_t m_timestamp[2];
 
 	int m_queued_bytes_idx;
 	int m_wasted_bytes_idx;

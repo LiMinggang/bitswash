@@ -43,14 +43,19 @@ POSSIBILITY OF SUCH DAMAGE.
 #include "libtorrent/file_storage.hpp"
 #include "libtorrent/torrent_info.hpp"
 
-using namespace libtorrent;
+using namespace lt;
 using namespace sim;
-namespace lt = libtorrent;
 
 using chrono::duration_cast;
 
 // seconds
 const int duration = 10000;
+
+template <typename Tp1, typename Tp2>
+bool eq(Tp1 const lhs, Tp2 const rhs)
+{
+	return std::abs(lt::duration_cast<seconds>(lhs - rhs).count()) <= 1;
+}
 
 void test_interval(int interval)
 {
@@ -69,7 +74,8 @@ void test_interval(int interval)
 	std::vector<lt::time_point> announces;
 
 	http.register_handler("/announce"
-		, [&announces,interval,start,&ran_to_completion](std::string method, std::string req
+		, [&announces,interval,start,&ran_to_completion](std::string /* method */
+			, std::string /* req */
 		, std::map<std::string, std::string>&)
 	{
 		// don't collect events once we're done. We're not interested in the
@@ -78,31 +84,37 @@ void test_interval(int interval)
 			announces.push_back(lt::clock_type::now());
 
 		char response[500];
-		int size = snprintf(response, sizeof(response), "d8:intervali%de5:peers0:e", interval);
+		int const size = std::snprintf(response, sizeof(response), "d8:intervali%de5:peers0:e", interval);
 		return sim::send_response(200, "OK", size) + response;
 	});
 
 	std::vector<lt::time_point> announce_alerts;
 
 	lt::settings_pack default_settings = settings();
+	// since the test tracker is only listening on IPv4 we need to configure the
+	// client to do the same so that the number of tracker_announce_alerts matches
+	// the number of announces seen by the tracker
+	default_settings.set_str(settings_pack::listen_interfaces, "0.0.0.0:6881");
 	lt::add_torrent_params default_add_torrent;
 
 	setup_swarm(1, swarm_test::upload, sim, default_settings, default_add_torrent
 		// add session
-		, [](lt::settings_pack& pack) { }
+		, [](lt::settings_pack&) {}
 		// add torrent
 		, [](lt::add_torrent_params& params) {
 			params.trackers.push_back("http://2.2.2.2:8080/announce");
 		}
 		// on alert
-		, [&](lt::alert const* a, lt::session& ses) {
+		, [&](lt::alert const* a, lt::session&) {
 
 			if (ran_to_completion) return;
 			if (lt::alert_cast<lt::tracker_announce_alert>(a))
+			{
 				announce_alerts.push_back(a->timestamp());
+			}
 		}
 		// terminate
-		, [&](int ticks, lt::session& ses) -> bool {
+		, [&](int const ticks, lt::session& ses) -> bool {
 			if (ticks > duration + 1)
 			{
 				ran_to_completion = true;
@@ -118,14 +130,13 @@ void test_interval(int interval)
 	lt::time_point last_alert = announce_alerts[0];
 	for (int i = 1; i < int(announces.size()); ++i)
 	{
-		// make sure the interval is within 500 ms of what it's supposed to be
-		// (this accounts for network latencies)
-		int const actual_interval_ms = duration_cast<lt::milliseconds>(announces[i] - last_announce).count();
-		TEST_CHECK(abs(actual_interval_ms - interval * 1000) < 500);
+		// make sure the interval is within 1 second of what it's supposed to be
+		// (this accounts for network latencies, and the second-granularity
+		// timestamps)
+		TEST_CHECK(eq(duration_cast<lt::seconds>(announces[i] - last_announce), lt::seconds(interval)));
 		last_announce = announces[i];
 
-		int const alert_interval_ms = duration_cast<lt::milliseconds>(announce_alerts[i] - last_alert).count();
-		TEST_CHECK(abs(alert_interval_ms - interval * 1000) < 500);
+		TEST_CHECK(eq(duration_cast<lt::milliseconds>(announce_alerts[i] - last_alert), lt::seconds(interval)));
 		last_alert = announce_alerts[i];
 	}
 }
@@ -151,12 +162,12 @@ TORRENT_TEST(event_completed)
 		, std::map<std::string, std::string>&)
 	{
 		TEST_EQUAL(method, "GET");
-		int timestamp = chrono::duration_cast<lt::seconds>(
-			lt::clock_type::now() - start).count();
+		int const timestamp = int(chrono::duration_cast<lt::seconds>(
+			lt::clock_type::now() - start).count());
 		announces.push_back({timestamp, req});
 
 		char response[500];
-		int size = snprintf(response, sizeof(response), "d8:intervali%de5:peers0:e", interval);
+		int const size = std::snprintf(response, sizeof(response), "d8:intervali%de5:peers0:e", interval);
 		return sim::send_response(200, "OK", size) + response;
 	});
 
@@ -167,20 +178,20 @@ TORRENT_TEST(event_completed)
 
 	setup_swarm(2, swarm_test::download, sim, default_settings, default_add_torrent
 		// add session
-		, [](lt::settings_pack& pack) { }
+		, [](lt::settings_pack&) { }
 		// add torrent
 		, [](lt::add_torrent_params& params) {
 			params.trackers.push_back("http://2.2.2.2:8080/announce");
 		}
 		// on alert
-		, [&](lt::alert const* a, lt::session& ses) {}
+		, [&](lt::alert const*, lt::session&) {}
 		// terminate
-		, [&](int ticks, lt::session& ses) -> bool
+		, [&](int const ticks, lt::session& ses) -> bool
 		{
 			if (completion == -1 && is_seed(ses))
 			{
-				completion = chrono::duration_cast<lt::seconds>(
-					lt::clock_type::now() - start).count();
+				completion = int(chrono::duration_cast<lt::seconds>(
+					lt::clock_type::now() - start).count());
 			}
 
 			return ticks > duration;
@@ -204,7 +215,7 @@ TORRENT_TEST(event_completed)
 		// we there can only be one event
 		const bool has_event = str.find("&event=") != std::string::npos;
 
-		fprintf(stdout, "- %s\n", str.c_str());
+		std::printf("- %s\n", str.c_str());
 
 		// there is exactly 0 or 1 events.
 		TEST_EQUAL(int(has_start) + int(has_completed) + int(has_stopped)
@@ -219,7 +230,7 @@ TORRENT_TEST(event_completed)
 			{
 				// the announce should have come approximately the same time we
 				// completed
-				TEST_CHECK(abs(completion - timestamp) <= 1);
+				TEST_CHECK(std::abs(completion - timestamp) <= 1);
 				TEST_CHECK(has_completed);
 				break;
 			}
@@ -254,21 +265,26 @@ TORRENT_TEST(announce_interval_1200)
 
 struct sim_config : sim::default_config
 {
+	explicit sim_config(bool ipv6 = true) : ipv6(ipv6) {}
+
 	chrono::high_resolution_clock::duration hostname_lookup(
 		asio::ip::address const& requestor
 		, std::string hostname
 		, std::vector<asio::ip::address>& result
-		, boost::system::error_code& ec)
+		, boost::system::error_code& ec) override
 	{
 		if (hostname == "tracker.com")
 		{
 			result.push_back(address_v4::from_string("10.0.0.2"));
-			result.push_back(address_v6::from_string("ff::dead:beef"));
+			if (ipv6)
+				result.push_back(address_v6::from_string("ff::dead:beef"));
 			return duration_cast<chrono::high_resolution_clock::duration>(chrono::milliseconds(100));
 		}
 
 		return default_config::hostname_lookup(requestor, hostname, result, ec);
 	}
+
+	bool ipv6;
 };
 
 void on_alert_notify(lt::session* ses)
@@ -280,12 +296,15 @@ void on_alert_notify(lt::session* ses)
 		for (lt::alert* a : alerts)
 		{
 			lt::time_duration d = a->timestamp().time_since_epoch();
-			boost::uint32_t millis = lt::duration_cast<lt::milliseconds>(d).count();
-			printf("%4d.%03d: %s\n", millis / 1000, millis % 1000,
+			std::uint32_t const millis = std::uint32_t(
+				lt::duration_cast<lt::milliseconds>(d).count());
+			std::printf("%4d.%03d: %s\n", millis / 1000, millis % 1000,
 				a->message().c_str());
 		}
 	});
 }
+
+static const int num_interfaces = 3;
 
 void test_ipv6_support(char const* listen_interfaces
 	, int const expect_v4, int const expect_v6)
@@ -312,7 +331,7 @@ void test_ipv6_support(char const* listen_interfaces
 		TEST_EQUAL(method, "GET");
 
 		char response[500];
-		int size = snprintf(response, sizeof(response), "d8:intervali1800e5:peers0:e");
+		int const size = std::snprintf(response, sizeof(response), "d8:intervali1800e5:peers0:e");
 		return sim::send_response(200, "OK", size) + response;
 	});
 
@@ -324,17 +343,30 @@ void test_ipv6_support(char const* listen_interfaces
 		TEST_EQUAL(method, "GET");
 
 		char response[500];
-		int size = snprintf(response, sizeof(response), "d8:intervali1800e5:peers0:e");
+		int const size = std::snprintf(response, sizeof(response), "d8:intervali1800e5:peers0:e");
 		return sim::send_response(200, "OK", size) + response;
 	});
 
 	{
 		lt::session_proxy zombie;
 
-		asio::io_service ios(sim, { address_v4::from_string("10.0.0.3")
-			, address_v6::from_string("ffff::1337") });
+		std::vector<asio::ip::address> ips;
+
+		for (int i = 0; i < num_interfaces; i++)
+		{
+			char ep[30];
+			std::snprintf(ep, sizeof(ep), "10.0.0.%d", i + 1);
+			ips.push_back(address::from_string(ep));
+			std::snprintf(ep, sizeof(ep), "ffff::1337:%d", i + 1);
+			ips.push_back(address::from_string(ep));
+		}
+
+		asio::io_service ios(sim, ips);
 		lt::settings_pack sett = settings();
-		sett.set_str(settings_pack::listen_interfaces, listen_interfaces);
+		if (listen_interfaces)
+		{
+			sett.set_str(settings_pack::listen_interfaces, listen_interfaces);
+		}
 		std::unique_ptr<lt::session> ses(new lt::session(sett, ios));
 
 		ses->set_alert_notify(std::bind(&on_alert_notify, ses.get()));
@@ -350,7 +382,7 @@ void test_ipv6_support(char const* listen_interfaces
 
 		// stop the torrent 5 seconds in
 		sim::timer t1(sim, lt::seconds(5)
-			, [&ses](boost::system::error_code const& ec)
+			, [&ses](boost::system::error_code const&)
 		{
 			std::vector<lt::torrent_handle> torrents = ses->get_torrents();
 			for (auto const& t : torrents)
@@ -361,7 +393,7 @@ void test_ipv6_support(char const* listen_interfaces
 
 		// then shut down 10 seconds in
 		sim::timer t2(sim, lt::seconds(10)
-			, [&ses,&zombie](boost::system::error_code const& ec)
+			, [&ses,&zombie](boost::system::error_code const&)
 		{
 			zombie = ses->abort();
 			ses.reset();
@@ -378,18 +410,20 @@ void test_ipv6_support(char const* listen_interfaces
 // IPv4 addresses will be announced to twice, once for each address family
 TORRENT_TEST(ipv6_support)
 {
-	// 2 because there's one announce on startup and one when shutting down
-	test_ipv6_support("0.0.0.0:6881", 2, 2);
+	// null means default
+	test_ipv6_support(nullptr, 2, num_interfaces * 2);
 }
 
 TORRENT_TEST(ipv6_support_bind_v4_v6_any)
 {
-	test_ipv6_support("0.0.0.0:6881,[::0]:6881", 2, 2);
+	// 2 because there's one announce on startup and one when shutting down
+	// IPv6 will send announces for each interface
+	test_ipv6_support("0.0.0.0:6881,[::0]:6881", 2, num_interfaces * 2);
 }
 
 TORRENT_TEST(ipv6_support_bind_v6_any)
 {
-	test_ipv6_support("[::0]:6881", 0, 2);
+	test_ipv6_support("[::0]:6881", 0, num_interfaces * 2);
 }
 
 TORRENT_TEST(ipv6_support_bind_v4)
@@ -399,17 +433,22 @@ TORRENT_TEST(ipv6_support_bind_v4)
 
 TORRENT_TEST(ipv6_support_bind_v6)
 {
-	test_ipv6_support("[ffff::1337]:6881", 0, 2);
+	test_ipv6_support("[ffff::1337:1]:6881", 0, 2);
+}
+
+TORRENT_TEST(ipv6_support_bind_v6_3interfaces)
+{
+	test_ipv6_support("[ffff::1337:1]:6881,[ffff::1337:2]:6881,[ffff::1337:3]:6881", 0, 3 * 2);
 }
 
 TORRENT_TEST(ipv6_support_bind_v4_v6)
 {
-	test_ipv6_support("10.0.0.3:6881,[ffff::1337]:6881", 2, 2);
+	test_ipv6_support("10.0.0.3:6881,[ffff::1337:1]:6881", 2, 2);
 }
 
 TORRENT_TEST(ipv6_support_bind_v6_v4)
 {
-	test_ipv6_support("[ffff::1337]:6881,10.0.0.3:6881", 2, 2);
+	test_ipv6_support("[ffff::1337:1]:6881,10.0.0.3:6881", 2, 2);
 }
 
 // this runs a simulation of a torrent with tracker(s), making sure the request
@@ -429,11 +468,14 @@ void tracker_test(Setup setup, Announce a, Test1 test1, Test2 test2
 	sim::simulation sim{network_cfg};
 
 	sim::asio::io_service tracker_ios(sim, address_v4::from_string("10.0.0.2"));
+	sim::asio::io_service tracker_ios6(sim, address_v6::from_string("ff::dead:beef"));
 
 	// listen on port 8080
 	sim::http_server http(tracker_ios, 8080);
+	sim::http_server http6(tracker_ios6, 8080);
 
 	http.register_handler(url_path, a);
+	http6.register_handler(url_path, a);
 
 	lt::session_proxy zombie;
 
@@ -453,7 +495,7 @@ void tracker_test(Setup setup, Announce a, Test1 test1, Test2 test2
 
 	// run the test 5 seconds in
 	sim::timer t1(sim, lt::seconds(5)
-		, [&ses,&test1](boost::system::error_code const& ec)
+		, [&ses,&test1](boost::system::error_code const&)
 	{
 		std::vector<lt::torrent_handle> torrents = ses->get_torrents();
 		TEST_EQUAL(torrents.size(), 1);
@@ -462,7 +504,7 @@ void tracker_test(Setup setup, Announce a, Test1 test1, Test2 test2
 	});
 
 	sim::timer t2(sim, lt::seconds(5 + delay)
-		, [&ses,&test2](boost::system::error_code const& ec)
+		, [&ses,&test2](boost::system::error_code const&)
 	{
 		std::vector<lt::torrent_handle> torrents = ses->get_torrents();
 		TEST_EQUAL(torrents.size(), 1);
@@ -472,7 +514,7 @@ void tracker_test(Setup setup, Announce a, Test1 test1, Test2 test2
 
 	// then shut down 10 seconds in
 	sim::timer t3(sim, lt::seconds(10 + delay)
-		, [&ses,&zombie](boost::system::error_code const& ec)
+		, [&ses,&zombie](boost::system::error_code const&)
 	{
 		zombie = ses->abort();
 		ses.reset();
@@ -510,21 +552,25 @@ TORRENT_TEST(test_error)
 {
 	announce_entry_test(
 		[](std::string method, std::string req
-			, std::map<std::string, std::string>& headers)
+			, std::map<std::string, std::string>&)
 		{
 			TEST_EQUAL(method, "GET");
 
 			char response[500];
-			int size = snprintf(response, sizeof(response), "d14:failure reason4:teste");
+			int const size = std::snprintf(response, sizeof(response), "d14:failure reason4:teste");
 			return sim::send_response(200, "OK", size) + response;
 		}
 		, [](announce_entry const& ae)
 		{
-			TEST_EQUAL(ae.is_working(), false);
-			TEST_EQUAL(ae.message, "test");
 			TEST_EQUAL(ae.url, "http://tracker.com:8080/announce");
-			TEST_EQUAL(ae.last_error, error_code(errors::tracker_failure));
-			TEST_EQUAL(ae.fails, 1);
+			TEST_EQUAL(ae.endpoints.size(), 2);
+			for (auto const& aep : ae.endpoints)
+			{
+				TEST_EQUAL(aep.is_working(), false);
+				TEST_EQUAL(aep.message, "test");
+				TEST_EQUAL(aep.last_error, error_code(errors::tracker_failure));
+				TEST_EQUAL(aep.fails, 1);
+			}
 		});
 }
 
@@ -532,21 +578,25 @@ TORRENT_TEST(test_warning)
 {
 	announce_entry_test(
 		[](std::string method, std::string req
-			, std::map<std::string, std::string>& headers)
+			, std::map<std::string, std::string>&)
 		{
 			TEST_EQUAL(method, "GET");
 
 			char response[500];
-			int size = snprintf(response, sizeof(response), "d5:peers6:aaaaaa15:warning message5:test2e");
+			int const size = std::snprintf(response, sizeof(response), "d5:peers6:aaaaaa15:warning message5:test2e");
 			return sim::send_response(200, "OK", size) + response;
 		}
 		, [](announce_entry const& ae)
 		{
-			TEST_EQUAL(ae.is_working(), true);
-			TEST_EQUAL(ae.message, "test2");
 			TEST_EQUAL(ae.url, "http://tracker.com:8080/announce");
-			TEST_EQUAL(ae.last_error, error_code());
-			TEST_EQUAL(ae.fails, 0);
+			TEST_EQUAL(ae.endpoints.size(), 2);
+			for (auto const& aep : ae.endpoints)
+			{
+				TEST_EQUAL(aep.is_working(), true);
+				TEST_EQUAL(aep.message, "test2");
+				TEST_EQUAL(aep.last_error, error_code());
+				TEST_EQUAL(aep.fails, 0);
+			}
 		});
 }
 
@@ -554,25 +604,29 @@ TORRENT_TEST(test_scrape_data_in_announce)
 {
 	announce_entry_test(
 		[](std::string method, std::string req
-			, std::map<std::string, std::string>& headers)
+			, std::map<std::string, std::string>&)
 		{
 			TEST_EQUAL(method, "GET");
 
 			char response[500];
-			int size = snprintf(response, sizeof(response),
+			int const size = std::snprintf(response, sizeof(response),
 				"d5:peers6:aaaaaa8:completei1e10:incompletei2e10:downloadedi3e11:downloadersi4ee");
 			return sim::send_response(200, "OK", size) + response;
 		}
 		, [](announce_entry const& ae)
 		{
-			TEST_EQUAL(ae.is_working(), true);
-			TEST_EQUAL(ae.message, "");
 			TEST_EQUAL(ae.url, "http://tracker.com:8080/announce");
-			TEST_EQUAL(ae.last_error, error_code());
-			TEST_EQUAL(ae.fails, 0);
-			TEST_EQUAL(ae.scrape_complete, 1);
-			TEST_EQUAL(ae.scrape_incomplete, 2);
-			TEST_EQUAL(ae.scrape_downloaded, 3);
+			TEST_EQUAL(ae.endpoints.size(), 2);
+			for (auto const& aep : ae.endpoints)
+			{
+				TEST_EQUAL(aep.is_working(), true);
+				TEST_EQUAL(aep.message, "");
+				TEST_EQUAL(aep.last_error, error_code());
+				TEST_EQUAL(aep.fails, 0);
+				TEST_EQUAL(aep.scrape_complete, 1);
+				TEST_EQUAL(aep.scrape_incomplete, 2);
+				TEST_EQUAL(aep.scrape_downloaded, 3);
+			}
 		});
 }
 
@@ -580,12 +634,12 @@ TORRENT_TEST(test_scrape)
 {
 	tracker_test(
 		[](std::string method, std::string req
-			, std::map<std::string, std::string>& headers)
+			, std::map<std::string, std::string>&)
 		{
 			TEST_EQUAL(method, "GET");
 
 			char response[500];
-			int size = snprintf(response, sizeof(response),
+			int const size = std::snprintf(response, sizeof(response),
 				"d5:filesd20:ababababababababababd8:completei1e10:downloadedi3e10:incompletei2eeee");
 			return sim::send_response(200, "OK", size) + response;
 		}
@@ -599,9 +653,13 @@ TORRENT_TEST(test_scrape)
 
 			TEST_EQUAL(tr.size(), 1);
 			announce_entry const& ae = tr[0];
-			TEST_EQUAL(ae.scrape_incomplete, 2);
-			TEST_EQUAL(ae.scrape_complete, 1);
-			TEST_EQUAL(ae.scrape_downloaded, 3);
+			TEST_EQUAL(ae.endpoints.size(), 2);
+			for (auto const& aep : ae.endpoints)
+			{
+				TEST_EQUAL(aep.scrape_incomplete, 2);
+				TEST_EQUAL(aep.scrape_complete, 1);
+				TEST_EQUAL(aep.scrape_downloaded, 3);
+			}
 		}
 		, "/scrape");
 }
@@ -610,18 +668,22 @@ TORRENT_TEST(test_http_status)
 {
 	announce_entry_test(
 		[](std::string method, std::string req
-			, std::map<std::string, std::string>& headers)
+			, std::map<std::string, std::string>&)
 		{
 			TEST_EQUAL(method, "GET");
 			return sim::send_response(410, "Not A Tracker", 0);
 		}
 		, [](announce_entry const& ae)
 		{
-			TEST_EQUAL(ae.is_working(), false);
-			TEST_EQUAL(ae.message, "Not A Tracker");
 			TEST_EQUAL(ae.url, "http://tracker.com:8080/announce");
-			TEST_EQUAL(ae.last_error, error_code(410, http_category()));
-			TEST_EQUAL(ae.fails, 1);
+			TEST_EQUAL(ae.endpoints.size(), 2);
+			for (auto const& aep : ae.endpoints)
+			{
+				TEST_EQUAL(aep.is_working(), false);
+				TEST_EQUAL(aep.message, "Not A Tracker");
+				TEST_EQUAL(aep.last_error, error_code(410, http_category()));
+				TEST_EQUAL(aep.fails, 1);
+			}
 		});
 }
 
@@ -629,21 +691,25 @@ TORRENT_TEST(test_interval)
 {
 	announce_entry_test(
 		[](std::string method, std::string req
-			, std::map<std::string, std::string>& headers)
+			, std::map<std::string, std::string>&)
 		{
 			TEST_EQUAL(method, "GET");
 			char response[500];
-			int size = snprintf(response, sizeof(response)
+			int const size = std::snprintf(response, sizeof(response)
 				, "d10:tracker id8:testteste");
 			return sim::send_response(200, "OK", size) + response;
 		}
 		, [](announce_entry const& ae)
 		{
-			TEST_EQUAL(ae.is_working(), true);
-			TEST_EQUAL(ae.message, "");
 			TEST_EQUAL(ae.url, "http://tracker.com:8080/announce");
-			TEST_EQUAL(ae.last_error, error_code());
-			TEST_EQUAL(ae.fails, 0);
+			TEST_EQUAL(ae.endpoints.size(), 2);
+			for (auto const& aep : ae.endpoints)
+			{
+				TEST_EQUAL(aep.is_working(), true);
+				TEST_EQUAL(aep.message, "");
+				TEST_EQUAL(aep.last_error, error_code());
+				TEST_EQUAL(aep.fails, 0);
+			}
 
 			TEST_EQUAL(ae.trackerid, "testtest");
 		});
@@ -653,22 +719,26 @@ TORRENT_TEST(test_invalid_bencoding)
 {
 	announce_entry_test(
 		[](std::string method, std::string req
-			, std::map<std::string, std::string>& headers)
+			, std::map<std::string, std::string>&)
 		{
 			TEST_EQUAL(method, "GET");
 			char response[500];
-			int size = snprintf(response, sizeof(response)
+			int const size = std::snprintf(response, sizeof(response)
 				, "d10:tracer idteste");
 			return sim::send_response(200, "OK", size) + response;
 		}
 		, [](announce_entry const& ae)
 		{
-			TEST_EQUAL(ae.is_working(), false);
-			TEST_EQUAL(ae.message, "");
 			TEST_EQUAL(ae.url, "http://tracker.com:8080/announce");
-			TEST_EQUAL(ae.last_error, error_code(bdecode_errors::expected_value
-				, bdecode_category()));
-			TEST_EQUAL(ae.fails, 1);
+			TEST_EQUAL(ae.endpoints.size(), 2);
+			for (auto const& aep : ae.endpoints)
+			{
+				TEST_EQUAL(aep.is_working(), false);
+				TEST_EQUAL(aep.message, "");
+				TEST_EQUAL(aep.last_error, error_code(bdecode_errors::expected_value
+					, bdecode_category()));
+				TEST_EQUAL(aep.fails, 1);
+			}
 		});
 }
 
@@ -689,14 +759,14 @@ TORRENT_TEST(try_next)
 			return 60;
 		},
 		[&](std::string method, std::string req
-			, std::map<std::string, std::string>& headers)
+			, std::map<std::string, std::string>&)
 		{
 			got_announce = true;
 			TEST_EQUAL(method, "GET");
 
 			char response[500];
 			// respond with an empty peer list
-			int size = snprintf(response, sizeof(response), "d5:peers0:e");
+			int const size = std::snprintf(response, sizeof(response), "d5:peers0:e");
 			return sim::send_response(200, "OK", size) + response;
 		}
 		, [](torrent_handle h) {}
@@ -711,25 +781,34 @@ TORRENT_TEST(try_next)
 
 			for (int i = 0; i < int(tr.size()); ++i)
 			{
-				fprintf(stdout, "tracker \"%s\"\n", tr[i].url.c_str());
+				std::printf("tracker \"%s\"\n", tr[i].url.c_str());
 				if (tr[i].url == "http://tracker.com:8080/announce")
 				{
-					TEST_EQUAL(tr[i].fails, 0);
+					for (auto const& aep : tr[i].endpoints)
+					{
+						TEST_EQUAL(aep.fails, 0);
+					}
 					TEST_EQUAL(tr[i].verified, true);
 				}
 				else if (tr[i].url == "http://failing-tracker.com/announce")
 				{
-					TEST_CHECK(tr[i].fails >= 1);
+					for (auto const& aep : tr[i].endpoints)
+					{
+						TEST_CHECK(aep.fails >= 1);
+						TEST_EQUAL(aep.last_error
+							, error_code(boost::asio::error::host_not_found));
+					}
 					TEST_EQUAL(tr[i].verified, false);
-					TEST_EQUAL(tr[i].last_error
-						, error_code(boost::asio::error::host_not_found));
 				}
 				else if (tr[i].url == "udp://failing-tracker.com/announce")
 				{
-					TEST_CHECK(tr[i].fails >= 1);
 					TEST_EQUAL(tr[i].verified, false);
-					TEST_EQUAL(tr[i].last_error
-						, error_code(boost::asio::error::host_not_found));
+					for (auto const& aep : tr[i].endpoints)
+					{
+						TEST_CHECK(aep.fails >= 1);
+						TEST_EQUAL(aep.last_error
+							, error_code(boost::asio::error::host_not_found));
+					}
 				}
 				else
 				{
@@ -740,7 +819,7 @@ TORRENT_TEST(try_next)
 	TEST_EQUAL(got_announce, true);
 }
 
-boost::shared_ptr<torrent_info> make_torrent(bool priv)
+std::shared_ptr<torrent_info> make_torrent(bool priv)
 {
 	file_storage fs;
 	fs.add_file("foobar", 13241);
@@ -748,16 +827,15 @@ boost::shared_ptr<torrent_info> make_torrent(bool priv)
 
 	ct.add_tracker("http://tracker.com:8080/announce");
 
-	for (int i = 0; i < ct.num_pieces(); ++i)
-		ct.set_hash(i, sha1_hash(0));
+	for (piece_index_t i(0); i < piece_index_t(ct.num_pieces()); ++i)
+		ct.set_hash(i, sha1_hash(nullptr));
 
 	ct.set_priv(priv);
 
 	entry e = ct.generate();
 	std::vector<char> buf;
 	bencode(std::back_inserter(buf), e);
-	error_code ec;
-	return boost::make_shared<torrent_info>(buf.data(), buf.size(), ec);
+	return std::make_shared<torrent_info>(buf, from_span);
 }
 
 // make sure we _do_ send our IPv6 address to trackers for private torrents
@@ -775,19 +853,21 @@ TORRENT_TEST(tracker_ipv6_argument)
 			return 60;
 		},
 		[&](std::string method, std::string req
-			, std::map<std::string, std::string>& headers)
+			, std::map<std::string, std::string>&)
 		{
 			got_announce = true;
+			bool const stop_event = req.find("&event=stopped") != std::string::npos;
+			// stop events don't need to advertise the IPv6 address
 			std::string::size_type pos = req.find("&ipv6=");
-			TEST_CHECK(pos != std::string::npos);
-			got_ipv6 = pos != std::string::npos;
+			TEST_CHECK(pos != std::string::npos || stop_event);
+			got_ipv6 |= pos != std::string::npos;
 			// make sure the IPv6 argument is url encoded
-			TEST_CHECK(req.substr(pos + 6, req.find_first_of('&', pos + 6))
+			TEST_CHECK(req.substr(pos + 6, req.substr(pos + 6).find_first_of('&'))
 				== "ffff%3a%3a1337");
 			return sim::send_response(200, "OK", 11) + "d5:peers0:e";
 		}
-		, [](torrent_handle h) {}
-		, [](torrent_handle h) {});
+		, [](torrent_handle) {}
+		, [](torrent_handle) {});
 	TEST_EQUAL(got_announce, true);
 	TEST_EQUAL(got_ipv6, true);
 }
@@ -808,16 +888,16 @@ TORRENT_TEST(tracker_ipv6_argument_non_private)
 			return 60;
 		},
 		[&](std::string method, std::string req
-			, std::map<std::string, std::string>& headers)
+			, std::map<std::string, std::string>&)
 		{
 			got_announce = true;
 			std::string::size_type pos = req.find("&ipv6=");
 			TEST_CHECK(pos == std::string::npos);
-			got_ipv6 = pos != std::string::npos;
+			got_ipv6 |= pos != std::string::npos;
 			return sim::send_response(200, "OK", 11) + "d5:peers0:e";
 		}
-		, [](torrent_handle h) {}
-		, [](torrent_handle h) {});
+		, [](torrent_handle) {}
+		, [](torrent_handle) {});
 	TEST_EQUAL(got_announce, true);
 	TEST_EQUAL(got_ipv6, false);
 }
@@ -836,16 +916,16 @@ TORRENT_TEST(tracker_ipv6_argument_privacy_mode)
 			return 60;
 		},
 		[&](std::string method, std::string req
-			, std::map<std::string, std::string>& headers)
+			, std::map<std::string, std::string>&)
 		{
 			got_announce = true;
 			std::string::size_type pos = req.find("&ipv6=");
 			TEST_CHECK(pos == std::string::npos);
-			got_ipv6 = pos != std::string::npos;
+			got_ipv6 |= pos != std::string::npos;
 			return sim::send_response(200, "OK", 11) + "d5:peers0:e";
 		}
-		, [](torrent_handle h) {}
-		, [](torrent_handle h) {});
+		, [](torrent_handle) {}
+		, [](torrent_handle) {});
 	TEST_EQUAL(got_announce, true);
 	TEST_EQUAL(got_ipv6, false);
 }

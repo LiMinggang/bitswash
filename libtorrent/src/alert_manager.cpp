@@ -38,27 +38,25 @@ POSSIBILITY OF SUCH DAMAGE.
 #include "libtorrent/extensions.hpp"
 #endif
 
-namespace libtorrent
-{
+namespace libtorrent {
 
-	alert_manager::alert_manager(int queue_limit, boost::uint32_t alert_mask)
+	alert_manager::alert_manager(int const queue_limit, alert_category_t const alert_mask)
 		: m_alert_mask(alert_mask)
 		, m_queue_size_limit(queue_limit)
-		, m_num_queued_resume(0)
-		, m_generation(0)
 	{}
 
-	alert_manager::~alert_manager() {}
+	alert_manager::~alert_manager() = default;
 
-	int alert_manager::num_queued_resume() const
+	bool alert_manager::should_post_impl(int const priority) const
 	{
-		mutex::scoped_lock lock(m_mutex);
-		return m_num_queued_resume;
+		std::lock_guard<std::mutex> lock(m_mutex);
+		return m_alerts[m_generation].size()
+			< m_queue_size_limit * (1 + priority);
 	}
 
 	alert* alert_manager::wait_for_alert(time_duration max_wait)
 	{
-		mutex::scoped_lock lock(m_mutex);
+		std::unique_lock<std::mutex> lock(m_mutex);
 
 		if (!m_alerts[m_generation].empty())
 			return m_alerts[m_generation].front();
@@ -68,15 +66,11 @@ namespace libtorrent
 		if (!m_alerts[m_generation].empty())
 			return m_alerts[m_generation].front();
 
-		return NULL;
+		return nullptr;
 	}
 
-	void alert_manager::maybe_notify(alert* a, mutex::scoped_lock& lock)
+	void alert_manager::maybe_notify(alert* a, std::unique_lock<std::mutex>& lock)
 	{
-		if (a->type() == save_resume_data_failed_alert::alert_type
-			|| a->type() == save_resume_data_alert::alert_type)
-			++m_num_queued_resume;
-
 		if (m_alerts[m_generation].size() == 1)
 		{
 			lock.unlock();
@@ -97,61 +91,16 @@ namespace libtorrent
 		}
 
 #ifndef TORRENT_DISABLE_EXTENSIONS
-		for (ses_extension_list_t::iterator i = m_ses_extensions.begin()
-			, end(m_ses_extensions.end()); i != end; ++i)
-		{
-			(*i)->on_alert(a);
-		}
+		for (auto& e : m_ses_extensions)
+			e->on_alert(a);
+#else
+		TORRENT_UNUSED(a);
 #endif
 	}
 
-#ifndef TORRENT_NO_DEPRECATE
-
-	bool alert_manager::maybe_dispatch(alert const& a)
+	void alert_manager::set_notify_function(std::function<void()> const& fun)
 	{
-		if (m_dispatch)
-		{
-			m_dispatch(a.clone());
-			return true;
-		}
-		return false;
-	}
-
-#ifdef __GNUC__
-#pragma GCC diagnostic push
-#pragma GCC diagnostic ignored "-Wdeprecated-declarations"
-#endif
-
-	void alert_manager::set_dispatch_function(
-		boost::function<void(std::auto_ptr<alert>)> const& fun)
-	{
-		mutex::scoped_lock lock(m_mutex);
-
-		m_dispatch = fun;
-
-		heterogeneous_queue<alert> storage;
-		m_alerts[m_generation].swap(storage);
-		lock.unlock();
-
-		std::vector<alert*> alerts;
-		storage.get_pointers(alerts);
-
-		for (std::vector<alert*>::iterator i = alerts.begin()
-			, end(alerts.end()); i != end; ++i)
-		{
-			m_dispatch((*i)->clone());
-		}
-	}
-
-#ifdef __GNUC__
-#pragma GCC diagnostic pop
-#endif
-
-#endif
-
-	void alert_manager::set_notify_function(boost::function<void()> const& fun)
-	{
-		mutex::scoped_lock lock(m_mutex);
+		std::unique_lock<std::mutex> lock(m_mutex);
 		m_notify = fun;
 		if (!m_alerts[m_generation].empty())
 		{
@@ -162,23 +111,20 @@ namespace libtorrent
 	}
 
 #ifndef TORRENT_DISABLE_EXTENSIONS
-	void alert_manager::add_extension(boost::shared_ptr<plugin> ext)
+	void alert_manager::add_extension(std::shared_ptr<plugin> ext)
 	{
 		m_ses_extensions.push_back(ext);
 	}
 #endif
 
-	void alert_manager::get_all(std::vector<alert*>& alerts, int& num_resume)
+	void alert_manager::get_all(std::vector<alert*>& alerts)
 	{
-		mutex::scoped_lock lock(m_mutex);
-		TORRENT_ASSERT(m_num_queued_resume <= m_alerts[m_generation].size());
+		std::lock_guard<std::mutex> lock(m_mutex);
 
 		alerts.clear();
 		if (m_alerts[m_generation].empty()) return;
 
 		m_alerts[m_generation].get_pointers(alerts);
-		num_resume = m_num_queued_resume;
-		m_num_queued_resume = 0;
 
 		// swap buffers
 		m_generation = (m_generation + 1) & 1;
@@ -189,17 +135,23 @@ namespace libtorrent
 
 	bool alert_manager::pending() const
 	{
-		mutex::scoped_lock lock(m_mutex);
+		std::lock_guard<std::mutex> lock(m_mutex);
 		return !m_alerts[m_generation].empty();
 	}
 
 	int alert_manager::set_alert_queue_size_limit(int queue_size_limit_)
 	{
-		mutex::scoped_lock lock(m_mutex);
+		std::lock_guard<std::mutex> lock(m_mutex);
 
 		std::swap(m_queue_size_limit, queue_size_limit_);
 		return queue_size_limit_;
 	}
 
+	dropped_alerts_t alert_manager::dropped_alerts()
+	{
+		std::unique_lock<std::mutex> lock(m_mutex);
+		dropped_alerts_t const ret = m_dropped;
+		m_dropped.reset();
+		return ret;
+	}
 }
-

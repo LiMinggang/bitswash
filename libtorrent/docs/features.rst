@@ -3,7 +3,7 @@ libtorrent manual
 =================
 
 :Author: Arvid Norberg, arvid@libtorrent.org
-:Version: 1.1.5
+:Version: 1.2.0
 
 .. contents:: Table of contents
   :depth: 2
@@ -305,7 +305,7 @@ code to implement a simple bittorrent client::
 		std::cin >> a;
 		return 0;
 	}
-	catch (std::exception& e)
+	catch (std::exception const& e)
 	{
 		std::cerr << ec.what() << std::endl;
 		return 1;

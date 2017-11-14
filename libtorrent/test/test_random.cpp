@@ -34,7 +34,7 @@ POSSIBILITY OF SUCH DAMAGE.
 #include "setup_transfer.hpp"
 #include "libtorrent/random.hpp"
 
-using namespace libtorrent;
+using namespace lt;
 
 TORRENT_TEST(random)
 {
@@ -48,7 +48,7 @@ TORRENT_TEST(random)
 
 		for (int i = 0; i < repetitions; ++i)
 		{
-			boost::uint32_t val = libtorrent::random();
+			std::uint32_t val = lt::random(0xffffffff);
 			val >>= byte * 8;
 			++buckets[val & 0xff];
 		}
@@ -57,7 +57,7 @@ TORRENT_TEST(random)
 		{
 			const int expected = repetitions / 256;
 			// expect each bucket to be within 15% of the expected value
-			fprintf(stderr, "%d: %f\n", i, float(buckets[i] - expected) * 100.f / expected);
+			std::printf("%d: %f\n", i, float(buckets[i] - expected) * 100.f / expected);
 			TEST_CHECK(abs(buckets[i] - expected) < expected / 6);
 		}
 	}

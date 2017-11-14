@@ -33,7 +33,7 @@
 #include "mainframe.h"
 #include "functions.h"
 
-namespace lt = libtorrent;
+//namespace lt = libtorrent;
 
 // PeerListCtrl
 

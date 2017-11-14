@@ -40,16 +40,15 @@ POSSIBILITY OF SUCH DAMAGE.
 #include "libtorrent/peer_id.hpp"
 #include "libtorrent/export.hpp"
 
-namespace libtorrent
-{
+namespace libtorrent {
 
 	// This is a utility function to produce a client ID fingerprint formatted to
 	// the most common convention.
-	// 
+	//
 	// The name string should contain exactly two characters. These are the
 	// characters unique to your client, used to identify it. Make sure not to
 	// clash with anybody else. Here are some taken id's:
-	// 
+	//
 	// +----------+-----------------------+
 	// | id chars | client                |
 	// +==========+=======================+
@@ -67,13 +66,13 @@ namespace libtorrent
 	// +----------+-----------------------+
 	// | 'XT'     | Xan Torrent           |
 	// +----------+-----------------------+
-	// 
+	//
 	// There's an informal directory of client id's here_.
-	// 
+	//
 	// .. _here: http://wiki.theory.org/BitTorrentSpecification#peer_id
 	//
-	// The ``major``, ``minor``, ``revision`` and ``tag`` parameters are used to
-	// identify the version of your client.
+	// The ``major``, ``minor``, ``revision`` and ``tag`` parameters are used to identify the
+	// version of your client.
 	TORRENT_EXPORT std::string generate_fingerprint(std::string name
 		, int major, int minor = 0, int revision = 0, int tag = 0);
 
@@ -98,4 +97,3 @@ namespace libtorrent
 }
 
 #endif // TORRENT_FINGERPRINT_HPP_INCLUDED
-
