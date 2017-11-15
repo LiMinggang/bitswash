@@ -222,7 +222,7 @@ SummaryPane::~SummaryPane()
 void SummaryPane::UpdateSummary()
 {
 	//wxLogDebug(_T("UpdateSummary\n"));
-	std::shared_ptr<torrent_t> pTorrent = ((MainFrame*)m_pMainFrame)->GetSelectedTorrent();
+	std::shared_ptr<torrent_t> pTorrent = (dynamic_cast< MainFrame* >(m_pMainFrame))->GetSelectedTorrent();
 
 	if ( !pTorrent )
 	{

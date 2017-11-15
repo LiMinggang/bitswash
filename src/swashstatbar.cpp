@@ -50,7 +50,7 @@ SwashStatBar::~SwashStatBar()
 
 void SwashStatBar::UpdateStatBar()
 {
-	MainFrame *pMainFrame = (MainFrame*)m_pMainFrame;
+	MainFrame *pMainFrame = dynamic_cast<MainFrame*>(m_pMainFrame);
 
 	SetStatusText(pMainFrame->GetStatusDownloadRate(), BAR_FIELD_DOWNLOADRATE );
 	SetStatusText(pMainFrame->GetStatusUploadRate(), BAR_FIELD_UPLOADRATE );

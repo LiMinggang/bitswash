@@ -91,7 +91,6 @@ void SwashListCtrl::Init( long num_cols, SwashColumnItem *columns )
 {
 	m_numberofcolumns = num_cols;
 	m_columns = columns;
-	int i;
 
 	if( m_settings != wxEmptyString )
 	{
@@ -110,6 +109,7 @@ void SwashListCtrl::Init( long num_cols, SwashColumnItem *columns )
 
 			wxString col_show = col_setting.GetNextToken();
 			wxString col_sort = col_setting.GetNextToken();
+			int i;
 
 			for( i = 0; i < num_cols ; i++ )
 			{
@@ -265,7 +265,6 @@ void SwashListCtrl::OnColClick( wxListEvent& event )
 void SwashListCtrl::OnColumnSelected( wxCommandEvent& event )
 {
 	long colnum = 0;
-	long insert = 0;
 	int i;
 	colnum = event.GetId() - SWASHLIST_POPUP_START;
 	
@@ -276,6 +275,7 @@ void SwashListCtrl::OnColumnSelected( wxCommandEvent& event )
 	if( event.IsChecked() )
 	{
 		wxListItem listitem;
+		long insert = 0;
 		listitem.SetText( wxGetTranslation( m_columns[colnum].title ) );
 
 		if( colnum == 0 )
@@ -512,7 +512,7 @@ void SwashListCtrl::OnSelected( wxListEvent& event )
 #ifdef _DEBUG
 	LogListEvent( event, _T( "OnSelected" ) );
 #endif
-	MainFrame* pMainFrame = ( MainFrame* )( wxGetApp().GetTopWindow() );
+	MainFrame* pMainFrame = dynamic_cast< MainFrame* >( wxGetApp().GetTopWindow() );
 	pMainFrame->OnListItemClick( event.GetIndex() );
 }
 

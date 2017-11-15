@@ -35,7 +35,7 @@ SwashTrayIcon::SwashTrayIcon(wxFrame* parent)
 { 
 	m_pMainFrame = parent;
 
-	m_hidetaskbar = ((MainFrame*)m_pMainFrame)->GetConfig()->GetHideTaskbar();
+	m_hidetaskbar = (dynamic_cast<MainFrame*>(m_pMainFrame))->GetConfig()->GetHideTaskbar();
 	
 	Bind( wxEVT_MENU, &SwashTrayIcon::OnMenuRestore, this, TRAY_RESTORE );
 	Bind( wxEVT_MENU,	&SwashTrayIcon::OnMenuExit, this, TRAY_EXIT );
@@ -59,12 +59,12 @@ void SwashTrayIcon::OnMenuExit(wxCommandEvent& )
 
 void SwashTrayIcon::OnMenuOpenTorrent(wxCommandEvent& )
 {
-	((MainFrame*)m_pMainFrame)->OpenTorrent();
+	(dynamic_cast<MainFrame*>(m_pMainFrame))->OpenTorrent();
 }
 
 void SwashTrayIcon::OnMenuOpenTorrentUrl(wxCommandEvent& )
 {
-	((MainFrame*)m_pMainFrame)->OpenTorrentUrl();
+	(dynamic_cast<MainFrame*>(m_pMainFrame))->OpenTorrentUrl();
 }
 
 void SwashTrayIcon::OnMenuPreference(wxCommandEvent& )
@@ -78,7 +78,7 @@ void SwashTrayIcon::OnMenuPreference(wxCommandEvent& )
 void SwashTrayIcon::OnMenuHideTaskbar(wxCommandEvent& )
 {
 	m_hidetaskbar =!m_hidetaskbar;
-	((MainFrame*)m_pMainFrame)->GetConfig()->SetHideTaskbar(m_hidetaskbar);
+	(dynamic_cast<MainFrame*>(m_pMainFrame))->GetConfig()->SetHideTaskbar(m_hidetaskbar);
 }
 
 void SwashTrayIcon::OnMenuUICheckmark(wxUpdateUIEvent &event)
@@ -114,7 +114,7 @@ void SwashTrayIcon::OnLeftButton(wxTaskBarIconEvent&)
 
 void SwashTrayIcon::ShowHideMainFrame()
 {
-	bool hidetaskbar = ((MainFrame *)m_pMainFrame)->GetConfig()->GetHideTaskbar();
+	bool hidetaskbar = (dynamic_cast<MainFrame*>(m_pMainFrame))->GetConfig()->GetHideTaskbar();
 	
 	if (hidetaskbar) 
 	{
@@ -124,7 +124,7 @@ void SwashTrayIcon::ShowHideMainFrame()
 		} 
 		else 
 		{
-			((MainFrame *)m_pMainFrame)->UpdateUI(true);
+			(dynamic_cast<MainFrame*>(m_pMainFrame))->UpdateUI(true);
 			m_pMainFrame->Show(true);
 			m_pMainFrame->Iconize(false);
 			m_pMainFrame->Raise();
@@ -134,7 +134,7 @@ void SwashTrayIcon::ShowHideMainFrame()
 	{
 		if (m_pMainFrame->IsIconized())
 		{
-			((MainFrame *)m_pMainFrame)->UpdateUI(true);
+			(dynamic_cast<MainFrame*>(m_pMainFrame))->UpdateUI(true);
 			m_pMainFrame->Iconize(false);
 		} 
 		else 

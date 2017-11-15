@@ -234,7 +234,7 @@ bool GeneralSettingPane::GetHideTaskbar()
 void GeneralSettingPane::OnUseSystray(wxCommandEvent& event)
 {
 	bool usesystray = m_check_usesystray->GetValue();
-	((MainFrame*)m_pMainFrame)->ShowSystray(usesystray);
+	( dynamic_cast< MainFrame* >( m_pMainFrame ))->ShowSystray(usesystray);
 
 	m_pcfg->SetUseSystray(usesystray);
 	

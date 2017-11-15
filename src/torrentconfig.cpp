@@ -159,12 +159,11 @@ void TorrentConfig::WriteTrackersUrl()
 	{ return ; }
 
 	std::string t_url;
-	int t_tier;
 
 	for( t = m_trackers_url.begin(); t != m_trackers_url.end() ; ++t )
 	{
 		t_url = t->url;
-		t_tier = t->tier;
+		int t_tier = t->tier;
 		trackers += wxString::FromUTF8( t_url.c_str() ) + _T( "|" ) + wxString::Format( _T( "%d" ), t_tier ) + _T( ";" );
 	}
 

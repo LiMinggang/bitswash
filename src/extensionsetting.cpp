@@ -36,7 +36,7 @@ ExtensionSettingPane::ExtensionSettingPane( wxWindow* parent,
         int style ): wxPanel( parent, id, pos, size, style )
 {
     m_pMainFrame = ( wxFrame* )wxGetApp().GetTopWindow();
-    m_pcfg = ( ( MainFrame* )m_pMainFrame )->GetConfig();
+    m_pcfg = ( dynamic_cast< MainFrame* >( m_pMainFrame ))->GetConfig();
     wxFlexGridSizer* fgSizerMain;
     fgSizerMain = new wxFlexGridSizer( 0, 1, 0, 0 );
     fgSizerMain->SetFlexibleDirection( wxBOTH );

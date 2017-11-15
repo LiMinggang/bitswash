@@ -1252,11 +1252,10 @@ std::shared_ptr<torrent_t> BitTorrentSession::ParseTorrent( const wxString& file
 
 std::shared_ptr<torrent_t> BitTorrentSession::LoadMagnetUri( MagnetUri& magneturi )
 {
-	bool notfound = false;
 	std::shared_ptr<torrent_t> torrent;
 	{
 		wxMutexLocker ml( m_torrent_queue_lock );
-		notfound = (m_queue_torrent_set.find(wxString(magneturi.hash())) == m_queue_torrent_set.end());
+		bool notfound = (m_queue_torrent_set.find(wxString(magneturi.hash())) == m_queue_torrent_set.end());
 		if(notfound)
 		{
 			try

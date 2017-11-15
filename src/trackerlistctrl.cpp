@@ -83,7 +83,7 @@ TrackerListCtrl::~TrackerListCtrl()
 
 wxString TrackerListCtrl::GetItemValue(long item, long columnid) const
 {
-	MainFrame* pMainFrame = (MainFrame*)(wxGetApp().GetTopWindow());
+	MainFrame* pMainFrame = ( dynamic_cast< MainFrame* >(wxGetApp().GetTopWindow()));
 
 	wxString ret(_T(""));
 

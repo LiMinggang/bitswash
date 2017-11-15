@@ -295,7 +295,7 @@ void TorrentListCtrl::ShowContextMenu( const wxPoint& pos )
 {
 	if( GetSelectedItemCount() > 0 )
 	{
-		MainFrame* pMainFrame = ( MainFrame* ) wxGetApp().GetTopWindow();
+		MainFrame* pMainFrame = dynamic_cast< MainFrame* >( wxGetApp().GetTopWindow());
 
 		if( !m_torrentmenu )
 		{

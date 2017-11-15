@@ -39,8 +39,8 @@ LoggerCtrl::LoggerCtrl( wxWindow *parent, wxLog* oldlog,
 	  m_issuspend( 0 )
 {
 	m_oldlog = oldlog;
-	m_pMainFrame = ( wxFrame* ) wxGetApp().GetTopWindow();
-	m_pcfg = ( ( MainFrame* )m_pMainFrame )->GetConfig();
+	m_pMainFrame = dynamic_cast< wxFrame* >( wxGetApp().GetTopWindow());
+	m_pcfg = (dynamic_cast< MainFrame* >(m_pMainFrame) )->GetConfig();
 	m_logtofile = m_pcfg->GetLogFile();
 	wxFlexGridSizer* fgSizerMain;
 	fgSizerMain = new wxFlexGridSizer( 2, 1, 0, 0 );
@@ -102,13 +102,13 @@ LoggerCtrl::~LoggerCtrl()
 
 void LoggerCtrl::OnSize( wxSizeEvent& event )
 {
-	int panelheight;
+	//int panelheight;
 	int ctrlheight;
 	int p_width = 0;
 	int p_height = 0;
 	m_panelCtrl->Layout();
 	m_panelCtrl->GetSizer()->Fit( m_panelCtrl );
-	panelheight = GetClientSize().GetHeight();
+	//panelheight = GetClientSize().GetHeight();
 	ctrlheight = m_panelCtrl->GetSize().GetHeight();
 	p_width = GetClientSize().GetWidth();
 	p_height = GetClientSize().GetHeight();
@@ -124,7 +124,7 @@ void LoggerCtrl::OnSeverityChoice( wxCommandEvent& event )
 {
 	//wxLogDebug( _T( "Severity update %d\n" ), m_choice_logseverity->GetCurrentSelection() );
 	m_pcfg->SetLogSeverity( m_choice_logseverity->GetCurrentSelection() );
-	( ( MainFrame* )m_pMainFrame )->SetLogSeverity();
+	( dynamic_cast< MainFrame* >( m_pMainFrame ))->SetLogSeverity();
 }
 
 void LoggerCtrl::OnLogFileCheck( wxCommandEvent& event )
