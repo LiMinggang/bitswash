@@ -48,8 +48,8 @@ public:
         NotWorking
     };
 
-    TrackerEntry(const wxString &url);
-    TrackerEntry(const libtorrent::announce_entry &nativeEntry);
+    explicit TrackerEntry(const wxString &url);
+    explicit TrackerEntry(const libtorrent::announce_entry &nativeEntry);
     TrackerEntry(const TrackerEntry &other);
 
     wxString url() const;

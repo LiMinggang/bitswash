@@ -37,14 +37,20 @@ class InfoHash
 {
 public:
     InfoHash();
-    InfoHash(const libtorrent::sha1_hash &nativeHash);
-    InfoHash(const wxString &hashString);
+    explicit InfoHash(const libtorrent::sha1_hash &nativeHash);
+    explicit InfoHash(const wxString &hashString);
     InfoHash(const InfoHash &other);
 
     bool isValid() const;
 
     operator libtorrent::sha1_hash() const;
     operator wxString() const;
+	InfoHash& operator=( const InfoHash& other ) {
+	    m_valid      = other.m_valid;
+	    m_nativeHash = other.m_nativeHash;
+	    m_hashString = other.m_hashString;
+		return *this;
+	}
     bool operator==(const InfoHash &other) const;
     bool operator!=(const InfoHash &other) const;
 

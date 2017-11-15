@@ -33,7 +33,7 @@
 class SwashTrayIcon : public wxTaskBarIcon 
 {
 public:
-	SwashTrayIcon(wxFrame* parent) ;
+	explicit SwashTrayIcon(wxFrame* parent) ;
 
 private:
 	wxFrame* m_pMainFrame;

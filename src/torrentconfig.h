@@ -64,7 +64,7 @@ enum torrent_state
 class TorrentConfig : public wxFileConfig
 {
 public:
-	TorrentConfig( const wxString& TorrentName );
+	explicit TorrentConfig( const wxString& TorrentName );
 	~TorrentConfig();
 
 	void Save();

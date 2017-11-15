@@ -1223,7 +1223,7 @@ std::shared_ptr<torrent_t> BitTorrentSession::ParseTorrent( const wxString& file
 		{
 			torrent->info = t;
 			torrent->name = wxString( wxConvUTF8.cMB2WC( t->name().c_str() ) );
-			torrent->hash = t->info_hash();
+			torrent->hash = InfoHash(t->info_hash());
 			if( wxString(torrent->hash) != _T("0000000000000000000000000000000000000000"))
 			{
 				torrent->config.reset( new TorrentConfig( wxString(torrent->hash) ) );

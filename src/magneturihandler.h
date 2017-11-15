@@ -8,7 +8,7 @@ class MainFrame;
 class MagnetUriHanlder: public wxFileSystemHandler
 {
 public:
-	MagnetUriHanlder(MainFrame * frame):m_frame(frame){}
+	explicit MagnetUriHanlder(MainFrame * frame):m_frame(frame){}
 	~MagnetUriHanlder(){}
 	virtual bool CanOpen( const wxString& location );
 	virtual wxFSFile * 	OpenFile (wxFileSystem &fs, const wxString &location);

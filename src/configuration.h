@@ -42,7 +42,7 @@ struct gui_metric {
 class Configuration : public wxFileConfig
 {
     public:
-        Configuration(const wxString& AppName);
+        explicit Configuration(const wxString& AppName);
         ~Configuration();
 
 

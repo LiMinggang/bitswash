@@ -32,7 +32,7 @@
 class SwashStatBar: public wxStatusBar
 {
 public:
-	SwashStatBar(wxWindow* parent);
+	explicit SwashStatBar(wxWindow* parent);
 	virtual ~SwashStatBar();
 	void UpdateStatBar();
 
