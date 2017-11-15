@@ -231,9 +231,9 @@ void Configuration::Load()
 	//save fast resume every 10 minutes
 	m_fastresume_save_time = m_cfg->Read( _T( "/Config/fastresume_save_time" ), 600 );
 	m_max_start = m_cfg->Read( _T( "/Config/max_start" ), 5 );
-	if( ( m_max_start > 100 ) || ( m_max_start < 0 ) )  m_max_start = 2;
+	if( ( m_max_start > 100 ) || ( m_max_start <= 0 ) )  m_max_start = 2;
 	m_log_severity = m_cfg->Read( _T( "/Log/log_severity" ), 2 );
-	if( ( m_log_severity > 7 ) || ( m_log_severity < 0 ) )  m_log_severity = 2;
+	if( ( m_log_severity > 7 ) || ( m_log_severity <= 0 ) )  m_log_severity = 2;
 	m_log_linecount = m_cfg->Read( _T( "/Log/log_linecount" ), 100 );
 	if( ( m_log_linecount > 1000 ) || ( m_log_linecount < 100 ) )  m_log_linecount = 100;
 	m_cfg->Read( _T( "/Log/log_file" ), &m_log_file, false );
