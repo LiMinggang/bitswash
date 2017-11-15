@@ -956,7 +956,7 @@
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <ResourceCompile Include="src\bitswash.rc">
+    <ResourceCompile Include="..\..\..\src\bitswash.rc">
       <Filter>Resource Files</Filter>
     </ResourceCompile>
   </ItemGroup>
