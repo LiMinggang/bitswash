@@ -2322,7 +2322,7 @@ bool BitTorrentSession::HandleAddTorrentAlert(lt::add_torrent_alert *p)
 			if(torrent->info && torrent->info->is_valid())
 			{
 			 	bool nopriority = false;
-				wxULongLong_t total_selected = 0;
+				wxULongLong_t total_selected = 0, total;
 				lt::torrent_info const& t_info = *(torrent->info);
 				lt::file_storage const& allfiles = t_info.files();
 				std::vector<lt::download_priority_t> filespriority = torrent->config->GetFilesPriorities();
@@ -2342,8 +2342,10 @@ bool BitTorrentSession::HandleAddTorrentAlert(lt::add_torrent_alert *p)
 					{
 						total_selected += allfiles.file_size(i);
 					}
+					total += allfiles.file_size(i);
 				}
 				torrent->config->SetSelectedSize(total_selected);
+				torrent->config->SetTotalSize(total);
 			}
 
 			if( state == TORRENT_STATE_FORCE_START || state == TORRENT_STATE_START )

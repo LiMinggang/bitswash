@@ -36,7 +36,7 @@
 //namespace lt = libtorrent;
 
 TorrentConfig::TorrentConfig( const wxString& torrentName )
-	: wxFileConfig( wxEmptyString, wxEmptyString, torrentName, wxEmptyString, wxCONFIG_USE_LOCAL_FILE | wxCONFIG_USE_RELATIVE_PATH )
+	: wxFileConfig( wxEmptyString, wxEmptyString, torrentName, wxEmptyString, wxCONFIG_USE_LOCAL_FILE | wxCONFIG_USE_RELATIVE_PATH ), m_selected_file_size(0), m_total_file_size(0) 
 {
 	//ctor
 	m_maincfg = wxGetApp().GetConfig();
@@ -54,7 +54,6 @@ TorrentConfig::TorrentConfig( const wxString& torrentName )
 	m_torrentname = torrentName;
 	//wxLogDebug( _T( "Init TorrentConfig %s\n" ), m_configfile.c_str() );
 	m_cfg =  new wxFileConfig( ( wxInputStream & )fis );
-	m_selected_file_size = 0;
 	//m_cfg = (wxConfig*)wxConfig::Get(m_appname);
 	Load();
 }
@@ -77,7 +76,12 @@ void TorrentConfig::Save()
 	m_cfg->Write( _T( "/Torrent/upload_limit" ), m_torrent_upload_limit );
 	m_cfg->Write( _T( "/Torrent/download_limit" ), m_torrent_download_limit );
 	m_cfg->Write( _T( "/Torrent/max_connections" ), m_torrent_max_connections );
-	 wxLongLong fsize(m_selected_file_size);
+	
+	wxLongLong tsize(m_total_file_size);
+	m_cfg->Write( _T( "/Torrent/total_size_h" ), tsize.GetHi() );
+	m_cfg->Write( _T( "/Torrent/total_size_l" ), tsize.GetLo() );
+
+	wxLongLong fsize(m_selected_file_size);
 	m_cfg->Write( _T( "/Torrent/selected_size_h" ), fsize.GetHi() );
 	m_cfg->Write( _T( "/Torrent/selected_size_l" ), fsize.GetLo() );
 
@@ -110,8 +114,11 @@ void TorrentConfig::Load()
 	m_torrent_download_limit = m_cfg->Read( _T( "/Torrent/download_limit" ), m_maincfg->GetDefaultDownloadLimit() );
 	m_torrent_max_connections = m_cfg->Read( _T( "/Torrent/max_connections" ), m_maincfg->GetMaxConnections() );
 
-	long s_hi = m_cfg->Read( _T( "/Torrent/selected_size_h" ), 0L );
-	unsigned long s_lo = m_cfg->Read( _T( "/Torrent/selected_size_l" ), 0L );
+	long s_hi = m_cfg->Read( _T( "/Torrent/total_size_h" ), 0L );
+	unsigned long s_lo = m_cfg->Read( _T( "/Torrent/total_size_l" ), 0L );
+	if(s_hi || s_lo) m_total_file_size = wxLongLong(s_hi, s_lo).GetValue();
+	s_hi = m_cfg->Read( _T( "/Torrent/selected_size_h" ), 0L );
+	s_lo = m_cfg->Read( _T( "/Torrent/selected_size_l" ), 0L );
 	if(s_hi || s_lo) m_selected_file_size = wxLongLong(s_hi, s_lo).GetValue();
 
 	m_torrent_max_uploads = m_cfg->Read( _T( "/Torrent/max_uploads" ), m_maincfg->GetMaxUploads() );

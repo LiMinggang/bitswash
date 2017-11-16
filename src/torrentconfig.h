@@ -112,6 +112,8 @@ public:
 	void ReadFilesPriority();
 	void WriteTrackersUrl();
 	void ReadTrackersUrl();
+	void SetTotalSize(const wxULongLong_t& fsize) {m_total_file_size = fsize;}
+	const wxULongLong_t& GetTotalSize() {return m_total_file_size;}
 	void SetSelectedSize(const wxULongLong_t& fsize) {m_selected_file_size = fsize;}
 	const wxULongLong_t& GetSelectedSize() {return m_selected_file_size;}
 
@@ -137,6 +139,7 @@ private:
 	int m_torrent_max_uploads;
 	int m_torrent_max_connections;
 	wxULongLong_t m_selected_file_size;
+	wxULongLong_t m_total_file_size;
 	std::vector<lt::download_priority_t> m_files_priority;
 	std::vector<libtorrent::announce_entry> m_trackers_url;
 	stats_t m_torrent_stats;
