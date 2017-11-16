@@ -764,7 +764,9 @@ void SwashListCtrl::OnContextMenu( wxContextMenuEvent& event )
 
 void SwashListCtrl::ShowContextMenu( const wxPoint& pos )
 {
+#ifdef _DEBUG
 	wxLogDebug( _T( "SwashListCtrl: ShowContextMenu (%d, %d)\n" ), pos.x, pos.y );
+#endif
 }
 
 void SwashListCtrl::UpdateSwashList()

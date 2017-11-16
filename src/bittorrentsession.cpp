@@ -1045,7 +1045,7 @@ void BitTorrentSession::SaveAllTorrent()
 	wxArrayString magneturi;
 
 	{
-		int idx = 0, cnt = 0;
+		int idx = 0;
 		wxMutexLocker ml( m_torrent_queue_lock );
 		for( torrents_t::iterator i = m_torrent_queue.begin();
 				i != m_torrent_queue.end();
@@ -1075,7 +1075,6 @@ void BitTorrentSession::SaveAllTorrent()
 				lt::torrent_status status = torrent->handle.status();
 				if(status.has_metadata)
 				{
-					++cnt;
 					torrent->handle.save_resume_data(lt::torrent_handle::save_info_dict);
 					++num_outstanding_resume_data;
 				}
@@ -1170,20 +1169,23 @@ void BitTorrentSession::SaveAllTorrent()
 	}
 }
 
-void BitTorrentSession::SaveTorrentResumeData( lt::save_resume_data_alert * const p )
+void BitTorrentSession::SaveTorrentResumeData( lt::save_resume_data_alert * p )
 {
 	//new api, write to disk in save_resume_data_alert
 	lt::torrent_handle& h = p->handle;
 	
 	if (h.is_valid())
 	{
-		lt::torrent_status st = h.status(lt::torrent_handle::query_save_path);
-		wxString resumefile = wxGetApp().SaveTorrentsPath() + to_hex(st.info_hash) + _T(".resume");
-		std::ofstream out((const char*)resumefile.mb_str(wxConvFile), std::ios_base::trunc | std::ios_base::out | std::ios_base::binary);
-		out.unsetf(std::ios_base::skipws);
-		
-		lt::entry rd = lt::write_resume_data(p->params);
-		lt::bencode(std::ostream_iterator<char>(out), rd);
+		lt::torrent_status st = h.status(/*lt::torrent_handle::query_save_path*/);
+		if (st.has_metadata)
+		{
+			wxString resumefile = wxGetApp().SaveTorrentsPath() + to_hex(st.info_hash) + _T(".resume");
+			std::ofstream out((const char*)resumefile.mb_str(wxConvFile), std::ios_base::trunc | std::ios_base::out | std::ios_base::binary);
+			out.unsetf(std::ios_base::skipws);
+
+			lt::entry rd = lt::write_resume_data(p->params);
+			lt::bencode(std::ostream_iterator<char>(out), rd);
+		}
 	}
 }
 
@@ -1627,7 +1629,7 @@ void BitTorrentSession::ConfigureTorrent( std::shared_ptr<torrent_t>& torrent )
 	lt::torrent_handle &h = torrent->handle;
 	WXLOGDEBUG(( _T( "%s: Configure\n" ), torrent->name.c_str() ));
 
-	if(torrent->info)
+	if(torrent->info && torrent->info->is_valid())
 	{
 		wxASSERT(h.is_valid());
 		std::string existdir = h.status(lt::torrent_handle::query_save_path).save_path;
@@ -2261,6 +2263,10 @@ void BitTorrentSession::HandleTorrentAlert()
 		{
 			wxLogError( _T( "Exception: %s\n" ), e.what() );
 		}
+		TORRENT_CATCH(...)
+		{
+			wxLogError( _T( "Unknown Exception: %s\n" ), __FUNCTION__ );
+		}
 	}
 }
 
@@ -2322,7 +2328,7 @@ bool BitTorrentSession::HandleAddTorrentAlert(lt::add_torrent_alert *p)
 			if(torrent->info && torrent->info->is_valid())
 			{
 			 	bool nopriority = false;
-				wxULongLong_t total_selected = 0, total;
+				wxULongLong_t total_selected = 0, total = 0;
 				lt::torrent_info const& t_info = *(torrent->info);
 				lt::file_storage const& allfiles = t_info.files();
 				std::vector<lt::download_priority_t> filespriority = torrent->config->GetFilesPriorities();
@@ -2366,6 +2372,10 @@ bool BitTorrentSession::HandleAddTorrentAlert(lt::add_torrent_alert *p)
 	{
 		wxLogError( wxString::FromUTF8( e.what() ) + _T("\n") );
 		return false;
+	}
+	catch (...)
+	{
+		wxLogError(_T("Unknown Exception: %s\n"), __FUNCTION__ );
 	}
 
 	return true;

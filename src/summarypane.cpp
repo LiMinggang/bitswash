@@ -239,7 +239,7 @@ void SummaryPane::UpdateSummary()
 	if(h.is_valid()) 
 		s = h.status();
 
-	if(t)
+	if(t && t->is_valid())
 	{
 		wxString t_name = wxString(wxConvUTF8.cMB2WC(t->name().c_str()));
 		//wxLogDebug(_T("UpdateSummary - Update torrent %s\n"), t_name.c_str());
@@ -278,7 +278,7 @@ void SummaryPane::UpdateSummary()
 			UpdateRatio(_T("inf"));
 	}
 
-	if(t)
+	if(t && t->is_valid())
 		UpdateComment(wxString(wxConvUTF8.cMB2WC(t->comment().c_str())));
 
 	UpdateTrackerUrl(h.is_valid()?wxString::FromUTF8(s.current_tracker.c_str()):_T(""));
