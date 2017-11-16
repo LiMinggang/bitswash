@@ -114,6 +114,10 @@ wxString TrackerListCtrl::GetItemValue(long item, long columnid) const
 
 	}
 	lt::announce_entry tracker= trackers.at(item);
+	
+	auto best_ae = std::min_element(tracker.endpoints.begin(), tracker.endpoints.end()
+		, [](lt::announce_endpoint const& l, lt::announce_endpoint const& r) { return l.fails < r.fails; } );
+	bool valid = (best_ae == tracker.endpoints.end());
 
 //	if (h.is_valid())
 
@@ -127,7 +131,7 @@ wxString TrackerListCtrl::GetItemValue(long item, long columnid) const
 		}
 		case TRACKERLIST_COLUMN_STATUS:
 		{
-			if(tracker.verified)
+			if(tracker.verified && valid)
 			{
 				/*if(tracker.is_working())*/ ret = _("Working");
 				/*else ret = wxString(tracker.last_error.message());*/
@@ -138,9 +142,12 @@ wxString TrackerListCtrl::GetItemValue(long item, long columnid) const
 		}
 		case TRACKERLIST_COLUMN_NEXT_ANNOUNCE:
 		{
- 			/*if(tracker.verified && tracker.is_working())
-				ret = HumanReadableTime(tracker.next_announce_in());
-			else*/
+ 			if(tracker.verified && valid/*&& tracker.is_working()*/)
+			{
+				lt::time_point const now = lt::clock_type::now();
+				ret = HumanReadableTime(int(lt::total_seconds(best_ae->next_announce - now)));
+			}
+			else
 				ret = _T("N/A");
 			break;
 		}
