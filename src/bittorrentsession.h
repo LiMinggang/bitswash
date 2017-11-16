@@ -90,8 +90,8 @@ typedef struct torrent_handle_t {
 	wxString name;
 	InfoHash hash;
     wxString magneturi;
-	libtorrent::torrent_handle handle;
-	std::shared_ptr<const libtorrent::torrent_info> info;
+	lt::torrent_handle handle;
+	std::shared_ptr<const lt::torrent_info> info;
 	std::shared_ptr<TorrentConfig> config;
 	std::vector<long> fileindex;
 	bool isvalid;
@@ -111,7 +111,7 @@ public:
 	virtual void *Entry();
 	virtual void OnExit();
 
-	void Configure(libtorrent::settings_pack &settingsPack);
+	void Configure(lt::settings_pack &settingsPack);
 	void ConfigureSession();
 	void SetLogSeverity();
 	void SetConnection();
@@ -160,11 +160,11 @@ public:
 	void ConfigureTorrentTrackers( int idx );
 	void ConfigureTorrent( int idx );
 
-	//libtorrent::session* GetLibTorrent() { return m_libbtsession;}
+	//lt::session* GetLibTorrent() { return m_libbtsession;}
 
 	void HandleTorrentAlert();
-	bool HandleAddTorrentAlert(libtorrent::add_torrent_alert *p);
-	bool HandleMetaDataAlert(libtorrent::metadata_received_alert *p);
+	bool HandleAddTorrentAlert(lt::add_torrent_alert *p);
+	bool HandleMetaDataAlert(lt::metadata_received_alert *p);
 	void PostEvent(bts_event & evt) { m_evt_queue.Post(evt);}
 	void PostLibTorrentAlertEvent()
 		{
@@ -189,7 +189,7 @@ private:
 	void ScanTorrentsDirectory(const wxString& dirname);
 	int find_torrent_from_hash(const wxString& hash);
 
-	void SaveTorrentResumeData(std::shared_ptr<torrent_t>& torrent);
+	void SaveTorrentResumeData( lt::save_resume_data_alert * const p );
 	void SaveAllTorrent();
 
 	void DumpTorrents();
@@ -206,7 +206,7 @@ private:
 
 	wxApp* m_pParent;
 	Configuration* m_config;
-	libtorrent::session* m_libbtsession;
+	lt::session* m_libbtsession;
     wxCondition *m_condition;
     wxMutex *m_mutex;
 	wxMessageQueue< bts_event > m_evt_queue;

@@ -792,7 +792,7 @@ void BitTorrentSession::RemoveTorrent( std::shared_ptr<torrent_t>& torrent, bool
 	lt::torrent_handle& h = torrent->handle;
 	if( h.is_valid() )
 	{
-		h.pause();
+		h.pause(lt::torrent_handle::graceful_pause);
 		lt::remove_flags_t options;
 		if( deletedata ) options = lt::session::delete_files;
 		m_libbtsession->remove_torrent( h, options );
@@ -1045,7 +1045,7 @@ void BitTorrentSession::SaveAllTorrent()
 	wxArrayString magneturi;
 
 	{
-		int idx = 0;
+		int idx = 0, cnt = 0;
 		wxMutexLocker ml( m_torrent_queue_lock );
 		for( torrents_t::iterator i = m_torrent_queue.begin();
 				i != m_torrent_queue.end();
@@ -1075,7 +1075,8 @@ void BitTorrentSession::SaveAllTorrent()
 				lt::torrent_status status = torrent->handle.status();
 				if(status.has_metadata)
 				{
-					torrent->handle.save_resume_data();
+					++cnt;
+					torrent->handle.save_resume_data(lt::torrent_handle::save_info_dict);
 					++num_outstanding_resume_data;
 				}
 			}
@@ -1112,29 +1113,13 @@ void BitTorrentSession::SaveAllTorrent()
 				WXLOGDEBUG(( _T( "\nleft: %d failed: %d pause: %d\n" )
 							, num_outstanding_resume_data, num_failed, num_paused ));
 			}
-			else if (lt::save_resume_data_alert const* p = lt::alert_cast<lt::save_resume_data_alert>( *i ) )
+			else if (lt::save_resume_data_alert * p = lt::alert_cast<lt::save_resume_data_alert>( *i ) )
 			{
 				--num_outstanding_resume_data;
 				WXLOGDEBUG(( _T( "\nleft: %d failed: %d pause: %d\n" )
 							, num_outstanding_resume_data, num_failed, num_paused ));
 
-				//if( !rd->resume_data ) { continue; }
-
-				lt::torrent_handle h = p->handle;
-				if (h.is_valid())
-				{
-					lt::torrent_status st = h.status(lt::torrent_handle::query_save_path);
-					//std::vector<char> out;
-					//bencode(std::back_inserter(out), *rd->resume_data);
-					auto const buf = lt::write_resume_data_buf(p->params);
-					if (!buf.empty())
-					{
-						wxString resumefile = wxGetApp().SaveTorrentsPath() + to_hex(st.info_hash) + _T(".resume");
-						std::ofstream out((const char*)resumefile.mb_str(wxConvFile), std::ios_base::trunc | std::ios_base::out | std::ios_base::binary);
-						out.unsetf(std::ios_base::skipws);
-						out.write(buf.data(), buf.size());
-					}
-				}
+				SaveTorrentResumeData(p);
 			}
 		}
 	}
@@ -1185,16 +1170,23 @@ void BitTorrentSession::SaveAllTorrent()
 	}
 }
 
-void BitTorrentSession::SaveTorrentResumeData( std::shared_ptr<torrent_t>& torrent )
+void BitTorrentSession::SaveTorrentResumeData( lt::save_resume_data_alert * const p )
 {
 	//new api, write to disk in save_resume_data_alert
-	if (torrent->handle.is_valid())
+	lt::torrent_handle& h = p->handle;
+	
+	if (h.is_valid())
 	{
-		lt::torrent_status status = torrent->handle.status();
-		if(status.has_metadata)
-		{ torrent->handle.save_resume_data(); }
+		lt::torrent_status st = h.status(lt::torrent_handle::query_save_path);
+		wxString resumefile = wxGetApp().SaveTorrentsPath() + to_hex(st.info_hash) + _T(".resume");
+		std::ofstream out((const char*)resumefile.mb_str(wxConvFile), std::ios_base::trunc | std::ios_base::out | std::ios_base::binary);
+		out.unsetf(std::ios_base::skipws);
+		
+		lt::entry rd = lt::write_resume_data(p->params);
+		lt::bencode(std::ostream_iterator<char>(out), rd);
 	}
 }
+
 
 void BitTorrentSession::DumpTorrents()
 {
@@ -1369,8 +1361,10 @@ void BitTorrentSession::StopTorrent( std::shared_ptr<torrent_t>& torrent )
 	//
 	if( handle.is_valid() )
 	{
-		handle.pause();
-		SaveTorrentResumeData( torrent );
+		handle.pause(lt::torrent_handle::graceful_pause);
+		lt::torrent_status status = torrent->handle.status();
+		if(status.has_metadata)
+		{ torrent->handle.save_resume_data(lt::torrent_handle::save_info_dict); }
 		m_libbtsession->remove_torrent( handle );
 		torrent->handle = invalid_handle;
 	}
@@ -1400,7 +1394,7 @@ void BitTorrentSession::QueueTorrent( std::shared_ptr<torrent_t>& torrent )
 
 	if (handle.is_valid())
 	{
-		handle.pause();
+		handle.pause(lt::torrent_handle::graceful_pause);
 	}
 	else
 	{
@@ -1424,7 +1418,7 @@ void BitTorrentSession::PauseTorrent( std::shared_ptr<torrent_t>& torrent )
 	}
 
 	//if( !handle.is_paused() )
-	handle.pause();
+	handle.pause(lt::torrent_handle::graceful_pause);
 
 	torrent->config->SetTorrentState( TORRENT_STATE_PAUSE );
 	torrent->config->Save();
@@ -2064,7 +2058,7 @@ void BitTorrentSession::HandleTorrentAlert()
 					{
 						lt::torrent_status st = (p->handle).status(lt::torrent_handle::query_name);
 						event_string << st.name << _T(": ") << wxString::FromUTF8(p->message().c_str());
-						(p->handle).save_resume_data();
+						(p->handle).save_resume_data(lt::torrent_handle::save_info_dict);
 					}
 					break;
 				case lt::peer_ban_alert::alert_type:
@@ -2177,22 +2171,8 @@ void BitTorrentSession::HandleTorrentAlert()
 				case lt::save_resume_data_alert::alert_type:
 					if( lt::save_resume_data_alert *p = lt::alert_cast<lt::save_resume_data_alert>( *it ) )
 					{
+						SaveTorrentResumeData(p);
 						lt::torrent_handle& h = p->handle;
-
-						if (h.is_valid())
-						{
-							lt::torrent_status st = h.status(lt::torrent_handle::query_save_path);
-							//std::vector<char> out;
-							//bencode(std::back_inserter(out), *rd->resume_data);
-							auto const buf = lt::write_resume_data_buf(p->params);
-							if (!buf.empty())
-							{
-								wxString resumefile = wxGetApp().SaveTorrentsPath() + to_hex(st.info_hash) + _T(".resume");
-								std::ofstream out((const char*)resumefile.mb_str(wxConvFile), std::ios_base::trunc | std::ios_base::out | std::ios_base::binary);
-								out.unsetf(std::ios_base::skipws);
-								out.write(buf.data(), buf.size());
-							}
-						}
 						event_string << h.status(lt::torrent_handle::query_name).name << _T( ": " ) << wxString::FromUTF8(p->message().c_str());
 					}
 					break;
@@ -2230,8 +2210,8 @@ void BitTorrentSession::HandleTorrentAlert()
 				case lt::torrent_paused_alert::alert_type:
 					if (lt::torrent_paused_alert* p = lt::alert_cast<lt::torrent_paused_alert>( *it ))
 					{
-						lt::torrent_handle h = p->handle;
-						h.save_resume_data();
+						lt::torrent_handle& h = p->handle;
+						h.save_resume_data(lt::torrent_handle::save_info_dict);
 						return;
 					}
 					break;
@@ -2303,10 +2283,11 @@ bool BitTorrentSession::HandleAddTorrentAlert(lt::add_torrent_alert *p)
 			torrent = m_torrent_queue.at(idx);
 			//wxString torrent_backup = wxGetApp().SaveTorrentsPath() + torrent->hash + _T( ".torrent" );
 			torrent->handle = p->handle;
+			p->handle.save_resume_data(lt::torrent_handle::save_info_dict | lt::torrent_handle::only_if_modified);
 			wxASSERT(p->handle.is_valid());
 			torrent->isvalid = true;
 			torrent->handle.status().flags &= ~(lt::torrent_flags::auto_managed);
-			torrent->handle.pause();
+			torrent->handle.pause(lt::torrent_handle::graceful_pause);
 			enum torrent_state state = ( enum torrent_state ) torrent->config->GetTorrentState();
 			wxLogError( _T( "HandleAddTorrentAlert %s\n" ), torrent->name.c_str() );
 
@@ -2338,7 +2319,7 @@ bool BitTorrentSession::HandleAddTorrentAlert(lt::add_torrent_alert *p)
 				}
 			}
 
-			if(torrent->info)
+			if(torrent->info && torrent->info->is_valid())
 			{
 			 	bool nopriority = false;
 				wxULongLong_t total_selected = 0;
@@ -2374,7 +2355,7 @@ bool BitTorrentSession::HandleAddTorrentAlert(lt::add_torrent_alert *p)
 		{
 			if( p->handle.is_valid() )
 			{
-				p->handle.pause();
+				p->handle.pause(lt::torrent_handle::graceful_pause);
 				m_libbtsession->remove_torrent( p->handle );
 			}
 		}
@@ -2398,6 +2379,7 @@ bool BitTorrentSession::HandleMetaDataAlert(lt::metadata_received_alert *p)
 	{
 		std::shared_ptr<torrent_t> torrent = GetTorrent(it->second);
 		wxString torrent_backup = wxGetApp().SaveTorrentsPath() + wxString(torrent->hash) + _T( ".torrent" );
+		p->handle.save_resume_data(lt::torrent_handle::save_info_dict);
 		torrent->handle = p->handle;
 		torrent->info = p->handle.torrent_file();
 		lt::torrent_status st = p->handle.status(lt::torrent_handle::query_name);
