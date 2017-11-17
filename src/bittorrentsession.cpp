@@ -2060,7 +2060,9 @@ void BitTorrentSession::HandleTorrentAlert()
 					{
 						lt::torrent_status st = (p->handle).status(lt::torrent_handle::query_name);
 						event_string << st.name << _T(": ") << wxString::FromUTF8(p->message().c_str());
+						wxASSERT(st.has_metadata == true);
 						(p->handle).save_resume_data(lt::torrent_handle::save_info_dict);
+						//(p->handle).set_max_connections(max_connections_per_torrent / 2);
 					}
 					break;
 				case lt::peer_ban_alert::alert_type:
@@ -2213,7 +2215,9 @@ void BitTorrentSession::HandleTorrentAlert()
 					if (lt::torrent_paused_alert* p = lt::alert_cast<lt::torrent_paused_alert>( *it ))
 					{
 						lt::torrent_handle& h = p->handle;
-						h.save_resume_data(lt::torrent_handle::save_info_dict);
+						lt::torrent_status st = h.status(lt::torrent_handle::query_name);
+						if (st.has_metadata)
+							h.save_resume_data(lt::torrent_handle::save_info_dict);
 						return;
 					}
 					break;
@@ -2288,9 +2292,11 @@ bool BitTorrentSession::HandleAddTorrentAlert(lt::add_torrent_alert *p)
 		{
 			torrent = m_torrent_queue.at(idx);
 			//wxString torrent_backup = wxGetApp().SaveTorrentsPath() + torrent->hash + _T( ".torrent" );
-			torrent->handle = p->handle;
-			p->handle.save_resume_data(lt::torrent_handle::save_info_dict | lt::torrent_handle::only_if_modified);
 			wxASSERT(p->handle.is_valid());
+			torrent->handle = p->handle;
+			lt::torrent_status st = (p->handle).status(lt::torrent_handle::query_name);
+			if(st.has_metadata)
+				p->handle.save_resume_data(lt::torrent_handle::save_info_dict | lt::torrent_handle::only_if_modified);
 			torrent->isvalid = true;
 			torrent->handle.status().flags &= ~(lt::torrent_flags::auto_managed);
 			torrent->handle.pause(lt::torrent_handle::graceful_pause);
@@ -2383,6 +2389,7 @@ bool BitTorrentSession::HandleAddTorrentAlert(lt::add_torrent_alert *p)
 
 bool BitTorrentSession::HandleMetaDataAlert(lt::metadata_received_alert *p)
 {
+	wxASSERT(p->handle.is_valid());
 	InfoHash thash(p->handle.info_hash());
 	
 	wxMutexLocker ml( m_torrent_queue_lock );
@@ -2390,11 +2397,13 @@ bool BitTorrentSession::HandleMetaDataAlert(lt::metadata_received_alert *p)
 	if(it != m_running_torrent_map.end())
 	{
 		std::shared_ptr<torrent_t> torrent = GetTorrent(it->second);
+		
+		lt::torrent_status st = (p->handle).status(lt::torrent_handle::query_name);
+		wxASSERT(st.has_metadata);
 		wxString torrent_backup = wxGetApp().SaveTorrentsPath() + wxString(torrent->hash) + _T( ".torrent" );
 		p->handle.save_resume_data(lt::torrent_handle::save_info_dict);
 		torrent->handle = p->handle;
 		torrent->info = p->handle.torrent_file();
-		lt::torrent_status st = p->handle.status(lt::torrent_handle::query_name);
 		torrent->name = st.name;
 		SaveTorrent(torrent, torrent_backup );
 		
