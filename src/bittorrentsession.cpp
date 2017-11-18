@@ -2302,7 +2302,7 @@ bool BitTorrentSession::HandleAddTorrentAlert(lt::add_torrent_alert *p)
 			torrent->handle.status().flags &= ~(lt::torrent_flags::auto_managed);
 			torrent->handle.pause(lt::torrent_handle::graceful_pause);
 			enum torrent_state state = ( enum torrent_state ) torrent->config->GetTorrentState();
-			wxLogError( _T( "HandleAddTorrentAlert %s\n" ), torrent->name.c_str() );
+			//wxLogInfo( _T( "HandleAddTorrentAlert %s\n" ), torrent->name.c_str() );
 
 			if( torrent->config->GetQIndex() == -1 )
 			{
