@@ -124,17 +124,18 @@ static const wxCmdLineEntryDesc g_cmdLineDesc [] =
 
 bool BitSwash::OnInit()
 {
-	m_btsession = 0;
-	m_logold = 0;
-	m_config = 0;
-	m_imglist_ctryflags = 0;
-	m_imglist_settingicons = 0;
-	m_locale = 0;
-	m_SigleAppChecker = 0;
-	m_AppServer = 0;
-	m_condition = 0;
+	m_btsession = nullptr;
+	m_logold = nullptr;
+	m_config = nullptr;
+	m_imglist_ctryflags = nullptr;
+	m_imglist_settingicons = nullptr;
+	m_locale = nullptr;
+	m_SigleAppChecker = nullptr;
+	m_AppServer = nullptr;
+	m_condition = nullptr;
 #ifdef USE_LIBGEOIP
-	m_geoip = 0;
+	m_geoip = nullptr;
+	m_geoipv6 = nullptr;
 #endif
 
 #ifdef __WXMSW__
@@ -293,7 +294,11 @@ bool BitSwash::OnInit()
 
 	wxInitAllImageHandlers();
 #ifdef USE_LIBGEOIP
-	m_geoip = GeoIP_open(g_BitSwashHomeDir + "GeoIP.dat", GEOIP_STANDARD | GEOIP_CHECK_CACHE);
+	wxString ipv4dbfile = g_BitSwashHomeDir + wxT("GeoIP.dat"), ipv6dbfile = g_BitSwashHomeDir + wxT("GeoIPv6.dat");
+	if(wxFileName::FileExists( ipv4dbfile ))
+		m_geoip = GeoIP_open(ipv4dbfile, GEOIP_STANDARD | GEOIP_CHECK_CACHE);
+	if(wxFileName::FileExists( ipv6dbfile ))
+		m_geoipv6 = GeoIP_open(ipv6dbfile, GEOIP_STANDARD | GEOIP_CHECK_CACHE);
 #endif
 	LoadIcons();
 	LoadFlags();
@@ -363,6 +368,7 @@ int BitSwash::OnExit()
 
 #ifdef USE_LIBGEOIP
 	if(m_geoip) GeoIP_delete(m_geoip);
+	if(m_geoipv6) GeoIP_delete(m_geoipv6);
 #endif
 	if(m_condition) delete m_condition;
 	return 0;
@@ -393,15 +399,23 @@ void BitSwash::LoadFlags()
 }
 
 #ifdef USE_LIBGEOIP
-bool BitSwash::GetCountryCode(const wxString& ip/*IN*/, wxString& code/*OUT*/)
+bool BitSwash::GetCountryCode(const wxString& ip/*IN*/, bool isIpv4/*IN*/, wxString& code/*OUT*/)
 {
 	bool ret = false;
 	if(m_geoip)
 	{
 		// code is IP actually
-		const char * ccode = GeoIP_country_code_by_addr(m_geoip, ip.ToStdString().c_str());
+		GeoIPLookup gl;
+		const char * ccode = nullptr;
+		if(isIpv4)
+			ccode = GeoIP_country_code_by_addr_gl(m_geoip, ip.ToStdString().c_str(), &gl);
+		else
+			ccode = GeoIP_country_code3_by_addr_v6_gl(m_geoip, ip.ToStdString().c_str(), &gl);
 		if(ccode)
+		{
 			code = wxString::FromAscii(ccode);
+			ret = true;
+		}
 		else
 			code = (_T("--"));
 	}

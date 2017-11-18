@@ -138,7 +138,7 @@ wxString PeerListCtrl::GetItemValue(long item, long columnid) const
 		BitSwash& bitSwachApp = wxGetApp();
 		lt::address c_ip = peer_info.ip.address();
 		ret = (_T("--"));
-		bitSwachApp.GetCountryCode(wxString(c_ip.to_string()), ret);
+		bitSwachApp.GetCountryCode(wxString(c_ip.to_string()), (peer_info.ip.protocol() == boost::asio::ip::tcp::v4()), ret);
 #else
 		ret = wxString(peer_info.country, sizeof(peer_info.country) / sizeof(peer_info.country[0]));
 #endif
@@ -253,7 +253,7 @@ int PeerListCtrl::GetItemColumnImage(long item, long columnid) const
 #ifdef USE_LIBGEOIP
 			lt::address c_ip = peer_info.ip.address();
 			wxString ctry(_T("--"));
-			bitSwachApp.GetCountryCode(wxString(c_ip.to_string()), ctry);
+			bitSwachApp.GetCountryCode(wxString(c_ip.to_string()), (peer_info.ip.protocol() == boost::asio::ip::tcp::v4()), ctry);
 #else
 			wxString ctry = wxString::FromAscii(peer_info.country, sizeof(peer_info.country) / sizeof(peer_info.country[0]));
 #endif
@@ -296,7 +296,7 @@ int PeerListCtrl::OnGetItemImage(long item) const
 #ifdef USE_LIBGEOIP
 	lt::address c_ip = peer_info.ip.address();
 	wxString ctry(_T("--"));
-	bitSwachApp.GetCountryCode(wxString(c_ip.to_string()), ctry);
+	bitSwachApp.GetCountryCode(wxString(c_ip.to_string()), (peer_info.ip.protocol() == boost::asio::tcp::v4()), ctry);
 #else
 	wxString ctry = wxString::FromAscii(peer_info.country, sizeof(peer_info.country) / sizeof(peer_info.country[0]));
 	//wxLogDebug(_T("Image idx %s %d\n" ),ctry.c_str(), wxGetApp().GetCountryFlag(ctry.c_str()));

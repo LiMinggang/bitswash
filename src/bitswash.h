@@ -137,7 +137,7 @@ public:
 
 	int GetCountryFlag(const wxString & code);
 #ifdef USE_LIBGEOIP
-	bool BitSwash::GetCountryCode(const wxString& ip/*IN*/, wxString& code/*OUT*/);
+	bool BitSwash::GetCountryCode(const wxString& ip/*IN*/, bool isIpv4/*IN*/, wxString& code/*OUT*/);
 #endif
 	wxImageList* GetCountryFlagsList() { return m_imglist_ctryflags;} 
 	wxImageList* GetSettingIconsList() { return m_imglist_settingicons;} 
@@ -181,6 +181,7 @@ private:
 #endif
 #ifdef USE_LIBGEOIP
     GeoIP *m_geoip;
+	GeoIP *m_geoipv6;
 #endif
     wxMutex m_mutex;
     wxCondition *m_condition;
