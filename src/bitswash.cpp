@@ -402,22 +402,42 @@ void BitSwash::LoadFlags()
 bool BitSwash::GetCountryCode(const wxString& ip/*IN*/, bool isIpv4/*IN*/, wxString& code/*OUT*/)
 {
 	bool ret = false;
-	if(m_geoip)
+	if(isIpv4)
 	{
-		// code is IP actually
-		GeoIPLookup gl;
-		const char * ccode = nullptr;
-		if(isIpv4)
-			ccode = GeoIP_country_code_by_addr_gl(m_geoip, ip.ToStdString().c_str(), &gl);
-		else
-			ccode = GeoIP_country_code3_by_addr_v6_gl(m_geoip, ip.ToStdString().c_str(), &gl);
-		if(ccode)
+		if(m_geoip)
 		{
-			code = wxString::FromAscii(ccode);
-			ret = true;
+			// code is IP actually
+			GeoIPLookup gl;
+			const char * ccode = nullptr;
+			if(isIpv4)
+				ccode = GeoIP_country_code_by_addr_gl(m_geoip, ip.ToStdString().c_str(), &gl);
+			else
+				ccode = GeoIP_country_code3_by_addr_v6_gl(m_geoipv6, ip.ToStdString().c_str(), &gl);
+			if(ccode)
+			{
+				code = wxString::FromAscii(ccode);
+				ret = true;
+			}
+			else
+				code = (_T("--"));
 		}
-		else
-			code = (_T("--"));
+	}
+	else
+	{
+		if(m_geoipv6)
+		{
+			// code is IP actually
+			GeoIPLookup gl;
+			const char * ccode = nullptr;
+			ccode = GeoIP_country_code3_by_addr_v6_gl(m_geoipv6, ip.ToStdString().c_str(), &gl);
+			if(ccode)
+			{
+				code = wxString::FromAscii(ccode);
+				ret = true;
+			}
+			else
+				code = (_T("--"));
+		}
 	}
 
 	return ret;
