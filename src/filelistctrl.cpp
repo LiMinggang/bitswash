@@ -392,8 +392,10 @@ int FileListCtrl::GetItemColumnImage(long item, long columnid) const
 			}
 			if (filespriority.size() != torrent_info.num_files())
 			{
-				nopriority = true;
+				std::vector<lt::download_priority_t> deffilespriority( pTorrent->info->num_files(), lt::download_priority_t(BITTORRENT_FILE_NORMAL) );
+				filespriority.swap( deffilespriority );
 			}
+			
 			/*0--unchecked_xpm*/
 			/*1--checked_xpm*/
 			/*2--unchecked_dis_xpm*/

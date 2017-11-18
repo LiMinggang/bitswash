@@ -257,17 +257,17 @@ void SummaryPane::UpdateSummary()
 	}
 	//
 	
-	UpdatePeers(h.is_valid()?wxString::Format(_T("%d"), s.num_peers):_T("0"));
-	UpdateSeeds(h.is_valid()?wxString::Format(_T("%d"), s.num_seeds):_T("0"));
+	UpdatePeers((h.is_valid() && s.has_metadata)?wxString::Format(_T("%d"), s.num_peers):_T("0"));
+	UpdateSeeds((h.is_valid() && s.has_metadata)?wxString::Format(_T("%d"), s.num_seeds):_T("0"));
 
-	UpdateDownSpeed(h.is_valid()?HumanReadableByte(s.download_rate) + wxString(_T("ps")):_T("0bps"));
-	UpdateUpSpeed(h.is_valid()?HumanReadableByte(s.upload_rate) + wxString(_T("ps")):_T("0bps"));
+	UpdateDownSpeed((h.is_valid() && s.has_metadata)?HumanReadableByte(s.download_rate) + wxString(_T("ps")):_T("0bps"));
+	UpdateUpSpeed((h.is_valid() && s.has_metadata)?HumanReadableByte(s.upload_rate) + wxString(_T("ps")):_T("0bps"));
 
-	UpdateDownLimit(h.is_valid()?HumanReadableByte( h.download_limit()) + _T("ps"):_T("0bps"));
-	UpdateUpLimit(h.is_valid()?HumanReadableByte(h.upload_limit()) + _T("ps"):_T("0bps"));
+	UpdateDownLimit((h.is_valid() && s.has_metadata)?HumanReadableByte( h.download_limit()) + _T("ps"):_T("0bps"));
+	UpdateUpLimit((h.is_valid() && s.has_metadata)?HumanReadableByte(h.upload_limit()) + _T("ps"):_T("0bps"));
 
-	UpdateDownloaded(h.is_valid()?HumanReadableByte(s.total_payload_download):_T("0b"));
-	UpdateUploaded(h.is_valid()?HumanReadableByte( s.total_payload_upload):_T("0b"));
+	UpdateDownloaded((h.is_valid() && s.has_metadata)?HumanReadableByte(s.total_payload_download):_T("0b"));
+	UpdateUploaded((h.is_valid() && s.has_metadata)?HumanReadableByte( s.total_payload_upload):_T("0b"));
 	//TODO: Calculate ratio
 
 	if (h.is_valid())
@@ -281,12 +281,12 @@ void SummaryPane::UpdateSummary()
 	if(t && t->is_valid())
 		UpdateComment(wxString(wxConvUTF8.cMB2WC(t->comment().c_str())));
 
-	UpdateTrackerUrl(h.is_valid()?wxString::FromUTF8(s.current_tracker.c_str()):_T(""));
+	UpdateTrackerUrl((h.is_valid() && s.has_metadata)?wxString::FromUTF8(s.current_tracker.c_str()):_T(""));
 	//
 	//TODO: findout tracker status
 	//UpdateTrackerStatus();
 	//
-	UpdateNextUpdate(h.is_valid()?wxString::Format(_T("%s"), HumanReadableTime(s.next_announce.count())):_T(""));
+	UpdateNextUpdate((h.is_valid() && s.has_metadata)?wxString::Format(_T("%s"), HumanReadableTime(s.next_announce.count())):_T(""));
 
 	// TODO: DHT status?
 	//UpdateDht();

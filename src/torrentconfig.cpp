@@ -150,7 +150,7 @@ void TorrentConfig::WriteFilesPriority()
 
 	for( i = m_files_priority.begin(); i != m_files_priority.end() ; ++i )
 	{
-		filespriority_data << std::uint8_t(*i) << _T( "," );
+		filespriority_data << int(std::uint8_t(*i)) << _T( "," );
 	}
 
 	filespriority_data = filespriority_data.BeforeLast( ',' );

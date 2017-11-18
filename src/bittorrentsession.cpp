@@ -690,7 +690,8 @@ void BitTorrentSession::AddTorrentToSession( std::shared_ptr<torrent_t>& torrent
 		}
 
 		wxASSERT(torrent->info);
-		p.ti.reset(const_cast<lt::torrent_info *>(torrent->info.get()));
+		p.ti = torrent->info;
+		//p.ti.reset(const_cast<lt::torrent_info *>(torrent->info.get()));
 		p.save_path = (const char*)torrent->config->GetDownloadPath().mb_str(wxConvUTF8);
 		p.max_connections = 1024;
 		p.max_uploads = -1;
@@ -1210,7 +1211,7 @@ std::shared_ptr<torrent_t> BitTorrentSession::ParseTorrent( const wxString& file
 	try
 	{
 		lt::error_code ec;
-		std::shared_ptr<const lt::torrent_info> t(new lt::torrent_info(wxString(filename.mb_str(wxConvUTF8)).ToStdString(), ec));
+		std::shared_ptr<lt::torrent_info> t(new lt::torrent_info(wxString(filename.mb_str(wxConvUTF8)).ToStdString(), ec));
 		if(ec)
 			wxLogError( wxString::FromUTF8( ec.message().c_str() ) );
 		else
@@ -2187,18 +2188,18 @@ void BitTorrentSession::HandleTorrentAlert()
 						log_severity = 1;
 						event_string << _T("FAILED TO SAVE RESUME DATA:: ") << wxString::FromUTF8(p->message().c_str());
 
-						if (h.is_valid())
+						if (h.is_valid() && p->error != lt::errors::resume_data_not_modified)
 						{
 							log_severity = 4;
 							InfoHash thash(h.info_hash());
-							wxMutexLocker ml( m_torrent_queue_lock );
+							wxMutexLocker ml(m_torrent_queue_lock);
 							torrents_map::iterator it = m_running_torrent_map.find(wxString(thash));
-							if(it != m_running_torrent_map.end())
+							if (it != m_running_torrent_map.end())
 							{
 								m_libbtsession->remove_torrent(h);
-								std::shared_ptr<torrent_t> torrent = BitTorrentSession::GetTorrent( it->second );
+								std::shared_ptr<torrent_t> torrent = BitTorrentSession::GetTorrent(it->second);
 								wxASSERT(torrent);
-								torrent->config->SetTorrentState( TORRENT_STATE_STOP );
+								torrent->config->SetTorrentState(TORRENT_STATE_STOP);
 								torrent->config->Save();
 							}
 						}
@@ -2403,7 +2404,7 @@ bool BitTorrentSession::HandleMetaDataAlert(lt::metadata_received_alert *p)
 		wxString torrent_backup = wxGetApp().SaveTorrentsPath() + wxString(torrent->hash) + _T( ".torrent" );
 		p->handle.save_resume_data(lt::torrent_handle::save_info_dict);
 		torrent->handle = p->handle;
-		torrent->info = p->handle.torrent_file();
+		torrent->info.reset(new lt::torrent_info(*(p->handle.torrent_file())));
 		torrent->name = st.name;
 		SaveTorrent(torrent, torrent_backup );
 		

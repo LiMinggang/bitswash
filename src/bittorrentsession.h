@@ -91,7 +91,7 @@ typedef struct torrent_handle_t {
 	InfoHash hash;
     wxString magneturi;
 	lt::torrent_handle handle;
-	std::shared_ptr<const lt::torrent_info> info;
+	std::shared_ptr<lt::torrent_info> info;
 	std::shared_ptr<TorrentConfig> config;
 	std::vector<long> fileindex;
 	bool isvalid;
