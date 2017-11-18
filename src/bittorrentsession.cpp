@@ -701,7 +701,7 @@ void BitTorrentSession::AddTorrentToSession( std::shared_ptr<torrent_t>& torrent
 		if (torrent->config->GetTorrentState() != TORRENT_STATE_PAUSE)
 			p.flags |= lt::torrent_flags::paused;
 		p.flags &= ~lt::torrent_flags::duplicate_is_error;
-		p.flags |= lt::torrent_flags::auto_managed;
+		p.flags &= ~lt::torrent_flags::auto_managed;
 
 		wxString strStorageMode;
 		enum lt::storage_mode_t eStorageMode = torrent->config->GetTorrentStorageMode();
@@ -1423,8 +1423,8 @@ void BitTorrentSession::PauseTorrent( std::shared_ptr<torrent_t>& torrent )
 	//if( !handle.is_paused() )
 	handle.pause(lt::torrent_handle::graceful_pause);
 
-	torrent->config->SetTorrentState( TORRENT_STATE_PAUSE );
-	torrent->config->Save();
+	//torrent->config->SetTorrentState( TORRENT_STATE_PAUSE );
+	//torrent->config->Save();
 }
 
 void BitTorrentSession::MoveTorrentUp( std::shared_ptr<torrent_t>& torrent )
@@ -2066,6 +2066,63 @@ void BitTorrentSession::HandleTorrentAlert()
 						//(p->handle).set_max_connections(max_connections_per_torrent / 2);
 					}
 					break;
+				case lt::save_resume_data_failed_alert::alert_type:
+					if (lt::save_resume_data_failed_alert* p = lt::alert_cast<lt::save_resume_data_failed_alert>( *it ))
+					{
+						lt::torrent_handle & h = p->handle;
+						log_severity = 1;
+						event_string << _T("FAILED TO SAVE RESUME DATA:: ") << wxString::FromUTF8(p->message().c_str());
+
+						if (h.is_valid() && p->error != lt::errors::resume_data_not_modified)
+						{
+							log_severity = 4;
+							InfoHash thash(h.info_hash());
+							wxMutexLocker ml(m_torrent_queue_lock);
+							torrents_map::iterator it = m_running_torrent_map.find(wxString(thash));
+							if (it != m_running_torrent_map.end())
+							{
+								m_libbtsession->remove_torrent(h);
+								std::shared_ptr<torrent_t> torrent = BitTorrentSession::GetTorrent(it->second);
+								wxASSERT(torrent);
+								torrent->config->SetTorrentState(TORRENT_STATE_STOP);
+								torrent->config->Save();
+							}
+						}
+					}
+					break;
+				case lt::session_stats_alert::alert_type:
+					if (lt::session_stats_alert* p = lt::alert_cast<lt::session_stats_alert>( *it ))
+					{
+						UpdateCounters(p->counters(), lt::duration_cast<lt::microseconds>(p->timestamp().time_since_epoch()).count());
+						return;
+					}
+					break;
+				case lt::torrent_paused_alert::alert_type:
+					if (lt::torrent_paused_alert* p = lt::alert_cast<lt::torrent_paused_alert>( *it ))
+					{
+						lt::torrent_handle& h = p->handle;
+						lt::torrent_status st = h.status(lt::torrent_handle::query_name);
+						if (st.has_metadata)
+							h.save_resume_data(lt::torrent_handle::save_info_dict);
+						
+						log_severity = 1;
+						event_string << _T("Torrent paused: ") << wxString::FromUTF8(p->message().c_str());
+						if (h.is_valid())
+						{
+							log_severity = 4;
+							InfoHash thash(h.info_hash());
+							wxMutexLocker ml(m_torrent_queue_lock);
+							torrents_map::iterator it = m_running_torrent_map.find(wxString(thash));
+							if (it != m_running_torrent_map.end())
+							{
+								std::shared_ptr<torrent_t> torrent = BitTorrentSession::GetTorrent(it->second);
+								wxASSERT(torrent);
+								torrent->config->SetTorrentState(TORRENT_STATE_PAUSE);
+								torrent->config->Save();
+							}
+						}
+					}
+					break;
 				case lt::peer_ban_alert::alert_type:
 					if( lt::peer_ban_alert* p = lt::alert_cast<lt::peer_ban_alert>( *it ) )
 					{
@@ -2179,47 +2236,6 @@ void BitTorrentSession::HandleTorrentAlert()
 						SaveTorrentResumeData(p);
 						lt::torrent_handle& h = p->handle;
 						event_string << h.status(lt::torrent_handle::query_name).name << _T( ": " ) << wxString::FromUTF8(p->message().c_str());
-					}
-					break;
-				case lt::save_resume_data_failed_alert::alert_type:
-					if (lt::save_resume_data_failed_alert* p = lt::alert_cast<lt::save_resume_data_failed_alert>( *it ))
-					{
-						lt::torrent_handle & h = p->handle;
-						log_severity = 1;
-						event_string << _T("FAILED TO SAVE RESUME DATA:: ") << wxString::FromUTF8(p->message().c_str());
-
-						if (h.is_valid() && p->error != lt::errors::resume_data_not_modified)
-						{
-							log_severity = 4;
-							InfoHash thash(h.info_hash());
-							wxMutexLocker ml(m_torrent_queue_lock);
-							torrents_map::iterator it = m_running_torrent_map.find(wxString(thash));
-							if (it != m_running_torrent_map.end())
-							{
-								m_libbtsession->remove_torrent(h);
-								std::shared_ptr<torrent_t> torrent = BitTorrentSession::GetTorrent(it->second);
-								wxASSERT(torrent);
-								torrent->config->SetTorrentState(TORRENT_STATE_STOP);
-								torrent->config->Save();
-							}
-						}
-					}
-					break;
-				case lt::session_stats_alert::alert_type:
-					if (lt::session_stats_alert* p = lt::alert_cast<lt::session_stats_alert>( *it ))
-					{
-						UpdateCounters(p->counters(), lt::duration_cast<lt::microseconds>(p->timestamp().time_since_epoch()).count());
-						return;
-					}
-					break;
-				case lt::torrent_paused_alert::alert_type:
-					if (lt::torrent_paused_alert* p = lt::alert_cast<lt::torrent_paused_alert>( *it ))
-					{
-						lt::torrent_handle& h = p->handle;
-						lt::torrent_status st = h.status(lt::torrent_handle::query_name);
-						if (st.has_metadata)
-							h.save_resume_data(lt::torrent_handle::save_info_dict);
-						return;
 					}
 					break;
 				case lt::stats_alert::alert_type:
@@ -2364,6 +2380,13 @@ bool BitTorrentSession::HandleAddTorrentAlert(lt::add_torrent_alert *p)
 			if( state == TORRENT_STATE_FORCE_START || state == TORRENT_STATE_START )
 			{
 				StartTorrent( torrent, (state == TORRENT_STATE_FORCE_START) );
+			}
+			else if (state == TORRENT_STATE_PAUSE)
+			{
+				if (p->handle.is_valid())
+				{
+					p->handle.pause(lt::torrent_handle::graceful_pause);
+				}
 			}
 		}
 		else

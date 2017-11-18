@@ -189,7 +189,9 @@ void TorrentConfig::ReadFilesPriority()
 	while( tokens.HasMoreTokens() )
 	{
 		wxString token = tokens.GetNextToken();
-		m_files_priority.push_back(lt::download_priority_t(wxAtoi( token )) );
+		std::uint8_t pr = wxAtoi(token);
+		if (pr > 7) pr = 4;
+		m_files_priority.push_back(lt::download_priority_t(pr) );
 	}
 }
 

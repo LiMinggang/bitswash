@@ -138,6 +138,7 @@ wxString TorrentListCtrl::GetItemValue( long item, long columnid ) const
 		_( "Allocating" ),
 		_( "Checking resume data" )
 	};
+	static unsigned int state_size = ( sizeof( state_str ) / ( sizeof( wxChar * ) ) );
 
 	wxString ret;
 
@@ -173,14 +174,13 @@ wxString TorrentListCtrl::GetItemValue( long item, long columnid ) const
 		}
 		else
 		{
-			/*if( ( torrent->config->GetTorrentState() == TORRENT_STATE_PAUSE ) ||
-					( torrentstatus.paused ) )
+			if( torrent->config->GetTorrentState() == TORRENT_STATE_PAUSE )
 			{
 				ret = _( "Paused" );
 			}
-			else*/
+			else
 			{
-				if( torrentstatus.state < ( sizeof( state_str ) / ( sizeof( wxChar * ) ) ) )
+				if( torrentstatus.state < state_size )
 				{ ret = wxString::Format( _T( "%s" ), state_str[torrentstatus.state] ); }
 				else
 				{ ret = _( "Error!" ); }
