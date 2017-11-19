@@ -59,7 +59,8 @@ class SummaryPane;
 class TorrentProperty;
 class MagnetUriHanlder;
 
-wxDECLARE_EVENT( SHOW_HIDE_TRAYICON, wxCommandEvent );
+//wxDECLARE_EVENT( SHOW_HIDE_TRAYICON, wxCommandEvent );
+wxDECLARE_EVENT( CHECK_METADATA, wxCommandEvent );
 
 class MainFrame: public wxFrame
 {
@@ -72,6 +73,7 @@ public:
 	void TorrentOperationMenu( wxMenu* torrentmenu );
 	void UpdateUI(bool force = false);
 	void UpdateSelectedTorrent();
+	void TorrentMetadataReceived();
 
 	std::shared_ptr<torrent_t> GetSelectedTorrent() ;
 	std::shared_ptr<torrent_t> GetTorrent(int idx) { return m_btsession->GetTorrent(idx);}
@@ -121,6 +123,7 @@ private:
 
 	void AddTorrent( wxString filename, bool usedefault = false );
 	void RemoveTorrent( bool deletedata );
+	void OnTorrentMetadata( wxCommandEvent& event );
 	void OnMenuOpenTorrent( wxCommandEvent& event );
 	void OnMenuOpenTorrentUrl( wxCommandEvent& event );
 	void ToDo( wxCommandEvent& event );

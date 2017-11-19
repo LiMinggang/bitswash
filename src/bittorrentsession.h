@@ -101,6 +101,7 @@ typedef struct torrent_handle_t {
 typedef std::vector<std::shared_ptr<torrent_t> > torrents_t;
 typedef std::map<wxString, int> torrents_map;
 typedef std::set<wxString> torrents_set;
+typedef std::vector<wxString> metadata_t;
 
 class BitTorrentSession : public wxThread
 {
@@ -124,12 +125,14 @@ public:
 	bool AddTorrent(std::shared_ptr<torrent_t>& torrent);
 	void RemoveTorrent(std::shared_ptr<torrent_t>& torrent, bool deletedata);
 	int FindTorrent(const wxString &hash);
+	std::shared_ptr<torrent_t> GetTorrent(const wxString &hash);
 	std::shared_ptr<torrent_t> GetTorrent(int idx);
 	void MergeTorrent(std::shared_ptr<torrent_t>& dst_torrent, std::shared_ptr<torrent_t>& src_torrent);
 	void MergeTorrent(std::shared_ptr<torrent_t>& dst_torrent, MagnetUri& src_magneturi);
 
 	std::shared_ptr<torrent_t> ParseTorrent(const wxString& filename);
 	std::shared_ptr<torrent_t> LoadMagnetUri( MagnetUri& magneturi );
+	void UpdateTorrentFileSize(std::shared_ptr<torrent_t>& torrent);
 	void LoadMagnetUri( const wxString& magneturi );
 	bool SaveTorrent(std::shared_ptr<torrent_t>& torrent, const wxString& filename);
 	
@@ -159,7 +162,7 @@ public:
 	void ConfigureTorrentFilesPriority( int idx );
 	void ConfigureTorrentTrackers( int idx );
 	void ConfigureTorrent( int idx );
-
+	void GetPendingMetadata(metadata_t & mdq);
 	//lt::session* GetLibTorrent() { return m_libbtsession;}
 
 	void HandleTorrentAlert();
@@ -203,6 +206,8 @@ private:
 	torrents_t m_torrent_queue;
 	torrents_map m_running_torrent_map;
 	torrents_set m_queue_torrent_set;
+	wxMutex m_metadata_queue_lock;
+	metadata_t m_metadata_queue;
 
 	wxApp* m_pParent;
 	Configuration* m_config;

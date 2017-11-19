@@ -73,6 +73,7 @@
 #include "magneturihandler.h"
 
 //namespace lt = libtorrent;
+wxDEFINE_EVENT( CHECK_METADATA, wxCommandEvent );
 
 #ifndef __WXMSW__
 #include "languages.h"
@@ -161,16 +162,24 @@ MainFrame::wxUIUpdateEvtHandlerMap_t MainFrame::m_menu_ui_updater_map[] =
 	{ ID_TORRENT_OPENDIR, &MainFrame::OnUpdateUI_MenuTorrent },
 };
 
-MainFrame * g_BitSwashMainFrame = 0;
+MainFrame * g_BitSwashMainFrame = nullptr;
+
+void TorrentMetadataNotify( )
+{
+	if( g_BitSwashMainFrame )
+	{
+		g_BitSwashMainFrame->TorrentMetadataReceived();
+	}
+}
 
 MainFrame::MainFrame( wxFrame *frame, const wxString& title )
 	: wxFrame( frame, -1, title ),
-	  m_btsession( 0 ), m_torrentmenu( 0 ), m_languagemenu( 0 ),
-	  m_torrentpane( 0 ), m_torrentinfo( 0 ), m_torrentlistctrl( 0 ),
-	  m_peerlistctrl( 0 ), m_filelistctrl( 0 ), m_summarypane( 0 ),
-	  m_trackerlistctrl( 0 ), m_config( 0 ), m_torrentproperty( 0 ),
-	  m_swashsetting( 0 ), m_swashstatbar( 0 ), m_oldlog( 0 ),
-	  m_swashtrayicon( NULL ),
+	  m_btsession( nullptr ), m_torrentmenu( nullptr ), m_languagemenu( nullptr ),
+	  m_torrentpane( nullptr ), m_torrentinfo( nullptr ), m_torrentlistctrl( nullptr ),
+	  m_peerlistctrl( nullptr ), m_filelistctrl( nullptr ), m_summarypane( nullptr ),
+	  m_trackerlistctrl( nullptr ), m_config( nullptr ), m_torrentproperty( nullptr ),
+	  m_swashsetting( nullptr ), m_swashstatbar( nullptr ), m_oldlog( nullptr ),
+	  m_swashtrayicon( nullptr ),
 	  m_upnp_started( false ),
 	  m_natpmp_started( false ),
 	  m_lsd_started( false ),
@@ -250,6 +259,7 @@ MainFrame::MainFrame( wxFrame *frame, const wxString& title )
 		Bind( wxEVT_UPDATE_UI, m_menu_ui_updater_map[i].method, this, m_menu_ui_updater_map[i].evtTag );
 	}
 
+	Bind( CHECK_METADATA, &MainFrame::OnTorrentMetadata, this );
 	Bind( wxEVT_MENU_OPEN, &MainFrame::OnMenuOpen, this );
 	
 	Bind( wxEVT_SIZE, &MainFrame::OnSize, this );
@@ -635,7 +645,6 @@ void MainFrame::CreateTorrentList()
 			flags );
 }
 
-
 void MainFrame::ReceiveTorrent( wxString fileorurl )
 {
 	if( g_BitSwashMainFrame )
@@ -649,6 +658,13 @@ void MainFrame::ReceiveTorrent( wxString fileorurl )
 			g_BitSwashMainFrame->AddTorrent( filename, true );
 		}
 	}
+}
+
+void MainFrame::TorrentMetadataReceived( )
+{
+	wxCommandEvent event( CHECK_METADATA );
+	event.SetEventObject( this );
+	AddPendingEvent( event );
 }
 
 /* parse torrent file and add to session */
@@ -736,6 +752,52 @@ void MainFrame::OpenTorrent()
 			AddTorrent( paths[n], false );
 		}
 		if(count) m_btsession->PostQueueUpdateEvent();
+	}
+}
+
+void MainFrame::OnTorrentMetadata( wxCommandEvent& WXUNUSED( event ) )
+{
+	metadata_t mdq;
+	m_btsession->GetPendingMetadata(mdq);
+	if(!mdq.empty())
+	{
+		std::shared_ptr<torrent_t> torrent;
+		for(auto& hash : mdq)
+		{
+			torrent = m_btsession->GetTorrent( hash );
+			if(torrent && torrent->isvalid)
+			{
+				m_btsession->UpdateTorrentFileSize(torrent);
+				
+				if(torrent->config->GetTrackersURL().size() <= 0 )
+				{
+					std::vector<lt::announce_entry> trackers = torrent->handle.trackers();
+					torrent->config->SetTrackersURL( trackers );
+				}
+
+				if( torrent->handle.status().has_metadata )
+				{
+					wxString torrent_backup = wxGetApp().SaveTorrentsPath() + wxString(torrent->hash) + _T( ".torrent" );
+					m_btsession->SaveTorrent( torrent, torrent_backup );
+				}
+
+				if( !m_config->GetUseDefault() )
+				{
+					TorrentProperty torrent_property_dlg( torrent, this, wxID_ANY );
+				
+					if( torrent_property_dlg.ShowModal() != wxID_OK )
+					{
+						wxLogMessage( _T( "Canceled by user" ) );
+						return;
+					}
+					
+				}
+				
+				m_btsession->StartTorrent(torrent, false);
+				//m_btsession->PostQueueUpdateEvent();
+				UpdateUI();
+			}
+		}
 	}
 }
 

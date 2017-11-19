@@ -880,6 +880,17 @@ int BitTorrentSession::FindTorrent( const wxString &hash )
 	return idx;
 }
 
+std::shared_ptr<torrent_t> BitTorrentSession::GetTorrent( const wxString &hash )
+{
+	wxMutexLocker ml(m_torrent_queue_lock);
+	int idx = find_torrent_from_hash(hash);
+
+	if( idx >= 0 )
+		return m_torrent_queue.at( idx );
+	else
+		return std::shared_ptr<torrent_t>();
+}
+
 std::shared_ptr<torrent_t> BitTorrentSession::GetTorrent( int idx )
 {
 	std::shared_ptr<torrent_t> torrent;
@@ -1228,8 +1239,9 @@ std::shared_ptr<torrent_t> BitTorrentSession::ParseTorrent( const wxString& file
 					std::vector<lt::announce_entry> trackers = t->trackers();
 					torrent->config->SetTrackersURL( trackers );
 				}
-
+				
 				torrent->isvalid = true;
+				UpdateTorrentFileSize(torrent);
 			}
 			else
 			{
@@ -1300,6 +1312,34 @@ std::shared_ptr<torrent_t> BitTorrentSession::LoadMagnetUri( MagnetUri& magnetur
 	}
 
 	return torrent;
+}
+
+void BitTorrentSession::UpdateTorrentFileSize(std::shared_ptr<torrent_t>& torrent)
+{
+	if(torrent->info && torrent->info->is_valid())
+	{
+		bool nopriority = false;
+		wxULongLong_t total_selected = 0, total = 0;
+		lt::torrent_info const& t_info = *(torrent->info);
+		lt::file_storage const& allfiles = t_info.files();
+		std::vector<lt::download_priority_t> filespriority = torrent->config->GetFilesPriorities();
+	
+		if (filespriority.size() != t_info.num_files())
+		{
+			nopriority = true;
+		}
+	
+		for (lt::file_index_t i(0); i < lt::file_index_t(t_info.num_files()); ++i)
+		{
+			if (nopriority || filespriority[int32_t(i)] != lt::download_priority_t(BITTORRENT_FILE_NONE))
+			{
+				total_selected += allfiles.file_size(i);
+			}
+			total += allfiles.file_size(i);
+		}
+		torrent->config->SetSelectedSize(total_selected);
+		torrent->config->SetTotalSize(total);
+	}
 }
 
 bool BitTorrentSession::SaveTorrent( std::shared_ptr<torrent_t>& torrent, const wxString& filename )
@@ -2348,35 +2388,6 @@ bool BitTorrentSession::HandleAddTorrentAlert(lt::add_torrent_alert *p)
 				}
 			}
 
-			if(torrent->info && torrent->info->is_valid())
-			{
-			 	bool nopriority = false;
-				wxULongLong_t total_selected = 0, total = 0;
-				lt::torrent_info const& t_info = *(torrent->info);
-				lt::file_storage const& allfiles = t_info.files();
-				std::vector<lt::download_priority_t> filespriority = torrent->config->GetFilesPriorities();
-
-				if (filespriority.size() != t_info.num_files())
-				{
-					nopriority = true;
-				}
-				/*0--unchecked_xpm*/
-				/*1--checked_xpm*/
-				/*2--unchecked_dis_xpm*/
-				/*3--checked_dis_xpm*/
-
-				for (lt::file_index_t i(0); i < lt::file_index_t(t_info.num_files()); ++i)
-				{
-					if (nopriority || filespriority[int32_t(i)] != lt::download_priority_t(BITTORRENT_FILE_NONE))
-					{
-						total_selected += allfiles.file_size(i);
-					}
-					total += allfiles.file_size(i);
-				}
-				torrent->config->SetSelectedSize(total_selected);
-				torrent->config->SetTotalSize(total);
-			}
-
 			if( state == TORRENT_STATE_FORCE_START || state == TORRENT_STATE_START )
 			{
 				StartTorrent( torrent, (state == TORRENT_STATE_FORCE_START) );
@@ -2411,36 +2422,50 @@ bool BitTorrentSession::HandleAddTorrentAlert(lt::add_torrent_alert *p)
 	return true;
 }
 
+extern void TorrentMetadataNotify( );
 bool BitTorrentSession::HandleMetaDataAlert(lt::metadata_received_alert *p)
 {
 	wxASSERT(p->handle.is_valid());
+	p->handle.pause(lt::torrent_handle::graceful_pause);
 	InfoHash thash(p->handle.info_hash());
-	
+	wxString hashstr(thash);
+
 	wxMutexLocker ml( m_torrent_queue_lock );
-	torrents_map::iterator it = m_running_torrent_map.find(wxString(thash));
+	torrents_map::iterator it = m_running_torrent_map.find(hashstr);
 	if(it != m_running_torrent_map.end())
 	{
 		std::shared_ptr<torrent_t> torrent = GetTorrent(it->second);
 		
+		wxASSERT(torrent);
 		lt::torrent_status st = (p->handle).status(lt::torrent_handle::query_name);
 		wxASSERT(st.has_metadata);
-		wxString torrent_backup = wxGetApp().SaveTorrentsPath() + wxString(torrent->hash) + _T( ".torrent" );
 		p->handle.save_resume_data(lt::torrent_handle::save_info_dict);
 		torrent->handle = p->handle;
 		torrent->info.reset(new lt::torrent_info(*(p->handle.torrent_file())));
 		torrent->name = st.name;
-		SaveTorrent(torrent, torrent_backup );
-		
-		if(torrent->config->GetTrackersURL().size() <= 0 )
+
 		{
-			std::vector<lt::announce_entry> trackers = p->handle.trackers();
-			torrent->config->SetTrackersURL( trackers );
+			wxMutexLocker ml( m_metadata_queue_lock );
+			m_metadata_queue.push_back(hashstr);
+			TorrentMetadataNotify();
 		}
-		StartTorrent(torrent, false);
+
+		//StartTorrent(torrent, false);
 		return true;
 	}
 
 	return false;
+}
+
+void BitTorrentSession::GetPendingMetadata(metadata_t & mdq)
+{
+	mdq.clear();
+	wxMutexLocker ml( m_metadata_queue_lock );
+	if(!m_metadata_queue.empty())
+	{
+		mdq.swap(m_metadata_queue);
+		//m_metadata_queue.clear();
+	}
 }
 
 void BitTorrentSession::PostStatusUpdate()
