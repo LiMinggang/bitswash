@@ -960,7 +960,7 @@ void BitTorrentSession::ScanTorrentsDirectory( const wxString& dirname )
 
 	if( !torrents_dir.IsOpened() )
 	{
-		wxLogWarning( _T( "Error opening directory %s for processing\n" ), wxGetApp().SaveTorrentsPath().c_str() );
+		wxLogWarning( _( "Error opening directory %s for processing\n" ), wxGetApp().SaveTorrentsPath().c_str() );
 		return ;
 	}
 

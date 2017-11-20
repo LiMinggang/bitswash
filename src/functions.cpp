@@ -80,10 +80,10 @@ wxString HumanReadableTime(unsigned long second)
 	mins = (second%hour)/min;
 	secs = (second%min);
 	wxString time;
-	if(days) time << days << _("D");
-	if(hours) time << hours << _("H");
-	if(mins) time << mins << _("M");
-	if(secs) time << secs << _("S");
+	if(days) time << days << _("d");
+	if(hours) time << hours << _("h");
+	if(mins) time << mins << _("m");
+	if(secs) time << secs << _("s");
 	return time;
 }
 

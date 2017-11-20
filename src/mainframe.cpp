@@ -639,7 +639,7 @@ void MainFrame::CreateTorrentInfo()
 /* torrents queue display area (main area) */
 void MainFrame::CreateTorrentList()
 {
-	long flags = wxLC_REPORT | wxLC_VIRTUAL | wxSUNKEN_BORDER;
+	long flags = wxLC_REPORT | wxLC_VIRTUAL | wxSUNKEN_BORDER | wxVSCROLL;
 	m_torrentlistctrl = new TorrentListCtrl( this, m_config->GetTorrentListCtrlSetting(), wxID_ANY,
 			wxDefaultPosition, wxDefaultSize,
 			flags );

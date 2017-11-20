@@ -2724,8 +2724,7 @@ namespace libtorrent {
 		req.downloaded = m_stat.total_payload_download() - m_total_failed_bytes;
 		req.uploaded = m_stat.total_payload_upload();
 		req.corrupt = m_total_failed_bytes;
-		req.left = bytes_left();
-		if (req.left == -1) req.left = 16*1024;
+		req.left = value_or(bytes_left(), 16*1024);
 #ifdef TORRENT_USE_OPENSSL
 		// if this torrent contains an SSL certificate, make sure
 		// any SSL tracker presents a certificate signed by it
@@ -3467,11 +3466,11 @@ namespace libtorrent {
 	}
 	catch (...) { handle_exception(); }
 
-	std::int64_t torrent::bytes_left() const
+	boost::optional<std::int64_t> torrent::bytes_left() const
 	{
 		// if we don't have the metadata yet, we
 		// cannot tell how big the torrent is.
-		if (!valid_metadata()) return -1;
+		if (!valid_metadata()) return {};
 		return m_torrent_file->total_size()
 			- quantized_bytes_done();
 	}
@@ -9972,7 +9971,7 @@ namespace libtorrent {
 		remove_web_seed_iter(i);
 	}
 
-	void torrent::retry_web_seed(peer_connection* p, int retry)
+	void torrent::retry_web_seed(peer_connection* p, boost::optional<seconds32> const retry)
 	{
 		TORRENT_ASSERT(is_single_thread());
 		auto const i = std::find_if(m_web_seeds.begin(), m_web_seeds.end()
@@ -9981,8 +9980,8 @@ namespace libtorrent {
 		TORRENT_ASSERT(i != m_web_seeds.end());
 		if (i == m_web_seeds.end()) return;
 		if (i->removed) return;
-		if (retry == 0) retry = settings().get_int(settings_pack::urlseed_wait_retry);
-		i->retry = aux::time_now32() + seconds32(retry);
+		i->retry = aux::time_now32() + value_or(retry, seconds32(
+			settings().get_int(settings_pack::urlseed_wait_retry)));
 	}
 
 	torrent_state torrent::get_peer_list_state()
