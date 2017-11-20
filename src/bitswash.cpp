@@ -428,8 +428,7 @@ bool BitSwash::GetCountryCode(const wxString& ip/*IN*/, bool isIpv4/*IN*/, wxStr
 		{
 			// code is IP actually
 			GeoIPLookup gl;
-			const char * ccode = nullptr;
-			ccode = GeoIP_country_code3_by_addr_v6_gl(m_geoipv6, ip.ToStdString().c_str(), &gl);
+			const char * ccode = GeoIP_country_code3_by_addr_v6_gl(m_geoipv6, ip.ToStdString().c_str(), &gl);
 			if(ccode)
 			{
 				code = wxString::FromAscii(ccode);

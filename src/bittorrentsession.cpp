@@ -271,7 +271,7 @@ void BitTorrentSession::OnExit()
 	delete m_libbtsession;
 	{
 		wxMutexLocker ml( m_torrent_queue_lock );
-		m_torrent_queue.empty();
+		m_torrent_queue.clear();
 		//m_torrent_queue.swap( m_torrent_queue );
 	}
 }
