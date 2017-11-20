@@ -954,6 +954,9 @@
     <ClInclude Include="..\..\..\libtorrent\include\libtorrent\aux_\win_util.hpp">
       <Filter>Header Files\libtorrent\aux</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\..\libtorrent\include\libtorrent\optional.hpp">
+      <Filter>Header Files\libtorrent</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="..\..\..\src\bitswash.rc">

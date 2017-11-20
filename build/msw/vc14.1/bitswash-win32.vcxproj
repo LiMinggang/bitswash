@@ -365,6 +365,7 @@
     <ClInclude Include="..\..\..\libtorrent\include\libtorrent\netlink.hpp" />
     <ClInclude Include="..\..\..\libtorrent\include\libtorrent\network_thread_pool.hpp" />
     <ClInclude Include="..\..\..\libtorrent\include\libtorrent\operations.hpp" />
+    <ClInclude Include="..\..\..\libtorrent\include\libtorrent\optional.hpp" />
     <ClInclude Include="..\..\..\libtorrent\include\libtorrent\packet_buffer.hpp" />
     <ClInclude Include="..\..\..\libtorrent\include\libtorrent\packet_pool.hpp" />
     <ClInclude Include="..\..\..\libtorrent\include\libtorrent\parse_url.hpp" />
