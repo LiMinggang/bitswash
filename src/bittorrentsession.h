@@ -144,6 +144,8 @@ public:
 	void PauseTorrent(std::shared_ptr<torrent_t>& torrent);
 	void MoveTorrentUp(std::shared_ptr<torrent_t>& torrent);
 	void MoveTorrentDown(std::shared_ptr<torrent_t>& torrent);
+	void MoveTorrentTop(std::shared_ptr<torrent_t>& torrent);
+	void MoveTorrentBottom(std::shared_ptr<torrent_t>& torrent);
 	void ReannounceTorrent(std::shared_ptr<torrent_t>& torrent);
 	void RecheckTorrent(std::shared_ptr<torrent_t>& torrent);
 	void ConfigureTorrent(std::shared_ptr<torrent_t>& torrent);
@@ -157,6 +159,8 @@ public:
 	void PauseTorrent( int idx );
 	void MoveTorrentUp( int idx );
 	void MoveTorrentDown( int idx );
+	void MoveTorrentTop( int idx );
+	void MoveTorrentBottom( int idx );
 	void ReannounceTorrent( int idx );
 	void RecheckTorrent(int idx);
 	void ConfigureTorrentFilesPriority( int idx );
