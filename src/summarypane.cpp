@@ -62,36 +62,28 @@ SummaryPane::SummaryPane(wxWindow *parent,
 
 	//SetMinSize(wxSize(500,100));
 	GetClientSize(&w, &h);
-	
 	m_summarypane_sizer = new wxFlexGridSizer( 0, 1, 3, 0 );
 	m_summarypane_sizer->SetFlexibleDirection( wxBOTH );
 	m_summarypane_sizer->SetDimension(0, 0, w-50, -1);
 	m_summarypane_sizer->SetMinSize(500, -1);
 
-	
 	m_pane_info = new wxPanel( this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL );
 	m_pane_info->SetBackgroundColour( wxSystemSettings::GetColour( wxSYS_COLOUR_ACTIVECAPTION) );
 	//m_pane_info->SetSize(0, 0, w-50, 30, wxSIZE_AUTO);
 	m_pane_info->SetMaxSize( wxSize( -1,20 ) );
-	
 	wxBoxSizer* m_pane_boxsizer;
 	m_pane_boxsizer = new wxBoxSizer( wxVERTICAL );
 	//m_pane_boxsizer->SetDimension(0,0,w-50, -1);
-	
 	m_pane_label_info = new wxStaticText( m_pane_info, wxID_ANY, _("Info"), wxDefaultPosition, wxDefaultSize, 0 );
 	m_pane_boxsizer->Add( m_pane_label_info, 0, wxALL, 2 );
-	
 	m_pane_info->SetSizer( m_pane_boxsizer );
 	m_pane_info->Layout();
 	m_summarypane_sizer->Add( m_pane_info, 1, wxEXPAND | wxALL, 3 );
 
-	
 	m_label_saveas = new wxStaticText( this, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize,0 );
 	//m_label_saveas->SetMinSize (wxSize(300, -1));
 	//m_label_saveas->Wrap(w-50);
-	
 	m_summarypane_sizer->Add( m_label_saveas, 0, wxALL, 3 );
-	
 	wxFlexGridSizer* m_status_info_sizer;
 	m_status_info_sizer = new wxFlexGridSizer( 0, 3, 3, 0 );
 	m_status_info_sizer->AddGrowableCol( 0 );
@@ -99,58 +91,39 @@ SummaryPane::SummaryPane(wxWindow *parent,
 	m_status_info_sizer->AddGrowableCol( 2 );
 	m_status_info_sizer->SetFlexibleDirection( wxBOTH);
 	m_status_info_sizer->SetMinSize(wxSize(500, -1));
-	
 	m_label_size = new wxStaticText( this, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, 0 );
 	m_status_info_sizer->Add( m_label_size, 0, wxALL, 3 );
-	
 	m_label_pieces = new wxStaticText( this, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, 0 );
 	m_status_info_sizer->Add( m_label_pieces, 0, wxALL, 3 );
-	
 	m_status_info_sizer->Add( 0, 0, 1, wxEXPAND, 0 );
-	
 	m_label_peers = new wxStaticText( this, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, 0 );
 	m_status_info_sizer->Add( m_label_peers, 0, wxALL, 3 );
-	
 	m_label_seeds = new wxStaticText( this, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, 0 );
 	m_status_info_sizer->Add( m_label_seeds, 0, wxALL, 3 );
-	
 	m_status_info_sizer->Add( 0, 0, 1, wxEXPAND, 0 );
-	
 	m_label_downspeed = new wxStaticText( this, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, 0 );
 	m_status_info_sizer->Add( m_label_downspeed, 0, wxALL, 3 );
-	
 	m_label_upspeed = new wxStaticText( this, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, 0 );
 	m_status_info_sizer->Add( m_label_upspeed, 0, wxALL, 3 );
-	
 	m_status_info_sizer->Add( 0, 0, 1, wxEXPAND, 0 );
-	
 	m_label_downlimit = new wxStaticText( this, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, 0 );
 	m_status_info_sizer->Add( m_label_downlimit, 0, wxALL, 3 );
-	
 	m_label_uplimit = new wxStaticText( this, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, 0 );
 	m_status_info_sizer->Add( m_label_uplimit, 0, wxALL, 3 );
-	
 	m_status_info_sizer->Add( 0, 0, 1, wxEXPAND, 0 );
-	
 	m_label_downloaded = new wxStaticText( this, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, 0 );
 	m_status_info_sizer->Add( m_label_downloaded, 0, wxALL, 3 );
-	
 	m_label_uploaded = new wxStaticText( this, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, 0 );
 	m_status_info_sizer->Add( m_label_uploaded, 0, wxALL, 3 );
-	
 	m_label_ratio = new wxStaticText( this, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, 0 );
 	m_status_info_sizer->Add( m_label_ratio, 0, wxALL, 3 );
-	
-	
 	m_summarypane_sizer->Add( m_status_info_sizer, 1, wxEXPAND, 3 );
 
 	m_label_hash = new wxStaticText( this, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, 0 );
 	m_summarypane_sizer->Add( m_label_hash, 0, wxALL, 3 );
-	
 	m_label_comment_static = new wxStaticText( this, wxID_ANY, _("Comment:"), wxDefaultPosition, wxDefaultSize, 0 );
 
 	m_summarypane_sizer->Add( m_label_comment_static, 0, wxALL, 3 );
-	
 	m_text_comment = new wxTextCtrl( this, wxID_ANY, wxEmptyString, wxDefaultPosition, wxSize(w-50, 80), wxTE_AUTO_URL | wxTE_BESTWRAP | wxTE_MULTILINE | wxTE_READONLY);
 	//m_label_comment = new wxStaticText( this, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, 0 );
 	//m_label_comment->SetMinSize( wxSize(-1, 50));
@@ -161,17 +134,13 @@ SummaryPane::SummaryPane(wxWindow *parent,
 	m_pane_tracker = new wxPanel( this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL );
 	m_pane_tracker->SetBackgroundColour( wxSystemSettings::GetColour( wxSYS_COLOUR_ACTIVECAPTION) );
 	m_pane_tracker->SetMaxSize( wxSize( -1,20 ) );
-	
 	wxBoxSizer* m_pane_boxsizer1;
 	m_pane_boxsizer1 = new wxBoxSizer( wxVERTICAL );
-	
 	m_pane_label_tracker = new wxStaticText( m_pane_tracker, wxID_ANY, _("Tracker"), wxDefaultPosition, wxDefaultSize, 0 );
 	m_pane_boxsizer1->Add( m_pane_label_tracker, 0, wxALL, 2 );
-	
 	m_pane_tracker->SetSizer( m_pane_boxsizer1 );
 	m_pane_tracker->Layout();
 	m_summarypane_sizer->Add( m_pane_tracker, 1, wxEXPAND | wxALL, 3 );
-	
 	m_label_tracker_url = new wxStaticText( this, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, 0 );
 
 	m_summarypane_sizer->Add( m_label_tracker_url, 0, wxALL, 3 );
@@ -182,23 +151,17 @@ SummaryPane::SummaryPane(wxWindow *parent,
 	m_status_tracker_sizer->AddGrowableCol( 1 );
 	m_status_tracker_sizer->AddGrowableCol( 2 );
 	m_status_tracker_sizer->SetFlexibleDirection( wxBOTH);
-	
-	
+
 	m_label_trackerstatus = new wxStaticText( this, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, 0 );
 	m_status_tracker_sizer->Add( m_label_trackerstatus, 0, wxALL, 3 );
-	
 	m_label_nextupdate = new wxStaticText( this, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, 0 );
 	m_status_tracker_sizer->Add( m_label_nextupdate, 0, wxALL, 3 );
-	
 	m_status_tracker_sizer->Add( 0, 0, 1, wxEXPAND, 0 );
-	
-	
+
 	m_summarypane_sizer->Add( m_status_tracker_sizer, 1, wxEXPAND, 3 );
 
 	m_label_dht = new wxStaticText( this, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, 0 );
 	m_summarypane_sizer->Add( m_label_dht, 0, wxALL, 3 );
-	
-	
 	this->SetSizer( m_summarypane_sizer );
 	this->Layout();
 
@@ -208,7 +171,6 @@ SummaryPane::SummaryPane(wxWindow *parent,
 
 	SetScrollbars(20,20,5,5);
 }
-
 
 SummaryPane::~SummaryPane()
 {
@@ -428,7 +390,6 @@ void SummaryPane::ResetSummary()
 	UpdatePieces(wxEmptyString);
 
 	UpdateHash(wxEmptyString);
-	
 	UpdatePeers(wxEmptyString);
 	UpdateSeeds(wxEmptyString);
 
