@@ -191,6 +191,7 @@ public:
 	bool HasInComingConns() { return (m_cnt[0][m_has_incoming_connections_idx] > 0 ? true : false); }
 	void PostStatusUpdate();
 	void UpdateCounters(lt::span<std::int64_t const>& stats_counters, boost::uint64_t t);
+	void DHTStatusToString(wxString & status);
 
 private:
 	void ScanTorrentsDirectory(const wxString& dirname);
@@ -212,6 +213,11 @@ private:
 	torrents_set m_queue_torrent_set;
 	wxMutex m_metadata_queue_lock;
 	metadata_t m_metadata_queue;
+
+	wxMutex m_dht_status_lock;
+	bool m_dht_changed;
+	std::vector<lt::dht_lookup> m_dht_active_requests;
+	std::vector<lt::dht_routing_bucket> m_dht_routing_table;
 
 	wxApp* m_pParent;
 	Configuration* m_config;

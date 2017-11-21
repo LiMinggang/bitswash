@@ -53,7 +53,8 @@ SummaryPane::SummaryPane(wxWindow *parent,
 {
 	TorrentInfo* tInfo = dynamic_cast<TorrentInfo *> (parent);
 	wxASSERT(tInfo != 0);
-	m_pMainFrame = tInfo->GetMainFrame();
+	m_pMainFrame = dynamic_cast< MainFrame* >(tInfo->GetMainFrame());
+	wxASSERT(m_pMainFrame != nullptr);
 
 	int w,h;
 
@@ -222,7 +223,7 @@ SummaryPane::~SummaryPane()
 void SummaryPane::UpdateSummary()
 {
 	//wxLogDebug(_T("UpdateSummary\n"));
-	std::shared_ptr<torrent_t> pTorrent = (dynamic_cast< MainFrame* >(m_pMainFrame))->GetSelectedTorrent();
+	std::shared_ptr<torrent_t> pTorrent = m_pMainFrame->GetSelectedTorrent();
 
 	if ( !pTorrent )
 	{
@@ -270,26 +271,52 @@ void SummaryPane::UpdateSummary()
 	UpdateUploaded((h.is_valid() && s.has_metadata)?HumanReadableByte( s.total_payload_upload):_T("0b"));
 	//TODO: Calculate ratio
 
+	wxString turl(wxT("")), tstatus(wxT("")), nupdate(wxT(""));
 	if (h.is_valid())
 	{
 		if(s.total_payload_download >0)
 			UpdateRatio(wxString::Format(_T("%.02f"), (wxDouble) s.total_payload_upload/ (wxDouble)s.total_payload_download));
 		else
 			UpdateRatio(_T("inf"));
+		if(s.has_metadata)
+		{
+
+			turl = wxString::FromUTF8(s.current_tracker.c_str());
+			nupdate = wxString::Format(_T("%s"), HumanReadableTime(s.next_announce.count()));
+			std::vector<lt::announce_entry>& trackers = pTorrent->handle.trackers();
+			for(auto & tracker: trackers)
+			{
+				if(tracker.url == s.current_tracker)
+				{
+					auto best_ae = std::min_element(tracker.endpoints.begin(), tracker.endpoints.end()
+						, [](lt::announce_endpoint const& l, lt::announce_endpoint const& r) { return l.fails < r.fails; } );
+					if(tracker.verified && (best_ae != tracker.endpoints.end()))
+					{
+						if(best_ae->is_working()) tstatus = _("Working");
+						else tstatus = wxString(best_ae->last_error.message());
+					}
+					else
+						tstatus = _("Not connected");
+				}
+			}
+		}
 	}
 
 	if(t && t->is_valid())
 		UpdateComment(wxString(wxConvUTF8.cMB2WC(t->comment().c_str())));
 
-	UpdateTrackerUrl((h.is_valid() && s.has_metadata)?wxString::FromUTF8(s.current_tracker.c_str()):_T(""));
-	//
-	//TODO: findout tracker status
-	//UpdateTrackerStatus();
-	//
-	UpdateNextUpdate((h.is_valid() && s.has_metadata)?wxString::Format(_T("%s"), HumanReadableTime(s.next_announce.count())):_T(""));
+	UpdateTrackerUrl(turl);
+	UpdateTrackerStatus(tstatus);
 
-	// TODO: DHT status?
-	//UpdateDht();
+	UpdateNextUpdate(nupdate);
+
+	// DHT status
+	wxString dhts(wxT(""));
+	m_pMainFrame->GetDHTStatus(dhts);
+	if(!dhts.IsEmpty())
+	{
+		UpdateDht(dhts);
+	}
 
 	wxFlexGridSizer *m_summarypane_sizer = (wxFlexGridSizer *)GetSizer();
 	//this->SetClientSize(m_summarypane_sizer->GetSize());

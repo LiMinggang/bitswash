@@ -25,8 +25,10 @@
 #include <wx/filename.h>
 
 #include "torrentinfo.h"
+#include "trackerlistctrl.h"
 #include "filelistctrl.h"
 #include "functions.h"
+#include "mainframe.h"
 
 // resources
 #include "../icons/checked.xpm"

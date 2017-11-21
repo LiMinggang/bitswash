@@ -27,6 +27,7 @@
 #include "trackerlistctrl.h"
 #include "functions.h"
 
+#include "mainframe.h"
 //namespace lt = libtorrent;
 
 enum
@@ -104,7 +105,7 @@ wxString TrackerListCtrl::GetItemValue(long item, long columnid) const
 
 	wxString t_name = wxEmptyString;
 
-	std::vector<lt::announce_entry>& const trackers = pTorrent->config->GetTrackersURL();
+	std::vector<lt::announce_entry>& trackers = pTorrent->config->GetTrackersURL();
 	if(pTorrent->handle.is_valid())
 		trackers = pTorrent->handle.trackers();
 
@@ -115,7 +116,8 @@ wxString TrackerListCtrl::GetItemValue(long item, long columnid) const
 		return ret;
 
 	}
-	lt::announce_entry tracker= trackers.at(item);
+
+	lt::announce_entry tracker = trackers.at(item);
 	
 	auto best_ae = std::min_element(tracker.endpoints.begin(), tracker.endpoints.end()
 		, [](lt::announce_endpoint const& l, lt::announce_endpoint const& r) { return l.fails < r.fails; } );

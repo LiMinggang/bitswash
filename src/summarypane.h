@@ -28,8 +28,7 @@
 #include <wx/sizer.h>
 #include <wx/scrolwin.h>
 
-#include "mainframe.h"
-#include "torrentinfo.h"
+class MainFrame;
 
 class SummaryPane :  public wxScrolledWindow
 {
@@ -95,8 +94,7 @@ private:
 	void UpdateDht(wxString s); 
 	void ResetSummary();
 
-	wxFrame* m_pMainFrame;
-
+	MainFrame* m_pMainFrame;
 
 private:
 };

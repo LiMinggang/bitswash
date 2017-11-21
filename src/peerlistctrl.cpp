@@ -100,9 +100,8 @@ PeerListCtrl::~PeerListCtrl()
 wxString PeerListCtrl::GetItemValue(long item, long columnid) const
 {
 	wxString ret(_T(""));
-	PeerListCtrl* pThis = const_cast<PeerListCtrl*>(this);
 
-	MainFrame* pMainFrame = dynamic_cast<MainFrame *>( wxGetApp().GetTopWindow() );
+	MainFrame * pMainFrame = dynamic_cast<MainFrame *>( wxGetApp().GetTopWindow() );
 	wxASSERT(pMainFrame != 0);
 
 	const PeerListCtrl::peer_list_t *peers_list = pMainFrame->GetPeersList();
@@ -126,18 +125,21 @@ wxString PeerListCtrl::GetItemValue(long item, long columnid) const
 
 	//wxLogDebug(_T("PeerListCtrl::Showing %d items "), peers_list->size());
 
-	lt::address c_ip = peer_info.ip.address();
 
 	switch (columnid)
 	{
 	case PEERLIST_COLUMN_IP:
-		ret = wxString(c_ip.to_string());
+		{
+			lt::address c_ip = peer_info.ip.address();
+			ret = wxString(c_ip.to_string());
+		}
 		break;
 	case PEERLIST_COLUMN_COUNTRY:
 		{
 #ifdef USE_LIBGEOIP
 		static BitSwash& bitSwachApp = wxGetApp();
 		//ret = (_T("--"));
+		lt::address c_ip = peer_info.ip.address();
 		bitSwachApp.GetCountryCode(wxString(c_ip.to_string()), (peer_info.ip.protocol() == boost::asio::ip::tcp::v4()), ret);
 #else
 		ret = wxString(peer_info.country, sizeof(peer_info.country) / sizeof(peer_info.country[0]));

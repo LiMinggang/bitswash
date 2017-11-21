@@ -92,12 +92,9 @@ std::string to_hex(lt::sha1_hash const& s)
 }
 
 BitTorrentSession::BitTorrentSession( wxApp* pParent, Configuration* config, wxMutex *mutex/* = 0*/, wxCondition *condition/* = 0*/ )
-	: wxThread( wxTHREAD_JOINABLE ), m_upnp_started( false ), m_natpmp_started( false ), m_lsd_started( false ), m_libbtsession( 0 )
+	: wxThread( wxTHREAD_JOINABLE ), m_upnp_started( false ), m_natpmp_started( false ), m_lsd_started( false ), m_libbtsession( 0 ), m_dht_changed(true), 
+	m_pParent(pParent), m_config(config), m_condition(condition), m_mutex(mutex)
 {
-	m_pParent = pParent;
-	m_config = config;
-	m_condition = condition;
-    m_mutex = mutex;
 	//boost::filesystem::path::default_name_check(boost::filesystem::no_check);
 	using lt::find_metric_idx;
 
@@ -2263,6 +2260,35 @@ void BitTorrentSession::HandleTorrentAlert()
 						}
 					}
 					break;
+				case lt::metadata_received_alert::alert_type:
+					if( lt::metadata_received_alert* p = lt::alert_cast<lt::metadata_received_alert>( *it ) )
+					{
+						event_string << _T( "Metadata: " ) << wxString::FromUTF8(p->message().c_str());
+						HandleMetaDataAlert(p);
+					}
+					break;
+				case lt::save_resume_data_alert::alert_type:
+					if( lt::save_resume_data_alert *p = lt::alert_cast<lt::save_resume_data_alert>( *it ) )
+					{
+						SaveTorrentResumeData(p);
+						lt::torrent_handle& h = p->handle;
+						event_string << h.status(lt::torrent_handle::query_name).name << _T( ": " ) << wxString::FromUTF8(p->message().c_str());
+					}
+					break;
+				case lt::dht_stats_alert::alert_type:
+					if (lt::dht_stats_alert* p = lt::alert_cast<lt::dht_stats_alert>(*it))
+					{
+						{
+							wxMutexLocker ml(m_dht_status_lock);
+							m_dht_changed = true;
+							m_dht_active_requests = p->active_requests;
+							m_dht_routing_table = p->routing_table;
+						}
+						log_severity = 1;
+						event_string << _T("[") << (*it)->type() << _T("]") << wxString::FromUTF8((*it)->message().c_str());
+							//if(event_string.IsEmpty()) return;
+					}
+					break;
 				case lt::peer_ban_alert::alert_type:
 					if( lt::peer_ban_alert* p = lt::alert_cast<lt::peer_ban_alert>( *it ) )
 					{
@@ -2356,13 +2382,6 @@ void BitTorrentSession::HandleTorrentAlert()
 						event_string << _T( "Metadata: " ) << wxString::FromUTF8(p->message().c_str());
 					}
 					break;
-				case lt::metadata_received_alert::alert_type:
-					if( lt::metadata_received_alert* p = lt::alert_cast<lt::metadata_received_alert>( *it ) )
-					{
-						event_string << _T( "Metadata: " ) << wxString::FromUTF8(p->message().c_str());
-						HandleMetaDataAlert(p);
-					}
-					break;
 				case lt::fastresume_rejected_alert::alert_type:
 					if( lt::fastresume_rejected_alert* p = lt::alert_cast<lt::fastresume_rejected_alert>( *it ) )
 					{
@@ -2370,17 +2389,8 @@ void BitTorrentSession::HandleTorrentAlert()
 						event_string << _T( "Fastresume: " ) << wxString::FromUTF8(p->message().c_str());
 					}
 					break;
-				case lt::save_resume_data_alert::alert_type:
-					if( lt::save_resume_data_alert *p = lt::alert_cast<lt::save_resume_data_alert>( *it ) )
-					{
-						SaveTorrentResumeData(p);
-						lt::torrent_handle& h = p->handle;
-						event_string << h.status(lt::torrent_handle::query_name).name << _T( ": " ) << wxString::FromUTF8(p->message().c_str());
-					}
-					break;
 				case lt::stats_alert::alert_type:
 				case lt::state_update_alert::alert_type:
-				case lt::dht_stats_alert::alert_type:
 				case lt::piece_finished_alert::alert_type:
 				case lt::block_finished_alert::alert_type:
 				case lt::block_downloading_alert::alert_type:
@@ -2598,5 +2608,55 @@ void BitTorrentSession::UpdateCounters(lt::span<std::int64_t const>& stats_count
 		m_upload_rate = (m_cnt[0][m_sent_payload_idx] - m_cnt[1][m_sent_payload_idx])
 			/ seconds;
 	}
+}
+
+void BitTorrentSession::DHTStatusToString(wxString & status)
+{
+	static wxString lastStatus;
+	static char const* progress_bar =
+		"################################"
+		"################################"
+		"################################"
+		"################################";
+	static char const* short_progress_bar = "--------";
+	int bucket = 0;
+	{
+		wxMutexLocker ml(m_dht_status_lock);
+		if (m_dht_changed == true)
+		{
+			for (lt::dht_routing_bucket const& n : m_dht_routing_table)
+			{
+				lastStatus = wxString::Format(wxT("%3d [%3d, %d] %s%s\x1b[K\n")
+					, bucket, n.num_nodes, n.num_replacements
+					, progress_bar + (128 - n.num_nodes)
+					, short_progress_bar + (8 - (std::min)(8, n.num_replacements)));
+			}
+
+			for (lt::dht_lookup const& l : m_dht_active_requests)
+			{
+				lastStatus += wxString::Format(wxT("  %10s target: %s "
+					"[limit: %2d] "
+					"in-flight: %-2d "
+					"left: %-3d "
+					"1st-timeout: %-2d "
+					"timeouts: %-2d "
+					"responses: %-2d "
+					"last_sent: %-2d "
+					"\x1b[K\n")
+					, l.type
+					, to_hex(l.target).c_str()
+					, l.branch_factor
+					, l.outstanding_requests
+					, l.nodes_left
+					, l.first_timeout
+					, l.timeouts
+					, l.responses
+					, l.last_sent);
+			}
+
+			m_dht_changed = false;
+		}
+	}
+	status = lastStatus;
 }
 

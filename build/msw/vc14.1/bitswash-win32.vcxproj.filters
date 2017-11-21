@@ -1018,9 +1018,6 @@
     <ClCompile Include="..\..\..\src\swashtrayicon.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\libtorrent\src\torrent_info.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\..\src\torrentconfig.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -1569,6 +1566,9 @@
     </ClCompile>
     <ClCompile Include="..\..\..\libtorrent\src\kademlia\sample_infohashes.cpp">
       <Filter>Source Files\libtorrent\kademlia</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\libtorrent\src\torrent_info.cpp">
+      <Filter>Source Files\libtorrent</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

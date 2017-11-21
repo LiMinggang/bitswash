@@ -35,6 +35,8 @@
 #include "filelistctrl.h"
 #include "loggerctrl.h"
 
+class TrackerListCtrl;
+
 class TorrentInfo : public wxAuiNotebook
 {
 public:
