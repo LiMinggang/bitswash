@@ -28,11 +28,8 @@
 #include <libtorrent/address.hpp>
 #include <libtorrent/peer_info.hpp>
 #include "bitswash.h"
-#include "summarypane.h"
-#include "peerlistctrl.h"
-#include "filelistctrl.h"
-#include "loggerctrl.h"
 #include "torrentinfo.h"
+#include "peerlistctrl.h"
 #include "mainframe.h"
 #include "functions.h"
 

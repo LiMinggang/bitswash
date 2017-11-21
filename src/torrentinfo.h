@@ -30,10 +30,12 @@
 #include <wx/panel.h>
 #include <wx/textctrl.h>
 
-class PeerListCtrl;
-class SummaryPane;
+#include "summarypane.h"
+#include "peerlistctrl.h"
+#include "filelistctrl.h"
+#include "loggerctrl.h"
+
 class TrackerListCtrl;
-class LoggerCtrl;
 class MainFrame;
 class TorrentInfo : public wxAuiNotebook
 {
