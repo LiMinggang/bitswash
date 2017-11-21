@@ -1607,10 +1607,6 @@ void BitTorrentSession::MoveTorrentBottom( std::shared_ptr<torrent_t>& torrent )
 			break;
 		}
 		bottom_qindex = next_qindex;
-		if(current_torrent->handle.is_valid())
-		{
-			current_torrent->handle.queue_position_down();
-		}
 		
 		m_torrent_queue[i + 1]->config->SetQIndex( m_torrent_queue[i]->config->GetQIndex() );
 		m_torrent_queue[i + 1]->config->Save();
@@ -1620,6 +1616,10 @@ void BitTorrentSession::MoveTorrentBottom( std::shared_ptr<torrent_t>& torrent )
 	}
 	if(next_qindex == bottom_qindex) ++i;
 
+	if(current_torrent->handle.is_valid())
+	{
+		current_torrent->handle.queue_position_bottom();
+	}
 	current_torrent->config->SetQIndex( bottom_qindex );
 	current_torrent->config->Save();
 	m_torrent_queue[i] = current_torrent;
@@ -1667,12 +1667,12 @@ void BitTorrentSession::MoveTorrentTop( std::shared_ptr<torrent_t>& torrent )
 		m_torrent_queue[idx - 1]->config->Save();
 		m_torrent_queue[idx] = m_torrent_queue[idx - 1];
 		m_running_torrent_map[wxString(m_torrent_queue[idx]->hash)] = idx;
-		if(current_torrent->handle.is_valid())
-		{
-			current_torrent->handle.queue_position_up();
-		}
 	}
 
+	if(current_torrent->handle.is_valid())
+	{
+		current_torrent->handle.queue_position_top();
+	}
 	current_torrent->config->SetQIndex( qindex );
 	current_torrent->config->Save();
 	m_torrent_queue[0] = current_torrent;
