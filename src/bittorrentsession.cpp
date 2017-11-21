@@ -696,7 +696,7 @@ void BitTorrentSession::AddTorrentToSession( std::shared_ptr<torrent_t>& torrent
 		//p.upload_limit = torrent_upload_limit;
 		//p.download_limit = torrent_download_limit;
 
-		if (torrent->config->GetTorrentState() != TORRENT_STATE_PAUSE)
+		if (torrent->config->GetTorrentState() == TORRENT_STATE_PAUSE)
 			p.flags |= lt::torrent_flags::paused;
 		p.flags &= ~lt::torrent_flags::duplicate_is_error;
 		p.flags &= ~lt::torrent_flags::auto_managed;
@@ -2244,20 +2244,6 @@ void BitTorrentSession::HandleTorrentAlert()
 						
 						log_severity = 1;
 						event_string << _T("Torrent paused: ") << wxString::FromUTF8(p->message().c_str());
-						if (h.is_valid())
-						{
-							log_severity = 4;
-							InfoHash thash(h.info_hash());
-							wxMutexLocker ml(m_torrent_queue_lock);
-							torrents_map::iterator it = m_running_torrent_map.find(wxString(thash));
-							if (it != m_running_torrent_map.end())
-							{
-								std::shared_ptr<torrent_t> torrent = BitTorrentSession::GetTorrent(it->second);
-								wxASSERT(torrent);
-								torrent->config->SetTorrentState(TORRENT_STATE_PAUSE);
-								torrent->config->Save();
-							}
-						}
 					}
 					break;
 				case lt::metadata_received_alert::alert_type:
