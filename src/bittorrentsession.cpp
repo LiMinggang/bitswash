@@ -1283,6 +1283,10 @@ std::shared_ptr<torrent_t> BitTorrentSession::LoadMagnetUri( MagnetUri& magnetur
 					p.flags &= ~lt::torrent_flags::duplicate_is_error; // Already checked
 					// Solution to avoid accidental file writes
 					p.flags |= lt::torrent_flags::upload_mode;
+					p.max_connections = m_config->GetMaxConnections();
+					p.max_uploads = m_config->GetMaxUploads();
+					p.upload_limit = m_config->GetDefaultUploadLimit();
+					p.download_limit = m_config->GetDefaultDownloadLimit();
 
 					// Adding torrent to BitTorrent session
 					torrent->config->SetTorrentState( TORRENT_STATE_START );
