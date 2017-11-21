@@ -1026,8 +1026,6 @@ void MainFrame::UpdateUI(bool force/* = false*/)
 						m_trackerlistctrl->SetItemCount( torrent->config->GetTrackersURL().size() );
 					}
 				}
-				WXLOGDEBUG(( _T( "UpdateSummary\n" )));
-				m_summarypane->UpdateSummary();
 			}
 			else
 			{

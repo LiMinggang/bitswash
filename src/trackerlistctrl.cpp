@@ -104,7 +104,9 @@ wxString TrackerListCtrl::GetItemValue(long item, long columnid) const
 
 	wxString t_name = wxEmptyString;
 
-	const std::vector<lt::announce_entry>& trackers = pTorrent->handle.trackers();
+	std::vector<lt::announce_entry>& const trackers = pTorrent->config->GetTrackersURL();
+	if(pTorrent->handle.is_valid())
+		trackers = pTorrent->handle.trackers();
 
 	if (item >= trackers.size())
 	{
