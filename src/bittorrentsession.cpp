@@ -2624,9 +2624,10 @@ void BitTorrentSession::DHTStatusToString(wxString & status)
 		wxMutexLocker ml(m_dht_status_lock);
 		if (m_dht_changed == true)
 		{
+			lastStatus = wxT("\n");
 			for (lt::dht_routing_bucket const& n : m_dht_routing_table)
 			{
-				lastStatus = wxString::Format(wxT("%3d [%3d, %d] %s%s\x1b[K\n")
+				lastStatus += wxString::Format(wxT("%3d [%3d, %d] %s%s\n")
 					, bucket, n.num_nodes, n.num_replacements
 					, progress_bar + (128 - n.num_nodes)
 					, short_progress_bar + (8 - (std::min)(8, n.num_replacements)));
@@ -2641,8 +2642,7 @@ void BitTorrentSession::DHTStatusToString(wxString & status)
 					"1st-timeout: %-2d "
 					"timeouts: %-2d "
 					"responses: %-2d "
-					"last_sent: %-2d "
-					"\x1b[K\n")
+					"last_sent: %-2d\n")
 					, l.type
 					, to_hex(l.target).c_str()
 					, l.branch_factor

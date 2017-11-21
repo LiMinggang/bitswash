@@ -225,9 +225,9 @@ void SummaryPane::UpdateSummary()
 			UpdateRatio(_T("inf"));
 		if(s.has_metadata)
 		{
-
 			turl = wxString::FromUTF8(s.current_tracker.c_str());
-			nupdate = wxString::Format(_T("%s"), HumanReadableTime(s.next_announce.count()));
+			
+			nupdate = wxString::Format(_T("%s"), HumanReadableTime(int(lt::total_seconds(s.next_announce))));
 			std::vector<lt::announce_entry>& trackers = pTorrent->handle.trackers();
 			for(auto & tracker: trackers)
 			{
