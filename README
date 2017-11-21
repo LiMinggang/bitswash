@@ -33,11 +33,11 @@ New: Add/remove/copy tracker
 New: Crash dumper
 New: Start on OS startup(Windows only)
 New: Associate .torrent to this application
-New: GeoIP support
+New: GeoIP support(v4/v6)
 Fix: Clear zombie torrent in UI controls
 Performance improvement
 Change help&forum URL to github
-Update libtorrent to 1.1.5
+Update libtorrent to latest
 
 
 Author:
