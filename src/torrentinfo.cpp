@@ -23,6 +23,10 @@
 //
 
 #include "mainframe.h"
+#include "summarypane.h"
+#include "peerlistctrl.h"
+#include "filelistctrl.h"
+#include "loggerctrl.h"
 #include "torrentinfo.h"
 
 //namespace lt = libtorrent;
@@ -48,6 +52,7 @@ TorrentInfo::TorrentInfo(wxWindow *parent,
 	Configuration* config = wxGetApp().GetConfig();
 
 	m_pMainFrame = (wxFrame*)parent;
+	wxASSERT(m_pMainFrame != nullptr);
 
 	m_summarypane = new SummaryPane(this, wxID_ANY, wxDefaultPosition, wxSize(size.GetWidth(), -1));
     InsertPage(BW_TORRENTINFO_SUMMARY, m_summarypane, _("Status") );

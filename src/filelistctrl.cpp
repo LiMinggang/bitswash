@@ -24,9 +24,10 @@
 #include <wx/utils.h> 
 #include <wx/filename.h>
 
-#include "torrentinfo.h"
 #include "trackerlistctrl.h"
 #include "filelistctrl.h"
+#include "torrentinfo.h"
+
 #include "functions.h"
 #include "mainframe.h"
 

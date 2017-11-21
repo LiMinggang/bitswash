@@ -23,8 +23,12 @@
 //
 
 #include <wx/clipbrd.h>
-#include "torrentinfo.h"
 #include "trackerlistctrl.h"
+#include "summarypane.h"
+#include "peerlistctrl.h"
+#include "filelistctrl.h"
+#include "loggerctrl.h"
+#include "torrentinfo.h"
 #include "functions.h"
 
 #include "mainframe.h"

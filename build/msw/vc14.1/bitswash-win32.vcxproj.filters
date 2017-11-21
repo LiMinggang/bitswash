@@ -1264,9 +1264,6 @@
     <ClCompile Include="..\..\..\libtorrent\src\torrent_handle.cpp">
       <Filter>Source Files\libtorrent</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\src\torrentinfo.cpp">
-      <Filter>Source Files\libtorrent</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\..\libtorrent\src\tracker_manager.cpp">
       <Filter>Source Files\libtorrent</Filter>
     </ClCompile>
@@ -1569,6 +1566,9 @@
     </ClCompile>
     <ClCompile Include="..\..\..\libtorrent\src\torrent_info.cpp">
       <Filter>Source Files\libtorrent</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\src\torrentinfo.cpp">
+      <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
