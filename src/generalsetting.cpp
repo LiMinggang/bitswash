@@ -26,6 +26,7 @@
 #include <wx/log.h>
 
 #include "mainframe.h"
+#include "configuration.h"
 #include "generalsetting.h"
 #include "functions.h"
 
@@ -35,11 +36,9 @@ GeneralSettingPane::GeneralSettingPane( wxWindow* parent,
 			wxSize size, 
 			int style): wxPanel(parent, id, pos, size, style)
 {
-	m_pMainFrame = dynamic_cast<wxFrame *>( wxGetApp().GetTopWindow() );
-	wxASSERT(m_pMainFrame != 0);
-	MainFrame* pMainFrame = dynamic_cast<MainFrame *>( m_pMainFrame );
-	wxASSERT(pMainFrame != 0);
-	m_pcfg = pMainFrame->GetConfig();
+	m_pMainFrame = dynamic_cast<MainFrame *>( wxGetApp().GetTopWindow() );
+	wxASSERT(m_pMainFrame != nullptr);
+	m_pcfg = m_pMainFrame->GetConfig();
 
 	wxFlexGridSizer* fgSizerMain;
 	fgSizerMain = new wxFlexGridSizer( 0, 1, 0, 0 );
@@ -234,7 +233,7 @@ bool GeneralSettingPane::GetHideTaskbar()
 void GeneralSettingPane::OnUseSystray(wxCommandEvent& event)
 {
 	bool usesystray = m_check_usesystray->GetValue();
-	( dynamic_cast< MainFrame* >( m_pMainFrame ))->ShowSystray(usesystray);
+	m_pMainFrame->ShowSystray(usesystray);
 
 	m_pcfg->SetUseSystray(usesystray);
 	

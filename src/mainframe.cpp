@@ -957,6 +957,7 @@ void MainFrame::UpdateUI(bool force/* = false*/)
 {
 	wxASSERT( m_btsession != 0 );
 	WXLOGDEBUG(( _T( "UpdateUI\n" )));
+	static std::shared_ptr<torrent_t> invalid_torrent;
 
 	if(force || (this->IsShown() && !this->IsIconized()))
 	{
@@ -979,10 +980,11 @@ void MainFrame::UpdateUI(bool force/* = false*/)
 				std::shared_ptr<torrent_t> torrent = m_btsession->GetTorrent( selecteditems[0] );
 				if(!torrent || !torrent->isvalid)
 				{
-					m_filelistctrl->SetStaticHandle(std::shared_ptr<torrent_t>(nullptr));
+					m_filelistctrl->SetStaticHandle(invalid_torrent);
 					m_filelistctrl->SetItemCount( 0 );
-					m_trackerlistctrl->SetStaticHandle(std::shared_ptr<torrent_t>(nullptr));
+					m_trackerlistctrl->SetStaticHandle(invalid_torrent);
 					m_trackerlistctrl->SetItemCount( 0 );
+					m_peerlistctrl->SetItemCount( 0 );
 					return;
 				}
 
@@ -1037,11 +1039,11 @@ void MainFrame::UpdateUI(bool force/* = false*/)
 		}
 		else
 		{
-			std::shared_ptr<torrent_t> torrent;
-			m_filelistctrl->SetStaticHandle(torrent);
+			m_filelistctrl->SetStaticHandle( invalid_torrent );
 			m_filelistctrl->SetItemCount( 0 );
-			m_trackerlistctrl->SetStaticHandle( torrent );
+			m_trackerlistctrl->SetStaticHandle( invalid_torrent );
 			m_trackerlistctrl->SetItemCount( 0 );
+			m_peerlistctrl->SetItemCount( 0 );
 		}
 
 		WXLOGDEBUG(( _T( "UpdateTorrentInfo\n" )));

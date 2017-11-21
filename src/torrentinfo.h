@@ -34,7 +34,7 @@ class PeerListCtrl;
 class SummaryPane;
 class TrackerListCtrl;
 class LoggerCtrl;
-
+class MainFrame;
 class TorrentInfo : public wxAuiNotebook
 {
 public:
@@ -47,7 +47,7 @@ public:
 	 ~TorrentInfo();
 
 	 void UpdateTorrentInfo(bool updateall);
-	 wxFrame* GetMainFrame() { return m_pMainFrame; }
+	 MainFrame* GetMainFrame() { return m_pMainFrame; }
 	 LoggerCtrl* GetLogger() { return m_logger_panel;}
 
 	 PeerListCtrl* GetPeerListCtrl() { return m_peerspane ; }
@@ -64,7 +64,7 @@ private:
 	void OnNotebookChanged(wxAuiNotebookEvent& event);
 	LoggerCtrl* m_logger_panel;
 
-	wxFrame* m_pMainFrame;
+	MainFrame* m_pMainFrame;
 };
 
 

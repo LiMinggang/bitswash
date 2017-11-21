@@ -28,7 +28,7 @@
 #include <wx/wx.h>
 #include <wx/statusbr.h>
 
-
+class MainFrame;
 class SwashStatBar: public wxStatusBar
 {
 public:
@@ -47,7 +47,7 @@ private:
 		BAR_FIELD_MAX,
 	} SwashBarField;
 
-	wxFrame* m_pMainFrame;
+	MainFrame* m_pMainFrame;
 };
 
 #endif // BITSWASH_H

@@ -27,6 +27,7 @@
 #include <wx/log.h>
 
 #include "mainframe.h"
+#include "configuration.h"
 #include "extensionsetting.h"
 
 ExtensionSettingPane::ExtensionSettingPane( wxWindow* parent,
@@ -35,8 +36,9 @@ ExtensionSettingPane::ExtensionSettingPane( wxWindow* parent,
         wxSize size,
         int style ): wxPanel( parent, id, pos, size, style )
 {
-    m_pMainFrame = ( wxFrame* )wxGetApp().GetTopWindow();
-    m_pcfg = ( dynamic_cast< MainFrame* >( m_pMainFrame ))->GetConfig();
+    m_pMainFrame = dynamic_cast< MainFrame* >(wxGetApp().GetTopWindow());
+	wxASSERT(m_pMainFrame != nullptr);
+    m_pcfg = m_pMainFrame->GetConfig();
     wxFlexGridSizer* fgSizerMain;
     fgSizerMain = new wxFlexGridSizer( 0, 1, 0, 0 );
     fgSizerMain->SetFlexibleDirection( wxBOTH );

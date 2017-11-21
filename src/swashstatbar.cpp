@@ -39,23 +39,20 @@ SwashStatBar::SwashStatBar(wxWindow* parent): wxStatusBar(parent, wxID_ANY), Swa
 	SetFieldsCount(BAR_FIELD_MAX);
 	SetStatusWidths(BAR_FIELD_MAX, widths);
 
-	m_pMainFrame = (wxFrame*)parent;
-
+	m_pMainFrame = dynamic_cast<MainFrame*>(parent);
+	wxASSERT(m_pMainFrame);
 }
 
 SwashStatBar::~SwashStatBar()
 {
-
 }
 
 void SwashStatBar::UpdateStatBar()
 {
-	MainFrame *pMainFrame = dynamic_cast<MainFrame*>(m_pMainFrame);
+	SetStatusText(m_pMainFrame->GetStatusDownloadRate(), BAR_FIELD_DOWNLOADRATE );
+	SetStatusText(m_pMainFrame->GetStatusUploadRate(), BAR_FIELD_UPLOADRATE );
 
-	SetStatusText(pMainFrame->GetStatusDownloadRate(), BAR_FIELD_DOWNLOADRATE );
-	SetStatusText(pMainFrame->GetStatusUploadRate(), BAR_FIELD_UPLOADRATE );
-
-	wxString peersdht = wxString::Format(_("Peers: %s DHT: %s"), pMainFrame->GetStatusPeers().c_str(), pMainFrame->GetStatusDHT().c_str());
+	wxString peersdht = wxString::Format(_("Peers: %s DHT: %s"), m_pMainFrame->GetStatusPeers().c_str(), m_pMainFrame->GetStatusDHT().c_str());
 	SetStatusText(peersdht, BAR_FIELD_PEERS );
-	SetStatusText(pMainFrame->GetStatusIncoming(), BAR_FIELD_INCOMING);
+	SetStatusText(m_pMainFrame->GetStatusIncoming(), BAR_FIELD_INCOMING);
 }

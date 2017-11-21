@@ -39,7 +39,7 @@
 #include <wx/choice.h>
 #include <wx/wfstream.h>
 
-
+class MainFrame;
 class LoggerCtrl: public wxPanel, wxLog
 {
 public:
@@ -57,7 +57,7 @@ public:
 	void Update();
 
 private:
-	wxFrame* m_pMainFrame;
+	MainFrame* m_pMainFrame;
 	Configuration* m_pcfg;
 	wxLog* m_oldlog;
 

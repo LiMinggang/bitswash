@@ -32,12 +32,12 @@
 #include <wx/spinctrl.h>
 #include <wx/stattext.h>
 
-#include "configuration.h"
-
 #ifndef ID_GENERALSETTING_START
 #define ID_GENERALSETTING_START wxID_HIGHEST
 #endif
 
+class Configuration;
+class MainFrame;
 class GeneralSettingPane :  public wxPanel
 {
 public:
@@ -61,7 +61,7 @@ public:
     static wxString m_startup_regkey;
 #endif
 private:
-	wxFrame* m_pMainFrame;
+	MainFrame* m_pMainFrame;
 	Configuration *m_pcfg;
 
 	wxPanel* m_pane_infogeneral;

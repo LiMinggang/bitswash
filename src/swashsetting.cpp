@@ -29,6 +29,7 @@
 #include "bitswash.h"
 #include "swashsetting.h"
 #include "bittorrentsession.h"
+#include "mainframe.h"
 
 SwashSetting::SwashSetting( wxWindow* parent, Configuration *pcfg, int id, wxString title, wxPoint pos, wxSize size, int style ) : wxDialog( parent, id, title, pos, size, style )
 {

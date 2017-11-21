@@ -53,7 +53,7 @@ SummaryPane::SummaryPane(wxWindow *parent,
 {
 	TorrentInfo* tInfo = dynamic_cast<TorrentInfo *> (parent);
 	wxASSERT(tInfo != 0);
-	m_pMainFrame = dynamic_cast< MainFrame* >(tInfo->GetMainFrame());
+	m_pMainFrame = tInfo->GetMainFrame();
 	wxASSERT(m_pMainFrame != nullptr);
 
 	int w,h;

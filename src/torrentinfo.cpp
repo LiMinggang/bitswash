@@ -51,7 +51,7 @@ TorrentInfo::TorrentInfo(wxWindow *parent,
 {
 	Configuration* config = wxGetApp().GetConfig();
 
-	m_pMainFrame = (wxFrame*)parent;
+	m_pMainFrame = dynamic_cast<MainFrame *>(parent);
 	wxASSERT(m_pMainFrame != nullptr);
 
 	m_summarypane = new SummaryPane(this, wxID_ANY, wxDefaultPosition, wxSize(size.GetWidth(), -1));
