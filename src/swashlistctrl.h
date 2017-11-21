@@ -90,7 +90,7 @@ public:
 
     SwashListCtrl(wxWindow *parent,
 			   long num_cols = 0,
-			   SwashColumnItem *columns = NULL,
+			   SwashColumnItem *columns = nullptr,
 			   const wxString settings = wxEmptyString,
                const wxWindowID id = wxID_ANY,
                const wxPoint& pos = wxDefaultPosition,
@@ -99,7 +99,7 @@ public:
 
 	virtual ~SwashListCtrl();
 
-	void Init(long num_cols = 0, SwashColumnItem *columns= NULL);
+	void Init(long num_cols = 0, SwashColumnItem *columns = nullptr);
 
 	bool Create(wxWindow* parent, 
 					wxWindowID id, 
@@ -115,7 +115,7 @@ public:
 
 	void UpdateSwashList();
 	/* returns list of selected items */
-	itemlist_t GetSelectedItems() const;
+	void GetSelectedItems(itemlist_t & items) const;
 	
 protected:
 

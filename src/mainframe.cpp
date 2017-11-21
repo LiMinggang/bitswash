@@ -390,9 +390,9 @@ void MainFrame::OnMenuTorrentOpenDir( wxCommandEvent& event )
 	{
 		//XXX windows might needs special treatment here!
 #if  defined(__WXMSW__)
-		wxExecute( _T( "Explorer " ) + pTorrent->config->GetDownloadPath(), wxEXEC_ASYNC, NULL );
+		wxExecute( _T( "Explorer " ) + pTorrent->config->GetDownloadPath(), wxEXEC_ASYNC, nullptr );
 #elif defined(__APPLE__)
-		wxExecute( _T( "/usr/bin/open ") + pTorrent->config->GetDownloadPath(), wxEXEC_ASYNC, NULL );
+		wxExecute( _T( "/usr/bin/open ") + pTorrent->config->GetDownloadPath(), wxEXEC_ASYNC, nullptr );
 #elif defined(__WXGTK__)
 		wxString loc = _T( "file://" ) + pTorrent->config->GetDownloadPath();
 		//SystemOpenURL( loc );
@@ -494,7 +494,7 @@ wxMenuBar* MainFrame::CreateMainMenuBar()
 		{
 			const wxLanguageInfo * const langinfo = wxLocale::FindLanguageInfo( strlang );
 
-			if( langinfo == NULL )
+			if( langinfo == nullptr )
 			{
 				wxLogError( _T( "Language %s is not available\n" ), strlang.c_str() );
 				i++;
@@ -970,7 +970,8 @@ void MainFrame::UpdateUI(bool force/* = false*/)
 
 		if( torrent_queue_size > 0 )
 		{
-			const SwashListCtrl::itemlist_t selecteditems = m_torrentlistctrl->GetSelectedItems();
+			SwashListCtrl::itemlist_t selecteditems;
+			m_torrentlistctrl->GetSelectedItems(selecteditems);
 
 			/* selected more than 1 item in the torrent list */
 			if( selecteditems.size() > 0 )
@@ -978,8 +979,13 @@ void MainFrame::UpdateUI(bool force/* = false*/)
 				std::shared_ptr<torrent_t> torrent = m_btsession->GetTorrent( selecteditems[0] );
 				if(!torrent || !torrent->isvalid)
 				{
+					m_filelistctrl->SetStaticHandle(std::shared_ptr<torrent_t>(nullptr));
+					m_filelistctrl->SetItemCount( 0 );
+					m_trackerlistctrl->SetStaticHandle(std::shared_ptr<torrent_t>(nullptr));
+					m_trackerlistctrl->SetItemCount( 0 );
 					return;
 				}
+
 				lt::torrent_handle &torrent_handle = torrent->handle;
 				WXLOGDEBUG(( _T( "MainFrame: list size %s selected items %s\n" ), ( wxLongLong( torrent_queue_size ).ToString() ).c_str(), ( wxLongLong( selecteditems.size() ).ToString() ).c_str() ));
 
@@ -991,10 +997,10 @@ void MainFrame::UpdateUI(bool force/* = false*/)
 						torrent_handle.get_peer_info( m_peerlistitems );
 						m_peerlistctrl->SetItemCount( m_peerlistitems.size() );
 
-						if( m_peerlistitems.size() > 0 )
+						/*if( m_peerlistitems.size() > 0 )
 						{
 							m_peerlistctrl->UpdateSwashList();
-						}
+						}*/
 					}
 				}
 				else
@@ -1170,7 +1176,8 @@ void MainFrame::OnUpdateUI_MenuTorrent( wxUpdateUIEvent& event )
 
 	if( m_btsession && m_btsession->GetTorrentQueueSize() > 0 )
 	{
-		const SwashListCtrl::itemlist_t selecteditems = m_torrentlistctrl->GetSelectedItems();
+		SwashListCtrl::itemlist_t selecteditems;
+		m_torrentlistctrl->GetSelectedItems(selecteditems);
 		/* selected more than 1 item in the torrent list */
 		size_t total = selecteditems.size();
 
@@ -1297,9 +1304,9 @@ void MainFrame::OnMenuViewToolbar( wxCommandEvent& event )
 
 void MainFrame::OnMenuTorrentStart( wxCommandEvent& event )
 {
-	int i = 0;
 	WXLOGDEBUG(( _T( "MainFrame: OnMenuTorrentStart\n" ) ));
-	const SwashListCtrl::itemlist_t selecteditems = m_torrentlistctrl->GetSelectedItems();
+	SwashListCtrl::itemlist_t selecteditems;
+	m_torrentlistctrl->GetSelectedItems(selecteditems);
 
 	if( selecteditems.size() <= 0 )
 	{
@@ -1310,7 +1317,7 @@ void MainFrame::OnMenuTorrentStart( wxCommandEvent& event )
 	/* start selected torrent(s) */
 	{
 		/* start data selected in ui list */
-		for( i = 0; i < selecteditems.size(); i++ )
+		for( int i = 0; i < selecteditems.size(); i++ )
 		{
 			if( event.GetId() == ID_TORRENT_FORCE_START )
 			{
@@ -1329,7 +1336,8 @@ void MainFrame::OnMenuTorrentPause( wxCommandEvent& event )
 	int i = 0;
 
 	WXLOGDEBUG(( _T( "MainFrame: OnMenuTorrentPause\n" ) ));
-	const SwashListCtrl::itemlist_t selecteditems = m_torrentlistctrl->GetSelectedItems();
+	SwashListCtrl::itemlist_t selecteditems;
+	m_torrentlistctrl->GetSelectedItems(selecteditems);
 
 	if( selecteditems.size() <= 0 )
 	{
@@ -1351,10 +1359,9 @@ void MainFrame::OnMenuTorrentPause( wxCommandEvent& event )
 
 void MainFrame::OnMenuTorrentStop( wxCommandEvent& event )
 {
-	int i = 0;
-
 	WXLOGDEBUG(( _T( "MainFrame: OnMenuTorrentStop\n" ) ));
-	const SwashListCtrl::itemlist_t selecteditems = m_torrentlistctrl->GetSelectedItems();
+	SwashListCtrl::itemlist_t selecteditems;
+	m_torrentlistctrl->GetSelectedItems(selecteditems);
 
 	if( selecteditems.size() <= 0 )
 	{
@@ -1365,7 +1372,7 @@ void MainFrame::OnMenuTorrentStop( wxCommandEvent& event )
 	/* stop selected torrent(s) */
 	{
 		/* stop data selected in ui list */
-		for( i = 0; i < selecteditems.size(); i++ )
+		for(int i = 0; i < selecteditems.size(); i++ )
 		{
 			m_btsession->StopTorrent( selecteditems[i] );
 		}
@@ -1376,10 +1383,9 @@ void MainFrame::OnMenuTorrentStop( wxCommandEvent& event )
 //Show torrent properties
 void MainFrame::OnMenuTorrentProperties( wxCommandEvent& event )
 {
-	int i = 0;
-
 	WXLOGDEBUG(( _T( "MainFrame: OnMenuTorrentProperties\n" ) ));
-	const SwashListCtrl::itemlist_t selecteditems = m_torrentlistctrl->GetSelectedItems();
+	SwashListCtrl::itemlist_t selecteditems;
+	m_torrentlistctrl->GetSelectedItems(selecteditems);
 
 	if( selecteditems.size() <= 0 )
 	{
@@ -1389,7 +1395,7 @@ void MainFrame::OnMenuTorrentProperties( wxCommandEvent& event )
 
 	/* shows selected torrent(s) property*/
 	{
-		for( i = 0; i < selecteditems.size(); i++ )
+		for( int i = 0; i < selecteditems.size(); i++ )
 		{
 			std::shared_ptr<torrent_t> torrent = m_btsession->GetTorrent( selecteditems[i] );
 			if(!torrent || !torrent->isvalid)
@@ -1411,7 +1417,8 @@ void MainFrame::OnMenuTorrentProperties( wxCommandEvent& event )
 void MainFrame::RemoveTorrent( bool deletedata )
 {
 	int i = 0;
-	const SwashListCtrl::itemlist_t selecteditems = m_torrentlistctrl->GetSelectedItems();
+	SwashListCtrl::itemlist_t selecteditems;
+	m_torrentlistctrl->GetSelectedItems(selecteditems);
 
 	if( selecteditems.size() <= 0 )
 	{
@@ -1429,7 +1436,7 @@ void MainFrame::RemoveTorrent( bool deletedata )
 	if( deletedata )
 	{ torrentwarning += _( " and data" ); }
 
-	wxMessageDialog dialog( NULL, _( "Remove " ) + torrentwarning + _T( "?" ),
+	wxMessageDialog dialog( nullptr, _( "Remove " ) + torrentwarning + _T( "?" ),
 							_( "Confirm Remove" ), wxNO_DEFAULT | wxYES_NO | wxICON_QUESTION );
 
 	if( dialog.ShowModal() == wxID_YES )
@@ -1478,7 +1485,8 @@ void MainFrame::OnMenuTorrentMoveUp( wxCommandEvent& event )
 	int i = 0;
 
 	WXLOGDEBUG(( _T( "MainFrame: OnMenuTorrentMoveUp\n" ) ));
-	const SwashListCtrl::itemlist_t selecteditems = m_torrentlistctrl->GetSelectedItems();
+	SwashListCtrl::itemlist_t selecteditems;
+	m_torrentlistctrl->GetSelectedItems(selecteditems);
 
 	if( selecteditems.size() <= 0 )
 	{
@@ -1508,7 +1516,8 @@ void MainFrame::OnMenuTorrentMoveDown( wxCommandEvent& event )
 	int i = 0;
 
 	WXLOGDEBUG(( _T( "MainFrame: OnMenuTorrentMoveDown\n" ) ));
-	const SwashListCtrl::itemlist_t selecteditems = m_torrentlistctrl->GetSelectedItems();
+	SwashListCtrl::itemlist_t selecteditems;
+	m_torrentlistctrl->GetSelectedItems(selecteditems);
 
 	if( selecteditems.size() <= 0 )
 	{
@@ -1537,7 +1546,8 @@ void MainFrame::OnMenuTorrentReannounce( wxCommandEvent& event )
 {
 	int i = 0;
 	WXLOGDEBUG(( _T( "MainFrame: OnMenuTorrentReannounce\n" ) ));
-	const SwashListCtrl::itemlist_t selecteditems = m_torrentlistctrl->GetSelectedItems();
+	SwashListCtrl::itemlist_t selecteditems;
+	m_torrentlistctrl->GetSelectedItems(selecteditems);
 
 	if( selecteditems.size() <= 0 )
 	{
@@ -1559,7 +1569,8 @@ void MainFrame::OnMenuTorrentRecheck( wxCommandEvent& event )
 	int i = 0;
 
 	WXLOGDEBUG(( _T( "MainFrame: OnMenuTorrentRecheck\n" ) ));
-	const SwashListCtrl::itemlist_t selecteditems = m_torrentlistctrl->GetSelectedItems();
+	SwashListCtrl::itemlist_t selecteditems;
+	m_torrentlistctrl->GetSelectedItems(selecteditems);
 
 	if( selecteditems.size() <= 0 )
 	{
@@ -1582,7 +1593,8 @@ std::shared_ptr<torrent_t> MainFrame::GetSelectedTorrent()
 {
 	std::shared_ptr<torrent_t> torrent;
 
-	const SwashListCtrl::itemlist_t selecteditems = m_torrentlistctrl->GetSelectedItems();
+	SwashListCtrl::itemlist_t selecteditems;
+	m_torrentlistctrl->GetSelectedItems(selecteditems);
 
 	if( selecteditems.size() > 0 )
 	{
@@ -1710,25 +1722,27 @@ void MainFrame::ShowSystray( bool show )
 	{
 		m_swashtrayicon = new SwashTrayIcon( this );
 
-		if( !m_swashtrayicon->SetIcon( m_trayicon, wxT( "Bitswash" ) ) )
-		{ wxMessageBox( _( "Could not set icon." ) ); }
+		//if( !m_swashtrayicon->SetIcon( m_trayicon, wxT( "Bitswash" ) ) )
+		//{ wxMessageBox( _( "Could not set icon." ) ); }
+		m_swashtrayicon->SetIcon( m_trayicon, wxT( "Bitswash" ) );
 
 		SetIcon( m_frameicon );
 	}
 	else
 	{
-		if( m_swashtrayicon != NULL )
+		if( m_swashtrayicon != nullptr )
 		{
-			m_swashtrayicon->RemoveIcon();
+			if(m_swashtrayicon->IsIconInstalled())
+				m_swashtrayicon->RemoveIcon();
 			delete m_swashtrayicon;
-			m_swashtrayicon = NULL;
+			m_swashtrayicon = nullptr;
 		}
 	}
 }
 
 void MainFrame::SetLogSeverity()
 {
-	//wxASSERT(s!= NULL);
+	//wxASSERT(s!= nullptr);
 	int wx_loglevel = wxLOG_Debug - m_config->GetLogSeverity();
 	wxLog::SetLogLevel( wx_loglevel );
 

@@ -68,7 +68,7 @@ TrackerListCtrl::TrackerListCtrl(wxWindow *parent,
                const wxSize& size,
                long style)
 			: SwashListCtrl(parent, SWASHLISTCOL_SIZE(trackerlistcols), trackerlistcols, settings, id, pos, size, style),
-			m_pTorrent(NULL)
+			m_pTorrent(nullptr)
 {
 	Bind( wxEVT_MENU, &TrackerListCtrl::OnMenuTracker, this, TRACKERLISTCTRL_MENU_ADD);
 	Bind( wxEVT_MENU, &TrackerListCtrl::OnMenuTracker, this, TRACKERLISTCTRL_MENU_EDIT);
@@ -285,7 +285,7 @@ void TrackerListCtrl::OnMenuTracker(wxCommandEvent& event)
 
 			std::vector<lt::announce_entry>::iterator tracker_it = trackers.begin() + item;
 
-			wxMessageDialog dialogConfirm(NULL, 
+			wxMessageDialog dialogConfirm(nullptr, 
 							_("Remove tracker ") + wxString::FromUTF8(tracker_it->url.c_str()) + _T("?"), 
 							_("Confirm remove tracker"), 
 							wxNO_DEFAULT | wxYES_NO| wxICON_QUESTION);

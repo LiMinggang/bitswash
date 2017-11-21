@@ -44,7 +44,7 @@ static wxChar timetunits[MAX_TIME_UNITS][2] = { _T(""), _T("S"), _T("M"), _T("H"
 
 wxString HumanReadableByte(wxDouble byte) 
 {
-	wxDouble vl =0 ;
+	wxDouble vl = 0 ;
 
 	wxLongLong ivl = 1024, step = 1024;
 	int i=0;
@@ -244,7 +244,7 @@ wxString & GetExecutablePath()
 
 		wxChar buf[512];
 		*buf = wxT('\0');
-		GetModuleFileName(NULL, buf, 511);
+		GetModuleFileName(nullptr, buf, 511);
 		path = buf;
 
 #elif defined(__WXMAC__)
@@ -253,10 +253,10 @@ wxString & GetExecutablePath()
 		ProcessSerialNumber	procno ;
 		FSSpec fsSpec;
 
-		procno.highLongOfPSN = NULL	;
-		procno.lowLongOfPSN	= kCurrentProcess ;
+		procno.highLongOfPSN = nullptr;
+		procno.lowLongOfPSN = kCurrentProcess ;
 		processinfo.processInfoLength =	sizeof(ProcessInfoRec);
-		processinfo.processName	= NULL;
+		processinfo.processName = nullptr;
 		processinfo.processAppSpec = &fsSpec;
 
 		GetProcessInformation( &procno , &processinfo )	;

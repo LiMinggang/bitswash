@@ -74,7 +74,7 @@ TorrentSettingPane::TorrentSettingPane( wxWindow* parent, std::shared_ptr<torren
 	std::vector<wxString>& historypath = pcfg->GetSavePathHistory();
 	
 	wxString t_saveas = m_pTorrent?m_pTorrent->config->GetDownloadPath():pcfg->GetDownloadPath();
-	m_combo_saveas = new wxComboBox( this, wxID_ANY, t_saveas, wxDefaultPosition, wxDefaultSize, 0, NULL, 0 );
+	m_combo_saveas = new wxComboBox( this, wxID_ANY, t_saveas, wxDefaultPosition, wxDefaultSize, 0, nullptr, 0 );
 	
 	m_combo_saveas->SetMinSize(wxSize(260,-1));
 	m_combo_saveas->Append( t_saveas );
@@ -112,7 +112,7 @@ TorrentSettingPane::TorrentSettingPane( wxWindow* parent, std::shared_ptr<torren
 		if(fdir.DirExists())
 		{
 			wxLongLong free(0);  
-			if(wxGetDiskSpace( fdir.GetPathWithSep(), NULL, &free))
+			if(wxGetDiskSpace( fdir.GetPathWithSep(), nullptr, &free))
 			{
 				freeSpace = HumanReadableByte(wxDouble(free.ToDouble()));
 			}
@@ -345,7 +345,7 @@ void TorrentSettingPane::OnSaveDirectoryChanged(wxCommandEvent& event)
 		if(fdir.DirExists())
 		{
 			wxLongLong free(0);  
-			if(wxGetDiskSpace( fdir.GetPathWithSep(), NULL, &free))
+			if(wxGetDiskSpace( fdir.GetPathWithSep(), nullptr, &free))
 			{
 				m_label_diskfreespace->SetLabelText(HumanReadableByte(wxDouble(free.ToDouble())));
 			}

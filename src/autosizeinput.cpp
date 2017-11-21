@@ -39,7 +39,7 @@ AutoSizeInput::AutoSizeInput( wxWindow* parent, wxString unitbase, int usize, in
 	
 	fgSizer->Add( m_spinValue, 0, wxALL, 2 );
 	
-	m_comboUnit = new wxComboBox( this, wxID_ANY, unitbase, wxDefaultPosition, wxSize(80,-1), 0, NULL, wxCB_READONLY );
+	m_comboUnit = new wxComboBox( this, wxID_ANY, unitbase, wxDefaultPosition, wxSize(80,-1), 0, nullptr, wxCB_READONLY );
 
 	m_unit_base = unitbase;
 	

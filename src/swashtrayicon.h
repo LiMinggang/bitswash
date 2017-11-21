@@ -30,13 +30,14 @@
 #include <wx/icon.h>
 #include <wx/frame.h>
 
+class MainFrame;
 class SwashTrayIcon : public wxTaskBarIcon 
 {
 public:
 	explicit SwashTrayIcon(wxFrame* parent) ;
 
 private:
-	wxFrame* m_pMainFrame;
+	MainFrame * m_pMainFrame;
 	bool m_hidetaskbar;
 	void OnLeftButton(wxTaskBarIconEvent&);
 	void OnMenuRestore(wxCommandEvent&);

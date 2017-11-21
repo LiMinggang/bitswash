@@ -703,9 +703,9 @@ void FileListCtrl::OnMenuOpenPath( wxCommandEvent& event )
 				filename.MakeAbsolute();
 				//wxLogDebug(_T("File path %s\n"), filename.GetFullPath().c_str());
 #if  defined(__WXMSW__) 
-				wxExecute(_T("Explorer ")+filename.GetPath(), wxEXEC_ASYNC, NULL); 
+				wxExecute(_T("Explorer ")+filename.GetPath(), wxEXEC_ASYNC, nullptr); 
 #elif defined(__APPLE__)
-				wxExecute(_T("/usr/bin/open ")+filename.GetPath(), wxEXEC_ASYNC, NULL);
+				wxExecute(_T("/usr/bin/open ")+filename.GetPath(), wxEXEC_ASYNC, nullptr);
 #elif defined(__WXGTK__)
 //wxFileSystem::FileNameToURL(const wxFileName &filename)
 				wxLaunchDefaultBrowser(_T("file://")+filename.GetPath());

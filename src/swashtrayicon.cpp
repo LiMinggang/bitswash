@@ -33,12 +33,13 @@ const long SwashTrayIcon::TRAY_PREFERENCE = wxNewId();
 
 SwashTrayIcon::SwashTrayIcon(wxFrame* parent) 
 { 
-	m_pMainFrame = parent;
+	m_pMainFrame = dynamic_cast<MainFrame*>(parent);
+	wxASSERT(m_pMainFrame != nullptr);
 
-	m_hidetaskbar = (dynamic_cast<MainFrame*>(m_pMainFrame))->GetConfig()->GetHideTaskbar();
+	m_hidetaskbar = m_pMainFrame->GetConfig()->GetHideTaskbar();
 	
 	Bind( wxEVT_MENU, &SwashTrayIcon::OnMenuRestore, this, TRAY_RESTORE );
-	Bind( wxEVT_MENU,	&SwashTrayIcon::OnMenuExit, this, TRAY_EXIT );
+	Bind( wxEVT_MENU, &SwashTrayIcon::OnMenuExit, this, TRAY_EXIT );
 	Bind( wxEVT_MENU,&SwashTrayIcon::OnMenuHideTaskbar, this, TRAY_HIDETASKBAR );
 	Bind( wxEVT_UPDATE_UI,&SwashTrayIcon::OnMenuUICheckmark, this, TRAY_HIDETASKBAR );
 	Bind( wxEVT_TASKBAR_LEFT_UP, &SwashTrayIcon::OnLeftButton, this );
@@ -59,12 +60,12 @@ void SwashTrayIcon::OnMenuExit(wxCommandEvent& )
 
 void SwashTrayIcon::OnMenuOpenTorrent(wxCommandEvent& )
 {
-	(dynamic_cast<MainFrame*>(m_pMainFrame))->OpenTorrent();
+	m_pMainFrame->OpenTorrent();
 }
 
 void SwashTrayIcon::OnMenuOpenTorrentUrl(wxCommandEvent& )
 {
-	(dynamic_cast<MainFrame*>(m_pMainFrame))->OpenTorrentUrl();
+	m_pMainFrame->OpenTorrentUrl();
 }
 
 void SwashTrayIcon::OnMenuPreference(wxCommandEvent& )
@@ -78,7 +79,7 @@ void SwashTrayIcon::OnMenuPreference(wxCommandEvent& )
 void SwashTrayIcon::OnMenuHideTaskbar(wxCommandEvent& )
 {
 	m_hidetaskbar =!m_hidetaskbar;
-	(dynamic_cast<MainFrame*>(m_pMainFrame))->GetConfig()->SetHideTaskbar(m_hidetaskbar);
+	m_pMainFrame->GetConfig()->SetHideTaskbar(m_hidetaskbar);
 }
 
 void SwashTrayIcon::OnMenuUICheckmark(wxUpdateUIEvent &event)
@@ -114,7 +115,7 @@ void SwashTrayIcon::OnLeftButton(wxTaskBarIconEvent&)
 
 void SwashTrayIcon::ShowHideMainFrame()
 {
-	bool hidetaskbar = (dynamic_cast<MainFrame*>(m_pMainFrame))->GetConfig()->GetHideTaskbar();
+	bool hidetaskbar = m_pMainFrame->GetConfig()->GetHideTaskbar();
 	
 	if (hidetaskbar) 
 	{
@@ -124,7 +125,7 @@ void SwashTrayIcon::ShowHideMainFrame()
 		} 
 		else 
 		{
-			(dynamic_cast<MainFrame*>(m_pMainFrame))->UpdateUI(true);
+			m_pMainFrame->UpdateUI(true);
 			m_pMainFrame->Show(true);
 			m_pMainFrame->Iconize(false);
 			m_pMainFrame->Raise();
@@ -134,7 +135,7 @@ void SwashTrayIcon::ShowHideMainFrame()
 	{
 		if (m_pMainFrame->IsIconized())
 		{
-			(dynamic_cast<MainFrame*>(m_pMainFrame))->UpdateUI(true);
+			m_pMainFrame->UpdateUI(true);
 			m_pMainFrame->Iconize(false);
 		} 
 		else 

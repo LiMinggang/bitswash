@@ -58,7 +58,7 @@ wxConnectionBase *BitSwashAppSrv::OnAcceptConnection( const wxString& topic )
 
 			if( dialog && dialog->IsModal() )
 			{
-				return NULL;
+				return nullptr;
 			}
 
 			node = node->GetNext();
@@ -67,7 +67,7 @@ wxConnectionBase *BitSwashAppSrv::OnAcceptConnection( const wxString& topic )
 		return new BitSwashAppConn();
 	}
 	else
-		return NULL;
+		return nullptr;
 }
 
 // Opens a file passed from another instance
@@ -117,7 +117,7 @@ static const wxCmdLineEntryDesc g_cmdLineDesc [] =
 		wxCMD_LINE_SWITCH, "h", "help", "Displays help on the command line parameters",
 		wxCMD_LINE_VAL_NONE, wxCMD_LINE_OPTION_HELP
 	},
-	{ wxCMD_LINE_PARAM, NULL, NULL, "File(s) to be opened", wxCMD_LINE_VAL_STRING,  wxCMD_LINE_PARAM_OPTIONAL | wxCMD_LINE_PARAM_MULTIPLE },
+	{ wxCMD_LINE_PARAM, nullptr, nullptr, "File(s) to be opened", wxCMD_LINE_VAL_STRING,  wxCMD_LINE_PARAM_OPTIONAL | wxCMD_LINE_PARAM_MULTIPLE },
 
 	{ wxCMD_LINE_NONE }
 };
@@ -197,7 +197,7 @@ bool BitSwash::OnInit()
 		}
 		else
 		{
-			wxMessageBox( wxGetTranslation(_( "Sorry, the existing instance may be too busy too respond.\nPlease close any open dialogs and retry." )),
+			wxMessageBox( wxGetTranslation(wxT( "Sorry, the existing instance may be too busy too respond.\nPlease close any open dialogs and retry." )),
 						   APPNAME, wxICON_INFORMATION | wxOK );
 		}
 
@@ -226,7 +226,7 @@ bool BitSwash::OnInit()
 	//int initcountdown = 1;
 	SetVendorName( APPNAME );
 	SetAppName( APPBINNAME );
-	m_locale = NULL;
+	m_locale = nullptr;
 	m_btinitdone = false;
 	//log to stderr
 	m_logold = wxLog::SetActiveTarget( new wxLogStderr() );
@@ -333,7 +333,7 @@ bool BitSwash::OnInit()
 	}
 
 	SetExitOnFrameDelete( true );
-	return TRUE;
+	return true;
 }
 
 int BitSwash::OnExit()
@@ -402,24 +402,14 @@ void BitSwash::LoadFlags()
 bool BitSwash::GetCountryCode(const wxString& ip/*IN*/, bool isIpv4/*IN*/, wxString& code/*OUT*/)
 {
 	bool ret = false;
+	const char * ccode = nullptr;
 	if(isIpv4)
 	{
 		if(m_geoip)
 		{
 			// code is IP actually
 			GeoIPLookup gl;
-			const char * ccode = nullptr;
-			if(isIpv4)
-				ccode = GeoIP_country_code_by_addr_gl(m_geoip, ip.ToStdString().c_str(), &gl);
-			else
-				ccode = GeoIP_country_code3_by_addr_v6_gl(m_geoipv6, ip.ToStdString().c_str(), &gl);
-			if(ccode)
-			{
-				code = wxString::FromAscii(ccode);
-				ret = true;
-			}
-			else
-				code = (_T("--"));
+			ccode = GeoIP_country_code_by_addr_gl(m_geoip, ip.ToStdString().c_str(), &gl);
 		}
 	}
 	else
@@ -428,21 +418,20 @@ bool BitSwash::GetCountryCode(const wxString& ip/*IN*/, bool isIpv4/*IN*/, wxStr
 		{
 			// code is IP actually
 			GeoIPLookup gl;
-			const char * ccode = GeoIP_country_code3_by_addr_v6_gl(m_geoipv6, ip.ToStdString().c_str(), &gl);
-			if(ccode)
-			{
-				code = wxString::FromAscii(ccode);
-				ret = true;
-			}
-			else
-				code = (_T("--"));
+			ccode = GeoIP_country_code3_by_addr_v6_gl(m_geoipv6, ip.ToStdString().c_str(), &gl);
 		}
 	}
 
+	if(ccode)
+	{
+		code = wxString::FromAscii(ccode);
+		ret = true;
+	}
+	else
+		code = (_T("--"));
 	return ret;
 }
 #endif
-
 
 int BitSwash::GetCountryFlag( const wxString& code )
 {
@@ -486,7 +475,7 @@ bool BitSwash::SetLocale( wxString lang )
 	{
 		langid = langinfo->Language;
 	}
-	if( m_locale != NULL )
+	if( m_locale != nullptr )
 	{
 		delete m_locale;
 	}

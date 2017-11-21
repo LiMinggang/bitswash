@@ -787,21 +787,20 @@ void SwashListCtrl::UpdateSwashList()
 	RefreshItems( m_showfrom, m_showto );
 }
 
-SwashListCtrl::itemlist_t SwashListCtrl::GetSelectedItems() const
+void SwashListCtrl::GetSelectedItems(SwashListCtrl::itemlist_t & items) const
 {
-	itemlist_t selecteditems;
 	//wxLogDebug( _T( "SwashListCtrl: Selected items %d" ), GetSelectedItemCount() );
-
+	items.clear();
 	if( GetSelectedItemCount() <= 0 )
-	{ return selecteditems; }
+	{
+		return;
+	}
 
 	long item = GetFirstSelected();
 
 	while( item != -1 )
 	{
-		selecteditems.push_back( item );
+		items.push_back( item );
 		item = GetNextSelected( item );
 	}
-
-	return selecteditems;
 }

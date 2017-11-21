@@ -5,22 +5,22 @@
 
 struct AppIcons_t AppIcons[] =
 {
-	{ BITSWASH_ICON_APP, NULL, &bitswash_bin[0], sizeof(bitswash_bin)/sizeof(bitswash_bin[0])},
-	{ BITSWASH_ICON_APP256, NULL, &bitswash_256x256_bin[0], sizeof(bitswash_256x256_bin)/sizeof(bitswash_256x256_bin[0])},
-	{ BITSWASH_ICON_TORRENT_OPEN, NULL, &torrent_open_bin[0], sizeof(torrent_open_bin)/sizeof(torrent_open_bin[0])},
-	{ BITSWASH_ICON_TORRENT_CREATE, NULL, &torrent_create_bin[0], sizeof(torrent_create_bin)/sizeof(torrent_create_bin[0])},
-	{ BITSWASH_ICON_TORRENT_OPENURL, NULL, &torrent_open_url_bin[0], sizeof(torrent_open_url_bin)/sizeof(torrent_open_url_bin[0])},
-	{ BITSWASH_ICON_TORRENT_OPENDIR, NULL, &torrent_open_dir_bin[0], sizeof(torrent_open_dir_bin)/sizeof(torrent_open_dir_bin[0])},
-	{ BITSWASH_ICON_TORRENT_START, NULL, &torrent_start_bin[0], sizeof(torrent_start_bin)/sizeof(torrent_start_bin[0])},
-	{ BITSWASH_ICON_TORRENT_PAUSE, NULL, &torrent_pause_bin[0], sizeof(torrent_pause_bin)/sizeof(torrent_pause_bin[0])},
-	{ BITSWASH_ICON_TORRENT_STOP, NULL, &torrent_stop_bin[0], sizeof(torrent_stop_bin)/sizeof(torrent_stop_bin[0])},
-	{ BITSWASH_ICON_TORRENT_PROPERTIES, NULL, &torrent_properties_bin[0], sizeof(torrent_properties_bin)/sizeof(torrent_properties_bin[0])},
-	{ BITSWASH_ICON_TORRENT_REMOVE, NULL, &torrent_remove_bin[0], sizeof(torrent_remove_bin)/sizeof(torrent_remove_bin[0])},
-	{ BITSWASH_ICON_TORRENT_REMOVEDATA, NULL, &torrent_remove_data_bin[0], sizeof(torrent_remove_data_bin)/sizeof(torrent_remove_data_bin[0])},
-	{ BITSWASH_ICON_TORRENT_MOVEUP, NULL, &torrent_move_up_bin[0], sizeof(torrent_move_up_bin)/sizeof(torrent_move_up_bin[0])},
-	{ BITSWASH_ICON_TORRENT_MOVEDOWN, NULL, &torrent_move_down_bin[0], sizeof(torrent_move_down_bin)/sizeof(torrent_move_down_bin[0])},
-	{ BITSWASH_ICON_OPTION_PREFERENCE, NULL, &option_preference_bin[0], sizeof(option_preference_bin)/sizeof(option_preference_bin[0])},
-	{ BITSWASH_ICON_MAX, NULL, NULL, 0 }
+	{ BITSWASH_ICON_APP, nullptr, &bitswash_bin[0], sizeof(bitswash_bin)/sizeof(bitswash_bin[0])},
+	{ BITSWASH_ICON_APP256, nullptr, &bitswash_256x256_bin[0], sizeof(bitswash_256x256_bin)/sizeof(bitswash_256x256_bin[0])},
+	{ BITSWASH_ICON_TORRENT_OPEN, nullptr, &torrent_open_bin[0], sizeof(torrent_open_bin)/sizeof(torrent_open_bin[0])},
+	{ BITSWASH_ICON_TORRENT_CREATE, nullptr, &torrent_create_bin[0], sizeof(torrent_create_bin)/sizeof(torrent_create_bin[0])},
+	{ BITSWASH_ICON_TORRENT_OPENURL, nullptr, &torrent_open_url_bin[0], sizeof(torrent_open_url_bin)/sizeof(torrent_open_url_bin[0])},
+	{ BITSWASH_ICON_TORRENT_OPENDIR, nullptr, &torrent_open_dir_bin[0], sizeof(torrent_open_dir_bin)/sizeof(torrent_open_dir_bin[0])},
+	{ BITSWASH_ICON_TORRENT_START, nullptr, &torrent_start_bin[0], sizeof(torrent_start_bin)/sizeof(torrent_start_bin[0])},
+	{ BITSWASH_ICON_TORRENT_PAUSE, nullptr, &torrent_pause_bin[0], sizeof(torrent_pause_bin)/sizeof(torrent_pause_bin[0])},
+	{ BITSWASH_ICON_TORRENT_STOP, nullptr, &torrent_stop_bin[0], sizeof(torrent_stop_bin)/sizeof(torrent_stop_bin[0])},
+	{ BITSWASH_ICON_TORRENT_PROPERTIES, nullptr, &torrent_properties_bin[0], sizeof(torrent_properties_bin)/sizeof(torrent_properties_bin[0])},
+	{ BITSWASH_ICON_TORRENT_REMOVE, nullptr, &torrent_remove_bin[0], sizeof(torrent_remove_bin)/sizeof(torrent_remove_bin[0])},
+	{ BITSWASH_ICON_TORRENT_REMOVEDATA, nullptr, &torrent_remove_data_bin[0], sizeof(torrent_remove_data_bin)/sizeof(torrent_remove_data_bin[0])},
+	{ BITSWASH_ICON_TORRENT_MOVEUP, nullptr, &torrent_move_up_bin[0], sizeof(torrent_move_up_bin)/sizeof(torrent_move_up_bin[0])},
+	{ BITSWASH_ICON_TORRENT_MOVEDOWN, nullptr, &torrent_move_down_bin[0], sizeof(torrent_move_down_bin)/sizeof(torrent_move_down_bin[0])},
+	{ BITSWASH_ICON_OPTION_PREFERENCE, nullptr, &option_preference_bin[0], sizeof(option_preference_bin)/sizeof(option_preference_bin[0])},
+	{ BITSWASH_ICON_MAX, nullptr, nullptr, 0 }
 };
 
 struct CountryFlags_t CountryFlags[] =

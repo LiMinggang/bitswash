@@ -77,28 +77,28 @@ void TorrentInfo::UpdateTorrentInfo(bool updateall)
 	switch(GetSelection())
 	{
 		case BW_TORRENTINFO_SUMMARY:
-			if(m_summarypane != NULL)
+			if(m_summarypane != nullptr)
 			{
 				m_summarypane->UpdateSummary();
 				summary_updated = true;
 			}
 			break;
 		case BW_TORRENTINFO_PEERLIST:
-			if (m_peerspane != NULL)
+			if (m_peerspane != nullptr)
 			{
 				m_peerspane->UpdateSwashList();
 				peers_updated = true;
 			}
 			break;
 		case BW_TORRENTINFO_FILELIST:
-			if (m_filespane != NULL)
+			if (m_filespane != nullptr)
 			{
 				m_filespane->UpdateSwashList();
 				files_updated = true;
 			}
 			break;
 		case BW_TORRENTINFO_TRACKERLIST:
-			if (m_trackerspane != NULL)
+			if (m_trackerspane != nullptr)
 			{
 				m_trackerspane->UpdateSwashList();
 				trackers_updated = true;
@@ -110,16 +110,16 @@ void TorrentInfo::UpdateTorrentInfo(bool updateall)
 
 	if (updateall) 
 	{
-		if(!summary_updated && (m_summarypane != NULL))
+		if(!summary_updated && (m_summarypane != nullptr))
 			m_summarypane->UpdateSummary();
 
-		if(!peers_updated && (m_peerspane != NULL))
+		if(!peers_updated && (m_peerspane != nullptr))
 			m_peerspane->UpdateSwashList();
 		
-		if(!files_updated && (m_filespane != NULL))
+		if(!files_updated && (m_filespane != nullptr))
 			m_filespane->UpdateSwashList();
 
-		if(!trackers_updated && (m_trackerspane != NULL))
+		if(!trackers_updated && (m_trackerspane != nullptr))
 			m_trackerspane->UpdateSwashList();
 	} 
 }

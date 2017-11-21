@@ -106,7 +106,7 @@ TorrentProperty::TorrentProperty(std::shared_ptr<torrent_t>& pTorrent, wxWindow*
 		if(fdir.DirExists())
 		{
 			wxLongLong free(0);  
-			if(wxGetDiskSpace( fdir.GetPathWithSep(), NULL, &free))
+			if(wxGetDiskSpace( fdir.GetPathWithSep(), nullptr, &free))
 			{
 				m_label_diskfreespace->SetLabelText(HumanReadableByte(wxDouble(free.ToDouble())));
 			}

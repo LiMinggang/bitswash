@@ -54,7 +54,7 @@ Configuration::Configuration( const wxString& AppName )
 
 Configuration::~Configuration()
 {
-	delete wxConfigBase::Set( ( wxConfigBase* )NULL );
+	delete wxConfigBase::Set( ( wxConfigBase* )nullptr );
 	//dtor
 }
 

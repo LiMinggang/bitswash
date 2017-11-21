@@ -60,7 +60,7 @@ TorrentConfig::TorrentConfig( const wxString& torrentName )
 
 TorrentConfig::~TorrentConfig()
 {
-	//delete wxConfigBase::Set((wxConfigBase*)NULL);
+	//delete wxConfigBase::Set((wxConfigBase*)nullptr);
 	//dtor
 }
 

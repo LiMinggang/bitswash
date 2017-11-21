@@ -32,7 +32,7 @@
 
 SwashSetting::SwashSetting( wxWindow* parent, Configuration *pcfg, int id, wxString title, wxPoint pos, wxSize size, int style ) : wxDialog( parent, id, title, pos, size, style )
 {
-	//wxASSERT(pcfg == NULL);
+	//wxASSERT(pcfg == nullptr);
 
 	m_pcfg = pcfg;
 

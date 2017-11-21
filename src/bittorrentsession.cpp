@@ -229,7 +229,7 @@ void *BitTorrentSession::Entry()
 	while(result != wxMSGQUEUE_MISC_ERROR);
 
 	Exit( 0 );
-	return NULL;
+	return nullptr;
 }
 
 typedef std::function<void()> null_notify_func_t;
@@ -552,13 +552,13 @@ void BitTorrentSession::ConfigureSession()
 
 void BitTorrentSession::SetLogSeverity()
 {
-	wxASSERT( m_libbtsession != NULL );
+	wxASSERT( m_libbtsession != nullptr );
 	//m_libbtsession->set_severity_level( ( lt::alert::severity_t )m_config->GetLogSeverity() );
 }
 
 void BitTorrentSession::SetConnection()
 {
-	wxASSERT( m_libbtsession != NULL );
+	wxASSERT( m_libbtsession != nullptr );
 	long portmin, portmax;
 	portmin = m_config->GetPortMin();
 	portmax = m_config->GetPortMax();
@@ -582,7 +582,7 @@ void BitTorrentSession::SetConnection()
 
 void BitTorrentSession::StartExtensions()
 {
-	wxASSERT( m_libbtsession != NULL );
+	wxASSERT( m_libbtsession != nullptr );
 
 	/* XXX no way to remove extension currently
 	 * restart is needed
@@ -602,7 +602,7 @@ void BitTorrentSession::StartExtensions()
 
 void BitTorrentSession::StartUpnp()
 {
-	wxASSERT( m_libbtsession != NULL );
+	wxASSERT( m_libbtsession != nullptr );
 
 	if( m_config->GetEnableUpnp() )
 	{
@@ -627,7 +627,7 @@ void BitTorrentSession::StartUpnp()
 
 void BitTorrentSession::StartNatpmp()
 {
-	wxASSERT( m_libbtsession != NULL );
+	wxASSERT( m_libbtsession != nullptr );
 
 	if( m_config->GetEnableNatpmp() )
 	{
@@ -952,7 +952,7 @@ void BitTorrentSession::MergeTorrent( std::shared_ptr<torrent_t>& dst_torrent, M
 
 void BitTorrentSession::ScanTorrentsDirectory( const wxString& dirname )
 {
-	wxASSERT( m_libbtsession != NULL );
+	wxASSERT( m_libbtsession != nullptr );
 	wxDir torrents_dir( dirname );
 	wxString filename;
 	//wxString fullpath;

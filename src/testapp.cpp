@@ -35,7 +35,7 @@ bool TestApp::OnInit()
 {
 
 	oldlog = wxLog::SetActiveTarget(new wxLogStderr());
-	m_frame = new wxFrame(NULL, wxID_ANY, _T("TestApp"), wxDefaultPosition, wxDefaultSize);
+	m_frame = new wxFrame(nullptr, wxID_ANY, _T("TestApp"), wxDefaultPosition, wxDefaultSize);
 	m_tlist = new TestListCtrl(m_frame, wxID_ANY);
 
 

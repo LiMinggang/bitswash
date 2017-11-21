@@ -99,6 +99,7 @@ PeerListCtrl::~PeerListCtrl()
 
 wxString PeerListCtrl::GetItemValue(long item, long columnid) const
 {
+	wxString ret(_T(""));
 	PeerListCtrl* pThis = const_cast<PeerListCtrl*>(this);
 
 	MainFrame* pMainFrame = dynamic_cast<MainFrame *>( wxGetApp().GetTopWindow() );
@@ -106,9 +107,9 @@ wxString PeerListCtrl::GetItemValue(long item, long columnid) const
 
 	const PeerListCtrl::peer_list_t *peers_list = pMainFrame->GetPeersList();
 
-	if ((peers_list == NULL) || (peers_list->size() <= 0) || item >= peers_list->size())
+	if ((peers_list == nullptr) || (peers_list->size() <= 0) || item >= peers_list->size())
 	{
-		return _T("");
+		return ret;
 	}
 
 	lt::peer_info peer_info = peers_list->at(item);
@@ -119,14 +120,14 @@ wxString PeerListCtrl::GetItemValue(long item, long columnid) const
 		_("(D)"),
 		_("(P)"),
 		_("(L)"),
-		_("(R)")
+		_("(R)"),
+		_("(I)")
 	};
 
 	//wxLogDebug(_T("PeerListCtrl::Showing %d items "), peers_list->size());
 
 	lt::address c_ip = peer_info.ip.address();
 
-	wxString ret;
 	switch (columnid)
 	{
 	case PEERLIST_COLUMN_IP:
@@ -135,9 +136,8 @@ wxString PeerListCtrl::GetItemValue(long item, long columnid) const
 	case PEERLIST_COLUMN_COUNTRY:
 		{
 #ifdef USE_LIBGEOIP
-		BitSwash& bitSwachApp = wxGetApp();
-		lt::address c_ip = peer_info.ip.address();
-		ret = (_T("--"));
+		static BitSwash& bitSwachApp = wxGetApp();
+		//ret = (_T("--"));
 		bitSwachApp.GetCountryCode(wxString(c_ip.to_string()), (peer_info.ip.protocol() == boost::asio::ip::tcp::v4()), ret);
 #else
 		ret = wxString(peer_info.country, sizeof(peer_info.country) / sizeof(peer_info.country[0]));
@@ -170,6 +170,10 @@ wxString PeerListCtrl::GetItemValue(long item, long columnid) const
 			{
 				peertype_flag = 4;
 			}
+			else if(peer_info.source & lt::peer_info::incoming)
+			{
+				peertype_flag = 5;
+			}
 			//if ((peertype_flag < 0) || (peertype_flag > 4)) peertype_flag = 4;
 
 			ret = wxString::Format(_T("%s %s"), (peer_info.flags & lt::peer_info::seed) ? _("Seed") : _("Peer"), peer_source_flag[peertype_flag]);
@@ -188,6 +192,10 @@ wxString PeerListCtrl::GetItemValue(long item, long columnid) const
 		{
 			ret = _("Queued");
 		}*/
+		else if (peer_info.flags & lt::peer_info::snubbed)
+		{
+			ret = _("Snubbed");
+		}		
 		else if (peer_info.flags & lt::peer_info::local_connection)
 		{
 			ret = _("Local");
@@ -198,8 +206,8 @@ wxString PeerListCtrl::GetItemValue(long item, long columnid) const
 	case PEERLIST_COLUMN_FLAGS:
 		ret = wxString::Format(_T("%c%c%c%c%c%c%c"),
 			(peer_info.flags & lt::peer_info::interesting) ? 'I' : ' ',
-			(peer_info.flags & lt::peer_info::choked) ? 'C' : ' ',
 			(peer_info.flags & lt::peer_info::remote_interested) ? 'i' : ' ',
+			(peer_info.flags & lt::peer_info::choked) ? 'C' : ' ',
 			(peer_info.flags & lt::peer_info::remote_choked) ? 'c' : ' ',
 			(peer_info.flags & lt::peer_info::supports_extensions) ? 'e' : ' ',
 			(peer_info.flags & lt::peer_info::rc4_encrypted) ? 'X' : ' ',
@@ -236,7 +244,7 @@ int PeerListCtrl::GetItemColumnImage(long item, long columnid) const
 	wxASSERT(pMainFrame != 0);
 	const PeerListCtrl::peer_list_t *peers_list = pMainFrame->GetPeersList();
 
-	if ((peers_list == NULL) || (peers_list->size() <= 0))
+	if ((peers_list == nullptr) || (peers_list->size() <= 0))
 	{
 		return -1;
 	}
@@ -284,7 +292,7 @@ int PeerListCtrl::OnGetItemImage(long item) const
 
 	const PeerListCtrl::peer_list_t *peers_list = pMainFrame->GetPeersList();
 
-	if ((peers_list == NULL) || (peers_list->size() <= 0))
+	if ((peers_list == nullptr) || (peers_list->size() <= 0))
 	{
 		return -1;
 	}
