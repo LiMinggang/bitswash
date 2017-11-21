@@ -691,10 +691,10 @@ void BitTorrentSession::AddTorrentToSession( std::shared_ptr<torrent_t>& torrent
 		p.ti = torrent->info;
 		//p.ti.reset(const_cast<lt::torrent_info *>(torrent->info.get()));
 		p.save_path = (const char*)torrent->config->GetDownloadPath().mb_str(wxConvUTF8);
-		p.max_connections = 1024;
-		p.max_uploads = -1;
-		//p.upload_limit = torrent_upload_limit;
-		//p.download_limit = torrent_download_limit;
+		p.max_connections = m_config->GetMaxConnections();
+		p.max_uploads = m_config->GetMaxUploads();
+		p.upload_limit = m_config->GetDefaultUploadLimit();
+		p.download_limit = m_config->GetDefaultDownloadLimit();
 
 		if (torrent->config->GetTorrentState() == TORRENT_STATE_PAUSE)
 			p.flags |= lt::torrent_flags::paused;
