@@ -280,9 +280,6 @@ void BitTorrentSession::Configure(lt::settings_pack &settingsPack)
 	settingsPack.set_str( lt::settings_pack::user_agent, wxGetApp().UserAgent().ToStdString( ));
 
 	// Speed limit
-	//const bool altSpeedLimitEnabled = isAltGlobalSpeedLimitEnabled();
-	//settingsPack.set_int(lt::settings_pack::download_rate_limit, altSpeedLimitEnabled ? altGlobalDownloadSpeedLimit() : globalDownloadSpeedLimit());
-	//settingsPack.set_int(lt::settings_pack::upload_rate_limit, altSpeedLimitEnabled ? altGlobalUploadSpeedLimit() : globalUploadSpeedLimit());
 	settingsPack.set_int( lt::settings_pack::upload_rate_limit, m_config->GetGlobalUploadLimit() );
 	settingsPack.set_int( lt::settings_pack::download_rate_limit, m_config->GetGlobalDownloadLimit() );
 	// * Max Half-open connections
@@ -372,12 +369,12 @@ void BitTorrentSession::Configure(lt::settings_pack &settingsPack)
 	// 1 active torrent force 2 connections. If you have more active torrents * 2 than connection limit,
 	// connection limit will get extended. Multiply max connections or active torrents by 10 for queue.
 	// Ignore -1 values because we don't want to set a max int message queue
-	//settingsPack.set_int(lt::settings_pack::alert_queue_size, std::max(1000,
+	settingsPack.set_int(lt::settings_pack::alert_queue_size, 1000);
 	//	10 * std::max(maxActiveTorrents() * 2, maxConnections())));
 	
 	// Outgoing ports
-	//settingsPack.set_int(lt::settings_pack::outgoing_port, m_config->GetPortMin());
-	//settingsPack.set_int(lt::settings_pack::num_outgoing_ports, m_config->GetPortMax() - m_config->GetPortMin() + 1);
+	settingsPack.set_int(lt::settings_pack::outgoing_port, m_config->GetPortMin());
+	settingsPack.set_int(lt::settings_pack::num_outgoing_ports, m_config->GetPortMax() - m_config->GetPortMin() + 1);
 	
 	// Include overhead in transfer limits
 	settingsPack.set_bool(lt::settings_pack::rate_limit_ip_overhead, true);
