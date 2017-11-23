@@ -92,9 +92,9 @@ TorrentListCtrl::TorrentListCtrl( wxWindow *parent,
 								  const wxPoint& pos,
 								  const wxSize& size,
 								  long style )
-	: SwashListCtrl( parent, SWASHLISTCOL_SIZE( torrentlistcols ), torrentlistcols, settings, id, pos, size, style ), m_torrentmenu( 0 )
+	: SwashListCtrl( parent, SWASHLISTCOL_SIZE( torrentlistcols ), torrentlistcols, settings, id, pos, size, style ), m_torrentmenu( nullptr )
 {
-	MainFrame* m_pMainFrame = dynamic_cast<MainFrame *> ( parent );
+	m_pMainFrame = dynamic_cast<MainFrame *> ( parent );
 	wxASSERT(m_pMainFrame != nullptr);
 }
 
