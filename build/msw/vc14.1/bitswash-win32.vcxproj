@@ -486,7 +486,6 @@
     <ClInclude Include="..\..\..\src\peerlistctrl.h" />
     <ClInclude Include="..\..\..\src\resource.h" />
     <ClInclude Include="..\..\..\src\summarypane.h" />
-    <ClInclude Include="..\..\..\src\swashgauge.h" />
     <ClInclude Include="..\..\..\src\swashlistctrl.h" />
     <ClInclude Include="..\..\..\src\swashsetting.h" />
     <ClInclude Include="..\..\..\src\swashstatbar.h" />
@@ -749,7 +748,6 @@
     <ClCompile Include="..\..\..\src\mainframe.cpp" />
     <ClCompile Include="..\..\..\src\peerlistctrl.cpp" />
     <ClCompile Include="..\..\..\src\summarypane.cpp" />
-    <ClCompile Include="..\..\..\src\swashgauge.cpp" />
     <ClCompile Include="..\..\..\src\swashlistctrl.cpp" />
     <ClCompile Include="..\..\..\src\swashsetting.cpp" />
     <ClCompile Include="..\..\..\src\swashstatbar.cpp" />
