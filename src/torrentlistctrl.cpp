@@ -171,9 +171,11 @@ wxString TorrentListCtrl::GetItemValue( long item, long columnid ) const
 					if( torrenthandle.is_valid() )
 					{
 						torrentstatus = torrenthandle.status(lt::torrent_handle::query_distributed_copies);
+						if( torrentstatus.state < state_size )
+						{ ret = wxString::Format( _T( "%s" ), _( state_str[torrentstatus.state] ) ); }
+						else
+						{ ret = _( "Error!" ); }
 					}
-					if( torrentstatus.state < state_size )
-					{ ret = wxString::Format( _T( "%s" ), state_str[torrentstatus.state] ); }
 					else
 					{ ret = _( "Error!" ); }
 				}
@@ -232,7 +234,7 @@ wxString TorrentListCtrl::GetItemValue( long item, long columnid ) const
 				break;
 
 			case TORRENTLIST_COLUMN_TIMELEFT:
-				if( ( torrentstatus.state == lt::torrent_status::seeding ) || ( torrentstatus.progress >= 1 ) )
+				if( ( (torrenthandle.is_valid()) && ( torrentstatus.state == lt::torrent_status::seeding )) || ( torrentstatus.progress >= 1 ) )
 				{
 					ret = _T( "00:00:00" );
 				}

@@ -24,10 +24,10 @@
 
 wxString HumanReadableByte(wxDouble byte);
 wxString HumanReadableTime(unsigned long second);
-int RemoveDirectory(wxString path);
-int MoveDirectory(wxString path);
-int CopyDirectory(wxString frompath, wxString topath);
-void SystemOpenURL(wxString url);
+int RemoveDirectory(wxString& path);
+int MoveDirectory(wxString& path);
+int CopyDirectory(wxString& frompath, wxString& topath);
+void SystemOpenURL(wxString& url);
 wxString & GetExecutablePath();
 bool isUrl(const wxString &s, bool isScheme = true);
 

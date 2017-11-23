@@ -406,9 +406,9 @@ void MainFrame::OnAbout( wxCommandEvent& event )
 	wxAboutDialogInfo info;
 	info.SetName( _T( "Bitswash-Mod" ) );
 	info.SetVersion( BITSWASH_VERSION );
-	info.SetDescription( _T( "Bittorrent Client" ) );
+	info.SetDescription( _( "Bittorrent Client" ) );
 	info.SetCopyright( _T( "(c) 2017 Bitswash Developers" ) );
-	info.SetWebSite( _T( "https://github.com/LiMinggang/bitswash" ), _T( "Bitswash Homepage" ) );
+	info.SetWebSite( _T( "https://github.com/LiMinggang/bitswash" ), _( "Bitswash Homepage" ) );
 	info.SetLicence( _T( " \n\n \
  This program is free software; you can redistribute it and/or modify\n \
  it under the terms of the GNU General Public License as published by\n \
@@ -437,12 +437,12 @@ void MainFrame::OnAbout( wxCommandEvent& event )
 
 void MainFrame::OnMenuHelp( wxCommandEvent& event )
 {
-	SystemOpenURL( BITSWASH_HELP_URL );
+	SystemOpenURL( wxString(BITSWASH_HELP_URL ));
 }
 
 void MainFrame::OnHelpHomepage( wxCommandEvent& event )
 {
-	SystemOpenURL( BITSWASH_HOMEPAGE );
+	SystemOpenURL(wxString(BITSWASH_HOMEPAGE ));
 }
 
 wxMenuBar* MainFrame::CreateMainMenuBar()

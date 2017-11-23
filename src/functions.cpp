@@ -87,7 +87,7 @@ wxString HumanReadableTime(unsigned long second)
 	return time;
 }
 
-int RemoveDirectory(wxString path) {
+int RemoveDirectory(wxString& path) {
 
 	wxDir dir (path);
 
@@ -127,7 +127,7 @@ int RemoveDirectory(wxString path) {
 	return wxRmdir(path);
 }
 
-int CopyDirectory(wxString frompath, wxString topath) {
+int CopyDirectory(wxString& frompath, wxString& topath) {
 
 	wxDir fromdir (frompath);
 
@@ -178,7 +178,7 @@ int CopyDirectory(wxString frompath, wxString topath) {
 	//return wxRmdir(frompath);
 }
 
-int MoveDirectory(wxString frompath, wxString topath)
+int MoveDirectory(wxString& frompath, wxString& topath)
 {
 	CopyDirectory(frompath, topath);
 
@@ -187,7 +187,7 @@ int MoveDirectory(wxString frompath, wxString topath)
 	return 0;
 }
 
-void SystemOpenURL(wxString url)
+void SystemOpenURL(wxString& url)
 {
 #ifdef __UNIX_LIKE__
 	wxString desktop_session = wxEmptyString;
@@ -236,10 +236,10 @@ void SystemOpenURL(wxString url)
 
 wxString & GetExecutablePath()
 {
-	static bool	found =	false;
-	static wxString	path;
+	static bool found = false;
+	static wxString path;
 
-	if (!found)	{
+	if (!found) {
 #ifdef __WXMSW__
 
 		wxChar buf[512];
@@ -250,12 +250,12 @@ wxString & GetExecutablePath()
 #elif defined(__WXMAC__)
 
 		ProcessInfoRec processinfo;
-		ProcessSerialNumber	procno ;
+		ProcessSerialNumber procno ;
 		FSSpec fsSpec;
 
 		procno.highLongOfPSN = nullptr;
 		procno.lowLongOfPSN = kCurrentProcess ;
-		processinfo.processInfoLength =	sizeof(ProcessInfoRec);
+		processinfo.processInfoLength = sizeof(ProcessInfoRec);
 		processinfo.processName = nullptr;
 		processinfo.processAppSpec = &fsSpec;
 
@@ -277,7 +277,7 @@ wxString & GetExecutablePath()
 		filename.Normalize();
 		path = filename.GetFullPath();
 #endif
-		found =	true;
+		found = true;
 	}
 
 	return path;
