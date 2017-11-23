@@ -84,7 +84,7 @@ public:
 	wxString GetStatusUploadRate();
 	wxString GetStatusPeers();
 	wxString GetStatusDHT();
-	void GetDHTStatus(wxString& status){m_btsession->DHTStatusToString(status);}
+	bool GetDHTStatus(wxString& status){return m_btsession->DHTStatusToString(status);}
 	wxString GetStatusIncoming();
 	Configuration* GetConfig() { return m_config ; }
 

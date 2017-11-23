@@ -275,8 +275,7 @@ void SummaryPane::UpdateSummary()
 
 	// DHT status
 	wxString dhts(wxT(""));
-	m_pMainFrame->GetDHTStatus(dhts);
-	if(!dhts.IsEmpty())
+	if(m_pMainFrame->GetDHTStatus(dhts))
 	{
 		UpdateDht(dhts);
 	}

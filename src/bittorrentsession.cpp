@@ -2597,7 +2597,7 @@ void BitTorrentSession::UpdateCounters(lt::span<std::int64_t const>& stats_count
 	}
 }
 
-void BitTorrentSession::DHTStatusToString(wxString & status)
+bool BitTorrentSession::DHTStatusToString(wxString & status)
 {
 	static wxString lastStatus;
 	static char const* progress_bar =
@@ -2606,9 +2606,11 @@ void BitTorrentSession::DHTStatusToString(wxString & status)
 		"################################"
 		"################################";
 	static char const* short_progress_bar = "--------";
+	bool changed = false;
 	int bucket = 0;
 	{
 		wxMutexLocker ml(m_dht_status_lock);
+		changed = m_dht_changed;
 		if (m_dht_changed == true)
 		{
 			lastStatus = wxT("\n");
@@ -2642,8 +2644,10 @@ void BitTorrentSession::DHTStatusToString(wxString & status)
 			}
 
 			m_dht_changed = false;
+			status = lastStatus;
 		}
 	}
-	status = lastStatus;
+
+	return changed;
 }
 

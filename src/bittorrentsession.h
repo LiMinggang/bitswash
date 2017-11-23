@@ -191,7 +191,7 @@ public:
 	bool HasInComingConns() { return (m_cnt[0][m_has_incoming_connections_idx] > 0 ? true : false); }
 	void PostStatusUpdate();
 	void UpdateCounters(lt::span<std::int64_t const>& stats_counters, boost::uint64_t t);
-	void DHTStatusToString(wxString & status);
+	bool DHTStatusToString(wxString & status);
 
 private:
 	void ScanTorrentsDirectory(const wxString& dirname);
