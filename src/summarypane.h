@@ -73,25 +73,25 @@ protected:
 private:
 	// SummaryPane variables
 	
-	void UpdateSaveAs(wxString s);	
-	void UpdateSize(wxString s);	
-	void UpdatePieces(wxString s);	
-	void UpdateHash(wxString s);	
-	void UpdatePeers(wxString s);	
-	void UpdateSeeds(wxString s);	
-	void UpdateDownSpeed(wxString s);	
-	void UpdateUpSpeed(wxString s);	
-	void UpdateDownLimit(wxString s);	
-	void UpdateUpLimit(wxString s);	
-	void UpdateDownloaded(wxString s);	
-	void UpdateUploaded(wxString s);	
-	void UpdateRatio(wxString s);	
-	void UpdateComment(wxString s);	
+	void UpdateSaveAs(wxString& s);	
+	void UpdateSize(wxString& s);	
+	void UpdatePieces(wxString& s);	
+	void UpdateHash(wxString& s);	
+	void UpdatePeers(wxString& s);	
+	void UpdateSeeds(wxString& s);	
+	void UpdateDownSpeed(wxString& s);	
+	void UpdateUpSpeed(wxString& s);	
+	void UpdateDownLimit(wxString& s);	
+	void UpdateUpLimit(wxString& s);	
+	void UpdateDownloaded(wxString& s);	
+	void UpdateUploaded(wxString& s);	
+	void UpdateRatio(wxString& s);	
+	void UpdateComment(wxString& s);	
 
-	void UpdateTrackerUrl(wxString s); 
-	void UpdateTrackerStatus(wxString s); 
-	void UpdateNextUpdate(wxString s); 
-	void UpdateDht(wxString s); 
+	void UpdateTrackerUrl(wxString& s); 
+	void UpdateTrackerStatus(wxString& s); 
+	void UpdateNextUpdate(wxString& s); 
+	void UpdateDht(wxString& s); 
 	void ResetSummary();
 
 	MainFrame* m_pMainFrame;
