@@ -955,7 +955,7 @@ void MainFrame::OnListItemClick( long item )
 
 void MainFrame::UpdateUI(bool force/* = false*/)
 {
-	wxASSERT( m_btsession != 0 );
+	wxASSERT( m_btsession != nullptr );
 	WXLOGDEBUG(( _T( "UpdateUI\n" )));
 	static std::shared_ptr<torrent_t> invalid_torrent;
 

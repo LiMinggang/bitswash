@@ -153,7 +153,7 @@ void *BitTorrentSession::Entry()
 	ConfigureSession();
 
 	// Resume main thread
-	if(m_mutex != 0 && m_condition != 0)
+	if(m_mutex != nullptr && m_condition != nullptr)
 	{
 		wxMutexLocker lock(*m_mutex); 
 		m_condition->Broadcast(); // same as Signal() here -- one waiter only

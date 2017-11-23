@@ -38,7 +38,7 @@
 ConnectionSettingPane::ConnectionSettingPane( wxWindow* parent, int id, wxPoint pos, wxSize size, int style) : wxPanel(parent, id, pos, size, style)
 {
 	MainFrame* pMainFrame = dynamic_cast<MainFrame *>( wxGetApp().GetTopWindow() );
-	wxASSERT(pMainFrame != 0);
+	wxASSERT(pMainFrame != nullptr);
 	Configuration* pcfg = pMainFrame->GetConfig();
 
 	wxFlexGridSizer* fgConnectionMain;

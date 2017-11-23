@@ -84,7 +84,12 @@ TrackerListCtrl::~TrackerListCtrl()
 
 wxString TrackerListCtrl::GetItemValue(long item, long columnid) const
 {
-	MainFrame* pMainFrame = ( dynamic_cast< MainFrame* >(wxGetApp().GetTopWindow()));
+	static MainFrame* pMainFrame = nullptr;
+	if(pMainFrame == nullptr)
+	{
+		pMainFrame = ( dynamic_cast< MainFrame* >(wxGetApp().GetTopWindow()));
+		wxASSERT(pMainFrame != nullptr);
+	}
 
 	wxString ret(_T(""));
 
@@ -103,8 +108,6 @@ wxString TrackerListCtrl::GetItemValue(long item, long columnid) const
 	if (!pTorrent)
 		return ret;
 
-	wxString t_name = wxEmptyString;
-
 	std::vector<lt::announce_entry>& trackers = pTorrent->config->GetTrackersURL();
 	if(pTorrent->handle.is_valid())
 		trackers = pTorrent->handle.trackers();
@@ -118,10 +121,6 @@ wxString TrackerListCtrl::GetItemValue(long item, long columnid) const
 	}
 
 	lt::announce_entry tracker = trackers.at(item);
-	
-	auto best_ae = std::min_element(tracker.endpoints.begin(), tracker.endpoints.end()
-		, [](lt::announce_endpoint const& l, lt::announce_endpoint const& r) { return l.fails < r.fails; } );
-	bool valid = (best_ae != tracker.endpoints.end());
 
 //	if (h.is_valid())
 
@@ -129,12 +128,14 @@ wxString TrackerListCtrl::GetItemValue(long item, long columnid) const
 	{
 		case TRACKERLIST_COLUMN_URL:
 		{
-			t_name = wxString(wxConvUTF8.cMB2WC(tracker.url.c_str()));
-			ret = t_name;
+			ret = wxString(wxConvUTF8.cMB2WC(tracker.url.c_str()));
 			break;
 		}
 		case TRACKERLIST_COLUMN_STATUS:
 		{
+			auto best_ae = std::min_element(tracker.endpoints.begin(), tracker.endpoints.end()
+				, [](lt::announce_endpoint const& l, lt::announce_endpoint const& r) { return l.fails < r.fails; } );
+			bool valid = (best_ae != tracker.endpoints.end());
 			if(tracker.verified && valid)
 			{
 				if(best_ae->is_working()) ret = _("Working");
@@ -146,6 +147,9 @@ wxString TrackerListCtrl::GetItemValue(long item, long columnid) const
 		}
 		case TRACKERLIST_COLUMN_NEXT_ANNOUNCE:
 		{
+			auto best_ae = std::min_element(tracker.endpoints.begin(), tracker.endpoints.end()
+				, [](lt::announce_endpoint const& l, lt::announce_endpoint const& r) { return l.fails < r.fails; } );
+			bool valid = (best_ae != tracker.endpoints.end());
  			if(tracker.verified && valid && best_ae->is_working())
 			{
 				lt::time_point const now = lt::clock_type::now();
@@ -197,7 +201,7 @@ void TrackerListCtrl::OnMenuTracker(wxCommandEvent& event)
 	else
 	{
 		MainFrame* pMainFrame = dynamic_cast< MainFrame* >( wxGetApp().GetTopWindow() );
-		wxASSERT(pMainFrame != 0);
+		wxASSERT(pMainFrame != nullptr);
 		pTorrent = pMainFrame->GetSelectedTorrent();
 		
 		if(m_pTorrent.use_count() == 1)
