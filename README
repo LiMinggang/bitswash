@@ -18,11 +18,11 @@ Currently supported Languages:
 Build
 -----
 BOOST
-.\bjam.exe define=_WIN32_WINNT=0x0601 crypto=openssl --with-thread --with-system --with-filesystem --with-regex --with-iostreams threading=multi variant=release link=static address-model=64 runtime-link=static stage
+.\bjam.exe define=_WIN32_WINNT=0x0601 --with-thread --with-system --with-filesystem --with-regex --with-iostreams threading=multi variant=release link=static address-model=64 runtime-link=static stage
 
 News:
 0.7.1
-New: 64 bits
+New: 64 bits support
 New: Checkbox indicator in File list
 New: Click column to sort in File list
 New: Magnet URI support
@@ -34,7 +34,10 @@ New: Crash dumper
 New: Start on OS startup(Windows only)
 New: Associate .torrent to this application
 New: GeoIP support(v4/v6)
+New: DHT status
+New: Save/load DHT
 Fix: Clear zombie torrent in UI controls
+Fix: Lost of race conditions and bugs
 Performance improvement
 Change help&forum URL to github
 Update libtorrent to latest

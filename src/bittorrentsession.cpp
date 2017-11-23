@@ -647,7 +647,7 @@ void BitTorrentSession::AddTorrentToSession( std::shared_ptr<torrent_t>& torrent
 {
 	lt::torrent_handle &handle = torrent->handle;
 	wxLogWarning(( _T( "AddTorrent %s into session\n" ), torrent->name.c_str() ));
-	wxASSERT_MSG((wxString(torrent->hash) != _T("0000000000000000000000000000000000000000")), _("BitTorrentSession::AddTorrentToSession torrent hash is invalid!")+torrent->name);
+	wxASSERT_MSG((wxString(torrent->hash) != _T("0000000000000000000000000000000000000000")), _T("BitTorrentSession::AddTorrentToSession torrent hash is invalid!")+torrent->name);
 	wxString fastresumefile = wxGetApp().SaveTorrentsPath() + torrent->hash + _T( ".resume" );
 
 	try

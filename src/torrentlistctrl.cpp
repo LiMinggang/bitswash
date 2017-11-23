@@ -94,6 +94,8 @@ TorrentListCtrl::TorrentListCtrl( wxWindow *parent,
 								  long style )
 	: SwashListCtrl( parent, SWASHLISTCOL_SIZE( torrentlistcols ), torrentlistcols, settings, id, pos, size, style ), m_torrentmenu( 0 )
 {
+	MainFrame* m_pMainFrame = dynamic_cast<MainFrame *> ( parent );
+	wxASSERT(m_pMainFrame != nullptr);
 }
 
 TorrentListCtrl::~TorrentListCtrl()
@@ -102,31 +104,15 @@ TorrentListCtrl::~TorrentListCtrl()
 
 wxString TorrentListCtrl::GetItemValue( long item, long columnid ) const
 {
-	MainFrame* pMainFrame = dynamic_cast<MainFrame *> ( wxGetApp().GetTopWindow() );
-	wxASSERT(pMainFrame != 0);
-
 	//wxLogDebug(_T("TorrentListCtrl::Showing %d items column %d"), torrentlistitems->size(), columnid);
-	std::shared_ptr<torrent_t> torrent = pMainFrame->GetTorrent( item );
+	std::shared_ptr<torrent_t> torrent = m_pMainFrame->GetTorrent( item );
 	if(!torrent)
 	{
 		wxLogError( _T( "TorrentListCtrl: Couldn't retrieve torrent %d\n" ), item );
 		return _T( "" );
 	}
 
-	stats_t& torrentstats = torrent->config->GetTorrentStats();
-	lt::torrent_handle &torrenthandle = torrent->handle;
-	//std::shared_ptr<const lt::torrent_info> torrentinfo = torrent->info;
-	lt::torrent_status torrentstatus;
-	int torrentstoped = !torrenthandle.is_valid();
-
-	if( !torrentstoped )
-	{
-		torrentstatus = torrenthandle.status(lt::torrent_handle::query_distributed_copies);
-		torrentstats.progress = torrentstatus.progress;
-		torrentstats.total_download = torrentstatus.total_payload_download;
-		torrentstats.total_upload = torrentstatus.total_payload_upload;
-	}
-
+	std::shared_ptr<TorrentConfig>& tconfig = torrent->config;
 	static const wxChar *state_str[] =
 	{
 		_( "Queued" ),
@@ -140,20 +126,16 @@ wxString TorrentListCtrl::GetItemValue( long item, long columnid ) const
 	};
 	static size_t state_size = ( sizeof( state_str ) / ( sizeof( wxChar * ) ) );
 
-	wxString ret;
+	wxString ret(wxT("--"));
 
 	switch( columnid )
 	{
 	case TORRENTLIST_COLUMN_INDEX:
 		{
-			int idx = torrent->config->GetQIndex();
+			int idx = tconfig->GetQIndex();
 			if(idx >= 0)
 			{
-				ret = wxString::Format( _T( "%d" ), torrent->config->GetQIndex() );
-			}
-			else
-			{
-				ret = wxT("--");
+				ret = wxString::Format( _T( "%d" ), tconfig->GetQIndex() + 1 );
 			}
 		}
 		break;
@@ -163,128 +145,157 @@ wxString TorrentListCtrl::GetItemValue( long item, long columnid ) const
 		break;
 
 	case TORRENTLIST_COLUMN_STATUS:
-		if( torrent->config->GetTorrentState() == TORRENT_STATE_QUEUE )
 		{
-			ret = _( "Queueing" );
-		}
-		else if( ( torrent->config->GetTorrentState() == TORRENT_STATE_STOP ) ||
-				 ( torrentstoped ) )
-		{
-			ret = _( "Stopped" );
-		}
-		else
-		{
-			if( torrent->config->GetTorrentState() == TORRENT_STATE_PAUSE )
+			lt::torrent_handle &torrenthandle = torrent->handle;
+			bool torrentstoped = !torrenthandle.is_valid();
+			
+			if( tconfig->GetTorrentState() == TORRENT_STATE_QUEUE )
 			{
-				ret = _( "Paused" );
+				ret = _( "Queueing" );
+			}
+			else if( ( tconfig->GetTorrentState() == TORRENT_STATE_STOP ) ||
+					 ( torrentstoped ) )
+			{
+				ret = _( "Stopped" );
 			}
 			else
 			{
-				if( torrentstatus.state < state_size )
-				{ ret = wxString::Format( _T( "%s" ), state_str[torrentstatus.state] ); }
+				if( tconfig->GetTorrentState() == TORRENT_STATE_PAUSE )
+				{
+					ret = _( "Paused" );
+				}
 				else
-				{ ret = _( "Error!" ); }
+				{
+					lt::torrent_status torrentstatus;
+					
+					if( torrenthandle.is_valid() )
+					{
+						torrentstatus = torrenthandle.status(lt::torrent_handle::query_distributed_copies);
+					}
+					if( torrentstatus.state < state_size )
+					{ ret = wxString::Format( _T( "%s" ), state_str[torrentstatus.state] ); }
+					else
+					{ ret = _( "Error!" ); }
+				}
 			}
 		}
 
 		break;
 
 	case TORRENTLIST_COLUMN_SIZE:
-		ret = HumanReadableByte( ( wxDouble ) torrent->config->GetTotalSize() );
+		ret = HumanReadableByte( ( wxDouble ) tconfig->GetTotalSize() );
 		break;
 	case TORRENTLIST_COLUMN_SELECTEDSIZE:
-		ret = HumanReadableByte( ( wxDouble ) torrent->config->GetSelectedSize() );
+		ret = HumanReadableByte( ( wxDouble ) tconfig->GetSelectedSize() );
 		break;
-	case TORRENTLIST_COLUMN_DOWNLOADED:
-		ret = HumanReadableByte( ( wxDouble ) torrentstats.total_download );
-		break;
-	case TORRENTLIST_COLUMN_UPLOADED:
-		ret = HumanReadableByte( ( wxDouble ) torrentstats.total_upload );
-		break;
-
-	case TORRENTLIST_COLUMN_PROGRESS:
-		ret =  wxString::Format( _T( "%.02f%%" ), ( torrentstats.progress * 100 ) ) ;
-		break;
-
-	case TORRENTLIST_COLUMN_DOWNSPEED:
-		if( torrentstoped )
-		{ ret = _T( "0 Bps" ); }
-		else
-		{ ret = HumanReadableByte( ( wxDouble ) torrentstatus.download_payload_rate ) + wxString( _T( "ps" ) ); }
-
-		break;
-
-	case TORRENTLIST_COLUMN_UPSPEED:
-		if( torrentstoped )
-		{ ret = _T( "0 Bps" ); }
-		else
-		{ ret = HumanReadableByte( ( wxDouble ) torrentstatus.upload_payload_rate ) + wxString( _T( "ps" ) ); }
-
-		break;
-
-	case TORRENTLIST_COLUMN_TIMELEFT:
-		if( ( torrentstatus.state == lt::torrent_status::seeding ) || ( torrentstatus.progress >= 1 ) )
-		{
-			ret = _T( "00:00:00" );
-		}
-		else if( torrentstatus.distributed_copies <= 0 )
-		{
-			ret = _T( "99:99:99" );
-		}
-		else
-		{
-			unsigned long byteleft = ( unsigned long )( torrent->config->GetTotalSize() );
-			unsigned long secleft = 999999;
-			unsigned long downloadrate = torrentstatus.download_payload_rate ;
-
-			if( downloadrate > 0 )
-			{
-				secleft =  byteleft / downloadrate;
-			}
-
-			//wxLogDebug(_T("XXX byteleft %ld, secleft %ld"), secleft);
-			if( secleft > 360000 ) //approx 99:99:99 ??
-			{
-				ret = _T( "99:99:99" );
-			}
-			else
-			{
-				unsigned long hrleft = secleft / 3600;
-				secleft %= 3600;
-				unsigned long mnleft = secleft / 60 ;
-				secleft %= 60;
-				ret = wxString::Format( _T( "%2d:%02d:%02d" ), ( unsigned long )hrleft, ( unsigned long )mnleft, ( unsigned long )secleft );
-			}
-		}
-
-		break;
-
-	case TORRENTLIST_COLUMN_PEER:
-		if( torrentstoped )
-		{ ret = _T( "0/0" ); }
-		else
-		{ ret = wxString::Format( _T( "%d/%d" ), torrentstatus.num_peers, torrentstatus.num_seeds ); }
-
-		break;
-
-	case TORRENTLIST_COLUMN_COPIES:
-		if( torrentstoped || torrentstatus.distributed_copies < 0.f)
-		{ ret = _T( "--" ); }
-		else
-		{ ret = wxString::Format( _T( "%.02f" ), torrentstatus.distributed_copies ); }
-
-		break;
-
-	case TORRENTLIST_COLUMN_RATIO:
-		if( torrentstats.total_download > 0 )
-		{ ret = wxString::Format( _T( "%.02f" ), ( double )( torrentstats.total_upload ) / ( double )torrentstats.total_download ); }
-		else
-		{ ret = _( "inf" ); }
-
-		break;
-
 	default:
-		ret = _T( "" );
+		{
+			stats_t& torrentstats = tconfig->GetTorrentStats();
+			lt::torrent_handle &torrenthandle = torrent->handle;
+			lt::torrent_status torrentstatus;
+			bool torrentstoped = !torrenthandle.is_valid();
+
+			if( torrenthandle.is_valid() )
+			{
+				torrentstatus = torrenthandle.status(lt::torrent_handle::query_distributed_copies);
+				torrentstats.progress = torrentstatus.progress;
+				torrentstats.total_download = torrentstatus.total_payload_download;
+				torrentstats.total_upload = torrentstatus.total_payload_upload;
+			}
+			switch(columnid)
+			{
+			case TORRENTLIST_COLUMN_DOWNLOADED:
+				ret = HumanReadableByte( ( wxDouble ) torrentstats.total_download );
+				break;
+			case TORRENTLIST_COLUMN_UPLOADED:
+				ret = HumanReadableByte( ( wxDouble ) torrentstats.total_upload );
+				break;
+
+			case TORRENTLIST_COLUMN_PROGRESS:
+				ret =  wxString::Format( _T( "%.02f%%" ), ( torrentstats.progress * 100 ) ) ;
+				break;
+
+			case TORRENTLIST_COLUMN_DOWNSPEED:
+				if( torrentstoped )
+				{ ret = _T( "0 Bps" ); }
+				else
+				{ ret = HumanReadableByte( ( wxDouble ) torrentstatus.download_payload_rate ) + wxString( _T( "ps" ) ); }
+
+				break;
+
+			case TORRENTLIST_COLUMN_UPSPEED:
+				if( torrentstoped )
+				{ ret = _T( "0 Bps" ); }
+				else
+				{ ret = HumanReadableByte( ( wxDouble ) torrentstatus.upload_payload_rate ) + wxString( _T( "ps" ) ); }
+
+				break;
+
+			case TORRENTLIST_COLUMN_TIMELEFT:
+				if( ( torrentstatus.state == lt::torrent_status::seeding ) || ( torrentstatus.progress >= 1 ) )
+				{
+					ret = _T( "00:00:00" );
+				}
+				else if( torrentstatus.distributed_copies <= 0 )
+				{
+					ret = _T( "99:99:99" );
+				}
+				else
+				{
+					unsigned long byteleft = ( unsigned long )( tconfig->GetTotalSize() );
+					unsigned long secleft = 999999;
+					unsigned long downloadrate = torrentstatus.download_payload_rate ;
+
+					if( downloadrate > 0 )
+					{
+						secleft =  byteleft / downloadrate;
+					}
+
+					//wxLogDebug(_T("XXX byteleft %ld, secleft %ld"), secleft);
+					if( secleft > 360000 ) //approx 99:99:99 ??
+					{
+						ret = _T( "99:99:99" );
+					}
+					else
+					{
+						unsigned long hrleft = secleft / 3600;
+						secleft %= 3600;
+						unsigned long mnleft = secleft / 60 ;
+						secleft %= 60;
+						ret = wxString::Format( _T( "%2d:%02d:%02d" ), ( unsigned long )hrleft, ( unsigned long )mnleft, ( unsigned long )secleft );
+					}
+				}
+
+				break;
+
+			case TORRENTLIST_COLUMN_PEER:
+				if( torrentstoped )
+				{ ret = _T( "0/0" ); }
+				else
+				{ ret = wxString::Format( _T( "%d/%d" ), torrentstatus.num_peers, torrentstatus.num_seeds ); }
+
+				break;
+
+			case TORRENTLIST_COLUMN_COPIES:
+				if( torrentstoped || torrentstatus.distributed_copies < 0.f)
+				{ ret = _T( "--" ); }
+				else
+				{ ret = wxString::Format( _T( "%.02f" ), torrentstatus.distributed_copies ); }
+
+				break;
+
+			case TORRENTLIST_COLUMN_RATIO:
+				if( torrentstats.total_download > 0 )
+				{ ret = wxString::Format( _T( "%.02f" ), ( double )( torrentstats.total_upload ) / ( double )torrentstats.total_download ); }
+				else
+				{ ret = _( "inf" ); }
+
+				break;
+
+			default:
+				ret = _T( "" );
+			}
+		}
 	}
 
 	return ret;

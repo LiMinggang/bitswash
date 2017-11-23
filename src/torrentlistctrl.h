@@ -37,7 +37,7 @@
 
 #define ID_TORRENTLIST_CTRL wxID_HIGHEST + 1
 
-
+class MainFrame;
 class TorrentListCtrl: public SwashListCtrl
 {
 		
@@ -56,6 +56,7 @@ private:
 	wxString GetItemValue(long item, long columnid) const;
 	void ShowContextMenu(const wxPoint& pos);
 	wxMenu* m_torrentmenu;
+	MainFrame* m_pMainFrame;
 
     DECLARE_NO_COPY_CLASS(TorrentListCtrl)
 };

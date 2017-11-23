@@ -103,7 +103,7 @@ wxMenu *SwashTrayIcon::CreatePopupMenu()
 
 #ifndef __WXMAC_OSX__ /*Mac has built-in quit menu*/
 	menu->AppendSeparator();
-	menu->Append(TRAY_EXIT,	_("E&xit"));
+	menu->Append(TRAY_EXIT, _("E&xit"));
 #endif
 	return menu;
 }
@@ -125,7 +125,7 @@ void SwashTrayIcon::ShowHideMainFrame()
 		} 
 		else 
 		{
-			//m_pMainFrame->UpdateUI(true);
+			m_pMainFrame->UpdateUI(true);
 			m_pMainFrame->Show(true);
 			m_pMainFrame->Iconize(false);
 			m_pMainFrame->Raise();
@@ -135,7 +135,7 @@ void SwashTrayIcon::ShowHideMainFrame()
 	{
 		if (m_pMainFrame->IsIconized())
 		{
-			//m_pMainFrame->UpdateUI(true);
+			m_pMainFrame->UpdateUI(true);
 			m_pMainFrame->Iconize(false);
 		} 
 		else 
