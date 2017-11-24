@@ -1054,7 +1054,6 @@ void MainFrame::UpdateUI(bool force/* = false*/)
 
 	if( m_config->GetUseSystray() )
 	{
-		m_btsession->PostStatusUpdate();
 		UpdateTrayInfo();
 	}
 
@@ -1413,7 +1412,6 @@ void MainFrame::OnMenuTorrentProperties( wxCommandEvent& event )
 	}
 }
 
-
 void MainFrame::RemoveTorrent( bool deletedata )
 {
 	int i = 0;
@@ -1706,14 +1704,17 @@ wxString MainFrame::GetStatusIncoming()
 
 void MainFrame::UpdateTrayInfo()
 {
-	wxString tooltips = wxString::Format(_T("%s %s\n%-20s : %s\n%-20s : %s\n%-20s : %s\n%-20s : %s\n%-20s : %s"),
-		APPNAME, BITSWASH_VERSION,
-		_("Download Rate"), GetStatusDownloadRate().c_str(),
-		_("Upload Rate"), GetStatusUploadRate().c_str(),
-		_("Peers"), GetStatusPeers().c_str(),
-		_("DHT Nodes"), GetStatusDHT().c_str(),
-		_("Incoming"), GetStatusIncoming().c_str());
-	m_swashtrayicon->SetIcon( m_trayicon, tooltips );
+	if (m_swashtrayicon != nullptr)
+	{
+		wxString tooltips = wxString::Format(_T("%s %s\n%-20s : %s\n%-20s : %s\n%-20s : %s\n%-20s : %s\n%-20s : %s"),
+			APPNAME, BITSWASH_VERSION,
+			_("Download Rate"), GetStatusDownloadRate().c_str(),
+			_("Upload Rate"), GetStatusUploadRate().c_str(),
+			_("Peers"), GetStatusPeers().c_str(),
+			_("DHT Nodes"), GetStatusDHT().c_str(),
+			_("Incoming"), GetStatusIncoming().c_str());
+		m_swashtrayicon->SetIcon(m_trayicon, tooltips);
+	}
 }
 
 void MainFrame::ShowSystray( bool show )
@@ -1742,7 +1743,6 @@ void MainFrame::ShowSystray( bool show )
 
 void MainFrame::SetLogSeverity()
 {
-	//wxASSERT(s!= nullptr);
 	int wx_loglevel = wxLOG_Debug - m_config->GetLogSeverity();
 	wxLog::SetLogLevel( wx_loglevel );
 
@@ -1750,9 +1750,6 @@ void MainFrame::SetLogSeverity()
 	{ wxLog::SetVerbose( true ); }
 	else
 	{ wxLog::SetVerbose( false ); }
-
-	m_btsession->SetLogSeverity();
-	//  s->set_severity_level((lt::alert::severity_t)m_config->GetLogSeverity());
 }
 
 void MainFrame::OnUpdateOptionLanguage( wxUpdateUIEvent& event )
@@ -1794,4 +1791,3 @@ wxMenu* MainFrame::GetNewTorrentMenu()
 	menuitem->SetBitmap( wxBitmap( wxGetApp().GetAppIcon( BITSWASH_ICON_TORRENT_PROPERTIES ) ) );
 	return torrentMenu;
 }
-

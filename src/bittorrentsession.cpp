@@ -170,6 +170,7 @@ void *BitTorrentSession::Entry()
 	{
 		try
 		{
+			PostStatusUpdate();
 			evt = BTS_EVENT_INVALID;
 			result = m_evt_queue.ReceiveTimeout( 1000, evt );
 			if(result == wxMSGQUEUE_NO_ERROR)
@@ -270,7 +271,7 @@ void BitTorrentSession::OnExit()
 	{
 		wxMutexLocker ml( m_torrent_queue_lock );
 		m_torrent_queue.clear();
-		//m_torrent_queue.swap( m_torrent_queue );
+		m_torrent_queue.swap( m_torrent_queue );
 	}
 }
 
@@ -510,10 +511,9 @@ void BitTorrentSession::ConfigureSession()
 			if(length > 0)
 			{
 				bufin.resize(length);
-				in.read (&bufin[0],length);
+				in.read (&bufin[0], length);
 				try
 				{
-					
 					if (bdecode(&bufin[0], &bufin[0] + bufin.size(), e, ec) == 0)
 						params = read_session_params(e, lt::session_handle::save_dht_state);
 				}
@@ -521,8 +521,11 @@ void BitTorrentSession::ConfigureSession()
 				{
 					wxLogWarning( _T( "Unable to restore dht state file %s - %s\n" ), dhtstatefile.c_str(), wxString::FromUTF8( e.what() ).c_str() );
 				}
+				catch (...)
+				{
+					wxLogError(_T("Unknown Exception: %s\n"), __FUNCTION__ );
+				}
 			}
-
 		}
 		else
 		{
@@ -536,18 +539,11 @@ void BitTorrentSession::ConfigureSession()
 
 	m_libbtsession->set_alert_notify(boost::bind(&BitTorrentSession::PostLibTorrentAlertEvent, this));
 
-	SetLogSeverity();
 	//Network settings
 	SetConnection();
 	StartExtensions();
 	StartUpnp();
 	StartNatpmp();
-}
-
-void BitTorrentSession::SetLogSeverity()
-{
-	wxASSERT( m_libbtsession != nullptr );
-	//m_libbtsession->set_severity_level( ( lt::alert::severity_t )m_config->GetLogSeverity() );
 }
 
 void BitTorrentSession::SetConnection()
@@ -647,7 +643,7 @@ void BitTorrentSession::AddTorrentToSession( std::shared_ptr<torrent_t>& torrent
 {
 	lt::torrent_handle &handle = torrent->handle;
 	wxLogWarning(( _T( "AddTorrent %s into session\n" ), torrent->name.c_str() ));
-	wxASSERT_MSG((wxString(torrent->hash) != _T("0000000000000000000000000000000000000000")), _T("BitTorrentSession::AddTorrentToSession torrent hash is invalid!")+torrent->name);
+	wxASSERT_MSG((wxString(torrent->hash) != _T("0000000000000000000000000000000000000000")), _("Torrent hash is invalid! ")+torrent->name);
 	wxString fastresumefile = wxGetApp().SaveTorrentsPath() + torrent->hash + _T( ".resume" );
 
 	try
@@ -659,9 +655,6 @@ void BitTorrentSession::AddTorrentToSession( std::shared_ptr<torrent_t>& torrent
 		//
 		lt::add_torrent_params p;
 		lt::error_code ec;
-
-		//p.ti = t;
-		//p.url = wxFileSystem::FileNameToURL(const wxFileName &filename)
 
 		if( wxFileExists( fastresumefile ) )
 		{
@@ -728,6 +721,10 @@ void BitTorrentSession::AddTorrentToSession( std::shared_ptr<torrent_t>& torrent
 		//posibly duplicate torrent
 		wxLogError( wxString::FromUTF8( e.what() ) + _T("\n") );
 	}
+	catch (...)
+	{
+		wxLogError(_T("Unknown Exception: %s\n"), __FUNCTION__ );
+	}
 }
 
 bool BitTorrentSession::AddTorrent( std::shared_ptr<torrent_t>& torrent )
@@ -760,6 +757,11 @@ bool BitTorrentSession::AddTorrent( std::shared_ptr<torrent_t>& torrent )
 	catch( std::exception& e )
 	{
 		wxLogError( wxString::FromUTF8( e.what() ) + _T("\n") );
+		return false;
+	}
+	catch (...)
+	{
+		wxLogError(_T("Unknown Exception: %s\n"), __FUNCTION__ );
 		return false;
 	}
 
@@ -902,10 +904,10 @@ std::shared_ptr<torrent_t> BitTorrentSession::GetTorrent( int idx )
 void BitTorrentSession::MergeTorrent( std::shared_ptr<torrent_t>& dst_torrent, std::shared_ptr<torrent_t>& src_torrent )
 {
 	lt::torrent_handle &torrent_handle = dst_torrent->handle;
-	std::vector<lt::announce_entry> const& trackers = src_torrent->info->trackers();
 
 	if(torrent_handle.is_valid())
 	{
+		std::vector<lt::announce_entry> const& trackers = src_torrent->info->trackers();
 		for( size_t i = 0; i < trackers.size(); ++i )
 		{
 			torrent_handle.add_tracker( trackers.at( i ) );
@@ -1195,7 +1197,6 @@ void BitTorrentSession::SaveTorrentResumeData( lt::save_resume_data_alert * p )
 	}
 }
 
-
 void BitTorrentSession::DumpTorrents()
 {
 	wxMutexLocker ml( m_torrent_queue_lock );
@@ -1246,6 +1247,10 @@ std::shared_ptr<torrent_t> BitTorrentSession::ParseTorrent( const wxString& file
 	catch( std::exception &e )
 	{
 		wxLogError( wxString::FromUTF8( e.what() ) + _T("\n") );
+	}
+	catch (...)
+	{
+		wxLogError(_T("Unknown Exception: %s\n"), __FUNCTION__ );
 	}
 
 	return torrent;
@@ -1306,6 +1311,10 @@ std::shared_ptr<torrent_t> BitTorrentSession::LoadMagnetUri( MagnetUri& magnetur
 			{
 				wxLogError( wxString::FromUTF8( e.what() ) + _T("\n") );
 			}
+			catch (...)
+			{
+				wxLogError(_T("Unknown Exception: %s\n"), __FUNCTION__ );
+			}
 		}
 	}
 
@@ -1353,6 +1362,11 @@ bool BitTorrentSession::SaveTorrent( std::shared_ptr<torrent_t>& torrent, const 
 	catch( std::exception &e )
 	{
 		wxLogError( wxString::FromUTF8( e.what() ) + _T("\n") );
+		return false;
+	}	
+	catch (...)
+	{
+		wxLogError(_T("Unknown Exception: %s\n"), __FUNCTION__ );
 		return false;
 	}
 

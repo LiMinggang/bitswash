@@ -114,7 +114,6 @@ public:
 
 	void Configure(lt::settings_pack &settingsPack);
 	void ConfigureSession();
-	void SetLogSeverity();
 	void SetConnection();
 	void SetEncryption();
 	void StartExtensions();

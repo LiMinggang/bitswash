@@ -73,8 +73,7 @@ TorrentInfo::~TorrentInfo()
 
 void TorrentInfo::UpdateTorrentInfo(bool updateall) 
 {
-	bool summary_updated, peers_updated, files_updated, trackers_updated;
-	summary_updated = peers_updated = files_updated = trackers_updated = false;
+	bool summary_updated = false, peers_updated = false, files_updated = false, trackers_updated = false;
 	switch(GetSelection())
 	{
 		case BW_TORRENTINFO_SUMMARY:

@@ -43,7 +43,7 @@ AutoSizeInput::AutoSizeInput( wxWindow* parent, wxString unitbase, int usize, in
 
 	m_unit_base = unitbase;
 	
-	for (int i=0 ; i< usize; i++)
+	for (int i = 0 ; i < usize; i++)
 	{
 		m_comboUnit->Append( units[i] +  unitbase );
 	}
@@ -65,17 +65,15 @@ void AutoSizeInput::SetValue(long val)
 	int i=0;
 
 	vl = val;
-	for(i=0; i< m_unit_size; i++)
+	for(i = 0; i < m_unit_size; i++)
 	{
 		if(val < ivl) break;
 		vl = val / ivl;
 		ivl *=ivl;
-
 	}
 	m_spinValue->SetValue((long)vl);
 	m_comboidx = i;
 	m_comboUnit->SetValue(units[i] + m_unit_base);
-
 }
 
 long AutoSizeInput::GetValue()
@@ -83,12 +81,11 @@ long AutoSizeInput::GetValue()
 	return m_value;
 }
 
-void AutoSizeInput::OnSpinUpdate(wxSpinEvent& event) 
+void AutoSizeInput::OnSpinUpdate(wxSpinEvent& WXUNUSED(event))
 {
-
-	int i=0;
-	long mply= 1;
-	for (i=0; i< m_comboidx; i++)
+	int i = 0;
+	long mply = 1;
+	for (i = 0; i < m_comboidx; i++)
 		mply *= 1024;
 
 	if (m_spinValue->GetValue() > 0)
@@ -97,19 +94,17 @@ void AutoSizeInput::OnSpinUpdate(wxSpinEvent& event)
 		m_value = m_spinValue->GetValue();
 }
 
-void AutoSizeInput::OnComboUpdate(wxCommandEvent& event) 
+void AutoSizeInput::OnComboUpdate(wxCommandEvent& WXUNUSED(event))
 {
-
 	m_comboidx = m_comboUnit->GetCurrentSelection();
 	
-	int i=0;
-	long mply= 1;
-	for (i=0; i< m_comboidx; i++)
+	int i = 0;
+	long mply = 1;
+	for (i = 0; i < m_comboidx; i++)
 		mply *= 1024;
 
 	if (m_spinValue->GetValue() > 0)
 		m_value = m_spinValue->GetValue() * mply;
 	else
 		m_value = m_spinValue->GetValue();
-	
 }

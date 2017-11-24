@@ -44,6 +44,7 @@
 #include "functions.h"
 
 //namespace lt = libtorrent;
+static wxString emptystr(wxEmptyString);
 
 SummaryPane::SummaryPane(wxWindow *parent,
                 const wxWindowID id,
@@ -180,6 +181,8 @@ void SummaryPane::UpdateSummary()
 {
 	//wxLogDebug(_T("UpdateSummary\n"));
 	std::shared_ptr<torrent_t> pTorrent = m_pMainFrame->GetSelectedTorrent();
+	static bool cleard = false;
+	bool notupdated = true;
 
 	if ( !pTorrent )
 	{
@@ -190,7 +193,7 @@ void SummaryPane::UpdateSummary()
 
 	lt::torrent_handle h = pTorrent->handle;
 
-	std::shared_ptr<const lt::torrent_info> t = pTorrent->info;
+	std::shared_ptr<lt::torrent_info>& t = pTorrent->info;
 	lt::torrent_status s;
 
 	if(h.is_valid()) 
@@ -214,9 +217,6 @@ void SummaryPane::UpdateSummary()
 		UpdateComment(wxString(wxConvUTF8.cMB2WC(t->comment().c_str())));
 	}
 
-	wxString turl(wxT("")), tstatus(wxT("")), nupdate(wxT("")), peers(wxT("")), seeds(wxT("")), 
-		downspeed(wxT("")), upspeed(wxT("")), downlimit(wxT("")), uplimit(wxT("")), downloaded(wxT("")),
-		uploaded(wxT(""));
 	if (h.is_valid())
 	{
 		if(s.total_payload_download >0)
@@ -225,9 +225,12 @@ void SummaryPane::UpdateSummary()
 			UpdateRatio(wxString(_T("inf")));
 		if(s.has_metadata)
 		{
+			wxString turl(wxT("")), tstatus(wxT("")), nextupdate(wxT("")), peers(wxT("")), seeds(wxT("")), 
+				downspeed(wxT("")), upspeed(wxT("")), downlimit(wxT("")), uplimit(wxT("")), downloaded(wxT("")),
+				uploaded(wxT(""));
 			turl = wxString::FromUTF8(s.current_tracker.c_str());
 			
-			nupdate = wxString::Format(_T("%s"), HumanReadableTime(int(lt::total_seconds(s.next_announce))));
+			nextupdate = wxString::Format(_T("%s"), HumanReadableTime(int(lt::total_seconds(s.next_announce))));
 			std::vector<lt::announce_entry>& trackers = pTorrent->handle.trackers();
 			for(auto & tracker: trackers)
 			{
@@ -253,25 +256,42 @@ void SummaryPane::UpdateSummary()
 			uplimit    = HumanReadableByte(h.upload_limit()) + _T("ps");
 			downloaded = HumanReadableByte(s.total_payload_download);
 			uploaded   = HumanReadableByte( s.total_payload_upload);
+			UpdatePeers(peers);
+			UpdateSeeds(seeds);
+			
+			UpdateDownSpeed(downspeed);
+			UpdateUpSpeed(upspeed);
+			
+			UpdateDownLimit(downlimit);
+			UpdateUpLimit(uplimit);
+			
+			UpdateDownloaded(downloaded);
+			UpdateUploaded(uploaded);
+			
+			UpdateTrackerUrl(turl);
+			UpdateTrackerStatus(tstatus);
+			
+			UpdateNextUpdate(nextupdate);
+			cleard = false;
+			notupdated = false;
 		}
 	}
 
-	UpdatePeers(peers);
-	UpdateSeeds(seeds);
-
-	UpdateDownSpeed(downspeed);
-	UpdateUpSpeed(upspeed);
-
-	UpdateDownLimit(downlimit);
-	UpdateUpLimit(uplimit);
-
-	UpdateDownloaded(downloaded);
-	UpdateUploaded(uploaded);
-
-	UpdateTrackerUrl(turl);
-	UpdateTrackerStatus(tstatus);
-
-	UpdateNextUpdate(nupdate);
+	if(notupdated && !cleard)
+	{
+		UpdatePeers(emptystr);
+		UpdateSeeds(emptystr);
+		UpdateDownSpeed(emptystr);
+		UpdateUpSpeed(emptystr);
+		UpdateDownLimit(emptystr);
+		UpdateUpLimit(emptystr);
+		UpdateDownloaded(emptystr);
+		UpdateUploaded(emptystr);
+		UpdateTrackerUrl(emptystr);
+		UpdateTrackerStatus(emptystr);
+		UpdateNextUpdate(emptystr);
+		cleard = true;
+	}
 
 	// DHT status
 	wxString dhts(wxT(""));
@@ -382,35 +402,34 @@ void SummaryPane::UpdateDht(wxString& s)
 
 void SummaryPane::ResetSummary()
 {
-	static wxString empty(wxEmptyString);
-	UpdateSaveAs(empty);
+	UpdateSaveAs(emptystr);
 
-	UpdateSize(empty);
+	UpdateSize(emptystr);
 
-	UpdatePieces(empty);
+	UpdatePieces(emptystr);
 
-	UpdateHash(empty);
-	UpdatePeers(empty);
-	UpdateSeeds(empty);
+	UpdateHash(emptystr);
+	UpdatePeers(emptystr);
+	UpdateSeeds(emptystr);
 
-	UpdateDownSpeed(empty);
-	UpdateUpSpeed(empty);
+	UpdateDownSpeed(emptystr);
+	UpdateUpSpeed(emptystr);
 
-	UpdateDownLimit(empty);
-	UpdateUpLimit(empty);
+	UpdateDownLimit(emptystr);
+	UpdateUpLimit(emptystr);
 
-	UpdateDownloaded(empty);
-	UpdateUploaded(empty);
+	UpdateDownloaded(emptystr);
+	UpdateUploaded(emptystr);
 
-	UpdateRatio(empty);
+	UpdateRatio(emptystr);
 
-	UpdateComment(empty);
+	UpdateComment(emptystr);
 
-	UpdateTrackerUrl(empty);
+	UpdateTrackerUrl(emptystr);
 	//
-	UpdateTrackerStatus(empty);
+	UpdateTrackerStatus(emptystr);
 	//
-	UpdateNextUpdate(empty);
+	UpdateNextUpdate(emptystr);
 
-	UpdateDht(empty);
+	UpdateDht(emptystr);
 }

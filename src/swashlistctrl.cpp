@@ -706,7 +706,7 @@ wxString SwashListCtrl::OnGetItemText( long item, long column ) const
 {
 	//SwashListCtrl* pThis = const_cast<SwashListCtrl*>( this );
 	//long index_item = item;
-	wxListItem listitem;
+	//wxListItem listitem;
 	//  pThis->GetColumn(column, listitem);
 	//wxLogDebug(_T("OnGetItemText: Item %d column %d listitem %s ColumnCount %d id %d"), item, column, listitem.GetText().c_str(), pThis->GetColumnCount(), listitem.GetId());
 	return GetItemValue( item, ColumnId( column ) );
