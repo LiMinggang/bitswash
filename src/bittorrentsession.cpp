@@ -170,7 +170,6 @@ void *BitTorrentSession::Entry()
 	{
 		try
 		{
-			PostStatusUpdate();
 			evt = BTS_EVENT_INVALID;
 			result = m_evt_queue.ReceiveTimeout( 1000, evt );
 			if(result == wxMSGQUEUE_NO_ERROR)

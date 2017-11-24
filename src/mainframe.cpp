@@ -941,6 +941,8 @@ void MainFrame::OnMenuOpenTorrentUrl( wxCommandEvent& WXUNUSED( event ) )
 void MainFrame::OnRefreshTimer( wxTimerEvent& WXUNUSED( event ) )
 {
 	//GetTorrentLog();
+	m_btsession->PostStatusUpdate();
+
 	UpdateUI();
 }
 
@@ -998,11 +1000,6 @@ void MainFrame::UpdateUI(bool force/* = false*/)
 					{
 						torrent_handle.get_peer_info( m_peerlistitems );
 						m_peerlistctrl->SetItemCount( m_peerlistitems.size() );
-
-						/*if( m_peerlistitems.size() > 0 )
-						{
-							m_peerlistctrl->UpdateSwashList();
-						}*/
 					}
 				}
 				else
