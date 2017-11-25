@@ -23,8 +23,9 @@ BOOST
 News:
 0.7.1
 New: 64 bits support
-New: Checkbox indicator in File list
-New: Click column to sort in File list
+New: Checkbox indicator on File list dialog
+New: Click column to sort on File list dialog
+New: Free disk space on File list dialog
 New: Magnet URI support
 New: Fast resume
 New: Single instance
@@ -41,6 +42,7 @@ Fix: Lost of race conditions and bugs
 Performance improvement
 Change help&forum URL to github
 Update libtorrent to latest
+Update to wxWidgets 3.1
 
 
 Author:

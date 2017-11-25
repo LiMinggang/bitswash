@@ -108,7 +108,7 @@ wxString TorrentListCtrl::GetItemValue( long item, long columnid ) const
 	std::shared_ptr<torrent_t> torrent = m_pMainFrame->GetTorrent( item );
 	if(!torrent)
 	{
-		wxLogError( _T( "TorrentListCtrl: Couldn't retrieve torrent %d\n" ), item );
+		wxLogError( _T( "Couldn't retrieve torrent %d\n" ), item );
 		return _T( "" );
 	}
 

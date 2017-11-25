@@ -34,7 +34,8 @@
 #include <wx/button.h>
 #include <wx/tglbtn.h>
 #include <wx/log.h>
-#include <wx/textctrl.h>
+//#include <wx/textctrl.h>
+#include <wx/richtext/richtextctrl.h>
 #include <wx/sizer.h>
 #include <wx/choice.h>
 #include <wx/wfstream.h>
@@ -52,7 +53,7 @@ public:
 
 	~LoggerCtrl();
 
-	wxTextCtrl* GetLoggerTextCtrl() { return m_log_text; }
+	wxRichTextCtrl* GetLoggerTextCtrl() { return m_log_text; }
     int GetNumberOfLogLines() {return m_log_text->GetNumberOfLines();}
 	void Update();
 
@@ -68,7 +69,7 @@ private:
 	wxButton* m_button_clearlog;
 	wxToggleButton* m_button_suspend;
 	wxPanel* m_panelLog;
-	wxTextCtrl* m_log_text;
+	wxRichTextCtrl* m_log_text;
 
 	bool m_logtofile;
 

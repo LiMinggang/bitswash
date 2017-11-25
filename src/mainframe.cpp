@@ -14,7 +14,6 @@
  *  Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  */
 
-
 //
 // Class: MainFrame
 //
@@ -227,9 +226,9 @@ MainFrame::MainFrame( wxFrame *frame, const wxString& title )
 	              */
 	CreateTorrentPanel();
 	m_mgr.SetFlags( m_mgr.GetFlags() | wxAUI_MGR_ALLOW_ACTIVE_PANE );
-#ifndef _DEBUG //XXX asert failure fired in gtk debug library.
+//#ifndef _DEBUG //XXX asert failure fired in gtk debug library.
 	m_oldlog = wxLog::SetActiveTarget( ( wxLog* )m_torrentinfo->GetLogger() );
-#endif
+//#endif
 
 	if( !wxIsEmpty( m_config->GetAuiPerspective() ) )
 	{ m_mgr.LoadPerspective( m_config->GetAuiPerspective() ); }

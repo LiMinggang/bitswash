@@ -51,7 +51,6 @@ public:
 	long GetUploadLimit();
 	int GetMaxUploads();
 	int GetMaxConnections();
-	int GetMaxHalfOpen();
 
 private: 
 	/* connection settings */
@@ -72,8 +71,6 @@ private:
 	wxSpinCtrl* m_spinMaxUploads;
 	wxStaticText* m_staticMaxConnections;
 	wxSpinCtrl* m_spinMaxConnections;
-	wxStaticText* m_staticMaxHalfOpen;
-	wxSpinCtrl* m_spinMaxHalfOpen;
 
 	AutoSizeInput* m_autoDownLimit;
 	AutoSizeInput* m_autoUpLimit;

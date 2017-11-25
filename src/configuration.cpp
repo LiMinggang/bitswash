@@ -152,7 +152,6 @@ void Configuration::Save()
 	m_cfg->Write( _T( "/Torrent/global_max_connections" ), m_global_max_connections );
 	if( m_global_max_uploads < 2 ) m_global_max_uploads = 2;
 	m_cfg->Write( _T( "/Torrent/global_max_uploads" ), m_global_max_uploads );
-	m_cfg->Write( _T( "/Torrent/global_max_half_connect" ), m_global_max_half_connect );
 	m_cfg->Write( _T( "/Torrent/use_default" ), ( bool )m_usedefault );
 	//dht
 	//
@@ -317,7 +316,6 @@ void Configuration::Load()
 	m_global_max_connections = m_cfg->Read( _T( "/Torrent/global_max_connections" ), 250 );
 	m_global_max_uploads = m_cfg->Read( _T( "/Torrent/global_max_uploads" ), 20 );
 	if( m_global_max_uploads < 2 ) m_global_max_uploads = 2;
-	m_global_max_half_connect = m_cfg->Read( _T( "/Torrent/global_max_half_connect" ), 50 );
 	m_cfg->Read( _T( "/Torrent/use_default" ), &m_usedefault, false );
 	//dht
 	//

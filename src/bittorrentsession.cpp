@@ -149,7 +149,7 @@ static const char PEER_ID[] = "SW";
 
 void *BitTorrentSession::Entry()
 {
-	WXLOGDEBUG(( _T( "BitTorrentSession Thread lt::entry pid 0x%lx priority %u.\n" ), GetId(), GetPriority() ));
+	WXLOGDEBUG(( _T( "BitTorrentSession Thread lt::entry pid 0x%lx priority %u." ), GetId(), GetPriority() ));
 	ConfigureSession();
 
 	// Resume main thread
@@ -212,16 +212,16 @@ void *BitTorrentSession::Entry()
 		}		
 		catch( std::exception& e )
 		{
-			wxLogError( _T( "%s\n" ), e.what() );
+			wxLogFatalError( _T( "%s" ), e.what() );
 			break;
 		}
 		catch(...)
 		{
-			wxLogError( _T( "FATAL ERROR!! exiting...\n" ) );
+			wxLogFatalError( _T( "FATAL ERROR!! exiting..." ) );
 			break;
 		}
 
-		WXLOGDEBUG(( _T( "BitTorrentSession Thread msg queue result %d.\n" ), result ));
+		WXLOGDEBUG(( _T( "BitTorrentSession Thread msg queue result %d." ), result ));
 	}
 	while(result != wxMSGQUEUE_MISC_ERROR);
 
@@ -236,7 +236,7 @@ void BitTorrentSession::OnExit()
 	//
 	//wxCriticalSectionLocker locker(wxGetApp().m_btcritsect);
 	//save DHT lt::entry
-	WXLOGDEBUG(( _T( "BitTorrent Session exiting\n" ) ));
+	WXLOGDEBUG(( _T( "BitTorrent Session exiting" ) ));
 
 	if( m_config->GetDHTEnabled() )
 	{
@@ -252,11 +252,11 @@ void BitTorrentSession::OnExit()
 		}
 		catch( std::exception& e )
 		{
-			wxLogError( _T( "Save DHT error: %s\n" ), e.what() );
+			wxLogFatalError( _T( "Save DHT error: %s" ), e.what() );
 		}
 		catch(...)
 		{
-			wxLogError( _T( "Save DHT error!! exiting...\n" ) );
+			wxLogFatalError( _T( "Save DHT error!! exiting..." ) );
 		}
 	}
 
@@ -342,7 +342,7 @@ void BitTorrentSession::Configure(lt::settings_pack &settingsPack)
 	{
 		settingsPack.set_int(lt::settings_pack::out_enc_policy, lt::settings_pack::pe_enabled);
 		settingsPack.set_int(lt::settings_pack::in_enc_policy, lt::settings_pack::pe_enabled);
-		wxLogMessage( _T( "Encryption enabled, policy %d\n" ), m_config->GetEncPolicy() );
+		wxLogMessage( _T( "Encryption enabled, policy %d" ), m_config->GetEncPolicy() );
 	}
 	else
 	{
@@ -497,7 +497,7 @@ void BitTorrentSession::ConfigureSession()
 
 		if( wxFileExists( dhtstatefile ) )
 		{
-			wxLogInfo( _T( "Restoring previous DHT state " ) + dhtstatefile +_T("\n") );
+			wxLogInfo( _T( "Restoring previous DHT state " ) + dhtstatefile );
 			std::vector<char> bufin;
 			lt::bdecode_node e;
 			lt::error_code ec;
@@ -518,17 +518,17 @@ void BitTorrentSession::ConfigureSession()
 				}
 				catch( std::exception& e )
 				{
-					wxLogWarning( _T( "Unable to restore dht state file %s - %s\n" ), dhtstatefile.c_str(), wxString::FromUTF8( e.what() ).c_str() );
+					wxLogFatalError( _T( "Unable to restore dht state file %s - %s" ), dhtstatefile.c_str(), wxString::FromUTF8( e.what() ).c_str() );
 				}
 				catch (...)
 				{
-					wxLogError(_T("Unknown Exception: %s\n"), __FUNCTION__ );
+					wxLogFatalError(_T("Unknown Exception: %s"), __FUNCTION__ );
 				}
 			}
 		}
 		else
 		{
-			wxLogWarning( _T( "Previous DHT state not found " ) + dhtstatefile  +_T("\n"));
+			wxLogWarning( _T( "Previous DHT state not found " ) + dhtstatefile );
 		}
 	}
 
@@ -641,7 +641,7 @@ void BitTorrentSession::StartNatpmp()
 void BitTorrentSession::AddTorrentToSession( std::shared_ptr<torrent_t>& torrent )
 {
 	lt::torrent_handle &handle = torrent->handle;
-	wxLogWarning(( _T( "AddTorrent %s into session\n" ), torrent->name.c_str() ));
+	wxLogDebug(( _T( "AddTorrent %s into session" ), torrent->name.c_str() ));
 	wxASSERT_MSG((wxString(torrent->hash) != _T("0000000000000000000000000000000000000000")), _("Torrent hash is invalid! ")+torrent->name);
 	wxString fastresumefile = wxGetApp().SaveTorrentsPath() + torrent->hash + _T( ".resume" );
 
@@ -657,7 +657,7 @@ void BitTorrentSession::AddTorrentToSession( std::shared_ptr<torrent_t>& torrent
 
 		if( wxFileExists( fastresumefile ) )
 		{
-			wxLogInfo( _T( "%s: Read fast resume data\n" ), torrent->name.c_str() );
+			wxLogInfo( _T( "%s: Read fast resume data" ), torrent->name.c_str() );
 			std::ifstream fastresume_in( ( const char* )fastresumefile.mb_str( wxConvFile ), std::ios_base::binary );
 			if(fastresume_in)
 			{
@@ -707,7 +707,7 @@ void BitTorrentSession::AddTorrentToSession( std::shared_ptr<torrent_t>& torrent
 		}
 
 		p.storage_mode = eStorageMode;
-		wxLogInfo( _T( "%s: %s allocation mode\n" ), torrent->name.c_str(), strStorageMode.c_str() );
+		wxLogInfo( _T( "%s: %s allocation mode" ), torrent->name.c_str(), strStorageMode.c_str() );
 		m_libbtsession->async_add_torrent(std::move(p));
 		m_queue_torrent_set.insert(wxString(torrent->hash));
 
@@ -718,17 +718,17 @@ void BitTorrentSession::AddTorrentToSession( std::shared_ptr<torrent_t>& torrent
 	catch( std::exception& e )
 	{
 		//posibly duplicate torrent
-		wxLogError( wxString::FromUTF8( e.what() ) + _T("\n") );
+		wxLogFatalError( wxString::FromUTF8( e.what() ) );
 	}
 	catch (...)
 	{
-		wxLogError(_T("Unknown Exception: %s\n"), __FUNCTION__ );
+		wxLogFatalError(_T("Unknown Exception: %s"), __FUNCTION__ );
 	}
 }
 
 bool BitTorrentSession::AddTorrent( std::shared_ptr<torrent_t>& torrent )
 {
-	wxLogWarning( _T( "Add Torrent %s, state %d\n" ),  torrent->name.c_str(), torrent->config->GetTorrentState() );
+	wxLogDebug( _T( "Add Torrent %s, state %d" ),  torrent->name.c_str(), torrent->config->GetTorrentState() );
 
 	try
 	{
@@ -736,7 +736,7 @@ bool BitTorrentSession::AddTorrent( std::shared_ptr<torrent_t>& torrent )
 			wxMutexLocker ml( m_torrent_queue_lock );
 			if( find_torrent_from_hash( wxString(torrent->hash) ) >= 0 )
 			{
-				wxLogWarning( _T( "Torrent %s already exists\n" ), torrent->name.c_str() );
+				wxLogWarning( _T( "Torrent %s already exists" ), torrent->name.c_str() );
 				return false;
 			}
 			
@@ -755,12 +755,12 @@ bool BitTorrentSession::AddTorrent( std::shared_ptr<torrent_t>& torrent )
 	}
 	catch( std::exception& e )
 	{
-		wxLogError( wxString::FromUTF8( e.what() ) + _T("\n") );
+		wxLogFatalError( wxString::FromUTF8( e.what() ) );
 		return false;
 	}
 	catch (...)
 	{
-		wxLogError(_T("Unknown Exception: %s\n"), __FUNCTION__ );
+		wxLogFatalError(_T("Unknown Exception: %s"), __FUNCTION__ );
 		return false;
 	}
 
@@ -769,7 +769,7 @@ bool BitTorrentSession::AddTorrent( std::shared_ptr<torrent_t>& torrent )
 
 void BitTorrentSession::RemoveTorrent( std::shared_ptr<torrent_t>& torrent, bool deletedata )
 {
-	WXLOGDEBUG(( _T( "%s: Removing Torrent\n" ), torrent->name.c_str() ));
+	WXLOGDEBUG(( _T( "%s: Removing Torrent" ), torrent->name.c_str() ));
 	wxASSERT(torrent);
 	{
 		wxMutexLocker ml( m_torrent_queue_lock );
@@ -777,7 +777,7 @@ void BitTorrentSession::RemoveTorrent( std::shared_ptr<torrent_t>& torrent, bool
 
 		if( idx < 0 )
 		{
-			wxLogError( _T( "RemoveTorrent %s: Torrent not found in queue\n" ), torrent->name.c_str() );
+			wxLogError( _T( "RemoveTorrent %s: Torrent not found in queue" ), torrent->name.c_str() );
 			return ;
 		}
 		torrents_t::iterator torrent_it = m_torrent_queue.begin() + idx;
@@ -808,31 +808,31 @@ void BitTorrentSession::RemoveTorrent( std::shared_ptr<torrent_t>& torrent, bool
 	if( ( wxFileExists( fastresumefile ) ) &&
 			( !wxRemoveFile( fastresumefile ) ) )
 	{
-		wxLogError( _T( "Error removing file %s\n" ), fastresumefile.c_str() );
+		wxLogError( _T( "Error removing file %s" ), fastresumefile.c_str() );
 	}
 
 	//if( ( wxFileExists( resumefile ) ) &&
 	//		( !wxRemoveFile( resumefile ) ) )
 	//{
-	//	wxLogError( _T( "Error removing file %s\n" ), resumefile.c_str() );
+	//	wxLogError( _T( "Error removing file %s" ), resumefile.c_str() );
 	//}
 
 	if( ( wxFileExists( torrentconffile ) ) &&
 			( !wxRemoveFile( torrentconffile ) ) )
 	{
-		wxLogError( _T( "Error removing file %s\n" ), torrentconffile.c_str() );
+		wxLogError( _T( "Error removing file %s" ), torrentconffile.c_str() );
 	}
 
 	if( ( wxFileExists( torrentfile ) ) &&
 			( !wxRemoveFile( torrentfile ) ) )
 	{
-		wxLogError( _T( "Error removing file %s\n" ), torrentfile.c_str() );
+		wxLogError( _T( "Error removing file %s" ), torrentfile.c_str() );
 	}
 
 	if( deletedata )
 	{
 		wxString download_data = torrent->config->GetDownloadPath() + ( wxString )torrent->name.c_str() ;
-		wxLogInfo( _T( "%s: Remove Data as well in %s\n" ), torrent->name.c_str(), download_data.c_str() );
+		wxLogInfo( _T( "%s: Remove Data as well in %s" ), torrent->name.c_str(), download_data.c_str() );
 		
 
 		if( wxDirExists( download_data ) )
@@ -846,18 +846,18 @@ void BitTorrentSession::RemoveTorrent( std::shared_ptr<torrent_t>& torrent, bool
 			}
 			if( !RemoveDirectory( download_data ) )
 			{
-				wxLogError( _T( "%s: Error removing directory %s error %s\n" ), torrent->name.c_str(), download_data.c_str(), wxSysErrorMsg( wxSysErrorCode() ) );
+				wxLogError( _T( "%s: Error removing directory %s error %s" ), torrent->name.c_str(), download_data.c_str(), wxSysErrorMsg( wxSysErrorCode() ) );
 			}
 		}
 		else if( wxFileExists( download_data ) )
 		{
 			if( !wxRemoveFile( download_data ) )
 			{
-				wxLogError( _T( "%s: Error removing file %s\n" ), torrent->name.c_str(), download_data.c_str() );
+				wxLogError( _T( "%s: Error removing file %s" ), torrent->name.c_str(), download_data.c_str() );
 			}
 		}
 		else
-		{ wxLogInfo( _T( "%s: No downloaded data to remove\n" ), torrent->name.c_str() ); }
+		{ wxLogInfo( _T( "%s: No downloaded data to remove" ), torrent->name.c_str() ); }
 	}
 
 	if( ( state == TORRENT_STATE_START ) ||
@@ -956,7 +956,7 @@ void BitTorrentSession::ScanTorrentsDirectory( const wxString& dirname )
 
 	if( !torrents_dir.IsOpened() )
 	{
-		wxLogWarning( _( "Error opening directory %s for processing\n" ), wxGetApp().SaveTorrentsPath().c_str() );
+		wxLogWarning( _( "Error opening directory %s for processing" ), wxGetApp().SaveTorrentsPath().c_str() );
 		return ;
 	}
 
@@ -966,7 +966,7 @@ void BitTorrentSession::ScanTorrentsDirectory( const wxString& dirname )
 	{
 		//fullpath = dirname + filename;
 		fn.Assign(dirname, filename);
-		WXLOGDEBUG(( _T( "Saved Torrent: %s\n" ), fn.GetFullPath().c_str() ));
+		WXLOGDEBUG(( _T( "Saved Torrent: %s" ), fn.GetFullPath().c_str() ));
 		torrent = ParseTorrent(fn.GetFullPath());
 
 		if (torrent->config->GetTorrentState() == TORRENT_STATE_QUEUE) /*Fist time added torrent, it's not in libtorrent*/
@@ -1042,7 +1042,7 @@ char const* timestamp()
 //posibly called in interval fashion
 void BitTorrentSession::SaveAllTorrent()
 {
-	WXLOGDEBUG(( _T( "Saving torrent info\n" ) ));
+	WXLOGDEBUG(( _T( "Saving torrent info" ) ));
 	// keep track of the number of resume data
 	// alerts to wait for
 	int num_paused = 0;
@@ -1109,20 +1109,20 @@ void BitTorrentSession::SaveAllTorrent()
 			if( tp )
 			{
 				++num_paused;
-				WXLOGDEBUG(( _T( "\nleft: %d failed: %d pause: %d\n" )
+				WXLOGDEBUG(( _T( "left: %d failed: %d pause: %d" )
 							, num_outstanding_resume_data, num_failed, num_paused ));
 			}
 			else if(lt::alert_cast<lt::save_resume_data_failed_alert>( *i ) )
 			{
 				++num_failed;
 				--num_outstanding_resume_data;
-				WXLOGDEBUG(( _T( "\nleft: %d failed: %d pause: %d\n" )
+				WXLOGDEBUG(( _T( "left: %d failed: %d pause: %d" )
 							, num_outstanding_resume_data, num_failed, num_paused ));
 			}
 			else if (lt::save_resume_data_alert * p = lt::alert_cast<lt::save_resume_data_alert>( *i ) )
 			{
 				--num_outstanding_resume_data;
-				WXLOGDEBUG(( _T( "\nleft: %d failed: %d pause: %d\n" )
+				WXLOGDEBUG(( _T( "left: %d failed: %d pause: %d" )
 							, num_outstanding_resume_data, num_failed, num_paused ));
 
 				SaveTorrentResumeData(p);
@@ -1211,7 +1211,7 @@ void BitTorrentSession::DumpTorrents()
 std::shared_ptr<torrent_t> BitTorrentSession::ParseTorrent( const wxString& filename )
 {
 	std::shared_ptr<torrent_t> torrent( new torrent_t() );
-	WXLOGDEBUG(( _T( "Parse Torrent: %s\n" ), filename.c_str() ));
+	WXLOGDEBUG(( _T( "Parse Torrent: %s" ), filename.c_str() ));
 
 	try
 	{
@@ -1245,11 +1245,11 @@ std::shared_ptr<torrent_t> BitTorrentSession::ParseTorrent( const wxString& file
 	}
 	catch( std::exception &e )
 	{
-		wxLogError( wxString::FromUTF8( e.what() ) + _T("\n") );
+		wxLogFatalError( wxString::FromUTF8( e.what() ) );
 	}
 	catch (...)
 	{
-		wxLogError(_T("Unknown Exception: %s\n"), __FUNCTION__ );
+		wxLogFatalError(_T("Unknown Exception: %s"), __FUNCTION__ );
 	}
 
 	return torrent;
@@ -1308,11 +1308,11 @@ std::shared_ptr<torrent_t> BitTorrentSession::LoadMagnetUri( MagnetUri& magnetur
 			}
 			catch( std::exception &e )
 			{
-				wxLogError( wxString::FromUTF8( e.what() ) + _T("\n") );
+				wxLogFatalError( wxString::FromUTF8( e.what() ) );
 			}
 			catch (...)
 			{
-				wxLogError(_T("Unknown Exception: %s\n"), __FUNCTION__ );
+				wxLogFatalError(_T("Unknown Exception: %s"), __FUNCTION__ );
 			}
 		}
 	}
@@ -1360,12 +1360,12 @@ bool BitTorrentSession::SaveTorrent( std::shared_ptr<torrent_t>& torrent, const 
 	}
 	catch( std::exception &e )
 	{
-		wxLogError( wxString::FromUTF8( e.what() ) + _T("\n") );
+		wxLogFatalError( wxString::FromUTF8( e.what() ) );
 		return false;
 	}	
 	catch (...)
 	{
-		wxLogError(_T("Unknown Exception: %s\n"), __FUNCTION__ );
+		wxLogFatalError(_T("Unknown Exception: %s"), __FUNCTION__ );
 		return false;
 	}
 
@@ -1374,7 +1374,7 @@ bool BitTorrentSession::SaveTorrent( std::shared_ptr<torrent_t>& torrent, const 
 
 void BitTorrentSession::StartTorrent( std::shared_ptr<torrent_t>& torrent, bool force )
 {
-	wxLogInfo( _T( "%s: Start %s\n" ), torrent->name.c_str(), force ? _T( "force" ) : _T( "" ) );
+	wxLogInfo( _T( "%s: Start %s" ), torrent->name.c_str(), force ? _T( "force" ) : _T( "" ) );
 	lt::torrent_handle& handle = torrent->handle;
 
 	//if(m_queue_torrent_set.find(wxString(torrent->hash)) != m_queue_torrent_set.end())
@@ -1404,7 +1404,7 @@ void BitTorrentSession::StartTorrent( std::shared_ptr<torrent_t>& torrent, bool 
 void BitTorrentSession::StopTorrent( std::shared_ptr<torrent_t>& torrent )
 {
 	wxASSERT(torrent);
-	wxLogInfo( _T( "%s:Stop\n" ), torrent->name.c_str() );
+	wxLogInfo( _T( "%s:Stop" ), torrent->name.c_str() );
 	wxASSERT(torrent->isvalid);
 	wxASSERT(torrent->config);
 	lt::torrent_handle& handle = torrent->handle;
@@ -1461,7 +1461,7 @@ void BitTorrentSession::QueueTorrent( std::shared_ptr<torrent_t>& torrent )
 
 void BitTorrentSession::PauseTorrent( std::shared_ptr<torrent_t>& torrent )
 {
-	wxLogInfo( _T( "%s: Pause\n" ), torrent->name.c_str() );
+	wxLogInfo( _T( "%s: Pause" ), torrent->name.c_str() );
 	wxASSERT(torrent->isvalid);
 	wxASSERT(torrent->config);
 	lt::torrent_handle& handle = torrent->handle;
@@ -1474,8 +1474,8 @@ void BitTorrentSession::PauseTorrent( std::shared_ptr<torrent_t>& torrent )
 	//if( !handle.is_paused() )
 	handle.pause(lt::torrent_handle::graceful_pause);
 
-	//torrent->config->SetTorrentState( TORRENT_STATE_PAUSE );
-	//torrent->config->Save();
+	torrent->config->SetTorrentState( TORRENT_STATE_PAUSE );
+	torrent->config->Save();
 }
 
 void BitTorrentSession::MoveTorrentUp( std::shared_ptr<torrent_t>& torrent )
@@ -1486,11 +1486,11 @@ void BitTorrentSession::MoveTorrentUp( std::shared_ptr<torrent_t>& torrent )
 	{
 		if( idx == 0 )
 		{
-			wxLogInfo( _T( "Torrent is at top position %d-%s\n" ), idx, torrent->name.c_str() );
+			wxLogInfo( _T( "Torrent is at top position %d-%s" ), idx, torrent->name.c_str() );
 		}
 		else
 		{
-			wxLogError( _T( "MoveTorrentUp %s: Torrent not found in queue\n" ), torrent->name.c_str() );
+			wxLogError( _T( "MoveTorrentUp %s: Torrent not found in queue" ), torrent->name.c_str() );
 		}
 		return ;
 	}
@@ -1498,13 +1498,13 @@ void BitTorrentSession::MoveTorrentUp( std::shared_ptr<torrent_t>& torrent )
 	long qindex = torrent->config->GetQIndex();
 	if(qindex < 0)
 	{
-		wxLogInfo( _T( "Torrent is not in download que %d-%s\n" ), idx, torrent->name.c_str() );
+		wxLogInfo( _T( "Torrent is not in download que %d-%s" ), idx, torrent->name.c_str() );
 		return;
 	}
 
 	torrents_t::iterator torrent_it = m_torrent_queue.begin() + idx - 1;
 	std::shared_ptr<torrent_t> prev_torrent( *( torrent_it ) );
-	WXLOGDEBUG(( _T( "Prev %d now %d\n" ), prev_torrent->config->GetQIndex(), torrent->config->GetQIndex() ));
+	WXLOGDEBUG(( _T( "Prev %d now %d" ), prev_torrent->config->GetQIndex(), torrent->config->GetQIndex() ));
 	long prev_qindex = prev_torrent->config->GetQIndex();
 	torrent->config->SetQIndex( prev_qindex );
 	torrent->config->Save();
@@ -1529,7 +1529,7 @@ void BitTorrentSession::MoveTorrentDown( std::shared_ptr<torrent_t>& torrent )
 	int idx = find_torrent_from_hash( wxString(torrent->hash));
 	if( idx < 0 )
 	{
-		wxLogError( _T( "MoveTorrentDown %s: Torrent not found in queue\n" ), torrent->name.c_str() );
+		wxLogError( _T( "MoveTorrentDown %s: Torrent not found in queue" ), torrent->name.c_str() );
 		return ;
 	}
 
@@ -1540,26 +1540,26 @@ void BitTorrentSession::MoveTorrentDown( std::shared_ptr<torrent_t>& torrent )
 
 	if( idx == ( m_torrent_queue.size() - 1 ) )
 	{
-		wxLogInfo( _T( "Torrent is at bottom position %d-%s\n" ), idx, torrent->name.c_str() );
+		wxLogInfo( _T( "Torrent is at bottom position %d-%s" ), idx, torrent->name.c_str() );
 		return;
 	}
 
 	long qindex = torrent->config->GetQIndex();
 	if(qindex < 0)
 	{
-		wxLogInfo( _T( "Torrent is not in download que %d-%s\n" ), idx, torrent->name.c_str() );
+		wxLogInfo( _T( "Torrent is not in download que %d-%s" ), idx, torrent->name.c_str() );
 		return;
 	}
 
-	wxLogInfo( _T( "%s: Moving Torrent Down\n" ), torrent->name.c_str() );
+	wxLogInfo( _T( "%s: Moving Torrent Down" ), torrent->name.c_str() );
 	torrents_t::iterator torrent_it = m_torrent_queue.begin() + idx;
 	std::shared_ptr<torrent_t> next_torrent( *( torrent_it + 1 ) );
-	WXLOGDEBUG(( _T( "Next %d now %d\n" ), next_torrent->config->GetQIndex(), torrent->config->GetQIndex() ));
+	WXLOGDEBUG(( _T( "Next %d now %d" ), next_torrent->config->GetQIndex(), torrent->config->GetQIndex() ));
 	long next_qindex = next_torrent->config->GetQIndex();
 	
 	if( next_qindex < 0 )
 	{
-		wxLogInfo( _T( "Torrent is at queue end %d-%s\n" ), idx, torrent->name.c_str() );
+		wxLogInfo( _T( "Torrent is at queue end %d-%s" ), idx, torrent->name.c_str() );
 		return;
 	}
 	torrent->config->SetQIndex( next_qindex );
@@ -1587,23 +1587,23 @@ void BitTorrentSession::MoveTorrentBottom( std::shared_ptr<torrent_t>& torrent )
 	int idx = find_torrent_from_hash( wxString(torrent->hash));
 	if( idx < 0 )
 	{
-		wxLogError( _T( "MoveTorrentDown %s: Torrent not found in queue\n" ), torrent->name.c_str() );
+		wxLogError( _T( "MoveTorrentDown %s: Torrent not found in queue" ), torrent->name.c_str() );
 		return ;
 	}
 	if( idx == ( m_torrent_queue.size() - 1 ) )
 	{
-		wxLogInfo( _T( "Torrent is at bottom position %d-%s\n" ), idx, torrent->name.c_str() );
+		wxLogInfo( _T( "Torrent is at bottom position %d-%s" ), idx, torrent->name.c_str() );
 		return;
 	}
 
 	long qindex = torrent->config->GetQIndex();
 	if(qindex < 0)
 	{
-		wxLogInfo( _T( "Torrent is not in download que %d-%s\n" ), idx, torrent->name.c_str() );
+		wxLogInfo( _T( "Torrent is not in download que %d-%s" ), idx, torrent->name.c_str() );
 		return;
 	}
 
-	wxLogInfo( _T( "%s: Moving Torrent Down\n" ), torrent->name.c_str() );
+	wxLogInfo( _T( "%s: Moving Torrent Down" ), torrent->name.c_str() );
 	
 	std::shared_ptr<torrent_t> current_torrent(*(m_torrent_queue.begin() + idx));
 	//torrents_t::iterator torrent_it = m_torrent_queue.begin() + idx;
@@ -1614,7 +1614,7 @@ void BitTorrentSession::MoveTorrentBottom( std::shared_ptr<torrent_t>& torrent )
 		next_qindex = m_torrent_queue[i + 1]->config->GetQIndex();
 		if( next_qindex < 0 )
 		{
-			wxLogInfo( _T( "Torrent is at queue end %d-%s\n" ), i, torrent->name.c_str() );
+			wxLogInfo( _T( "Torrent is at queue end %d-%s" ), i, torrent->name.c_str() );
 			break;
 		}
 		bottom_qindex = next_qindex;
@@ -1651,21 +1651,21 @@ void BitTorrentSession::MoveTorrentTop( std::shared_ptr<torrent_t>& torrent )
 	{
 		if( idx == 0 )
 		{
-			wxLogInfo( _T( "Torrent is at top position %d-%s\n" ), idx, torrent->name.c_str() );
+			wxLogInfo( _T( "Torrent is at top position %d-%s" ), idx, torrent->name.c_str() );
 		}
 		else
 		{
-			wxLogError( _T( "MoveTorrentUp %s: Torrent not found in queue\n" ), torrent->name.c_str() );
+			wxLogError( _T( "MoveTorrentUp %s: Torrent not found in queue" ), torrent->name.c_str() );
 		}
 		return ;
 	}
 
-	wxLogInfo( _T( "%s: Moving Torrent Up\n" ), torrent->name.c_str() );
+	wxLogInfo( _T( "%s: Moving Torrent Up" ), torrent->name.c_str() );
 
 	long qindex = torrent->config->GetQIndex();
 	if(qindex < 0)
 	{
-		wxLogInfo( _T( "Torrent is not in download que %d-%s\n" ), idx, torrent->name.c_str() );
+		wxLogInfo( _T( "Torrent is not in download que %d-%s" ), idx, torrent->name.c_str() );
 		return;
 	}
 
@@ -1695,7 +1695,7 @@ void BitTorrentSession::MoveTorrentTop( std::shared_ptr<torrent_t>& torrent )
 
 void BitTorrentSession::ReannounceTorrent( std::shared_ptr<torrent_t>& torrent )
 {
-	wxLogInfo( _T( "%s: Reannounce\n" ), torrent->name.c_str() );
+	wxLogInfo( _T( "%s: Reannounce" ), torrent->name.c_str() );
 	lt::torrent_handle &h = torrent->handle;
 
 	if( h.is_valid() )
@@ -1716,7 +1716,7 @@ void BitTorrentSession::RecheckTorrent( std::shared_ptr<torrent_t>& torrent )
 			( prev_state == TORRENT_STATE_FORCE_START ) ||
 			( prev_state == TORRENT_STATE_PAUSE ) )
 	{
-		wxLogInfo( _T( "%s: Stop for checking\n" ), torrent->name.c_str() );
+		wxLogInfo( _T( "%s: Stop for checking" ), torrent->name.c_str() );
 		StopTorrent( torrent );
 	}
 	
@@ -1724,18 +1724,18 @@ void BitTorrentSession::RecheckTorrent( std::shared_ptr<torrent_t>& torrent )
 	
 	if( wxFileExists( fastresumefile ) )
 	{
-		wxLogWarning( _T( "%s: Remove fast resume data\n" ), torrent->name.c_str() );
+		wxLogWarning( _T( "%s: Remove fast resume data" ), torrent->name.c_str() );
 	
 		if( ! wxRemoveFile( fastresumefile ) )
 		{
-			wxLogError( _T( "%s: Remove fast resume data: failed\n" ), torrent->name.c_str() );
+			wxLogError( _T( "%s: Remove fast resume data: failed" ), torrent->name.c_str() );
 		}
 	}
 	
 	if( ( prev_state == TORRENT_STATE_START ) ||
 			( prev_state == TORRENT_STATE_FORCE_START ) )
 	{
-		wxLogInfo( _T( "%s: Stop for checking\n" ), torrent->name.c_str() );
+		wxLogInfo( _T( "%s: Stop for checking" ), torrent->name.c_str() );
 		StartTorrent( torrent, ( prev_state == TORRENT_STATE_FORCE_START ) );
 	}
 	else
@@ -1779,7 +1779,7 @@ void BitTorrentSession::ConfigureTorrentTrackers( std::shared_ptr<torrent_t>& to
 void BitTorrentSession::ConfigureTorrent( std::shared_ptr<torrent_t>& torrent )
 {
 	lt::torrent_handle &h = torrent->handle;
-	WXLOGDEBUG(( _T( "%s: Configure\n" ), torrent->name.c_str() ));
+	WXLOGDEBUG(( _T( "%s: Configure" ), torrent->name.c_str() ));
 
 	if(torrent->info && torrent->info->is_valid())
 	{
@@ -1806,7 +1806,7 @@ void BitTorrentSession::ConfigureTorrent( std::shared_ptr<torrent_t>& torrent )
 				StopTorrent( torrent );
 			}
 
-			WXLOGDEBUG(( _T( "Old path %s, new path %s\n" ), oldpath.GetPath().c_str(), newpath.GetPath().c_str() ));
+			WXLOGDEBUG(( _T( "Old path %s, new path %s" ), oldpath.GetPath().c_str(), newpath.GetPath().c_str() ));
 
 			if(oldpath.DirExists())
 			{
@@ -1828,7 +1828,7 @@ void BitTorrentSession::ConfigureTorrent( std::shared_ptr<torrent_t>& torrent )
 			}
 			else
 			{
-				wxLogWarning( _T( "Old path not exists %s\n" ), oldpath.GetFullPath().c_str() );
+				wxLogWarning( _T( "Old path not exists %s" ), oldpath.GetFullPath().c_str() );
 				copysuccess = false;
 			}
 
@@ -1854,8 +1854,8 @@ void BitTorrentSession::ConfigureTorrent( std::shared_ptr<torrent_t>& torrent )
 			}
 			else //failed copy, restore path
 			{
-				wxLogError( _T( "Failed moving save path %s\n" ), torrent->config->GetDownloadPath().c_str() );
-				wxLogWarning( _T( "Restoring download path %s\n" ), oldpath.GetFullPath().c_str() );
+				wxLogError( _T( "Failed moving save path %s" ), torrent->config->GetDownloadPath().c_str() );
+				wxLogWarning( _T( "Restoring download path %s" ), oldpath.GetFullPath().c_str() );
 				
 				wxFileName dpath;
 				dpath.AssignDir(wxString::FromUTF8( existdir.c_str() ));
@@ -1880,7 +1880,7 @@ void BitTorrentSession::ConfigureTorrent( std::shared_ptr<torrent_t>& torrent )
 		h.set_max_uploads( torrent->config->GetTorrentMaxUploads() );
 		h.set_max_connections( torrent->config->GetTorrentMaxConnections() );
 		//h.set_ratio( torrent->config->GetTorrentRatio() );
-		WXLOGDEBUG(( _T( "%s: Upload Limit %s download limit %s, max uploads %s, max connections %s, ratio %lf\n" ),
+		WXLOGDEBUG(( _T( "%s: Upload Limit %s download limit %s, max uploads %s, max connections %s, ratio %lf" ),
 					torrent->name.c_str(),
 					( wxLongLong( h.upload_limit() ).ToString() ).c_str(),
 					( wxLongLong( h.download_limit() ).ToString() ).c_str(),
@@ -1938,7 +1938,7 @@ void BitTorrentSession::MoveTorrentUp( int idx )
 {
 	if( idx == 0 )
 	{
-		wxLogInfo( _T( "Torrent is at top position %d\n" ), idx );
+		wxLogInfo( _T( "Torrent is at top position %d" ), idx );
 		return;
 	}
 	std::shared_ptr<torrent_t> torrent = GetTorrent( idx );
@@ -1953,7 +1953,7 @@ void BitTorrentSession::MoveTorrentDown( int idx )
 		bool CanNotMoveDown = (idx >= ( m_torrent_queue.size() - 1 ));
 		if(CanNotMoveDown)
 		{
-			wxLogInfo( _T( "Torrent is at bottom position %d\n" ), idx );
+			wxLogInfo( _T( "Torrent is at bottom position %d" ), idx );
 			return;
 		}
 	}
@@ -1974,7 +1974,7 @@ void BitTorrentSession::RecheckTorrent( int idx )
 {
 	if( idx < 0 || idx >= m_torrent_queue.size())
 	{
-		wxLogError( _T( "%d: Invalid torrent index\n" ), idx );
+		wxLogError( _T( "%d: Invalid torrent index" ), idx );
 		return ;
 	}
 
@@ -2023,13 +2023,13 @@ void BitTorrentSession::CheckQueueItem()
 	int start_count = 0;
 	int i = 0;
 	int maxstart = m_config->GetMaxStart();
-	//WXLOGDEBUG((_T("CheckQueueItem %d\n"), m_torrent_queue.size());
+	//WXLOGDEBUG((_T("CheckQueueItem %d"), m_torrent_queue.size());
 	wxMutexLocker ml( m_torrent_queue_lock );
 
 	for( idx = 0; idx < m_torrent_queue.size(); ++idx )
 	{
 		std::shared_ptr<torrent_t>& torrent = m_torrent_queue[idx];
-		WXLOGDEBUG(( _T( "Processing torrent %s\n" ), torrent->name.c_str() ));
+		WXLOGDEBUG(( _T( "Processing torrent %s" ), torrent->name.c_str() ));
 		wxASSERT(torrent);
  		wxASSERT(torrent->config);
 		switch( torrent->config->GetTorrentState() )
@@ -2056,7 +2056,7 @@ void BitTorrentSession::CheckQueueItem()
 
 						if( seedratio >= torrent->config->GetTorrentRatio() )
 						{
-							wxLogInfo( _T( "%s torrent finished\n" ), torrent->name.c_str() );
+							wxLogInfo( _T( "%s torrent finished" ), torrent->name.c_str() );
 							StopTorrent( torrent );
 							continue;
 						}
@@ -2412,31 +2412,31 @@ void BitTorrentSession::HandleTorrentAlert()
 			{
 				case 2:
 					{
-						wxLogInfo( _T("%s\n"), event_string.c_str() );
+						wxLogInfo( _T("%s"), event_string.c_str() );
 					}
 					break;
 				case 3:
 					{
-						wxLogWarning( _T("%s\n"), event_string.c_str() );
+						wxLogWarning( _T("%s"), event_string.c_str() );
 					}
 					break;
 				case 4:
 					{
-						wxLogError( _T("%s\n"), event_string.c_str() );
+						wxLogError( _T("%s"), event_string.c_str() );
 					}
 					break;
 				default:
-					wxLogDebug( _T("%s\n"), event_string.c_str() );
+					wxLogDebug( _T("%s"), event_string.c_str() );
 					break;
 			}
 		}
 		TORRENT_CATCH(std::exception& e)
 		{
-			wxLogError( _T( "Exception: %s\n" ), e.what() );
+			wxLogError( _T( "Exception: %s" ), e.what() );
 		}
 		TORRENT_CATCH(...)
 		{
-			wxLogError( _T( "Unknown Exception: %s\n" ), __FUNCTION__ );
+			wxLogError( _T( "Unknown Exception: %s" ), __FUNCTION__ );
 		}
 	}
 }
@@ -2468,7 +2468,7 @@ bool BitTorrentSession::HandleAddTorrentAlert(lt::add_torrent_alert *p)
 			torrent->handle.status().flags &= ~(lt::torrent_flags::auto_managed);
 			torrent->handle.pause(lt::torrent_handle::graceful_pause);
 			enum torrent_state state = ( enum torrent_state ) torrent->config->GetTorrentState();
-			//wxLogInfo( _T( "HandleAddTorrentAlert %s\n" ), torrent->name.c_str() );
+			//wxLogInfo( _T( "HandleAddTorrentAlert %s" ), torrent->name.c_str() );
 
 			if( torrent->config->GetQIndex() == -1 )
 			{
@@ -2521,12 +2521,13 @@ bool BitTorrentSession::HandleAddTorrentAlert(lt::add_torrent_alert *p)
 	}
 	catch( std::exception& e )
 	{
-		wxLogError( wxString::FromUTF8( e.what() ) + _T("\n") );
+		wxLogFatalError( wxString::FromUTF8( e.what() ) );
 		return false;
 	}
 	catch (...)
 	{
-		wxLogError(_T("Unknown Exception: %s\n"), __FUNCTION__ );
+		wxLogFatalError(_T("Unknown Exception: %s"), __FUNCTION__ );
+		return false;
 	}
 
 	return true;

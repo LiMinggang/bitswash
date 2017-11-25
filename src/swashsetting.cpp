@@ -120,9 +120,6 @@ void SwashSetting::OnOK(wxCommandEvent& event)
 	m_pcfg->SetGlobalMaxConnections(m_pane_connectionsettings->GetMaxConnections());
 	m_pcfg->SetGlobalMaxUploads(m_pane_connectionsettings->GetMaxUploads());
 
-	m_pcfg->SetGlobalMaxHalfConnect(m_pane_connectionsettings->GetMaxHalfOpen());
-	
-	//m_pcfg->SetCompactAlloc(m_pane_torrentsettings->GetCompactAlloc());
 	m_pcfg->SetDefaultStorageMode(m_pane_torrentsettings->GetStorageMode());
 
 	m_pcfg->SetDefaultState((m_pane_torrentsettings->GetStartTorrent())?TORRENT_STATE_QUEUE:TORRENT_STATE_STOP);

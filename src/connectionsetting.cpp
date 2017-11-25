@@ -147,13 +147,6 @@ ConnectionSettingPane::ConnectionSettingPane( wxWindow* parent, int id, wxPoint 
 
 	fgLimit->Add( m_spinMaxUploads, 0, wxALL, 5 );
 	
-	m_staticMaxHalfOpen = new wxStaticText( this, wxID_ANY, _("Maximum Half Open Connections:"), wxDefaultPosition, wxDefaultSize, 0 );
-	fgLimit->Add( m_staticMaxHalfOpen, 0, wxALL, 5 );
-	
-	m_spinMaxHalfOpen = new wxSpinCtrl( this, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, wxSP_ARROW_KEYS, 1, 99999999, 0);
-	m_spinMaxHalfOpen->SetValue(pcfg->GetGlobalMaxHalfConnect());
-	fgLimit->Add( m_spinMaxHalfOpen, 0, wxALL, 5 );
-	
 	fgConnectionMain->Add( fgLimit, 1, wxEXPAND, 5 );
 	
 	this->SetSizer( fgConnectionMain );
@@ -198,10 +191,5 @@ int ConnectionSettingPane::GetMaxUploads()
 int ConnectionSettingPane::GetMaxConnections()
 {
 	return m_spinMaxConnections->GetValue();
-}
-
-int ConnectionSettingPane::GetMaxHalfOpen()
-{
-	return m_spinMaxHalfOpen->GetValue();
 }
 

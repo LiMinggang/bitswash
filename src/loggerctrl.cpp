@@ -76,7 +76,7 @@ LoggerCtrl::LoggerCtrl( wxWindow *parent, wxLog* oldlog,
 	fgSizerLog = new wxFlexGridSizer( 1, 3, 0, 0 );
 	fgSizerLog->AddGrowableCol( 2 );
 	fgSizerLog->SetFlexibleDirection( wxBOTH );
-	m_log_text = new wxTextCtrl( m_panelLog, wxID_ANY, wxEmptyString, wxDefaultPosition, wxSize( size.GetWidth()-50, 200 ), wxTE_MULTILINE | wxTE_READONLY | wxTE_DONTWRAP );
+	m_log_text = new wxRichTextCtrl( m_panelLog, wxID_ANY, wxEmptyString, wxDefaultPosition, wxSize( size.GetWidth()-50, 200 ), wxTE_MULTILINE | wxTE_READONLY | wxTE_DONTWRAP );
 	fgSizerLog->Add( m_log_text, 1, wxALL, 5 );
 	m_panelLog->SetSizer( fgSizerLog );
 	m_panelLog->Layout();
@@ -157,59 +157,6 @@ void LoggerCtrl::OnLogText( wxCommandEvent& event )
 {
 }
 
-#if WXWIN_COMPATIBILITY_2_8
-void LoggerCtrl::DoLog( wxLogLevel level, const wxChar *szString, time_t t )
-{
-#if 0
-	wxString st( szString );
-	std::cout << t << ":" << __func__
-			  << " level " << level
-			  << ": str " << st.c_str() << std::endl;
-#endif
-	if( m_issuspend )
-	{
-		wxString msg;
-		TimeStamp( &msg );
-		msg += szString;
-		struct log_data logdata;
-		logdata.level = level;
-		logdata.msg = msg;
-		if(m_suspended_logdata.size() >= LOGGER_CTRL_MAX_PENDING_LINES)
-			m_suspended_logdata.pop_front();
-		m_suspended_logdata.push_back( logdata );
-	}
-	else
-	{
-		if( level <= wxLOG_Error )
-			m_log_text->SetDefaultStyle( wxTextAttr( *wxRED ) );
-		else
-			if( level <= wxLOG_Warning )
-				m_log_text->SetDefaultStyle( wxTextAttr( *wxBLUE ) );
-			else
-				m_log_text->SetDefaultStyle( wxTextAttr( *wxBLACK ) );
-		RotateLog( 1 );
-		wxLog::DoLogTextAtLevel( level, szString/*, t*/ );
-	}
-}
-
-void LoggerCtrl::DoLogString( const wxChar *szString, time_t WXUNUSED( t ) )
-{
-#if 0
-	wxString st( szString );
-	std::cout << __func__
-			  << ": str " << st.c_str() << std::endl;
-#endif
-	static wxString msg;
-	TimeStamp( &msg );
-	msg += szString;
-	//Use WriteText will prevent scrolling
-	m_log_text->AppendText( ( msg ) );
-	if( m_logtofile )
-	{
-		LogToFile( msg );
-	}
-}
-#else
 void LoggerCtrl::DoLogTextAtLevel( wxLogLevel level, const wxString& msg )
 {
 	if( m_issuspend )
@@ -224,28 +171,37 @@ void LoggerCtrl::DoLogTextAtLevel( wxLogLevel level, const wxString& msg )
 	}
 	else
 	{
+		wxColour tc(*wxBLACK);
+		bool forcelogtofile = false, oldflag = m_logtofile;
 		if( level <= wxLOG_Error )
-			m_log_text->SetDefaultStyle( wxTextAttr( *wxRED ) );
-		else
-			if( level <= wxLOG_Warning )
-				m_log_text->SetDefaultStyle( wxTextAttr( *wxBLUE ) );
-			else
-				m_log_text->SetDefaultStyle( wxTextAttr( *wxBLACK ) );
-		RotateLog( 1 );
+		{
+			tc = *wxRED;
+			forcelogtofile = true;
+		}
+		else if (level <= wxLOG_Warning)
+		{
+			tc = *wxBLUE;
+		}
+
+		RotateLog(1);
+		m_log_text->BeginTextColour(tc);
+		if (forcelogtofile) m_logtofile = true;
 		wxLog::DoLogTextAtLevel( level, msg/*, t*/ );
+		m_log_text->EndTextColour();
+		m_logtofile = oldflag;
 	}
 }
 
 void LoggerCtrl::DoLogText( const wxString& msg )
 {
-	//Use WriteText will prevent scrolling
-	m_log_text->AppendText(msg);
+	//m_log_text->AppendText(_T(""));
+	m_log_text->AddParagraph(msg);
 	if( m_logtofile )
 	{
 		LogToFile(msg);
 	}
 }
-#endif
+
 void LoggerCtrl::RotateLog( int line )
 {
 	if( ( size_t )line < m_pcfg->GetLogLineCount() )

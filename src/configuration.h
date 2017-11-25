@@ -158,9 +158,6 @@ class Configuration : public wxFileConfig
 		int GetGlobalMaxConnections() { return m_global_max_connections; }
 		void SetGlobalMaxConnections(int connections) { m_global_max_connections = connections;}
 
-		int GetGlobalMaxHalfConnect() { return m_global_max_half_connect; }
-		void SetGlobalMaxHalfConnect(int half_connect) { m_global_max_half_connect = half_connect;}
-
 		enum torrent_state GetDefaultState() { return m_default_state; }
 		void SetDefaultState(enum torrent_state state) { m_default_state = state;}
 
@@ -384,7 +381,6 @@ class Configuration : public wxFileConfig
 		int 	m_global_download_limit;
 		int 	m_global_max_uploads;
 		int 	m_global_max_connections;
-		int 	m_global_max_half_connect;
 		bool 	m_usedefault;
 	
 		/***********************************************************
