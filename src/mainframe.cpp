@@ -1620,6 +1620,7 @@ void MainFrame::ShowPreferences()
 				wxFileSystem::RemoveHandler(m_magneturi_handler);
 			}
 		}
+		m_btsession->PostQueueUpdateEvent();
 	}
 }
 
@@ -1702,13 +1703,13 @@ void MainFrame::UpdateTrayInfo()
 {
 	if (m_swashtrayicon != nullptr)
 	{
-		wxString tooltips = wxString::Format(_T("%s %s\n%-20s : %s\n%-20s : %s\n%-20s : %s\n%-20s : %s\n%-20s : %s"),
+		wxString tooltips = wxString::Format(_T("%s %s\n%s : %s\n%s : %s\n%s : %s\n%s : %s\n%s : %s"),
 			APPNAME, BITSWASH_VERSION,
-			_("Download Rate"), GetStatusDownloadRate().c_str(),
-			_("Upload Rate"), GetStatusUploadRate().c_str(),
-			_("Peers"), GetStatusPeers().c_str(),
-			_("DHT Nodes"), GetStatusDHT().c_str(),
-			_("Incoming"), GetStatusIncoming().c_str());
+			_("DLR"), GetStatusDownloadRate().c_str(),
+			_("ULR"), GetStatusUploadRate().c_str(),
+			_("PRS"), GetStatusPeers().c_str(),
+			_("DHT"), GetStatusDHT().c_str(),
+			_("INC"), GetStatusIncoming().c_str());
 		m_swashtrayicon->SetIcon(m_trayicon, tooltips);
 	}
 }
