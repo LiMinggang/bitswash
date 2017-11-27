@@ -328,15 +328,15 @@ void BitTorrentSession::Configure(lt::settings_pack &settingsPack)
 	settingsPack.set_bool( lt::settings_pack::announce_to_all_trackers, true);
 
 	lt::settings_pack::io_buffer_mode_t mode = /*useOSCache() ? */lt::settings_pack::enable_os_cache;
-                                                              //: lt::settings_pack::disable_os_cache;
+															  //: lt::settings_pack::disable_os_cache;
 	settingsPack.set_int(lt::settings_pack::disk_io_read_mode, mode);
 	settingsPack.set_int(lt::settings_pack::disk_io_write_mode, mode);
 	settingsPack.set_bool(lt::settings_pack::anonymous_mode, false);
 
 	
-    // The most secure, rc4 only so that all streams are encrypted
-    //settingsPack.set_int(lt::settings_pack::allowed_enc_level, ( lt::pe_settings::enc_level )( m_config->GetEncLevel()));
-    settingsPack.set_bool(lt::settings_pack::prefer_rc4, m_config->GetEncEnabled());
+	// The most secure, rc4 only so that all streams are encrypted
+	//settingsPack.set_int(lt::settings_pack::allowed_enc_level, ( lt::pe_settings::enc_level )( m_config->GetEncLevel()));
+	settingsPack.set_bool(lt::settings_pack::prefer_rc4, m_config->GetEncEnabled());
 	
 	if( m_config->GetEncEnabled() )
 	{
@@ -350,21 +350,21 @@ void BitTorrentSession::Configure(lt::settings_pack &settingsPack)
 		settingsPack.set_int(lt::settings_pack::in_enc_policy, lt::settings_pack::pe_disabled);
 		wxLogMessage( _T( "Encryption is disabled" ) );
 	}
-    //case 1: // Forced
-    //    settingsPack.set_int(lt::settings_pack::out_enc_policy, lt::settings_pack::pe_forced);
-    //    settingsPack.set_int(lt::settings_pack::in_enc_policy, lt::settings_pack::pe_forced);
+	//case 1: // Forced
+	//	settingsPack.set_int(lt::settings_pack::out_enc_policy, lt::settings_pack::pe_forced);
+	//	settingsPack.set_int(lt::settings_pack::in_enc_policy, lt::settings_pack::pe_forced);
 	/*
 	if (isQueueingSystemEnabled()) {
-        adjustLimits(settingsPack);
+		adjustLimits(settingsPack);
 
-        settingsPack.set_int(lt::settings_pack::active_seeds, maxActiveUploads());
-        settingsPack.set_bool(lt::settings_pack::dont_count_slow_torrents, ignoreSlowTorrentsForQueueing());
-    }
-    else {
-        settingsPack.set_int(lt::settings_pack::active_downloads, -1);
-        settingsPack.set_int(lt::settings_pack::active_seeds, -1);
-        settingsPack.set_int(lt::settings_pack::active_limit, -1);
-    }
+		settingsPack.set_int(lt::settings_pack::active_seeds, maxActiveUploads());
+		settingsPack.set_bool(lt::settings_pack::dont_count_slow_torrents, ignoreSlowTorrentsForQueueing());
+	}
+	else {
+		settingsPack.set_int(lt::settings_pack::active_downloads, -1);
+		settingsPack.set_int(lt::settings_pack::active_seeds, -1);
+		settingsPack.set_int(lt::settings_pack::active_limit, -1);
+	}
 	*/
 	// 1 active torrent force 2 connections. If you have more active torrents * 2 than connection limit,
 	// connection limit will get extended. Multiply max connections or active torrents by 10 for queue.
@@ -394,22 +394,22 @@ void BitTorrentSession::Configure(lt::settings_pack &settingsPack)
 
 	//Todo: new options=======================================
 
-    settingsPack.set_int(lt::settings_pack::active_tracker_limit, -1);
-    settingsPack.set_int(lt::settings_pack::active_dht_limit, -1);
-    settingsPack.set_int(lt::settings_pack::active_lsd_limit, -1);
+	settingsPack.set_int(lt::settings_pack::active_tracker_limit, -1);
+	settingsPack.set_int(lt::settings_pack::active_dht_limit, -1);
+	settingsPack.set_int(lt::settings_pack::active_lsd_limit, -1);
 
 	// Set severity level of libtorrent session
 #if 0
 	int alertMask = lt::alert::error_notification
-                    | lt::alert::peer_notification
-                    | lt::alert::port_mapping_notification
-                    | lt::alert::storage_notification
-                    | lt::alert::tracker_notification
-                    | lt::alert::status_notification
-                    | lt::alert::ip_block_notification
-                    | lt::alert::progress_notification
-                    | lt::alert::stats_notification
-                    ;
+					| lt::alert::peer_notification
+					| lt::alert::port_mapping_notification
+					| lt::alert::storage_notification
+					| lt::alert::tracker_notification
+					| lt::alert::status_notification
+					| lt::alert::ip_block_notification
+					| lt::alert::progress_notification
+					| lt::alert::stats_notification
+					;
 
 	int alertMask = lt::alert::all_categories
 				& ~(lt::alert::dht_notification
@@ -455,27 +455,27 @@ void BitTorrentSession::Configure(lt::settings_pack &settingsPack)
 	settingsPack.set_int(lt::settings_pack::seed_choking_algorithm, lt::settings_pack::fastest_upload);
 	/*
 	switch (chokingAlgorithm()) {
-    case ChokingAlgorithm::FixedSlots:
-    default:
-        settingsPack.set_int(lt::settings_pack::choking_algorithm, lt::settings_pack::fixed_slots_choker);
-        break;
-    case ChokingAlgorithm::RateBased:
-        settingsPack.set_int(lt::settings_pack::choking_algorithm, lt::settings_pack::rate_based_choker);
-        break;
-    }
+	case ChokingAlgorithm::FixedSlots:
+	default:
+		settingsPack.set_int(lt::settings_pack::choking_algorithm, lt::settings_pack::fixed_slots_choker);
+		break;
+	case ChokingAlgorithm::RateBased:
+		settingsPack.set_int(lt::settings_pack::choking_algorithm, lt::settings_pack::rate_based_choker);
+		break;
+	}
 
-    switch (seedChokingAlgorithm()) {
-    case SeedChokingAlgorithm::RoundRobin:
-        settingsPack.set_int(lt::settings_pack::seed_choking_algorithm, lt::settings_pack::round_robin);
-        break;
-    case SeedChokingAlgorithm::FastestUpload:
-    default:
-        settingsPack.set_int(lt::settings_pack::seed_choking_algorithm, lt::settings_pack::fastest_upload);
-        break;
-    case SeedChokingAlgorithm::AntiLeech:
-        settingsPack.set_int(lt::settings_pack::seed_choking_algorithm, lt::settings_pack::anti_leech);
-        break;
-    }
+	switch (seedChokingAlgorithm()) {
+	case SeedChokingAlgorithm::RoundRobin:
+		settingsPack.set_int(lt::settings_pack::seed_choking_algorithm, lt::settings_pack::round_robin);
+		break;
+	case SeedChokingAlgorithm::FastestUpload:
+	default:
+		settingsPack.set_int(lt::settings_pack::seed_choking_algorithm, lt::settings_pack::fastest_upload);
+		break;
+	case SeedChokingAlgorithm::AntiLeech:
+		settingsPack.set_int(lt::settings_pack::seed_choking_algorithm, lt::settings_pack::anti_leech);
+		break;
+	}
 	*/
 }
 
@@ -503,10 +503,10 @@ void BitTorrentSession::ConfigureSession()
 			lt::error_code ec;
 			std::ifstream in( ( const char* )dhtstatefile.mb_str( wxConvFile ), std::ios_base::binary );
 			in.unsetf( std::ios_base::skipws );
-		    // get length of file:
-		    in.seekg (0, in.end);
-		    int length = in.tellg();
-		    in.seekg (0, in.beg);
+			// get length of file:
+			in.seekg (0, in.end);
+			int length = in.tellg();
+			in.seekg (0, in.beg);
 			if(length > 0)
 			{
 				bufin.resize(length);
@@ -662,10 +662,10 @@ void BitTorrentSession::AddTorrentToSession( std::shared_ptr<torrent_t>& torrent
 			if(fastresume_in)
 			{
 				fastresume_in.unsetf( std::ios_base::skipws );
-			    // get length of file:
-			    fastresume_in.seekg (0, fastresume_in.end);
-			    int length = fastresume_in.tellg();
-			    fastresume_in.seekg (0, fastresume_in.beg);
+				// get length of file:
+				fastresume_in.seekg (0, fastresume_in.end);
+				int length = fastresume_in.tellg();
+				fastresume_in.seekg (0, fastresume_in.beg);
 				if(length > 0)
 				{
 					std::vector<char> resume_data;
@@ -1377,25 +1377,17 @@ void BitTorrentSession::StartTorrent( std::shared_ptr<torrent_t>& torrent, bool 
 	wxLogInfo( _T( "%s: Start %s" ), torrent->name.c_str(), force ? _T( "force" ) : _T( "" ) );
 	lt::torrent_handle& handle = torrent->handle;
 
-	//if(m_queue_torrent_set.find(wxString(torrent->hash)) != m_queue_torrent_set.end())
-	//{
-	//	return;
-	//}
-
 	if( !handle.is_valid() || ( ( handle.status(lt::torrent_handle::query_save_path).save_path).empty() ) )
 	{
 		AddTorrentToSession( torrent );
 	}
-
-	//lt::torrent_status st = handle.status();
-	//if(st.state ==  )
-	//{ handle.resume(); }
 
 	if (handle.is_valid())
 	{
 		torrent->config->SetTorrentState(force ? TORRENT_STATE_FORCE_START : TORRENT_STATE_START);
 		torrent->config->Save();
 		ConfigureTorrent(torrent);
+		if(force) handle.clear_error();
 		if(handle.status().flags & lt::torrent_flags::paused)
 			handle.resume();
 	}
@@ -1408,7 +1400,6 @@ void BitTorrentSession::StopTorrent( std::shared_ptr<torrent_t>& torrent )
 	wxASSERT(torrent->isvalid);
 	wxASSERT(torrent->config);
 	lt::torrent_handle& handle = torrent->handle;
-	lt::torrent_handle invalid_handle;
 
 	//Remove torrent from session
 	//set property to STOP
@@ -1417,10 +1408,19 @@ void BitTorrentSession::StopTorrent( std::shared_ptr<torrent_t>& torrent )
 	{
 		handle.pause(lt::torrent_handle::graceful_pause);
 		lt::torrent_status status = torrent->handle.status();
+
+		stats_t& torrentstats = torrent->config->GetTorrentStats();
+		torrentstats.progress = status.progress;
+		torrentstats.total_download = status.total_payload_download;
+		torrentstats.total_upload = status.total_payload_upload;
 		if(status.has_metadata)
 		{ torrent->handle.save_resume_data(lt::torrent_handle::save_info_dict); }
-		m_libbtsession->remove_torrent( handle );
-		torrent->handle = invalid_handle;
+		else
+		{
+			lt::torrent_handle invalid_handle;
+			m_libbtsession->remove_torrent( handle );
+			torrent->handle = invalid_handle;
+		}
 	}
 
 	if(torrent->config)
@@ -1448,6 +1448,12 @@ void BitTorrentSession::QueueTorrent( std::shared_ptr<torrent_t>& torrent )
 
 	if (handle.is_valid())
 	{
+		lt::torrent_status status = torrent->handle.status(lt::torrent_handle::query_distributed_copies);
+
+		stats_t& torrentstats = torrent->config->GetTorrentStats();
+		torrentstats.progress = status.progress;
+		torrentstats.total_download = status.total_payload_download;
+		torrentstats.total_upload = status.total_payload_upload;
 		handle.pause(lt::torrent_handle::graceful_pause);
 	}
 	else
@@ -1470,9 +1476,17 @@ void BitTorrentSession::PauseTorrent( std::shared_ptr<torrent_t>& torrent )
 	{
 		AddTorrentToSession( torrent );
 	}
+	else
+    {   
+    	
+		lt::torrent_status status = torrent->handle.status(lt::torrent_handle::query_distributed_copies);
 
-	//if( !handle.is_paused() )
-	handle.pause(lt::torrent_handle::graceful_pause);
+		stats_t& torrentstats = torrent->config->GetTorrentStats();
+		torrentstats.progress = status.progress;
+		torrentstats.total_download = status.total_payload_download;
+		torrentstats.total_upload = status.total_payload_upload;
+		handle.pause(lt::torrent_handle::graceful_pause);
+	}
 
 	torrent->config->SetTorrentState( TORRENT_STATE_PAUSE );
 	torrent->config->Save();
@@ -2006,13 +2020,13 @@ void BitTorrentSession::ConfigureTorrent( int idx )
  * start:
  *  max number of torrent is  less than cfg->maxstart
  * XXX more criteria?
- *    start next torrent when download speed is less than x
+ *	start next torrent when download speed is less than x
  *
  * stop:
  *  share ratio is more than cfg->ratio
  * XXX more criteria?
- *    num of seed is less than x
- *    time elapsed is more than x
+ *	num of seed is less than x
+ *	time elapsed is more than x
  */
 void BitTorrentSession::CheckQueueItem()
 {
@@ -2065,28 +2079,6 @@ void BitTorrentSession::CheckQueueItem()
 						if( m_config->GetExcludeSeed() )
 						{ exseed = true; }
 					}
-
-#if 0
-					//periodic save fastresume data
-					//
-					wxString fastresumefile = wxGetApp().SaveTorrentsPath() + torrent->hash + _T( ".fastresume" );
-					time_t modtime = wxFileModificationTime( fastresumefile );
-
-					if( modtime != -1 )
-					{
-						time_t now = wxDateTime::GetTimeNow();
-						int timediff = now - modtime;
-
-						if( timediff > m_config->GetFastResumeSaveTime() )
-						{
-							SaveTorrentResumeData( torrent );
-						}
-					}
-					else
-					{
-						SaveTorrentResumeData( torrent );
-					}
-#endif
 				}
 
 				/* make this an option */
@@ -2272,6 +2264,20 @@ void BitTorrentSession::HandleTorrentAlert()
 					{
 						SaveTorrentResumeData(p);
 						lt::torrent_handle& h = p->handle;
+						InfoHash thash(h.info_hash());
+						wxMutexLocker ml(m_torrent_queue_lock);
+						torrents_map::iterator it = m_running_torrent_map.find(wxString(thash));
+						if (it != m_running_torrent_map.end() )
+						{
+							std::shared_ptr<torrent_t> torrent = BitTorrentSession::GetTorrent(it->second);
+							wxASSERT(torrent);
+							if(torrent->config->GetTorrentState() == TORRENT_STATE_STOP)
+							{
+								lt::torrent_handle invalid_handle;
+								m_libbtsession->remove_torrent( h );
+								torrent->handle = invalid_handle;
+							}
+						}
 						event_string << h.status(lt::torrent_handle::query_name).name << _T( ": " ) << wxString::FromUTF8(p->message().c_str());
 					}
 					break;

@@ -181,8 +181,6 @@ void SummaryPane::UpdateSummary()
 {
 	//wxLogDebug(_T("UpdateSummary\n"));
 	std::shared_ptr<torrent_t> pTorrent = m_pMainFrame->GetSelectedTorrent();
-	static bool cleard = false;
-	bool notupdated = true;
 
 	if ( !pTorrent )
 	{
@@ -252,10 +250,10 @@ void SummaryPane::UpdateSummary()
 			seeds      = wxString::Format(_T("%d"), s.num_seeds);
 			downspeed  = HumanReadableByte(s.download_rate) + wxString(_T("ps"));
 			upspeed    = HumanReadableByte(s.upload_rate) + wxString(_T("ps"));
-			downlimit  = HumanReadableByte( h.download_limit()) + _T("ps");
+			downlimit  = HumanReadableByte(h.download_limit()) + _T("ps");
 			uplimit    = HumanReadableByte(h.upload_limit()) + _T("ps");
 			downloaded = HumanReadableByte(s.total_payload_download);
-			uploaded   = HumanReadableByte( s.total_payload_upload);
+			uploaded   = HumanReadableByte(s.total_payload_upload);
 			UpdatePeers(peers);
 			UpdateSeeds(seeds);
 			
@@ -272,25 +270,26 @@ void SummaryPane::UpdateSummary()
 			UpdateTrackerStatus(tstatus);
 			
 			UpdateNextUpdate(nextupdate);
-			cleard = false;
-			notupdated = false;
 		}
 	}
-
-	if(notupdated && !cleard)
+	else
 	{
+		stats_t& torrentstats = pTorrent->config->GetTorrentStats();
+		if( torrentstats.total_download > 0 )
+		{ UpdateRatio(wxString::Format( _T( "%.02f" ), ( double )( torrentstats.total_upload ) / ( double )torrentstats.total_download ));}
+		else
+		{ UpdateRatio(_( "inf" )); }
+		UpdateDownloaded(HumanReadableByte( ( wxDouble ) torrentstats.total_download ));
+		UpdateUploaded(HumanReadableByte( ( wxDouble ) torrentstats.total_upload ));
 		UpdatePeers(emptystr);
 		UpdateSeeds(emptystr);
 		UpdateDownSpeed(emptystr);
 		UpdateUpSpeed(emptystr);
 		UpdateDownLimit(emptystr);
 		UpdateUpLimit(emptystr);
-		UpdateDownloaded(emptystr);
-		UpdateUploaded(emptystr);
 		UpdateTrackerUrl(emptystr);
 		UpdateTrackerStatus(emptystr);
 		UpdateNextUpdate(emptystr);
-		cleard = true;
 	}
 
 	// DHT status
@@ -307,72 +306,72 @@ void SummaryPane::UpdateSummary()
 	//SetScrollbars(20,20,5,5);
 }
 
-void SummaryPane::UpdateSaveAs(wxString& s) 
+void SummaryPane::UpdateSaveAs(const wxString& s) 
 {
 	m_label_saveas->SetLabel(wxString::Format(_("Save As: %s"), s.c_str()));
 }
 
-void SummaryPane::UpdateSize(wxString& s) 
+void SummaryPane::UpdateSize(const wxString& s) 
 {
 	m_label_size->SetLabel(wxString::Format(_("Size: %s"), s.c_str()));
 }
 
-void SummaryPane::UpdatePieces(wxString& s) 
+void SummaryPane::UpdatePieces(const wxString& s) 
 {
 	m_label_pieces->SetLabel(wxString::Format(_("Pieces: %s"), s.c_str()));
 }
 
-void SummaryPane::UpdateHash(wxString& s) 
+void SummaryPane::UpdateHash(const wxString& s) 
 {
 	m_label_hash->SetLabel(wxString::Format(_("Hash: %s"), s.c_str()));
 }
 
-void SummaryPane::UpdatePeers(wxString& s) 
+void SummaryPane::UpdatePeers(const wxString& s) 
 {
 	m_label_peers->SetLabel(wxString::Format(_("Peers: %s"), s.c_str()));
 }
 
-void SummaryPane::UpdateSeeds(wxString& s) 
+void SummaryPane::UpdateSeeds(const wxString& s) 
 {
 	m_label_seeds->SetLabel(wxString::Format(_("Seeds: %s"), s.c_str()));
 }
 
-void SummaryPane::UpdateDownSpeed(wxString& s) 
+void SummaryPane::UpdateDownSpeed(const wxString& s) 
 {
 	m_label_downspeed->SetLabel(wxString::Format(_("Download Speed: %s"), s.c_str()));
 }
 
-void SummaryPane::UpdateUpSpeed(wxString& s) 
+void SummaryPane::UpdateUpSpeed(const wxString& s) 
 {
 	m_label_upspeed->SetLabel(wxString::Format(_("Upload Speed: %s"), s.c_str()));
 }
 
-void SummaryPane::UpdateDownLimit(wxString& s) 
+void SummaryPane::UpdateDownLimit(const wxString& s) 
 {
 	m_label_downlimit->SetLabel(wxString::Format(_("Download Rate Limit: %s"), s.c_str()));
 }
 
-void SummaryPane::UpdateUpLimit(wxString& s) 
+void SummaryPane::UpdateUpLimit(const wxString& s) 
 {
 	m_label_uplimit->SetLabel(wxString::Format(_("Upload Rate Limit: %s"), s.c_str()));
 }
 
-void SummaryPane::UpdateDownloaded(wxString& s) 
+void SummaryPane::UpdateDownloaded(const wxString& s) 
 {
 	m_label_downloaded->SetLabel(wxString::Format(_("Downloaded: %s"), s.c_str()));
 }
 
-void SummaryPane::UpdateUploaded(wxString& s) 
+void SummaryPane::UpdateUploaded(const wxString& s) 
 {
 	m_label_uploaded->SetLabel(wxString::Format(_("Uploaded: %s"), s.c_str()));
 }
 
-void SummaryPane::UpdateRatio(wxString& s) 
+void SummaryPane::UpdateRatio(const wxString& s) 
 {
 	m_label_ratio->SetLabel(wxString::Format(_("Share Ratio: %s"), s.c_str()));
 }
 
-void SummaryPane::UpdateComment(wxString& s) 
+void SummaryPane::UpdateComment(const wxString& s) 
 {
 	//TODO: convert html tags
 	//m_label_comment->SetLabel(wxString::Format(_T("%s"), s.c_str()));
@@ -380,22 +379,22 @@ void SummaryPane::UpdateComment(wxString& s)
 	m_text_comment->SetValue(wxString::Format(_("%s"), s.c_str()));
 }
 
-void SummaryPane::UpdateTrackerUrl(wxString& s) 
+void SummaryPane::UpdateTrackerUrl(const wxString& s) 
 {
 	m_label_tracker_url->SetLabel(wxString::Format(_("Tracker URL: %s"), s.c_str()));
 }
 
-void SummaryPane::UpdateTrackerStatus(wxString& s) 
+void SummaryPane::UpdateTrackerStatus(const wxString& s) 
 {
 	m_label_trackerstatus->SetLabel(wxString::Format(_("Status: %s"), s.c_str()));
 }
 
-void SummaryPane::UpdateNextUpdate(wxString& s) 
+void SummaryPane::UpdateNextUpdate(const wxString& s) 
 {
 	m_label_nextupdate->SetLabel(wxString::Format(_("Next Update: %s"), s.c_str()));
 }
 
-void SummaryPane::UpdateDht(wxString& s) 
+void SummaryPane::UpdateDht(const wxString& s) 
 {
 	m_label_dht->SetLabel(wxString::Format(_("DHT Status: %s"), s.c_str()));
 }

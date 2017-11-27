@@ -1600,7 +1600,7 @@ std::shared_ptr<torrent_t> MainFrame::GetSelectedTorrent()
 
 void MainFrame::ShowPreferences()
 {
-	if( m_swashsetting == 0 )
+	if( m_swashsetting == nullptr )
 	{ m_swashsetting = new SwashSetting( this, m_config ); }
 
 	bool magneturi = m_config->GetAssociateMagnetURI();
