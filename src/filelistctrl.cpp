@@ -369,6 +369,8 @@ wxString FileListCtrl::GetItemValue( long item, long columnid ) const
 int FileListCtrl::GetItemColumnImage(long item, long columnid) const
 {
 	int ret = -1;
+	const static lt::download_priority_t file_none(BITTORRENT_FILE_NONE);
+	const static lt::download_priority_t file_normal(BITTORRENT_FILE_NORMAL);
 	if(columnid == FILELIST_COLUMN_SELECTED)
 	{
 		//XXX backward compatible
@@ -386,7 +388,7 @@ int FileListCtrl::GetItemColumnImage(long item, long columnid) const
 		if (pTorrent)
 		{
 			lt::torrent_info const& torrent_info = *(pTorrent->info);
-			std::vector<lt::download_priority_t> filespriority = pTorrent->config->GetFilesPriorities();
+			std::vector<lt::download_priority_t>& filespriority = pTorrent->config->GetFilesPriorities();
 
 			if(pTorrent->info->num_files() > 1)
 			{
@@ -394,20 +396,20 @@ int FileListCtrl::GetItemColumnImage(long item, long columnid) const
 			}
 			if (filespriority.size() != torrent_info.num_files())
 			{
-				std::vector<lt::download_priority_t> deffilespriority( pTorrent->info->num_files(), lt::download_priority_t(BITTORRENT_FILE_NORMAL) );
+				std::vector<lt::download_priority_t> deffilespriority( pTorrent->info->num_files(), file_normal );
 				filespriority.swap( deffilespriority );
+				nopriority = true;
 			}
 			
 			/*0--unchecked_xpm*/
 			/*1--checked_xpm*/
 			/*2--unchecked_dis_xpm*/
 			/*3--checked_dis_xpm*/
-
 			switch (columnid)
 			{
 			case FILELIST_COLUMN_SELECTED:
 
-				if (nopriority || filespriority[item] != lt::download_priority_t(BITTORRENT_FILE_NONE))
+				if (nopriority || filespriority[item] != file_none)
 					ret = 1;
 				else
 					ret = 0;

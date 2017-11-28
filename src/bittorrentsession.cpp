@@ -789,7 +789,7 @@ void BitTorrentSession::RemoveTorrent( std::shared_ptr<torrent_t>& torrent, bool
 	lt::torrent_handle& h = torrent->handle;
 	if( h.is_valid() )
 	{
-		h.pause(lt::torrent_handle::graceful_pause);
+		h.pause();
 		lt::remove_flags_t options;
 		if( deletedata ) options = lt::session::delete_files;
 		m_libbtsession->remove_torrent( h, options );
@@ -811,12 +811,6 @@ void BitTorrentSession::RemoveTorrent( std::shared_ptr<torrent_t>& torrent, bool
 		wxLogError( _T( "Error removing file %s" ), fastresumefile.c_str() );
 	}
 
-	//if( ( wxFileExists( resumefile ) ) &&
-	//		( !wxRemoveFile( resumefile ) ) )
-	//{
-	//	wxLogError( _T( "Error removing file %s" ), resumefile.c_str() );
-	//}
-
 	if( ( wxFileExists( torrentconffile ) ) &&
 			( !wxRemoveFile( torrentconffile ) ) )
 	{
@@ -834,14 +828,12 @@ void BitTorrentSession::RemoveTorrent( std::shared_ptr<torrent_t>& torrent, bool
 		wxString download_data = torrent->config->GetDownloadPath() + ( wxString )torrent->name.c_str() ;
 		wxLogInfo( _T( "%s: Remove Data as well in %s" ), torrent->name.c_str(), download_data.c_str() );
 
-
 		if( wxDirExists( download_data ) )
 		{
 			wxFileName fn(torrent->config->GetDownloadPath());
 			wxFileName cwd(wxFileName::GetCwd(fn.GetVolume()));
 			if(fn.GetLongPath() == cwd.GetLongPath())
 			{
-
 				wxSetWorkingDirectory (fn.GetVolume() + wxFileName::GetPathSeparator());
 			}
 			if( !RemoveDirectory( download_data ) )
@@ -1763,10 +1755,9 @@ void BitTorrentSession::RecheckTorrent( std::shared_ptr<torrent_t>& torrent )
 void BitTorrentSession::ConfigureTorrentFilesPriority( std::shared_ptr<torrent_t>& torrent )
 {
 	bool nopriority = false;
-	std::vector<lt::download_priority_t> filespriority = torrent->config->GetFilesPriorities();
+	std::vector<lt::download_priority_t>& filespriority = torrent->config->GetFilesPriorities();
 	//XXX default priority is 4...
 	// win32 4 triggers a assert
-	std::vector<lt::download_priority_t> deffilespriority( torrent->info->num_files(), lt::download_priority_t(BITTORRENT_FILE_NORMAL) );
 
 	wxASSERT(torrent->info);
 	if (filespriority.size() != torrent->info->num_files())
@@ -1778,7 +1769,9 @@ void BitTorrentSession::ConfigureTorrentFilesPriority( std::shared_ptr<torrent_t
 	{
 		if (nopriority)
 		{
+			std::vector<lt::download_priority_t> deffilespriority( torrent->info->num_files(), lt::download_priority_t(BITTORRENT_FILE_NORMAL) );
 			torrent->handle.prioritize_files(nopriority ? deffilespriority : filespriority);
+			filespriority.swap(deffilespriority);
 		}
 	}
 }
@@ -2078,6 +2071,11 @@ void BitTorrentSession::CheckQueueItem()
 							StopTorrent( torrent );
 							continue;
 						}
+
+						if(torrent->handle.max_connections() == torrent->config->GetTorrentMaxConnections())
+						{
+							torrent->handle.set_max_connections( torrent->config->GetTorrentMaxConnections() / 2 );
+						}
 
 						/* exclude seed from count as running job */
 						if( m_config->GetExcludeSeed() )
