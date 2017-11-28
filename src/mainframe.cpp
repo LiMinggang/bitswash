@@ -99,6 +99,7 @@ const long MainFrame::ID_FILE_OPEN_URL = wxNewId();
 const long MainFrame::ID_FILE_OPEN_TORRENT = wxNewId();
 const long MainFrame::ID_FILE_CREATE_TORRENT = wxNewId();
 const long MainFrame::ID_VIEW_STATUS = wxNewId();
+const long MainFrame::ID_VIEW_TORRENT_INFO = wxNewId();
 const long MainFrame::ID_VIEW_TOOLBAR = wxNewId();
 const long MainFrame::ID_VIEW_FAVORITE = wxNewId();
 const long MainFrame::ID_TORRENT_START = wxNewId();
@@ -128,6 +129,7 @@ MainFrame::wxCmdEvtHandlerMap_t MainFrame::m_menu_evt_map[]=
 	{ ID_FILE_EXIT, &MainFrame::OnQuit },
 	{ ID_VIEW_FAVORITE, &MainFrame::ToDo },
 	{ ID_VIEW_STATUS, &MainFrame::OnMenuViewStatusBar },
+	{ ID_VIEW_TORRENT_INFO, &MainFrame::OnMenuViewTorrentInfo },
 	{ ID_VIEW_TOOLBAR, &MainFrame::OnMenuViewToolbar },
 	{ ID_TORRENT_START, &MainFrame::OnMenuTorrentStart },
 	{ ID_TORRENT_FORCE_START, &MainFrame::OnMenuTorrentStart },
@@ -149,6 +151,10 @@ MainFrame::wxCmdEvtHandlerMap_t MainFrame::m_menu_evt_map[]=
 
 MainFrame::wxUIUpdateEvtHandlerMap_t MainFrame::m_menu_ui_updater_map[] =
 {
+	{ ID_VIEW_STATUS, &MainFrame::OnUpdateUI_MenuViewStatusBar },
+	{ ID_VIEW_TORRENT_INFO, &MainFrame::OnUpdateUI_MenuViewTorrentInfo },
+	{ ID_VIEW_TOOLBAR, &MainFrame::OnUpdateUI_MenuViewToolbar },
+
 	{ ID_TORRENT_START, &MainFrame::OnUpdateUI_MenuTorrent },
 	{ ID_TORRENT_FORCE_START, &MainFrame::OnUpdateUI_MenuTorrent },
 	{ ID_TORRENT_PAUSE, &MainFrame::OnUpdateUI_MenuTorrent },
@@ -172,7 +178,7 @@ void TorrentMetadataNotify( )
 }
 
 MainFrame::MainFrame( wxFrame *frame, const wxString& title )
-	: wxFrame( frame, -1, title ),
+	: wxFrame( frame, wxID_ANY, title ),
 	  m_btsession( nullptr ), m_torrentmenu( nullptr ), m_languagemenu( nullptr ),
 	  m_torrentpane( nullptr ), m_torrentinfo( nullptr ), m_torrentlistctrl( nullptr ),
 	  m_peerlistctrl( nullptr ), m_filelistctrl( nullptr ), m_summarypane( nullptr ),
@@ -462,8 +468,9 @@ wxMenuBar* MainFrame::CreateMainMenuBar()
 	menuitem->SetBitmap( wxArtProvider::GetBitmap( wxART_QUIT, wxART_OTHER, wxSize( 16, 16 ) ) );
 	mbar->Append( fileMenu, _( "&File" ) );
 	wxMenu* viewMenu = new wxMenu( wxT( "" ) );
-	menuitem = viewMenu->Append( ID_VIEW_TOOLBAR, _( "View &Toolbar" ), _( "View Toolbar" ) );
-	menuitem = viewMenu->Append( ID_VIEW_STATUS, _( "View &Status" ), _( "View Status" ) );
+	menuitem = viewMenu->Append( ID_VIEW_TOOLBAR, _( "View &Toolbar" ), _( "View Toolbar" ), wxITEM_CHECK );
+	menuitem = viewMenu->Append( ID_VIEW_STATUS, _( "View &Status" ), _( "View Status" ) , wxITEM_CHECK);
+	menuitem = viewMenu->Append( ID_VIEW_TORRENT_INFO, _( "View Torrent &Information" ), _( "View Torrent Information" ) , wxITEM_CHECK);
 	//menuitem = viewMenu->Append(ID_VIEW_FAVORITE, _("View &Categories"), _("View Categories"));
 	mbar->Append( viewMenu, _( "&View" ) );
 	m_torrentmenu = GetNewTorrentMenu();
@@ -1250,6 +1257,21 @@ void MainFrame::OnUpdateUI_MenuTorrent( wxUpdateUIEvent& event )
 	event.Enable( enable );
 }
 
+void MainFrame::OnUpdateUI_MenuViewStatusBar( wxUpdateUIEvent& event )
+{
+	event.Check( m_swashstatbar->IsShown());
+}
+
+void MainFrame::OnUpdateUI_MenuViewTorrentInfo( wxUpdateUIEvent& event )
+{
+	event.Check( m_mgr.GetPane( m_torrentinfo ).IsShown() );
+}
+
+void MainFrame::OnUpdateUI_MenuViewToolbar( wxUpdateUIEvent& event )
+{
+	event.Check( m_mgr.GetPane( _T( "mainToolBar" ) ).IsShown() );
+}
+
 // XXX probly not needed, we do this in torrentlist
 void MainFrame::OnMenuOpen( wxMenuEvent& event )
 {
@@ -1267,6 +1289,19 @@ void MainFrame::OnMenuViewStatusBar( wxCommandEvent& event )
 	{ m_swashstatbar->Hide(); }
 	else
 	{ m_swashstatbar->Show(); }
+}
+
+void MainFrame::OnMenuViewTorrentInfo( wxCommandEvent& event )
+{
+	if( m_mgr.GetPane( m_torrentinfo ).IsShown() )
+	{
+		m_mgr.GetPane( m_torrentinfo ).Hide();
+	}
+	else
+	{
+		m_mgr.GetPane( m_torrentinfo ).Show();
+	}
+	m_mgr.Update();
 }
 
 void MainFrame::OnMenuViewToolbar( wxCommandEvent& event )

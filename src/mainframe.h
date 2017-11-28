@@ -134,6 +134,7 @@ private:
 	void OnAbout( wxCommandEvent& event );
 	void OnMenuViewStatusBar( wxCommandEvent& event );
 	void OnMenuViewToolbar( wxCommandEvent& event );
+	void OnMenuViewTorrentInfo( wxCommandEvent& event );
 	void OnMenuTorrentStart( wxCommandEvent& event );
 	void OnMenuTorrentPause( wxCommandEvent& event );
 	void OnMenuTorrentStop( wxCommandEvent& event );
@@ -154,6 +155,9 @@ private:
 	void OnSize( wxSizeEvent& event );
 
 	void OnUpdateUI_MenuTorrent( wxUpdateUIEvent& event );
+	void OnUpdateUI_MenuViewStatusBar( wxUpdateUIEvent& event );
+	void OnUpdateUI_MenuViewTorrentInfo( wxUpdateUIEvent& event );
+	void OnUpdateUI_MenuViewToolbar( wxUpdateUIEvent& event );
 
 	void LoadIcons();
 	//void SaveTorrentResumeData(std::shared_ptr<ptorrent_t>& torrent);
@@ -227,6 +231,7 @@ private:
 	static const long ID_FILE_CREATE_TORRENT;
 
 	static const long ID_VIEW_STATUS;
+	static const long ID_VIEW_TORRENT_INFO;
 	static const long ID_VIEW_TOOLBAR;
 	static const long ID_VIEW_FAVORITE;
 	static const long ID_TORRENT_START;
