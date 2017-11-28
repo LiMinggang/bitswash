@@ -209,6 +209,7 @@ void *BitTorrentSession::Entry()
 
 			if( TestDestroy() )
 			{ break; }
+			wxGetApp().Yield();
 		}		
 		catch( std::exception& e )
 		{
