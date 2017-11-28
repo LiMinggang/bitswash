@@ -338,18 +338,13 @@ bool BitSwash::OnInit()
 
 int BitSwash::OnExit()
 {
-#if 0
-	int i;
-	wxLogDebug( _T( "BitSwash OnExit" ) );
-	// kill bittorrent session
-	//XXX lock
-#endif
 	wxLogDebug( _T( "Awaiting BitTorrent session exit ...\n" ) );
 	if( m_btsession->IsAlive() )
 	{
-		m_btsession->Delete();
+		wxThread::ExitCode retcode;
+		m_btsession->Delete(&retcode,  wxTHREAD_WAIT_BLOCK);
 		wxLogDebug( _T( "BitTorrent session exited with code %s\n" ),
-					wxLongLong((wxLongLong_t)m_btsession->Wait()).ToString().c_str() );
+					wxLongLong((wxLongLong_t)m_btsession->Wait(wxTHREAD_WAIT_BLOCK)).ToString().c_str() );
 	}
 #if 0
 	for( i = 0; i < BITSWASH_ICON_MAX; i++ )

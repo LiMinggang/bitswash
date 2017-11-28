@@ -986,6 +986,10 @@ void MainFrame::UpdateUI(bool force/* = false*/)
 					m_trackerlistctrl->SetStaticHandle(invalid_torrent);
 					m_trackerlistctrl->SetItemCount( 0 );
 					m_peerlistctrl->SetItemCount( 0 );
+					
+					m_torrentinfo->UpdateTorrentInfo( false );
+					m_torrentlistctrl->Refresh(false);
+					UpdateStatusBar();
 					return;
 				}
 

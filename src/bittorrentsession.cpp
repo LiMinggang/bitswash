@@ -1806,7 +1806,11 @@ void BitTorrentSession::ConfigureTorrent( std::shared_ptr<torrent_t>& torrent )
 		newpath.MakeAbsolute();
 		oldpath.MakeAbsolute();
 
+#if defined(__WXMSW__)
+		if((oldpath.GetPath()).CmpNoCase(newpath.GetPath()) != 0)
+#else
 		if( oldpath.GetPath() != newpath.GetPath() )
+#endif
 		{
 			bool copysuccess = true;
 			/* move_storage already handled copying files */
