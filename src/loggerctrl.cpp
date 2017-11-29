@@ -198,7 +198,7 @@ void LoggerCtrl::DoLogText( const wxString& msg )
 	m_log_text->AddParagraph(msg);
 	if( m_logtofile )
 	{
-		LogToFile(msg);
+		LogToFile(msg + _T("\n"));
 	}
 }
 
