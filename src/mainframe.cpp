@@ -524,10 +524,8 @@ wxMenuBar* MainFrame::CreateMainMenuBar()
 		i++;
 	}
 
-	Connect( ID_OPTIONS_LANGUAGE, ID_OPTIONS_LANGUAGE + wxLANGUAGE_USER_DEFINED, wxEVT_COMMAND_MENU_SELECTED,
-			 ( wxObjectEventFunction )
-			 ( wxEventFunction )
-			 ( wxCommandEventFunction )&MainFrame::OnMenuOptionLanguage );
+	Bind(wxEVT_COMMAND_MENU_SELECTED, &MainFrame::OnMenuOptionLanguage, this, ID_OPTIONS_LANGUAGE, ID_OPTIONS_LANGUAGE + wxLANGUAGE_USER_DEFINED);
+
 	optionsMenu->Append( wxID_ANY, _( "&Language" ), m_languagemenu,  _( "Language" ) );
 	mbar->Append( optionsMenu, _( "&Options" ) );
 	wxMenu* helpMenu = new wxMenu( wxEmptyString );
