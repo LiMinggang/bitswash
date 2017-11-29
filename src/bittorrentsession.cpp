@@ -1427,6 +1427,7 @@ void BitTorrentSession::StopTorrent( std::shared_ptr<torrent_t>& torrent )
 		}
 
 		torrent->config->SetTorrentState( TORRENT_STATE_STOP );
+		torrent->config->SetQIndex( -1 );
 		torrent->config->Save();
 	}
 }
@@ -1454,6 +1455,7 @@ void BitTorrentSession::QueueTorrent( std::shared_ptr<torrent_t>& torrent )
 	}
 
 	torrent->config->SetTorrentState( TORRENT_STATE_QUEUE );
+	torrent->config->SetQIndex( -1 );
 	torrent->config->Save();
 }
 

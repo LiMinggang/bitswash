@@ -1350,7 +1350,21 @@ void MainFrame::OnUpdateUI_MenuMovedown( wxUpdateUIEvent& event )
 		size_t last = selecteditems.size();
 		if( last > 0 )
 		{
-			if( selecteditems[last -1] < (m_torrentlistctrl->GetItemCount() - 1 ) ) enable = true;
+			long idx = selecteditems[last -1];
+			if( idx < (m_torrentlistctrl->GetItemCount() - 1 ) ) 
+			{
+				std::shared_ptr<torrent_t> torrent = m_btsession->GetTorrent( idx );
+				if(torrent && torrent->isvalid)
+				{
+					long qindex = torrent->config->GetQIndex();
+					if(qindex > 0)
+					{
+						std::shared_ptr<torrent_t> ntorrent = m_btsession->GetTorrent( idx + 1 );
+						if(torrent->config->GetQIndex() > 0)
+							enable = true;
+					}
+				}
+			}
 		}
 	}
 	event.Enable(enable);
