@@ -156,7 +156,7 @@ MainFrame::wxUIUpdateEvtHandlerMap_t MainFrame::m_menu_ui_updater_map[] =
 	{ ID_VIEW_TOOLBAR, &MainFrame::OnUpdateUI_MenuViewToolbar },
 
 	{ ID_TORRENT_START, &MainFrame::OnUpdateUI_MenuTorrentStart },
-	{ ID_TORRENT_FORCE_START, &MainFrame::OnUpdateUI_MenuTorrentForceStart },
+	{ ID_TORRENT_FORCE_START, &MainFrame::OnUpdateUI_MenuTorrentStart },
 	{ ID_TORRENT_PAUSE, &MainFrame::OnUpdateUI_MenuTorrentPause },
 	{ ID_TORRENT_STOP, &MainFrame::OnUpdateUI_MenuTorrentStop },
 
@@ -1171,24 +1171,13 @@ void MainFrame::OnUpdateUI_MenuTorrentStart( wxUpdateUIEvent& event )
 
 		if( total > 0 )
 		{
-			int torrent_state;
 			for( size_t i = 0; i < total; ++i )
 			{
 				std::shared_ptr<torrent_t> torrent = m_btsession->GetTorrent( selecteditems[i] );
-				if(!torrent || !torrent->isvalid)
+				if(torrent &&& torrent->isvalid)
 				{
-					break;
-				}
-				torrent_state = torrent->config->GetTorrentState();
-				if( torrent_state != TORRENT_STATE_START && torrent_state != TORRENT_STATE_FORCE_START )
-				{
-					enable = true;
-					break;
-				}
-				else
-				{
-					lt::torrent_handle &torrenthandle = torrent->handle;
-					if((torrenthandle.is_valid() /*&& torrenthandle.status().paused*/ ))
+					int torrent_state = torrent->config->GetTorrentState();
+					if( torrent_state != TORRENT_STATE_START && torrent_state != TORRENT_STATE_FORCE_START )
 					{
 						enable = true;
 						break;
@@ -1200,41 +1189,6 @@ void MainFrame::OnUpdateUI_MenuTorrentStart( wxUpdateUIEvent& event )
 
 	event.Enable(enable);
 }
-
-void MainFrame::OnUpdateUI_MenuTorrentForceStart( wxUpdateUIEvent& event )
-{
-	bool enable = false;
-
-	if( m_btsession && m_btsession->GetTorrentQueueSize() > 0 )
-	{
-		SwashListCtrl::itemlist_t selecteditems;
-		m_torrentlistctrl->GetSelectedItems(selecteditems);
-		/* selected more than 1 item in the torrent list */
-		size_t total = selecteditems.size();
-
-		if( total > 0 )
-		{
-			int torrent_state;
-			for( size_t i = 0; i < total; ++i )
-			{
-				std::shared_ptr<torrent_t> torrent = m_btsession->GetTorrent( selecteditems[i] );
-				if(!torrent || !torrent->isvalid)
-				{
-					break;
-				}
-				torrent_state = torrent->config->GetTorrentState();
-				if( torrent_state != TORRENT_STATE_START && torrent_state != TORRENT_STATE_FORCE_START )
-				{
-					enable = true;
-					break;
-				}
-			}
-		}
-	}
-
-	event.Enable(enable);
-}
-
 
 void MainFrame::OnUpdateUI_MenuTorrentPause( wxUpdateUIEvent& event )
 {
