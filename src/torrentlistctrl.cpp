@@ -287,7 +287,7 @@ void TorrentListCtrl::ShowContextMenu( const wxPoint& pos )
 			m_torrentmenu = m_pMainFrame->GetNewTorrentMenu();
 		}
 
-		m_pMainFrame->TorrentOperationMenu( m_torrentmenu );
+		//m_pMainFrame->TorrentOperationMenu( m_torrentmenu );
 		PopupMenu( m_torrentmenu, pos );
 	}
 }

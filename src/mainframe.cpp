@@ -155,16 +155,20 @@ MainFrame::wxUIUpdateEvtHandlerMap_t MainFrame::m_menu_ui_updater_map[] =
 	{ ID_VIEW_TORRENT_INFO, &MainFrame::OnUpdateUI_MenuViewTorrentInfo },
 	{ ID_VIEW_TOOLBAR, &MainFrame::OnUpdateUI_MenuViewToolbar },
 
-	{ ID_TORRENT_START, &MainFrame::OnUpdateUI_MenuTorrent },
-	{ ID_TORRENT_FORCE_START, &MainFrame::OnUpdateUI_MenuTorrent },
-	{ ID_TORRENT_PAUSE, &MainFrame::OnUpdateUI_MenuTorrent },
-	{ ID_TORRENT_STOP, &MainFrame::OnUpdateUI_MenuTorrent },
+	{ ID_TORRENT_START, &MainFrame::OnUpdateUI_MenuTorrentStart },
+	{ ID_TORRENT_FORCE_START, &MainFrame::OnUpdateUI_MenuTorrentForceStart },
+	{ ID_TORRENT_PAUSE, &MainFrame::OnUpdateUI_MenuTorrentPause },
+	{ ID_TORRENT_STOP, &MainFrame::OnUpdateUI_MenuTorrentStop },
 
-	{ ID_TORRENT_MOVEUP, &MainFrame::OnUpdateUI_MenuTorrent },
-	{ ID_TORRENT_MOVEDOWN, &MainFrame::OnUpdateUI_MenuTorrent },
-	{ ID_TORRENT_REANNOUNCE, &MainFrame::OnUpdateUI_MenuTorrent },
-	{ ID_TORRENT_RECHECK, &MainFrame::OnUpdateUI_MenuTorrent },
-	{ ID_TORRENT_OPENDIR, &MainFrame::OnUpdateUI_MenuTorrent },
+	{ ID_TORRENT_MOVEUP,     &MainFrame::OnUpdateUI_MenuMoveup     },
+	{ ID_TORRENT_MOVEDOWN,   &MainFrame::OnUpdateUI_MenuMovedown   },
+	{ ID_TORRENT_OPENDIR,    &MainFrame::OnUpdateUI_MenuOpendir    },
+	{ ID_TORRENT_PROPERTIES, &MainFrame::OnUpdateUI_MenuProperties },
+	{ ID_TORRENT_REMOVE,     &MainFrame::OnUpdateUI_MenuRemove     },
+	{ ID_TORRENT_REMOVEDATA, &MainFrame::OnUpdateUI_MenuRemovedata },
+
+	{ ID_TORRENT_REANNOUNCE, &MainFrame::OnUpdateUI_MenuTorrentReannounce },
+	{ ID_TORRENT_RECHECK, &MainFrame::OnUpdateUI_MenuTorrentRecheck },
 };
 
 MainFrame * g_BitSwashMainFrame = nullptr;
@@ -265,7 +269,7 @@ MainFrame::MainFrame( wxFrame *frame, const wxString& title )
 	}
 
 	Bind( CHECK_METADATA, &MainFrame::OnTorrentMetadata, this );
-	Bind( wxEVT_MENU_OPEN, &MainFrame::OnMenuOpen, this );
+	//Bind( wxEVT_MENU_OPEN, &MainFrame::OnMenuOpen, this );
 	
 	Bind( wxEVT_SIZE, &MainFrame::OnSize, this );
 	Bind( wxEVT_MOVE, &MainFrame::OnMove, this );
@@ -1075,110 +1079,6 @@ void MainFrame::UpdateSelectedTorrent()
 	m_torrentinfo->UpdateTorrentInfo( true );
 }
 
-void MainFrame::TorrentOperationMenu( wxMenu* torrentmenu )
-{
-	//wxLogMessage(_T("TorrentOperationMenu enabled %d"), enabled);
-	/* TODO: Check state to enable certain menu only */
-	/* TODO: enable/disable toolbar too */
-	static int menuids[] =
-	{
-		ID_TORRENT_START,
-		ID_TORRENT_FORCE_START,
-		ID_TORRENT_PAUSE,
-		ID_TORRENT_STOP,
-
-		ID_TORRENT_MOVEUP,
-		ID_TORRENT_MOVEDOWN,
-		ID_TORRENT_OPENDIR,
-		ID_TORRENT_PROPERTIES,
-		ID_TORRENT_REMOVE,
-		ID_TORRENT_REMOVEDATA,
-	};
-	bool menu_status[] =
-	{
-		true,
-		true,
-		true,
-		true,
-
-		true,
-		true,
-		true,
-		true,
-		true,
-		true,
-	};
-	wxASSERT( ( sizeof( menuids ) / sizeof( menuids[0] ) ) == ( sizeof( menu_status ) / sizeof( menu_status[0] ) ) );
-	int selected = m_torrentlistctrl->GetSelectedItemCount();
-
-	if( selected > 0 )
-	{
-		if( selected == 1 )
-		{
-			std::shared_ptr<torrent_t> pTorrent = GetSelectedTorrent();
-
-			if( pTorrent )
-			{
-				int state = pTorrent->config->GetTorrentState();
-				switch( state )
-				{
-				case TORRENT_STATE_STOP:
-					{
-						menu_status[2] = false;
-						menu_status[3] = false;
-						break;
-					}
-
-				case TORRENT_STATE_START:
-				case TORRENT_STATE_FORCE_START:
-					{
-						/*if(!( pTorrent->handle.status().paused ))
-						{
-							menu_status[0] = false;
-							menu_status[1] = false;
-						}*/
-						break;
-					}
-
-				case TORRENT_STATE_QUEUE:
-					{
-						menu_status[0] = false;
-						break;
-					}
-
-				case TORRENT_STATE_PAUSE:
-					menu_status[2] = false;
-					break;
-
-				default:
-					break;
-				}
-			}
-			else
-			{
-				/*
-				ID_TORRENT_OPENDIR,
-				ID_TORRENT_PROPERTIES,
-				*/
-				menu_status[7] = false;
-				menu_status[8] = false;
-			}
-		}
-
-		for( int i = 0; i < ( sizeof( menuids ) / sizeof( menuids[0] ) ); ++i )
-		{
-			torrentmenu->Enable( menuids[i], menu_status[i] );
-		}
-	}
-	else
-	{
-		for( int i = 0; i < ( sizeof( menuids ) / sizeof( menuids[0] ) ); ++i )
-		{
-			torrentmenu->Enable( menuids[i], false );
-		}
-	}
-}
-
 void MainFrame::OnUpdateUI_MenuTorrent( wxUpdateUIEvent& event )
 {
 	bool enable = false;
@@ -1260,6 +1160,155 @@ void MainFrame::OnUpdateUI_MenuTorrent( wxUpdateUIEvent& event )
 	event.Enable( enable );
 }
 
+void MainFrame::OnUpdateUI_MenuTorrentStart( wxUpdateUIEvent& event )
+{
+	bool enable = false;
+
+	if( m_btsession && m_btsession->GetTorrentQueueSize() > 0 )
+	{
+		SwashListCtrl::itemlist_t selecteditems;
+		m_torrentlistctrl->GetSelectedItems(selecteditems);
+		/* selected more than 1 item in the torrent list */
+		size_t total = selecteditems.size();
+
+		if( total > 0 )
+		{
+			int torrent_state;
+			for( size_t i = 0; i < total; ++i )
+			{
+				std::shared_ptr<torrent_t> torrent = m_btsession->GetTorrent( selecteditems[i] );
+				if(!torrent || !torrent->isvalid)
+				{
+					break;
+				}
+				torrent_state = torrent->config->GetTorrentState();
+				if( torrent_state != TORRENT_STATE_START && torrent_state != TORRENT_STATE_FORCE_START )
+				{
+					enable = true;
+					break;
+				}
+				else
+				{
+					lt::torrent_handle &torrenthandle = torrent->handle;
+					if((torrenthandle.is_valid() /*&& torrenthandle.status().paused*/ ))
+					{
+						enable = true;
+						break;
+					}
+				}
+			}
+		}
+	}
+
+	event.Enable(enable);
+}
+
+void MainFrame::OnUpdateUI_MenuTorrentForceStart( wxUpdateUIEvent& event )
+{
+	bool enable = false;
+
+	if( m_btsession && m_btsession->GetTorrentQueueSize() > 0 )
+	{
+		SwashListCtrl::itemlist_t selecteditems;
+		m_torrentlistctrl->GetSelectedItems(selecteditems);
+		/* selected more than 1 item in the torrent list */
+		size_t total = selecteditems.size();
+
+		if( total > 0 )
+		{
+			int torrent_state;
+			for( size_t i = 0; i < total; ++i )
+			{
+				std::shared_ptr<torrent_t> torrent = m_btsession->GetTorrent( selecteditems[i] );
+				if(!torrent || !torrent->isvalid)
+				{
+					break;
+				}
+				torrent_state = torrent->config->GetTorrentState();
+				if( torrent_state != TORRENT_STATE_START && torrent_state != TORRENT_STATE_FORCE_START )
+				{
+					enable = true;
+					break;
+				}
+			}
+		}
+	}
+
+	event.Enable(enable);
+}
+
+
+void MainFrame::OnUpdateUI_MenuTorrentPause( wxUpdateUIEvent& event )
+{
+	bool enable = false;
+
+	if( m_btsession && m_btsession->GetTorrentQueueSize() > 0 )
+	{
+		SwashListCtrl::itemlist_t selecteditems;
+		m_torrentlistctrl->GetSelectedItems(selecteditems);
+		/* selected more than 1 item in the torrent list */
+		size_t total = selecteditems.size();
+
+		if( total > 0 )
+		{
+			int torrent_state;
+			for( size_t i = 0; i < total; ++i )
+			{
+				std::shared_ptr<torrent_t> torrent = m_btsession->GetTorrent( selecteditems[i] );
+				if(!torrent || !torrent->isvalid)
+				{
+					break;
+				}
+				torrent_state = torrent->config->GetTorrentState();
+				if( torrent_state == TORRENT_STATE_START || torrent_state == TORRENT_STATE_FORCE_START )
+				{
+					enable = true;
+					break;
+				}
+			}
+		}
+	}
+
+	event.Enable(enable);
+}
+
+
+void MainFrame::OnUpdateUI_MenuTorrentStop( wxUpdateUIEvent& event )
+{
+	bool enable = false;
+
+	if( m_btsession && m_btsession->GetTorrentQueueSize() > 0 )
+	{
+		SwashListCtrl::itemlist_t selecteditems;
+		m_torrentlistctrl->GetSelectedItems(selecteditems);
+		/* selected more than 1 item in the torrent list */
+		size_t total = selecteditems.size();
+
+		if( total > 0 )
+		{
+			int torrent_state;
+			for( size_t i = 0; i < total; ++i )
+			{
+				std::shared_ptr<torrent_t> torrent = m_btsession->GetTorrent( selecteditems[i] );
+				if(!torrent || !torrent->isvalid)
+				{
+					break;
+				}
+				torrent_state = torrent->config->GetTorrentState();
+
+				if( torrent_state != TORRENT_STATE_STOP )
+				{
+					enable = true;
+					break;
+				}
+			}
+		}
+	}
+
+	event.Enable(enable);
+}
+
+
 void MainFrame::OnUpdateUI_MenuViewStatusBar( wxUpdateUIEvent& event )
 {
 	event.Check( m_swashstatbar->IsShown());
@@ -1275,15 +1324,131 @@ void MainFrame::OnUpdateUI_MenuViewToolbar( wxUpdateUIEvent& event )
 	event.Check( m_mgr.GetPane( _T( "mainToolBar" ) ).IsShown() );
 }
 
-// XXX probly not needed, we do this in torrentlist
-void MainFrame::OnMenuOpen( wxMenuEvent& event )
+void MainFrame::OnUpdateUI_MenuMoveup( wxUpdateUIEvent& event )
 {
-	wxMenu* openmenu = event.GetMenu();
+	bool enable = false;
 
-	if( openmenu == m_torrentmenu )
+	if(m_torrentlistctrl)
 	{
-		TorrentOperationMenu( m_torrentmenu );
+		long item = m_torrentlistctrl->GetFirstSelected();
+
+		enable = ( item > 0 );
 	}
+
+	event.Enable(enable);
+}
+
+void MainFrame::OnUpdateUI_MenuMovedown( wxUpdateUIEvent& event )
+{
+	bool enable = false;
+
+	if(m_torrentlistctrl)
+	{
+		SwashListCtrl::itemlist_t selecteditems;
+		m_torrentlistctrl->GetSelectedItems(selecteditems);
+
+		size_t last = selecteditems.size();
+		if( last > 0 )
+		{
+			if( selecteditems[last -1] < (m_torrentlistctrl->GetItemCount() - 1 ) ) enable = true;
+		}
+	}
+	event.Enable(enable);
+}
+
+void MainFrame::OnUpdateUI_MenuOpendir( wxUpdateUIEvent& event )
+{
+	int selected = m_torrentlistctrl->GetSelectedItemCount();
+	bool enable = (( selected == 1 ) &&( GetSelectedTorrent() ));
+
+	event.Enable(enable);
+}
+
+void MainFrame::OnUpdateUI_MenuProperties( wxUpdateUIEvent& event )
+{
+	int selected = m_torrentlistctrl->GetSelectedItemCount();
+	bool enable = (( selected == 1 ) &&( GetSelectedTorrent() ));
+
+	event.Enable(enable);
+}
+
+
+void MainFrame::OnUpdateUI_MenuRemove( wxUpdateUIEvent& event )
+{
+	int selected = m_torrentlistctrl->GetSelectedItemCount();
+	bool enable = (( selected == 1 ) &&( GetSelectedTorrent() ));
+
+	event.Enable(enable);
+}
+
+
+void MainFrame::OnUpdateUI_MenuRemovedata( wxUpdateUIEvent& event )
+{
+	int selected = m_torrentlistctrl->GetSelectedItemCount();
+	bool enable = (( selected == 1 ) &&( GetSelectedTorrent() ));
+
+	event.Enable(enable);
+}
+
+void MainFrame::OnUpdateUI_MenuTorrentReannounce( wxUpdateUIEvent& event )
+{
+	bool enable = false;
+
+	if( m_btsession && m_btsession->GetTorrentQueueSize() > 0 )
+	{
+		SwashListCtrl::itemlist_t selecteditems;
+		m_torrentlistctrl->GetSelectedItems(selecteditems);
+		/* selected more than 1 item in the torrent list */
+		size_t total = selecteditems.size();
+
+		if( total > 0 )
+		{
+			for( size_t i = 0; i < total; ++i )
+			{
+				std::shared_ptr<torrent_t> torrent = m_btsession->GetTorrent( selecteditems[i] );
+				if(!torrent || !torrent->isvalid)
+				{
+					continue;
+				}
+
+				if(torrent->handle.is_valid())
+				{
+					enable = true;
+					break;
+				}
+			}
+		}
+	}
+
+	event.Enable(enable);
+}
+
+void MainFrame::OnUpdateUI_MenuTorrentRecheck( wxUpdateUIEvent& event )
+{
+	bool enable = false;
+
+	if( m_btsession && m_btsession->GetTorrentQueueSize() > 0 )
+	{
+		SwashListCtrl::itemlist_t selecteditems;
+		m_torrentlistctrl->GetSelectedItems(selecteditems);
+		/* selected more than 1 item in the torrent list */
+		size_t total = selecteditems.size();
+
+		if( total > 0 )
+		{
+			for( size_t i = 0; i < total; ++i )
+			{
+				std::shared_ptr<torrent_t> torrent = m_btsession->GetTorrent( selecteditems[i] );
+				if(!torrent || !torrent->isvalid)
+				{
+					enable = true;
+					break;
+				}
+			}
+		}
+	}
+
+	event.Enable(enable);
 }
 
 void MainFrame::OnMenuViewStatusBar( wxCommandEvent& event )

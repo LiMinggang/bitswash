@@ -69,17 +69,15 @@ public:
 	~MainFrame();
 
 	wxMenu* GetNewTorrentMenu();
-	void OnMenuOpen( wxMenuEvent& event );
-	void TorrentOperationMenu( wxMenu* torrentmenu );
 	void UpdateUI(bool force = false);
 	void UpdateSelectedTorrent();
 	void TorrentMetadataReceived();
 
 	std::shared_ptr<torrent_t> GetSelectedTorrent() ;
 	std::shared_ptr<torrent_t> GetTorrent(int idx) { return m_btsession->GetTorrent(idx);}
-	const PeerListCtrl::peer_list_t* GetPeersList() { return &m_peerlistitems;  }
+	const PeerListCtrl::peer_list_t* GetPeersList() { return & m_peerlistitems;  }
 
-	wxMutex& GetListLock() {return  m_listlock; }
+	wxMutex& GetListLock() {return     m_listlock; }
 	wxString GetStatusDownloadRate();
 	wxString GetStatusUploadRate();
 	wxString GetStatusPeers();
@@ -155,9 +153,21 @@ private:
 	void OnSize( wxSizeEvent& event );
 
 	void OnUpdateUI_MenuTorrent( wxUpdateUIEvent& event );
+	void OnUpdateUI_MenuTorrentStart( wxUpdateUIEvent& event );
+	void OnUpdateUI_MenuTorrentForceStart( wxUpdateUIEvent& event );
+	void OnUpdateUI_MenuTorrentPause( wxUpdateUIEvent& event );
+	void OnUpdateUI_MenuTorrentStop( wxUpdateUIEvent& event );
+	void OnUpdateUI_MenuTorrentReannounce( wxUpdateUIEvent& event );
+	void OnUpdateUI_MenuTorrentRecheck( wxUpdateUIEvent& event );
 	void OnUpdateUI_MenuViewStatusBar( wxUpdateUIEvent& event );
 	void OnUpdateUI_MenuViewTorrentInfo( wxUpdateUIEvent& event );
 	void OnUpdateUI_MenuViewToolbar( wxUpdateUIEvent& event );
+	void OnUpdateUI_MenuMoveup( wxUpdateUIEvent& event );
+	void OnUpdateUI_MenuMovedown( wxUpdateUIEvent& event );
+	void OnUpdateUI_MenuOpendir ( wxUpdateUIEvent& event );
+	void OnUpdateUI_MenuProperties( wxUpdateUIEvent& event );
+	void OnUpdateUI_MenuRemove( wxUpdateUIEvent& event );
+	void OnUpdateUI_MenuRemovedata( wxUpdateUIEvent& event );
 
 	void LoadIcons();
 	//void SaveTorrentResumeData(std::shared_ptr<ptorrent_t>& torrent);
