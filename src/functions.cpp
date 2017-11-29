@@ -52,13 +52,17 @@ wxString HumanReadableByte(wxDouble byte)
 	//std::cout << byte << "\n";
 
 	vl = byte;
-	for (i=0; i< MAX_UNITS ; i++) 
+	for ( i= 0; i< MAX_UNITS ; i++) 
 	{
-		if (byte < wxDouble(ivl.ToDouble()) ) break;
+		if (byte < wxDouble(ivl.ToDouble()) )
+		{
+			ivl /= step;
+			break;
+		}
 
-		vl = byte / wxDouble(ivl.ToDouble()) ;
 		ivl *= step;
 	}
+	vl = byte / wxDouble(ivl.ToDouble()) ;
 	if (!i)
 		res = wxString::Format(_T("%.0lf B"), vl );
 	else
@@ -87,8 +91,8 @@ wxString HumanReadableTime(unsigned long second)
 	return time;
 }
 
-int RemoveDirectory(wxString& path) {
-
+int RemoveDirectory(wxString& path)
+{
 	wxDir dir (path);
 
 	if ( !dir.IsOpened() )
@@ -127,8 +131,8 @@ int RemoveDirectory(wxString& path) {
 	return wxRmdir(path);
 }
 
-int CopyDirectory(wxString& frompath, wxString& topath) {
-
+int CopyDirectory(wxString& frompath, wxString& topath)
+{
 	wxDir fromdir (frompath);
 
 	if ( !fromdir.IsOpened() )
