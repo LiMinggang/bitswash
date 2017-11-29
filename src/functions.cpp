@@ -44,17 +44,16 @@ static wxChar timetunits[MAX_TIME_UNITS][2] = { _T(""), _T("S"), _T("M"), _T("H"
 
 wxString HumanReadableByte(wxDouble byte) 
 {
-	wxDouble vl = 0 ;
+	wxDouble vl = 0;
 
 	wxLongLong ivl = 1024, step = 1024;
-	int i=0;
+	int i = 0;
 	wxString res;
 	//std::cout << byte << "\n";
 
-	vl = byte;
-	for ( i= 0; i< MAX_UNITS ; i++) 
+	for ( i = 0; i < MAX_UNITS; i++) 
 	{
-		if (byte < wxDouble(ivl.ToDouble()) )
+		if (byte < wxDouble(ivl.ToDouble()))
 		{
 			ivl /= step;
 			break;
@@ -62,6 +61,7 @@ wxString HumanReadableByte(wxDouble byte)
 
 		ivl *= step;
 	}
+
 	vl = byte / wxDouble(ivl.ToDouble()) ;
 	if (!i)
 		res = wxString::Format(_T("%.0lf B"), vl );
