@@ -133,7 +133,7 @@
       <UseLibraryDependencyInputs>false</UseLibraryDependencyInputs>
     </ProjectReference>
     <Link>
-      <AdditionalDependencies>wxmsw31ud_aui.lib;wxmsw31ud_html.lib;wxmsw31ud_adv.lib;wxmsw31ud_core.lib;wxbase31ud_xml.lib;wxbase31ud.lib;wxtiffd.lib;wxjpegd.lib;wxpngd.lib;wxzlibd.lib;wxregexud.lib;wxexpatd.lib;winmm.lib;comctl32.lib;rpcrt4.lib;odbc32.lib;libboost_filesystem-vc141-mt-sgd-1_65.lib;libboost_regex-vc141-mt-sgd-1_65.lib;libboost_iostreams-vc141-mt-sgd-1_65.lib;libboost_thread-vc141-mt-sgd-1_65.lib;libboost_system-vc141-mt-sgd-1_65.lib;Iphlpapi.lib;Ws2_32.lib;DbgHelp.lib;CRYPT32.LIB;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>wxmsw31ud_aui.lib;wxmsw31ud_html.lib;wxmsw31ud_adv.lib;wxmsw31ud_core.lib;wxbase31ud_xml.lib;wxbase31ud.lib;wxtiffd.lib;wxjpegd.lib;wxpngd.lib;wxzlibd.lib;wxregexud.lib;wxexpatd.lib;winmm.lib;comctl32.lib;rpcrt4.lib;odbc32.lib;libboost_filesystem-vc141-mt-sgd-1_65_1.lib;libboost_regex-vc141-mt-sgd-1_65_1.lib;libboost_iostreams-vc141-mt-sgd-1_65_1.lib;libboost_thread-vc141-mt-sgd-1_65_1.lib;libboost_system-vc141-mt-sgd-1_65_1.lib;Iphlpapi.lib;Ws2_32.lib;DbgHelp.lib;CRYPT32.LIB;%(AdditionalDependencies)</AdditionalDependencies>
       <AdditionalLibraryDirectories>$(WXWIN)\lib\vc_x64_lib\;$(BOOST)\stage\lib;$(SolutionDir)$(Platform)\$(Configuration);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <SubSystem>Windows</SubSystem>
@@ -181,7 +181,7 @@
       <LinkLibraryDependencies>true</LinkLibraryDependencies>
     </ProjectReference>
     <Link>
-      <AdditionalDependencies>wxmsw31u_aui.lib;wxmsw31u_html.lib;wxmsw31u_adv.lib;wxmsw31u_core.lib;wxbase31u_xml.lib;wxbase31u.lib;wxtiff.lib;wxjpeg.lib;wxpng.lib;wxzlib.lib;wxregexu.lib;wxexpat.lib;winmm.lib;comctl32.lib;rpcrt4.lib;odbc32.lib;libboost_filesystem-vc141-mt-s-1_65.lib;libboost_regex-vc141-mt-s-1_65.lib;libboost_iostreams-vc141-mt-s-1_65.lib;libboost_thread-vc141-mt-s-1_65.lib;libboost_system-vc141-mt-s-1_65.lib;Iphlpapi.lib;Ws2_32.lib;DbgHelp.lib;CRYPT32.LIB;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>wxmsw31u_aui.lib;wxmsw31u_html.lib;wxmsw31u_adv.lib;wxmsw31u_core.lib;wxbase31u_xml.lib;wxbase31u.lib;wxtiff.lib;wxjpeg.lib;wxpng.lib;wxzlib.lib;wxregexu.lib;wxexpat.lib;winmm.lib;comctl32.lib;rpcrt4.lib;odbc32.lib;libboost_filesystem-vc141-mt-s-1_65_1.lib;libboost_regex-vc141-mt-s-1_65_1.lib;libboost_iostreams-vc141-mt-s-1_65_1.lib;libboost_thread-vc141-mt-s-1_65_1.lib;libboost_system-vc141-mt-s-1_65_1.lib;Iphlpapi.lib;Ws2_32.lib;DbgHelp.lib;CRYPT32.LIB;%(AdditionalDependencies)</AdditionalDependencies>
       <AdditionalLibraryDirectories>$(WXWIN)\lib\vc_x64_lib\;$(BOOST)\stage\lib;$(SolutionDir)$(Platform)\$(Configuration);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <IgnoreAllDefaultLibraries>false</IgnoreAllDefaultLibraries>
       <GenerateDebugInformation>false</GenerateDebugInformation>

@@ -1185,10 +1185,8 @@ void BitTorrentSession::SaveTorrentResumeData( lt::save_resume_data_alert * p )
 void BitTorrentSession::DumpTorrents()
 {
 	wxMutexLocker ml( m_torrent_queue_lock );
-	for( torrents_t::iterator i = m_torrent_queue.begin();
-			i != m_torrent_queue.end(); ++i )
+	for( auto & torrent : m_torrent_queue )
 	{
-		std::shared_ptr<torrent_t> torrent = *i;
 		wxLogMessage( _T( "[%s] %s" ), ( wxLongLong( torrent->config->GetQIndex() ).ToString() ).c_str(), torrent->name.c_str() );
 	}
 }

@@ -277,6 +277,40 @@ wxString TorrentListCtrl::GetItemValue( long item, long columnid ) const
 	return _T("");
 }
 
+void TorrentListCtrl::OnLeftDClick(wxMouseEvent& event)
+{
+	auto pTorrent = m_pMainFrame->GetSelectedTorrent();
+
+	if( pTorrent )
+	{
+		bool nopriority = false;
+		lt::torrent_info const& torrentinfo = *(pTorrent->info);
+		std::vector<lt::download_priority_t> & filespriority = pTorrent->config->GetFilesPriorities();
+		
+		if( filespriority.size() != torrentinfo.num_files() )
+		{
+			nopriority = true;
+		}
+
+		for(int i  = 0; i < torrentinfo.num_files(); ++i)
+		{
+			if(nopriority || filespriority.at(i) != lt::download_priority_t(BITTORRENT_FILE_NONE))
+			{
+				lt::file_storage const& allfiles = torrentinfo.files();
+				wxString fname(pTorrent->config->GetDownloadPath() + wxConvUTF8.cMB2WC( torrentinfo.name().c_str() ) + wxFileName::GetPathSeparator() + wxString::FromUTF8((allfiles.file_name(lt::file_index_t(i))).to_string().c_str()));
+				wxFileName filename (fname);
+				filename.MakeAbsolute();
+				//wxLogDebug(_T("File path %s\n"), filename.GetFullPath().c_str());
+				if(wxFileName::FileExists(filename.GetFullPath()))
+				{
+					wxLaunchDefaultApplication(filename.GetFullPath()); 
+				}
+			}
+		}
+	}
+}
+
+
 #if USE_CONTEXT_MENU
 void TorrentListCtrl::ShowContextMenu( const wxPoint& pos )
 {

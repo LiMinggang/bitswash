@@ -55,6 +55,7 @@ private:
 	//wxString OnGetItemText(long item, long column) const;
 	wxString GetItemValue(long item, long columnid) const;
 	void ShowContextMenu(const wxPoint& pos);
+	virtual void OnLeftDClick(wxMouseEvent& event);
 	wxMenu* m_torrentmenu;
 	MainFrame* m_pMainFrame;
 
