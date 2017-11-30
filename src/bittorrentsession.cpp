@@ -92,7 +92,7 @@ std::string to_hex(lt::sha1_hash const& s)
 }
 
 BitTorrentSession::BitTorrentSession( wxApp* pParent, Configuration* config, wxMutex *mutex/* = 0*/, wxCondition *condition/* = 0*/ )
-	: wxThread( wxTHREAD_JOINABLE ), m_upnp_started( false ), m_natpmp_started( false ), m_lsd_started( false ), m_libbtsession( 0 ), m_dht_changed(true),
+	: wxThread( wxTHREAD_JOINABLE ), m_upnp_started( false ), m_natpmp_started( false ), m_lsd_started( false ), m_libbtsession( nullptr ), m_dht_changed(true),
 	m_pParent(pParent), m_config(config), m_condition(condition), m_mutex(mutex)
 {
 	//boost::filesystem::path::default_name_check(boost::filesystem::no_check);
@@ -825,7 +825,7 @@ void BitTorrentSession::RemoveTorrent( std::shared_ptr<torrent_t>& torrent, bool
 
 	if( deletedata )
 	{
-		wxString download_data = torrent->config->GetDownloadPath() + ( wxString )torrent->name.c_str() ;
+		wxString download_data( torrent->config->GetDownloadPath() + ( wxString )torrent->name.c_str() );
 		wxLogInfo( _T( "%s: Remove Data as well in %s" ), torrent->name.c_str(), download_data.c_str() );
 
 		if( wxDirExists( download_data ) )
@@ -1046,11 +1046,8 @@ void BitTorrentSession::SaveAllTorrent()
 	{
 		int idx = 0;
 		wxMutexLocker ml( m_torrent_queue_lock );
-		for( torrents_t::iterator i = m_torrent_queue.begin();
-				i != m_torrent_queue.end();
-				++i )
+		for( auto & torrent : m_torrent_queue )
 		{
-			std::shared_ptr<torrent_t> torrent = *i;
 			torrent->config->SetQIndex( idx++ );
 			torrent->config->Save();
 
@@ -1092,11 +1089,10 @@ void BitTorrentSession::SaveAllTorrent()
 		m_libbtsession->pop_alerts( &alerts );
 		std::string now = timestamp();
 
-		for( std::vector<lt::alert*>::iterator i = alerts.begin(),
-			end( alerts.end() ); i != end; ++i )
+		for( auto const& i : alerts )
 		{
 			// make sure to delete each alert
-			lt::torrent_paused_alert const* tp = lt::alert_cast<lt::torrent_paused_alert>( *i );
+			lt::torrent_paused_alert const* tp = lt::alert_cast<lt::torrent_paused_alert>( i );
 
 			if( tp )
 			{
@@ -1104,14 +1100,14 @@ void BitTorrentSession::SaveAllTorrent()
 				WXLOGDEBUG(( _T( "left: %d failed: %d pause: %d" )
 							, num_outstanding_resume_data, num_failed, num_paused ));
 			}
-			else if(lt::alert_cast<lt::save_resume_data_failed_alert>( *i ) )
+			else if(lt::alert_cast<lt::save_resume_data_failed_alert>( i ) )
 			{
 				++num_failed;
 				--num_outstanding_resume_data;
 				WXLOGDEBUG(( _T( "left: %d failed: %d pause: %d" )
 							, num_outstanding_resume_data, num_failed, num_paused ));
 			}
-			else if (lt::save_resume_data_alert * p = lt::alert_cast<lt::save_resume_data_alert>( *i ) )
+			else if (lt::save_resume_data_alert * p = lt::alert_cast<lt::save_resume_data_alert>( i ) )
 			{
 				--num_outstanding_resume_data;
 				WXLOGDEBUG(( _T( "left: %d failed: %d pause: %d" )
@@ -1124,12 +1120,10 @@ void BitTorrentSession::SaveAllTorrent()
 
 	// save dead magnet uri
 	size_t counts = magneturi.GetCount();
-	wxString filename = wxGetApp().SaveTorrentsPath() + APPBINNAME + _T( ".magneturi" );
+	wxString filename( wxGetApp().SaveTorrentsPath() + APPBINNAME + _T( ".magneturi" ));
 	wxTextFile magneturifile( filename );
 	if(counts > 0)
 	{
-		wxString filename = wxGetApp().SaveTorrentsPath() + APPBINNAME + _T( ".magneturi" );
-		wxTextFile magneturifile( filename );
 		if( !magneturifile.Exists() )
 		{
 			magneturifile.Create();
@@ -2178,16 +2172,15 @@ void BitTorrentSession::HandleTorrentAlert()
 	unsigned int log_severity = 2;
 
 	m_libbtsession->pop_alerts(&alerts);
-	for (std::vector<lt::alert*>::iterator it = alerts.begin()
-		, end(alerts.end()); it != end; ++it)
+	for (auto & alert : alerts)
 	{
 		TORRENT_TRY
 		{
 			event_string.Empty();
-			switch ((*it)->type())
+			switch ((alert)->type())
 			{
 				case lt::add_torrent_alert::alert_type:
-					if( lt::add_torrent_alert* p = lt::alert_cast<lt::add_torrent_alert>( *it ) )
+					if( lt::add_torrent_alert* p = lt::alert_cast<lt::add_torrent_alert>( alert ) )
 					{
 						if (p->error)
 						{
@@ -2202,7 +2195,7 @@ void BitTorrentSession::HandleTorrentAlert()
 					}
 					break;
 				case lt::torrent_finished_alert::alert_type:
-					if( lt::torrent_finished_alert* p = lt::alert_cast<lt::torrent_finished_alert>( *it ) )
+					if( lt::torrent_finished_alert* p = lt::alert_cast<lt::torrent_finished_alert>( alert ) )
 					{
 						lt::torrent_status st = (p->handle).status(lt::torrent_handle::query_name);
 						event_string << st.name << _T(": ") << wxString::FromUTF8(p->message().c_str());
@@ -2212,7 +2205,7 @@ void BitTorrentSession::HandleTorrentAlert()
 					}
 					break;
 				case lt::save_resume_data_failed_alert::alert_type:
-					if (lt::save_resume_data_failed_alert* p = lt::alert_cast<lt::save_resume_data_failed_alert>( *it ))
+					if (lt::save_resume_data_failed_alert* p = lt::alert_cast<lt::save_resume_data_failed_alert>( alert ))
 					{
 						lt::torrent_handle & h = p->handle;
 						log_severity = 1;
@@ -2236,14 +2229,14 @@ void BitTorrentSession::HandleTorrentAlert()
 					}
 					break;
 				case lt::session_stats_alert::alert_type:
-					if (lt::session_stats_alert* p = lt::alert_cast<lt::session_stats_alert>( *it ))
+					if (lt::session_stats_alert* p = lt::alert_cast<lt::session_stats_alert>( alert ))
 					{
 						UpdateCounters(p->counters(), lt::duration_cast<lt::microseconds>(p->timestamp().time_since_epoch()).count());
 						return;
 					}
 					break;
 				case lt::torrent_paused_alert::alert_type:
-					if (lt::torrent_paused_alert* p = lt::alert_cast<lt::torrent_paused_alert>( *it ))
+					if (lt::torrent_paused_alert* p = lt::alert_cast<lt::torrent_paused_alert>( alert ))
 					{
 						lt::torrent_handle& h = p->handle;
 						lt::torrent_status st = h.status(lt::torrent_handle::query_name);
@@ -2255,14 +2248,14 @@ void BitTorrentSession::HandleTorrentAlert()
 					}
 					break;
 				case lt::metadata_received_alert::alert_type:
-					if( lt::metadata_received_alert* p = lt::alert_cast<lt::metadata_received_alert>( *it ) )
+					if( lt::metadata_received_alert* p = lt::alert_cast<lt::metadata_received_alert>( alert ) )
 					{
 						event_string << _T( "Metadata: " ) << wxString::FromUTF8(p->message().c_str());
 						HandleMetaDataAlert(p);
 					}
 					break;
 				case lt::save_resume_data_alert::alert_type:
-					if( lt::save_resume_data_alert *p = lt::alert_cast<lt::save_resume_data_alert>( *it ) )
+					if( lt::save_resume_data_alert *p = lt::alert_cast<lt::save_resume_data_alert>( alert ) )
 					{
 						SaveTorrentResumeData(p);
 						lt::torrent_handle& h = p->handle;
@@ -2284,7 +2277,7 @@ void BitTorrentSession::HandleTorrentAlert()
 					}
 					break;
 				case lt::dht_stats_alert::alert_type:
-					if (lt::dht_stats_alert* p = lt::alert_cast<lt::dht_stats_alert>(*it))
+					if (lt::dht_stats_alert* p = lt::alert_cast<lt::dht_stats_alert>(alert))
 					{
 						{
 							wxMutexLocker ml(m_dht_status_lock);
@@ -2293,105 +2286,105 @@ void BitTorrentSession::HandleTorrentAlert()
 							m_dht_routing_table = p->routing_table;
 						}
 						log_severity = 1;
-						event_string << _T("[") << (*it)->type() << _T("]") << wxString::FromUTF8((*it)->message().c_str());
+						event_string << _T("[") << (alert)->type() << _T("]") << wxString::FromUTF8((alert)->message().c_str());
 							//if(event_string.IsEmpty()) return;
 					}
 					break;
 				case lt::peer_ban_alert::alert_type:
-					if( lt::peer_ban_alert* p = lt::alert_cast<lt::peer_ban_alert>( *it ) )
+					if( lt::peer_ban_alert* p = lt::alert_cast<lt::peer_ban_alert>( alert ) )
 					{
 						event_string << wxString::FromUTF8(p->message().c_str());
 					}
 					break;
 				case lt::peer_error_alert::alert_type:
-					if( lt::peer_error_alert* p = lt::alert_cast<lt::peer_error_alert>( *it ) )
+					if( lt::peer_error_alert* p = lt::alert_cast<lt::peer_error_alert>( alert ) )
 					{
 						log_severity = 4;
 						event_string << _T( "Peer: " ) << identify_client( p->pid ) << _T( ": " ) << wxString::FromUTF8(p->message().c_str());
 					}
 					break;
 				case lt::peer_blocked_alert::alert_type:
-					if( lt::peer_blocked_alert* p = lt::alert_cast<lt::peer_blocked_alert>( *it ) )
+					if( lt::peer_blocked_alert* p = lt::alert_cast<lt::peer_blocked_alert>( alert ) )
 					{
 						log_severity = 3;
 						event_string << wxString::FromUTF8(p->message().c_str());
 					}
 					break;
 				case lt::invalid_request_alert::alert_type:
-					if( lt::invalid_request_alert* p = lt::alert_cast<lt::invalid_request_alert>( *it ) )
+					if( lt::invalid_request_alert* p = lt::alert_cast<lt::invalid_request_alert>( alert ) )
 					{
 						log_severity = 4;
 						event_string << identify_client( p->pid ) << _T( ": " ) << wxString::FromUTF8(p->message().c_str());
 					}
 					break;
 				case lt::tracker_warning_alert::alert_type:
-					if( lt::tracker_warning_alert* p = lt::alert_cast<lt::tracker_warning_alert>( *it ) )
+					if( lt::tracker_warning_alert* p = lt::alert_cast<lt::tracker_warning_alert>( alert ) )
 					{
 						log_severity = 3;
 						event_string << _T( "Tracker: " ) << wxString::FromUTF8(p->message().c_str());
 					}
 					break;
 				case lt::tracker_reply_alert::alert_type:
-					if( lt::tracker_reply_alert* p = lt::alert_cast<lt::tracker_reply_alert>( *it ) )
+					if( lt::tracker_reply_alert* p = lt::alert_cast<lt::tracker_reply_alert>( alert ) )
 					{
 						event_string << _T( "Tracker:" ) << wxString::FromUTF8(p->message().c_str()) << p->num_peers << _T( " number of peers " );
 					}
 					break;
 				case lt::url_seed_alert::alert_type:
-					if( lt::url_seed_alert* p = lt::alert_cast<lt::url_seed_alert>( *it ) )
+					if( lt::url_seed_alert* p = lt::alert_cast<lt::url_seed_alert>( alert ) )
 					{
 						event_string << _T( "Url seed '" ) << p->server_url() << _T( "': " ) << wxString::FromUTF8(p->message().c_str());
 					}
 					break;
 				case lt::listen_failed_alert::alert_type:
-					if( lt::listen_failed_alert* p = lt::alert_cast<lt::listen_failed_alert>( *it ) )
+					if( lt::listen_failed_alert* p = lt::alert_cast<lt::listen_failed_alert>( alert ) )
 					{
 						log_severity = 4;
 						event_string << _T( "Listen failed: " ) << wxString::FromUTF8(p->message().c_str());
 					}
 					break;
 				case lt::portmap_error_alert::alert_type:
-					if( lt::portmap_error_alert* p = lt::alert_cast<lt::portmap_error_alert>( *it ) )
+					if( lt::portmap_error_alert* p = lt::alert_cast<lt::portmap_error_alert>( alert ) )
 					{
 						log_severity = 4;
 						event_string << _T( "Portmap error: " ) << wxString::FromUTF8(p->message().c_str());
 					}
 					break;
 				case lt::portmap_alert::alert_type:
-					if( lt::portmap_alert* p = lt::alert_cast<lt::portmap_alert>( *it ) )
+					if( lt::portmap_alert* p = lt::alert_cast<lt::portmap_alert>( alert ) )
 					{
 						event_string << _T( "Portmap: " ) << wxString::FromUTF8(p->message().c_str());
 					}
 					break;
 				case lt::tracker_announce_alert::alert_type:
-					if( lt::tracker_announce_alert* p = lt::alert_cast<lt::tracker_announce_alert>( *it ) )
+					if( lt::tracker_announce_alert* p = lt::alert_cast<lt::tracker_announce_alert>( alert ) )
 					{
 						event_string << _T( "Tracker: " ) << wxString::FromUTF8(p->message().c_str());
 					}
 					break;
 				case lt::file_error_alert::alert_type:
-					if( lt::file_error_alert* p = lt::alert_cast<lt::file_error_alert>( *it ) )
+					if( lt::file_error_alert* p = lt::alert_cast<lt::file_error_alert>( alert ) )
 					{
 						log_severity = 4;
 						event_string << _T( "File error: " ) << wxString::FromUTF8(p->message().c_str());
 					}
 					break;
 				case lt::hash_failed_alert::alert_type:
-					if( lt::hash_failed_alert* p = lt::alert_cast<lt::hash_failed_alert>( *it ) )
+					if( lt::hash_failed_alert* p = lt::alert_cast<lt::hash_failed_alert>( alert ) )
 					{
 						log_severity = 4;
 						event_string << _T( "Hash: " ) << wxString::FromUTF8(p->message().c_str());
 					}
 					break;
 				case lt::metadata_failed_alert::alert_type:
-					if( lt::metadata_failed_alert* p = lt::alert_cast<lt::metadata_failed_alert>( *it ) )
+					if( lt::metadata_failed_alert* p = lt::alert_cast<lt::metadata_failed_alert>( alert ) )
 					{
 						log_severity = 4;
 						event_string << _T( "Metadata: " ) << wxString::FromUTF8(p->message().c_str());
 					}
 					break;
 				case lt::fastresume_rejected_alert::alert_type:
-					if( lt::fastresume_rejected_alert* p = lt::alert_cast<lt::fastresume_rejected_alert>( *it ) )
+					if( lt::fastresume_rejected_alert* p = lt::alert_cast<lt::fastresume_rejected_alert>( alert ) )
 					{
 						log_severity = 3;
 						event_string << _T( "Fastresume: " ) << wxString::FromUTF8(p->message().c_str());
@@ -2407,7 +2400,7 @@ void BitTorrentSession::HandleTorrentAlert()
 				default:
 					log_severity = 1;
 					{
-						event_string << _T("[") << (*it)->type() << _T("]") << wxString::FromUTF8((*it)->message().c_str());
+						event_string << _T("[") << (alert)->type() << _T("]") << wxString::FromUTF8(( alert )->message().c_str());
 						//if(event_string.IsEmpty()) return;
 					}
 					break;
@@ -2450,7 +2443,7 @@ void BitTorrentSession::HandleTorrentAlert()
 }
 
 /*Check error before call it. So, assume no p->error*/
-bool BitTorrentSession::HandleAddTorrentAlert(lt::add_torrent_alert *p)
+bool BitTorrentSession::HandleAddTorrentAlert(lt::add_torrent_alert * p)
 {
 	try
 	{
