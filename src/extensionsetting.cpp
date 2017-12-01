@@ -36,9 +36,9 @@ ExtensionSettingPane::ExtensionSettingPane( wxWindow* parent,
         wxSize size,
         int style ): wxPanel( parent, id, pos, size, style )
 {
-    m_pMainFrame = dynamic_cast< MainFrame* >(wxGetApp().GetTopWindow());
-	wxASSERT(m_pMainFrame != nullptr);
-    m_pcfg = m_pMainFrame->GetConfig();
+    MainFrame* pMainFrame = dynamic_cast< MainFrame* >(wxGetApp().GetTopWindow());
+	wxASSERT(pMainFrame != nullptr);
+    m_pcfg = pMainFrame->GetConfig();
     wxFlexGridSizer* fgSizerMain;
     fgSizerMain = new wxFlexGridSizer( 0, 1, 0, 0 );
     fgSizerMain->SetFlexibleDirection( wxBOTH );
@@ -149,29 +149,9 @@ bool ExtensionSettingPane::GetEnableLsd()
     return m_check_lsd->GetValue();
 }
 
-
 void ExtensionSettingPane::OnEnablePe( wxCommandEvent& event )
 {
     bool enablepe = m_check_pe->GetValue();
     m_check_pe_notforce->Enable( enablepe );
 }
 
-#if 0
-void ExtensionSettingPane::OnCheckUpnp( wxCommandEvent& event )
-{
-    //bool enableupnp = m_check_upnp->GetValue();
-    //((MainFrame*)m_pMainFrame)->StartUpnp(enableupnp);
-}
-
-void ExtensionSettingPane::OnCheckNatpmp( wxCommandEvent& event )
-{
-    //bool enablenatpmp = m_check_natpmp->GetValue();
-    //((MainFrame*)m_pMainFrame)->StartNatpmp(enablenatpmp);
-}
-
-void ExtensionSettingPane::OnCheckLsd( wxCommandEvent& event )
-{
-    //bool enablelsd = m_check_lsd->GetValue();
-    //((MainFrame*)m_pMainFrame)->StartLsd(enablelsd);
-}
-#endif

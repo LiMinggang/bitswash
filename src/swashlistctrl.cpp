@@ -512,7 +512,12 @@ void SwashListCtrl::OnSelected( wxListEvent& event )
 #ifdef _DEBUG
 	LogListEvent( event, _T( "OnSelected" ) );
 #endif
-	MainFrame* pMainFrame = dynamic_cast< MainFrame* >( wxGetApp().GetTopWindow() );
+	static MainFrame * pMainFrame = nullptr;
+	if(pMainFrame == nullptr)
+	{
+ 		pMainFrame = dynamic_cast<MainFrame *>( wxGetApp().GetTopWindow() );
+		wxASSERT(pMainFrame != nullptr);
+	}
 	pMainFrame->OnListItemClick( event.GetIndex() );
 }
 

@@ -246,8 +246,12 @@ wxString PeerListCtrl::GetItemValue(long item, long columnid) const
 #if WXVER >= 280
 int PeerListCtrl::GetItemColumnImage(long item, long columnid) const
 {
-	MainFrame* pMainFrame = dynamic_cast<MainFrame *>( wxGetApp().GetTopWindow() );
-	wxASSERT(pMainFrame != nullptr);
+	static MainFrame * pMainFrame = nullptr;
+	if(pMainFrame == nullptr)
+	{
+ 		pMainFrame = dynamic_cast<MainFrame *>( wxGetApp().GetTopWindow() );
+		wxASSERT(pMainFrame != nullptr);
+	}
 	const PeerListCtrl::peer_list_t *peers_list = pMainFrame->GetPeersList();
 
 	if ((peers_list == nullptr) || (peers_list->size() <= 0))
@@ -293,8 +297,12 @@ int PeerListCtrl::GetItemColumnImage(long item, long columnid) const
 #else
 int PeerListCtrl::OnGetItemImage(long item) const
 {
-	MainFrame* pMainFrame = dynamic_cast<MainFrame *>( wxGetApp().GetTopWindow() );
-	wxASSERT(pMainFrame != nullptr)
+	static MainFrame * pMainFrame = nullptr;
+	if(pMainFrame == nullptr)
+	{
+ 		pMainFrame = dynamic_cast<MainFrame *>( wxGetApp().GetTopWindow() );
+		wxASSERT(pMainFrame != nullptr);
+	}
 
 	const PeerListCtrl::peer_list_t *peers_list = pMainFrame->GetPeersList();
 

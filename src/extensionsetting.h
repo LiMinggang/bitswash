@@ -32,7 +32,6 @@
 #include <wx/spinctrl.h>
 #include <wx/stattext.h>
 
-class m_pMainFrame;
 class Configuration;
 class ExtensionSettingPane :  public wxPanel
 {
@@ -48,7 +47,6 @@ public:
 	bool GetEnableLsd();
 
 private:
-		MainFrame * m_pMainFrame;
 	Configuration *m_pcfg;
 
 	wxPanel* m_pane_infoextension;

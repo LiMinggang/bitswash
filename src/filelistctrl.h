@@ -38,6 +38,7 @@
 
 #include "bittorrentsession.h"
 
+class MainFrame;
 class FileListCtrl : public SwashListCtrl
 {
 public:
@@ -77,6 +78,7 @@ private:
     wxMenu m_contextmenu;
 	static wxCmdEvtHandlerMap_t m_menu_evt_map[];
 	long m_lastclickcol;
+	MainFrame* m_pMainframe;
 
 	static const long FILELISTCTRL_MENU_PRIORITY0;
 	static const long FILELISTCTRL_MENU_PRIORITY1;
