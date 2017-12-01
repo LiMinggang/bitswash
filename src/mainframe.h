@@ -218,7 +218,6 @@ private:
 	int m_prevlocale;
 	long m_prevselecteditem;
 	bool m_closed;
-	MagnetUriHanlder* m_magneturi_handler;
 	typedef struct 
 	{
 		const long evtTag;

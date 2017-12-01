@@ -137,9 +137,9 @@ class Configuration : public wxFileConfig
         void SetRunAtStartup(bool run_at_startup ) { m_run_at_startup = run_at_startup; }
         bool GetAssociateTorrent() { return m_associate_torrent; }
         void SetAssociateTorrent(bool associate_torrent) { m_associate_torrent = associate_torrent; }
-#endif
         bool GetAssociateMagnetURI() { return m_associate_magneturi; }
         void SetAssociateMagnetURI(bool associate_magneturi) { m_associate_magneturi = associate_magneturi; }
+#endif
 
         // libtorrent
 
@@ -327,6 +327,8 @@ class Configuration : public wxFileConfig
 		bool DetectType(const wxString& type);
 		void AddType(const wxString& type);
 		void RemoveType(const wxString& type);
+		void AddMagnetLinkType();
+		void RemoveMagnetLinkType();
 #endif
     protected:
 		void ReadSavePath();

@@ -251,13 +251,6 @@ MainFrame::MainFrame( wxFrame *frame, const wxString& title )
 	m_refreshtimer.SetOwner( this, ID_TIMER_GUI_UPDATE );
 	m_refreshtimer.Start( m_config->GetRefreshTime() * 1000, wxTIMER_CONTINUOUS );
 
-	m_magneturi_handler = 0;
-	if(m_config->GetAssociateMagnetURI())
-	{
-		m_magneturi_handler = new MagnetUriHanlder(this);
-		wxFileSystem::AddHandler(m_magneturi_handler);
-	}
-
 	for(size_t i = 0; i < sizeof(m_menu_evt_map)/sizeof(m_menu_evt_map[0]); ++i)
 	{
 		Bind( wxEVT_MENU, m_menu_evt_map[i].method, this, m_menu_evt_map[i].evtTag );
@@ -289,8 +282,6 @@ MainFrame::~MainFrame()
 
 	delete m_config;
 
-	if(m_magneturi_handler)
-		delete m_magneturi_handler;
 #ifndef __WXDEBUG__
 	//wxLog::SetActiveTarget(m_oldlog);
 #endif
@@ -314,8 +305,6 @@ void MainFrame::OnClose( wxCloseEvent& event )
 
 	if( m_swashsetting ) { delete m_swashsetting; }
 
-	if(m_magneturi_handler)
-		wxFileSystem::RemoveHandler(m_magneturi_handler);
 	Destroy();
 	m_closed = true;
 }
@@ -1779,20 +1768,6 @@ void MainFrame::ShowPreferences()
 	bool magneturi = m_config->GetAssociateMagnetURI();
 	if( m_swashsetting->ShowModal() == wxID_OK )
 	{
-		//XXX settorrent session
-		if(magneturi != m_config->GetAssociateMagnetURI())
-		{
-			if(m_config->GetAssociateMagnetURI())
-			{
-				if(!m_magneturi_handler)
-					m_magneturi_handler = new MagnetUriHanlder(this);
-				wxFileSystem::AddHandler(m_magneturi_handler);
-			}
-			else
-			{
-				wxFileSystem::RemoveHandler(m_magneturi_handler);
-			}
-		}
 		m_btsession->PostQueueUpdateEvent();
 	}
 }

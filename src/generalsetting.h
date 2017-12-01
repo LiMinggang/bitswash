@@ -72,8 +72,8 @@ private:
 #ifdef __WXMSW__
 	wxCheckBox* m_check_runatstartup;
 	wxCheckBox* m_check_associate_torrent;
-#endif
 	wxCheckBox* m_check_associate_magneturi;
+#endif
 
 	wxPanel* m_pane_infogui;
 	wxStaticText* m_static_infogui;

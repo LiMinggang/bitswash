@@ -81,7 +81,6 @@ void Configuration::Save()
 	m_cfg->Write( _T( "/Config/use_systray" ), ( bool )m_use_systray );
 	m_cfg->Write( _T( "/Config/hidetaskbar" ), ( bool )m_hidetaskbar );
 	m_cfg->Write( _T( "/Config/exclude_seed" ), ( bool )m_exclude_seed );
-	m_cfg->Write( _T( "/Config/associate_magneturi" ), m_associate_magneturi );
 #ifdef __WXMSW__
 	m_cfg->Write( _T( "/Config/run_at_startup" ), ( bool )m_run_at_startup );
 	wxRegKey regKey( m_startup_regkey );
@@ -100,7 +99,12 @@ void Configuration::Save()
 		}
 	}
 	
-	m_cfg->Write( _T( "/Config/associate_torrent" ), ( bool )m_associate_torrent);
+	m_cfg->Write( _T( "/Config/associate_magneturi" ), m_associate_magneturi );
+	if (m_associate_magneturi)
+		AddMagnetLinkType();
+	else
+		RemoveMagnetLinkType();
+	m_cfg->Write( _T( "/Config/associate_torrent" ), m_associate_torrent);
 	if(m_associate_torrent)
 		AddType( _T(".torrent") );
 	else
@@ -240,7 +244,6 @@ void Configuration::Load()
 	//if (! (m_cfg->Read(_T("/Config/use_systray"), &m_use_systray))) m_use_systray = true;
 	m_cfg->Read( _T( "/Config/hidetaskbar" ), &m_hidetaskbar, false ) ;
 	m_cfg->Read( _T( "/Config/exclude_seed" ), &m_exclude_seed, true );
-	m_cfg->Read( _T( "/Config/associate_magneturi" ), &m_associate_magneturi, false );
 #ifdef __WXMSW__
 	m_cfg->Read( _T( "/Config/run_at_startup" ), &m_run_at_startup, false );
 	wxRegKey regKey( m_startup_regkey );
@@ -265,6 +268,11 @@ void Configuration::Load()
 		AddType( _T(".torrent") );
 	else
 		RemoveType(_T(".torrent"));
+	m_cfg->Read( _T( "/Config/associate_magneturi" ), &m_associate_magneturi, false );
+	if (m_associate_magneturi)
+		AddMagnetLinkType();
+	else
+		RemoveMagnetLinkType();
 #endif
 	//
 	m_cfg->Read( _T( "/Config/enable_upnp" ), &m_enable_upnp, true );
@@ -460,24 +468,6 @@ void Configuration::AddType( const wxString& type )
 	delete pRegKey;
 	wxString name( m_bitswash_regkey_path );
 	name += value;
-
-	if( type == wxT( ".torrent" ) )
-	{
-		wxString txt_name;
-		pRegKey = new wxRegKey( wxString( m_bitswash_regkey_path + wxT( "torrent" ) ) );
-
-		if( pRegKey->Exists() ) { pRegKey->QueryValue( wxEmptyString, txt_name ); }
-
-		delete pRegKey;
-
-		if( txt_name.IsEmpty() ) { txt_name = wxT( "Bittorrent file" ); }
-
-		pRegKey = new wxRegKey( name );
-		pRegKey->Create();
-		pRegKey->SetValue( wxEmptyString, txt_name );
-		delete pRegKey;
-	}
-
 	name += wxT( "\\shell\\open\\command" );
 	pRegKey = new wxRegKey( name );
 	pRegKey->Create();
@@ -532,5 +522,110 @@ void Configuration::RemoveType( const wxString& type )
 		delete pRegKey;
 	}
 }
+
+void Configuration::AddMagnetLinkType( )
+{
+	wxString value, type(wxT("magent"));
+	wxString bitswash_type = wxString(APPNAME) + wxT(".") + type;
+	wxRegKey *pRegKey = new wxRegKey( m_bitswash_regkey_path + type );
+
+	if( !pRegKey->Exists() ) { pRegKey->Create(); }
+	else { pRegKey->QueryValue( wxEmptyString, value ); }
+
+	if (value != bitswash_type)
+	{
+		if (!value.IsEmpty()) //save old default value
+		{
+			pRegKey->SetValue(wxT("Old_Default"), value);
+		}
+
+		value = bitswash_type;
+		pRegKey->SetValue(wxEmptyString, value);
+	}
+
+	delete pRegKey;
+	wxString name(m_bitswash_regkey_path);
+	name += value;
+	name +=  wxT("\\shell\\open\\command");
+	pRegKey = new wxRegKey( name );
+	pRegKey->Create();
+	wxString exepath = GetExecutablePath();
+	pRegKey->SetValue( wxEmptyString, wxString( wxT( '"' ) ) + exepath + wxString( wxT( "\" \"%1\"" ) ) );
+	delete pRegKey;
+	name = m_bitswash_regkey_path;
+	name += value;
+	name += wxT( "\\DefaultIcon\\Default " );
+	pRegKey = new wxRegKey( name );
+	pRegKey->Create();
+	pRegKey->SetValue( wxEmptyString, exepath + wxString( wxT( ",1" ) ) );
+	delete pRegKey;
+	name = m_bitswash_regkey_path;
+	name += value;
+	name += wxT( "\\Default " );
+	pRegKey = new wxRegKey( name );
+	pRegKey->Create();
+	pRegKey->SetValue( wxEmptyString, wxT("URL:Magnet link") );
+	delete pRegKey;
+	name = m_bitswash_regkey_path;
+	name += value;
+	name += wxT( "\\Content Type " );
+	pRegKey = new wxRegKey( name );
+	pRegKey->Create();
+	pRegKey->SetValue( wxEmptyString, wxT("application\\x-magnet") );
+	delete pRegKey;
+	name = m_bitswash_regkey_path;
+	name += value;
+	name += wxT( "\\URL Protocol " );
+	pRegKey = new wxRegKey( name );
+	pRegKey->Create();
+	pRegKey->SetValue( wxEmptyString, wxT("") );
+	delete pRegKey;
+	name = m_bitswash_regkey_path;
+	name += value;
+	name += wxT( "\\shell\\Default" );
+	pRegKey = new wxRegKey( name );
+	pRegKey->Create();
+	pRegKey->SetValue( wxEmptyString, wxT("open") );
+	delete pRegKey;
+}
+
+void Configuration::RemoveMagnetLinkType( )
+{
+	wxString value, type(wxT("magent")), old_default;
+	wxString bitswash_type = wxString(APPNAME) + wxT(".") + type;
+	wxRegKey *pRegKey = new wxRegKey( m_bitswash_regkey_path + type );
+
+	if( pRegKey->Exists() )
+	{
+		pRegKey->QueryValue( wxT( "Old_Default" ), old_default );
+		pRegKey->QueryValue( wxEmptyString, value );
+	}
+
+	if( !old_default.IsEmpty() )
+	{
+		pRegKey->DeleteValue( wxT( "Old_Default" ) );
+		pRegKey->SetValue( wxEmptyString, old_default );
+	}
+	else
+		if( !value.IsEmpty() )
+		{
+			if( value == bitswash_type )
+			{
+				pRegKey->DeleteSelf();
+			}
+		}
+
+	delete pRegKey;
+
+	if( value == bitswash_type )
+	{
+		pRegKey = new wxRegKey( m_bitswash_regkey_path + value );
+
+		if( pRegKey->Exists() ) { pRegKey->DeleteSelf(); }
+
+		delete pRegKey;
+	}
+}
+
 #endif
 

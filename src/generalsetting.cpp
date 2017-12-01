@@ -86,13 +86,13 @@ GeneralSettingPane::GeneralSettingPane( wxWindow* parent,
 
 	fgSizerGeneral->Add( m_spin_fastresume_save_time, 0, wxALL, 5 );
 	
+#ifdef __WXMSW__
 	m_check_associate_magneturi = new wxCheckBox( this, wxID_ANY, _("Associate Magnet URI with Bitswash"), wxDefaultPosition, wxDefaultSize, 0 );
 
 	m_check_associate_magneturi->SetValue(m_pcfg->GetAssociateMagnetURI());
 	
 	fgSizerGeneral->Add( m_check_associate_magneturi, 0, wxALL, 5 );
 
-#ifdef __WXMSW__
 	m_check_associate_torrent = new wxCheckBox( this, wxID_ANY, _("Associate .torrent with Bitswash"), wxDefaultPosition, wxDefaultSize, 0 );
 
 	m_check_associate_torrent->SetValue(m_pcfg->GetAssociateTorrent());
