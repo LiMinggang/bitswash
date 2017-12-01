@@ -525,64 +525,43 @@ void Configuration::RemoveType( const wxString& type )
 
 void Configuration::AddMagnetLinkType( )
 {
-	wxString value, type(wxT("magent"));
+	wxString type(wxT("magnet"));
 	wxString bitswash_type = wxString(APPNAME) + wxT(".") + type;
 	wxRegKey *pRegKey = new wxRegKey( m_bitswash_regkey_path + type );
 
-	if( !pRegKey->Exists() ) { pRegKey->Create(); }
-	else { pRegKey->QueryValue( wxEmptyString, value ); }
-
-	if (value != bitswash_type)
-	{
-		if (!value.IsEmpty()) //save old default value
-		{
-			pRegKey->SetValue(wxT("Old_Default"), value);
-		}
-
-		value = bitswash_type;
-		pRegKey->SetValue(wxEmptyString, value);
-	}
-
-	delete pRegKey;
 	wxString name(m_bitswash_regkey_path);
-	name += value;
-	name +=  wxT("\\shell\\open\\command");
+	name +=  wxT("\\magnet\\shell\\open\\command");
 	pRegKey = new wxRegKey( name );
 	pRegKey->Create();
 	wxString exepath = GetExecutablePath();
 	pRegKey->SetValue( wxEmptyString, wxString( wxT( '"' ) ) + exepath + wxString( wxT( "\" \"%1\"" ) ) );
 	delete pRegKey;
 	name = m_bitswash_regkey_path;
-	name += value;
-	name += wxT( "\\DefaultIcon\\Default " );
+	name += wxT( "\\magnet\\DefaultIcon\\Default" );
 	pRegKey = new wxRegKey( name );
 	pRegKey->Create();
 	pRegKey->SetValue( wxEmptyString, exepath + wxString( wxT( ",1" ) ) );
 	delete pRegKey;
 	name = m_bitswash_regkey_path;
-	name += value;
-	name += wxT( "\\Default " );
+	name += wxT( "\\magnet\\Default" );
 	pRegKey = new wxRegKey( name );
 	pRegKey->Create();
 	pRegKey->SetValue( wxEmptyString, wxT("URL:Magnet link") );
 	delete pRegKey;
 	name = m_bitswash_regkey_path;
-	name += value;
-	name += wxT( "\\Content Type " );
+	name += wxT( "\\magnet\\Content Type" );
 	pRegKey = new wxRegKey( name );
 	pRegKey->Create();
-	pRegKey->SetValue( wxEmptyString, wxT("application\\x-magnet") );
+	pRegKey->SetValue( wxEmptyString, wxT("application/x-magnet") );
 	delete pRegKey;
 	name = m_bitswash_regkey_path;
-	name += value;
-	name += wxT( "\\URL Protocol " );
+	name += wxT( "\\magnet\\URL Protocol" );
 	pRegKey = new wxRegKey( name );
 	pRegKey->Create();
 	pRegKey->SetValue( wxEmptyString, wxT("") );
 	delete pRegKey;
 	name = m_bitswash_regkey_path;
-	name += value;
-	name += wxT( "\\shell\\Default" );
+	name += wxT( "\\magnet\\shell\\Default" );
 	pRegKey = new wxRegKey( name );
 	pRegKey->Create();
 	pRegKey->SetValue( wxEmptyString, wxT("open") );
@@ -591,40 +570,9 @@ void Configuration::AddMagnetLinkType( )
 
 void Configuration::RemoveMagnetLinkType( )
 {
-	wxString value, type(wxT("magent")), old_default;
-	wxString bitswash_type = wxString(APPNAME) + wxT(".") + type;
-	wxRegKey *pRegKey = new wxRegKey( m_bitswash_regkey_path + type );
+	wxRegKey regKey(m_bitswash_regkey_path + wxT("magnet"));
 
-	if( pRegKey->Exists() )
-	{
-		pRegKey->QueryValue( wxT( "Old_Default" ), old_default );
-		pRegKey->QueryValue( wxEmptyString, value );
-	}
-
-	if( !old_default.IsEmpty() )
-	{
-		pRegKey->DeleteValue( wxT( "Old_Default" ) );
-		pRegKey->SetValue( wxEmptyString, old_default );
-	}
-	else
-		if( !value.IsEmpty() )
-		{
-			if( value == bitswash_type )
-			{
-				pRegKey->DeleteSelf();
-			}
-		}
-
-	delete pRegKey;
-
-	if( value == bitswash_type )
-	{
-		pRegKey = new wxRegKey( m_bitswash_regkey_path + value );
-
-		if( pRegKey->Exists() ) { pRegKey->DeleteSelf(); }
-
-		delete pRegKey;
-	}
+	if (regKey.Exists()) { regKey.DeleteSelf(); }
 }
 
 #endif
