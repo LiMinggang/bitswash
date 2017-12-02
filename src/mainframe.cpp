@@ -789,7 +789,8 @@ void MainFrame::OnTorrentMetadata( wxCommandEvent& WXUNUSED( event ) )
 					}
 					
 				}
-				
+
+				torrent->handle.unset_flags(lt::torrent_flags::upload_mode);
 				m_btsession->StartTorrent(torrent, false);
 				//m_btsession->PostQueueUpdateEvent();
 				UpdateUI();
