@@ -1360,6 +1360,7 @@ void BitTorrentSession::StartTorrent( std::shared_ptr<torrent_t>& torrent, bool 
 {
 	wxLogInfo( _T( "%s: Start %s" ), torrent->name.c_str(), force ? _T( "force" ) : _T( "" ) );
 	lt::torrent_handle& handle = torrent->handle;
+	int maxstart = m_config->GetMaxStart();
 
 	if( !handle.is_valid() || ( ( handle.status(lt::torrent_handle::query_save_path).save_path).empty() ) )
 	{
@@ -2087,27 +2088,6 @@ void BitTorrentSession::CheckQueueItem()
 
 		case TORRENT_STATE_FORCE_START:
 			{
-#if 0
-				//periodic save fastresume data
-				//
-				wxString fastresumefile = wxGetApp().SaveTorrentsPath() + torrent->hash + _T( ".fastresume" );
-				time_t modtime = wxFileModificationTime( fastresumefile );
-
-				if( modtime != -1 )
-				{
-					time_t now = wxDateTime::GetTimeNow();
-					int timediff = now - modtime;
-
-					if( timediff > m_config->GetFastResumeSaveTime() )
-					{
-						SaveTorrentResumeData( torrent );
-					}
-				}
-				else
-				{
-					SaveTorrentResumeData( torrent );
-				}
-#endif
 				if (!((m_torrent_queue[idx])->handle.is_valid()))
 					StartTorrent((m_torrent_queue[idx]), true);
 
