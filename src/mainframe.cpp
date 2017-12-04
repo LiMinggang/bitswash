@@ -1331,8 +1331,7 @@ void MainFrame::OnUpdateUI_MenuProperties( wxUpdateUIEvent& event )
 
 void MainFrame::OnUpdateUI_MenuRemove( wxUpdateUIEvent& event )
 {
-	int selected = m_torrentlistctrl->GetSelectedItemCount();
-	bool enable = (( selected == 1 ) &&( GetSelectedTorrent() ));
+	bool enable = (m_torrentlistctrl->GetSelectedItemCount() > 0);
 
 	event.Enable(enable);
 }
@@ -1340,8 +1339,7 @@ void MainFrame::OnUpdateUI_MenuRemove( wxUpdateUIEvent& event )
 
 void MainFrame::OnUpdateUI_MenuRemovedata( wxUpdateUIEvent& event )
 {
-	int selected = m_torrentlistctrl->GetSelectedItemCount();
-	bool enable = (( selected == 1 ) &&( GetSelectedTorrent() ));
+	bool enable = (m_torrentlistctrl->GetSelectedItemCount() > 0);
 
 	event.Enable(enable);
 }
