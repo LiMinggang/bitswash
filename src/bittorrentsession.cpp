@@ -21,6 +21,7 @@
 // Created on: Sun Aug 12 13:49:33 MYT 2007
 //
 
+#include <cmath> 
 #include <vector>
 #include <algorithm> // for std::max
 #include <wx/wx.h>
@@ -28,6 +29,7 @@
 #include <wx/dir.h>
 #include <wx/log.h>
 #include <wx/filesys.h>
+#include <wx/hashset.h>
 
 #include <boost/bind.hpp>
 #include <boost/filesystem/operations.hpp>
@@ -65,6 +67,7 @@
 #include "bittorrentsession.h"
 
 //namespace lt = libtorrent;
+WX_DECLARE_HASH_SET( wxString, wxStringHash, wxStringEqual, wxStrSet );
 
 #ifdef TORRENT_DISABLE_DHT
 	#error you must not disable DHT
@@ -1747,24 +1750,94 @@ void BitTorrentSession::RecheckTorrent( std::shared_ptr<torrent_t>& torrent )
 
 void BitTorrentSession::ConfigureTorrentFilesPriority( std::shared_ptr<torrent_t>& torrent )
 {
+	static wxStrSet extSet;
 	bool nopriority = false;
 	std::vector<lt::download_priority_t>& filespriority = torrent->config->GetFilesPriorities();
 	//XXX default priority is 4...
 	// win32 4 triggers a assert
 
-	wxASSERT(torrent->info);
-	if (filespriority.size() != torrent->info->num_files())
+	if(extSet.empty())
 	{
-		nopriority = true;
+        extSet.insert("3GP");
+        extSet.insert("AAC");
+        extSet.insert("AC3");
+        extSet.insert("AIF");
+        extSet.insert("AIFC");
+        extSet.insert("AIFF");
+        extSet.insert("ASF");
+        extSet.insert("AU");
+        extSet.insert("AVI");
+        extSet.insert("FLAC");
+        extSet.insert("FLV");
+        extSet.insert("M3U");
+        extSet.insert("M4A");
+        extSet.insert("M4P");
+        extSet.insert("M4V");
+        extSet.insert("MID");
+        extSet.insert("MKV");
+        extSet.insert("MOV");
+        extSet.insert("MP2");
+        extSet.insert("MP3");
+        extSet.insert("MP4");
+        extSet.insert("MPC");
+        extSet.insert("MPE");
+        extSet.insert("MPEG");
+        extSet.insert("MPG");
+        extSet.insert("MPP");
+        extSet.insert("OGG");
+        extSet.insert("OGM");
+        extSet.insert("OGV");
+        extSet.insert("QT");
+        extSet.insert("RA");
+        extSet.insert("RAM");
+        extSet.insert("RM");
+        extSet.insert("RMV");
+        extSet.insert("RMVB");
+        extSet.insert("SWA");
+        extSet.insert("SWF");
+        extSet.insert("VOB");
+        extSet.insert("WAV");
+        extSet.insert("WMA");
+        extSet.insert("WMV");
 	}
+	wxASSERT(torrent->info);
+	int nfiles = torrent->info->num_files();
+	wxASSERT(nfiles >= 0);
+	nopriority = (filespriority.size() != nfiles);
 
 	if( torrent->handle.is_valid() )
 	{
 		if (nopriority)
 		{
 			std::vector<lt::download_priority_t> deffilespriority( torrent->info->num_files(), lt::download_priority_t(BITTORRENT_FILE_NORMAL) );
-			torrent->handle.prioritize_files(nopriority ? deffilespriority : filespriority);
-			filespriority.swap(deffilespriority);
+			if(nopriority)
+				filespriority.swap(deffilespriority);
+			torrent->handle.prioritize_files(filespriority);
+			const static lt::download_priority_t file_none(BITTORRENT_FILE_NONE), file_high(BITTORRENT_FILE_HIGHEST);
+			int npieces = torrent->info->num_pieces(), piece_len = torrent->info->piece_length();
+			std::vector<lt::download_priority_t> pp(torrent->handle.get_piece_priorities());
+			const lt::file_storage &allfiles = torrent->info->files();
+			bool set = true;
+
+			wxFileName filename;
+			for(int i = 0; i < nfiles; ++i)
+			{
+				lt::file_index_t idx(i);
+				filename.Assign(wxString::FromUTF8((allfiles.file_name(idx)).to_string().c_str()));
+				if(filespriority[i] != file_none && (extSet.count(filename.GetExt()) != 0))
+				{
+					const auto fileSize = allfiles.file_size(idx);
+					const auto firstOffset = allfiles.file_offset(idx);
+					int first = static_cast<int>(firstOffset / piece_len);
+					int last = static_cast<int>((firstOffset + fileSize - 1) / piece_len);
+					lt::download_priority_t prio(set ? file_high : filespriority[i]);
+					int nNumPieces = ceil(fileSize * 0.01 / piece_len);
+					for (int j = 0; j < nNumPieces; ++j) {
+						pp[first + j] = prio;
+						pp[last - j] = prio;
+					}
+				}
+			}
 		}
 	}
 }
@@ -2068,7 +2141,8 @@ void BitTorrentSession::CheckQueueItem()
 						if(torrent->handle.max_connections() == torrent->config->GetTorrentMaxConnections())
 						{
 							torrent->handle.set_max_connections( torrent->config->GetTorrentMaxConnections() / 2 );
-						}
+						
+}
 
 						/* exclude seed from count as running job */
 						if( m_config->GetExcludeSeed() )
