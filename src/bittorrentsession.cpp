@@ -1607,36 +1607,31 @@ void BitTorrentSession::MoveTorrentBottom( std::shared_ptr<torrent_t>& torrent )
 
 	wxLogInfo( _T( "%s: Moving Torrent Down" ), torrent->name.c_str() );
 
-	std::shared_ptr<torrent_t> current_torrent(*(m_torrent_queue.begin() + idx));
 	//torrents_t::iterator torrent_it = m_torrent_queue.begin() + idx;
 	size_t i = 0;
 	long bottom_qindex = -1, next_qindex = -1;
-	for(i = idx; i <= ( m_torrent_queue.size() - 2 ); ++i)
+	for(i = idx + 1; i < m_torrent_queue.size(); ++i)
 	{
-		next_qindex = m_torrent_queue[i + 1]->config->GetQIndex();
+		next_qindex = m_torrent_queue[i]->config->GetQIndex();
 		if( next_qindex < 0 )
 		{
-			wxLogInfo( _T( "Torrent is at queue end %d-%s" ), i, torrent->name.c_str() );
+			wxLogInfo( _T( "Torrent is at queue end %d" ), i );
 			break;
 		}
 		bottom_qindex = next_qindex;
-
-		m_torrent_queue[i + 1]->config->SetQIndex( m_torrent_queue[i]->config->GetQIndex() );
-		m_torrent_queue[i + 1]->config->Save();
-		m_torrent_queue[i] = m_torrent_queue[i + 1];
-		m_running_torrent_map[wxString(m_torrent_queue[i]->hash)] = i + 1;
-		m_running_torrent_map[wxString(m_torrent_queue[i + 1]->hash)] = i;
 	}
-	if(next_qindex == bottom_qindex) ++i;
 
-	if(current_torrent->handle.is_valid())
+	if(bottom_qindex > idx)
 	{
-		current_torrent->handle.queue_position_bottom();
+		m_torrent_queue.erase(m_torrent_queue.begin() + idx);
+		m_torrent_queue.insert(m_torrent_queue.begin() + bottom_qindex, torrent);
+		for(i = idx; i <= bottom_qindex; ++i)
+		{
+			m_torrent_queue[i]->config->SetQIndex( i );
+			m_torrent_queue[i]->config->Save();
+			m_running_torrent_map[wxString(m_torrent_queue[i]->hash)] = i;
+		}
 	}
-	current_torrent->config->SetQIndex( bottom_qindex );
-	current_torrent->config->Save();
-	m_torrent_queue[i] = current_torrent;
-	m_running_torrent_map[wxString(current_torrent->hash)] = i;
 	//std::shared_ptr<torrent_t> next_torrent( *( torrent_it + 1 ) );
 
 
@@ -1671,25 +1666,19 @@ void BitTorrentSession::MoveTorrentTop( std::shared_ptr<torrent_t>& torrent )
 		return;
 	}
 
-	long top_qindex = -1;
-	std::shared_ptr<torrent_t> current_torrent(*(m_torrent_queue.begin() + idx));
-	qindex = m_torrent_queue[0]->config->GetQIndex();
-	for(size_t i = idx; i > 0; --i)
+	m_torrent_queue.erase(m_torrent_queue.begin() + idx);
+	m_torrent_queue.insert(m_torrent_queue.begin(), torrent);
+	for(size_t i = 0; i <= idx; ++i)
 	{
-		m_torrent_queue[idx - 1]->config->SetQIndex( m_torrent_queue[i]->config->GetQIndex() );
-		m_torrent_queue[idx - 1]->config->Save();
-		m_torrent_queue[idx] = m_torrent_queue[idx - 1];
-		m_running_torrent_map[wxString(m_torrent_queue[idx]->hash)] = idx;
+		m_torrent_queue[i]->config->SetQIndex( i );
+		m_torrent_queue[i]->config->Save();
+		m_running_torrent_map[wxString(m_torrent_queue[i]->hash)] = i;
 	}
 
-	if(current_torrent->handle.is_valid())
+	if(torrent->handle.is_valid())
 	{
-		current_torrent->handle.queue_position_top();
+		torrent->handle.queue_position_top();
 	}
-	current_torrent->config->SetQIndex( qindex );
-	current_torrent->config->Save();
-	m_torrent_queue[0] = current_torrent;
-	m_running_torrent_map[wxString(current_torrent->hash)] = 0;
 //m_torrent_queue.erase( torrent_it );
 //torrent_it = m_torrent_queue.begin() + idx;
 //m_torrent_queue.insert( torrent_it, prev_torrent );
