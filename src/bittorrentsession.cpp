@@ -1832,7 +1832,8 @@ void BitTorrentSession::ConfigureTorrentFilesPriority( std::shared_ptr<torrent_t
 					int last = static_cast<int>((firstOffset + fileSize - 1) / piece_len);
 					lt::download_priority_t prio(set ? file_high : filespriority[i]);
 					int nNumPieces = ceil(fileSize * 0.01 / piece_len);
-					for (int j = 0; j < nNumPieces; ++j) {
+					for (int j = 0; j < nNumPieces; ++j)
+					{
 						pp[first + j] = prio;
 						pp[last - j] = prio;
 					}
