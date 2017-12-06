@@ -24,20 +24,20 @@
 #ifndef _BITTORRENTSESSION_H_
 #define _BITTORRENTSESSION_H_
 
-#include <libtorrent/session_stats.hpp>
-#include <boost/cstdint.hpp>
-
 #include <vector>
 
 #include <memory>
+#include <boost/cstdint.hpp>
 
 #include <wx/app.h>
 #include <wx/thread.h>
 #include <wx/msgqueue.h>
+#include <wx/hashset.h>
 
 #include <libtorrent/session.hpp>
 #include <libtorrent/torrent_info.hpp>
 #include <libtorrent/kademlia/traversal_algorithm.hpp>
+#include <libtorrent/session_stats.hpp>
 
 #include "infohash.h"
 
@@ -102,6 +102,7 @@ typedef std::vector<std::shared_ptr<torrent_t> > torrents_t;
 typedef std::map<wxString, int> torrents_map;
 typedef std::set<wxString> torrents_set;
 typedef std::vector<wxString> metadata_t;
+WX_DECLARE_HASH_SET( wxString, wxStringHash, wxStringEqual, BitwashStrSet );
 
 class BitTorrentSession : public wxThread
 {
@@ -269,6 +270,8 @@ private:
 
 	wxDouble m_download_rate;
 	wxDouble m_upload_rate;
+
+	static BitwashStrSet m_preview_ext_set;
 };
 
 #endif // _BITTORRENTSESSION_H_

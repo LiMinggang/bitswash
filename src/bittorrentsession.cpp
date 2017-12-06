@@ -29,7 +29,6 @@
 #include <wx/dir.h>
 #include <wx/log.h>
 #include <wx/filesys.h>
-#include <wx/hashset.h>
 
 #include <boost/bind.hpp>
 #include <boost/filesystem/operations.hpp>
@@ -67,7 +66,6 @@
 #include "bittorrentsession.h"
 
 //namespace lt = libtorrent;
-WX_DECLARE_HASH_SET( wxString, wxStringHash, wxStringEqual, wxStrSet );
 
 #ifdef TORRENT_DISABLE_DHT
 	#error you must not disable DHT
@@ -93,6 +91,8 @@ std::string to_hex(lt::sha1_hash const& s)
 	ret << s;
 	return ret.str();
 }
+
+BitwashStrSet BitTorrentSession::m_preview_ext_set;
 
 BitTorrentSession::BitTorrentSession( wxApp* pParent, Configuration* config, wxMutex *mutex/* = 0*/, wxCondition *condition/* = 0*/ )
 	: wxThread( wxTHREAD_JOINABLE ), m_upnp_started( false ), m_natpmp_started( false ), m_lsd_started( false ), m_libbtsession( nullptr ), m_dht_changed(true),
@@ -142,6 +142,51 @@ BitTorrentSession::BitTorrentSession( wxApp* pParent, Configuration* config, wxM
 	m_dht_nodes_idx = find_metric_idx("dht.dht_nodes");
 	m_download_rate = 0.0;
 	m_upload_rate = 0.0;
+
+	if(m_preview_ext_set.empty())
+	{
+        m_preview_ext_set.insert("3GP");
+        m_preview_ext_set.insert("AAC");
+        m_preview_ext_set.insert("AC3");
+        m_preview_ext_set.insert("AIF");
+        m_preview_ext_set.insert("AIFC");
+        m_preview_ext_set.insert("AIFF");
+        m_preview_ext_set.insert("ASF");
+        m_preview_ext_set.insert("AU");
+        m_preview_ext_set.insert("AVI");
+        m_preview_ext_set.insert("FLAC");
+        m_preview_ext_set.insert("FLV");
+        m_preview_ext_set.insert("M3U");
+        m_preview_ext_set.insert("M4A");
+        m_preview_ext_set.insert("M4P");
+        m_preview_ext_set.insert("M4V");
+        m_preview_ext_set.insert("MID");
+        m_preview_ext_set.insert("MKV");
+        m_preview_ext_set.insert("MOV");
+        m_preview_ext_set.insert("MP2");
+        m_preview_ext_set.insert("MP3");
+        m_preview_ext_set.insert("MP4");
+        m_preview_ext_set.insert("MPC");
+        m_preview_ext_set.insert("MPE");
+        m_preview_ext_set.insert("MPEG");
+        m_preview_ext_set.insert("MPG");
+        m_preview_ext_set.insert("MPP");
+        m_preview_ext_set.insert("OGG");
+        m_preview_ext_set.insert("OGM");
+        m_preview_ext_set.insert("OGV");
+        m_preview_ext_set.insert("QT");
+        m_preview_ext_set.insert("RA");
+        m_preview_ext_set.insert("RAM");
+        m_preview_ext_set.insert("RM");
+        m_preview_ext_set.insert("RMV");
+        m_preview_ext_set.insert("RMVB");
+        m_preview_ext_set.insert("SWA");
+        m_preview_ext_set.insert("SWF");
+        m_preview_ext_set.insert("VOB");
+        m_preview_ext_set.insert("WAV");
+        m_preview_ext_set.insert("WMA");
+        m_preview_ext_set.insert("WMV");
+	}
 }
 
 BitTorrentSession::~BitTorrentSession()
@@ -1739,56 +1784,11 @@ void BitTorrentSession::RecheckTorrent( std::shared_ptr<torrent_t>& torrent )
 
 void BitTorrentSession::ConfigureTorrentFilesPriority( std::shared_ptr<torrent_t>& torrent )
 {
-	static wxStrSet extSet;
 	std::vector<lt::download_priority_t>& filespriority = torrent->config->GetFilesPriorities();
+	wxASSERT(torrent->info);
 	//XXX default priority is 4...
 	// win32 4 triggers a assert
 
-	if(extSet.empty())
-	{
-        extSet.insert("3GP");
-        extSet.insert("AAC");
-        extSet.insert("AC3");
-        extSet.insert("AIF");
-        extSet.insert("AIFC");
-        extSet.insert("AIFF");
-        extSet.insert("ASF");
-        extSet.insert("AU");
-        extSet.insert("AVI");
-        extSet.insert("FLAC");
-        extSet.insert("FLV");
-        extSet.insert("M3U");
-        extSet.insert("M4A");
-        extSet.insert("M4P");
-        extSet.insert("M4V");
-        extSet.insert("MID");
-        extSet.insert("MKV");
-        extSet.insert("MOV");
-        extSet.insert("MP2");
-        extSet.insert("MP3");
-        extSet.insert("MP4");
-        extSet.insert("MPC");
-        extSet.insert("MPE");
-        extSet.insert("MPEG");
-        extSet.insert("MPG");
-        extSet.insert("MPP");
-        extSet.insert("OGG");
-        extSet.insert("OGM");
-        extSet.insert("OGV");
-        extSet.insert("QT");
-        extSet.insert("RA");
-        extSet.insert("RAM");
-        extSet.insert("RM");
-        extSet.insert("RMV");
-        extSet.insert("RMVB");
-        extSet.insert("SWA");
-        extSet.insert("SWF");
-        extSet.insert("VOB");
-        extSet.insert("WAV");
-        extSet.insert("WMA");
-        extSet.insert("WMV");
-	}
-	wxASSERT(torrent->info);
 	int nfiles = torrent->info->num_files();
 	wxASSERT(nfiles > 0);
 
@@ -1815,7 +1815,7 @@ void BitTorrentSession::ConfigureTorrentFilesPriority( std::shared_ptr<torrent_t
 			{
 				lt::file_index_t idx(i);
 				filename.Assign(wxString::FromUTF8((allfiles.file_name(idx)).to_string().c_str()));
-				if(filespriority[i] != file_none && (extSet.count(filename.GetExt()) != 0))
+				if(filespriority[i] != file_none && (m_preview_ext_set.count(filename.GetExt()) != 0))
 				{
 					const auto fileSize = allfiles.file_size(idx);
 					const auto firstOffset = allfiles.file_offset(idx);
