@@ -1836,6 +1836,8 @@ void BitTorrentSession::ConfigureTorrentFilesPriority( std::shared_ptr<torrent_t
 			if(ppchanged)
 				torrent->handle.prioritize_pieces(pp);
 		}
+
+		torrent->config->Save();
 	}
 }
 

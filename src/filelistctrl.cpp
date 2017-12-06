@@ -448,23 +448,22 @@ void FileListCtrl::OnLeftDown(wxMouseEvent& event)
 
 			if (pTorrent)
 			{
-				if(pTorrent->info->num_files() > 1)
+				lt::torrent_info const& torrent_info = *(pTorrent->info);
+				int nfiles = torrent_info.num_files();
+				if(nfiles > 1)
 				{
 					item = ConvertItemId(pTorrent, item);
 				}
-				lt::torrent_info const& torrent_info = *(pTorrent->info);
 				std::vector<lt::download_priority_t>& filespriority = pTorrent->config->GetFilesPriorities();
-				if( filespriority.size() != torrent_info.num_files() )
+				
+				nopriority = ( filespriority.size() != nfiles );
+				if( nopriority )
 				{
-					nopriority = true;
-
-					if( filespriority.size() != pTorrent->info->num_files() )
-					{
-						std::vector<lt::download_priority_t> deffilespriority( pTorrent->info->num_files(), lt::download_priority_t(BITTORRENT_FILE_NORMAL) );
-						filespriority.swap( deffilespriority );
-					}
+					std::vector<lt::download_priority_t> deffilespriority( nfiles, lt::download_priority_t(BITTORRENT_FILE_NORMAL) );
+					filespriority.swap( deffilespriority );
 				}
 
+				/* Toggle file priority */
 				if (nopriority || ((item < filespriority.size() ) && filespriority[item] != lt::download_priority_t(BITTORRENT_FILE_NONE)))
 				{
 					filespriority[item] = lt::download_priority_t(BITTORRENT_FILE_NONE);
