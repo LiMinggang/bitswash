@@ -621,10 +621,11 @@ void FileListCtrl::OnMenuPriority( wxCommandEvent& event )
 	// Get existing priority from pTorrent->t_cfg;
 	std::vector<lt::download_priority_t> & filespriority = pTorrent->config->GetFilesPriorities();
 	std::vector<lt::download_priority_t>::iterator file_it ;
+	int nfiles = pTorrent->info->num_files();
 
-	if( filespriority.size() != pTorrent->info->num_files() )
+	if( filespriority.size() != nfiles )
 	{
-		std::vector<lt::download_priority_t> deffilespriority( pTorrent->info->num_files(), lt::download_priority_t(BITTORRENT_FILE_NORMAL) );
+		std::vector<lt::download_priority_t> deffilespriority( nfiles, lt::download_priority_t(BITTORRENT_FILE_NORMAL) );
 		filespriority.swap( deffilespriority );
 	}
 
@@ -633,7 +634,7 @@ void FileListCtrl::OnMenuPriority( wxCommandEvent& event )
 	while( selectedfiles != -1 )
 	{
 		int item = selectedfiles;
-		if(pTorrent->info->num_files() > 1) item = ConvertItemId(pTorrent, selectedfiles);
+		if(nfiles > 1) item = ConvertItemId(pTorrent, selectedfiles);
 		file_it = filespriority.begin() + item;
 		*file_it = lt::download_priority_t(priority);
 		selectedfiles = GetNextSelected( selectedfiles );

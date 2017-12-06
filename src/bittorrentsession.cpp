@@ -1740,7 +1740,6 @@ void BitTorrentSession::RecheckTorrent( std::shared_ptr<torrent_t>& torrent )
 void BitTorrentSession::ConfigureTorrentFilesPriority( std::shared_ptr<torrent_t>& torrent )
 {
 	static wxStrSet extSet;
-	bool nopriority = false;
 	std::vector<lt::download_priority_t>& filespriority = torrent->config->GetFilesPriorities();
 	//XXX default priority is 4...
 	// win32 4 triggers a assert
@@ -1791,22 +1790,25 @@ void BitTorrentSession::ConfigureTorrentFilesPriority( std::shared_ptr<torrent_t
 	}
 	wxASSERT(torrent->info);
 	int nfiles = torrent->info->num_files();
-	wxASSERT(nfiles >= 0);
-	nopriority = (filespriority.size() != nfiles);
+	wxASSERT(nfiles > 0);
 
 	if( torrent->handle.is_valid() )
 	{
-		if (nopriority)
+		if (filespriority.size() != nfiles)
 		{
-			std::vector<lt::download_priority_t> deffilespriority( torrent->info->num_files(), lt::download_priority_t(BITTORRENT_FILE_NORMAL) );
-			if(nopriority)
-				filespriority.swap(deffilespriority);
-			torrent->handle.prioritize_files(filespriority);
+			std::vector<lt::download_priority_t> deffilespriority( nfiles, lt::download_priority_t(BITTORRENT_FILE_NORMAL) );
+			filespriority.swap(deffilespriority);
+		}
+
+		torrent->handle.prioritize_files(filespriority);
+		bool ppchanged = false, set = true;
+
+		if(set)
+		{
 			const static lt::download_priority_t file_none(BITTORRENT_FILE_NONE), file_high(BITTORRENT_FILE_HIGHEST);
 			int npieces = torrent->info->num_pieces(), piece_len = torrent->info->piece_length();
 			std::vector<lt::download_priority_t> pp(torrent->handle.get_piece_priorities());
 			const lt::file_storage &allfiles = torrent->info->files();
-			bool set = true;
 
 			wxFileName filename;
 			for(int i = 0; i < nfiles; ++i)
@@ -1826,8 +1828,13 @@ void BitTorrentSession::ConfigureTorrentFilesPriority( std::shared_ptr<torrent_t
 						pp[first + j] = prio;
 						pp[last - j] = prio;
 					}
+
+					ppchanged = true;
 				}
 			}
+
+			if(ppchanged)
+				torrent->handle.prioritize_pieces(pp);
 		}
 	}
 }
