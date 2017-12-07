@@ -21,27 +21,63 @@
 // Created by: lim k. c. <admin@bitswash.org>
 // Created on: Tue Jun 26 13:23:51 MYT 2007
 //
+#ifndef TORRENTSETTING_H
+#define TORRENTSETTING_H
 
-#ifndef _TORRENTSETTING_H_
-#define _TORRENTSETTING_H_
+#include <memory>
 
+//(*Headers(TorrentSettingPane)
+#include <wx/button.h>
+#include <wx/checkbox.h>
+#include <wx/combobox.h>
 #include <wx/panel.h>
 #include <wx/sizer.h>
-#include <wx/scrolwin.h>
-#include <wx/statline.h>
 #include <wx/spinctrl.h>
+#include <wx/statline.h>
 #include <wx/stattext.h>
-#include <wx/combobox.h>
+//*)
+#include "bittorrentsession.h"
 
-#include "configuration.h"
-#include "autosizeinput.h"
-
+class AutoSizeInput;
 typedef void ( *OnSaveDirectoryChangePtr )( const wxString &newdirectory );
 
-class TorrentSettingPane : public wxPanel
+class TorrentSettingPane: public wxPanel
 {
 	public:
+
 		TorrentSettingPane( wxWindow* parent, std::shared_ptr<torrent_t>& pTorrent = std::shared_ptr<torrent_t>(), int id = wxID_ANY, wxPoint pos = wxDefaultPosition, wxSize size = wxDefaultSize, int style = wxTAB_TRAVERSAL);
+		virtual ~TorrentSettingPane();
+
+		//(*Declarations(TorrentSettingPane)
+		AutoSizeInput* m_autoDownLimit;
+		AutoSizeInput* m_autoUpLimit;
+		wxButton* m_button_showdir;
+		wxCheckBox* m_check_start;
+		wxCheckBox* m_check_usedefault;
+		wxComboBox* m_combo_saveas;
+		wxStaticText* m_label_diskfreespace;
+		wxComboBox* m_combo_storagemode;
+		wxSpinCtrl* m_spin_maxconnect;
+		wxSpinCtrl* m_spin_maxupload;
+		wxSpinCtrl* m_spin_ratio;
+		//*)
+
+	protected:
+
+		//(*Identifiers(TorrentSettingPane)
+		//*)
+
+	private:
+
+		//(*Handlers(TorrentSettingPane)
+		void OnBbuttonShowDirClick(wxCommandEvent& event);
+		void OnSaveDirectoryChanged(wxCommandEvent& event);
+		//*)
+		
+		std::shared_ptr<torrent_t> m_pTorrent;
+		OnSaveDirectoryChangePtr m_directory_change_func;
+
+	public:
 
 		wxString GetDownloadPath();
 		libtorrent::storage_mode_t GetStorageMode();
@@ -56,44 +92,7 @@ class TorrentSettingPane : public wxPanel
 
 		void SetTorrentHandle(std::shared_ptr<torrent_t>& pTorrent) { m_pTorrent= pTorrent; }
 		void SetTorrentDirectoryChange(OnSaveDirectoryChangePtr pFunc) { m_directory_change_func= pFunc; }
-	private:
-		std::shared_ptr<torrent_t> m_pTorrent;
-		void OnFileButton(wxCommandEvent& event);
-		void OnSaveDirectoryChanged(wxCommandEvent& event);
-		/* torrent settings */
-		wxPanel* m_pane_info1;
-		wxStaticText* m_pane_label_settings;
-				
-		wxStaticText* m_staticStorageMode;
-		wxStaticText* m_staticSaveAs;
-		
-		wxStaticText* m_label_diskfreespace;
-		wxStaticText* m_label_freespace;
-
-		wxComboBox* m_combo_saveas;
-		wxButton* m_button_showdir;
-		/* libtorrent r1749 */
-		//wxCheckBox* m_check_compact;
-		wxComboBox* m_combo_storagemode;
-
-		wxCheckBox* m_check_start;
-		wxCheckBox* m_check_usedefault;
-		wxStaticLine* m_staticHline;
-		wxStaticText* m_staticDownLimit;
-		wxStaticText* m_staticUpLimit;
-		wxStaticText* m_staticMaxConnect;
-		wxSpinCtrl* m_spin_maxconnect;
-		wxStaticText* m_staticMaxUpload;
-		wxSpinCtrl* m_spin_maxupload;
-		wxStaticText* m_staticRatio;
-		wxSpinCtrl* m_spin_ratio;
-
-		AutoSizeInput* m_autoDownLimit;
-		AutoSizeInput* m_autoUpLimit;
-
-		OnSaveDirectoryChangePtr m_directory_change_func;
+		DECLARE_EVENT_TABLE()
 };
 
-
-#endif	//_TORRENTSETTING_H_
-
+#endif
