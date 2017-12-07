@@ -271,41 +271,6 @@ lt::storage_mode_t TorrentSettingPane::GetStorageMode()
 	}
 }
 
-bool TorrentSettingPane::GetStartTorrent()
-{
-	return (m_check_start->IsChecked());
-}
-
-bool TorrentSettingPane::GetUseDefault()
-{
-	return m_check_usedefault->IsChecked();
-}
-
-long TorrentSettingPane::GetDownloadRate()
-{
-	return m_autoDownLimit->GetValue();
-}
-
-long TorrentSettingPane::GetUploadRate()
-{
-	return m_autoUpLimit->GetValue();
-}
-
-int TorrentSettingPane::GetMaxConnections()
-{
-	return m_spin_maxconnect->GetValue();
-}
-
-int TorrentSettingPane::GetMaxUpload()
-{
-	return m_spin_maxupload->GetValue();
-}
-
-int TorrentSettingPane::GetRatio()
-{
-	return m_spin_ratio->GetValue();
-}
-
 void TorrentSettingPane::OnBbuttonShowDirClick(wxCommandEvent& event)
 {
 #if WXVER >= 280

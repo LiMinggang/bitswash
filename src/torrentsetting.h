@@ -82,13 +82,40 @@ class TorrentSettingPane: public wxPanel
 		wxString GetDownloadPath();
 		libtorrent::storage_mode_t GetStorageMode();
 
-		bool GetStartTorrent();
-		bool GetUseDefault();
-		long GetDownloadRate();
-		long GetUploadRate();
-		int GetMaxConnections();
-		int GetMaxUpload();
-		int GetRatio();
+		bool GetStartTorrent()
+		{
+			return (m_check_start->IsChecked());
+		}
+		
+		bool GetUseDefault()
+		{
+			return m_check_usedefault->IsChecked();
+		}
+		
+		long GetDownloadRate()
+		{
+			return m_autoDownLimit->GetValue();
+		}
+		
+		long GetUploadRate()
+		{
+			return m_autoUpLimit->GetValue();
+		}
+		
+		int GetMaxConnections()
+		{
+			return m_spin_maxconnect->GetValue();
+		}
+		
+		int GetMaxUpload()
+		{
+			return m_spin_maxupload->GetValue();
+		}
+		
+		int GetRatio()
+		{
+			return m_spin_ratio->GetValue();
+		}
 
 		void SetTorrentHandle(std::shared_ptr<torrent_t>& pTorrent) { m_pTorrent= pTorrent; }
 		void SetTorrentDirectoryChange(OnSaveDirectoryChangePtr pFunc) { m_directory_change_func= pFunc; }
