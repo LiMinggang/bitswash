@@ -178,6 +178,7 @@ void Configuration::Save()
 	m_cfg->Write( _T( "/Torrent/default_max_connections" ), m_default_max_connections );
 	if( m_default_max_uploads < 2 ) m_default_max_uploads = 2;
 	m_cfg->Write( _T( "/Torrent/default_max_uploads" ), m_default_max_uploads );
+	m_cfg->Write( _T( "/Torrent/enable_video_preview" ), ( bool )m_enable_video_preview );
 	//logging
 	m_cfg->Write( _T( "/Log/log_severity" ), ( int )m_log_severity );
 	m_cfg->Write( _T( "/Log/log_linecount" ), ( int )m_log_linecount );
@@ -314,10 +315,7 @@ void Configuration::Load()
 	m_handshake_timeout = m_cfg->Read( _T( "/Session/handshake_timeout" ), 10 );
 	m_cfg->Read( _T( "/Session/use_dht_as_fallback" ), &m_use_dht_as_fallback, true );
 	m_cfg->Read( _T( "/Session/free_torrent_hashes" ), &m_free_torrent_hashes, true );
-	//legacy
 	lt::storage_mode_t defstoragemode = lt::storage_mode_sparse;
-	/*if( m_compactalloc == true )
-		defstoragemode = lt::storage_mode_compact;*/
 	m_storagemode = ( lt::storage_mode_t ) m_cfg->Read( _T( "/Torrent/storagemode" ), ( long ) defstoragemode );
 	m_global_upload_limit = m_cfg->Read( _T( "/Torrent/global_upload_limit" ), -1 );
 	m_global_download_limit = m_cfg->Read( _T( "/Torrent/global_download_limit" ), -1 );
@@ -350,6 +348,7 @@ void Configuration::Load()
 	if( m_default_max_uploads < 2 ) m_default_max_uploads = 2;
 	//read save path
 	ReadSavePath();
+	m_cfg->Read( _T( "/Torrent/enable_video_preview" ), &m_enable_video_preview, true );
 }
 
 void Configuration::ReadSavePath()

@@ -25,6 +25,8 @@
 #include <vector>
 #include "libtorrent/announce_entry.hpp"
 #include "libtorrent/download_priority.hpp"
+#include "storage.hpp"
+
 enum
 {
 	BITTORRENT_FILE_NONE     = 0,
@@ -77,8 +79,8 @@ public:
 	const wxString GetDownloadPath() { return m_downloadpath; }
 	void SetDownloadPath( wxString path ) { m_downloadpath = path; }
 
-	bool GetTorrentCompactAlloc() { return m_compactalloc; }
-	void SetTorrentCompactAlloc( bool compactalloc ) { m_compactalloc = compactalloc; }
+	bool GetTorrentEnableVideoPreview() { return m_enable_video_preview; }
+	void SetTorrentEnableVideoPreview( bool enable ) { m_enable_video_preview = enable; }
 
 	libtorrent::storage_mode_t GetTorrentStorageMode() { return m_storagemode; }
 	void SetTorrentStorageMode( libtorrent::storage_mode_t storagemode ) { m_storagemode = storagemode; }
@@ -127,8 +129,7 @@ private:
 	int m_qindex;
 	wxString m_downloadpath;
 
-	//legacy
-	bool m_compactalloc;
+	bool m_enable_video_preview;
 	libtorrent::storage_mode_t m_storagemode;
 
 	//per torrent settings

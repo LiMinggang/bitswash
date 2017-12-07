@@ -573,6 +573,7 @@ class Configuration : public wxFileConfig
 		int m_default_download_limit;
 		int m_default_max_uploads;
 		int m_default_max_connections;
+		bool m_enable_video_preview;
 	
 		//logging
 		unsigned int m_log_severity;
