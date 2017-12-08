@@ -834,6 +834,7 @@ void BitTorrentSession::RemoveTorrent( std::shared_ptr<torrent_t>& torrent, bool
 	}
 
 	wxASSERT(torrent);
+	wxASSERT(torrent->config);
 	lt::torrent_handle& h = torrent->handle;
 	if( h.is_valid() )
 	{
@@ -843,7 +844,6 @@ void BitTorrentSession::RemoveTorrent( std::shared_ptr<torrent_t>& torrent, bool
 		m_libbtsession->remove_torrent( h, options );
 	}
 
-	wxASSERT(torrent->config);
 	enum torrent_state state = ( enum torrent_state ) torrent->config->GetTorrentState();
 
 	wxString app_prefix = wxGetApp().SaveTorrentsPath() +
@@ -898,6 +898,25 @@ void BitTorrentSession::RemoveTorrent( std::shared_ptr<torrent_t>& torrent, bool
 		}
 		else
 		{ wxLogInfo( _T( "%s: No downloaded data to remove" ), torrent->name.c_str() ); }
+	}
+	else
+	{
+		const std::vector<lt::download_priority_t>& fp = torrent->config->GetFilesPriorities();
+		const std::vector<lt::download_priority_t>& filespriority = torrent->config->GetFilesPriorities();
+		int nfiles = torrent->info->num_files();
+		const lt::file_storage &allfiles = torrent->info->files();
+		wxASSERT(nfiles == fp.size());
+		
+		for(int i = 0; i < nfiles; ++i)
+		{
+			lt::file_index_t idx(i);
+			wxString fname(torrent->config->GetDownloadPath() + wxConvUTF8.cMB2WC(torrent->info->name().c_str()) + wxFileName::GetPathSeparator() + wxString::FromUTF8(((allfiles.file_path(idx)) + (allfiles.file_name(idx)).to_string()).c_str()));
+			if((filespriority[i] == TorrentConfig::file_none) && (wxFileExists( fname )))
+			{
+				if( !wxRemoveFile( torrentfile ) )
+					wxLogError( _T( "Error removing file %s" ), torrentfile.c_str() );
+			}
+		}
 	}
 
 	if( ( state == TORRENT_STATE_START ) ||
@@ -1369,7 +1388,7 @@ void BitTorrentSession::UpdateTorrentFileSize(std::shared_ptr<torrent_t>& torren
 
 		for (lt::file_index_t i(0); i < lt::file_index_t(t_info.num_files()); ++i)
 		{
-			if (nopriority || filespriority[int32_t(i)] != lt::download_priority_t(BITTORRENT_FILE_NONE))
+			if (nopriority || filespriority[int32_t(i)] != TorrentConfig::file_none)
 			{
 				total_selected += allfiles.file_size(i);
 			}
@@ -1796,7 +1815,7 @@ void BitTorrentSession::ConfigureTorrentFilesPriority( std::shared_ptr<torrent_t
 	{
 		if (filespriority.size() != nfiles)
 		{
-			std::vector<lt::download_priority_t> deffilespriority( nfiles, lt::download_priority_t(BITTORRENT_FILE_NORMAL) );
+			std::vector<lt::download_priority_t> deffilespriority( nfiles, TorrentConfig::file_normal );
 			filespriority.swap(deffilespriority);
 		}
 
@@ -1805,7 +1824,6 @@ void BitTorrentSession::ConfigureTorrentFilesPriority( std::shared_ptr<torrent_t
 
 		if(set)
 		{
-			const static lt::download_priority_t file_none(BITTORRENT_FILE_NONE), file_high(BITTORRENT_FILE_HIGHEST);
 			int npieces = torrent->info->num_pieces(), piece_len = torrent->info->piece_length();
 			std::vector<lt::download_priority_t> pp(torrent->handle.get_piece_priorities());
 			const lt::file_storage &allfiles = torrent->info->files();
@@ -1815,13 +1833,13 @@ void BitTorrentSession::ConfigureTorrentFilesPriority( std::shared_ptr<torrent_t
 			{
 				lt::file_index_t idx(i);
 				filename.Assign(wxString::FromUTF8((allfiles.file_name(idx)).to_string().c_str()));
-				if(filespriority[i] != file_none && (m_preview_ext_set.count(filename.GetExt()) != 0))
+				if(filespriority[i] != TorrentConfig::file_none && (m_preview_ext_set.count(filename.GetExt()) != 0))
 				{
 					const auto fileSize = allfiles.file_size(idx);
 					const auto firstOffset = allfiles.file_offset(idx);
 					int first = static_cast<int>(firstOffset / piece_len);
 					int last = static_cast<int>((firstOffset + fileSize - 1) / piece_len);
-					lt::download_priority_t prio(set ? file_high : filespriority[i]);
+					lt::download_priority_t prio(set ? TorrentConfig::file_highest : filespriority[i]);
 					int nNumPieces = ceil(fileSize * 0.01 / piece_len);
 					for (int j = 0; j < nNumPieces; ++j)
 					{

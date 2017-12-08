@@ -34,6 +34,10 @@
 #include "configuration.h"
 
 //namespace lt = libtorrent;
+const lt::download_priority_t TorrentConfig::file_none(BITTORRENT_FILE_NONE);
+const lt::download_priority_t TorrentConfig::file_lowest(BITTORRENT_FILE_LOWEST);
+const lt::download_priority_t TorrentConfig::file_normal(BITTORRENT_FILE_NORMAL);
+const lt::download_priority_t TorrentConfig::file_highest(BITTORRENT_FILE_HIGHEST);
 
 TorrentConfig::TorrentConfig( const wxString& torrentName )
 	: wxFileConfig( wxEmptyString, wxEmptyString, torrentName, wxEmptyString, wxCONFIG_USE_LOCAL_FILE | wxCONFIG_USE_RELATIVE_PATH ), m_selected_file_size(0), m_total_file_size(0) 

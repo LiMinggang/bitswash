@@ -294,10 +294,11 @@ void TorrentListCtrl::OnLeftDClick(wxMouseEvent& event)
 
 		for(int i  = 0; i < torrentinfo.num_files(); ++i)
 		{
-			if(nopriority || filespriority.at(i) != lt::download_priority_t(BITTORRENT_FILE_NONE))
+			if(nopriority || filespriority.at(i) != TorrentConfig::file_none)
 			{
 				lt::file_storage const& allfiles = torrentinfo.files();
-				wxString fname(pTorrent->config->GetDownloadPath() + wxConvUTF8.cMB2WC( torrentinfo.name().c_str() ) + wxFileName::GetPathSeparator() + wxString::FromUTF8((allfiles.file_name(lt::file_index_t(i))).to_string().c_str()));
+				lt::file_index_t idx(i);
+				wxString fname(pTorrent->config->GetDownloadPath() + wxConvUTF8.cMB2WC( torrentinfo.name().c_str() ) + wxFileName::GetPathSeparator() + wxString::FromUTF8(((allfiles.file_path(idx)) + (allfiles.file_name(idx)).to_string()).c_str()));
 				wxFileName filename (fname);
 				filename.MakeAbsolute();
 				//wxLogDebug(_T("File path %s\n"), filename.GetFullPath().c_str());

@@ -195,7 +195,7 @@ void TorrentProperty::OnFocus(wxFocusEvent& event)
 void TorrentProperty::OnDownloadAll(wxCommandEvent& event)
 {
 	std::shared_ptr<TorrentConfig> pConfig = m_pTorrent->config;
-	std::vector<lt::download_priority_t> filespriority(m_pTorrent->info->num_files(), lt::download_priority_t(BITTORRENT_FILE_NORMAL));
+	std::vector<lt::download_priority_t> filespriority(m_pTorrent->info->num_files(), TorrentConfig::file_normal);
 	pConfig->SetFilesPriority(filespriority);
 	m_filespane->UpdateSwashList();
 	m_filespane->Refresh(false);
@@ -204,7 +204,7 @@ void TorrentProperty::OnDownloadAll(wxCommandEvent& event)
 void TorrentProperty::OnDownloadNone(wxCommandEvent& event)
 {
 	std::shared_ptr<TorrentConfig> pConfig = m_pTorrent->config;
-	std::vector<lt::download_priority_t> filespriority(m_pTorrent->info->num_files(), lt::download_priority_t(BITTORRENT_FILE_NONE));
+	std::vector<lt::download_priority_t> filespriority(m_pTorrent->info->num_files(), TorrentConfig::file_none);
 	pConfig->SetFilesPriority(filespriority);
 	m_filespane->UpdateSwashList();
 	m_filespane->Refresh(false);

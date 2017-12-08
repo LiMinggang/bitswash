@@ -120,6 +120,11 @@ public:
 	const wxULongLong_t& GetSelectedSize() {return m_selected_file_size;}
 
 protected:
+public:
+	static const lt::download_priority_t file_none;
+	static const lt::download_priority_t file_lowest;
+	static const lt::download_priority_t file_normal;
+	static const lt::download_priority_t file_highest;
 private:
 	wxString m_torrentname;
 	wxString m_configfile;
