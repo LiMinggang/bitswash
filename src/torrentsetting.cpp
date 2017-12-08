@@ -39,12 +39,7 @@
 //(*IdInit(TorrentSettingPane)
 //*)
 
-BEGIN_EVENT_TABLE(TorrentSettingPane,wxPanel)
-	//(*EventTable(TorrentSettingPane)
-	//*)
-END_EVENT_TABLE()
-
-TorrentSettingPane::TorrentSettingPane( wxWindow* parent, std::shared_ptr<torrent_t>& pTorrent, int id, wxPoint pos, wxSize size, int style) : 
+TorrentSettingPane::TorrentSettingPane( wxWindow* parent, std::shared_ptr<torrent_t>& pTorrent, wxWindowID id, const wxPoint& pos, const wxSize& size, int style) : 
 		m_directory_change_func(nullptr)
 {
 	MainFrame * pMainFrame = nullptr;
@@ -108,7 +103,7 @@ TorrentSettingPane::TorrentSettingPane( wxWindow* parent, std::shared_ptr<torren
 	m_combo_saveas->SetValue(t_saveas);
 	FlexGridSizer3->Add(m_combo_saveas, 1, wxALL|wxALIGN_LEFT|wxALIGN_CENTER_VERTICAL, 5);
 	m_button_showdir = new wxButton(this, wxID_ANY, wxT("..."), wxDefaultPosition, wxDefaultSize, 0, wxDefaultValidator, _T("wxID_ANY"));
-	FlexGridSizer3->Add(m_button_showdir, 1, wxALL|wxALIGN_CENTER_HORIZONTAL|wxALIGN_CENTER_VERTICAL, 5);
+	FlexGridSizer3->Add(m_button_showdir, 1, wxALL|wxALIGN_LEFT|wxALIGN_CENTER_VERTICAL, 5);
 	StaticText2 = new wxStaticText(this, wxID_ANY, _("Free:"), wxDefaultPosition, wxDefaultSize, 0, _T("wxID_ANY"));
 	FlexGridSizer3->Add(StaticText2, 1, wxALL|wxALIGN_LEFT|wxALIGN_CENTER_VERTICAL, 5);
 
@@ -138,7 +133,7 @@ TorrentSettingPane::TorrentSettingPane( wxWindow* parent, std::shared_ptr<torren
 	m_label_diskfreespace = new wxStaticText(this, wxID_ANY, freeSpace, wxDefaultPosition, wxDefaultSize, 0, _T("wxID_ANY"));
 	FlexGridSizer3->Add(m_label_diskfreespace, 1, wxALL|wxALIGN_LEFT|wxALIGN_CENTER_VERTICAL, 5);
 	FlexGridSizer2->Add(FlexGridSizer3, 1, wxALL|wxALIGN_CENTER_HORIZONTAL|wxALIGN_CENTER_VERTICAL, 5);
-	FlexGridSizer4 = new wxFlexGridSizer(1, 2, 5, 5);
+	FlexGridSizer4 = new wxFlexGridSizer(0, 2, 5, 5);
 	m_check_start = new wxCheckBox(this, wxID_ANY, _("Start Torrent"), wxDefaultPosition, wxDefaultSize, 0, wxDefaultValidator, _T("wxID_ANY"));
 	if (m_pTorrent)
 	{
@@ -162,7 +157,7 @@ TorrentSettingPane::TorrentSettingPane( wxWindow* parent, std::shared_ptr<torren
 		}
 	}
 	
-	FlexGridSizer4->Add(m_check_start, 1, wxALL|wxALIGN_CENTER_HORIZONTAL|wxALIGN_CENTER_VERTICAL, 5);
+	FlexGridSizer4->Add(m_check_start, 1, wxALL|wxALIGN_LEFT|wxALIGN_CENTER_VERTICAL, 5);
 	m_check_usedefault = new wxCheckBox(this, wxID_ANY, _("Do not prompt for torrent settings"), wxDefaultPosition, wxDefaultSize, 0, wxDefaultValidator, _T("wxID_ANY"));
 
 	{
@@ -176,7 +171,10 @@ TorrentSettingPane::TorrentSettingPane( wxWindow* parent, std::shared_ptr<torren
 		}
 	}
 
-	FlexGridSizer4->Add(m_check_usedefault, 1, wxALL|wxALIGN_CENTER_HORIZONTAL|wxALIGN_CENTER_VERTICAL, 5);
+	FlexGridSizer4->Add(m_check_usedefault, 1, wxALL|wxALIGN_LEFT|wxALIGN_CENTER_VERTICAL, 5);
+	m_check_preview_video_files = new wxCheckBox(this, wxID_ANY, _("Enable preview video file(s)"), wxDefaultPosition, wxDefaultSize, 0, wxDefaultValidator, _T("wxID_ANY"));
+	m_check_preview_video_files->SetValue(false);
+	FlexGridSizer4->Add(m_check_preview_video_files, 1, wxALL|wxALIGN_LEFT|wxALIGN_CENTER_VERTICAL, 5);
 	FlexGridSizer2->Add(FlexGridSizer4, 1, wxALL|wxALIGN_LEFT|wxALIGN_CENTER_VERTICAL, 5);
 	StaticLine1 = new wxStaticLine(this, wxID_ANY, wxDefaultPosition, wxSize(10,-1), wxLI_HORIZONTAL, _T("wxID_ANY"));
 	FlexGridSizer2->Add(StaticLine1, 1, wxALL|wxEXPAND, 5);

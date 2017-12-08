@@ -58,7 +58,6 @@ SwashSetting::SwashSetting( wxWindow* parent, Configuration *pcfg, int id, wxStr
 	m_pane_torrentsettings = new TorrentSettingPane((wxWindow*)m_listbookmenu);
 	m_pane_extensionsettings = new ExtensionSettingPane(m_listbookmenu);
 
-
 	m_listbookmenu->AddPage(m_pane_generalsettings, _("General"), false, 0);
 	m_listbookmenu->AddPage(m_pane_connectionsettings, _("Connections"), false, 1);
 	m_listbookmenu->AddPage(m_pane_torrentsettings, _("Torrents"), false, 2);
@@ -133,6 +132,7 @@ void SwashSetting::OnOK(wxCommandEvent& event)
 	m_pcfg->SetMaxConnections(m_pane_torrentsettings->GetMaxConnections());
 	m_pcfg->SetMaxUploads(m_pane_torrentsettings->GetMaxUpload());
 	m_pcfg->SetDefaultRatio(m_pane_torrentsettings->GetRatio());
+	m_pcfg->SetEnableVideoPreview(m_pane_torrentsettings->GetEnableVideoPreview());
 
 	m_pcfg->SetEnableMetadata(m_pane_extensionsettings->GetEnableMetadata());
 	m_pcfg->SetEnablePex(m_pane_extensionsettings->GetEnablePex());

@@ -62,7 +62,7 @@ private:
 	wxPanel* m_panel_main;
 	wxTreebook* m_listbookmenu;
 	wxStdDialogButtonSizer* m_szokcancel;
-	
+
 	Configuration *m_pcfg;
 
 	void Todo() { wxLogMessage(_T("Todo")) ; }	

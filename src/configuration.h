@@ -140,9 +140,10 @@ class Configuration : public wxFileConfig
         bool GetAssociateMagnetURI() { return m_associate_magneturi; }
         void SetAssociateMagnetURI(bool associate_magneturi) { m_associate_magneturi = associate_magneturi; }
 #endif
+        bool GetEnableVideoPreview() { return m_enable_video_preview; }
+        void SetEnableVideoPreview(bool enable_preview) { m_enable_video_preview = enable_preview; }
 
         // libtorrent
-
 		libtorrent::storage_mode_t GetDefaultStorageMode() { return m_storagemode; }
 		void SetDefaultStorageMode(libtorrent::storage_mode_t storagemode) { m_storagemode = storagemode; } 
 
@@ -367,6 +368,7 @@ class Configuration : public wxFileConfig
 		bool		m_enable_pex;
 			
 		bool 		m_exclude_seed;
+		bool 		m_enable_video_preview;
 #ifdef __WXMSW__
         bool        m_run_at_startup;
         bool        m_associate_torrent;
@@ -573,7 +575,6 @@ class Configuration : public wxFileConfig
 		int m_default_download_limit;
 		int m_default_max_uploads;
 		int m_default_max_connections;
-		bool m_enable_video_preview;
 	
 		//logging
 		unsigned int m_log_severity;

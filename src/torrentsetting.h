@@ -45,21 +45,22 @@ class TorrentSettingPane: public wxPanel
 {
 	public:
 
-		TorrentSettingPane( wxWindow* parent, std::shared_ptr<torrent_t>& pTorrent = std::shared_ptr<torrent_t>(), int id = wxID_ANY, wxPoint pos = wxDefaultPosition, wxSize size = wxDefaultSize, int style = wxTAB_TRAVERSAL);
+		TorrentSettingPane( wxWindow* parent, std::shared_ptr<torrent_t>& pTorrent = std::shared_ptr<torrent_t>(), wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxDefaultSize, int style = wxTAB_TRAVERSAL);
 		virtual ~TorrentSettingPane();
 
 		//(*Declarations(TorrentSettingPane)
 		AutoSizeInput* m_autoDownLimit;
 		AutoSizeInput* m_autoUpLimit;
 		wxButton* m_button_showdir;
+		wxCheckBox* m_check_preview_video_files;
 		wxCheckBox* m_check_start;
 		wxCheckBox* m_check_usedefault;
 		wxComboBox* m_combo_saveas;
-		wxStaticText* m_label_diskfreespace;
 		wxComboBox* m_combo_storagemode;
 		wxSpinCtrl* m_spin_maxconnect;
 		wxSpinCtrl* m_spin_maxupload;
 		wxSpinCtrl* m_spin_ratio;
+		wxStaticText* m_label_diskfreespace;
 		//*)
 
 	protected:
@@ -92,6 +93,10 @@ class TorrentSettingPane: public wxPanel
 			return m_check_usedefault->IsChecked();
 		}
 		
+		bool GetEnableVideoPreview()
+		{
+			return m_check_preview_video_files->IsChecked();
+		}
 		long GetDownloadRate()
 		{
 			return m_autoDownLimit->GetValue();
@@ -119,7 +124,6 @@ class TorrentSettingPane: public wxPanel
 
 		void SetTorrentHandle(std::shared_ptr<torrent_t>& pTorrent) { m_pTorrent= pTorrent; }
 		void SetTorrentDirectoryChange(OnSaveDirectoryChangePtr pFunc) { m_directory_change_func= pFunc; }
-		DECLARE_EVENT_TABLE()
 };
 
 #endif
