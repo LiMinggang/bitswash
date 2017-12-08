@@ -47,7 +47,9 @@ TorrentSettingPane::TorrentSettingPane( wxWindow* parent, std::shared_ptr<torren
 	wxASSERT(pMainFrame != nullptr);
 
 	Configuration* pcfg = pMainFrame->GetConfig();
+	wxASSERT(pcfg != nullptr);
 	m_pTorrent = pTorrent;
+	bool isTorrent = bool(m_pTorrent);
 
 	//(*Initialize(TorrentSettingPane)
 	wxBoxSizer* BoxSizer1;
@@ -87,7 +89,7 @@ TorrentSettingPane::TorrentSettingPane( wxWindow* parent, std::shared_ptr<torren
 	
 	std::vector<wxString>& historypath = pcfg->GetSavePathHistory();
 	
-	wxString t_saveas = m_pTorrent?m_pTorrent->config->GetDownloadPath():pcfg->GetDownloadPath();
+	wxString t_saveas = isTorrent?m_pTorrent->config->GetDownloadPath():pcfg->GetDownloadPath();
 	m_combo_saveas = new wxComboBox( this, wxID_ANY, t_saveas, wxDefaultPosition, wxDefaultSize, 0, nullptr, 0 );
 	m_combo_saveas->SetMinSize(wxSize(260,-1));
 	m_combo_saveas->Append( t_saveas );
@@ -173,7 +175,7 @@ TorrentSettingPane::TorrentSettingPane( wxWindow* parent, std::shared_ptr<torren
 
 	FlexGridSizer4->Add(m_check_usedefault, 1, wxALL|wxALIGN_LEFT|wxALIGN_CENTER_VERTICAL, 5);
 	m_check_preview_video_files = new wxCheckBox(this, wxID_ANY, _("Enable preview video file(s)"), wxDefaultPosition, wxDefaultSize, 0, wxDefaultValidator, _T("wxID_ANY"));
-	m_check_preview_video_files->SetValue(false);
+	m_check_preview_video_files->SetValue(isTorrent?m_pTorrent->config->GetTorrentEnableVideoPreview():pcfg->GetEnableVideoPreview());
 	FlexGridSizer4->Add(m_check_preview_video_files, 1, wxALL|wxALIGN_LEFT|wxALIGN_CENTER_VERTICAL, 5);
 	FlexGridSizer2->Add(FlexGridSizer4, 1, wxALL|wxALIGN_LEFT|wxALIGN_CENTER_VERTICAL, 5);
 	StaticLine1 = new wxStaticLine(this, wxID_ANY, wxDefaultPosition, wxSize(10,-1), wxLI_HORIZONTAL, _T("wxID_ANY"));
@@ -186,7 +188,7 @@ TorrentSettingPane::TorrentSettingPane( wxWindow* parent, std::shared_ptr<torren
 	m_arrStorageMode.Add(_("Full"));
 	m_arrStorageMode.Add(_("Sparse"));
 	m_combo_storagemode = new wxComboBox(this, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, m_arrStorageMode, wxCB_READONLY);
-	enum lt::storage_mode_t e_storagemode = m_pTorrent?m_pTorrent->config->GetTorrentStorageMode():pcfg->GetDefaultStorageMode();
+	enum lt::storage_mode_t e_storagemode = isTorrent?m_pTorrent->config->GetTorrentStorageMode():pcfg->GetDefaultStorageMode();
 
 	wxString strStorageMode;
 	switch (e_storagemode)
@@ -204,28 +206,28 @@ TorrentSettingPane::TorrentSettingPane( wxWindow* parent, std::shared_ptr<torren
 	StaticText5 = new wxStaticText(this, wxID_ANY, _("Download Rate Limit:"), wxDefaultPosition, wxDefaultSize, 0, _T("wxID_ANY"));
 	FlexGridSizer5->Add(StaticText5, 1, wxALL|wxALIGN_LEFT|wxALIGN_CENTER_VERTICAL, 5);
 	m_autoDownLimit = new AutoSizeInput(this, _T("Bps"));
-	m_autoDownLimit->SetValue(m_pTorrent?m_pTorrent->config->GetTorrentDownloadLimit():pcfg->GetDefaultDownloadLimit());
+	m_autoDownLimit->SetValue(isTorrent?m_pTorrent->config->GetTorrentDownloadLimit():pcfg->GetDefaultDownloadLimit());
 	FlexGridSizer5->Add(m_autoDownLimit, 1, wxALL|wxALIGN_LEFT|wxALIGN_CENTER_VERTICAL, 5);
 	StaticText6 = new wxStaticText(this, wxID_ANY, _("Upload Rate Limit:"), wxDefaultPosition, wxDefaultSize, 0, _T("wxID_ANY"));
 	FlexGridSizer5->Add(StaticText6, 1, wxALL|wxALIGN_LEFT|wxALIGN_CENTER_VERTICAL, 5);
 	m_autoUpLimit = new AutoSizeInput(this, _T("Bps") );
-	m_autoUpLimit->SetValue(m_pTorrent?m_pTorrent->config->GetTorrentUploadLimit():pcfg->GetDefaultUploadLimit());
+	m_autoUpLimit->SetValue(isTorrent?m_pTorrent->config->GetTorrentUploadLimit():pcfg->GetDefaultUploadLimit());
 	FlexGridSizer5->Add(m_autoUpLimit, 1, wxALL|wxALIGN_LEFT|wxALIGN_CENTER_VERTICAL, 5);
 	StaticText7 = new wxStaticText(this, wxID_ANY, _("Maximum Connections:"), wxDefaultPosition, wxDefaultSize, 0, _T("wxID_ANY"));
 	FlexGridSizer5->Add(StaticText7, 1, wxALL|wxALIGN_LEFT|wxALIGN_CENTER_VERTICAL, 5);
-	wxString t_maxconnect= wxString::Format(_T("%d"), m_pTorrent?m_pTorrent->config->GetTorrentMaxConnections():pcfg->GetMaxConnections());
+	wxString t_maxconnect= wxString::Format(_T("%d"), isTorrent?m_pTorrent->config->GetTorrentMaxConnections():pcfg->GetMaxConnections());
 	m_spin_maxconnect = new wxSpinCtrl(this, wxID_ANY, t_maxconnect, wxDefaultPosition, wxDefaultSize, 0, -1, 99999999, 0, _T("wxID_ANY"));
 	//m_spin_maxconnect->SetValue(_T("0"));
 	FlexGridSizer5->Add(m_spin_maxconnect, 1, wxALL|wxALIGN_LEFT|wxALIGN_CENTER_VERTICAL, 5);
 	StaticText8 = new wxStaticText(this, wxID_ANY, _("Maximum Upload Slots:"), wxDefaultPosition, wxDefaultSize, 0, _T("wxID_ANY"));
 	FlexGridSizer5->Add(StaticText8, 1, wxALL|wxALIGN_LEFT|wxALIGN_CENTER_VERTICAL, 5);
-	wxString t_maxupload = wxString::Format(_T("%d"), m_pTorrent?m_pTorrent->config->GetTorrentMaxUploads():pcfg->GetMaxUploads());
+	wxString t_maxupload = wxString::Format(_T("%d"), isTorrent?m_pTorrent->config->GetTorrentMaxUploads():pcfg->GetMaxUploads());
 	m_spin_maxupload = new wxSpinCtrl(this, wxID_ANY, t_maxupload, wxDefaultPosition, wxDefaultSize, 0, -1, 99999999, 0, _T("wxID_ANY"));
 	//m_spin_maxupload->SetValue(_T("0"));
 	FlexGridSizer5->Add(m_spin_maxupload, 1, wxALL|wxALIGN_LEFT|wxALIGN_CENTER_VERTICAL, 5);
 	StaticText9 = new wxStaticText(this, wxID_ANY, _("Seed Ratio:"), wxDefaultPosition, wxDefaultSize, 0, _T("wxID_ANY"));
 	FlexGridSizer5->Add(StaticText9, 1, wxALL|wxALIGN_LEFT|wxALIGN_CENTER_VERTICAL, 5);
-	wxString t_ratio= wxString::Format(_T("%d"), m_pTorrent?m_pTorrent->config->GetTorrentRatio():pcfg->GetDefaultRatio());
+	wxString t_ratio= wxString::Format(_T("%d"), isTorrent?m_pTorrent->config->GetTorrentRatio():pcfg->GetDefaultRatio());
 	m_spin_ratio = new wxSpinCtrl(this, wxID_ANY, t_ratio, wxDefaultPosition, wxDefaultSize, 0, 0, 99999999, 0, _T("wxID_ANY"));
 	//m_spin_ratio->SetValue(_T("0"));
 	FlexGridSizer5->Add(m_spin_ratio, 1, wxALL|wxALIGN_LEFT|wxALIGN_CENTER_VERTICAL, 5);
