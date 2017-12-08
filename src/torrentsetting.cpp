@@ -45,7 +45,7 @@ BEGIN_EVENT_TABLE(TorrentSettingPane,wxPanel)
 END_EVENT_TABLE()
 
 TorrentSettingPane::TorrentSettingPane( wxWindow* parent, std::shared_ptr<torrent_t>& pTorrent, int id, wxPoint pos, wxSize size, int style) : 
-		wxPanel(parent, id, pos, size, style) , m_directory_change_func(nullptr)
+		m_directory_change_func(nullptr)
 {
 	MainFrame * pMainFrame = nullptr;
 	pMainFrame = dynamic_cast<MainFrame *>( wxGetApp().GetTopWindow() );
