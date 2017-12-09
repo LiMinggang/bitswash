@@ -298,7 +298,7 @@ void TorrentListCtrl::OnLeftDClick(wxMouseEvent& event)
 			{
 				lt::file_storage const& allfiles = torrentinfo.files();
 				lt::file_index_t idx(i);
-				wxString fname(pTorrent->config->GetDownloadPath() + wxConvUTF8.cMB2WC( torrentinfo.name().c_str() ) + wxFileName::GetPathSeparator() + wxString::FromUTF8(((allfiles.file_path(idx)) + (allfiles.file_name(idx)).to_string()).c_str()));
+				wxString fname(pTorrent->config->GetDownloadPath() + wxString::FromUTF8((allfiles.file_path(idx)).c_str()));
 				wxFileName filename (fname);
 				filename.MakeAbsolute();
 				//wxLogDebug(_T("File path %s\n"), filename.GetFullPath().c_str());

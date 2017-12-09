@@ -910,7 +910,7 @@ void BitTorrentSession::RemoveTorrent( std::shared_ptr<torrent_t>& torrent, bool
 		for(int i = 0; i < nfiles; ++i)
 		{
 			lt::file_index_t idx(i);
-			wxString fname(torrent->config->GetDownloadPath() + wxConvUTF8.cMB2WC(torrent->info->name().c_str()) + wxFileName::GetPathSeparator() + wxString::FromUTF8(((allfiles.file_path(idx)) + (allfiles.file_name(idx)).to_string()).c_str()));
+			wxString fname(torrent->config->GetDownloadPath() + wxString::FromUTF8((allfiles.file_path(idx)).c_str()));
 			if((filespriority[i] == TorrentConfig::file_none) && (wxFileExists( fname )))
 			{
 				if( !wxRemoveFile( torrentfile ) )

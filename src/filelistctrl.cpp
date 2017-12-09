@@ -514,7 +514,7 @@ void FileListCtrl::OnLeftDClick(wxMouseEvent& event)
 			{
 				lt::file_storage const& allfiles = torrentinfo.files();
 				lt::file_index_t idx(selectedfiles);
-				wxString fname(pTorrent->config->GetDownloadPath() + wxConvUTF8.cMB2WC( torrentinfo.name().c_str() ) + wxFileName::GetPathSeparator() + wxString::FromUTF8(((allfiles.file_path(idx)) + (allfiles.file_name(idx)).to_string()).c_str()));
+				wxString fname(pTorrent->config->GetDownloadPath() + wxString::FromUTF8((allfiles.file_path(idx)).c_str()));
 				//std::vector<std::string> const& allp = allfiles.paths();
 				wxFileName filename (fname);
 				filename.MakeAbsolute();
@@ -687,7 +687,8 @@ void FileListCtrl::OnMenuOpenPath( wxCommandEvent& event )
 			if(selectedfiles < filespriority.size() && filespriority.at(selectedfiles) != TorrentConfig::file_none)
 			{
 				lt::file_storage const& allfiles = torrentinfo.files();
-				wxString fname = pTorrent->config->GetDownloadPath() + wxConvUTF8.cMB2WC( torrentinfo.name().c_str() ) + wxFileName::GetPathSeparator() + wxString::FromUTF8((allfiles.file_name(lt::file_index_t(selectedfiles))).to_string().c_str());
+				lt::file_index_t idx(selectedfiles);
+				wxString fname = pTorrent->config->GetDownloadPath() + wxString::FromUTF8((allfiles.file_path(idx)).c_str());
 				//std::vector<std::string> const& allp = allfiles.paths();
 				wxFileName filename(fname);
 				filename.MakeAbsolute();
