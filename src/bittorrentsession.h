@@ -166,6 +166,7 @@ public:
 	void ConfigureTorrentFilesPriority( int idx );
 	void ConfigureTorrentTrackers( int idx );
 	void ConfigureTorrent( int idx );
+	bool GetTorrentMagnetUri( int idx, wxString& magneturi );
 	void GetPendingMetadata(metadata_t & mdq);
 	//lt::session* GetLibTorrent() { return m_libbtsession;}
 

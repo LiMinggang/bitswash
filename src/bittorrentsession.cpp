@@ -905,15 +905,16 @@ void BitTorrentSession::RemoveTorrent( std::shared_ptr<torrent_t>& torrent, bool
 		const std::vector<lt::download_priority_t>& filespriority = torrent->config->GetFilesPriorities();
 		int nfiles = torrent->info->num_files();
 		const lt::file_storage &allfiles = torrent->info->files();
+		wxString fname;
 		wxASSERT(nfiles == fp.size());
 		
 		for(int i = 0; i < nfiles; ++i)
 		{
 			lt::file_index_t idx(i);
-			wxString fname(torrent->config->GetDownloadPath() + wxString::FromUTF8((allfiles.file_path(idx)).c_str()));
-			if((filespriority[i] == TorrentConfig::file_none) && (wxFileExists( fname )))
+			if( filespriority[i] == TorrentConfig::file_none )
 			{
-				if( !wxRemoveFile( torrentfile ) )
+				fname = (torrent->config->GetDownloadPath() + wxString::FromUTF8((allfiles.file_path(idx)).c_str()));
+				if( wxFileExists( fname ) && !wxRemoveFile( torrentfile ) )
 					wxLogError( _T( "Error removing file %s" ), torrentfile.c_str() );
 			}
 		}
@@ -1031,7 +1032,9 @@ void BitTorrentSession::ScanTorrentsDirectory( const wxString& dirname )
 		if (torrent->config->GetTorrentState() == TORRENT_STATE_QUEUE) /*Fist time added torrent, it's not in libtorrent*/
 			torrent->config->SetTorrentState(TORRENT_STATE_START);
 		if( torrent->isvalid )
-		{ AddTorrent( torrent ); }
+		{
+			AddTorrent( torrent );
+		}
 
 		cont = torrents_dir.GetNext( &filename );
 	}
@@ -2094,6 +2097,21 @@ void BitTorrentSession::ConfigureTorrent( int idx )
 	std::shared_ptr<torrent_t> torrent = GetTorrent( idx );
 	if(torrent)
 		ConfigureTorrent( torrent );
+}
+
+bool BitTorrentSession::GetTorrentMagnetUri( int idx, wxString& magneturi )
+{
+	bool ok = false;
+	std::shared_ptr<torrent_t> torrent = GetTorrent( idx );
+	if(torrent)
+	{
+		if(torrent->isvalid && torrent->handle.is_valid())
+		{
+			magneturi = wxString::FromUTF8((lt::make_magnet_uri(torrent->handle)).c_str());
+			if(!magneturi.IsEmpty()) ok = true;
+		}
+	}
+	return ok;
 }
 
 /* start or stop queued item based on several criteria

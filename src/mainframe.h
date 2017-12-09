@@ -144,6 +144,7 @@ private:
 	void OnMenuTorrentReannounce( wxCommandEvent& event );
 	void OnMenuTorrentRecheck( wxCommandEvent& event );
 	void OnMenuTorrentOpenDir( wxCommandEvent& event );
+	void OnMenuTorrentCopyMagnetUri( wxCommandEvent& event );
 	void OnMenuPreferences( wxCommandEvent& event );
 	void OnMenuOptionLanguage( wxCommandEvent& event );
 	void OnUpdateOptionLanguage( wxUpdateUIEvent& event );
@@ -158,6 +159,7 @@ private:
 	void OnUpdateUI_MenuTorrentStop( wxUpdateUIEvent& event );
 	void OnUpdateUI_MenuTorrentReannounce( wxUpdateUIEvent& event );
 	void OnUpdateUI_MenuTorrentRecheck( wxUpdateUIEvent& event );
+	void OnUpdateUI_MenuCopyMagnetUri( wxUpdateUIEvent& event );
 	void OnUpdateUI_MenuViewStatusBar( wxUpdateUIEvent& event );
 	void OnUpdateUI_MenuViewTorrentInfo( wxUpdateUIEvent& event );
 	void OnUpdateUI_MenuViewToolbar( wxUpdateUIEvent& event );
@@ -232,7 +234,6 @@ private:
 	static wxUIUpdateEvtHandlerMap_t m_menu_ui_updater_map[];
 
 	static const long ID_FILE_EXIT;
-	static const long ID_HELP_ABOUT;
 
 	static const long ID_FILE_OPEN_URL;
 	static const long ID_FILE_OPEN_TORRENT;
@@ -254,6 +255,8 @@ private:
 	static const long ID_TORRENT_MOVEDOWN;
 	static const long ID_TORRENT_REANNOUNCE;
 	static const long ID_TORRENT_RECHECK;
+	static const long ID_TORRENT_COPYMAGNETURI;
+	static const long ID_HELP_ABOUT;
 	static const long ID_HELP_BITSWASH_HELP;
 	static const long ID_HELP_HOMEPAGE;
 

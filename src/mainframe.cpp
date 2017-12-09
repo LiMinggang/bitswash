@@ -44,6 +44,8 @@
 #include <wx/url.h>
 #include <wx/tokenzr.h>
 #include <wx/aui/auibar.h>
+#include <wx/clipbrd.h>
+#include <wx/textfile.h>
 
 #ifdef __UNIX_LIKE__
 	#include <wx/utils.h>
@@ -94,7 +96,6 @@ const struct swashlang languages[] =
 #endif
 
 const long MainFrame::ID_FILE_EXIT = wxID_EXIT;
-const long MainFrame::ID_HELP_ABOUT = wxID_ABOUT;
 const long MainFrame::ID_FILE_OPEN_URL = wxNewId();
 const long MainFrame::ID_FILE_OPEN_TORRENT = wxNewId();
 const long MainFrame::ID_FILE_CREATE_TORRENT = wxNewId();
@@ -114,12 +115,14 @@ const long MainFrame::ID_TORRENT_MOVEUP = wxNewId();
 const long MainFrame::ID_TORRENT_MOVEDOWN = wxNewId();
 const long MainFrame::ID_TORRENT_REANNOUNCE = wxNewId();
 const long MainFrame::ID_TORRENT_RECHECK = wxNewId();
+const long MainFrame::ID_TORRENT_COPYMAGNETURI = wxNewId();
 const long MainFrame::ID_OPTIONS_PREFERENCES = wxNewId();
+const long MainFrame::ID_OPTIONS_LANGUAGE = wxNewId();
 const long MainFrame::ID_HELP_BITSWASH_HELP = wxNewId();
+const long MainFrame::ID_HELP_ABOUT = wxID_ABOUT;
 const long MainFrame::ID_HELP_HOMEPAGE = wxNewId();
 const long MainFrame::ID_TIMER_GUI_UPDATE = wxNewId();
 const long MainFrame::ID_TIMER_BT_UPDATE = wxNewId();
-const long MainFrame::ID_OPTIONS_LANGUAGE = wxNewId();
 
 MainFrame::wxCmdEvtHandlerMap_t MainFrame::m_menu_evt_map[]=
 {
@@ -143,6 +146,7 @@ MainFrame::wxCmdEvtHandlerMap_t MainFrame::m_menu_evt_map[]=
 	{ ID_TORRENT_REANNOUNCE, &MainFrame::OnMenuTorrentReannounce },
 	{ ID_TORRENT_RECHECK, &MainFrame::OnMenuTorrentRecheck },
 	{ ID_TORRENT_OPENDIR, &MainFrame::OnMenuTorrentOpenDir },
+	{ ID_TORRENT_COPYMAGNETURI, &MainFrame::OnMenuTorrentCopyMagnetUri },
 	{ ID_OPTIONS_PREFERENCES, &MainFrame::OnMenuPreferences },
 	{ ID_HELP_BITSWASH_HELP, &MainFrame::OnMenuHelp },
 	{ ID_HELP_HOMEPAGE, &MainFrame::OnHelpHomepage },
@@ -169,6 +173,7 @@ MainFrame::wxUIUpdateEvtHandlerMap_t MainFrame::m_menu_ui_updater_map[] =
 
 	{ ID_TORRENT_REANNOUNCE, &MainFrame::OnUpdateUI_MenuTorrentReannounce },
 	{ ID_TORRENT_RECHECK, &MainFrame::OnUpdateUI_MenuTorrentRecheck },
+	{ ID_TORRENT_COPYMAGNETURI, &MainFrame::OnUpdateUI_MenuCopyMagnetUri },
 };
 
 MainFrame * g_BitSwashMainFrame = nullptr;
@@ -1328,6 +1333,13 @@ void MainFrame::OnUpdateUI_MenuProperties( wxUpdateUIEvent& event )
 	event.Enable(enable);
 }
 
+void MainFrame::OnUpdateUI_MenuCopyMagnetUri( wxUpdateUIEvent& event )
+{
+	int selected = m_torrentlistctrl->GetSelectedItemCount();
+	bool enable = (( selected == 1 ) &&( GetSelectedTorrent() ));
+
+	event.Enable(enable);
+}
 
 void MainFrame::OnUpdateUI_MenuRemove( wxUpdateUIEvent& event )
 {
@@ -1335,7 +1347,6 @@ void MainFrame::OnUpdateUI_MenuRemove( wxUpdateUIEvent& event )
 
 	event.Enable(enable);
 }
-
 
 void MainFrame::OnUpdateUI_MenuRemovedata( wxUpdateUIEvent& event )
 {
@@ -1519,21 +1530,39 @@ void MainFrame::OnMenuTorrentStop( wxCommandEvent& event )
 	SwashListCtrl::itemlist_t selecteditems;
 	m_torrentlistctrl->GetSelectedItems(selecteditems);
 
-	if( selecteditems.size() <= 0 )
+	if( selecteditems.size() > 0 )
 	{
-		wxLogWarning( _T( "MainFrame: No torrent is selected\n" ) );
-		return;
-	}
-
-	/* stop selected torrent(s) */
-	{
-		/* stop data selected in ui list */
-		for(int i = 0; i < selecteditems.size(); i++ )
+		for(auto const & i : selecteditems)
 		{
-			m_btsession->StopTorrent( selecteditems[i] );
+			m_btsession->StopTorrent( i );
+		}
+		UpdateUI();
+	}
+}
+
+void MainFrame::OnMenuTorrentCopyMagnetUri( wxCommandEvent& event )
+{
+	SwashListCtrl::itemlist_t selecteditems;
+	m_torrentlistctrl->GetSelectedItems(selecteditems);
+
+	if( selecteditems.size() > 0 )
+	{
+		wxString magneturis, magneturi;
+		const wxChar* eol = wxTextFile::GetEOL();
+		for(auto const & i : selecteditems)
+		{
+			if(m_btsession->GetTorrentMagnetUri( i, magneturi))
+				magneturis += magneturi + *eol;
+		}
+
+		
+		if( !magneturis.IsEmpty() && wxTheClipboard->Open() )
+		{
+			wxTheClipboard->SetData( new wxTextDataObject( magneturis ) );
+			wxTheClipboard->Flush();
+			wxTheClipboard->Close();
 		}
 	}
-	UpdateUI();
 }
 
 //Show torrent properties
@@ -1933,5 +1962,7 @@ wxMenu* MainFrame::GetNewTorrentMenu()
 	menuitem->SetBitmap( wxBitmap( wxGetApp().GetAppIcon( BITSWASH_ICON_TORRENT_OPENDIR ) ) );
 	menuitem = torrentMenu->Append( ID_TORRENT_PROPERTIES, _( "Propert&ies" ), _( "Torrent Properties" ) );
 	menuitem->SetBitmap( wxBitmap( wxGetApp().GetAppIcon( BITSWASH_ICON_TORRENT_PROPERTIES ) ) );
+	torrentMenu->AppendSeparator();
+	menuitem = torrentMenu->Append( ID_TORRENT_COPYMAGNETURI, _( "Copy &Magnet URI\tCtrl+C" ), _( "Copy Magnet URI" ) );
 	return torrentMenu;
 }
