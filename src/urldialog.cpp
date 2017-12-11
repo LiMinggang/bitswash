@@ -20,66 +20,60 @@
 // Created on: Tue Jun  5 11:49:36 MYT 2007
 //
 //
-
-// TODO: More responsive download status
-
 #include "urldialog.h"
 
-UrlDialog::UrlDialog( wxString* url, wxWindow* parent, int id,  wxString title, wxPoint pos, wxSize size, int style ) : wxDialog( parent, id, title, pos, size, style )
+//(*InternalHeaders(UrlDialog)
+#include <wx/button.h>
+#include <wx/intl.h>
+#include <wx/string.h>
+//*)
+
+//(*IdInit(UrlDialog)
+//*)
+
+BEGIN_EVENT_TABLE(UrlDialog,wxDialog)
+	//(*EventTable(UrlDialog)
+	//*)
+END_EVENT_TABLE()
+
+UrlDialog::UrlDialog(wxWindow* parent,wxWindowID id,const wxPoint& pos,const wxSize& size)
 {
-	m_url = url;
+	//(*Initialize(UrlDialog)
+	wxBoxSizer* BoxSizer1;
+	wxFlexGridSizer* FlexGridSizer1;
+	wxPanel* Panel1;
+	wxStaticText* StaticText1;
+	wxStdDialogButtonSizer* StdDialogButtonSizer1;
 
-	this->SetSizeHints( wxDefaultSize, wxDefaultSize );
-	
-	wxFlexGridSizer* fgSizerURLMain;
-	wxStaticText* m_staticURL;
-	fgSizerURLMain = new wxFlexGridSizer( 2, 2, 0, 0 );
-	
-	m_panelURL = new wxPanel( this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL );
-	wxFlexGridSizer* fgSizerURL;
-	fgSizerURL = new wxFlexGridSizer( 2, 2, 0, 0 );
-	
-	m_staticURL = new wxStaticText( m_panelURL, wxID_ANY, _("URL:"), wxDefaultPosition, wxDefaultSize, 0 );
-	fgSizerURL->Add( m_staticURL, 0, wxALL|wxALIGN_CENTER_VERTICAL, 5 );
-	
-	m_textURL = new wxTextCtrl( m_panelURL, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, 0 );
-	m_textURL->SetMinSize( wxSize( 380,-1 ) );
-	
-	fgSizerURL->Add( m_textURL, 0, wxALL, 5 );
-	
-	fgSizerURL->Add( 0, 0, 1, wxEXPAND, 0 );
-	
-	m_sdbOkCancel= new wxStdDialogButtonSizer();
-	wxButton *ButtonOK = new wxButton( m_panelURL, wxID_OK );
-	m_sdbOkCancel->AddButton( ButtonOK );
-	m_sdbOkCancel->AddButton( new wxButton( m_panelURL, wxID_CANCEL ) );
-	ButtonOK->SetDefault();
-	m_sdbOkCancel->Realize();
-	fgSizerURL->Add( m_sdbOkCancel, 0, wxALL|wxALIGN_RIGHT, 5 );
-	
-	m_panelURL->SetSizer( fgSizerURL );
-	m_panelURL->Layout();
-	fgSizerURL->Fit( m_panelURL );
-	fgSizerURLMain->Add( m_panelURL, 1, wxEXPAND | wxALL, 5 );
-	
-	this->SetSizer( fgSizerURLMain );
-	this->Layout();
-	fgSizerURLMain->Fit( this );
-
-	Bind( wxEVT_BUTTON, &UrlDialog::OnOk, this, wxID_OK);
-	Bind( wxEVT_BUTTON, &UrlDialog::OnCancel, this, wxID_CANCEL);
+	Create(parent, id, _("Enter Torrent URL"), wxDefaultPosition, wxDefaultSize, wxDEFAULT_DIALOG_STYLE, _T("id"));
+	SetClientSize(wxDefaultSize);
+	Move(wxDefaultPosition);
+	BoxSizer1 = new wxBoxSizer(wxHORIZONTAL);
+	Panel1 = new wxPanel(this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL, _T("wxID_ANY"));
+	FlexGridSizer1 = new wxFlexGridSizer(2, 2, 0, 0);
+	StaticText1 = new wxStaticText(Panel1, wxID_ANY, _("URL:"), wxDefaultPosition, wxDefaultSize, 0, _T("wxID_ANY"));
+	FlexGridSizer1->Add(StaticText1, 1, wxALL|wxALIGN_LEFT|wxALIGN_TOP, 5);
+	m_textURL = new wxTextCtrl(Panel1, wxID_ANY, _("Text"), wxDefaultPosition, wxDefaultSize, wxTE_MULTILINE|wxVSCROLL, wxDefaultValidator, _T("wxID_ANY"));
+	m_textURL->SetMinSize(wxSize(380,-1));
+	FlexGridSizer1->Add(m_textURL, 1, wxALL|wxALIGN_LEFT|wxALIGN_CENTER_VERTICAL, 5);
+	FlexGridSizer1->Add(-1,-1,1, wxALL|wxALIGN_CENTER_HORIZONTAL|wxALIGN_CENTER_VERTICAL, 5);
+	StdDialogButtonSizer1 = new wxStdDialogButtonSizer();
+	StdDialogButtonSizer1->AddButton(new wxButton(Panel1, wxID_OK, wxEmptyString));
+	StdDialogButtonSizer1->AddButton(new wxButton(Panel1, wxID_CANCEL, wxEmptyString));
+	StdDialogButtonSizer1->Realize();
+	FlexGridSizer1->Add(StdDialogButtonSizer1, 1, wxALL|wxALIGN_RIGHT|wxALIGN_CENTER_VERTICAL, 5);
+	Panel1->SetSizer(FlexGridSizer1);
+	FlexGridSizer1->Fit(Panel1);
+	FlexGridSizer1->SetSizeHints(Panel1);
+	BoxSizer1->Add(Panel1, 1, wxALL|wxALIGN_CENTER_HORIZONTAL|wxALIGN_CENTER_VERTICAL, 5);
+	SetSizer(BoxSizer1);
+	BoxSizer1->Fit(this);
+	BoxSizer1->SetSizeHints(this);
+	//*)
 }
 
-void UrlDialog::OnOk(wxCommandEvent& event)
+UrlDialog::~UrlDialog()
 {
-	*m_url = m_textURL->GetValue();
-
-	EndModal(wxID_OK);
-	event.Skip();
-}
-
-void UrlDialog::OnCancel(wxCommandEvent& event)
-{
-	EndModal(wxID_CANCEL);
-	event.Skip();
+	//(*Destroy(UrlDialog)
+	//*)
 }

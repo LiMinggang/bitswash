@@ -20,30 +20,39 @@
 // Created on: Tue Jun  5 11:49:36 MYT 2007
 //
 
+#ifndef URLDIALOG_H
+#define URLDIALOG_H
 
-#ifndef _URLDIALOG_H_
-#define _URLDIALOG_H_
-
-#include <wx/wx.h>
+//(*Headers(UrlDialog)
 #include <wx/dialog.h>
-#include <wx/stattext.h>
-#include <wx/sizer.h>
 #include <wx/panel.h>
+#include <wx/sizer.h>
+#include <wx/stattext.h>
+#include <wx/textctrl.h>
+//*)
 
-class UrlDialog: public wxDialog 
+class UrlDialog: public wxDialog
 {
-public:
-	UrlDialog( wxString* url, wxWindow* parent,  int id = wxID_ANY, wxString title = _T("Enter Torrent URL"), wxPoint pos = wxDefaultPosition, wxSize size = wxDefaultSize, int style = wxDEFAULT_DIALOG_STYLE );
+	public:
 
-protected:
+		UrlDialog(wxWindow* parent,wxWindowID id=wxID_ANY,const wxPoint& pos=wxDefaultPosition,const wxSize& size=wxDefaultSize);
+		virtual ~UrlDialog();
 
-private:
-	void OnOk(wxCommandEvent& event);
-	void OnCancel(wxCommandEvent& event);
-	wxString* m_url;
-	wxPanel* m_panelURL;
-	wxTextCtrl* m_textURL;
-	wxStdDialogButtonSizer* m_sdbOkCancel;
+		//(*Declarations(UrlDialog)
+		wxTextCtrl* m_textURL;
+		//*)
+
+	protected:
+
+		//(*Identifiers(UrlDialog)
+		//*)
+
+	private:
+
+		//(*Handlers(UrlDialog)
+		//*)
+
+		DECLARE_EVENT_TABLE()
 };
 
 #endif

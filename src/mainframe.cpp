@@ -913,12 +913,13 @@ void MainFrame::DownloadTorrent(wxURL & url)
  */
 void MainFrame::OpenTorrentUrl()
 {
-	wxString url;
-	UrlDialog urldialog( &url, this );
+	UrlDialog urldialog( this );
 
 	if( urldialog.ShowModal() == wxID_OK )
 	{
 		WXLOGDEBUG(( _T( "openurl: Fetch URL %s\n" ), url.c_str() ));
+		wxString url = urldialog.m_textURL->GetValue();
+
 		wxURL torrenturl( url );
 
 		if( isUrl( torrenturl.GetScheme() ) )
