@@ -42,7 +42,6 @@ private:
 	void OnCancel(wxCommandEvent& event);
 	wxString* m_url;
 	wxPanel* m_panelURL;
-	wxStaticText* m_staticURL;
 	wxTextCtrl* m_textURL;
 	wxStdDialogButtonSizer* m_sdbOkCancel;
 };

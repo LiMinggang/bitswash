@@ -32,6 +32,7 @@ UrlDialog::UrlDialog( wxString* url, wxWindow* parent, int id,  wxString title, 
 	this->SetSizeHints( wxDefaultSize, wxDefaultSize );
 	
 	wxFlexGridSizer* fgSizerURLMain;
+	wxStaticText* m_staticURL;
 	fgSizerURLMain = new wxFlexGridSizer( 2, 2, 0, 0 );
 	
 	m_panelURL = new wxPanel( this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL );
