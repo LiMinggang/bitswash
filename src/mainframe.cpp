@@ -1335,10 +1335,7 @@ void MainFrame::OnUpdateUI_MenuProperties( wxUpdateUIEvent& event )
 
 void MainFrame::OnUpdateUI_MenuCopyMagnetUri( wxUpdateUIEvent& event )
 {
-	int selected = m_torrentlistctrl->GetSelectedItemCount();
-	bool enable = (( selected == 1 ) &&( GetSelectedTorrent() ));
-
-	event.Enable(enable);
+	event.Enable( m_torrentlistctrl->GetSelectedItemCount() );
 }
 
 void MainFrame::OnUpdateUI_MenuRemove( wxUpdateUIEvent& event )

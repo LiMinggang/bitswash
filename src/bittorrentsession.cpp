@@ -1111,7 +1111,7 @@ void BitTorrentSession::SaveAllTorrent()
 	int num_failed = 0;
 	/* take this opportunity to sync torrent index back to zero */
 	int num_outstanding_resume_data = 0;
-	wxArrayString magneturi;
+	wxArrayString magneturis;
 
 	{
 		int idx = 0;
@@ -1127,10 +1127,11 @@ void BitTorrentSession::SaveAllTorrent()
 					( !( ( torrent->handle.status() ).need_save_resume ) ) || \
 					torrent->config->GetTorrentState() == TORRENT_STATE_STOP )
 			{
-				if((!torrent->magneturi.IsEmpty()) && torrent->handle.is_valid()
+				wxString magneturi(torrent->config->GetTorrentMagnetUri());
+				if ((!magneturi.IsEmpty()) && torrent->handle.is_valid()
 					&& !torrent->handle.status().has_metadata)
 				{
-					magneturi.Add(torrent->magneturi);
+					magneturis.Add(magneturi);
 				}
 
 				continue;
@@ -1189,7 +1190,7 @@ void BitTorrentSession::SaveAllTorrent()
 	}
 
 	// save dead magnet uri
-	size_t counts = magneturi.GetCount();
+	size_t counts = magneturis.GetCount();
 	wxString filename( wxGetApp().SaveTorrentsPath() + APPBINNAME + _T( ".magneturi" ));
 	wxTextFile magneturifile( filename );
 	if(counts > 0)
@@ -1209,7 +1210,7 @@ void BitTorrentSession::SaveAllTorrent()
 			magneturifile.Clear();
 			for( size_t i = 0; i < counts; ++i )
 			{
-				magneturifile.AddLine( magneturi[i] );
+				magneturifile.AddLine( magneturis[i] );
 			}
 
 #ifdef __WXMAC__
@@ -1322,10 +1323,6 @@ std::shared_ptr<torrent_t> BitTorrentSession::LoadMagnetUri( MagnetUri& magnetur
 				torrent.reset(new torrent_t());
 				lt::add_torrent_params p = magneturi.addTorrentParams();
 				// Limits
-				//p.max_connections = maxConnectionsPerTorrent();
-				//p.max_uploads = maxUploadsPerTorrent();
-				//std::shared_ptr<lt::torrent_info> t(new lt::torrent_info( sha1_hash( magneturi.hash() ) ));
-				//torrent->info = t;
 				torrent->name = magneturi.name();
 				torrent->hash = magneturi.hash();
 				if( wxString(torrent->hash) != _T("0000000000000000000000000000000000000000"))
@@ -1345,8 +1342,7 @@ std::shared_ptr<torrent_t> BitTorrentSession::LoadMagnetUri( MagnetUri& magnetur
 
 					// Adding torrent to BitTorrent session
 					torrent->config->SetTorrentState( TORRENT_STATE_START );
-					torrent->magneturi = magneturi.url();
-
+					torrent->config->SetTorrentMagnetUri(magneturi.url());
 
 					torrent->isvalid = false;
 					m_libbtsession->async_add_torrent( p );
@@ -2105,9 +2101,10 @@ bool BitTorrentSession::GetTorrentMagnetUri( int idx, wxString& magneturi )
 	std::shared_ptr<torrent_t> torrent = GetTorrent( idx );
 	if(torrent)
 	{
-		if(torrent->isvalid && torrent->handle.is_valid())
+		if(torrent->isvalid)
 		{
-			magneturi = wxString::FromUTF8((lt::make_magnet_uri(torrent->handle)).c_str());
+			wxASSERT(torrent->config);
+			magneturi = torrent->config->GetTorrentMagnetUri();//wxString::FromUTF8((lt::make_magnet_uri(torrent->handle)).c_str());
 			if(!magneturi.IsEmpty()) ok = true;
 		}
 	}
@@ -2553,6 +2550,8 @@ bool BitTorrentSession::HandleAddTorrentAlert(lt::add_torrent_alert * p)
 			if(st.has_metadata)
 				p->handle.save_resume_data(lt::torrent_handle::save_info_dict | lt::torrent_handle::only_if_modified);
 			torrent->isvalid = true;
+			if((torrent->config->GetTorrentMagnetUri()).IsEmpty())
+				torrent->config->SetTorrentMagnetUri(wxString::FromUTF8((lt::make_magnet_uri(p->handle)).c_str()));
 			torrent->handle.status().flags &= ~(lt::torrent_flags::auto_managed);
 			torrent->handle.pause(lt::torrent_handle::graceful_pause);
 			enum torrent_state state = ( enum torrent_state ) torrent->config->GetTorrentState();

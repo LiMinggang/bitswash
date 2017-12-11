@@ -99,6 +99,7 @@ void TorrentConfig::Save()
 							wxULongLong(m_torrent_stats.total_upload).ToString()
 											);
 	m_cfg->Write( _T( "/Torrent/stats" ), stats_string );
+	m_cfg->Write( _T( "/Torrent/magneturi" ), m_magneturi );
 	WriteFilesPriority();
 	WriteTrackersUrl();
 	wxFileOutputStream fos( m_configfile );
@@ -132,6 +133,7 @@ void TorrentConfig::Load()
 	if( m_torrent_max_uploads < 2 ) { m_torrent_max_uploads = 2; }
 
 	tmp_stats = m_cfg->Read( _T( "/Torrent/stats" ), _T( "0,0,0" ) );
+	m_magneturi = m_cfg->Read( _T( "/Torrent/magneturi" ),  wxT(""));
 	wxString tmpstr;
 	wxString tmpstr2;
 	wxChar token = ',';

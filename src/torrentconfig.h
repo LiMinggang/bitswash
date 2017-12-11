@@ -119,6 +119,9 @@ public:
 	void SetSelectedSize(const wxULongLong_t& fsize) {m_selected_file_size = fsize;}
 	const wxULongLong_t& GetSelectedSize() {return m_selected_file_size;}
 
+	const wxString & GetTorrentMagnetUri() { return m_magneturi; }
+	void SetTorrentMagnetUri( const wxString& magneturi ) { m_magneturi = magneturi;}
+
 protected:
 public:
 	static const lt::download_priority_t file_none;
@@ -133,6 +136,7 @@ private:
 
 	int m_qindex;
 	wxString m_downloadpath;
+	wxString m_magneturi;
 
 	bool m_enable_video_preview;
 	libtorrent::storage_mode_t m_storagemode;
