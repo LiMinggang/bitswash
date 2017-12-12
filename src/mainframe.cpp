@@ -46,6 +46,7 @@
 #include <wx/aui/auibar.h>
 #include <wx/clipbrd.h>
 #include <wx/textfile.h>
+#include <wx/tokenzr.h>
 
 #ifdef __UNIX_LIKE__
 	#include <wx/utils.h>
@@ -918,22 +919,27 @@ void MainFrame::OpenTorrentUrl()
 	if( urldialog.ShowModal() == wxID_OK )
 	{
 		WXLOGDEBUG(( _T( "openurl: Fetch URL %s\n" ), url.c_str() ));
-		wxString url = urldialog.m_textURL->GetValue();
+		wxString urls = urldialog.m_textURL->GetValue(), url, strDelimiters = _T( " \t\r\n" );
+        wxStringTokenizer tkz( urls, strDelimiters );
 
-		wxURL torrenturl( url );
+        while( tkz.HasMoreTokens() )
+	    {
+    		url = tkz.GetNextToken();
+    		wxURL torrenturl( url );
 
-		if( isUrl( torrenturl.GetScheme() ) )
-		{
-			DownloadTorrent(torrenturl);
-		}
-		else
-		{
-			OpenMagnetURI(url);
-		}
+    		if( isUrl( torrenturl.GetScheme() ) )
+    		{
+    			DownloadTorrent(torrenturl);
+    		}
+    		else
+    		{
+    			OpenMagnetURI(url);
+    		}
+        }
 	}
 	else
 	{
-		wxLogMessage( _T( "Download cancelled" ) );
+		wxLogMessage( _( "Download cancelled" ) );
 	}
 }
 
