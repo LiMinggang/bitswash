@@ -918,7 +918,6 @@ void MainFrame::OpenTorrentUrl()
 
 	if( urldialog.ShowModal() == wxID_OK )
 	{
-		WXLOGDEBUG(( _T( "openurl: Fetch URL %s\n" ), url.c_str() ));
 		wxString urls = urldialog.m_textURL->GetValue(), url, strDelimiters = _T( " \t\r\n" );
         wxStringTokenizer tkz( urls, strDelimiters );
 
@@ -926,6 +925,7 @@ void MainFrame::OpenTorrentUrl()
 	    {
     		url = tkz.GetNextToken();
     		wxURL torrenturl( url );
+			WXLOGDEBUG((_T("openurl: Fetch URL %s\n"), url.c_str()));
 
     		if( isUrl( torrenturl.GetScheme() ) )
     		{
