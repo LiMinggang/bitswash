@@ -53,7 +53,7 @@ UrlDialog::UrlDialog(wxWindow* parent,wxWindowID id,const wxPoint& pos,const wxS
 	FlexGridSizer1 = new wxFlexGridSizer(2, 2, 0, 0);
 	StaticText1 = new wxStaticText(Panel1, wxID_ANY, _("URL:"), wxDefaultPosition, wxDefaultSize, 0, _T("wxID_ANY"));
 	FlexGridSizer1->Add(StaticText1, 1, wxALL|wxALIGN_LEFT|wxALIGN_TOP, 5);
-	m_textURL = new wxTextCtrl(Panel1, wxID_ANY, _("Text"), wxDefaultPosition, wxDefaultSize, wxTE_MULTILINE|wxVSCROLL, wxDefaultValidator, _T("wxID_ANY"));
+	m_textURL = new wxTextCtrl(Panel1, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, wxTE_MULTILINE|wxVSCROLL, wxDefaultValidator, _T("wxID_ANY"));
 	m_textURL->SetMinSize(wxSize(380,-1));
 	FlexGridSizer1->Add(m_textURL, 1, wxALL|wxALIGN_LEFT|wxALIGN_CENTER_VERTICAL, 5);
 	FlexGridSizer1->Add(-1,-1,1, wxALL|wxALIGN_CENTER_HORIZONTAL|wxALIGN_CENTER_VERTICAL, 5);

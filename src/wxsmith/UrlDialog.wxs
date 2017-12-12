@@ -20,7 +20,6 @@
 						</object>
 						<object class="sizeritem">
 							<object class="wxTextCtrl" name="wxID_ANY" variable="m_textURL" member="yes">
-								<value>Text</value>
 								<minsize>380,-1</minsize>
 								<style>wxTE_MULTILINE|wxVSCROLL</style>
 							</object>
