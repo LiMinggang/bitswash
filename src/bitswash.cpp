@@ -41,7 +41,9 @@
 #include "bitswash.h"
 #include "mainframe.h"
 #include "functions.h"
+#include "magneturi.h"
 
+extern wxUniChar g_ConfigSeparator;
 const wxString g_BitSwashServerStr = wxT( "BitSwashMainApp" );
 const wxString g_BitSwashTopicStr = wxT( "single-instance" );
 
@@ -188,7 +190,7 @@ bool BitSwash::OnInit()
 			for( size_t i = 0; i < m_FileNames.GetCount(); ++i )
 			{
 				//The name is what follows the last \ or /
-				fnames +=  m_FileNames[i] + wxT( '|' );
+				fnames +=  m_FileNames[i] + g_ConfigSeparator;
 			}
 
 			connection->Execute( fnames );
@@ -551,19 +553,27 @@ bool BitSwash::OnCmdLineParsed( wxCmdLineParser& cmdParser )
 	for( size_t i = 0; i < cmdParser.GetParamCount(); i++ )
 	{
 		fname = cmdParser.GetParam( i );
-		fname.Replace(wxT("\\\\"), wxT("\\"));
-		filename = fname;
-
-		filename.MakeAbsolute();
-		fname = filename.GetFullName();
-
-		//WildCard
-		wxArrayString files;
-		size_t nums = wxDir::GetAllFiles(filename.GetPath( wxPATH_GET_VOLUME | wxPATH_GET_SEPARATOR ), &files, fname, flags);
-
-		for (size_t i = 0; i < nums; ++i)
+		MagnetUri mag(fname);
+		if(mag.isValid())
 		{
-			m_FileNames.Add(files[i]);
+			m_FileNames.Add(fname);
+		}
+		else
+		{
+			fname.Replace(wxT("\\\\"), wxT("\\"));
+			filename = fname;
+
+			filename.MakeAbsolute();
+			fname = filename.GetFullName();
+
+			//WildCard
+			wxArrayString files;
+			size_t nums = wxDir::GetAllFiles(filename.GetPath( wxPATH_GET_VOLUME | wxPATH_GET_SEPARATOR ), &files, fname, flags);
+
+			for (size_t i = 0; i < nums; ++i)
+			{
+				m_FileNames.Add(files[i]);
+			}
 		}
 	}
 

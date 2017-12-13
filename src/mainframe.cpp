@@ -85,6 +85,8 @@ struct swashlang
 	wxString lang;
 };
 
+wxUniChar g_ConfigSeparator(0x1F);
+
 const struct swashlang languages[] =
 {
 	{ _T( "en_US" )},
@@ -652,13 +654,17 @@ void MainFrame::ReceiveTorrent( wxString fileorurl )
 {
 	if( g_BitSwashMainFrame )
 	{
-		wxStringTokenizer tkz( fileorurl, '|' );
+		wxStringTokenizer tkz( fileorurl, g_ConfigSeparator );
 		wxString filename;
 
 		while( tkz.HasMoreTokens() )
 		{
 			filename = tkz.GetNextToken();
-			g_BitSwashMainFrame->AddTorrent( filename, true );
+			MagnetUri mag(filename);
+			if(mag.isValid())
+				g_BitSwashMainFrame->OpenMagnetURI(filename);
+			else
+				g_BitSwashMainFrame->AddTorrent( filename, true );
 		}
 	}
 }
