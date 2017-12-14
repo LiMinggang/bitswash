@@ -682,7 +682,7 @@ void MainFrame::AddTorrent( wxString filename, bool usedefault )
 	WXLOGDEBUG(( _T( "MainFrame: Add Torrent: %s\n" ), filename.c_str() ));
 	std::shared_ptr<torrent_t> torrent = m_btsession->ParseTorrent( filename );
 
-	if( torrent->isvalid )
+	if( torrent && torrent->isvalid )
 	{
 		int idx = m_btsession->FindTorrent( wxString(torrent->hash) );
 

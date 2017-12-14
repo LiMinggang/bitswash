@@ -1029,10 +1029,10 @@ void BitTorrentSession::ScanTorrentsDirectory( const wxString& dirname )
 		WXLOGDEBUG(( _T( "Saved Torrent: %s" ), fn.GetFullPath().c_str() ));
 		torrent = ParseTorrent(fn.GetFullPath());
 
-		if (torrent->config->GetTorrentState() == TORRENT_STATE_QUEUE) /*Fist time added torrent, it's not in libtorrent*/
-			torrent->config->SetTorrentState(TORRENT_STATE_START);
-		if( torrent->isvalid )
+		if( torrent && torrent->isvalid )
 		{
+            if (torrent->config->GetTorrentState() == TORRENT_STATE_QUEUE) /*Fist time added torrent, it's not in libtorrent*/
+                torrent->config->SetTorrentState(TORRENT_STATE_START);
 			AddTorrent( torrent );
 		}
 
@@ -1265,7 +1265,7 @@ void BitTorrentSession::DumpTorrents()
 /* General function, parse torrent file into torrent_t */
 std::shared_ptr<torrent_t> BitTorrentSession::ParseTorrent( const wxString& filename )
 {
-	std::shared_ptr<torrent_t> torrent( new torrent_t() );
+	std::shared_ptr<torrent_t> torrent;
 	WXLOGDEBUG(( _T( "Parse Torrent: %s" ), filename.c_str() ));
 
 	try
@@ -1276,6 +1276,7 @@ std::shared_ptr<torrent_t> BitTorrentSession::ParseTorrent( const wxString& file
 			wxLogError( wxString::FromUTF8( ec.message().c_str() ) );
 		else
 		{
+		    torrent.reset( new torrent_t() );
 			torrent->info = t;
 			torrent->name = wxString( wxConvUTF8.cMB2WC( t->name().c_str() ) );
 			torrent->hash = InfoHash(t->info_hash());
