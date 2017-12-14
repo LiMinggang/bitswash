@@ -1373,7 +1373,7 @@ std::shared_ptr<torrent_t> BitTorrentSession::LoadMagnetUri( MagnetUri& magnetur
 
 void BitTorrentSession::UpdateTorrentFileSize(std::shared_ptr<torrent_t>& torrent)
 {
-	if(torrent->info && torrent->info->is_valid())
+	if(torrent && torrent->info && torrent->info->is_valid())
 	{
 		bool nopriority = false;
 		wxULongLong_t total_selected = 0, total = 0;
