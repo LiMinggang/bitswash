@@ -1461,18 +1461,19 @@ void BitTorrentSession::StopTorrent( std::shared_ptr<torrent_t>& torrent )
 		handle.pause(lt::torrent_handle::graceful_pause);
 		lt::torrent_status status = torrent->handle.status();
 
-		stats_t& torrentstats = torrent->config->GetTorrentStats();
-		torrentstats.progress = status.progress;
-		torrentstats.total_download = status.total_payload_download;
-		torrentstats.total_upload = status.total_payload_upload;
-		if(status.has_metadata)
-		{ torrent->handle.save_resume_data(lt::torrent_handle::save_info_dict); }
-		else
+		if (torrent->config)
 		{
-			lt::torrent_handle invalid_handle;
-			m_libbtsession->remove_torrent( handle );
-			torrent->handle = invalid_handle;
+			stats_t& torrentstats = torrent->config->GetTorrentStats();
+			torrentstats.progress = status.progress;
+			torrentstats.total_download = status.total_payload_download;
+			torrentstats.total_upload = status.total_payload_upload;
 		}
+		if(status.has_metadata && !(( t_status.state == lt::torrent_status::seeding ) || ( t_status.state == lt::torrent_status::finished )))
+		{ torrent->handle.save_resume_data(lt::torrent_handle::save_info_dict); }
+
+		lt::torrent_handle invalid_handle;
+		m_libbtsession->remove_torrent( handle );
+		torrent->handle = invalid_handle;
 	}
 
 	if(torrent->config)
