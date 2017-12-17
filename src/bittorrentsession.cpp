@@ -74,14 +74,14 @@
 struct BTQueueSortAsc
 {
 	bool operator()( const std::shared_ptr<torrent_t>& torrent_start, const std::shared_ptr<torrent_t>& torrent_end ) {
-		return torrent_start->config->GetQIndex() < torrent_end->config->GetQIndex();
+		return ((torrent_end->config->GetQIndex() > 0) && (torrent_start->config->GetQIndex() < torrent_end->config->GetQIndex()));
 	}
 };
 
 struct BTQueueSortDsc
 {
 	bool operator()( const std::shared_ptr<torrent_t>& torrent_start, const std::shared_ptr<torrent_t>& torrent_end ) {
-		return torrent_start->config->GetQIndex() > torrent_end->config->GetQIndex();
+		return ((torrent_start->config->GetQIndex() > 0) && (torrent_start->config->GetQIndex() > torrent_end->config->GetQIndex()));
 	}
 };
 
@@ -1032,8 +1032,21 @@ void BitTorrentSession::ScanTorrentsDirectory( const wxString& dirname )
 		if( torrent && torrent->isvalid )
 		{
             if (torrent->config->GetTorrentState() == TORRENT_STATE_QUEUE) /*Fist time added torrent, it's not in libtorrent*/
+        	{
                 torrent->config->SetTorrentState(TORRENT_STATE_START);
-			AddTorrent( torrent );
+        	}
+			{
+				wxMutexLocker ml( m_torrent_queue_lock );
+				if( find_torrent_from_hash( wxString(torrent->hash) ) >= 0 )
+				{
+					wxLogWarning( _T( "Torrent %s already exists" ), torrent->name.c_str() );
+				}
+				else
+				{
+					m_torrent_queue.push_back( torrent );
+					m_running_torrent_map.insert( std::pair<wxString, int>( wxString(torrent->hash), (int)(m_torrent_queue.size() - 1 )) );
+				}
+			}
 		}
 
 		cont = torrents_dir.GetNext( &filename );
@@ -1062,6 +1075,7 @@ void BitTorrentSession::ScanTorrentsDirectory( const wxString& dirname )
 	}
 
 	{
+		int maxstart = m_config->GetMaxStart(), started = 0;
 		wxMutexLocker ml( m_torrent_queue_lock );
 		std::sort( m_torrent_queue.begin(), m_torrent_queue.end(),
 				   BTQueueSortAsc() );
@@ -1070,6 +1084,18 @@ void BitTorrentSession::ScanTorrentsDirectory( const wxString& dirname )
 		for( int i = 0; i < m_torrent_queue.size(); ++i )
 		{
 			m_running_torrent_map[m_torrent_queue.at( i )->hash] = i;
+			
+			enum torrent_state state = ( enum torrent_state ) m_torrent_queue.at( i )->config->GetTorrentState();
+			
+			//XXX redundant ? StartTorrent below will call the same thing
+			if((started < maxstart) && m_torrent_queue.at( i )->isvalid &&
+					( ( state == TORRENT_STATE_START ) ||
+					( state == TORRENT_STATE_FORCE_START ) ||
+					( state == TORRENT_STATE_PAUSE ) ))
+			{
+				AddTorrentToSession( m_torrent_queue.at( i ) );
+				++started;
+			}
 		}
 	}
 }
@@ -1468,7 +1494,7 @@ void BitTorrentSession::StopTorrent( std::shared_ptr<torrent_t>& torrent )
 			torrentstats.total_download = status.total_payload_download;
 			torrentstats.total_upload = status.total_payload_upload;
 		}
-		if(status.has_metadata && !(( t_status.state == lt::torrent_status::seeding ) || ( t_status.state == lt::torrent_status::finished )))
+		if(status.has_metadata && !((status.state == lt::torrent_status::seeding ) || (status.state == lt::torrent_status::finished )))
 		{ torrent->handle.save_resume_data(lt::torrent_handle::save_info_dict); }
 
 		lt::torrent_handle invalid_handle;
@@ -2535,6 +2561,7 @@ bool BitTorrentSession::HandleAddTorrentAlert(lt::add_torrent_alert * p)
 	{
 		//std::stringstream hash_stream;
 		//hash_stream << p->handle.info_hash();
+		static int maxQindex = -1;
 		InfoHash thash(p->handle.info_hash());
 		wxString shash(thash);
 		std::shared_ptr<torrent_t> torrent;
@@ -2566,9 +2593,10 @@ bool BitTorrentSession::HandleAddTorrentAlert(lt::add_torrent_alert * p)
 				int qidx = 0, index = m_torrent_queue.size();
 				while( it != m_torrent_queue.rend() )
 				{
-					if((*it)->config->GetQIndex() != -1)
+					int lastqidx = (*it)->config->GetQIndex();
+					if(lastqidx != -1)
 					{
-						qidx = (*it)->config->GetQIndex() + 1;
+						qidx = lastqidx + 1;
 						break;
 					}
 					++it;
