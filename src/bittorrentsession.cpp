@@ -1473,8 +1473,8 @@ void BitTorrentSession::StartTorrent( std::shared_ptr<torrent_t>& torrent, bool 
 
 void BitTorrentSession::StopTorrent( std::shared_ptr<torrent_t>& torrent )
 {
-	wxASSERT(torrent);
 	wxLogInfo( _T( "%s:Stop" ), torrent->name.c_str() );
+	wxASSERT(torrent);
 	wxASSERT(torrent->isvalid);
 	wxASSERT(torrent->config);
 	lt::torrent_handle& handle = torrent->handle;
@@ -1723,12 +1723,11 @@ void BitTorrentSession::MoveTorrentBottom( std::shared_ptr<torrent_t>& torrent )
 			m_running_torrent_map[wxString(m_torrent_queue[i]->hash)] = i;
 		}
 	}
-	//std::shared_ptr<torrent_t> next_torrent( *( torrent_it + 1 ) );
 
-
-//m_torrent_queue.erase( torrent_it );
-//torrent_it = m_torrent_queue.begin() + idx + 1 ;
-//m_torrent_queue.insert( torrent_it, torrent );
+	if(torrent->handle.is_valid())
+	{
+		torrent->handle.queue_position_bottom();
+	}
 }
 
 void BitTorrentSession::MoveTorrentTop( std::shared_ptr<torrent_t>& torrent )
