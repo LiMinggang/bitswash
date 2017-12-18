@@ -1494,12 +1494,27 @@ void BitTorrentSession::StopTorrent( std::shared_ptr<torrent_t>& torrent )
 			torrentstats.total_download = status.total_payload_download;
 			torrentstats.total_upload = status.total_payload_upload;
 		}
-		if(status.has_metadata && !((status.state == lt::torrent_status::seeding ) || (status.state == lt::torrent_status::finished )))
-		{ torrent->handle.save_resume_data(lt::torrent_handle::save_info_dict); }
 
-		lt::torrent_handle invalid_handle;
-		m_libbtsession->remove_torrent( handle );
-		torrent->handle = invalid_handle;
+		try
+		{
+			if (status.has_metadata && !((status.state == lt::torrent_status::seeding) || (status.state == lt::torrent_status::finished)))
+			{
+				torrent->handle.save_resume_data(lt::torrent_handle::save_info_dict);
+			}
+
+			lt::torrent_handle invalid_handle;
+			m_libbtsession->remove_torrent(handle);
+			torrent->handle = invalid_handle;
+		}
+		catch (std::exception& e)
+		{
+			//posibly duplicate torrent
+			wxLogFatalError(wxString::FromUTF8(e.what()));
+		}
+		catch (...)
+		{
+			wxLogFatalError(_T("Unknown Exception: %s"), __FUNCTION__);
+		}
 	}
 
 	if(torrent->config)
@@ -1525,6 +1540,8 @@ void BitTorrentSession::QueueTorrent( std::shared_ptr<torrent_t>& torrent )
 	wxASSERT(torrent->config);
 	lt::torrent_handle& handle = torrent->handle;
 
+	torrent->config->SetTorrentState( TORRENT_STATE_QUEUE );
+	torrent->config->Save();
 	if (handle.is_valid())
 	{
 		lt::torrent_status status = torrent->handle.status(lt::torrent_handle::query_distributed_copies);
@@ -1539,9 +1556,6 @@ void BitTorrentSession::QueueTorrent( std::shared_ptr<torrent_t>& torrent )
 	{
 		AddTorrentToSession(torrent);
 	}
-
-	torrent->config->SetTorrentState( TORRENT_STATE_QUEUE );
-	torrent->config->Save();
 }
 
 void BitTorrentSession::PauseTorrent( std::shared_ptr<torrent_t>& torrent )
@@ -1551,13 +1565,10 @@ void BitTorrentSession::PauseTorrent( std::shared_ptr<torrent_t>& torrent )
 	wxASSERT(torrent->config);
 	lt::torrent_handle& handle = torrent->handle;
 
-	if( !handle.is_valid() )
+	torrent->config->SetTorrentState( TORRENT_STATE_PAUSE );
+	torrent->config->Save();
+	if (handle.is_valid())
 	{
-		AddTorrentToSession( torrent );
-	}
-	else
-    {
-
 		lt::torrent_status status = torrent->handle.status(lt::torrent_handle::query_distributed_copies);
 
 		stats_t& torrentstats = torrent->config->GetTorrentStats();
@@ -1566,9 +1577,10 @@ void BitTorrentSession::PauseTorrent( std::shared_ptr<torrent_t>& torrent )
 		torrentstats.total_upload = status.total_payload_upload;
 		handle.pause(lt::torrent_handle::graceful_pause);
 	}
-
-	torrent->config->SetTorrentState( TORRENT_STATE_PAUSE );
-	torrent->config->Save();
+	else
+	{
+		AddTorrentToSession(torrent);
+	}
 }
 
 void BitTorrentSession::MoveTorrentUp( std::shared_ptr<torrent_t>& torrent )
