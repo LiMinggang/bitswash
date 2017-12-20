@@ -1523,12 +1523,17 @@ void BitTorrentSession::StopTorrent( std::shared_ptr<torrent_t>& torrent )
 
 void BitTorrentSession::QueueTorrent( std::shared_ptr<torrent_t>& torrent )
 {
-	//wxLogInfo(_T("%s: Queue"), torrent->name.c_str());
+	QueueTorrent(torrent, TORRENT_STATE_QUEUE);
+	wxLogInfo( _T( "%s: Queueed" ), torrent->name.c_str() );
+}
+
+void BitTorrentSession::QueueTorrent(std::shared_ptr<torrent_t>& torrent, int state)
+{
 	wxASSERT(torrent->isvalid);
 	wxASSERT(torrent->config);
 	lt::torrent_handle& handle = torrent->handle;
 
-	torrent->config->SetTorrentState( TORRENT_STATE_QUEUE );
+	torrent->config->SetTorrentState( state );
 	torrent->config->Save();
 	if (handle.is_valid())
 	{
@@ -1548,27 +1553,8 @@ void BitTorrentSession::QueueTorrent( std::shared_ptr<torrent_t>& torrent )
 
 void BitTorrentSession::PauseTorrent( std::shared_ptr<torrent_t>& torrent )
 {
-	wxLogInfo( _T( "%s: Pause" ), torrent->name.c_str() );
-	wxASSERT(torrent->isvalid);
-	wxASSERT(torrent->config);
-	lt::torrent_handle& handle = torrent->handle;
-
-	torrent->config->SetTorrentState( TORRENT_STATE_PAUSE );
-	torrent->config->Save();
-	if (handle.is_valid())
-	{
-		lt::torrent_status status = torrent->handle.status(lt::torrent_handle::query_distributed_copies);
-
-		stats_t& torrentstats = torrent->config->GetTorrentStats();
-		torrentstats.progress = status.progress;
-		torrentstats.total_download = status.total_payload_download;
-		torrentstats.total_upload = status.total_payload_upload;
-		handle.pause(lt::torrent_handle::graceful_pause);
-	}
-	else
-	{
-		AddTorrentToSession(torrent);
-	}
+	QueueTorrent(torrent, TORRENT_STATE_PAUSE);
+	wxLogInfo( _T( "%s: Paused" ), torrent->name.c_str() );
 }
 
 void BitTorrentSession::MoveTorrentUp( std::shared_ptr<torrent_t>& torrent )

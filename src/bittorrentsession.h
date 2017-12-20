@@ -140,6 +140,7 @@ public:
 	void StartTorrent(std::shared_ptr<torrent_t>& torrent, bool force);
 	void StopTorrent(std::shared_ptr<torrent_t>& torrent);
 	void QueueTorrent(std::shared_ptr<torrent_t>& torrent);
+	void QueueTorrent(std::shared_ptr<torrent_t>& torrent, int state);
 	void PauseTorrent(std::shared_ptr<torrent_t>& torrent);
 	void MoveTorrentUp(std::shared_ptr<torrent_t>& torrent);
 	void MoveTorrentDown(std::shared_ptr<torrent_t>& torrent);
