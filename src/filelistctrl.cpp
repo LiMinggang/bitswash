@@ -92,39 +92,6 @@ static SwashColumnItem filelistcols[] =
 };
 #endif
 
-// sort using a custom function object
-struct fsDsc{
-	bool operator()(long a, long b) const
-	{
-		return allfiles->file_size(lt::file_index_t(a)) > allfiles->file_size(lt::file_index_t(b));
-	}
-	lt::file_storage const * allfiles;
-} ;
-
-struct fsAsc{
-	bool operator()(long a, long b) const
-	{
-		return allfiles->file_size(lt::file_index_t(a)) < allfiles->file_size(lt::file_index_t(b));
-	}
-	lt::file_storage const * allfiles;
-} ;
-
-struct fnDsc{
-	bool operator()(long a, long b) const
-	{
-		return allfiles->file_name(lt::file_index_t(a)) > allfiles->file_name(lt::file_index_t(b));
-	}
-	lt::file_storage const * allfiles;
-} ;
-
-struct fnAsc{
-	bool operator()(long a, long b) const
-	{
-		return allfiles->file_name(lt::file_index_t(a)) < allfiles->file_name(lt::file_index_t(b));
-	}
-	lt::file_storage const * allfiles;
-} ;
-
 struct prgDsc{
 	bool operator()(long a, long b) const
 	{
@@ -208,45 +175,55 @@ void FileListCtrl::OnColClick(wxListEvent& event)
 		case FILELIST_COLUMN_FILE:
 			if(second)
 			{
-				fnDsc st;
-				st.allfiles = &(pTorrent->info->files());
-				std::sort(pTorrent->fileindex.begin(), pTorrent->fileindex.end(), st);
+				std::sort(pTorrent->fileindex.begin(), pTorrent->fileindex.end(), [&] (long a, long b)
+					{
+						return pTorrent->info->files().file_name(lt::file_index_t(a)) > pTorrent->info->files().file_name(lt::file_index_t(b));
+					});
 			}
 			else
 			{
-				fnAsc st;
-				st.allfiles = &(pTorrent->info->files());
-				std::sort(pTorrent->fileindex.begin(), pTorrent->fileindex.end(), st);
+				std::sort(pTorrent->fileindex.begin(), pTorrent->fileindex.end(), [&](long a, long b)
+					{
+						return pTorrent->info->files().file_name(lt::file_index_t(a)) < pTorrent->info->files().file_name(lt::file_index_t(b));
+					});
 			}
 			break;
 		case FILELIST_COLUMN_PROGRESS:
 			if(second)
 			{
-				prgDsc st;
-				st.h = pTorrent->handle;
-				st.allfiles = &(pTorrent->info->files());
-				std::sort(pTorrent->fileindex.begin(), pTorrent->fileindex.end(), st);
+				std::sort(pTorrent->fileindex.begin(), pTorrent->fileindex.end(), [&](long a, long b) 
+					{
+						std::vector<boost::int64_t> f_progress;
+						pTorrent->handle.file_progress(f_progress, lt::torrent_handle::piece_granularity);
+
+						return ((100 * f_progress[a]) / (pTorrent->info->files().file_size(lt::file_index_t(a)))) > ((100 * f_progress[b]) / ((wxDouble)pTorrent->info->files().file_size(lt::file_index_t(b))));
+					});
 			}
 			else
 			{
-				prgAsc st;
-				st.h = pTorrent->handle;
-				st.allfiles = &(pTorrent->info->files());
-				std::sort(pTorrent->fileindex.begin(), pTorrent->fileindex.end(), st);
+				std::sort(pTorrent->fileindex.begin(), pTorrent->fileindex.end(), [&](long a, long b)
+					{
+						std::vector<boost::int64_t> f_progress;
+						pTorrent->handle.file_progress(f_progress, lt::torrent_handle::piece_granularity);
+
+						return ((100 * f_progress[a]) / (pTorrent->info->files().file_size(lt::file_index_t(a)))) < ((100 * f_progress[b]) / ((wxDouble)pTorrent->info->files().file_size(lt::file_index_t(b))));
+					});
 			}
 			break;
 		case FILELIST_COLUMN_SIZE:
 			if(second)
 			{
-				fsAsc st;
-				st.allfiles = &(pTorrent->info->files());
-				std::sort(pTorrent->fileindex.begin(), pTorrent->fileindex.end(), st);
+				std::sort(pTorrent->fileindex.begin(), pTorrent->fileindex.end(), [&](long a, long b)
+					{
+						return pTorrent->info->files().file_size(lt::file_index_t(a)) > pTorrent->info->files().file_size(lt::file_index_t(b));
+					});
 				break;
 			}
 		default:
-			fsDsc st;
-			st.allfiles = &(pTorrent->info->files());
-			std::sort(pTorrent->fileindex.begin(), pTorrent->fileindex.end(), st);
+			std::sort(pTorrent->fileindex.begin(), pTorrent->fileindex.end(), [&](long a, long b)
+				{
+					return pTorrent->info->files().file_size(lt::file_index_t(a)) < pTorrent->info->files().file_size(lt::file_index_t(b));
+				});
 	}
 
 	m_lastclickcol = col;
