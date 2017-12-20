@@ -71,20 +71,6 @@
 	#error you must not disable DHT
 #endif
 
-struct BTQueueSortAsc
-{
-	bool operator()( const std::shared_ptr<torrent_t>& torrent_start, const std::shared_ptr<torrent_t>& torrent_end ) {
-		return ((torrent_end->config->GetQIndex() > 0) && (torrent_start->config->GetQIndex() < torrent_end->config->GetQIndex()));
-	}
-};
-
-struct BTQueueSortDsc
-{
-	bool operator()( const std::shared_ptr<torrent_t>& torrent_start, const std::shared_ptr<torrent_t>& torrent_end ) {
-		return ((torrent_start->config->GetQIndex() > 0) && (torrent_start->config->GetQIndex() > torrent_end->config->GetQIndex()));
-	}
-};
-
 std::string to_hex(lt::sha1_hash const& s)
 {
 	std::stringstream ret;
@@ -1077,8 +1063,10 @@ void BitTorrentSession::ScanTorrentsDirectory( const wxString& dirname )
 	{
 		int maxstart = m_config->GetMaxStart(), started = 0;
 		wxMutexLocker ml( m_torrent_queue_lock );
-		std::sort( m_torrent_queue.begin(), m_torrent_queue.end(),
-				   BTQueueSortAsc() );
+		std::sort( m_torrent_queue.begin(), m_torrent_queue.end(), [&] ( const std::shared_ptr<torrent_t>& torrent_start, const std::shared_ptr<torrent_t>& torrent_end )
+			{
+				return ((torrent_end->config->GetQIndex() > 0) && (torrent_start->config->GetQIndex() < torrent_end->config->GetQIndex()));
+			});
 		m_running_torrent_map.clear();
 
 		for( int i = 0; i < m_torrent_queue.size(); ++i )
@@ -1836,7 +1824,6 @@ void BitTorrentSession::RecheckTorrent( std::shared_ptr<torrent_t>& torrent )
 		{
 			PauseTorrent( torrent );
 		}
-
 }
 
 void BitTorrentSession::ConfigureTorrentFilesPriority( std::shared_ptr<torrent_t>& torrent )
