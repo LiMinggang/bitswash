@@ -72,7 +72,6 @@
 #include "urldialog.h"
 #include "swashlistctrl.h" //for itemlist_t
 #include "magneturi.h"
-#include "magneturihandler.h"
 
 //namespace lt = libtorrent;
 wxDEFINE_EVENT( CHECK_METADATA, wxCommandEvent );
