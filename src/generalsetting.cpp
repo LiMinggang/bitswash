@@ -36,6 +36,18 @@ GeneralSettingPane::GeneralSettingPane( wxWindow* parent,
 			wxSize size, 
 			int style): wxPanel(parent, id, pos, size, style)
 {
+	wxPanel* m_pane_infogeneral;
+	wxStaticText* m_static_infogeneral;
+	wxStaticText* m_static_maxstart;
+	wxPanel* m_pane_infogui;
+	wxStaticText* m_static_infogui;
+	wxStaticText* m_static_refreshtimer;
+	wxStaticText* m_static_fastresume_save_time;
+	wxPanel* m_pane_infolog;
+	wxStaticText* m_static_infolog;
+	wxStaticText* m_static_logseverity;
+	wxStaticText* m_static_loglinecount;
+
 	m_pMainFrame = dynamic_cast<MainFrame *>( wxGetApp().GetTopWindow() );
 	wxASSERT(m_pMainFrame != nullptr);
 	m_pcfg = m_pMainFrame->GetConfig();
