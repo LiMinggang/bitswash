@@ -57,9 +57,6 @@
     <ClInclude Include="..\..\..\libtorrent\include\libtorrent\alert_types.hpp">
       <Filter>Header Files\libtorrent</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\libtorrent\include\libtorrent\alloca.hpp">
-      <Filter>Header Files\libtorrent</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\..\libtorrent\include\libtorrent\allocator.hpp">
       <Filter>Header Files\libtorrent</Filter>
     </ClInclude>
@@ -276,9 +273,6 @@
     <ClInclude Include="..\..\..\libtorrent\include\libtorrent\magnet_uri.hpp">
       <Filter>Header Files\libtorrent</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\libtorrent\include\libtorrent\max.hpp">
-      <Filter>Header Files\libtorrent</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\..\libtorrent\include\libtorrent\extensions\metadata_transfer.hpp">
       <Filter>Header Files\libtorrent</Filter>
     </ClInclude>
@@ -354,9 +348,6 @@
     <ClInclude Include="..\..\..\libtorrent\include\libtorrent\kademlia\rpc_manager.hpp">
       <Filter>Header Files\libtorrent</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\libtorrent\include\libtorrent\rss.hpp">
-      <Filter>Header Files\libtorrent</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\..\libtorrent\include\libtorrent\session.hpp">
       <Filter>Header Files\libtorrent</Filter>
     </ClInclude>
@@ -379,9 +370,6 @@
       <Filter>Header Files\libtorrent</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\libtorrent\include\libtorrent\sliding_average.hpp">
-      <Filter>Header Files\libtorrent</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\libtorrent\include\libtorrent\extensions\smart_ban.hpp">
       <Filter>Header Files\libtorrent</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\libtorrent\include\libtorrent\socket.hpp">
@@ -414,25 +402,10 @@
     <ClInclude Include="..\..\..\libtorrent\include\libtorrent\string_util.hpp">
       <Filter>Header Files\libtorrent</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\libtorrent\include\libtorrent\thread.hpp">
-      <Filter>Header Files\libtorrent</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\..\libtorrent\include\libtorrent\time.hpp">
       <Filter>Header Files\libtorrent</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\libtorrent\include\libtorrent\timestamp_history.hpp">
-      <Filter>Header Files\libtorrent</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\libtorrent\include\libtorrent\tommath.h">
-      <Filter>Header Files\libtorrent</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\libtorrent\include\libtorrent\tommath_class.h">
-      <Filter>Header Files\libtorrent</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\libtorrent\include\libtorrent\tommath_private.h">
-      <Filter>Header Files\libtorrent</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\libtorrent\include\libtorrent\tommath_superclass.h">
       <Filter>Header Files\libtorrent</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\libtorrent\include\libtorrent\torrent.hpp">
@@ -460,12 +433,6 @@
       <Filter>Header Files\libtorrent</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\libtorrent\include\libtorrent\upnp.hpp">
-      <Filter>Header Files\libtorrent</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\libtorrent\include\libtorrent\extensions\ut_metadata.hpp">
-      <Filter>Header Files\libtorrent</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\libtorrent\include\libtorrent\extensions\ut_pex.hpp">
       <Filter>Header Files\libtorrent</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\libtorrent\include\libtorrent\utf8.hpp">
@@ -621,9 +588,6 @@
     <ClInclude Include="..\..\..\libtorrent\include\libtorrent\linked_list.hpp">
       <Filter>Header Files\libtorrent</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\libtorrent\include\libtorrent\network_thread_pool.hpp">
-      <Filter>Header Files\libtorrent</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\..\libtorrent\include\libtorrent\operations.hpp">
       <Filter>Header Files\libtorrent</Filter>
     </ClInclude>
@@ -687,16 +651,10 @@
     <ClInclude Include="..\..\..\libtorrent\include\libtorrent\tailqueue.hpp">
       <Filter>Header Files\libtorrent</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\libtorrent\include\libtorrent\thread_pool.hpp">
-      <Filter>Header Files\libtorrent</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\..\libtorrent\include\libtorrent\torrent_peer.hpp">
       <Filter>Header Files\libtorrent</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\libtorrent\include\libtorrent\torrent_status.hpp">
-      <Filter>Header Files\libtorrent</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\libtorrent\include\libtorrent\uncork_interface.hpp">
       <Filter>Header Files\libtorrent</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\libtorrent\include\libtorrent\vector_utils.hpp">
@@ -953,6 +911,15 @@
     </ClInclude>
     <ClInclude Include="..\..\..\libtorrent\include\libtorrent\optional.hpp">
       <Filter>Header Files\libtorrent</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\libtorrent\include\libtorrent\extensions\ut_metadata.hpp">
+      <Filter>Header Files\libtorrent\extention</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\libtorrent\include\libtorrent\extensions\ut_pex.hpp">
+      <Filter>Header Files\libtorrent\extention</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\libtorrent\include\libtorrent\extensions\smart_ban.hpp">
+      <Filter>Header Files\libtorrent\extention</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -1566,12 +1533,6 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <None Include="..\..\..\libtorrent\include\libtorrent\Makefile.am">
-      <Filter>Header Files\libtorrent</Filter>
-    </None>
-    <None Include="..\..\..\libtorrent\include\libtorrent\Makefile.in">
-      <Filter>Header Files\libtorrent</Filter>
-    </None>
     <None Include="..\..\..\src\wx\msw\hand.cur">
       <Filter>Resource Files</Filter>
     </None>

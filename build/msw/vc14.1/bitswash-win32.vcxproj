@@ -202,7 +202,6 @@
     <ClInclude Include="..\..\..\libtorrent\include\libtorrent\alert.hpp" />
     <ClInclude Include="..\..\..\libtorrent\include\libtorrent\alert_manager.hpp" />
     <ClInclude Include="..\..\..\libtorrent\include\libtorrent\alert_types.hpp" />
-    <ClInclude Include="..\..\..\libtorrent\include\libtorrent\alloca.hpp" />
     <ClInclude Include="..\..\..\libtorrent\include\libtorrent\allocator.hpp" />
     <ClInclude Include="..\..\..\libtorrent\include\libtorrent\announce_entry.hpp" />
     <ClInclude Include="..\..\..\libtorrent\include\libtorrent\assert.hpp" />
@@ -360,10 +359,8 @@
     <ClInclude Include="..\..\..\libtorrent\include\libtorrent\linked_list.hpp" />
     <ClInclude Include="..\..\..\libtorrent\include\libtorrent\lsd.hpp" />
     <ClInclude Include="..\..\..\libtorrent\include\libtorrent\magnet_uri.hpp" />
-    <ClInclude Include="..\..\..\libtorrent\include\libtorrent\max.hpp" />
     <ClInclude Include="..\..\..\libtorrent\include\libtorrent\natpmp.hpp" />
     <ClInclude Include="..\..\..\libtorrent\include\libtorrent\netlink.hpp" />
-    <ClInclude Include="..\..\..\libtorrent\include\libtorrent\network_thread_pool.hpp" />
     <ClInclude Include="..\..\..\libtorrent\include\libtorrent\operations.hpp" />
     <ClInclude Include="..\..\..\libtorrent\include\libtorrent\optional.hpp" />
     <ClInclude Include="..\..\..\libtorrent\include\libtorrent\packet_buffer.hpp" />
@@ -399,7 +396,6 @@
     <ClInclude Include="..\..\..\libtorrent\include\libtorrent\resolver.hpp" />
     <ClInclude Include="..\..\..\libtorrent\include\libtorrent\resolver_interface.hpp" />
     <ClInclude Include="..\..\..\libtorrent\include\libtorrent\resolve_links.hpp" />
-    <ClInclude Include="..\..\..\libtorrent\include\libtorrent\rss.hpp" />
     <ClInclude Include="..\..\..\libtorrent\include\libtorrent\session.hpp" />
     <ClInclude Include="..\..\..\libtorrent\include\libtorrent\session_handle.hpp" />
     <ClInclude Include="..\..\..\libtorrent\include\libtorrent\session_settings.hpp" />
@@ -428,14 +424,8 @@
     <ClInclude Include="..\..\..\libtorrent\include\libtorrent\string_util.hpp" />
     <ClInclude Include="..\..\..\libtorrent\include\libtorrent\string_view.hpp" />
     <ClInclude Include="..\..\..\libtorrent\include\libtorrent\tailqueue.hpp" />
-    <ClInclude Include="..\..\..\libtorrent\include\libtorrent\thread.hpp" />
-    <ClInclude Include="..\..\..\libtorrent\include\libtorrent\thread_pool.hpp" />
     <ClInclude Include="..\..\..\libtorrent\include\libtorrent\time.hpp" />
     <ClInclude Include="..\..\..\libtorrent\include\libtorrent\timestamp_history.hpp" />
-    <ClInclude Include="..\..\..\libtorrent\include\libtorrent\tommath.h" />
-    <ClInclude Include="..\..\..\libtorrent\include\libtorrent\tommath_class.h" />
-    <ClInclude Include="..\..\..\libtorrent\include\libtorrent\tommath_private.h" />
-    <ClInclude Include="..\..\..\libtorrent\include\libtorrent\tommath_superclass.h" />
     <ClInclude Include="..\..\..\libtorrent\include\libtorrent\torrent.hpp" />
     <ClInclude Include="..\..\..\libtorrent\include\libtorrent\torrent_flags.hpp" />
     <ClInclude Include="..\..\..\libtorrent\include\libtorrent\torrent_handle.hpp" />
@@ -446,7 +436,6 @@
     <ClInclude Include="..\..\..\libtorrent\include\libtorrent\tracker_manager.hpp" />
     <ClInclude Include="..\..\..\libtorrent\include\libtorrent\udp_socket.hpp" />
     <ClInclude Include="..\..\..\libtorrent\include\libtorrent\udp_tracker_connection.hpp" />
-    <ClInclude Include="..\..\..\libtorrent\include\libtorrent\uncork_interface.hpp" />
     <ClInclude Include="..\..\..\libtorrent\include\libtorrent\union_endpoint.hpp" />
     <ClInclude Include="..\..\..\libtorrent\include\libtorrent\units.hpp" />
     <ClInclude Include="..\..\..\libtorrent\include\libtorrent\upnp.hpp" />
@@ -762,8 +751,6 @@
     <ClCompile Include="..\..\..\src\urldialog.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="..\..\..\libtorrent\include\libtorrent\Makefile.am" />
-    <None Include="..\..\..\libtorrent\include\libtorrent\Makefile.in" />
     <None Include="..\..\..\src\wx\msw\blank.cur" />
     <None Include="..\..\..\src\wx\msw\bullseye.cur" />
     <None Include="..\..\..\src\wx\msw\cross.cur" />
