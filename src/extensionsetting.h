@@ -49,26 +49,15 @@ public:
 private:
 	Configuration *m_pcfg;
 
-	wxPanel* m_pane_infoextension;
-	wxStaticText* m_static_infoextension;
 	wxCheckBox* m_check_metadata;
 	wxCheckBox* m_check_pex;
-	wxPanel* m_pane_infoencryption;
-	wxStaticText* m_static_infoencryption;
 	wxCheckBox* m_check_pe;
 	wxCheckBox* m_check_pe_notforce;
-	wxPanel* m_pane_infonetwork;
-	wxStaticText* m_static_infonat;
 	wxCheckBox* m_check_upnp;
 	wxCheckBox* m_check_natpmp;
 	wxCheckBox* m_check_lsd;
 
 	void OnEnablePe(wxCommandEvent& event);
-	#if 0
-	void OnCheckUpnp(wxCommandEvent& event);
-	void OnCheckNatpmp(wxCommandEvent& event);
-	void OnCheckLsd(wxCommandEvent& event);
-	#endif
 private:
 };
 

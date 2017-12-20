@@ -693,9 +693,6 @@
     <ClInclude Include="..\..\..\src\icon.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\src\magneturihandler.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\..\libtorrent\include\libtorrent\kademlia\dht_settings.hpp">
       <Filter>Header Files\libtorrent\kademlia</Filter>
     </ClInclude>
@@ -1457,9 +1454,6 @@
       <Filter>Source Files\libgeoip</Filter>
     </ClCompile>
     <ClCompile Include="..\..\..\src\icons.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\src\magneturihandler.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="..\..\..\libtorrent\src\add_torrent_params.cpp">

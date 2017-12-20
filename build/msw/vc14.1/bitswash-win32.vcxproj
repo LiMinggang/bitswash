@@ -470,7 +470,6 @@
     <ClInclude Include="..\..\..\src\generalsetting.h" />
     <ClInclude Include="..\..\..\src\icon.h" />
     <ClInclude Include="..\..\..\src\loggerctrl.h" />
-    <ClInclude Include="..\..\..\src\magneturihandler.h" />
     <ClInclude Include="..\..\..\src\mainframe.h" />
     <ClInclude Include="..\..\..\src\peerlistctrl.h" />
     <ClInclude Include="..\..\..\src\resource.h" />
@@ -733,7 +732,6 @@
     <ClCompile Include="..\..\..\src\infohash.cpp" />
     <ClCompile Include="..\..\..\src\loggerctrl.cpp" />
     <ClCompile Include="..\..\..\src\magneturi.cpp" />
-    <ClCompile Include="..\..\..\src\magneturihandler.cpp" />
     <ClCompile Include="..\..\..\src\mainframe.cpp" />
     <ClCompile Include="..\..\..\src\peerlistctrl.cpp" />
     <ClCompile Include="..\..\..\src\summarypane.cpp" />
