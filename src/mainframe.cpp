@@ -402,7 +402,7 @@ void MainFrame::OnMenuTorrentOpenDir( wxCommandEvent& event )
 #elif defined(__WXGTK__)
 		wxString loc = _T( "file://" ) + pTorrent->config->GetDownloadPath() + wxConvUTF8.cMB2WC(pTorrent->info->name().c_str() ) + wxFileName::GetPathSeparator();
 		//SystemOpenURL( loc );
-		wxLaunchDefaultBrowser( _T( "file://" ) + filepath );
+		wxLaunchDefaultBrowser( loc );
 #endif
 	}
 }

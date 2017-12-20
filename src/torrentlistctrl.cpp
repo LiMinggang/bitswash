@@ -283,31 +283,54 @@ void TorrentListCtrl::OnLeftDClick(wxMouseEvent& event)
 
 	if( pTorrent )
 	{
-		bool nopriority = false;
+		bool openpath = false, nopriority = false;
+		int fileidx = -1;
 		lt::torrent_info const& torrentinfo = *(pTorrent->info);
 		std::vector<lt::download_priority_t> & filespriority = pTorrent->config->GetFilesPriorities();
-		
-		if( filespriority.size() != torrentinfo.num_files() )
+		int nfiles = torrentinfo.num_files();
+		if( filespriority.size() != nfiles )
 		{
 			nopriority = true;
 		}
 
-		for(int i  = 0; i < torrentinfo.num_files(); ++i)
+		if((nfiles == 1) || ((nfiles > 1) && (!nopriority)))
 		{
-			if(nopriority || filespriority.at(i) != TorrentConfig::file_none)
+			wxString fname;
+			int seled = 0;
+			for(int i  = 0; i < nfiles; ++i)
 			{
-				lt::file_storage const& allfiles = torrentinfo.files();
-				lt::file_index_t idx(i);
-				wxString fname(pTorrent->config->GetDownloadPath() + wxString::FromUTF8((allfiles.file_path(idx)).c_str()));
+				if(filespriority.at(i) != TorrentConfig::file_none)
+				{
+					++seled;
+					if(seled > 1) break;
+					lt::file_storage const& allfiles = torrentinfo.files();
+					lt::file_index_t idx(i);
+					fname = pTorrent->config->GetDownloadPath() + wxString::FromUTF8((allfiles.file_path(idx)).c_str());
+				}
+			}
+
+			if(seled == 1)
+			{
 				wxFileName filename (fname);
 				filename.MakeAbsolute();
 				//wxLogDebug(_T("File path %s\n"), filename.GetFullPath().c_str());
 				if(wxFileName::FileExists(filename.GetFullPath()))
 				{
 					wxLaunchDefaultApplication(filename.GetFullPath()); 
-				}
+					return;
+ 				}
 			}
+
 		}
+#if  defined(__WXMSW__)
+		wxExecute( _T( "Explorer " ) + pTorrent->config->GetDownloadPath() + wxConvUTF8.cMB2WC(pTorrent->info->name().c_str() ) + wxFileName::GetPathSeparator(), wxEXEC_ASYNC, nullptr );
+#elif defined(__APPLE__)
+		wxExecute( _T( "/usr/bin/open ") + pTorrent->config->GetDownloadPath() + wxConvUTF8.cMB2WC(pTorrent->info->name().c_str() ) + wxFileName::GetPathSeparator(), wxEXEC_ASYNC, nullptr );
+#elif defined(__WXGTK__)
+		wxString loc = _T( "file://" ) + pTorrent->config->GetDownloadPath() + wxConvUTF8.cMB2WC(pTorrent->info->name().c_str() ) + wxFileName::GetPathSeparator();
+		//SystemOpenURL( loc );
+		wxLaunchDefaultBrowser( loc );
+#endif
 	}
 }
 
