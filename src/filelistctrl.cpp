@@ -215,14 +215,14 @@ void FileListCtrl::OnColClick(wxListEvent& event)
 			{
 				std::sort(pTorrent->fileindex.begin(), pTorrent->fileindex.end(), [&](long a, long b)
 					{
-						return pTorrent->info->files().file_size(lt::file_index_t(a)) > pTorrent->info->files().file_size(lt::file_index_t(b));
+						return pTorrent->info->files().file_size(lt::file_index_t(a)) < pTorrent->info->files().file_size(lt::file_index_t(b));
 					});
 				break;
 			}
 		default:
 			std::sort(pTorrent->fileindex.begin(), pTorrent->fileindex.end(), [&](long a, long b)
 				{
-					return pTorrent->info->files().file_size(lt::file_index_t(a)) < pTorrent->info->files().file_size(lt::file_index_t(b));
+					return pTorrent->info->files().file_size(lt::file_index_t(a)) > pTorrent->info->files().file_size(lt::file_index_t(b));
 				});
 	}
 
