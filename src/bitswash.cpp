@@ -607,7 +607,6 @@ void BitSwashStackWalker::OnStackFrame( const wxStackFrame & frame )
 
 			if( ++i < count ) paramInfo += wxT( ", " );
 		}
-
 #endif
 		paramInfo += wxT( ")" );
 		m_DumpFile->Write( wxString::Format( fmt,

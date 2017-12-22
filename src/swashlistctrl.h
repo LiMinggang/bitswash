@@ -34,11 +34,10 @@
 // not all ports have support for EVT_CONTEXT_MENU yet, don't define
 // USE_CONTEXT_MENU for those which don't
 #if defined(__WXMOTIF__) || defined(__WXPM__) || defined(__WXX11__) || defined(__WXMGL__)
-    #define USE_CONTEXT_MENU 0
+	#define USE_CONTEXT_MENU 0
 #else
-    #define USE_CONTEXT_MENU 1
+	#define USE_CONTEXT_MENU 1
 #endif
-
 
 /* struct used for both column header setup 
  * and populate list data
@@ -65,37 +64,14 @@ class SwashListCtrl: public wxListView
 {
 public:
 
-	// IDs for the menu commands
-	enum
-	{
-	    ID_SWASH_LIST_DESELECT_ALL,
-	    ID_SWASH_LIST_SELECT_ALL,
-	    ID_SWASH_LIST_DELETE_ALL,
-	    ID_SWASH_LIST_DELETE,
-	    ID_SWASH_LIST_ADD,
-	    ID_SWASH_LIST_EDIT,
-	    ID_SWASH_LIST_SORT,
-	    ID_SWASH_LIST_SET_FG_COL,
-	    ID_SWASH_LIST_SET_BG_COL,
-	    ID_SWASH_LIST_TOGGLE_MULTI_SEL,
-	    ID_SWASH_LIST_TOGGLE_FIRST,
-	    ID_SWASH_LIST_SHOW_COL_INFO,
-	    ID_SWASH_LIST_SHOW_SEL_INFO,
-	    ID_SWASH_LIST_FOCUS_LAST,
-	    ID_SWASH_LIST_FREEZE,
-	    ID_SWASH_LIST_THAW,
-	    ID_SWASH_LIST_TOGGLE_LINES,
-    	ID_SWASH_LIST_CTRL, 
-	};
-
-    SwashListCtrl(wxWindow *parent,
-			   long num_cols = 0,
-			   SwashColumnItem *columns = nullptr,
-			   const wxString settings = wxEmptyString,
-               const wxWindowID id = wxID_ANY,
-               const wxPoint& pos = wxDefaultPosition,
-               const wxSize& size = wxDefaultSize,
-               long style = wxLC_VIRTUAL | wxLC_REPORT | wxSUNKEN_BORDER);
+	SwashListCtrl(wxWindow *parent,
+			long num_cols = 0,
+			SwashColumnItem *columns = nullptr,
+			const wxString settings = wxEmptyString,
+			const wxWindowID id = wxID_ANY,
+			const wxPoint& pos = wxDefaultPosition,
+			const wxSize& size = wxDefaultSize,
+			long style = wxLC_VIRTUAL | wxLC_REPORT | wxSUNKEN_BORDER);
 
 	virtual ~SwashListCtrl();
 
@@ -106,8 +82,7 @@ public:
 					const wxPoint& pos , 
 					const wxSize& size ,
 					long style);
-					
-												 
+
 	wxString Settings() const; //return list setting in comma separated wxString
 	void Settings(wxString s); // set list settings with command seperated string
 
@@ -116,57 +91,56 @@ public:
 	void UpdateSwashList();
 	/* returns list of selected items */
 	void GetSelectedItems(itemlist_t & items) const;
-	
+
 protected:
 
-    virtual void OnColClick(wxListEvent& event);
-    virtual void OnColRightClick(wxListEvent& event);
-    virtual void OnColBeginDrag(wxListEvent& event);
-    virtual void OnColDragging(wxListEvent& event);
-    virtual void OnColEndDrag(wxListEvent& event);
-    virtual void OnBeginDrag(wxListEvent& event);
-    virtual void OnBeginRDrag(wxListEvent& event);
-    virtual void OnBeginLabelEdit(wxListEvent& event);
-    virtual void OnEndLabelEdit(wxListEvent& event);
-    virtual void OnDeleteItem(wxListEvent& event);
-    virtual void OnDeleteAllItems(wxListEvent& event);
+	virtual void OnColClick(wxListEvent& event);
+	virtual void OnColRightClick(wxListEvent& event);
+	virtual void OnColBeginDrag(wxListEvent& event);
+	virtual void OnColDragging(wxListEvent& event);
+	virtual void OnColEndDrag(wxListEvent& event);
+	virtual void OnBeginDrag(wxListEvent& event);
+	virtual void OnBeginRDrag(wxListEvent& event);
+	virtual void OnBeginLabelEdit(wxListEvent& event);
+	virtual void OnEndLabelEdit(wxListEvent& event);
+	virtual void OnDeleteItem(wxListEvent& event);
+	virtual void OnDeleteAllItems(wxListEvent& event);
 
-    virtual void OnSelected(wxListEvent& event);
-    virtual void OnDeselected(wxListEvent& event);
-    virtual void OnListKeyDown(wxListEvent& event);
-    virtual void OnActivated(wxListEvent& event);
-    virtual void OnFocused(wxListEvent& event);
-    virtual void OnCacheHint(wxListEvent& event);
+	virtual void OnSelected(wxListEvent& event);
+	virtual void OnDeselected(wxListEvent& event);
+	virtual void OnListKeyDown(wxListEvent& event);
+	virtual void OnActivated(wxListEvent& event);
+	virtual void OnFocused(wxListEvent& event);
+	virtual void OnCacheHint(wxListEvent& event);
 
-    virtual void OnChar(wxKeyEvent& event);
+	virtual void OnChar(wxKeyEvent& event);
 
 #if USE_CONTEXT_MENU
-    virtual void OnContextMenu(wxContextMenuEvent& event);
+	virtual void OnContextMenu(wxContextMenuEvent& event);
 #endif
 
-    virtual void OnRightClick(wxMouseEvent& event);
-    virtual void OnLeftDClick(wxMouseEvent& event);
+	virtual void OnRightClick(wxMouseEvent& event);
+	virtual void OnLeftDClick(wxMouseEvent& event);
 
 	virtual wxString OnGetItemText(long item, long column) const;
 	virtual wxString GetItemValue(long item, long columnid) const; /* override to get value for shown columns */
 
-    virtual void ShowContextMenu(const wxPoint& pos);
+	virtual void ShowContextMenu(const wxPoint& pos);
 
-    virtual void SetColumnImage(int col, int image);
+	virtual void SetColumnImage(int col, int image);
 
 
-    virtual int GetItemColumnImage(long item, long columnid) const; /* override to get image for shown columns */
-    virtual int OnGetItemColumnImage(long item, long column) const;
+	virtual int GetItemColumnImage(long item, long columnid) const; /* override to get image for shown columns */
+	virtual int OnGetItemColumnImage(long item, long column) const;
 
-    virtual wxListItemAttr *OnGetItemAttr(long item) const;
+	virtual wxListItemAttr *OnGetItemAttr(long item) const;
 
 	void OnColumnSelected(wxCommandEvent& event);
 	long ColumnId(long column) const ;
 
-    wxListItemAttr m_attreven;
-    wxListItemAttr m_attrodd;
+	wxListItemAttr m_attreven;
+	wxListItemAttr m_attrodd;
 
-	
 	int m_showfrom;
 	int m_showto;
 
@@ -179,7 +153,5 @@ protected:
 	SwashColumnItem *m_columns;
 	int m_numberofcolumns;
 };
-
-
 
 #endif // _SWASHLISTCTRL_H_

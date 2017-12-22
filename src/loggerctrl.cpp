@@ -38,6 +38,8 @@ LoggerCtrl::LoggerCtrl( wxWindow *parent, wxLog* oldlog,
 	: wxPanel( parent, id, pos, size, style ),
 	  m_issuspend( 0 )
 {
+	wxStaticText* m_static_severity;
+
 	m_oldlog = oldlog;
 	m_pMainFrame = dynamic_cast< MainFrame* >( wxGetApp().GetTopWindow());
 	m_pcfg = m_pMainFrame->GetConfig();

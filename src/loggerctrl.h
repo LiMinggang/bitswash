@@ -63,12 +63,11 @@ private:
 	wxLog* m_oldlog;
 
 	wxPanel* m_panelCtrl;
-	wxStaticText* m_static_severity;
+	wxPanel* m_panelLog;
 	wxChoice* m_choice_logseverity;
 	wxCheckBox* m_checkLogFile;
 	wxButton* m_button_clearlog;
 	wxToggleButton* m_button_suspend;
-	wxPanel* m_panelLog;
 	wxRichTextCtrl* m_log_text;
 
 	bool m_logtofile;

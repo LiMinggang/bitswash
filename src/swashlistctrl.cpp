@@ -33,17 +33,17 @@
 // SwashListCtrl
 
 SwashListCtrl::SwashListCtrl( wxWindow *parent,
-							  long num_cols,
-							  SwashColumnItem *columns,
-							  const wxString settings,
-							  const wxWindowID id,
-							  const wxPoint& pos,
-							  const wxSize& size,
-							  long style )
+						long num_cols,
+						SwashColumnItem *columns,
+						const wxString settings,
+						const wxWindowID id,
+						const wxPoint& pos,
+						const wxSize& size,
+						long style )
 	: m_attrodd( *wxBLUE, *wxLIGHT_GREY, wxNullFont ),
-	  m_attreven( *wxBLACK, *wxWHITE, wxNullFont ),
-	  m_showfrom( 0 ),
-	  m_showto( 0 )
+	m_attreven( *wxBLACK, *wxWHITE, wxNullFont ),
+	m_showfrom( 0 ),
+	m_showto( 0 )
 {
 #ifdef __POCKETPC__
 	EnableContextMenu();
@@ -236,7 +236,7 @@ void SwashListCtrl::OnCacheHint( wxListEvent& event )
 {
 	m_showfrom = event.GetCacheFrom();
 	m_showto  = event.GetCacheTo();
-	
+
 #ifdef _DEBUG
 	wxLogDebug( _T( "SwashListCtrl::OnCacheHint %d-%d\n" ), m_showfrom, m_showto );
 #endif
@@ -403,10 +403,10 @@ void SwashListCtrl::OnColRightClick( wxListEvent& event )
 
 	// Connect to event handler
 	Connect( SWASHLIST_POPUP_START, SWASHLIST_POPUP_START + i,
-			 wxEVT_COMMAND_MENU_SELECTED,
-			 ( wxObjectEventFunction )
-			 ( wxEventFunction )
-			 ( wxCommandEventFunction )&SwashListCtrl::OnColumnSelected );
+			wxEVT_COMMAND_MENU_SELECTED,
+			( wxObjectEventFunction )
+			( wxEventFunction )
+			( wxCommandEventFunction )&SwashListCtrl::OnColumnSelected );
 	// Show popupmenu at position
 	PopupMenu( &menu, event.GetPoint() );
 #ifdef _DEBUG
