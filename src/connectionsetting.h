@@ -54,22 +54,12 @@ public:
 
 private: 
 	/* connection settings */
-	wxPanel* m_pane_infoport;
-	wxStaticText* m_static_infoport;
-	wxStaticText* m_staticPortRange;
 	wxSpinCtrl* m_spinPortFrom;
-	wxStaticText* m_staticPortRangeTo;
 	wxSpinCtrl* m_spinPortTo;
 	wxCheckBox* m_checkDHT;
 	wxSpinCtrl* m_spinDHTPort;
-	wxStaticLine* m_staticline1;
 	wxPanel* m_pane_infolimit;
-	wxStaticText* m_static_infoport1;
-	wxStaticText* m_staticDownLimit;
-	wxStaticText* m_staticUpLimit;
-	wxStaticText* m_staticMaxUploads;
 	wxSpinCtrl* m_spinMaxUploads;
-	wxStaticText* m_staticMaxConnections;
 	wxSpinCtrl* m_spinMaxConnections;
 
 	AutoSizeInput* m_autoDownLimit;

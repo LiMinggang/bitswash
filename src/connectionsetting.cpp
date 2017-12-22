@@ -37,6 +37,17 @@
 //CLASS ConnectionSettingPane
 ConnectionSettingPane::ConnectionSettingPane( wxWindow* parent, int id, wxPoint pos, wxSize size, int style) : wxPanel(parent, id, pos, size, style)
 {
+	wxPanel* m_pane_infoport;
+	wxStaticText* m_static_infoport;
+	wxStaticText* m_staticPortRange;
+	wxStaticText* m_staticPortRangeTo;
+	wxStaticText* m_static_infoport1;
+	wxStaticText* m_staticDownLimit;
+	wxStaticText* m_staticUpLimit;
+	wxStaticText* m_staticMaxUploads;
+	wxStaticText* m_staticMaxConnections;
+	wxStaticLine* m_staticline1;
+
 	MainFrame* pMainFrame = dynamic_cast<MainFrame *>( wxGetApp().GetTopWindow() );
 	wxASSERT(pMainFrame != nullptr);
 	Configuration* pcfg = pMainFrame->GetConfig();
