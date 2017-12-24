@@ -838,6 +838,7 @@ void BitTorrentSession::RemoveTorrent( std::shared_ptr<torrent_t>& torrent, bool
 	//wxString resumefile = app_prefix + _T( ".resume" );
 	wxString torrentconffile = app_prefix + _T( ".conf" );
 	wxString torrentfile = app_prefix + _T( ".torrent" );
+	wxString partsfile = wxGetApp().SaveTorrentsPath() + (_T(".")) + wxString(torrent->hash) + _T( ".parts" );
 
 	if( ( wxFileExists( fastresumefile ) ) &&
 			( !wxRemoveFile( fastresumefile ) ) )
@@ -855,6 +856,12 @@ void BitTorrentSession::RemoveTorrent( std::shared_ptr<torrent_t>& torrent, bool
 			( !wxRemoveFile( torrentfile ) ) )
 	{
 		wxLogError( _T( "Error removing file %s" ), torrentfile.c_str() );
+	}
+
+	if( ( wxFileExists( partsfile ) ) &&
+			( !wxRemoveFile( partsfile ) ) )
+	{
+		wxLogError( _T( "Error removing file %s" ), partsfile.c_str() );
 	}
 
 	if( deletedata )
@@ -1490,9 +1497,7 @@ void BitTorrentSession::StopTorrent( std::shared_ptr<torrent_t>& torrent )
 				torrent->handle.save_resume_data(lt::torrent_handle::save_info_dict);
 			}
 
-			lt::torrent_handle invalid_handle;
 			m_libbtsession->remove_torrent(handle);
-			torrent->handle = invalid_handle;
 		}
 		catch (std::exception& e)
 		{
@@ -2185,8 +2190,7 @@ void BitTorrentSession::CheckQueueItem()
 						if(torrent->handle.max_connections() == torrent->config->GetTorrentMaxConnections())
 						{
 							torrent->handle.set_max_connections( torrent->config->GetTorrentMaxConnections() / 2 );
-						
-}
+						}
 
 						/* exclude seed from count as running job */
 						if( m_config->GetExcludeSeed() )
@@ -2364,9 +2368,7 @@ void BitTorrentSession::HandleTorrentAlert()
 							wxASSERT(torrent);
 							if(torrent->config->GetTorrentState() == TORRENT_STATE_STOP)
 							{
-								lt::torrent_handle invalid_handle;
 								m_libbtsession->remove_torrent( h );
-								torrent->handle = invalid_handle;
 							}
 						}
 						event_string << h.status(lt::torrent_handle::query_name).name << _T( ": " ) << wxString::FromUTF8(p->message().c_str());
