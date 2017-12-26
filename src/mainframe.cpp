@@ -694,6 +694,12 @@ void MainFrame::AddTorrent( wxString filename, bool usedefault )
 				if( torrent_property_dlg.ShowModal() != wxID_OK )
 				{
 					wxLogMessage( _T( "Canceled by user" ) );
+					wxString configfile(wxGetApp().SaveTorrentsPath() + wxString(torrent->hash) + _T( ".conf" ));
+					if( ( wxFileExists( configfile ) ) &&
+							( !wxRemoveFile( configfile ) ) )
+					{
+						wxLogError( _T( "Error removing file %s" ), configfile.c_str() );
+					}
 					return;
 				}
 			}
@@ -726,6 +732,13 @@ void MainFrame::AddTorrent( wxString filename, bool usedefault )
 				if (downloaded && (wxNO == ::wxMessageBox(_("It seemed that the torrent had been downloaded before. Are you going to download it again?"), _("Downloading"), wxYES_NO | wxICON_QUESTION)))
 				{
 					wxLogMessage( _T( "Canceled by user" ) );
+					
+					wxString configfile(wxGetApp().SaveTorrentsPath() + wxString(torrent->hash) + _T( ".conf" ));
+					if( ( wxFileExists( configfile ) ) &&
+							( !wxRemoveFile( configfile ) ) )
+					{
+						wxLogError( _T( "Error removing file %s" ), configfile.c_str() );
+					}
 					return;
 				}
 			}
@@ -828,6 +841,13 @@ void MainFrame::OnTorrentMetadata( wxCommandEvent& WXUNUSED( event ) )
 					if( torrent_property_dlg.ShowModal() != wxID_OK )
 					{
 						wxLogMessage( _T( "Canceled by user" ) );
+
+						wxString configfile(wxGetApp().SaveTorrentsPath() + wxString(torrent->hash) + _T( ".conf" ));
+						if( ( wxFileExists( configfile ) ) &&
+								( !wxRemoveFile( configfile ) ) )
+						{
+							wxLogError( _T( "Error removing file %s" ), configfile.c_str() );
+						}
 						return;
 					}
 					
