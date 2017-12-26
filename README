@@ -21,7 +21,7 @@ BOOST
 .\bjam.exe define=_WIN32_WINNT=0x0601 --with-thread --with-system --with-filesystem --with-regex --with-iostreams threading=multi variant=release link=static address-model=64 runtime-link=static stage
 
 News:
-0.7.1
+0.0.7
 New: 64 bits support
 New: Checkbox indicator on File list dialog
 New: Click column to sort on File list control
@@ -41,6 +41,8 @@ New: GeoIP support(v4/v6)
 New: DHT status
 New: Save/load DHT
 Fix: Clear zombie torrent in UI controls
+Fix: List selection indicator resizing issue
+Fix: Remove temporary files while remove torrent
 Fix: Lots of race conditions and bugs
 Performance improvement
 Change help&forum URL to github
