@@ -723,7 +723,7 @@ void MainFrame::AddTorrent( wxString filename, bool usedefault )
 					}
 				}
 
-				if (downloaded && (wxNO == ::wxMessageBox(_("It seemed that the torrent had been downloaded. Are you going to download it again?"), _("Downloading"), wxYES_NO | wxICON_QUESTION)))
+				if (downloaded && (wxNO == ::wxMessageBox(_("It seemed that the torrent had been downloaded before. Are you going to download it again?"), _("Downloading"), wxYES_NO | wxICON_QUESTION)))
 				{
 					wxLogMessage( _T( "Canceled by user" ) );
 					return;
