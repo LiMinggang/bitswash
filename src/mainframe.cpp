@@ -698,6 +698,38 @@ void MainFrame::AddTorrent( wxString filename, bool usedefault )
 				}
 			}
 
+			if(torrent->info)
+			{
+				const lt::file_storage &allfiles = torrent->info->files();
+				std::vector<lt::download_priority_t>& filespriority = torrent->config->GetFilesPriorities();
+				int nfiles = torrent->info->num_files();
+				wxASSERT(nfiles > 0);
+				if (filespriority.size() != nfiles)
+				{
+					std::vector<lt::download_priority_t> deffilespriority( nfiles, TorrentConfig::file_normal );
+					filespriority.swap(deffilespriority);
+				}
+
+				wxString fname;
+				bool downloaded = false;
+				for(int i = 0; i < nfiles; ++i)
+				{
+					lt::file_index_t idx(i);
+					fname = (torrent->config->GetDownloadPath() + wxString::FromUTF8((allfiles.file_path(idx)).c_str()));
+					if(filespriority[i] != TorrentConfig::file_none && ( wxFileExists( fname ) ))
+					{
+						downloaded = true;
+						break;
+					}
+				}
+
+				if (downloaded && (wxNO == ::wxMessageBox(_("It seemed that the torrent had been downloaded. Are you going to download it again?"), _("Downloading"), wxYES_NO | wxICON_QUESTION)))
+				{
+					wxLogMessage( _T( "Canceled by user" ) );
+					return;
+				}
+			}
+
 			if( m_btsession->AddTorrent( torrent ) )
 			{
 				wxString torrent_backup = wxGetApp().SaveTorrentsPath() + wxString(torrent->hash) + _T( ".torrent" );
