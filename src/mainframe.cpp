@@ -1465,7 +1465,7 @@ void MainFrame::OnUpdateUI_MenuTorrentRecheck( wxUpdateUIEvent& event )
 			for( size_t i = 0; i < total; ++i )
 			{
 				std::shared_ptr<torrent_t> torrent = m_btsession->GetTorrent( selecteditems[i] );
-				if(!torrent || !torrent->isvalid)
+				if(torrent)
 				{
 					enable = true;
 					break;
