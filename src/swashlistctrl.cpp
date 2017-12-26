@@ -446,6 +446,7 @@ void SwashListCtrl::OnColDragging( wxListEvent& event )
 #ifdef _DEBUG
 	LogColEvent( event, wxT( "OnColDragging" ) );
 #endif
+	event.Skip();
 }
 
 void SwashListCtrl::OnColEndDrag( wxListEvent& event )
