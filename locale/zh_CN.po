@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2017-12-03 11:05+0800\n"
-"PO-Revision-Date: 2017-12-03 11:06+0800\n"
+"POT-Creation-Date: 2017-12-26 22:10+0800\n"
+"PO-Revision-Date: 2017-12-26 22:14+0800\n"
 "Last-Translator: Aaron Wang Shi <aarons.wang@gmail.com>\n"
 "Language-Team: \n"
 "Language: zh_CN\n"
@@ -17,11 +17,11 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "X-Generator: Poedit 2.0.4\n"
 
-#: ../src/bitswash.cpp:168
+#: ../src/bitswash.cpp:170
 msgid "Failed to create an IPC service.\n"
 msgstr "创建IPC服务失败。\n"
 
-#: ../src/bitswash.cpp:200
+#: ../src/bitswash.cpp:202
 msgid ""
 "Sorry, the existing instance may be too busy too respond.\n"
 "Please close any open dialogs and retry."
@@ -29,111 +29,111 @@ msgstr ""
 "对不起，正在运行的实例可能正忙而无法响应。\n"
 "请关闭一打开的对话框再重试。"
 
-#: ../src/bittorrentsession.cpp:645
+#: ../src/bittorrentsession.cpp:679
 msgid "Torrent hash is invalid! "
 msgstr "种子的哈希值无效！ "
 
-#: ../src/bittorrentsession.cpp:699 ../src/torrentsetting.cpp:192
-#: ../src/torrentsetting.cpp:204
+#: ../src/bittorrentsession.cpp:733 ../src/torrentsetting.cpp:188
+#: ../src/torrentsetting.cpp:197
 msgid "Full"
 msgstr "完全分配"
 
-#: ../src/bittorrentsession.cpp:705 ../src/torrentsetting.cpp:193
-#: ../src/torrentsetting.cpp:208
+#: ../src/bittorrentsession.cpp:739 ../src/torrentsetting.cpp:189
+#: ../src/torrentsetting.cpp:201
 msgid "Sparse"
 msgstr "稀疏"
 
-#: ../src/bittorrentsession.cpp:951
+#: ../src/bittorrentsession.cpp:1012
 #, c-format
 msgid "Error opening directory %s for processing"
 msgstr "处理时打开 %s 目录错误"
 
-#: ../src/bittorrentsession.cpp:1226
+#: ../src/bittorrentsession.cpp:1319
 msgid "Parse torrent failed:The torrent is invalid!"
 msgstr "分析种子失败：无效的种子"
 
-#: ../src/bittorrentsession.cpp:1226 ../src/bittorrentsession.cpp:1290
-#: ../src/mainframe.cpp:1847
+#: ../src/bittorrentsession.cpp:1319 ../src/bittorrentsession.cpp:1378
+#: ../src/mainframe.cpp:1933
 msgid "Error"
 msgstr "错误"
 
-#: ../src/bittorrentsession.cpp:1290
+#: ../src/bittorrentsession.cpp:1378
 msgid "Parse magnet URI failed:The torrent is invalid!"
 msgstr "分析磁链失败：无效的种子"
 
-#: ../src/connectionsetting.cpp:54
+#: ../src/connectionsetting.cpp:65
 msgid "Ports Setting"
 msgstr "端口设定"
 
-#: ../src/connectionsetting.cpp:66
+#: ../src/connectionsetting.cpp:77
 msgid "Port Range (TCP):"
 msgstr "端口范围(TCP)："
 
-#: ../src/connectionsetting.cpp:73
+#: ../src/connectionsetting.cpp:84
 msgid "to"
 msgstr "到"
 
-#: ../src/connectionsetting.cpp:87
+#: ../src/connectionsetting.cpp:98
 msgid "Enable DHT, Port (UDP):"
 msgstr "允许DHT网络，端口(UDP)："
 
-#: ../src/connectionsetting.cpp:108
+#: ../src/connectionsetting.cpp:119
 msgid "Limits"
 msgstr "限制"
 
-#: ../src/connectionsetting.cpp:120 ../src/torrentsetting.cpp:215
+#: ../src/connectionsetting.cpp:131 ../src/torrentsetting.cpp:206
 msgid "Download Rate Limit:"
 msgstr "下载速率限制："
 
-#: ../src/connectionsetting.cpp:128 ../src/torrentsetting.cpp:223
+#: ../src/connectionsetting.cpp:139 ../src/torrentsetting.cpp:211
 msgid "Upload Rate Limit:"
 msgstr "上传速率限制："
 
-#: ../src/connectionsetting.cpp:135 ../src/torrentsetting.cpp:230
+#: ../src/connectionsetting.cpp:146 ../src/torrentsetting.cpp:216
 msgid "Maximum Connections:"
 msgstr "最大连接数："
 
-#: ../src/connectionsetting.cpp:142 ../src/torrentsetting.cpp:237
+#: ../src/connectionsetting.cpp:153 ../src/torrentsetting.cpp:222
 msgid "Maximum Upload Slots:"
 msgstr "最大上传通道："
 
-#: ../src/extensionsetting.cpp:49 ../src/swashsetting.cpp:65
+#: ../src/extensionsetting.cpp:56 ../src/swashsetting.cpp:64
 msgid "Extensions"
 msgstr "扩展"
 
-#: ../src/extensionsetting.cpp:57
+#: ../src/extensionsetting.cpp:64
 msgid "Enable Metadata"
 msgstr "允许Metadata头"
 
-#: ../src/extensionsetting.cpp:60
+#: ../src/extensionsetting.cpp:67
 msgid "Enable Peer Exchange"
 msgstr "允许对等连接交换"
 
-#: ../src/extensionsetting.cpp:68
+#: ../src/extensionsetting.cpp:75
 msgid "Protocol Encryption"
 msgstr "协议加密"
 
-#: ../src/extensionsetting.cpp:76
+#: ../src/extensionsetting.cpp:83
 msgid "Enable Encryption"
 msgstr "允许加密"
 
-#: ../src/extensionsetting.cpp:79
+#: ../src/extensionsetting.cpp:86
 msgid "Accept Unencrypted Peer"
 msgstr "允许未加密的对等连接"
 
-#: ../src/extensionsetting.cpp:88
+#: ../src/extensionsetting.cpp:95
 msgid "NAT Service"
 msgstr "NAT服务"
 
-#: ../src/extensionsetting.cpp:96
+#: ../src/extensionsetting.cpp:103
 msgid "Enable UPnP"
 msgstr "允许UPnP"
 
-#: ../src/extensionsetting.cpp:99
+#: ../src/extensionsetting.cpp:106
 msgid "Enable NAT Port Mapping"
 msgstr "允许NAT端口映射"
 
-#: ../src/extensionsetting.cpp:102
+#: ../src/extensionsetting.cpp:109
 msgid "Enable Local Service Discovery"
 msgstr "允许本地服务探寻"
 
@@ -172,39 +172,39 @@ msgstr "进度"
 msgid "File download progress"
 msgstr "文件下载进度"
 
-#: ../src/filelistctrl.cpp:172
+#: ../src/filelistctrl.cpp:139
 msgid "Do not download"
 msgstr "不下载"
 
-#: ../src/filelistctrl.cpp:174
+#: ../src/filelistctrl.cpp:141
 msgid "Lowest Priority"
 msgstr "最低优先级"
 
-#: ../src/filelistctrl.cpp:175
+#: ../src/filelistctrl.cpp:142
 msgid "Normal Priority"
 msgstr "普通优先级"
 
-#: ../src/filelistctrl.cpp:176
+#: ../src/filelistctrl.cpp:143
 msgid "Highest Priority"
 msgstr "最高优先级"
 
-#: ../src/filelistctrl.cpp:178
+#: ../src/filelistctrl.cpp:145
 msgid "Open containing folder"
 msgstr "打开包含文件的目录"
 
-#: ../src/filelistctrl.cpp:290
+#: ../src/filelistctrl.cpp:267
 msgid "No"
 msgstr "否"
 
-#: ../src/filelistctrl.cpp:291
+#: ../src/filelistctrl.cpp:268
 msgid "Lowest"
 msgstr "最低"
 
-#: ../src/filelistctrl.cpp:294
+#: ../src/filelistctrl.cpp:271
 msgid "Normal"
 msgstr "普通"
 
-#: ../src/filelistctrl.cpp:297
+#: ../src/filelistctrl.cpp:274
 msgid "Higest"
 msgstr "最高"
 
@@ -224,92 +224,92 @@ msgstr "分钟"
 msgid "s"
 msgstr "秒"
 
-#: ../src/generalsetting.cpp:53 ../src/swashsetting.cpp:62
+#: ../src/generalsetting.cpp:65 ../src/swashsetting.cpp:61
 msgid "General"
 msgstr "一般设置"
 
-#: ../src/generalsetting.cpp:64
+#: ../src/generalsetting.cpp:76
 msgid "Maximum Running Job:"
 msgstr "最大同时活动任务："
 
-#: ../src/generalsetting.cpp:72
+#: ../src/generalsetting.cpp:84
 msgid "Exclude seeding"
 msgstr "做种中"
 
-#: ../src/generalsetting.cpp:80
+#: ../src/generalsetting.cpp:92
 msgid "Save Fastresume every (s):"
 msgstr "保存快速恢复每隔（秒）："
 
-#: ../src/generalsetting.cpp:90
+#: ../src/generalsetting.cpp:102
 msgid "Associate Magnet URI with Bitswash"
 msgstr "关联磁链到Bitswash"
 
-#: ../src/generalsetting.cpp:96
+#: ../src/generalsetting.cpp:108
 msgid "Associate .torrent with Bitswash"
 msgstr "关联种子文件到Bitswash"
 
-#: ../src/generalsetting.cpp:102
+#: ../src/generalsetting.cpp:114
 msgid "Run at Windows startup"
 msgstr "Windows启动时运行"
 
-#: ../src/generalsetting.cpp:118
+#: ../src/generalsetting.cpp:130
 msgid "GUI"
 msgstr "图形用户界面"
 
-#: ../src/generalsetting.cpp:129
+#: ../src/generalsetting.cpp:141
 msgid "Refresh Timer (s):"
 msgstr "刷新计时(s)："
 
-#: ../src/generalsetting.cpp:138
+#: ../src/generalsetting.cpp:150
 msgid "Enable Systray Icon"
 msgstr "允许托盘图标"
 
-#: ../src/generalsetting.cpp:143
+#: ../src/generalsetting.cpp:155
 msgid "Minimize to Systray"
 msgstr "最小化到系统托盘"
 
-#: ../src/generalsetting.cpp:159 ../src/torrentinfo.cpp:66
+#: ../src/generalsetting.cpp:171 ../src/torrentinfo.cpp:66
 msgid "Log"
 msgstr "日志"
 
-#: ../src/generalsetting.cpp:170
+#: ../src/generalsetting.cpp:182
 msgid "Log Severity:"
 msgstr "日志级别："
 
-#: ../src/generalsetting.cpp:173 ../src/loggerctrl.cpp:58
+#: ../src/generalsetting.cpp:185 ../src/loggerctrl.cpp:60
 msgid "Debug"
 msgstr "调试"
 
-#: ../src/generalsetting.cpp:173 ../src/loggerctrl.cpp:58
+#: ../src/generalsetting.cpp:185 ../src/loggerctrl.cpp:60
 #: ../src/summarypane.cpp:78
 msgid "Info"
 msgstr "信息"
 
-#: ../src/generalsetting.cpp:173 ../src/loggerctrl.cpp:58
+#: ../src/generalsetting.cpp:185 ../src/loggerctrl.cpp:60
 msgid "Warning"
 msgstr "警告"
 
-#: ../src/generalsetting.cpp:173 ../src/loggerctrl.cpp:58
+#: ../src/generalsetting.cpp:185 ../src/loggerctrl.cpp:60
 msgid "Critical"
 msgstr "关键"
 
-#: ../src/generalsetting.cpp:173 ../src/loggerctrl.cpp:58
+#: ../src/generalsetting.cpp:185 ../src/loggerctrl.cpp:60
 msgid "Fatal"
 msgstr "致命"
 
-#: ../src/generalsetting.cpp:173 ../src/loggerctrl.cpp:58
+#: ../src/generalsetting.cpp:185 ../src/loggerctrl.cpp:60
 msgid "None"
 msgstr "无"
 
-#: ../src/generalsetting.cpp:182
+#: ../src/generalsetting.cpp:194
 msgid "Maximum Lines:"
 msgstr "最大连线："
 
-#: ../src/generalsetting.cpp:185
+#: ../src/generalsetting.cpp:197
 msgid "line"
 msgstr "连线"
 
-#: ../src/generalsetting.cpp:189
+#: ../src/generalsetting.cpp:201
 msgid "Log to File:"
 msgstr "保存日志到文件："
 
@@ -1277,432 +1277,454 @@ msgstr "Zambia"
 msgid "Zimbabwe"
 msgstr "Zimbabwe"
 
-#: ../src/loggerctrl.cpp:56
+#: ../src/loggerctrl.cpp:58
 msgid "Severity"
 msgstr "严重程度"
 
-#: ../src/loggerctrl.cpp:63
+#: ../src/loggerctrl.cpp:65
 msgid "Log to File"
 msgstr "保存日志到文件"
 
-#: ../src/loggerctrl.cpp:66
+#: ../src/loggerctrl.cpp:68
 msgid "Clear Log"
 msgstr "清除日志"
 
-#: ../src/loggerctrl.cpp:68
+#: ../src/loggerctrl.cpp:70
 msgid "Pause Log"
 msgstr "暂停记录日志"
 
-#: ../src/mainframe.cpp:364
+#: ../src/mainframe.cpp:371
 msgid "Categories"
 msgstr "分类"
 
-#: ../src/mainframe.cpp:366
+#: ../src/mainframe.cpp:373
 msgid "All"
 msgstr "全部"
 
-#: ../src/mainframe.cpp:367
+#: ../src/mainframe.cpp:374
 msgid "Downloads"
 msgstr "下载"
 
-#: ../src/mainframe.cpp:368
+#: ../src/mainframe.cpp:375
 msgid "Seeds"
 msgstr "做种"
 
-#: ../src/mainframe.cpp:407
+#: ../src/mainframe.cpp:414
 msgid "Bittorrent Client"
 msgstr "BT客户端"
 
-#: ../src/mainframe.cpp:409
+#: ../src/mainframe.cpp:416
 msgid "Bitswash Homepage"
 msgstr "Bitswash主页"
 
-#: ../src/mainframe.cpp:452 ../src/swashtrayicon.cpp:99
+#: ../src/mainframe.cpp:459 ../src/swashtrayicon.cpp:99
 msgid "&Open Torrent\tCtrl+O"
 msgstr "打开种子(&O)\tCtrl+O"
 
-#: ../src/mainframe.cpp:452 ../src/mainframe.cpp:535
+#: ../src/mainframe.cpp:459 ../src/mainframe.cpp:542
 #: ../src/swashtrayicon.cpp:99
 msgid "Open Torrent"
 msgstr "打开种子"
 
-#: ../src/mainframe.cpp:454 ../src/swashtrayicon.cpp:100
+#: ../src/mainframe.cpp:461 ../src/swashtrayicon.cpp:100
 msgid "Open &URL\tCtrl+U"
 msgstr "打开URL(&U)\tCtrl+U"
 
-#: ../src/mainframe.cpp:454 ../src/mainframe.cpp:538
+#: ../src/mainframe.cpp:461 ../src/mainframe.cpp:545
 #: ../src/swashtrayicon.cpp:100
 msgid "Open URL"
 msgstr "打开 URL"
 
-#: ../src/mainframe.cpp:460
+#: ../src/mainframe.cpp:467
 msgid "E&xit\tAlt-F4"
 msgstr "退出(&x)\tAlt-F4"
 
-#: ../src/mainframe.cpp:460 ../src/mainframe.cpp:591
+#: ../src/mainframe.cpp:467 ../src/mainframe.cpp:598
 msgid "Exit Bitswash"
 msgstr "退出Bitswash"
 
-#: ../src/mainframe.cpp:462
+#: ../src/mainframe.cpp:469
 msgid "&File"
 msgstr "文件(&F)"
 
-#: ../src/mainframe.cpp:464
+#: ../src/mainframe.cpp:471
 msgid "View &Toolbar"
 msgstr "显示工具栏(&T)"
 
-#: ../src/mainframe.cpp:464
+#: ../src/mainframe.cpp:471
 msgid "View Toolbar"
 msgstr "显示工具栏"
 
-#: ../src/mainframe.cpp:465
+#: ../src/mainframe.cpp:472
 msgid "View &Status"
 msgstr "显示状态栏(&S)"
 
-#: ../src/mainframe.cpp:465
+#: ../src/mainframe.cpp:472
 msgid "View Status"
 msgstr "显示状态栏"
 
-#: ../src/mainframe.cpp:466
+#: ../src/mainframe.cpp:473
 msgid "View Torrent &Information"
 msgstr "查看种子信息(&I)"
 
-#: ../src/mainframe.cpp:466
+#: ../src/mainframe.cpp:473
 msgid "View Torrent Information"
 msgstr "查看种子信息"
 
-#: ../src/mainframe.cpp:468
+#: ../src/mainframe.cpp:475
 msgid "&View"
 msgstr "视图(&V)"
 
-#: ../src/mainframe.cpp:470
+#: ../src/mainframe.cpp:477
 msgid "&Torrent"
 msgstr "&Torrent"
 
-#: ../src/mainframe.cpp:472 ../src/swashtrayicon.cpp:102
+#: ../src/mainframe.cpp:479 ../src/swashtrayicon.cpp:102
 msgid "Prefere&nce\tCtrl+F"
 msgstr "首选项(&N)\tCtrl+F"
 
-#: ../src/mainframe.cpp:472 ../src/mainframe.cpp:582
+#: ../src/mainframe.cpp:479 ../src/mainframe.cpp:589
 #: ../src/swashtrayicon.cpp:102
 msgid "Preference"
 msgstr "首选项"
 
-#: ../src/mainframe.cpp:478
+#: ../src/mainframe.cpp:485
 msgid "System Language"
 msgstr "系统语言"
 
-#: ../src/mainframe.cpp:518
+#: ../src/mainframe.cpp:525
 msgid "&Language"
 msgstr "语言(&L)"
 
-#: ../src/mainframe.cpp:518
+#: ../src/mainframe.cpp:525
 msgid "Language"
 msgstr "语言"
 
-#: ../src/mainframe.cpp:519
+#: ../src/mainframe.cpp:526
 msgid "&Options"
 msgstr "选项(&O)"
 
-#: ../src/mainframe.cpp:521
+#: ../src/mainframe.cpp:528
 msgid "&Help\tF1"
 msgstr "帮助(&H)\tF1"
 
-#: ../src/mainframe.cpp:521
+#: ../src/mainframe.cpp:528
 msgid "Help"
 msgstr "帮助"
 
-#: ../src/mainframe.cpp:523
+#: ../src/mainframe.cpp:530
 msgid "Home&page"
 msgstr "软件主页(&p)"
 
-#: ../src/mainframe.cpp:523 ../src/mainframe.cpp:585
+#: ../src/mainframe.cpp:530 ../src/mainframe.cpp:592
 msgid "Homepage"
 msgstr "软件主页"
 
-#: ../src/mainframe.cpp:524
+#: ../src/mainframe.cpp:531
 msgid "&About"
 msgstr "关于(&A)"
 
-#: ../src/mainframe.cpp:524
+#: ../src/mainframe.cpp:531
 msgid "About"
 msgstr "关于"
 
-#: ../src/mainframe.cpp:525
+#: ../src/mainframe.cpp:532
 msgid "&Help"
 msgstr "帮助(&H)"
 
-#: ../src/mainframe.cpp:537
+#: ../src/mainframe.cpp:544
 msgid "Open torrent file"
 msgstr "打开torrent文件"
 
-#: ../src/mainframe.cpp:540
+#: ../src/mainframe.cpp:547
 msgid "Open torrent from url"
 msgstr "从url打开torrent文件"
 
-#: ../src/mainframe.cpp:540
+#: ../src/mainframe.cpp:547
 msgid "Open torrent from URL"
 msgstr "从URL打开torrent文件"
 
-#: ../src/mainframe.cpp:543
+#: ../src/mainframe.cpp:550
 msgid "Create Torrent"
 msgstr "创建种子"
 
-#: ../src/mainframe.cpp:545
+#: ../src/mainframe.cpp:552
 msgid "Create torrent file"
 msgstr "创建种子文件"
 
-#: ../src/mainframe.cpp:545
+#: ../src/mainframe.cpp:552
 msgid "Create torrent file to publish"
 msgstr "创建并发布种子"
 
-#: ../src/mainframe.cpp:550
+#: ../src/mainframe.cpp:557
 msgid "Queue"
 msgstr "排队中"
 
-#: ../src/mainframe.cpp:552
+#: ../src/mainframe.cpp:559
 msgid "Queue torrent"
 msgstr "排队种子"
 
-#: ../src/mainframe.cpp:553
+#: ../src/mainframe.cpp:560
 msgid "Pause"
 msgstr "暂停"
 
-#: ../src/mainframe.cpp:555
+#: ../src/mainframe.cpp:562
 msgid "Pause download"
 msgstr "暂停下载"
 
-#: ../src/mainframe.cpp:555
+#: ../src/mainframe.cpp:562
 msgid "Pause downlaoding"
 msgstr "暂停正在进行的下载"
 
-#: ../src/mainframe.cpp:556
+#: ../src/mainframe.cpp:563
 msgid "stop"
 msgstr "停止"
 
-#: ../src/mainframe.cpp:558
+#: ../src/mainframe.cpp:565
 msgid "Stop download"
 msgstr "停止下载"
 
-#: ../src/mainframe.cpp:558
+#: ../src/mainframe.cpp:565
 msgid "Stop downlaoding"
 msgstr "停止正在进行的下载"
 
-#: ../src/mainframe.cpp:560 ../src/trackerlistctrl.cpp:183
+#: ../src/mainframe.cpp:567 ../src/trackerlistctrl.cpp:183
 msgid "Delete"
 msgstr "删除"
 
-#: ../src/mainframe.cpp:562
+#: ../src/mainframe.cpp:569
 msgid "Delete torrent file"
 msgstr "删除种子文件"
 
-#: ../src/mainframe.cpp:563
+#: ../src/mainframe.cpp:570
 msgid "Delete Data"
 msgstr "删除下载数据"
 
-#: ../src/mainframe.cpp:565
+#: ../src/mainframe.cpp:572
 msgid "Delete torrent file and downloaded data"
 msgstr "删除种子文件和已下载的数据"
 
-#: ../src/mainframe.cpp:567
+#: ../src/mainframe.cpp:574
 msgid "Move Up"
 msgstr "上移"
 
-#: ../src/mainframe.cpp:570 ../src/mainframe.cpp:1924
+#: ../src/mainframe.cpp:577 ../src/mainframe.cpp:2010
 msgid "Move torrent up"
 msgstr "上移种子"
 
-#: ../src/mainframe.cpp:570
+#: ../src/mainframe.cpp:577
 msgid "Move torrent up in the queue position"
 msgstr "上移种子在队列中的位置"
 
-#: ../src/mainframe.cpp:571
+#: ../src/mainframe.cpp:578
 msgid "Move Down"
 msgstr "下移"
 
-#: ../src/mainframe.cpp:574 ../src/mainframe.cpp:1927
+#: ../src/mainframe.cpp:581 ../src/mainframe.cpp:2013
 msgid "Move torrent down"
 msgstr "下移种子"
 
-#: ../src/mainframe.cpp:574
+#: ../src/mainframe.cpp:581
 msgid "Move torrent down in the queue position"
 msgstr "下移种子在队列中的位置"
 
-#: ../src/mainframe.cpp:576
+#: ../src/mainframe.cpp:583
 msgid "Open"
 msgstr "打开"
 
-#: ../src/mainframe.cpp:578
+#: ../src/mainframe.cpp:585
 msgid "Open destination directory"
 msgstr "打开目标文件夹"
 
-#: ../src/mainframe.cpp:578
+#: ../src/mainframe.cpp:585
 msgid "Open destination downloaded directory"
 msgstr "打开目标下载文件夹"
 
-#: ../src/mainframe.cpp:584
+#: ../src/mainframe.cpp:591
 msgid "Program settings"
 msgstr "程序设定"
 
-#: ../src/mainframe.cpp:584
+#: ../src/mainframe.cpp:591
 msgid "Set user preference"
 msgstr "设定用户参数"
 
-#: ../src/mainframe.cpp:587
+#: ../src/mainframe.cpp:594
 msgid "Bitswash homepage"
 msgstr "Bitswash主页"
 
-#: ../src/mainframe.cpp:587
+#: ../src/mainframe.cpp:594
 msgid "Visit Bitswash homepage"
 msgstr "访问Bitswash主页"
 
-#: ../src/mainframe.cpp:589
+#: ../src/mainframe.cpp:596
 msgid "Exit"
 msgstr "退出"
 
-#: ../src/mainframe.cpp:706 ../src/mainframe.cpp:841
+#: ../src/mainframe.cpp:732
+msgid ""
+"It seemed that the torrent had been downloaded before. Are you going to "
+"download it again?"
+msgstr ""
+
+#: ../src/mainframe.cpp:732 ../src/torrentlistctrl.cpp:121
+msgid "Downloading"
+msgstr "下载中"
+
+#: ../src/mainframe.cpp:762 ../src/mainframe.cpp:904
 msgid "Torrent Exists. Do you want to update trackers/seeds from the torrent?"
 msgstr "Torrent已存在。你打算从当前trorrent里更新tracker或种子么？"
 
-#: ../src/mainframe.cpp:706 ../src/mainframe.cpp:841
+#: ../src/mainframe.cpp:762 ../src/mainframe.cpp:904
 msgid "Confirm"
 msgstr "确认"
 
-#: ../src/mainframe.cpp:733
+#: ../src/mainframe.cpp:789
 msgid "Open Torrent(s)..."
 msgstr "打开种子"
 
-#: ../src/mainframe.cpp:1589
-msgid "torrents"
-msgstr "种子"
+#: ../src/mainframe.cpp:999
+msgid "Download cancelled"
+msgstr "下载取消"
 
-#: ../src/mainframe.cpp:1591
+#: ../src/mainframe.cpp:1674
 msgid "torrent"
 msgstr "种子"
 
-#: ../src/mainframe.cpp:1594
+#: ../src/mainframe.cpp:1677
+msgid "torrents"
+msgstr "种子"
+
+#: ../src/mainframe.cpp:1680
 msgid " and data"
 msgstr " 及数据"
 
-#: ../src/mainframe.cpp:1596
+#: ../src/mainframe.cpp:1682
 msgid "Remove "
 msgstr "移除"
 
-#: ../src/mainframe.cpp:1597
+#: ../src/mainframe.cpp:1683
 msgid "Confirm Remove"
 msgstr "确认移除"
 
-#: ../src/mainframe.cpp:1846
+#: ../src/mainframe.cpp:1932
 msgid "Ok"
 msgstr "正常"
 
-#: ../src/mainframe.cpp:1857
+#: ../src/mainframe.cpp:1943
 msgid "DLR"
 msgstr "DLR"
 
-#: ../src/mainframe.cpp:1858
+#: ../src/mainframe.cpp:1944
 msgid "ULR"
 msgstr "ULR"
 
-#: ../src/mainframe.cpp:1859
+#: ../src/mainframe.cpp:1945
 msgid "PRS"
 msgstr "PRS"
 
-#: ../src/mainframe.cpp:1860
+#: ../src/mainframe.cpp:1946
 msgid "DHT"
 msgstr "DHT"
 
-#: ../src/mainframe.cpp:1861
+#: ../src/mainframe.cpp:1947
 msgid "INC"
 msgstr "INC"
 
-#: ../src/mainframe.cpp:1910
+#: ../src/mainframe.cpp:1996
 msgid "&Queue Torrent\tCtrl+S"
 msgstr "排队作种(&Q)\tCtrl+S"
 
-#: ../src/mainframe.cpp:1910
+#: ../src/mainframe.cpp:1996
 msgid "Queue Download"
 msgstr "排队下载"
 
-#: ../src/mainframe.cpp:1912
+#: ../src/mainframe.cpp:1998
 msgid "&Force Start Torrent\tCtrl+Alt+S"
 msgstr "强制开始Torrent(&F)\tCtrl+Alt+S"
 
-#: ../src/mainframe.cpp:1912
+#: ../src/mainframe.cpp:1998
 msgid "Force Torrent Download"
 msgstr "强制开始下载"
 
-#: ../src/mainframe.cpp:1914
+#: ../src/mainframe.cpp:2000
 msgid "&Pause Torrent\tCtrl+P"
 msgstr "暂停作种(&P)\tCtrl-P"
 
-#: ../src/mainframe.cpp:1914
+#: ../src/mainframe.cpp:2000
 msgid "Pause Download"
 msgstr "暂停下载"
 
-#: ../src/mainframe.cpp:1916
+#: ../src/mainframe.cpp:2002
 msgid "St&op Torrent\tCtrl+T"
 msgstr "停止作种(&t)\tCtrl-T"
 
-#: ../src/mainframe.cpp:1916
+#: ../src/mainframe.cpp:2002
 msgid "Stop Download"
 msgstr "停止下载"
 
-#: ../src/mainframe.cpp:1919
+#: ../src/mainframe.cpp:2005
 msgid "&Remove Torrent"
 msgstr "移除种子(&R)"
 
-#: ../src/mainframe.cpp:1919
+#: ../src/mainframe.cpp:2005
 msgid "Delete Torrent"
 msgstr "删除种子"
 
-#: ../src/mainframe.cpp:1921
+#: ../src/mainframe.cpp:2007
 msgid "Remove Torrent and &Data"
 msgstr "移除种子和下载文件(&D)"
 
-#: ../src/mainframe.cpp:1921
+#: ../src/mainframe.cpp:2007
 msgid "Delete Torrent and Data"
 msgstr "删除种子和下载文件"
 
-#: ../src/mainframe.cpp:1924
+#: ../src/mainframe.cpp:2010
 msgid "Move &Up\tAlt+UP"
 msgstr "上移(&U)\tAlt+UP"
 
-#: ../src/mainframe.cpp:1927
+#: ../src/mainframe.cpp:2013
 msgid "Move Do&wn\tAlt+DOWN"
 msgstr "下移(&w)\tAlt+DOWN"
 
-#: ../src/mainframe.cpp:1931
+#: ../src/mainframe.cpp:2017
 msgid "Re&announce Torrent"
 msgstr "重新发布种子(&a)"
 
-#: ../src/mainframe.cpp:1931
+#: ../src/mainframe.cpp:2017
 msgid "Force Reannounce Torrent"
 msgstr "强制重新发布种子"
 
-#: ../src/mainframe.cpp:1933
+#: ../src/mainframe.cpp:2019
 msgid "Force Re&check Torrent"
 msgstr "强制重新检查种子"
 
-#: ../src/mainframe.cpp:1933
+#: ../src/mainframe.cpp:2019
 msgid "Force Recheck Torrent"
 msgstr "强制重新检查种子"
 
-#: ../src/mainframe.cpp:1934
+#: ../src/mainframe.cpp:2020
 msgid "Open &Directory"
 msgstr "打开目录(&D)"
 
-#: ../src/mainframe.cpp:1934
+#: ../src/mainframe.cpp:2020
 msgid "Open downloaded directory"
 msgstr "打开下载目录"
 
-#: ../src/mainframe.cpp:1936
+#: ../src/mainframe.cpp:2022
 msgid "Propert&ies"
 msgstr "属性(&i)"
 
-#: ../src/mainframe.cpp:1936
+#: ../src/mainframe.cpp:2022
 msgid "Torrent Properties"
 msgstr "种子属性"
+
+#: ../src/mainframe.cpp:2025
+msgid "Copy &Magnet URI\tCtrl+C"
+msgstr "拷贝磁链(&C)\tCtrl+C"
+
+#: ../src/mainframe.cpp:2025
+msgid "Copy Magnet URI"
+msgstr "拷贝磁链"
 
 #: ../src/peerlistctrl.cpp:57 ../src/peerlistctrl.cpp:72
 msgid "IP"
@@ -1951,11 +1973,11 @@ msgstr "显示状态栏：%s"
 msgid "Show/Hide"
 msgstr "显示/隐藏"
 
-#: ../src/swashsetting.cpp:63
+#: ../src/swashsetting.cpp:62
 msgid "Connections"
 msgstr "连接"
 
-#: ../src/swashsetting.cpp:64
+#: ../src/swashsetting.cpp:63
 msgid "Torrents"
 msgstr "种子"
 
@@ -2065,10 +2087,6 @@ msgstr "检查中"
 msgid "Downloading meta data"
 msgstr "正在下载meta数据"
 
-#: ../src/torrentlistctrl.cpp:121
-msgid "Downloading"
-msgstr "下载中"
-
 #: ../src/torrentlistctrl.cpp:122
 msgid "Finished"
 msgstr "已完成"
@@ -2121,7 +2139,7 @@ msgstr "大小："
 msgid "Disk Free Space:"
 msgstr "磁盘空闲空间："
 
-#: ../src/torrentproperty.cpp:74 ../src/torrentsetting.cpp:102
+#: ../src/torrentproperty.cpp:74 ../src/torrentsetting.cpp:112
 msgid "0 Byte(s)"
 msgstr "0字节"
 
@@ -2145,35 +2163,39 @@ msgstr "确定"
 msgid "Cancel"
 msgstr "取消"
 
-#: ../src/torrentsetting.cpp:62
+#: ../src/torrentsetting.cpp:78
 msgid "Torrent Settings"
 msgstr "Torrent设定"
 
-#: ../src/torrentsetting.cpp:74
+#: ../src/torrentsetting.cpp:87
 msgid "Save:"
 msgstr "保存："
 
-#: ../src/torrentsetting.cpp:99
+#: ../src/torrentsetting.cpp:109
 msgid "Free:"
 msgstr "空闲空间："
 
-#: ../src/torrentsetting.cpp:135
+#: ../src/torrentsetting.cpp:139
 msgid "Start Torrent"
 msgstr "启动Torrent"
 
-#: ../src/torrentsetting.cpp:160
-msgid "Do not prompt for torrent settings."
-msgstr "取消提示torrent设置。"
+#: ../src/torrentsetting.cpp:163
+msgid "Do not prompt for torrent settings"
+msgstr "不提示torrent设置"
 
-#: ../src/torrentsetting.cpp:187
+#: ../src/torrentsetting.cpp:177
+msgid "Enable preview video file(s)"
+msgstr "允许视频文件预览功能"
+
+#: ../src/torrentsetting.cpp:184
 msgid "Storage Allocation Mode:"
 msgstr "存储分配模式："
 
-#: ../src/torrentsetting.cpp:244
-msgid "Seed Ratio"
-msgstr "分享率"
+#: ../src/torrentsetting.cpp:228
+msgid "Seed Ratio:"
+msgstr "分享率："
 
-#: ../src/torrentsetting.cpp:322
+#: ../src/torrentsetting.cpp:282
 msgid "Choose default download directory"
 msgstr "选择默认下载文件夹"
 
@@ -2241,7 +2263,11 @@ msgstr "移除tracker "
 msgid "Confirm remove tracker"
 msgstr "确认移除tracker"
 
-#: ../src/urldialog.cpp:41
+#: ../src/urldialog.cpp:48
+msgid "Enter Torrent URL"
+msgstr "输入Torrent URL"
+
+#: ../src/urldialog.cpp:54
 msgid "URL:"
 msgstr "URL:"
 
