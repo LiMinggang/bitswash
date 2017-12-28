@@ -199,7 +199,7 @@ MainFrame::MainFrame( wxFrame *frame, const wxString& title )
 	  m_upnp_started( false ),
 	  m_natpmp_started( false ),
 	  m_lsd_started( false ),
-	  m_prevlocale( 0 ),
+	  m_prevlocale( wxLANGUAGE_UNKNOWN ),
 	  m_prevselecteditem( 0 ),
 	  m_closed( false )
 {
@@ -275,7 +275,7 @@ MainFrame::MainFrame( wxFrame *frame, const wxString& title )
 	Bind( wxEVT_MOVE, &MainFrame::OnMove, this );
 	Bind( wxEVT_TIMER, &MainFrame::OnRefreshTimer, this, ID_TIMER_GUI_UPDATE );
 
-	Bind(wxEVT_CLOSE_WINDOW, &MainFrame::OnClose, this );
+	Bind( wxEVT_CLOSE_WINDOW, &MainFrame::OnClose, this );
 	Bind( wxEVT_ICONIZE, &MainFrame::OnMinimize, this );
 	//Refresh torrent list on timer
 	//
@@ -481,8 +481,7 @@ wxMenuBar* MainFrame::CreateMainMenuBar()
 	m_languagemenu = new wxMenu( wxEmptyString );
 	const struct swashlang* availlang = languages;
 	int i = 0;
-	wxMenuItem* tmpitem1;
-	tmpitem1 = m_languagemenu->AppendRadioItem( ID_OPTIONS_LANGUAGE, _( "System Language" ) );
+	wxMenuItem* tmpitem1 = m_languagemenu->AppendRadioItem( ID_OPTIONS_LANGUAGE, _( "System Language" ) );
 
 	if( m_config->GetLanguage() == _T( "" ) )
 	{
@@ -490,7 +489,7 @@ wxMenuBar* MainFrame::CreateMainMenuBar()
 		m_prevlocale = wxLANGUAGE_DEFAULT;
 	}
 
-	m_languagemenu->AppendSeparator();
+	//m_languagemenu->AppendSeparator();
 
 	while( i < ( sizeof( languages ) / sizeof( struct swashlang ) ) )
 	{
@@ -1884,6 +1883,13 @@ void MainFrame::OnMenuOptionLanguage( wxCommandEvent& event )
 	{
 		m_config->SetLanguage( strlang );
 		m_config->Save();
+		m_prevlocale = langinfo->Language;
+		wxMenuItem* tmpitem = m_languagemenu->FindItem( ID_OPTIONS_LANGUAGE + m_prevlocale );
+
+		if( tmpitem )
+		{
+			tmpitem->Check( true );
+		}
 	}
 	else
 	{
@@ -2025,3 +2031,4 @@ wxMenu* MainFrame::GetNewTorrentMenu()
 	menuitem = torrentMenu->Append( ID_TORRENT_COPYMAGNETURI, _( "Copy &Magnet URI\tCtrl+C" ), _( "Copy Magnet URI" ) );
 	return torrentMenu;
 }
+
