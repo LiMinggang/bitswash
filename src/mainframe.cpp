@@ -1890,6 +1890,7 @@ void MainFrame::OnMenuOptionLanguage( wxCommandEvent& event )
 		{
 			tmpitem->Check( true );
 		}
+		UpdateUI(true);
 	}
 	else
 	{
