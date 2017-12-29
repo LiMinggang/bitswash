@@ -918,6 +918,9 @@
     <ClInclude Include="..\..\..\libtorrent\include\libtorrent\extensions\smart_ban.hpp">
       <Filter>Header Files\libtorrent\extention</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\..\libtorrent\include\libtorrent\aux_\torrent_impl.hpp">
+      <Filter>Header Files\libtorrent\aux</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="..\..\..\src\bitswash.rc">

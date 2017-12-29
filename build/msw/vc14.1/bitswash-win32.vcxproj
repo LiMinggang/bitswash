@@ -250,6 +250,7 @@
     <ClInclude Include="..\..\..\libtorrent\include\libtorrent\aux_\suggest_piece.hpp" />
     <ClInclude Include="..\..\..\libtorrent\include\libtorrent\aux_\throw.hpp" />
     <ClInclude Include="..\..\..\libtorrent\include\libtorrent\aux_\time.hpp" />
+    <ClInclude Include="..\..\..\libtorrent\include\libtorrent\aux_\torrent_impl.hpp" />
     <ClInclude Include="..\..\..\libtorrent\include\libtorrent\aux_\typed_span.hpp" />
     <ClInclude Include="..\..\..\libtorrent\include\libtorrent\aux_\unique_ptr.hpp" />
     <ClInclude Include="..\..\..\libtorrent\include\libtorrent\aux_\vector.hpp" />

@@ -1,6 +1,6 @@
 /*
 
-Copyright (c) 2003-2016, Arvid Norberg
+Copyright (c) 2003-2017, Arvid Norberg
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
@@ -30,39 +30,51 @@ POSSIBILITY OF SUCH DAMAGE.
 
 */
 
-#ifndef TORRENT_STORAGE_PIECE_SET_HPP_INCLUDE
-#define TORRENT_STORAGE_PIECE_SET_HPP_INCLUDE
+#ifndef TORRENT_TORRENT_IMPL_HPP_INCLUDED
+#define TORRENT_TORRENT_IMPL_HPP_INCLUDED
 
-#include "libtorrent/aux_/disable_warnings_push.hpp"
-#include <boost/intrusive/list.hpp>
-#include "libtorrent/aux_/disable_warnings_pop.hpp"
-
-#include "libtorrent/export.hpp"
-#include "libtorrent/block_cache.hpp" // for cached_piece_entry
+// this is not a normal header, it's just this template, to be able to call this
+// function from more than one translation unit. But it's still internal
 
 namespace libtorrent {
 
-struct cached_piece_entry;
-
-namespace aux {
-
-	// this class keeps track of which pieces, belonging to
-	// a specific storage, are in the cache right now. It's
-	// used for quickly being able to evict all pieces for a
-	// specific torrent
-	struct TORRENT_EXPORT storage_piece_set
+	template <typename Fun, typename... Args>
+	void torrent::wrap(Fun f, Args&&... a)
+#ifndef BOOST_NO_EXCEPTIONS
+		try
+#endif
 	{
-		using list_t = boost::intrusive::list<cached_piece_entry, boost::intrusive::constant_time_size<false>>;
-		void add_piece(cached_piece_entry* p);
-		void remove_piece(cached_piece_entry* p);
-		int num_pieces() const { return m_num_pieces; }
-		list_t const& cached_pieces() const
-		{ return m_cached_pieces; }
-	private:
-		// these are cached pieces belonging to this storage
-		list_t m_cached_pieces;
-		int m_num_pieces = 0;
-	};
-}}
+		(this->*f)(std::forward<Args>(a)...);
+	}
+#ifndef BOOST_NO_EXCEPTIONS
+	catch (system_error const& e) {
+#ifndef TORRENT_DISABLE_LOGGING
+		debug_log("EXCEPTION: (%d %s) %s"
+			, e.code().value()
+			, e.code().message().c_str()
+			, e.what());
+#endif
+		alerts().emplace_alert<torrent_error_alert>(get_handle()
+			, e.code(), e.what());
+		pause();
+	} catch (std::exception const& e) {
+#ifndef TORRENT_DISABLE_LOGGING
+		debug_log("EXCEPTION: %s", e.what());
+#endif
+		alerts().emplace_alert<torrent_error_alert>(get_handle()
+			, error_code(), e.what());
+		pause();
+	} catch (...) {
+#ifndef TORRENT_DISABLE_LOGGING
+		debug_log("EXCEPTION: unknown");
+#endif
+		alerts().emplace_alert<torrent_error_alert>(get_handle()
+			, error_code(), "unknown error");
+		pause();
+	}
+#endif
+
+}
 
 #endif
+

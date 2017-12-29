@@ -199,6 +199,10 @@ namespace aux {
 		std::shared_ptr<tcp::acceptor> sock;
 		std::shared_ptr<aux::session_udp_socket> udp_sock;
 
+		// since udp packets are expected to be dispatched frequently, this saves
+		// time on handler allocation every time we read again.
+		aux::handler_storage<TORRENT_READ_HANDLER_MAX_SIZE> udp_handler_storage;
+
 		// the key is an id that is used to identify the
 		// client with the tracker only.
 		std::uint32_t tracker_key = 0;
@@ -272,6 +276,13 @@ namespace aux {
 			void start_session();
 
 			void init_peer_class_filter(bool unlimited_local);
+
+			void call_abort()
+			{
+				auto ptr = shared_from_this();
+				m_io_service.dispatch(make_handler([ptr] { ptr->abort(); }
+					, m_abort_handler_storage, *this));
+			}
 
 #ifndef TORRENT_DISABLE_EXTENSIONS
 			using ext_function_t
@@ -366,7 +377,7 @@ namespace aux {
 
 			peer_id const& get_peer_id() const override { return m_peer_id; }
 
-			void close_connection(peer_connection* p) override;
+			void close_connection(peer_connection* p) noexcept override;
 
 			void apply_settings_pack(std::shared_ptr<settings_pack> pack) override;
 			void apply_settings_pack_impl(settings_pack const& pack);
@@ -599,8 +610,8 @@ namespace aux {
 			alert_manager& alerts() override { return m_alerts; }
 			disk_interface& disk_thread() override { return m_disk_thread; }
 
-			void abort();
-			void abort_stage2();
+			void abort() noexcept;
+			void abort_stage2() noexcept;
 
 			torrent_handle find_torrent_handle(sha1_hash const& info_hash);
 
@@ -786,6 +797,8 @@ namespace aux {
 			counters m_stats_counters;
 
 			// this is a pool allocator for torrent_peer objects
+			// torrents and the disk cache (implicitly by holding references to the
+			// torrents) depend on this outliving them.
 			torrent_peer_allocator m_peer_allocator;
 
 			// this vector is used to store the block_info
@@ -1176,13 +1189,12 @@ namespace aux {
 			deadline_timer m_timer;
 			aux::handler_storage<TORRENT_READ_HANDLER_MAX_SIZE> m_tick_handler_storage;
 
-			template <class Handler>
-			aux::allocating_handler<Handler, TORRENT_READ_HANDLER_MAX_SIZE>
-			make_tick_handler(Handler const& handler)
-			{
-				return aux::allocating_handler<Handler, TORRENT_READ_HANDLER_MAX_SIZE>(
-					handler, m_tick_handler_storage, *this);
-			}
+			// abort may not fail and cannot allocate memory
+#ifdef _M_AMD64
+			aux::handler_storage<88> m_abort_handler_storage;
+#else
+			aux::handler_storage<56> m_abort_handler_storage;
+#endif
 
 			// torrents are announced on the local network in a
 			// round-robin fashion. All torrents are cycled through

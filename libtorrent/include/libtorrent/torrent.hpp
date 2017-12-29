@@ -448,6 +448,7 @@ namespace libtorrent {
 		// the necessary actions then.
 		void abort();
 		bool is_aborted() const { return m_abort; }
+		void panic();
 
 		void new_external_ip();
 
@@ -660,7 +661,7 @@ namespace libtorrent {
 		// this will remove the peer and make sure all
 		// the pieces it had have their reference counter
 		// decreased in the piece_picker
-		void remove_peer(std::shared_ptr<peer_connection> p);
+		void remove_peer(std::shared_ptr<peer_connection> p) noexcept;
 
 		// cancel requests to this block from any peer we're
 		// connected to on this torrent
@@ -1111,12 +1112,7 @@ namespace libtorrent {
 		void inc_num_connecting(torrent_peer* pp)
 		{
 			++m_num_connecting;
-			TORRENT_ASSERT(m_num_connecting <= int(m_connections.size()));
-			if (pp->seed)
-			{
-				++m_num_connecting_seeds;
-				TORRENT_ASSERT(m_num_connecting_seeds <= int(m_connections.size()));
-			}
+			if (pp->seed) ++m_num_connecting_seeds;
 		}
 		void dec_num_connecting(torrent_peer* pp)
 		{
@@ -1161,7 +1157,7 @@ namespace libtorrent {
 		void on_error(error_code const& ec) override;
 
 		// trigger deferred disconnection of peers
-		void on_remove_peers();
+		void on_remove_peers() noexcept;
 
 		void ip_filter_updated();
 
@@ -1431,7 +1427,11 @@ namespace libtorrent {
 		// used to post a message to defer disconnecting peers
 		std::vector<std::shared_ptr<peer_connection>> m_peers_to_disconnect;
 		aux::deferred_handler m_deferred_disconnect;
-		aux::handler_storage<24> m_deferred_handler_storage;
+#ifdef _M_AMD64
+		aux::handler_storage<96> m_deferred_handler_storage;
+#else
+		aux::handler_storage<64> m_deferred_handler_storage;
+#endif
 
 		// for torrents who have a bandwidth limit, this is != 0
 		// and refers to a peer_class in the session.

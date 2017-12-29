@@ -174,7 +174,7 @@ using namespace std::placeholders;
 #ifdef BOOST_NO_EXCEPTIONS
 namespace boost {
 
-	void throw_exception(std::exception const& e) { ::abort(); }
+	void throw_exception(std::exception const& e) { std::abort(); }
 }
 #endif
 
@@ -290,7 +290,7 @@ namespace aux {
 			{"0.0.0.0", "255.255.255.255", gfilter},
 			// local networks
 			{"10.0.0.0", "10.255.255.255", lfilter},
-			{"172.16.0.0", "172.16.255.255", lfilter},
+			{"172.16.0.0", "172.31.255.255", lfilter},
 			{"192.168.0.0", "192.168.255.255", lfilter},
 			// link-local
 			{"169.254.0.0", "169.254.255.255", lfilter},
@@ -303,6 +303,8 @@ namespace aux {
 		{
 			// everything
 			{"::0", "ffff:ffff:ffff:ffff:ffff:ffff:ffff:ffff", gfilter},
+			// local networks
+			{"fc00::", "fdff:ffff:ffff:ffff:ffff:ffff:ffff:ffff", lfilter},
 			// link-local
 			{"fe80::", "febf::ffff:ffff:ffff:ffff:ffff:ffff:ffff", lfilter},
 			// loop-back
@@ -805,7 +807,7 @@ namespace aux {
 		}
 	}
 
-	void session_impl::abort()
+	void session_impl::abort() noexcept
 	{
 		TORRENT_ASSERT(is_single_thread());
 
@@ -816,7 +818,7 @@ namespace aux {
 
 		// at this point we cannot call the notify function anymore, since the
 		// session will become invalid.
-		m_alerts.set_notify_function(std::function<void()>());
+		m_alerts.set_notify_function({});
 
 		// this will cancel requests that are not critical for shutting down
 		// cleanly. i.e. essentially tracker hostname lookups that we're not
@@ -912,11 +914,12 @@ namespace aux {
 		// shutdown_stage2 from there.
 		if (m_undead_peers.empty())
 		{
-			m_io_service.post(std::bind(&session_impl::abort_stage2, this));
+			m_io_service.post(make_handler([this] { abort_stage2(); }
+				, m_abort_handler_storage, *this));
 		}
 	}
 
-	void session_impl::abort_stage2()
+	void session_impl::abort_stage2() noexcept
 	{
 		m_download_rate.close();
 		m_upload_rate.close();
@@ -938,7 +941,14 @@ namespace aux {
 	void session_impl::insert_peer(std::shared_ptr<peer_connection> const& c)
 	{
 		TORRENT_ASSERT(!c->m_in_constructor);
+
+		// removing a peer may not throw an exception, so prepare for this
+		// connection to be added to the undead peers now.
+		m_undead_peers.reserve(m_undead_peers.size() + m_connections.size() + 1);
 		m_connections.insert(c);
+
+		TORRENT_ASSERT_VAL(m_undead_peers.capacity() >= m_connections.size()
+			, m_undead_peers.capacity());
 	}
 
 	void session_impl::set_port_filter(port_filter const& f)
@@ -1687,10 +1697,10 @@ namespace {
 		// internally, this method handle the SOCKS5's connection logic
 		ret->udp_sock->sock.set_proxy_settings(proxy());
 
-		// TODO: 2 use a handler allocator here
 		ADD_OUTSTANDING_ASYNC("session_impl::on_udp_packet");
-		ret->udp_sock->sock.async_read(std::bind(&session_impl::on_udp_packet
-			, this, ret->udp_sock, ret, ret->ssl, _1));
+		ret->udp_sock->sock.async_read(aux::make_handler(std::bind(&session_impl::on_udp_packet
+			, this, ret->udp_sock, ret, ret->ssl, _1)
+			, ret->udp_handler_storage, *this));
 
 #ifndef TORRENT_DISABLE_LOGGING
 		if (should_log())
@@ -2092,10 +2102,10 @@ namespace {
 			// internally, this method handle the SOCKS5's connection logic
 			udp_sock->sock.set_proxy_settings(proxy());
 
-			// TODO: 2 use a handler allocator here
 			ADD_OUTSTANDING_ASYNC("session_impl::on_udp_packet");
-			udp_sock->sock.async_read(std::bind(&session_impl::on_udp_packet
-				, this, udp_sock, std::weak_ptr<listen_socket_t>(), ep.ssl, _1));
+			udp_sock->sock.async_read(aux::make_handler(std::bind(&session_impl::on_udp_packet
+				, this, udp_sock, std::weak_ptr<listen_socket_t>(), ep.ssl, _1)
+					, udp_sock->udp_handler_storage, *this));
 
 			if (!ec && udp_sock)
 			{
@@ -2494,8 +2504,9 @@ namespace {
 		mgr.socket_drained();
 
 		ADD_OUTSTANDING_ASYNC("session_impl::on_udp_packet");
-		s->sock.async_read(std::bind(&session_impl::on_udp_packet
-			, this, std::move(socket), std::move(ls), ssl, _1));
+		s->sock.async_read(make_handler(std::bind(&session_impl::on_udp_packet
+			, this, std::move(socket), std::move(ls), ssl, _1), s->udp_handler_storage
+				, *this));
 	}
 
 	void session_impl::async_accept(std::shared_ptr<tcp::acceptor> const& listener
@@ -2528,9 +2539,9 @@ namespace {
 		TORRENT_ASSERT((ssl == transport::ssl) == is_ssl(*c));
 #endif
 
-		listener->async_accept(*str
-			, std::bind(&session_impl::on_accept_connection, this, c
-			, std::weak_ptr<tcp::acceptor>(listener), _1, ssl));
+		std::weak_ptr<tcp::acceptor> ls(listener);
+		listener->async_accept(*str, [this, c, ls, ssl] (error_code const& ec)
+			{ return this->wrap(&session_impl::on_accept_connection, c, ls, ec, ssl); });
 	}
 
 	void session_impl::on_accept_connection(std::shared_ptr<socket_type> const& s
@@ -2943,6 +2954,9 @@ namespace {
 				c->peer_exceeds_limit();
 
 			TORRENT_ASSERT(!c->m_in_constructor);
+			// removing a peer may not throw an exception, so prepare for this
+			// connection to be added to the undead peers now.
+			m_undead_peers.reserve(m_undead_peers.size() + m_connections.size() + 1);
 			m_connections.insert(c);
 			c->start();
 		}
@@ -2954,28 +2968,30 @@ namespace {
 		set_socket_buffer_size(s, m_settings, ec);
 	}
 
-	// if cancel_with_cq is set, the peer connection is
-	// currently expected to be scheduled for a connection
-	// with the connection queue, and should be cancelled
-	// TODO: should this function take a shared_ptr instead?
-	void session_impl::close_connection(peer_connection* p)
+	void session_impl::close_connection(peer_connection* p) noexcept
 	{
 		TORRENT_ASSERT(is_single_thread());
 		std::shared_ptr<peer_connection> sp(p->self());
 
-		// someone else is holding a reference, it's important that
-		// it's destructed from the network thread. Make sure the
-		// last reference is held by the network thread.
-		if (!sp.unique())
-			m_undead_peers.push_back(sp);
-
 		TORRENT_ASSERT(p->is_disconnecting());
-
-		TORRENT_ASSERT(sp.use_count() > 0);
 
 		auto const i = m_connections.find(sp);
 		// make sure the next disk peer round-robin cursor stays valid
-		if (i != m_connections.end()) m_connections.erase(i);
+		if (i != m_connections.end())
+		{
+			m_connections.erase(i);
+
+			TORRENT_ASSERT(std::find(m_undead_peers.begin()
+				, m_undead_peers.end(), sp) == m_undead_peers.end());
+
+			// someone else is holding a reference, it's important that
+			// it's destructed from the network thread. Make sure the
+			// last reference is held by the network thread.
+			TORRENT_ASSERT_VAL(m_undead_peers.capacity() > m_undead_peers.size()
+				, m_undead_peers.capacity());
+			if (sp.use_count() > 2)
+				m_undead_peers.push_back(sp);
+		}
 	}
 
 	void session_impl::set_peer_id(peer_id const& id)
@@ -3200,8 +3216,8 @@ namespace {
 		ADD_OUTSTANDING_ASYNC("session_impl::on_tick");
 		error_code ec;
 		m_timer.expires_at(now + milliseconds(m_settings.get_int(settings_pack::tick_interval)), ec);
-		m_timer.async_wait(make_tick_handler([this](error_code const& err) {
-			this->wrap(&session_impl::on_tick, err); }));
+		m_timer.async_wait(aux::make_handler([this](error_code const& err)
+		{ this->wrap(&session_impl::on_tick, err); }, m_tick_handler_storage, *this));
 
 		m_download_rate.update_quotas(now - m_last_tick);
 		m_upload_rate.update_quotas(now - m_last_tick);
@@ -4108,8 +4124,6 @@ namespace {
 		// if we don't have any connection attempt quota, return
 		if (max_connections <= 0) return;
 
-		INVARIANT_CHECK;
-
 		int steps_since_last_connect = 0;
 		int const num_torrents = int(want_peers_finished.size() + want_peers_download.size());
 		for (;;)
@@ -4950,6 +4964,15 @@ namespace {
 
 			ec = errors::duplicate_torrent;
 			return std::make_pair(ptr_t(), false);
+		}
+
+		// make sure we have enough memory in the torrent lists up-front,
+		// since when torrents changes states, we cannot allocate memory that
+		// might fail.
+		size_t const num_torrents = m_torrents.size();
+		for (auto& l : m_torrent_lists)
+		{
+			l.reserve(num_torrents + 1);
 		}
 
 		torrent_ptr = std::make_shared<torrent>(*this
@@ -6007,7 +6030,13 @@ namespace {
 //		TORRENT_ASSERT(is_not_thread());
 // TODO: asserts that no outstanding async operations are still in flight
 
-		TORRENT_ASSERT(m_torrents.empty());
+		// this can happen if we end the io_service run loop with an exception
+		for (auto& t : m_torrents)
+		{
+			t.second->panic();
+			t.second->abort();
+		}
+		m_torrents.clear();
 
 #if defined TORRENT_ASIO_DEBUGGING
 		FILE* f = fopen("wakeups.log", "w+");
