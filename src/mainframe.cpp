@@ -162,7 +162,7 @@ MainFrame::wxUIUpdateEvtHandlerMap_t MainFrame::m_menu_ui_updater_map[] =
 	{ ID_VIEW_TOOLBAR, &MainFrame::OnUpdateUI_MenuViewToolbar },
 
 	{ ID_TORRENT_START, &MainFrame::OnUpdateUI_MenuTorrentStart },
-	{ ID_TORRENT_FORCE_START, &MainFrame::OnUpdateUI_MenuTorrentStart },
+	{ ID_TORRENT_FORCE_START, &MainFrame::OnUpdateUI_MenuTorrentForceStart },
 	{ ID_TORRENT_PAUSE, &MainFrame::OnUpdateUI_MenuTorrentPause },
 	{ ID_TORRENT_STOP, &MainFrame::OnUpdateUI_MenuTorrentStop },
 
@@ -270,7 +270,7 @@ MainFrame::MainFrame( wxFrame *frame, const wxString& title )
 
 	Bind( CHECK_METADATA, &MainFrame::OnTorrentMetadata, this );
 	//Bind( wxEVT_MENU_OPEN, &MainFrame::OnMenuOpen, this );
-	
+
 	Bind( wxEVT_SIZE, &MainFrame::OnSize, this );
 	Bind( wxEVT_MOVE, &MainFrame::OnMove, this );
 	Bind( wxEVT_TIMER, &MainFrame::OnRefreshTimer, this, ID_TIMER_GUI_UPDATE );
@@ -731,7 +731,7 @@ void MainFrame::AddTorrent( wxString filename, bool usedefault )
 				if (downloaded && (wxNO == ::wxMessageBox(_("It seemed that the torrent had been downloaded before. Are you going to download it again?"), _("Downloading"), wxYES_NO | wxICON_QUESTION)))
 				{
 					wxLogMessage( _T( "Canceled by user" ) );
-					
+
 					wxString configfile(wxGetApp().SaveTorrentsPath() + wxString(torrent->hash) + _T( ".conf" ));
 					if( ( wxFileExists( configfile ) ) &&
 							( !wxRemoveFile( configfile ) ) )
@@ -820,7 +820,7 @@ void MainFrame::OnTorrentMetadata( wxCommandEvent& WXUNUSED( event ) )
 			if(torrent && torrent->isvalid)
 			{
 				m_btsession->UpdateTorrentFileSize(torrent);
-				
+
 				if(torrent->config->GetTrackersURL().size() <= 0 )
 				{
 					std::vector<lt::announce_entry> trackers = torrent->handle.trackers();
@@ -836,7 +836,7 @@ void MainFrame::OnTorrentMetadata( wxCommandEvent& WXUNUSED( event ) )
 				if( !m_config->GetUseDefault() )
 				{
 					TorrentProperty torrent_property_dlg( torrent, this, wxID_ANY );
-				
+
 					if( torrent_property_dlg.ShowModal() != wxID_OK )
 					{
 						wxLogMessage( _T( "Canceled by user" ) );
@@ -849,7 +849,7 @@ void MainFrame::OnTorrentMetadata( wxCommandEvent& WXUNUSED( event ) )
 						}
 						return;
 					}
-					
+
 				}
 
 				torrent->handle.unset_flags(lt::torrent_flags::upload_mode);
@@ -921,7 +921,7 @@ void MainFrame::DownloadTorrent(wxURL & url)
 	if(url.GetError() == wxURL_NOERR )
 	{
 		wxInputStream *in_stream = url.GetInputStream();
-	
+
 		if( in_stream && in_stream->IsOk() )
 		{
 			wxString contenttype = url.GetProtocol().GetContentType();
@@ -932,25 +932,25 @@ void MainFrame::DownloadTorrent(wxURL & url)
 			{
 				/* write downloaded stream in to temporary file */
 				wxFileOutputStream fos( tmpfile );
-	
+
 				if( !fos.Ok() )
 				{
 					wxLogError( _T( "Error creating temporary file %s\n" ), tmpfile.c_str() );
 					return;
 				}
-	
+
 				static char buffer[4096];
 				memset( buffer, 0, 4096 );
 				int counter = 0;
-	
+
 				while( !in_stream->Eof() && in_stream->CanRead() )
 				{
 					in_stream->Read( buffer, 4096 );
 					size_t size = in_stream->LastRead();
-	
+
 					if( size == 0 )
 					{ break; }
-	
+
 					fos.Write( buffer, size );
 					counter += size;
 				}
@@ -960,7 +960,6 @@ void MainFrame::DownloadTorrent(wxURL & url)
 			 */
 			AddTorrent( tmpfile, false );
 			m_btsession->PostQueueUpdateEvent();
-			
 		}
 	}
 }
@@ -1055,7 +1054,7 @@ void MainFrame::UpdateUI(bool force/* = false*/)
 						m_trackerlistctrl->SetStaticHandle(invalid_torrent);
 						m_trackerlistctrl->SetItemCount( 0 );
 						m_peerlistctrl->SetItemCount( 0 );
-						
+
 						m_torrentinfo->UpdateTorrentInfo( false );
 						m_torrentlistctrl->Refresh(false);
 						UpdateStatusBar();
@@ -1135,87 +1134,6 @@ void MainFrame::UpdateSelectedTorrent()
 	m_torrentinfo->UpdateTorrentInfo( true );
 }
 
-void MainFrame::OnUpdateUI_MenuTorrent( wxUpdateUIEvent& event )
-{
-	bool enable = false;
-
-	if( m_btsession && m_btsession->GetTorrentQueueSize() > 0 )
-	{
-		SwashListCtrl::itemlist_t selecteditems;
-		m_torrentlistctrl->GetSelectedItems(selecteditems);
-		/* selected more than 1 item in the torrent list */
-		size_t total = selecteditems.size();
-
-		if( total > 0 )
-		{
-			int torrent_state;
-			int menuId = event.GetId();
-
-			if( ( ID_TORRENT_MOVEUP == menuId ) || ( ID_TORRENT_MOVEDOWN  == menuId )
-					|| ( ID_TORRENT_REANNOUNCE  == menuId )  || ( ID_TORRENT_RECHECK  == menuId ) )
-			{
-				enable = true;
-			}
-			else
-			{
-				if( ID_TORRENT_OPENDIR == menuId )
-				{
-					enable = ( total == 1 );
-				}
-				else
-				{
-					for( size_t i = 0; i < total; ++i )
-					{
-						std::shared_ptr<torrent_t> torrent = m_btsession->GetTorrent( selecteditems[i] );
-						if(!torrent || !torrent->isvalid)
-						{
-							break;
-						}
-						torrent_state = torrent->config->GetTorrentState();
-						if( ID_TORRENT_START == menuId )
-						{
-							if( torrent_state != TORRENT_STATE_START && torrent_state != TORRENT_STATE_FORCE_START )
-							{
-								enable = true;
-								break;
-							}
-							else
-							{
-								lt::torrent_handle &torrenthandle = torrent->handle;
-								if((torrenthandle.is_valid() /*&& torrenthandle.status().paused*/ ))
-								{
-									enable = true;
-									break;
-								}
-							}
-						}
-						else
-							if( ID_TORRENT_STOP == menuId )
-							{
-								if( torrent_state != TORRENT_STATE_STOP )
-								{
-									enable = true;
-									break;
-								}
-							}
-							else
-								if( ID_TORRENT_PAUSE == menuId )
-								{
-									if( torrent_state == TORRENT_STATE_START || torrent_state == TORRENT_STATE_FORCE_START)
-									{
-										enable = true;
-										break;
-									}
-								}
-					}
-				}
-			}
-		}
-	}
-
-	event.Enable( enable );
-}
-
 void MainFrame::OnUpdateUI_MenuTorrentStart( wxUpdateUIEvent& event )
 {
 	bool enable = false;
@@ -1247,6 +1165,39 @@ void MainFrame::OnUpdateUI_MenuTorrentStart( wxUpdateUIEvent& event )
 
 	event.Enable(enable);
 }
+
+void MainFrame::OnUpdateUI_MenuTorrentForceStart( wxUpdateUIEvent& event )
+{
+	bool enable = false;
+
+	if( m_btsession && m_btsession->GetTorrentQueueSize() > 0 )
+	{
+		SwashListCtrl::itemlist_t selecteditems;
+		m_torrentlistctrl->GetSelectedItems(selecteditems);
+		/* selected more than 1 item in the torrent list */
+		size_t total = selecteditems.size();
+
+		if( total > 0 )
+		{
+			for( size_t i = 0; i < total; ++i )
+			{
+				std::shared_ptr<torrent_t> torrent = m_btsession->GetTorrent( selecteditems[i] );
+				if(torrent &&& torrent->isvalid)
+				{
+					int torrent_state = torrent->config->GetTorrentState();
+					if( torrent_state != TORRENT_STATE_FORCE_START )
+					{
+						enable = true;
+						break;
+					}
+				}
+			}
+		}
+	}
+
+	event.Enable(enable);
+}
+
 
 void MainFrame::OnUpdateUI_MenuTorrentPause( wxUpdateUIEvent& event )
 {
@@ -1361,7 +1312,7 @@ void MainFrame::OnUpdateUI_MenuMovedown( wxUpdateUIEvent& event )
 		if( last > 0 )
 		{
 			long idx = selecteditems[last -1];
-			if( idx < (m_torrentlistctrl->GetItemCount() - 1 ) ) 
+			if( idx < (m_torrentlistctrl->GetItemCount() - 1 ) )
 			{
 				std::shared_ptr<torrent_t> torrent = m_btsession->GetTorrent( idx );
 				if(torrent && torrent->isvalid)
@@ -1615,7 +1566,7 @@ void MainFrame::OnMenuTorrentCopyMagnetUri( wxCommandEvent& event )
 				magneturis += magneturi + *eol;
 		}
 
-		
+
 		if( !magneturis.IsEmpty() && wxTheClipboard->Open() )
 		{
 			wxTheClipboard->SetData( new wxTextDataObject( magneturis ) );
