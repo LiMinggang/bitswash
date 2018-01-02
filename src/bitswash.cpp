@@ -259,6 +259,7 @@ bool BitSwash::OnInit()
 		if( !b ) wxLogError( _T( "Failed to create file " ) + m_configpath );
 	}
 	m_config = new Configuration( APPNAME );
+	wxASSERT(m_config != nullptr);
 	/* workaround for libtorrent unable to resolve our ip address */
 	#if 0
 	wxIPV4address remote;
@@ -292,6 +293,19 @@ bool BitSwash::OnInit()
 	{
 		bool b = wxFileName::Mkdir( m_logpath );
 		if( !b ) wxLogError( _T( "Failed to create directory " ) + m_logpath );
+	}
+	else
+	{
+		wxArrayString files;
+		size_t nlogs = wxDir::GetAllFiles(m_logpath, &files, wxEmptyString, wxDIR_FILES );
+		if(nlogs >= m_config->GetLogMaxLogFiles())
+		{
+			files.Sort();
+			for(size_t i = 0; i < (nlogs - m_config->GetLogMaxLogFiles() + 1); ++i)
+			{
+				wxRemoveFile( m_logpath + files[i] );
+			}
+		}
 	}
 
 	wxInitAllImageHandlers();

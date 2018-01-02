@@ -110,6 +110,9 @@ class Configuration : public wxFileConfig
 		bool GetLogFile() { return m_log_file; }
 		void SetLogFile( bool log_file ) { m_log_file = log_file ; }
 
+		unsigned int GetLogMaxLogFiles() { return m_max_log_files; }
+		void SetLogMaxLogFiles(unsigned int max_file_num) { m_max_log_files = max_file_num; }
+
 		unsigned int GetMaxStart() { return m_max_start; }
 		void SetMaxStart(unsigned int max_start) { m_max_start = max_start; }
 		bool GetEnableUpnp() { return m_enable_upnp; }
@@ -580,6 +583,7 @@ class Configuration : public wxFileConfig
 		unsigned int m_log_severity;
 		unsigned int m_log_linecount;
 		bool m_log_file;
+		unsigned int m_max_log_files;
 
 		//torrent history
 		std::vector<wxString> m_savepathhistory;

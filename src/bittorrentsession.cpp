@@ -1401,20 +1401,23 @@ void BitTorrentSession::UpdateTorrentFileSize(std::shared_ptr<torrent_t>& torren
 		lt::torrent_info const& t_info = *(torrent->info);
 		lt::file_storage const& allfiles = t_info.files();
 		std::vector<lt::download_priority_t> filespriority = torrent->config->GetFilesPriorities();
+		int totalfiles = t_info.num_files();
 
-		if (filespriority.size() != t_info.num_files())
+		if (filespriority.size() != totalfiles)
 		{
 			nopriority = true;
 		}
 
-		for (lt::file_index_t i(0); i < lt::file_index_t(t_info.num_files()); ++i)
-		{
-			if (nopriority || filespriority[int32_t(i)] != TorrentConfig::file_none)
+		for(int i = 0; i < totalfiles; ++i)
+		{
+			lt::file_index_t idx(i);
+			if (nopriority || filespriority[i] != TorrentConfig::file_none)
 			{
-				total_selected += allfiles.file_size(i);
+				total_selected += allfiles.file_size(idx);
 			}
-			total += allfiles.file_size(i);
+			total += allfiles.file_size(idx);
 		}
+
 		torrent->config->SetSelectedSize(total_selected);
 		torrent->config->SetTotalSize(total);
 	}
@@ -1929,6 +1932,8 @@ void BitTorrentSession::ConfigureTorrent( std::shared_ptr<torrent_t>& torrent )
 				{
 					oldpath.Rmdir();
 				}
+				else
+					wxMessageBox( wxString::Format(_( "Failed to copy %s to %s!" ), oldpath.GetFullPath().c_str(), newpath.GetFullPath().c_str()), _( "Error" ),  wxOK | wxICON_ERROR );
 			}
 			else if( oldpath.FileExists () )
 			{
@@ -1956,13 +1961,6 @@ void BitTorrentSession::ConfigureTorrent( std::shared_ptr<torrent_t>& torrent )
 					{
 						AddTorrentToSession( torrent );
 					}
-					/*if( h.is_valid() )
-					{
-						torrent->config->SetTorrentState(force ? TORRENT_STATE_FORCE_START : TORRENT_STATE_START);
-						torrent->config->Save();
-						h = torrent->handle;
-						h.resume();
-					}*/
 				}
 			}
 			else //failed copy, restore path

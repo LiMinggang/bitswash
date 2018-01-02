@@ -183,6 +183,7 @@ void Configuration::Save()
 	m_cfg->Write( _T( "/Log/log_severity" ), ( int )m_log_severity );
 	m_cfg->Write( _T( "/Log/log_linecount" ), ( int )m_log_linecount );
 	m_cfg->Write( _T( "/Log/log_file" ), ( bool )m_log_file );
+	m_cfg->Write( _T( "/Log/log_max_files" ), ( int )m_max_log_files );
 	wxFileOutputStream fos( m_configfile );
 	m_cfg->Save( fos );
 	WriteSavePath();
@@ -241,6 +242,9 @@ void Configuration::Load()
 	m_log_linecount = m_cfg->Read( _T( "/Log/log_linecount" ), 100 );
 	if( ( m_log_linecount > 1000 ) || ( m_log_linecount < 100 ) )  m_log_linecount = 100;
 	m_cfg->Read( _T( "/Log/log_file" ), &m_log_file, false );
+	m_max_log_files = m_cfg->Read( _T( "/Log/log_max_files" ), 5 );
+	if(m_max_log_files <= 0) m_max_log_files = 5;
+	if(m_max_log_files > 20) m_max_log_files = 20;
 	m_cfg->Read( _T( "/Config/use_systray" ), &m_use_systray, true );
 	//if (! (m_cfg->Read(_T("/Config/use_systray"), &m_use_systray))) m_use_systray = true;
 	m_cfg->Read( _T( "/Config/hidetaskbar" ), &m_hidetaskbar, false ) ;
