@@ -20,7 +20,7 @@
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{4EFBB1F8-4E95-43CE-8873-628348CBD8E9}</ProjectGuid>
-    <RootNamespace>bitswash-win32</RootNamespace>
+    <RootNamespace>bitswash</RootNamespace>
     <Keyword>Win32Proj</Keyword>
     <WindowsTargetPlatformVersion>10.0.16299.0</WindowsTargetPlatformVersion>
     <ProjectName>bitswash</ProjectName>
