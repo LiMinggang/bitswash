@@ -762,7 +762,7 @@ void MainFrame::AddTorrent( wxString filename, bool usedefault )
 		else
 		{
 			m_torrentlistctrl->Select( idx, true );
-			int answer = wxMessageBox( _("Torrent Exists. Do you want to update trackers/seeds from the torrent?"), _("Confirm"), wxYES_NO, this );
+			int answer = wxMessageBox( _("Torrent Exists. Do you want to update trackers/seeds from the torrent?"), _("Confirm"), wxYES_NO | wxICON_QUESTION , this );
 
 			if( answer == wxYES )
 			{
@@ -904,7 +904,7 @@ void MainFrame::OpenMagnetURI(const wxString & magneturi)
 		else
 		{
 			m_torrentlistctrl->Select( idx, true );
-			int answer = wxMessageBox( _("Torrent Exists. Do you want to update trackers/seeds from the torrent?"), _("Confirm"), wxYES_NO, this );
+			int answer = wxMessageBox( _("Torrent Exists. Do you want to update trackers/seeds from the torrent?"), _("Confirm"), wxYES_NO | wxICON_QUESTION , this );
 
 			if( answer == wxYES )
 			{
@@ -1994,14 +1994,12 @@ void MainFrame::OnDropFiles(wxDropFilesEvent& event)
 		wxString* dropped = event.GetFiles();
 		wxASSERT(dropped);
 
-		wxBusyCursor busyCursor;
-		wxWindowDisabler disabler;      
 		wxBusyInfo busyInfo(_("Adding torrent files, wait please..."));
 
 		wxString name;
 		wxArrayString files;
 
-		for (int i = 0; i < event.GetNumberOfFiles(); i++)
+		for (size_t i = 0; i < event.GetNumberOfFiles(); ++i)
 		{
 			name = dropped[i];
 			if (wxFileExists(name))
@@ -2010,11 +2008,15 @@ void MainFrame::OnDropFiles(wxDropFilesEvent& event)
 				wxDir::GetAllFiles(name, &files, _T("*.torrent"));                                    
 		}
 
-		for (size_t i = 0; i < files.size(); ++i)
+		if(files.size())
 		{
-			AddTorrent( files[i], false );
+			int answer = wxMessageBox( _("Do you want apply default config for all torrents, aka. select all files?"), _("Confirm"), wxYES_NO | wxICON_QUESTION , this );
+			bool usedefault = ( answer == wxYES );
+			for (size_t i = 0; i < files.size(); ++i)
+			{
+				AddTorrent( files[i], usedefault );
+			}
 		}
 	}
 }
-
 
