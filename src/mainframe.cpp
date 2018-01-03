@@ -47,6 +47,7 @@
 #include <wx/clipbrd.h>
 #include <wx/textfile.h>
 #include <wx/tokenzr.h>
+#include <wx/busyinfo.h>
 
 #ifdef __UNIX_LIKE__
 	#include <wx/utils.h>
@@ -646,6 +647,9 @@ void MainFrame::CreateTorrentList()
 	m_torrentlistctrl = new TorrentListCtrl( this, m_config->GetTorrentListCtrlSetting(), wxID_ANY,
 			wxDefaultPosition, wxDefaultSize,
 			flags );
+	wxASSERT(m_torrentlistctrl != nullptr);
+	m_torrentlistctrl->DragAcceptFiles(true);
+	m_torrentlistctrl->Bind(wxEVT_DROP_FILES, &MainFrame::OnDropFiles, this);
 }
 
 void MainFrame::ReceiveTorrent( wxString fileorurl )
@@ -1983,4 +1987,34 @@ wxMenu* MainFrame::GetNewTorrentMenu()
 	menuitem = torrentMenu->Append( ID_TORRENT_COPYMAGNETURI, _( "Copy &Magnet URI\tCtrl+C" ), _( "Copy Magnet URI" ) );
 	return torrentMenu;
 }
+
+void MainFrame::OnDropFiles(wxDropFilesEvent& event)
+{
+	if (event.GetNumberOfFiles() > 0) {
+		wxString* dropped = event.GetFiles();
+		wxASSERT(dropped);
+
+		wxBusyCursor busyCursor;
+		wxWindowDisabler disabler;      
+		wxBusyInfo busyInfo(_("Adding torrent files, wait please..."));
+
+		wxString name;
+		wxArrayString files;
+
+		for (int i = 0; i < event.GetNumberOfFiles(); i++)
+		{
+			name = dropped[i];
+			if (wxFileExists(name))
+				files.push_back(name);
+			else if (wxDirExists(name))
+				wxDir::GetAllFiles(name, &files, _T("*.torrent"));                                    
+		}
+
+		for (size_t i = 0; i < files.size(); ++i)
+		{
+			AddTorrent( files[i], false );
+		}
+	}
+}
+
 

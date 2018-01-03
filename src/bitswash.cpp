@@ -303,7 +303,7 @@ bool BitSwash::OnInit()
 			files.Sort();
 			for(size_t i = 0; i < (nlogs - m_config->GetLogMaxLogFiles() + 1); ++i)
 			{
-				wxRemoveFile( m_logpath + files[i] );
+				wxRemoveFile( files[i] );
 			}
 		}
 	}

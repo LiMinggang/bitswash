@@ -169,6 +169,7 @@ private:
 	void OnUpdateUI_MenuProperties( wxUpdateUIEvent& event );
 	void OnUpdateUI_MenuRemove( wxUpdateUIEvent& event );
 	void OnUpdateUI_MenuRemovedata( wxUpdateUIEvent& event );
+	void OnDropFiles(wxDropFilesEvent& event);
 
 	void LoadIcons();
 	//void SaveTorrentResumeData(std::shared_ptr<ptorrent_t>& torrent);
