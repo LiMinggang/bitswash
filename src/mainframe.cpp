@@ -1994,18 +1994,18 @@ void MainFrame::OnDropFiles(wxDropFilesEvent& event)
 		wxString* dropped = event.GetFiles();
 		wxASSERT(dropped);
 
-		wxBusyInfo busyInfo(_("Adding torrent files, wait please..."));
-
-		wxString name;
 		wxArrayString files;
-
-		for (size_t i = 0; i < event.GetNumberOfFiles(); ++i)
 		{
-			name = dropped[i];
-			if (wxFileExists(name))
-				files.push_back(name);
-			else if (wxDirExists(name))
-				wxDir::GetAllFiles(name, &files, _T("*.torrent"));                                    
+			wxBusyInfo busyInfo(_("Adding torrent files, wait please..."));
+			wxString name;
+			for (size_t i = 0; i < event.GetNumberOfFiles(); ++i)
+			{
+				name = dropped[i];
+				if (wxFileExists(name))
+					files.push_back(name);
+				else if (wxDirExists(name))
+					wxDir::GetAllFiles(name, &files, _T("*.torrent"));                                    
+			}
 		}
 
 		if(files.size())
