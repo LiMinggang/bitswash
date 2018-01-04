@@ -175,8 +175,11 @@ TorrentSettingPane::TorrentSettingPane( wxWindow* parent, std::shared_ptr<torren
 
 	FlexGridSizer4->Add(m_check_usedefault, 1, wxALL|wxALIGN_LEFT|wxALIGN_CENTER_VERTICAL, 5);
 	m_check_preview_video_files = new wxCheckBox(this, wxID_ANY, _("Enable preview video file(s)"), wxDefaultPosition, wxDefaultSize, 0, wxDefaultValidator, _T("wxID_ANY"));
-	m_check_preview_video_files->SetValue(isTorrent?m_pTorrent->config->GetTorrentEnableVideoPreview():pcfg->GetEnableVideoPreview());
+	m_check_preview_video_files->SetValue(isTorrent?m_pTorrent->config->GetEnableVideoPreview():pcfg->GetEnableVideoPreview());
 	FlexGridSizer4->Add(m_check_preview_video_files, 1, wxALL|wxALIGN_LEFT|wxALIGN_CENTER_VERTICAL, 5);
+	m_check_sequential_download = new wxCheckBox(this, wxID_ANY, _("Sequential Download"), wxDefaultPosition, wxDefaultSize, 0, wxDefaultValidator, _T("wxID_ANY"));
+	m_check_sequential_download->SetValue(isTorrent?m_pTorrent->config->GetSequentialDownload():pcfg->GetSequentialDownload());
+	FlexGridSizer4->Add(m_check_sequential_download, 1, wxALL|wxALIGN_LEFT|wxALIGN_CENTER_VERTICAL, 5);
 	FlexGridSizer2->Add(FlexGridSizer4, 1, wxALL|wxALIGN_LEFT|wxALIGN_CENTER_VERTICAL, 5);
 	StaticLine1 = new wxStaticLine(this, wxID_ANY, wxDefaultPosition, wxSize(10,-1), wxLI_HORIZONTAL, _T("wxID_ANY"));
 	FlexGridSizer2->Add(StaticLine1, 1, wxALL|wxEXPAND, 5);
@@ -238,11 +241,15 @@ TorrentSettingPane::TorrentSettingPane( wxWindow* parent, std::shared_ptr<torren
 	FlexGridSizer1->SetSizeHints(this);
 
 	//Connect(wxID_ANY,wxEVT_COMMAND_TEXT_UPDATED,(wxObjectEventFunction)&TorrentSettingPane::OnSaveDirectoryChanged);
-	//Connect(wxID_ANY,wxEVT_COMMAND_BUTTON_CLICKED,(wxObjectEventFunction)&TorrentSettingPane::OnBbuttonShowDirClick);
+	//Connect(wxID_ANY,wxEVT_COMMAND_BUTTON_CLICKED,(wxObjectEventFunction)&TorrentSettingPane::OnButtonShowDirClick);
+	//Connect(wxID_ANY,wxEVT_COMMAND_CHECKBOX_CLICKED,(wxObjectEventFunction)&TorrentSettingPane::OnPreviewVideoFilesClick);
+	//Connect(wxID_ANY,wxEVT_COMMAND_CHECKBOX_CLICKED,(wxObjectEventFunction)&TorrentSettingPane::OnSequentialDownloadClick);
 	//*)
 
-	Bind(wxEVT_BUTTON, &TorrentSettingPane::OnBbuttonShowDirClick, this, m_button_showdir->GetId());
+	Bind(wxEVT_BUTTON, &TorrentSettingPane::OnButtonShowDirClick, this, m_button_showdir->GetId());
 	Bind(wxEVT_TEXT, &TorrentSettingPane::OnSaveDirectoryChanged, this, m_combo_saveas->GetId());
+	Bind(wxEVT_CHECKBOX, &TorrentSettingPane::OnPreviewVideoFilesClick, this, m_check_preview_video_files->GetId());
+	Bind(wxEVT_CHECKBOX, &TorrentSettingPane::OnSequentialDownloadClick, this, m_check_sequential_download->GetId());
 }
 
 TorrentSettingPane::~TorrentSettingPane()
@@ -271,7 +278,7 @@ lt::storage_mode_t TorrentSettingPane::GetStorageMode()
 	}
 }
 
-void TorrentSettingPane::OnBbuttonShowDirClick(wxCommandEvent& event)
+void TorrentSettingPane::OnButtonShowDirClick(wxCommandEvent& event)
 {
 #if WXVER >= 280
 	long dirstyle = wxDD_DEFAULT_STYLE| wxDD_DIR_MUST_EXIST |wxDD_CHANGE_DIR;
@@ -281,11 +288,11 @@ void TorrentSettingPane::OnBbuttonShowDirClick(wxCommandEvent& event)
 
 	wxDirDialog dir_dlg(this, _("Choose default download directory"), m_combo_saveas->GetValue(),dirstyle );
 
-	if (dir_dlg.ShowModal() == wxID_OK) 
+	if (dir_dlg.ShowModal() == wxID_OK)
 	{
 		wxString newpath = dir_dlg.GetPath();
 		//wxLogDebug(_T("DirDlg return %s"), newpath.c_str());
-		m_combo_saveas->SetValue(newpath);	
+		m_combo_saveas->SetValue(newpath);
 	}
 	event.Skip();
 }
@@ -314,4 +321,14 @@ void TorrentSettingPane::OnSaveDirectoryChanged(wxCommandEvent& event)
 			}
 		}
 	}
+}
+
+void TorrentSettingPane::OnPreviewVideoFilesClick(wxCommandEvent& event)
+{
+	m_check_sequential_download->SetValue(false);
+}
+
+void TorrentSettingPane::OnSequentialDownloadClick(wxCommandEvent& event)
+{
+	m_check_preview_video_files->SetValue(false);
 }

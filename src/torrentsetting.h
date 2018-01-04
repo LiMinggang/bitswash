@@ -53,6 +53,7 @@ class TorrentSettingPane: public wxPanel
 		AutoSizeInput* m_autoUpLimit;
 		wxButton* m_button_showdir;
 		wxCheckBox* m_check_preview_video_files;
+		wxCheckBox* m_check_sequential_download;
 		wxCheckBox* m_check_start;
 		wxCheckBox* m_check_usedefault;
 		wxComboBox* m_combo_saveas;
@@ -71,8 +72,10 @@ class TorrentSettingPane: public wxPanel
 	private:
 
 		//(*Handlers(TorrentSettingPane)
-		void OnBbuttonShowDirClick(wxCommandEvent& event);
+		void OnButtonShowDirClick(wxCommandEvent& event);
 		void OnSaveDirectoryChanged(wxCommandEvent& event);
+		void OnPreviewVideoFilesClick(wxCommandEvent& event);
+		void OnSequentialDownloadClick(wxCommandEvent& event);
 		//*)
 		
 		std::shared_ptr<torrent_t> m_pTorrent;
@@ -92,11 +95,17 @@ class TorrentSettingPane: public wxPanel
 		{
 			return m_check_usedefault->IsChecked();
 		}
-		
+
 		bool GetEnableVideoPreview()
 		{
 			return m_check_preview_video_files->IsChecked();
 		}
+
+		bool GetSquentialDownload()
+		{
+			return (m_check_sequential_download->IsChecked());
+		}
+
 		long GetDownloadRate()
 		{
 			return m_autoDownLimit->GetValue();

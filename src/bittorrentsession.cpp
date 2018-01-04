@@ -1842,7 +1842,7 @@ void BitTorrentSession::ConfigureTorrentFilesPriority( std::shared_ptr<torrent_t
 		}
 
 		torrent->handle.prioritize_files(filespriority);
-		bool ppchanged = false, set = torrent->config->GetTorrentEnableVideoPreview();
+		bool ppchanged = false, set = torrent->config->GetEnableVideoPreview();
 
 		if(set)
 		{

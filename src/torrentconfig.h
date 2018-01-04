@@ -79,11 +79,14 @@ public:
 	const wxString GetDownloadPath() { return m_downloadpath; }
 	void SetDownloadPath( wxString path ) { m_downloadpath = path; }
 
-	bool GetTorrentEnableVideoPreview() { return m_enable_video_preview; }
-	void SetTorrentEnableVideoPreview( bool enable ) { m_enable_video_preview = enable; }
+	bool GetEnableVideoPreview() { return m_enable_video_preview; }
+	void SetEnableVideoPreview( bool enable ) { m_enable_video_preview = enable; }
 
 	libtorrent::storage_mode_t GetTorrentStorageMode() { return m_storagemode; }
 	void SetTorrentStorageMode( libtorrent::storage_mode_t storagemode ) { m_storagemode = storagemode; }
+
+	bool GetSequentialDownload() { return m_sequential_download; }
+	void SetSequentialDownload( bool isSequential ) { m_sequential_download = isSequential;}
 
 	int GetTorrentState() { return m_torrent_state; }
 	void SetTorrentState( int state ) { m_torrent_state = state;}
@@ -138,6 +141,7 @@ private:
 	wxString m_downloadpath;
 	wxString m_magneturi;
 
+	bool m_sequential_download;
 	bool m_enable_video_preview;
 	libtorrent::storage_mode_t m_storagemode;
 

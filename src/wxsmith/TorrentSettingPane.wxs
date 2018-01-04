@@ -54,7 +54,7 @@
 							<object class="sizeritem">
 								<object class="wxButton" name="wxID_ANY" variable="m_button_showdir" member="yes">
 									<label>...</label>
-									<handler function="OnBbuttonShowDirClick" entry="EVT_BUTTON" />
+									<handler function="OnButtonShowDirClick" entry="EVT_BUTTON" />
 								</object>
 								<flag>wxALL|wxALIGN_LEFT|wxALIGN_CENTER_VERTICAL</flag>
 								<border>5</border>
@@ -69,7 +69,7 @@
 								<option>1</option>
 							</object>
 							<object class="sizeritem">
-								<object class="wxStaticText" name="ID_DISK_FREE_SPACE" variable="m_label_diskfreespace" member="yes">
+								<object class="wxStaticText" name="wxID_ANY" variable="m_label_diskfreespace" member="yes">
 									<label>0 Byte(s)</label>
 								</object>
 								<flag>wxALL|wxALIGN_LEFT|wxALIGN_CENTER_VERTICAL</flag>
@@ -105,6 +105,16 @@
 							<object class="sizeritem">
 								<object class="wxCheckBox" name="wxID_ANY" variable="m_check_preview_video_files" member="yes">
 									<label>Enable preview video file(s)</label>
+									<handler function="OnPreviewVideoFilesClick" entry="EVT_CHECKBOX" />
+								</object>
+								<flag>wxALL|wxALIGN_LEFT|wxALIGN_CENTER_VERTICAL</flag>
+								<border>5</border>
+								<option>1</option>
+							</object>
+							<object class="sizeritem">
+								<object class="wxCheckBox" name="wxID_ANY" variable="m_check_sequential_download" member="yes">
+									<label>Sequential Download</label>
+									<handler function="OnSequentialDownloadClick" entry="EVT_CHECKBOX" />
 								</object>
 								<flag>wxALL|wxALIGN_LEFT|wxALIGN_CENTER_VERTICAL</flag>
 								<border>5</border>

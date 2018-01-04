@@ -159,6 +159,8 @@ void TorrentProperty::OnOK(wxCommandEvent& event)
 	//pConfig->SetTorrentCompactAlloc(m_panel_settings->GetCompactAlloc());
 	pConfig->SetTorrentStorageMode(m_panel_settings->GetStorageMode());
 	
+	pConfig->SetEnableVideoPreview(m_panel_settings->GetEnableVideoPreview());
+	pConfig->SetSequentialDownload(m_panel_settings->GetSquentialDownload());
 
 	pConfig->SetTorrentState(m_panel_settings->GetStartTorrent()?TORRENT_STATE_QUEUE:TORRENT_STATE_STOP);
 

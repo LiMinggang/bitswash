@@ -81,6 +81,7 @@ void TorrentConfig::Save()
 	m_cfg->Write( _T( "/Torrent/download_limit" ), m_torrent_download_limit );
 	m_cfg->Write( _T( "/Torrent/max_connections" ), m_torrent_max_connections );
 	m_cfg->Write( _T( "/Torrent/enable_video_preview" ), ( bool )m_enable_video_preview );
+	m_cfg->Write( _T( "/Torrent/sequential_download" ), ( bool )m_sequential_download );
 
 	wxLongLong tsize(m_total_file_size);
 	m_cfg->Write( _T( "/Torrent/total_size_h" ), tsize.GetHi() );
@@ -120,6 +121,7 @@ void TorrentConfig::Load()
 	m_torrent_download_limit = m_cfg->Read( _T( "/Torrent/download_limit" ), m_maincfg->GetDefaultDownloadLimit() );
 	m_torrent_max_connections = m_cfg->Read( _T( "/Torrent/max_connections" ), m_maincfg->GetMaxConnections() );
 	m_cfg->Read( _T( "/Torrent/enable_video_preview" ), &m_enable_video_preview, true );
+	m_cfg->Read( _T( "/Torrent/sequential_download" ), &m_sequential_download, false );
 
 	long s_hi = m_cfg->Read( _T( "/Torrent/total_size_h" ), 0L );
 	unsigned long s_lo = m_cfg->Read( _T( "/Torrent/total_size_l" ), 0L );

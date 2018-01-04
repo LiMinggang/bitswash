@@ -179,6 +179,7 @@ void Configuration::Save()
 	if( m_default_max_uploads < 2 ) m_default_max_uploads = 2;
 	m_cfg->Write( _T( "/Torrent/default_max_uploads" ), m_default_max_uploads );
 	m_cfg->Write( _T( "/Torrent/enable_video_preview" ), ( bool )m_enable_video_preview );
+	m_cfg->Write( _T( "/Torrent/sequential_download" ), ( bool )m_sequential_download );
 	//logging
 	m_cfg->Write( _T( "/Log/log_severity" ), ( int )m_log_severity );
 	m_cfg->Write( _T( "/Log/log_linecount" ), ( int )m_log_linecount );
@@ -353,6 +354,7 @@ void Configuration::Load()
 	//read save path
 	ReadSavePath();
 	m_cfg->Read( _T( "/Torrent/enable_video_preview" ), &m_enable_video_preview, true );
+	m_cfg->Read( _T( "/Torrent/sequential_download" ), &m_sequential_download, false );
 }
 
 void Configuration::ReadSavePath()

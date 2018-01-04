@@ -147,6 +147,9 @@ class Configuration : public wxFileConfig
         void SetEnableVideoPreview(bool enable_preview) { m_enable_video_preview = enable_preview; }
 
         // libtorrent
+		bool GetSequentialDownload() { return m_sequential_download; }
+		void SetSequentialDownload(bool isSequential) { m_sequential_download = isSequential; }
+
 		libtorrent::storage_mode_t GetDefaultStorageMode() { return m_storagemode; }
 		void SetDefaultStorageMode(libtorrent::storage_mode_t storagemode) { m_storagemode = storagemode; } 
 
@@ -372,6 +375,7 @@ class Configuration : public wxFileConfig
 			
 		bool 		m_exclude_seed;
 		bool 		m_enable_video_preview;
+		bool		m_sequential_download;
 #ifdef __WXMSW__
         bool        m_run_at_startup;
         bool        m_associate_torrent;

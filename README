@@ -24,6 +24,8 @@ News:
 0.0.8
 New: Upper limit of number of log files
 New: Support drag and drop torrent files
+New: Squential download
+Fix: Enable preview download config won't apply
 
 0.0.7
 New: 64 bits support
