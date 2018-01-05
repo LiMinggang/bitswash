@@ -56,7 +56,8 @@ ExtensionSettingPane::ExtensionSettingPane( wxWindow* parent,
 	m_static_infoextension = new wxStaticText( m_pane_infoextension, wxID_ANY, _( "Extensions" ), wxDefaultPosition, wxDefaultSize, 0 );
 	bSizer1->Add( m_static_infoextension, 0, wxALL, 2 );
 	m_pane_infoextension->SetSizer( bSizer1 );
-	m_pane_infoextension->Layout();
+	bSizer1->Fit(m_pane_infoextension);
+	bSizer1->SetSizeHints(m_pane_infoextension);
 	fgSizerMain->Add( m_pane_infoextension, 1, wxEXPAND | wxALL, 5 );
 	wxFlexGridSizer* fgSizerExtensions;
 	fgSizerExtensions = new wxFlexGridSizer( 0, 1, 0, 0 );
@@ -75,7 +76,8 @@ ExtensionSettingPane::ExtensionSettingPane( wxWindow* parent,
 	m_static_infoencryption = new wxStaticText( m_pane_infoencryption, wxID_ANY, _( "Protocol Encryption" ), wxDefaultPosition, wxDefaultSize, 0 );
 	bSizer11->Add( m_static_infoencryption, 0, wxALL, 2 );
 	m_pane_infoencryption->SetSizer( bSizer11 );
-	m_pane_infoencryption->Layout();
+	bSizer11->Fit(m_pane_infoencryption);
+	bSizer11->SetSizeHints(m_pane_infoencryption);
 	fgSizerMain->Add( m_pane_infoencryption, 1, wxEXPAND | wxALL, 5 );
 	wxFlexGridSizer* fgSizerEncryption;
 	fgSizerEncryption = new wxFlexGridSizer( 0, 1, 0, 0 );
@@ -95,7 +97,8 @@ ExtensionSettingPane::ExtensionSettingPane( wxWindow* parent,
 	m_static_infonat = new wxStaticText( m_pane_infonetwork, wxID_ANY, _( "NAT Service" ), wxDefaultPosition, wxDefaultSize, 0 );
 	bSizer111->Add( m_static_infonat, 0, wxALL, 2 );
 	m_pane_infonetwork->SetSizer( bSizer111 );
-	m_pane_infonetwork->Layout();
+	bSizer111->Fit(m_pane_infonetwork);
+	bSizer111->SetSizeHints(m_pane_infonetwork);
 	fgSizerMain->Add( m_pane_infonetwork, 1, wxEXPAND | wxALL, 5 );
 	wxFlexGridSizer* fgSizerNetwork;
 	fgSizerNetwork = new wxFlexGridSizer( 0, 1, 0, 0 );
@@ -111,8 +114,9 @@ ExtensionSettingPane::ExtensionSettingPane( wxWindow* parent,
 	fgSizerNetwork->Add( m_check_lsd, 0, wxALL, 5 );
 	fgSizerMain->Add( fgSizerNetwork, 1, wxEXPAND, 5 );
 	this->SetSizer( fgSizerMain );
-	this->Layout();
+	//this->Layout();
 	fgSizerMain->Fit( this );
+	fgSizerMain->SetSizeHints(this);
 	Bind( wxEVT_CHECKBOX, &ExtensionSettingPane::OnEnablePe, this, m_check_pe->GetId() );
 }
 
