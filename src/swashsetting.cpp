@@ -120,6 +120,9 @@ void SwashSetting::OnOK(wxCommandEvent& event)
 	m_pcfg->SetGlobalMaxUploads(m_pane_connectionsettings->GetMaxUploads());
 	m_pcfg->SetAnonymousMode(m_pane_connectionsettings->IsAnonymousMode());
 	m_pcfg->SetUseOSCache(m_pane_connectionsettings->UseOSCache());
+	m_pcfg->SetMaxActiveSeeds(m_pane_connectionsettings->GetMaxActiveSeeds());
+	m_pcfg->SetSupperSeeding(m_pane_connectionsettings->GetSupperSeeding());
+	m_pcfg->SetIgnoreSlowTorrents(m_pane_connectionsettings->GetIgnoreSlowTorrents());
 
 	m_pcfg->SetDefaultStorageMode(m_pane_torrentsettings->GetStorageMode());
 

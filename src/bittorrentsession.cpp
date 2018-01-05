@@ -386,12 +386,13 @@ void BitTorrentSession::Configure(lt::settings_pack &settingsPack)
 	//case 1: // Forced
 	//	settingsPack.set_int(lt::settings_pack::out_enc_policy, lt::settings_pack::pe_forced);
 	//	settingsPack.set_int(lt::settings_pack::in_enc_policy, lt::settings_pack::pe_forced);
+
+	settingsPack.set_int(lt::settings_pack::active_seeds, m_config->GetMaxActiveSeeds());
+	settingsPack.set_bool(lt::settings_pack::dont_count_slow_torrents, m_config->GetIgnoreSlowTorrents());
 	/*
 	if (isQueueingSystemEnabled()) {
 		adjustLimits(settingsPack);
 
-		settingsPack.set_int(lt::settings_pack::active_seeds, maxActiveUploads());
-		settingsPack.set_bool(lt::settings_pack::dont_count_slow_torrents, ignoreSlowTorrentsForQueueing());
 	}
 	else {
 		settingsPack.set_int(lt::settings_pack::active_downloads, -1);
@@ -414,7 +415,7 @@ void BitTorrentSession::Configure(lt::settings_pack &settingsPack)
 	// IP address to announce to trackers
 	//settingsPack.set_str(lt::settings_pack::announce_ip, Utils::String::toStdString(announceIP()));
 	// Super seeding
-	settingsPack.set_bool(lt::settings_pack::strict_super_seeding, false);
+	settingsPack.set_bool(lt::settings_pack::strict_super_seeding, m_config->GetSupperSeeding());
 	settingsPack.set_bool(lt::settings_pack::enable_incoming_utp, true);
 	settingsPack.set_bool(lt::settings_pack::enable_outgoing_utp, true);
 	// uTP rate limiting

@@ -313,6 +313,15 @@ class Configuration : public wxFileConfig
 		bool GetUseOSCache() { return m_useoscache; }
 		void SetUseOSCache( bool useoscache ) { m_useoscache = useoscache ; }
 
+		int GetMaxActiveSeeds() { return m_max_active_seeds; }
+		void SetMaxActiveSeeds(int active_seeds) { m_max_active_seeds = active_seeds; }
+
+		bool GetSupperSeeding() { return m_super_seeding; }
+		void SetSupperSeeding( bool supperseeding ) { m_super_seeding = supperseeding; }
+
+		bool GetIgnoreSlowTorrents() { return m_ignore_slow_torrents; }
+		void SetIgnoreSlowTorrents( bool ignore ) { m_ignore_slow_torrents = ignore; }
+
 		//save path history
 #define BITSWASH_MAX_SAVE_PATH 10
 		std::vector<wxString>& GetSavePathHistory() { return m_savepathhistory; }
@@ -370,6 +379,7 @@ class Configuration : public wxFileConfig
 		unsigned int	m_refreshtime;
 		unsigned int	m_fastresume_save_time;
 		unsigned int	m_max_start;
+		int				m_max_active_seeds;
 		bool		m_use_systray;
 		bool 		m_hidetaskbar;
 		bool		m_enable_upnp;
@@ -595,6 +605,8 @@ class Configuration : public wxFileConfig
 		bool m_log_file;
 		bool m_anonymous_mode;
 		bool m_useoscache;
+		bool m_super_seeding;
+		bool m_ignore_slow_torrents;
 		unsigned int m_max_log_files;
 
 		//torrent history

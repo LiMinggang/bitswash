@@ -49,7 +49,9 @@ public:
 	int GetMaxConnections();
 	bool IsAnonymousMode();
 	bool UseOSCache();
-
+	int GetMaxActiveSeeds();
+	bool GetSupperSeeding();
+	bool GetIgnoreSlowTorrents();
 
 private: 
 		//(*Declarations(ConnectionSettingPane)
@@ -57,12 +59,15 @@ private:
 		AutoSizeInput* m_autoUpLimit;
 		wxCheckBox* m_checkDHT;
 		wxCheckBox* m_check_anonymous_mode;
+		wxCheckBox* m_check_igore_slow_torrents;
 		wxCheckBox* m_check_os_cache;
+		wxCheckBox* m_check_supper_seeding;
 		wxSpinCtrl* m_spinDHTPort;
 		wxSpinCtrl* m_spinMaxConnections;
 		wxSpinCtrl* m_spinMaxUploads;
 		wxSpinCtrl* m_spinPortFrom;
 		wxSpinCtrl* m_spinPortTo;
+		wxSpinCtrl* m_spin_max_active_seeds;
 		//*)
 	protected:
 

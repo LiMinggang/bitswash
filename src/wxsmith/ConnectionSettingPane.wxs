@@ -128,7 +128,7 @@
 						<object class="wxSpinCtrl" name="wxID_ANY" subclass="AutoSizeInput" variable="m_autoDownLimit" member="yes">
 							<value>0</value>
 						</object>
-						<flag>wxALL|wxALIGN_CENTER_HORIZONTAL|wxALIGN_CENTER_VERTICAL</flag>
+						<flag>wxALL|wxALIGN_LEFT|wxALIGN_CENTER_VERTICAL</flag>
 						<border>5</border>
 						<option>1</option>
 					</object>
@@ -144,7 +144,7 @@
 						<object class="wxSpinCtrl" name="wxID_ANY" subclass="AutoSizeInput" variable="m_autoUpLimit" member="yes">
 							<value></value>
 						</object>
-						<flag>wxALL|wxALIGN_CENTER_HORIZONTAL|wxALIGN_CENTER_VERTICAL</flag>
+						<flag>wxALL|wxALIGN_LEFT|wxALIGN_CENTER_VERTICAL</flag>
 						<border>5</border>
 						<option>1</option>
 					</object>
@@ -163,7 +163,7 @@
 							<max>99999999</max>
 							<style>wxSP_ARROW_KEYS</style>
 						</object>
-						<flag>wxALL|wxALIGN_CENTER_HORIZONTAL|wxALIGN_CENTER_VERTICAL</flag>
+						<flag>wxALL|wxALIGN_LEFT|wxALIGN_CENTER_VERTICAL</flag>
 						<border>5</border>
 						<option>1</option>
 					</object>
@@ -182,7 +182,24 @@
 							<max>99999999</max>
 							<style>wxSP_ARROW_KEYS</style>
 						</object>
-						<flag>wxALL|wxALIGN_CENTER_HORIZONTAL|wxALIGN_CENTER_VERTICAL</flag>
+						<flag>wxALL|wxALIGN_LEFT|wxALIGN_CENTER_VERTICAL</flag>
+						<border>5</border>
+						<option>1</option>
+					</object>
+					<object class="sizeritem">
+						<object class="wxStaticText" name="wxID_ANY" variable="StaticText10" member="no">
+							<label>Maximum Active Seeds:</label>
+						</object>
+						<flag>wxALL|wxALIGN_LEFT|wxALIGN_CENTER_VERTICAL</flag>
+						<border>5</border>
+						<option>1</option>
+					</object>
+					<object class="sizeritem">
+						<object class="wxSpinCtrl" name="wxID_ANY" variable="m_spin_max_active_seeds" member="yes">
+							<value>-1</value>
+							<min>-1</min>
+						</object>
+						<flag>wxALL|wxALIGN_LEFT|wxALIGN_CENTER_VERTICAL</flag>
 						<border>5</border>
 						<option>1</option>
 					</object>
@@ -222,7 +239,7 @@
 					<cols>2</cols>
 					<object class="sizeritem">
 						<object class="wxCheckBox" name="wxID_ANY" variable="m_check_anonymous_mode" member="yes">
-							<label>Anonymous mode</label>
+							<label>Anonymous Mode</label>
 						</object>
 						<flag>wxALL|wxALIGN_LEFT|wxALIGN_CENTER_VERTICAL</flag>
 						<border>5</border>
@@ -230,7 +247,23 @@
 					</object>
 					<object class="sizeritem">
 						<object class="wxCheckBox" name="wxID_ANY" variable="m_check_os_cache" member="yes">
-							<label>Enable OS cache</label>
+							<label>Enable OS Cache</label>
+						</object>
+						<flag>wxALL|wxALIGN_LEFT|wxALIGN_CENTER_VERTICAL</flag>
+						<border>5</border>
+						<option>1</option>
+					</object>
+					<object class="sizeritem">
+						<object class="wxCheckBox" name="wxID_ANY" variable="m_check_supper_seeding" member="yes">
+							<label>Supper Seeding</label>
+						</object>
+						<flag>wxALL|wxALIGN_LEFT|wxALIGN_CENTER_VERTICAL</flag>
+						<border>5</border>
+						<option>1</option>
+					</object>
+					<object class="sizeritem">
+						<object class="wxCheckBox" name="wxID_ANY" variable="m_check_igore_slow_torrents" member="yes">
+							<label>Don&apos;t Count Slow Torrents</label>
 						</object>
 						<flag>wxALL|wxALIGN_LEFT|wxALIGN_CENTER_VERTICAL</flag>
 						<border>5</border>

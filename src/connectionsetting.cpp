@@ -51,6 +51,7 @@ ConnectionSettingPane::ConnectionSettingPane( wxWindow* parent, wxWindowID id,co
 	wxPanel* Panel3;
 	wxStaticLine* StaticLine1;
 	wxStaticLine* StaticLine2;
+	wxStaticText* StaticText10;
 	wxStaticText* StaticText1;
 	wxStaticText* StaticText2;
 	wxStaticText* StaticText3;
@@ -126,19 +127,24 @@ ConnectionSettingPane::ConnectionSettingPane( wxWindow* parent, wxWindowID id,co
 	
 	m_autoUpLimit = new AutoSizeInput (this, _T("Bps"));
 	m_autoUpLimit->SetValue(pcfg->GetGlobalUploadLimit());
-	FlexGridSizer3->Add(m_autoUpLimit, 1, wxALL|wxALIGN_CENTER_HORIZONTAL|wxALIGN_CENTER_VERTICAL, 5);
+	FlexGridSizer3->Add(m_autoUpLimit, 1, wxALL|wxALIGN_LEFT|wxALIGN_CENTER_VERTICAL, 5);
 	StaticText7 = new wxStaticText(this, wxID_ANY, _("Maximum Connections:"), wxDefaultPosition, wxDefaultSize, 0, _T("wxID_ANY"));
 	FlexGridSizer3->Add(StaticText7, 1, wxALL|wxALIGN_LEFT|wxALIGN_CENTER_VERTICAL, 5);
-	m_spinMaxConnections = new wxSpinCtrl( this, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, wxSP_ARROW_KEYS, 1, 99999999, 0);
+	m_spinMaxConnections = new wxSpinCtrl(this, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, wxSP_ARROW_KEYS, 1, 99999999, 0, _T("wxID_ANY"));
 	m_spinMaxConnections->SetValue(pcfg->GetGlobalMaxConnections());
-	FlexGridSizer3->Add(m_spinMaxConnections, 1, wxALL|wxALIGN_CENTER_HORIZONTAL|wxALIGN_CENTER_VERTICAL, 5);
+	FlexGridSizer3->Add(m_spinMaxConnections, 1, wxALL|wxALIGN_LEFT|wxALIGN_CENTER_VERTICAL, 5);
 	StaticText8 = new wxStaticText(this, wxID_ANY, _("Maximum Upload Slots:"), wxDefaultPosition, wxDefaultSize, 0, _T("wxID_ANY"));
 	FlexGridSizer3->Add(StaticText8, 1, wxALL|wxALIGN_LEFT|wxALIGN_CENTER_VERTICAL, 5);
 	
-	m_spinMaxUploads = new wxSpinCtrl( this, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, wxSP_ARROW_KEYS, 1, 99999999, 0);
+	m_spinMaxUploads = new wxSpinCtrl(this, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, wxSP_ARROW_KEYS, 1, 99999999, 0, _T("wxID_ANY"));
 	m_spinMaxUploads->SetValue(pcfg->GetGlobalMaxUploads());
 
-	FlexGridSizer3->Add(m_spinMaxUploads, 1, wxALL|wxALIGN_CENTER_HORIZONTAL|wxALIGN_CENTER_VERTICAL, 5);
+	FlexGridSizer3->Add(m_spinMaxUploads, 1, wxALL|wxALIGN_LEFT|wxALIGN_CENTER_VERTICAL, 5);
+	StaticText10 = new wxStaticText(this, wxID_ANY, _("Maximum Active Seeds:"), wxDefaultPosition, wxDefaultSize, 0, _T("wxID_ANY"));
+	FlexGridSizer3->Add(StaticText10, 1, wxALL|wxALIGN_LEFT|wxALIGN_CENTER_VERTICAL, 5);
+	m_spin_max_active_seeds = new wxSpinCtrl(this, wxID_ANY, _T("-1"), wxDefaultPosition, wxDefaultSize, 0, -1, 1000, -1, _T("wxID_ANY"));
+	m_spin_max_active_seeds->SetValue(_T("-1"));
+	FlexGridSizer3->Add(m_spin_max_active_seeds, 1, wxALL|wxALIGN_LEFT|wxALIGN_CENTER_VERTICAL, 5);
 	FlexGridSizer1->Add(FlexGridSizer3, 1, wxALL|wxALIGN_LEFT|wxALIGN_CENTER_VERTICAL, 5);
 	StaticLine2 = new wxStaticLine(this, wxID_ANY, wxDefaultPosition, wxSize(10,-1), wxLI_HORIZONTAL, _T("wxID_ANY"));
 	FlexGridSizer1->Add(StaticLine2, 1, wxALL|wxEXPAND, 5);
@@ -152,12 +158,18 @@ ConnectionSettingPane::ConnectionSettingPane( wxWindow* parent, wxWindowID id,co
 	BoxSizer3->SetSizeHints(Panel3);
 	FlexGridSizer1->Add(Panel3, 1, wxALL|wxEXPAND, 5);
 	FlexGridSizer4 = new wxFlexGridSizer(0, 2, 0, 0);
-	m_check_anonymous_mode = new wxCheckBox(this, wxID_ANY, _("Anonymous mode"), wxDefaultPosition, wxDefaultSize, 0, wxDefaultValidator, _T("wxID_ANY"));
+	m_check_anonymous_mode = new wxCheckBox(this, wxID_ANY, _("Anonymous Mode"), wxDefaultPosition, wxDefaultSize, 0, wxDefaultValidator, _T("wxID_ANY"));
 	m_check_anonymous_mode->SetValue(false);
 	FlexGridSizer4->Add(m_check_anonymous_mode, 1, wxALL|wxALIGN_LEFT|wxALIGN_CENTER_VERTICAL, 5);
-	m_check_os_cache = new wxCheckBox(this, wxID_ANY, _("Enable OS cache"), wxDefaultPosition, wxDefaultSize, 0, wxDefaultValidator, _T("wxID_ANY"));
+	m_check_os_cache = new wxCheckBox(this, wxID_ANY, _("Enable OS Cache"), wxDefaultPosition, wxDefaultSize, 0, wxDefaultValidator, _T("wxID_ANY"));
 	m_check_os_cache->SetValue(false);
 	FlexGridSizer4->Add(m_check_os_cache, 1, wxALL|wxALIGN_LEFT|wxALIGN_CENTER_VERTICAL, 5);
+	m_check_supper_seeding = new wxCheckBox(this, wxID_ANY, _("Supper Seeding"), wxDefaultPosition, wxDefaultSize, 0, wxDefaultValidator, _T("wxID_ANY"));
+	m_check_supper_seeding->SetValue(false);
+	FlexGridSizer4->Add(m_check_supper_seeding, 1, wxALL|wxALIGN_LEFT|wxALIGN_CENTER_VERTICAL, 5);
+	m_check_igore_slow_torrents = new wxCheckBox(this, wxID_ANY, _("Don\'t Count Slow Torrents"), wxDefaultPosition, wxDefaultSize, 0, wxDefaultValidator, _T("wxID_ANY"));
+	m_check_igore_slow_torrents->SetValue(false);
+	FlexGridSizer4->Add(m_check_igore_slow_torrents, 1, wxALL|wxALIGN_LEFT|wxALIGN_CENTER_VERTICAL, 5);
 	FlexGridSizer1->Add(FlexGridSizer4, 1, wxALL, 5);
 	SetSizer(FlexGridSizer1);
 	FlexGridSizer1->Fit(this);
@@ -212,13 +224,26 @@ int ConnectionSettingPane::GetMaxConnections()
 
 bool ConnectionSettingPane::IsAnonymousMode()
 {
-
 	return m_check_anonymous_mode->GetValue();
 }
 
 bool ConnectionSettingPane::UseOSCache()
 {
-
 	return m_check_os_cache->GetValue();
+}
+
+int ConnectionSettingPane::GetMaxActiveSeeds()
+{
+	return m_spin_max_active_seeds->GetValue();
+}
+
+bool ConnectionSettingPane::GetSupperSeeding()
+{
+	return m_check_supper_seeding->GetValue();
+}
+
+bool ConnectionSettingPane::GetIgnoreSlowTorrents()
+{
+	return m_check_igore_slow_torrents->GetValue();
 }
 

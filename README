@@ -23,10 +23,13 @@ BOOST
 News:
 0.0.8
 New: Upper limit of number of log files
-New: Support drag and drop torrent files
+New: Drag and drop torrent files
 New: Squential download
-New: Config for enable/disable anonymous mode
-New: Config for enable/disable OS cache
+New: Enable/disable anonymous mode
+New: Enable/disable OS cache
+New: Enable/disable supper seeding
+New: Active seeds limits
+New: Don't count slow torrents
 Fix: Enable preview download config won't apply
 
 0.0.7

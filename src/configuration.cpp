@@ -149,6 +149,8 @@ void Configuration::Save()
 	m_cfg->Write( _T( "/Session/use_dht_as_fallback" ), m_use_dht_as_fallback );
 	m_cfg->Write( _T( "/Session/free_torrent_hashes" ), m_free_torrent_hashes );
 	m_cfg->Write( _T( "/Session/use_oscache" ), ( bool )m_useoscache );
+	m_cfg->Write( _T( "/Session/active_seeds" ), m_max_active_seeds );
+	m_cfg->Write( _T( "/Session/dont_count_slow_torrents" ), m_ignore_slow_torrents );
 	//legacy
 	//if( m_storagemode != lt::storage_mode_compact )
 	m_cfg->Write( _T( "/Torrent/storagemode" ), ( long )m_storagemode );
@@ -323,6 +325,9 @@ void Configuration::Load()
 	m_cfg->Read( _T( "/Session/free_torrent_hashes" ), &m_free_torrent_hashes, true );
 	m_cfg->Read( _T( "/Session/anonymous_mode" ), &m_anonymous_mode, false );
 	m_cfg->Read( _T( "/Session/use_oscache" ), &m_useoscache, true );
+	m_max_active_seeds = m_cfg->Read( _T( "/Session/active_seeds" ), -1 );
+	m_cfg->Read( _T( "/Session/super_seeding" ), &m_super_seeding, false );
+	m_cfg->Read( _T( "/Session/dont_count_slow_torrents" ), &m_ignore_slow_torrents, false );
 	lt::storage_mode_t defstoragemode = lt::storage_mode_sparse;
 	m_storagemode = ( lt::storage_mode_t ) m_cfg->Read( _T( "/Torrent/storagemode" ), ( long ) defstoragemode );
 	m_global_upload_limit = m_cfg->Read( _T( "/Torrent/global_upload_limit" ), -1 );
