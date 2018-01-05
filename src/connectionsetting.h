@@ -25,23 +25,22 @@
 #ifndef _CONNECTIONSETTING_H_
 #define _CONNECTIONSETTING_H_
 
+//(*Headers(ConnectionSettingPane)
+#include <wx/checkbox.h>
 #include <wx/panel.h>
 #include <wx/sizer.h>
 #include <wx/scrolwin.h>
 #include <wx/statline.h>
 #include <wx/spinctrl.h>
 #include <wx/stattext.h>
-
+//*)
 #include "configuration.h"
-
-#ifndef ID_CONNECTIONSETTING_START
-#define ID_CONNECTIONSETTING_START wxID_HIGHEST
-#endif
 
 class ConnectionSettingPane : public wxPanel
 {
 public:
-	ConnectionSettingPane( wxWindow* parent, int id = wxID_ANY, wxPoint pos = wxDefaultPosition, wxSize size = wxDefaultSize, int style = wxTAB_TRAVERSAL);
+	ConnectionSettingPane( wxWindow* parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxDefaultSize, int style = wxTAB_TRAVERSAL);
+	virtual ~ConnectionSettingPane();
 
 	int GetPortFrom();
 	int GetPortTo();
@@ -53,17 +52,27 @@ public:
 	int GetMaxConnections();
 
 private: 
-	/* connection settings */
-	wxSpinCtrl* m_spinPortFrom;
-	wxSpinCtrl* m_spinPortTo;
-	wxCheckBox* m_checkDHT;
-	wxSpinCtrl* m_spinDHTPort;
-	wxPanel* m_pane_infolimit;
-	wxSpinCtrl* m_spinMaxUploads;
-	wxSpinCtrl* m_spinMaxConnections;
+		//(*Declarations(ConnectionSettingPane)
+		AutoSizeInput* m_autoDownLimit;
+		AutoSizeInput* m_autoUpLimit;
+		wxCheckBox* m_checkDHT;
+		wxSpinCtrl* m_spinDHTPort;
+		wxSpinCtrl* m_spinMaxConnections;
+		wxSpinCtrl* m_spinMaxUploads;
+		wxSpinCtrl* m_spinPortFrom;
+		wxSpinCtrl* m_spinPortTo;
+		//*)
+	protected:
 
-	AutoSizeInput* m_autoDownLimit;
-	AutoSizeInput* m_autoUpLimit;
+		//(*Identifiers(ConnectionSettingPane)
+		//*)
+
+	private:
+
+		//(*Handlers(ConnectionSettingPane)
+		//*)
+
+		//DECLARE_EVENT_TABLE()
 };
 
 #endif	//_CONNECTIONSETTING_H_
