@@ -148,6 +148,7 @@ void Configuration::Save()
 	m_cfg->Write( _T( "/Session/handshake_timeout" ), m_handshake_timeout );
 	m_cfg->Write( _T( "/Session/use_dht_as_fallback" ), m_use_dht_as_fallback );
 	m_cfg->Write( _T( "/Session/free_torrent_hashes" ), m_free_torrent_hashes );
+	m_cfg->Write( _T( "/Session/use_oscache" ), ( bool )m_useoscache );
 	//legacy
 	//if( m_storagemode != lt::storage_mode_compact )
 	m_cfg->Write( _T( "/Torrent/storagemode" ), ( long )m_storagemode );
@@ -320,6 +321,8 @@ void Configuration::Load()
 	m_handshake_timeout = m_cfg->Read( _T( "/Session/handshake_timeout" ), 10 );
 	m_cfg->Read( _T( "/Session/use_dht_as_fallback" ), &m_use_dht_as_fallback, true );
 	m_cfg->Read( _T( "/Session/free_torrent_hashes" ), &m_free_torrent_hashes, true );
+	m_cfg->Read( _T( "/Session/anonymous_mode" ), &m_anonymous_mode, false );
+	m_cfg->Read( _T( "/Session/use_oscache" ), &m_useoscache, true );
 	lt::storage_mode_t defstoragemode = lt::storage_mode_sparse;
 	m_storagemode = ( lt::storage_mode_t ) m_cfg->Read( _T( "/Torrent/storagemode" ), ( long ) defstoragemode );
 	m_global_upload_limit = m_cfg->Read( _T( "/Torrent/global_upload_limit" ), -1 );

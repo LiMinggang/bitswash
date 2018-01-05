@@ -307,6 +307,12 @@ class Configuration : public wxFileConfig
 		bool GetEncPreferRC4() { return m_enc_prefer_rc4; }
 		void SetEncPreferRC4(bool enc_prefer_rc4) { m_enc_prefer_rc4 = enc_prefer_rc4 ; }
 
+		bool GetAnonymousMode() { return m_anonymous_mode; }
+		void SetAnonymousMode( bool anonymous_mode ) { m_anonymous_mode = anonymous_mode ; }
+
+		bool GetUseOSCache() { return m_useoscache; }
+		void SetUseOSCache( bool useoscache ) { m_useoscache = useoscache ; }
+
 		//save path history
 #define BITSWASH_MAX_SAVE_PATH 10
 		std::vector<wxString>& GetSavePathHistory() { return m_savepathhistory; }
@@ -587,6 +593,8 @@ class Configuration : public wxFileConfig
 		unsigned int m_log_severity;
 		unsigned int m_log_linecount;
 		bool m_log_file;
+		bool m_anonymous_mode;
+		bool m_useoscache;
 		unsigned int m_max_log_files;
 
 		//torrent history

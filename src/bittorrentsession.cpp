@@ -361,12 +361,11 @@ void BitTorrentSession::Configure(lt::settings_pack &settingsPack)
 	settingsPack.set_bool( lt::settings_pack::announce_to_all_tiers, true);
 	settingsPack.set_bool( lt::settings_pack::announce_to_all_trackers, true);
 
-	lt::settings_pack::io_buffer_mode_t mode = /*useOSCache() ? */lt::settings_pack::enable_os_cache;
-															  //: lt::settings_pack::disable_os_cache;
+	lt::settings_pack::io_buffer_mode_t mode = m_config->GetUseOSCache() ? lt::settings_pack::enable_os_cache
+															  : lt::settings_pack::disable_os_cache;
 	settingsPack.set_int(lt::settings_pack::disk_io_read_mode, mode);
 	settingsPack.set_int(lt::settings_pack::disk_io_write_mode, mode);
-	settingsPack.set_bool(lt::settings_pack::anonymous_mode, false);
-
+	settingsPack.set_bool(lt::settings_pack::anonymous_mode, m_config->GetAnonymousMode());
 
 	// The most secure, rc4 only so that all streams are encrypted
 	//settingsPack.set_int(lt::settings_pack::allowed_enc_level, ( lt::pe_settings::enc_level )( m_config->GetEncLevel()));
@@ -1409,7 +1408,8 @@ void BitTorrentSession::UpdateTorrentFileSize(std::shared_ptr<torrent_t>& torren
 		}
 
 		for(int i = 0; i < totalfiles; ++i)
-		{
+		{
+
 			lt::file_index_t idx(i);
 			if (nopriority || filespriority[i] != TorrentConfig::file_none)
 			{

@@ -29,13 +29,10 @@
 #include <wx/checkbox.h>
 #include <wx/panel.h>
 #include <wx/sizer.h>
-#include <wx/scrolwin.h>
-#include <wx/statline.h>
 #include <wx/spinctrl.h>
+#include <wx/statline.h>
 #include <wx/stattext.h>
 //*)
-#include "configuration.h"
-
 class ConnectionSettingPane : public wxPanel
 {
 public:
@@ -50,12 +47,17 @@ public:
 	long GetUploadLimit();
 	int GetMaxUploads();
 	int GetMaxConnections();
+	bool IsAnonymousMode();
+	bool UseOSCache();
+
 
 private: 
 		//(*Declarations(ConnectionSettingPane)
 		AutoSizeInput* m_autoDownLimit;
 		AutoSizeInput* m_autoUpLimit;
 		wxCheckBox* m_checkDHT;
+		wxCheckBox* m_check_anonymous_mode;
+		wxCheckBox* m_check_os_cache;
 		wxSpinCtrl* m_spinDHTPort;
 		wxSpinCtrl* m_spinMaxConnections;
 		wxSpinCtrl* m_spinMaxUploads;

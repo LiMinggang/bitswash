@@ -25,6 +25,8 @@ News:
 New: Upper limit of number of log files
 New: Support drag and drop torrent files
 New: Squential download
+New: Config for enable/disable anonymous mode
+New: Config for enable/disable OS cache
 Fix: Enable preview download config won't apply
 
 0.0.7

@@ -32,6 +32,7 @@
 #include "mainframe.h"
 
 #include "connectionsetting.h"
+#include "configuration.h"
 #include "functions.h"
 
 //CLASS ConnectionSettingPane
@@ -40,12 +41,16 @@ ConnectionSettingPane::ConnectionSettingPane( wxWindow* parent, wxWindowID id,co
 	//(*Initialize(ConnectionSettingPane)
 	wxBoxSizer* BoxSizer1;
 	wxBoxSizer* BoxSizer2;
+	wxBoxSizer* BoxSizer3;
 	wxFlexGridSizer* FlexGridSizer1;
 	wxFlexGridSizer* FlexGridSizer2;
 	wxFlexGridSizer* FlexGridSizer3;
+	wxFlexGridSizer* FlexGridSizer4;
 	wxPanel* Panel1;
 	wxPanel* Panel2;
+	wxPanel* Panel3;
 	wxStaticLine* StaticLine1;
+	wxStaticLine* StaticLine2;
 	wxStaticText* StaticText1;
 	wxStaticText* StaticText2;
 	wxStaticText* StaticText3;
@@ -54,6 +59,7 @@ ConnectionSettingPane::ConnectionSettingPane( wxWindow* parent, wxWindowID id,co
 	wxStaticText* StaticText6;
 	wxStaticText* StaticText7;
 	wxStaticText* StaticText8;
+	wxStaticText* StaticText9;
 
 	MainFrame* pMainFrame = dynamic_cast<MainFrame *>( wxGetApp().GetTopWindow() );
 	wxASSERT(pMainFrame != nullptr);
@@ -134,6 +140,25 @@ ConnectionSettingPane::ConnectionSettingPane( wxWindow* parent, wxWindowID id,co
 
 	FlexGridSizer3->Add(m_spinMaxUploads, 1, wxALL|wxALIGN_CENTER_HORIZONTAL|wxALIGN_CENTER_VERTICAL, 5);
 	FlexGridSizer1->Add(FlexGridSizer3, 1, wxALL|wxALIGN_LEFT|wxALIGN_CENTER_VERTICAL, 5);
+	StaticLine2 = new wxStaticLine(this, wxID_ANY, wxDefaultPosition, wxSize(10,-1), wxLI_HORIZONTAL, _T("wxID_ANY"));
+	FlexGridSizer1->Add(StaticLine2, 1, wxALL|wxEXPAND, 5);
+	Panel3 = new wxPanel(this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL, _T("wxID_ANY"));
+	Panel3->SetBackgroundColour(wxSystemSettings::GetColour(wxSYS_COLOUR_ACTIVECAPTION));
+	BoxSizer3 = new wxBoxSizer(wxHORIZONTAL);
+	StaticText9 = new wxStaticText(Panel3, wxID_ANY, _("Miscellaneous"), wxDefaultPosition, wxDefaultSize, 0, _T("wxID_ANY"));
+	BoxSizer3->Add(StaticText9, 1, wxALL|wxALIGN_CENTER_HORIZONTAL|wxALIGN_CENTER_VERTICAL, 5);
+	Panel3->SetSizer(BoxSizer3);
+	BoxSizer3->Fit(Panel3);
+	BoxSizer3->SetSizeHints(Panel3);
+	FlexGridSizer1->Add(Panel3, 1, wxALL|wxEXPAND, 5);
+	FlexGridSizer4 = new wxFlexGridSizer(0, 2, 0, 0);
+	m_check_anonymous_mode = new wxCheckBox(this, wxID_ANY, _("Anonymous mode"), wxDefaultPosition, wxDefaultSize, 0, wxDefaultValidator, _T("wxID_ANY"));
+	m_check_anonymous_mode->SetValue(false);
+	FlexGridSizer4->Add(m_check_anonymous_mode, 1, wxALL|wxALIGN_LEFT|wxALIGN_CENTER_VERTICAL, 5);
+	m_check_os_cache = new wxCheckBox(this, wxID_ANY, _("Enable OS cache"), wxDefaultPosition, wxDefaultSize, 0, wxDefaultValidator, _T("wxID_ANY"));
+	m_check_os_cache->SetValue(false);
+	FlexGridSizer4->Add(m_check_os_cache, 1, wxALL|wxALIGN_LEFT|wxALIGN_CENTER_VERTICAL, 5);
+	FlexGridSizer1->Add(FlexGridSizer4, 1, wxALL, 5);
 	SetSizer(FlexGridSizer1);
 	FlexGridSizer1->Fit(this);
 	FlexGridSizer1->SetSizeHints(this);
@@ -183,5 +208,17 @@ int ConnectionSettingPane::GetMaxUploads()
 int ConnectionSettingPane::GetMaxConnections()
 {
 	return m_spinMaxConnections->GetValue();
+}
+
+bool ConnectionSettingPane::IsAnonymousMode()
+{
+
+	return m_check_anonymous_mode->GetValue();
+}
+
+bool ConnectionSettingPane::UseOSCache()
+{
+
+	return m_check_os_cache->GetValue();
 }
 
