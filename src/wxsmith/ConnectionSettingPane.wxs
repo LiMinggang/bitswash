@@ -198,6 +198,7 @@
 						<object class="wxSpinCtrl" name="wxID_ANY" variable="m_spin_max_active_seeds" member="yes">
 							<value>-1</value>
 							<min>-1</min>
+							<max>1000</max>
 						</object>
 						<flag>wxALL|wxALIGN_LEFT|wxALIGN_CENTER_VERTICAL</flag>
 						<border>5</border>
