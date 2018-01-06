@@ -25,23 +25,24 @@
 #ifndef _GENERALSETTING_H_
 #define _GENERALSETTING_H_
 
+//(*Headers(GeneralSettingPane)
+#include <wx/checkbox.h>
+#include <wx/choice.h>
 #include <wx/panel.h>
 #include <wx/sizer.h>
-#include <wx/scrolwin.h>
 #include <wx/statline.h>
 #include <wx/spinctrl.h>
 #include <wx/stattext.h>
-
-#ifndef ID_GENERALSETTING_START
-#define ID_GENERALSETTING_START wxID_HIGHEST
-#endif
+//*)
 
 class Configuration;
 class MainFrame;
 class GeneralSettingPane :  public wxPanel
 {
-public:
-	GeneralSettingPane( wxWindow* parent, int id = wxID_ANY, wxPoint pos = wxDefaultPosition, wxSize size = wxDefaultSize, int style = wxTAB_TRAVERSAL);
+	public:
+
+	GeneralSettingPane(wxWindow* parent,wxWindowID id=wxID_ANY,const wxPoint& pos=wxDefaultPosition,const wxSize& size=wxDefaultSize, int style = wxTAB_TRAVERSAL);
+	virtual ~GeneralSettingPane();
 	int GetMaxStart();
 	int GetLogSeverity();
 	int GetRefreshTimer();
@@ -51,6 +52,8 @@ public:
 	bool GetHideTaskbar();
 	int GetLogLineCount();
 	bool GetLogToFile(); 
+	int GetMaxActiveSeeds();
+	bool GetIgnoreSlowTorrents();
 #ifdef __WXMSW__
 	void SetRunAtStartup(bool start) { m_check_runatstartup->SetValue(start); }
 	bool GetRunAtStartup() { return m_check_runatstartup->GetValue(); }
@@ -63,26 +66,36 @@ public:
 private:
 	MainFrame* m_pMainFrame;
 	Configuration *m_pcfg;
-
-	wxSpinCtrl* m_spin_maxstart;
-	wxCheckBox* m_check_excludeseed;
+	//(*Declarations(GeneralSettingPane)
 #ifdef __WXMSW__
-	wxCheckBox* m_check_runatstartup;
-	wxCheckBox* m_check_associate_torrent;
-	wxCheckBox* m_check_associate_magneturi;
+		wxCheckBox* m_check_associate_magneturi;
+		wxCheckBox* m_check_associate_torrent;
+		wxCheckBox* m_check_runatstartup;
 #endif
-
-	wxSpinCtrl* m_spin_refreshtimer;
-	wxSpinCtrl* m_spin_fastresume_save_time;
-	wxCheckBox* m_check_usesystray;
-	wxCheckBox* m_check_hidetaskbar;
-
-	wxChoice* m_choice_logseverity;
-	wxCheckBox* m_check_logtofile;
-	wxSpinCtrl* m_spin_loglinecount;
-
+		wxCheckBox* m_check_excludeseed;
+		wxCheckBox* m_check_hidetaskbar;
+		wxCheckBox* m_check_igore_slow_torrents;
+		wxCheckBox* m_check_logtofile;
+		wxCheckBox* m_check_usesystray;
+		wxChoice* m_choice_logseverity;
+		wxSpinCtrl* m_spin_fastresume_save_time;
+		wxSpinCtrl* m_spin_loglinecount;
+		wxSpinCtrl* m_spin_max_active_seeds;
+		wxSpinCtrl* m_spin_maxstart;
+		wxSpinCtrl* m_spin_refreshtimer;
+		//*)
 	void OnUseSystray(wxCommandEvent& event);
-private:
+
+	protected:
+
+		//(*Identifiers(GeneralSettingPane)
+		//*)
+
+	private:
+
+		//(*Handlers(GeneralSettingPane)
+		//*)
+
 };
 #endif	//_GENERALSETTING_H_
 

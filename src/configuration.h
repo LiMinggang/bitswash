@@ -322,6 +322,9 @@ class Configuration : public wxFileConfig
 		bool GetIgnoreSlowTorrents() { return m_ignore_slow_torrents; }
 		void SetIgnoreSlowTorrents( bool ignore ) { m_ignore_slow_torrents = ignore; }
 
+		bool GetSingleInstance() { return m_single_instance; }
+		void SetSingleInstance( bool single ) { m_single_instance = single ; }
+
 		//save path history
 #define BITSWASH_MAX_SAVE_PATH 10
 		std::vector<wxString>& GetSavePathHistory() { return m_savepathhistory; }
@@ -607,6 +610,7 @@ class Configuration : public wxFileConfig
 		bool m_useoscache;
 		bool m_super_seeding;
 		bool m_ignore_slow_torrents;
+		bool m_single_instance;
 		unsigned int m_max_log_files;
 
 		//torrent history

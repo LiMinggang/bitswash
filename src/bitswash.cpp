@@ -155,58 +155,6 @@ bool BitSwash::OnInit()
 	if( !wxApp::OnInit() )
 		return false;
 
-	wxString name = wxString::Format( wxT( "BitSwash-%s" ), wxGetUserId().GetData() );
-	m_SigleAppChecker = new wxSingleInstanceChecker( name );
-
-	// If using a single instance, use IPC to
-	// communicate with the other instance
-	if( !m_SigleAppChecker->IsAnotherRunning() )
-	{
-		// Create a new server
-		m_AppServer = new BitSwashAppSrv;
-
-		if( !m_AppServer->Create( g_BitSwashServerStr ) )
-		{
-			wxLogDebug( _( "Failed to create an IPC service.\n" ) );
-		}
-	}
-	else
-	{
-		wxLogNull logNull;
-		// OK, there IS another one running, so try to connect to it
-		// and send it any filename before exiting.
-		BitSwashAppClnt* client = new BitSwashAppClnt;
-		// ignored under DDE, host name in TCP/IP based classes
-		wxString hostName = wxT( "localhost" );
-		// Create the connection
-		wxConnectionBase* connection = client->MakeConnection( hostName, g_BitSwashServerStr, g_BitSwashTopicStr );
-
-		if( connection )
-		{
-			// Only file names would be send to the instance, ignore other switches, options
-			// Ask the other instance to open a file or raise itself
-			wxString fnames;
-
-			for( size_t i = 0; i < m_FileNames.GetCount(); ++i )
-			{
-				//The name is what follows the last \ or /
-				fnames +=  m_FileNames[i] + g_ConfigSeparator;
-			}
-
-			connection->Execute( fnames );
-			connection->Disconnect();
-			delete connection;
-		}
-		else
-		{
-			wxMessageBox( _( "Sorry, the existing instance may be too busy too respond.\nPlease close any open dialogs and retry." ),
-						   APPNAME, wxICON_INFORMATION | wxOK );
-		}
-
-		delete client;
-		return false;
-	}
-
 	wxFileName filename( GetExecutablePath() );
 	filename.MakeAbsolute();
 	g_BitSwashAppDir = filename.GetPath( wxPATH_GET_VOLUME | wxPATH_GET_SEPARATOR );
@@ -221,17 +169,6 @@ bool BitSwash::OnInit()
 		wxMkdir( g_BitSwashHomeDir );
 	}
 #endif
-
-	wxHandleFatalExceptions();
-	//==========================================================================
-
-	//int initcountdown = 1;
-	SetVendorName( APPNAME );
-	SetAppName( APPBINNAME );
-	m_locale = nullptr;
-	m_btinitdone = false;
-	//log to stderr
-	m_logold = wxLog::SetActiveTarget( new wxLogStderr() );
 #ifdef USERDATADIR
 	wxString confDirName = _T( USERDATADIR );
 #elif defined(__WXMSW__)
@@ -258,8 +195,76 @@ bool BitSwash::OnInit()
 		bool b = f->Create( m_configpath.c_str() );
 		if( !b ) wxLogError( _T( "Failed to create file " ) + m_configpath );
 	}
+
 	m_config = new Configuration( APPNAME );
 	wxASSERT(m_config != nullptr);
+
+	if( m_config->GetSingleInstance() )
+	{
+		wxString name = wxString::Format( wxT( "BitSwash-%s" ), wxGetUserId().GetData() );
+		m_SigleAppChecker = new wxSingleInstanceChecker( name );
+
+		// If using a single instance, use IPC to
+		// communicate with the other instance
+		if( !m_SigleAppChecker->IsAnotherRunning() )
+		{
+			// Create a new server
+			m_AppServer = new BitSwashAppSrv;
+
+			if( !m_AppServer->Create( g_BitSwashServerStr ) )
+			{
+				wxLogDebug( _( "Failed to create an IPC service.\n" ) );
+			}
+		}
+		else
+		{
+			wxLogNull logNull;
+			// OK, there IS another one running, so try to connect to it
+			// and send it any filename before exiting.
+			BitSwashAppClnt* client = new BitSwashAppClnt;
+			// ignored under DDE, host name in TCP/IP based classes
+			wxString hostName = wxT( "localhost" );
+			// Create the connection
+			wxConnectionBase* connection = client->MakeConnection( hostName, g_BitSwashServerStr, g_BitSwashTopicStr );
+
+			if( connection )
+			{
+				// Only file names would be send to the instance, ignore other switches, options
+				// Ask the other instance to open a file or raise itself
+				wxString fnames;
+
+				for( size_t i = 0; i < m_FileNames.GetCount(); ++i )
+				{
+					//The name is what follows the last \ or /
+					fnames +=  m_FileNames[i] + g_ConfigSeparator;
+				}
+
+				connection->Execute( fnames );
+				connection->Disconnect();
+				delete connection;
+			}
+			else
+			{
+				wxMessageBox( _( "Sorry, the existing instance may be too busy too respond.\nPlease close any open dialogs and retry." ),
+							   APPNAME, wxICON_INFORMATION | wxOK );
+			}
+
+			delete client;
+			return false;
+		}
+	}
+
+	wxHandleFatalExceptions();
+	//==========================================================================
+
+	//int initcountdown = 1;
+	SetVendorName( APPNAME );
+	SetAppName( APPBINNAME );
+	m_locale = nullptr;
+	m_btinitdone = false;
+	//log to stderr
+	m_logold = wxLog::SetActiveTarget( new wxLogStderr() );
+
 	/* workaround for libtorrent unable to resolve our ip address */
 	#if 0
 	wxIPV4address remote;

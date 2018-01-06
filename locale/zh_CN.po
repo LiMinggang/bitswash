@@ -8,14 +8,14 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2017-12-26 22:10+0800\n"
-"PO-Revision-Date: 2017-12-26 22:14+0800\n"
+"PO-Revision-Date: 2018-01-06 09:18+0800\n"
 "Last-Translator: Aaron Wang Shi <aarons.wang@gmail.com>\n"
 "Language-Team: \n"
 "Language: zh_CN\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Generator: Poedit 2.0.4\n"
+"X-Generator: Poedit 2.0.5\n"
 
 #: ../src/bitswash.cpp:170
 msgid "Failed to create an IPC service.\n"
@@ -234,7 +234,7 @@ msgstr "最大同时活动任务："
 
 #: ../src/generalsetting.cpp:84
 msgid "Exclude seeding"
-msgstr "做种中"
+msgstr "排除正在做种子的"
 
 #: ../src/generalsetting.cpp:92
 msgid "Save Fastresume every (s):"
@@ -1564,7 +1564,7 @@ msgstr "退出"
 msgid ""
 "It seemed that the torrent had been downloaded before. Are you going to "
 "download it again?"
-msgstr ""
+msgstr "这个种子已经被下载过。重新下载？"
 
 #: ../src/mainframe.cpp:732 ../src/torrentlistctrl.cpp:121
 msgid "Downloading"
@@ -1596,7 +1596,7 @@ msgstr "种子"
 
 #: ../src/mainframe.cpp:1680
 msgid " and data"
-msgstr " 及数据"
+msgstr "及数据"
 
 #: ../src/mainframe.cpp:1682
 msgid "Remove "

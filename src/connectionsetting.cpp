@@ -51,7 +51,6 @@ ConnectionSettingPane::ConnectionSettingPane( wxWindow* parent, wxWindowID id,co
 	wxPanel* Panel3;
 	wxStaticLine* StaticLine1;
 	wxStaticLine* StaticLine2;
-	wxStaticText* StaticText10;
 	wxStaticText* StaticText1;
 	wxStaticText* StaticText2;
 	wxStaticText* StaticText3;
@@ -67,10 +66,8 @@ ConnectionSettingPane::ConnectionSettingPane( wxWindow* parent, wxWindowID id,co
 	Configuration* pcfg = pMainFrame->GetConfig();
 	Create(parent, wxID_ANY, wxDefaultPosition, wxDefaultSize, style, _T("wxID_ANY"));
 	FlexGridSizer1 = new wxFlexGridSizer(0, 1, 0, 0);
-	
 	Panel1 = new wxPanel(this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL, _T("wxID_ANY"));
 	Panel1->SetBackgroundColour(wxSystemSettings::GetColour(wxSYS_COLOUR_ACTIVECAPTION));
-	
 	BoxSizer1 = new wxBoxSizer(wxHORIZONTAL);
 	StaticText1 = new wxStaticText(Panel1, wxID_ANY, _("Ports Setting"), wxDefaultPosition, wxDefaultSize, 0, _T("wxID_ANY"));
 	BoxSizer1->Add(StaticText1, 1, wxALL|wxALIGN_CENTER_HORIZONTAL|wxALIGN_CENTER_VERTICAL, 5);
@@ -81,30 +78,23 @@ ConnectionSettingPane::ConnectionSettingPane( wxWindow* parent, wxWindowID id,co
 	FlexGridSizer2 = new wxFlexGridSizer(0, 4, 0, 0);
 	StaticText2 = new wxStaticText(this, wxID_ANY, _("Port Range (TCP):"), wxDefaultPosition, wxDefaultSize, 0, _T("wxID_ANY"));
 	FlexGridSizer2->Add(StaticText2, 1, wxALL|wxALIGN_LEFT|wxALIGN_CENTER_VERTICAL, 5);
-	
-	wxString t_portFrom  = wxString::Format(_T("%d"), pcfg->GetPortMin());
-	m_spinPortFrom = new wxSpinCtrl(this, wxID_ANY, t_portFrom, wxDefaultPosition, wxDefaultSize, wxSP_ARROW_KEYS, 1, 65535, 0, _T("wxID_ANY"));
-	//m_spinPortFrom->SetValue(_T("0"));
+	m_spinPortFrom = new wxSpinCtrl(this, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, wxSP_ARROW_KEYS, 1, 65535, 0, _T("wxID_ANY"));
+	m_spinPortFrom->SetValue(pcfg->GetPortMin());
 	FlexGridSizer2->Add(m_spinPortFrom, 1, wxALL|wxALIGN_LEFT|wxALIGN_CENTER_VERTICAL, 5);
 	StaticText3 = new wxStaticText(this, wxID_ANY, _("to"), wxDefaultPosition, wxDefaultSize, 0, _T("wxID_ANY"));
 	FlexGridSizer2->Add(StaticText3, 1, wxALL|wxALIGN_LEFT|wxALIGN_CENTER_VERTICAL, 5);
-	
-	wxString t_portTo = wxString::Format(_T("%d"), pcfg->GetPortMax());
-	m_spinPortTo = new wxSpinCtrl(this, wxID_ANY, t_portTo, wxDefaultPosition, wxDefaultSize, wxSP_ARROW_KEYS, 1, 65535, 0, _T("wxID_ANY"));
-	//m_spinPortTo->SetValue(_T("0"));
+	m_spinPortTo = new wxSpinCtrl(this, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, wxSP_ARROW_KEYS, 1, 65535, 0, _T("wxID_ANY"));
+	m_spinPortTo->SetValue(pcfg->GetPortMax());
 	FlexGridSizer2->Add(m_spinPortTo, 1, wxALL|wxALIGN_LEFT|wxALIGN_CENTER_VERTICAL, 5);
 	m_checkDHT = new wxCheckBox(this, wxID_ANY, _("Enable DHT, Port (UDP):"), wxDefaultPosition, wxDefaultSize, 0, wxDefaultValidator, _T("wxID_ANY"));
 	m_checkDHT->SetValue( pcfg->GetDHTEnabled());
 	FlexGridSizer2->Add(m_checkDHT, 1, wxALL|wxALIGN_LEFT|wxALIGN_CENTER_VERTICAL, 5);
-	
-	wxString t_dhtport = wxString::Format(_T("%d"), pcfg->GetDHTPort());
-	m_spinDHTPort = new wxSpinCtrl(this, wxID_ANY, t_dhtport, wxDefaultPosition, wxDefaultSize, wxSP_ARROW_KEYS, 1, 65535, 0, _T("wxID_ANY"));
-	//m_spinDHTPort->SetValue(_T("0"));
+	m_spinDHTPort = new wxSpinCtrl(this, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, wxSP_ARROW_KEYS, 1, 65535, 0, _T("wxID_ANY"));
+	m_spinDHTPort->SetValue(pcfg->GetDHTPort());
 	FlexGridSizer2->Add(m_spinDHTPort, 1, wxALL|wxALIGN_CENTER_HORIZONTAL|wxALIGN_CENTER_VERTICAL, 5);
 	FlexGridSizer1->Add(FlexGridSizer2, 1, wxALL|wxALIGN_CENTER_HORIZONTAL|wxALIGN_CENTER_VERTICAL, 5);
 	StaticLine1 = new wxStaticLine(this, wxID_ANY, wxDefaultPosition, wxSize(10,-1), wxLI_HORIZONTAL, _T("wxID_ANY"));
 	FlexGridSizer1->Add(StaticLine1, 1, wxALL|wxEXPAND, 5);
-	
 	Panel2 = new wxPanel(this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL, _T("wxID_ANY"));
 	Panel2->SetBackgroundColour(wxSystemSettings::GetColour(wxSYS_COLOUR_ACTIVECAPTION));
 	BoxSizer2 = new wxBoxSizer(wxHORIZONTAL);
@@ -117,14 +107,11 @@ ConnectionSettingPane::ConnectionSettingPane( wxWindow* parent, wxWindowID id,co
 	FlexGridSizer3 = new wxFlexGridSizer(0, 2, 0, 0);
 	StaticText5 = new wxStaticText(this, wxID_ANY, _("Download Rate Limit:"), wxDefaultPosition, wxDefaultSize, 0, _T("wxID_ANY"));
 	FlexGridSizer3->Add(StaticText5, 1, wxALL|wxALIGN_LEFT|wxALIGN_CENTER_VERTICAL, 5);
-	
 	m_autoDownLimit = new AutoSizeInput( this, _T("Bps"));
-	
 	m_autoDownLimit->SetValue(pcfg->GetGlobalDownloadLimit());
 	FlexGridSizer3->Add(m_autoDownLimit, 1, wxALL|wxALIGN_CENTER_HORIZONTAL|wxALIGN_CENTER_VERTICAL, 5);
 	StaticText6 = new wxStaticText(this, wxID_ANY, _("Upload Rate Limit:"), wxDefaultPosition, wxDefaultSize, 0, _T("wxID_ANY"));
 	FlexGridSizer3->Add(StaticText6, 1, wxALL|wxALIGN_LEFT|wxALIGN_CENTER_VERTICAL, 5);
-	
 	m_autoUpLimit = new AutoSizeInput (this, _T("Bps"));
 	m_autoUpLimit->SetValue(pcfg->GetGlobalUploadLimit());
 	FlexGridSizer3->Add(m_autoUpLimit, 1, wxALL|wxALIGN_LEFT|wxALIGN_CENTER_VERTICAL, 5);
@@ -135,16 +122,9 @@ ConnectionSettingPane::ConnectionSettingPane( wxWindow* parent, wxWindowID id,co
 	FlexGridSizer3->Add(m_spinMaxConnections, 1, wxALL|wxALIGN_LEFT|wxALIGN_CENTER_VERTICAL, 5);
 	StaticText8 = new wxStaticText(this, wxID_ANY, _("Maximum Upload Slots:"), wxDefaultPosition, wxDefaultSize, 0, _T("wxID_ANY"));
 	FlexGridSizer3->Add(StaticText8, 1, wxALL|wxALIGN_LEFT|wxALIGN_CENTER_VERTICAL, 5);
-	
 	m_spinMaxUploads = new wxSpinCtrl(this, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, wxSP_ARROW_KEYS, 1, 99999999, 0, _T("wxID_ANY"));
 	m_spinMaxUploads->SetValue(pcfg->GetGlobalMaxUploads());
-
 	FlexGridSizer3->Add(m_spinMaxUploads, 1, wxALL|wxALIGN_LEFT|wxALIGN_CENTER_VERTICAL, 5);
-	StaticText10 = new wxStaticText(this, wxID_ANY, _("Maximum Active Seeds:"), wxDefaultPosition, wxDefaultSize, 0, _T("wxID_ANY"));
-	FlexGridSizer3->Add(StaticText10, 1, wxALL|wxALIGN_LEFT|wxALIGN_CENTER_VERTICAL, 5);
-	m_spin_max_active_seeds = new wxSpinCtrl(this, wxID_ANY, _T("-1"), wxDefaultPosition, wxDefaultSize, 0, -1, 1000, -1, _T("wxID_ANY"));
-	m_spin_max_active_seeds->SetValue(pcfg->GetMaxActiveSeeds());
-	FlexGridSizer3->Add(m_spin_max_active_seeds, 1, wxALL|wxALIGN_LEFT|wxALIGN_CENTER_VERTICAL, 5);
 	FlexGridSizer1->Add(FlexGridSizer3, 1, wxALL|wxALIGN_LEFT|wxALIGN_CENTER_VERTICAL, 5);
 	StaticLine2 = new wxStaticLine(this, wxID_ANY, wxDefaultPosition, wxSize(10,-1), wxLI_HORIZONTAL, _T("wxID_ANY"));
 	FlexGridSizer1->Add(StaticLine2, 1, wxALL|wxEXPAND, 5);
@@ -167,9 +147,6 @@ ConnectionSettingPane::ConnectionSettingPane( wxWindow* parent, wxWindowID id,co
 	m_check_supper_seeding = new wxCheckBox(this, wxID_ANY, _("Supper Seeding"), wxDefaultPosition, wxDefaultSize, 0, wxDefaultValidator, _T("wxID_ANY"));
 	m_check_supper_seeding->SetValue(pcfg->GetSupperSeeding());
 	FlexGridSizer4->Add(m_check_supper_seeding, 1, wxALL|wxALIGN_LEFT|wxALIGN_CENTER_VERTICAL, 5);
-	m_check_igore_slow_torrents = new wxCheckBox(this, wxID_ANY, _("Don\'t Count Slow Torrents"), wxDefaultPosition, wxDefaultSize, 0, wxDefaultValidator, _T("wxID_ANY"));
-	m_check_igore_slow_torrents->SetValue(pcfg->GetIgnoreSlowTorrents());
-	FlexGridSizer4->Add(m_check_igore_slow_torrents, 1, wxALL|wxALIGN_LEFT|wxALIGN_CENTER_VERTICAL, 5);
 	FlexGridSizer1->Add(FlexGridSizer4, 1, wxALL, 5);
 	SetSizer(FlexGridSizer1);
 	FlexGridSizer1->Fit(this);
@@ -232,18 +209,8 @@ bool ConnectionSettingPane::UseOSCache()
 	return m_check_os_cache->GetValue();
 }
 
-int ConnectionSettingPane::GetMaxActiveSeeds()
-{
-	return m_spin_max_active_seeds->GetValue();
-}
-
 bool ConnectionSettingPane::GetSupperSeeding()
 {
 	return m_check_supper_seeding->GetValue();
-}
-
-bool ConnectionSettingPane::GetIgnoreSlowTorrents()
-{
-	return m_check_igore_slow_torrents->GetValue();
 }
 

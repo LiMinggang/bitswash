@@ -30,186 +30,142 @@
 #include "generalsetting.h"
 #include "functions.h"
 
-GeneralSettingPane::GeneralSettingPane( wxWindow* parent,
-			int id, 
-			wxPoint pos, 
-			wxSize size, 
-			int style): wxPanel(parent, id, pos, size, style)
+//(*IdInit(GeneralSettingPane)
+//*)
+GeneralSettingPane::GeneralSettingPane(wxWindow* parent,wxWindowID id,const wxPoint& pos,const wxSize& size, int style)
 {
-	wxPanel* m_pane_infogeneral;
-	wxStaticText* m_static_infogeneral;
-	wxStaticText* m_static_maxstart;
-	wxPanel* m_pane_infogui;
-	wxStaticText* m_static_infogui;
-	wxStaticText* m_static_refreshtimer;
-	wxStaticText* m_static_fastresume_save_time;
-	wxPanel* m_pane_infolog;
-	wxStaticText* m_static_infolog;
-	wxStaticText* m_static_logseverity;
-	wxStaticText* m_static_loglinecount;
-
+	//(*Initialize(GeneralSettingPane)
+	wxBoxSizer* BoxSizer1;
+	wxBoxSizer* BoxSizer2;
+	wxBoxSizer* BoxSizer3;
+	wxFlexGridSizer* FlexGridSizer1;
+	wxFlexGridSizer* FlexGridSizer2;
+	wxFlexGridSizer* FlexGridSizer3;
+	wxFlexGridSizer* FlexGridSizer4;
+	wxPanel* Panel1;
+	wxPanel* Panel2;
+	wxPanel* Panel3;
+	wxStaticText* StaticText1;
+	wxStaticText* StaticText2;
+	wxStaticText* StaticText3;
+	wxStaticText* StaticText4;
+	wxStaticText* StaticText5;
+	wxStaticText* StaticText6;
+	wxStaticText* StaticText7;
+	wxStaticText* StaticText8;
+	wxStaticText* StaticText9;
 	m_pMainFrame = dynamic_cast<MainFrame *>( wxGetApp().GetTopWindow() );
 	wxASSERT(m_pMainFrame != nullptr);
 	m_pcfg = m_pMainFrame->GetConfig();
 
-	wxFlexGridSizer* fgSizerMain;
-	fgSizerMain = new wxFlexGridSizer( 0, 1, 0, 0 );
-	fgSizerMain->SetFlexibleDirection( wxBOTH );
-	
-	m_pane_infogeneral = new wxPanel( this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL );
-	m_pane_infogeneral->SetBackgroundColour( wxSystemSettings::GetColour( wxSYS_COLOUR_ACTIVECAPTION ) );
-	
-	wxBoxSizer* bSizer1;
-	bSizer1 = new wxBoxSizer( wxVERTICAL );
-	
-	m_static_infogeneral = new wxStaticText( m_pane_infogeneral, wxID_ANY, _("General"), wxDefaultPosition, wxDefaultSize, 0 );
-	bSizer1->Add( m_static_infogeneral, 0, wxALL, 2 );
-	
-	m_pane_infogeneral->SetSizer( bSizer1 );
-	m_pane_infogeneral->Layout();
-	fgSizerMain->Add( m_pane_infogeneral, 1, wxEXPAND | wxALL, 5 );
-	
-	wxFlexGridSizer* fgSizerGeneral;
-	fgSizerGeneral = new wxFlexGridSizer( 0, 2, 0, 0 );
-	fgSizerGeneral->SetFlexibleDirection( wxBOTH );
-	
-	m_static_maxstart = new wxStaticText( this, wxID_ANY, _("Maximum Running Job:"), wxDefaultPosition, wxDefaultSize, 0 );
-	fgSizerGeneral->Add( m_static_maxstart, 0, wxALL, 5 );
-	
-	m_spin_maxstart = new wxSpinCtrl( this, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, wxSP_ARROW_KEYS, 1, 100, 0);
-	m_spin_maxstart->SetValue(m_pcfg->GetMaxStart());
-
-	fgSizerGeneral->Add( m_spin_maxstart, 0, wxALL, 5 );
-	
+	Create(parent, id, wxDefaultPosition, wxDefaultSize, style, _T("id"));
+	FlexGridSizer1 = new wxFlexGridSizer(0, 1, 0, 0);
+	Panel1 = new wxPanel(this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL, _T("wxID_ANY"));
+	Panel1->SetBackgroundColour(wxSystemSettings::GetColour(wxSYS_COLOUR_ACTIVECAPTION));
+	BoxSizer1 = new wxBoxSizer(wxHORIZONTAL);
+	StaticText1 = new wxStaticText(Panel1, wxID_ANY, _("General"), wxDefaultPosition, wxDefaultSize, 0, _T("wxID_ANY"));
+	BoxSizer1->Add(StaticText1, 1, wxALL|wxEXPAND, 5);
+	Panel1->SetSizer(BoxSizer1);
+	BoxSizer1->Fit(Panel1);
+	BoxSizer1->SetSizeHints(Panel1);
+	FlexGridSizer1->Add(Panel1, 1, wxALL|wxEXPAND, 5);
+	FlexGridSizer2 = new wxFlexGridSizer(0, 2, 0, 0);
+	StaticText2 = new wxStaticText(this, wxID_ANY, _("Maximum Running Job:"), wxDefaultPosition, wxDefaultSize, 0, _T("wxID_ANY"));
+	FlexGridSizer2->Add(StaticText2, 1, wxALL|wxALIGN_LEFT|wxALIGN_CENTER_VERTICAL, 5);
+	m_spin_maxstart = new wxSpinCtrl(this, wxID_ANY, _T("1"), wxDefaultPosition, wxDefaultSize, wxSP_ARROW_KEYS, 1, 100, 1, _T("wxID_ANY"));
+	m_spin_maxstart->SetValue(_T("1"));
+	FlexGridSizer2->Add(m_spin_maxstart, 1, wxALL|wxALIGN_LEFT|wxALIGN_CENTER_VERTICAL, 5);
+	StaticText3 = new wxStaticText(this, wxID_ANY, _("Maximum Active Seeds:"), wxDefaultPosition, wxDefaultSize, 0, _T("wxID_ANY"));
+	FlexGridSizer2->Add(StaticText3, 1, wxALL|wxALIGN_LEFT|wxALIGN_CENTER_VERTICAL, 5);
+	m_spin_max_active_seeds = new wxSpinCtrl(this, wxID_ANY, _T("-1"), wxDefaultPosition, wxDefaultSize, wxSP_ARROW_KEYS, -1, 100, -1, _T("wxID_ANY"));
+	m_spin_max_active_seeds->SetValue(m_pcfg->GetMaxActiveSeeds());
+	FlexGridSizer2->Add(m_spin_max_active_seeds, 1, wxALL|wxALIGN_LEFT|wxALIGN_CENTER_VERTICAL, 5);
 	m_check_excludeseed = new wxCheckBox( this, wxID_ANY, _("Exclude seeding"), wxDefaultPosition, wxDefaultSize, 0 );
-
 	m_check_excludeseed->SetValue(m_pcfg->GetExcludeSeed());
-
-	fgSizerGeneral->Add( m_check_excludeseed, 0, wxALL, 5 );
-	
-	fgSizerGeneral->AddSpacer( 5 );
-
-	m_static_fastresume_save_time= new wxStaticText( this, wxID_ANY, _("Save Fastresume every (s):"), wxDefaultPosition, wxDefaultSize, 0 );
-	
-	fgSizerGeneral->Add( m_static_fastresume_save_time, 0, wxALL|wxALIGN_CENTER_VERTICAL, 5 );
-	
-	m_spin_fastresume_save_time = new wxSpinCtrl( this, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, wxSP_ARROW_KEYS, 1, 86400, 0);
+	FlexGridSizer2->Add(m_check_excludeseed, 1, wxALL|wxALIGN_LEFT|wxALIGN_CENTER_VERTICAL, 5);
+	m_check_igore_slow_torrents = new wxCheckBox(this, wxID_ANY, _("Don\'t Count Slow Torrents"), wxDefaultPosition, wxDefaultSize, 0, wxDefaultValidator, _T("wxID_ANY"));
+	m_check_igore_slow_torrents->SetValue(m_pcfg->GetIgnoreSlowTorrents());
+	FlexGridSizer2->Add(m_check_igore_slow_torrents, 1, wxALL|wxALIGN_LEFT|wxALIGN_CENTER_VERTICAL, 5);
+	StaticText4 = new wxStaticText(this, wxID_ANY, _("Save Fastresume every (s):"), wxDefaultPosition, wxDefaultSize, 0, _T("wxID_ANY"));
+	FlexGridSizer2->Add(StaticText4, 1, wxALL|wxALIGN_LEFT|wxALIGN_CENTER_VERTICAL, 5);
+	m_spin_fastresume_save_time = new wxSpinCtrl(this, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, wxSP_ARROW_KEYS, 1, 86400, 0, _T("wxID_ANY"));
 	m_spin_fastresume_save_time->SetValue(m_pcfg->GetFastResumeSaveTime());
-
-	fgSizerGeneral->Add( m_spin_fastresume_save_time, 0, wxALL, 5 );
-	
+	FlexGridSizer2->Add(m_spin_fastresume_save_time, 1, wxALL|wxALIGN_LEFT|wxALIGN_CENTER_VERTICAL, 5);
 #ifdef __WXMSW__
-	m_check_associate_magneturi = new wxCheckBox( this, wxID_ANY, _("Associate Magnet URI with Bitswash"), wxDefaultPosition, wxDefaultSize, 0 );
-
-	m_check_associate_magneturi->SetValue(m_pcfg->GetAssociateMagnetURI());
-	
-	fgSizerGeneral->Add( m_check_associate_magneturi, 0, wxALL, 5 );
-
-	m_check_associate_torrent = new wxCheckBox( this, wxID_ANY, _("Associate .torrent with Bitswash"), wxDefaultPosition, wxDefaultSize, 0 );
-
+	m_check_associate_torrent = new wxCheckBox(this, wxID_ANY, _("Associate .torrent with Bitswash"), wxDefaultPosition, wxDefaultSize, 0, wxDefaultValidator, _T("wxID_ANY"));
 	m_check_associate_torrent->SetValue(m_pcfg->GetAssociateTorrent());
-	
-	fgSizerGeneral->Add( m_check_associate_torrent, 0, wxALL, 5 );
-
-	m_check_runatstartup = new wxCheckBox( this, wxID_ANY, _("Run at Windows startup"), wxDefaultPosition, wxDefaultSize, 0 );
-
+	FlexGridSizer2->Add(m_check_associate_torrent, 1, wxALL|wxALIGN_CENTER_HORIZONTAL|wxALIGN_CENTER_VERTICAL, 5);
+	m_check_associate_magneturi = new wxCheckBox(this, wxID_ANY, _("Associate Magnet URI with Bitswash"), wxDefaultPosition, wxDefaultSize, 0, wxDefaultValidator, _T("wxID_ANY"));
+	m_check_associate_magneturi->SetValue(m_pcfg->GetAssociateMagnetURI());
+	FlexGridSizer2->Add(m_check_associate_magneturi, 1, wxALL|wxALIGN_LEFT|wxALIGN_CENTER_VERTICAL, 5);
+	m_check_runatstartup = new wxCheckBox(this, wxID_ANY, _("Run at Windows startup"), wxDefaultPosition, wxDefaultSize, 0, wxDefaultValidator, _T("wxID_ANY"));
 	m_check_runatstartup->SetValue(m_pcfg->GetRunAtStartup());
-	
-	fgSizerGeneral->Add( m_check_runatstartup, 0, wxALL, 5 );
+	FlexGridSizer2->Add(m_check_runatstartup, 1, wxALL|wxALIGN_LEFT|wxALIGN_CENTER_VERTICAL, 5);
 #endif
-
-	fgSizerGeneral->AddSpacer( 5 );
-	fgSizerMain->Add( fgSizerGeneral, 1, wxEXPAND, 5 );
-	
-	m_pane_infogui = new wxPanel( this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL );
-	m_pane_infogui->SetBackgroundColour( wxSystemSettings::GetColour( wxSYS_COLOUR_ACTIVECAPTION ) );
-	
-	wxBoxSizer* bSizer11;
-	bSizer11 = new wxBoxSizer( wxVERTICAL );
-	
-	m_static_infogui = new wxStaticText( m_pane_infogui, wxID_ANY, _("GUI"), wxDefaultPosition, wxDefaultSize, 0 );
-	bSizer11->Add( m_static_infogui, 0, wxALL, 2 );
-	
-	m_pane_infogui->SetSizer( bSizer11 );
-	m_pane_infogui->Layout();
-	fgSizerMain->Add( m_pane_infogui, 1, wxEXPAND | wxALL, 5 );
-	
-	wxFlexGridSizer* fgSizerGUI;
-	fgSizerGUI = new wxFlexGridSizer( 0, 2, 0, 0 );
-	fgSizerGUI->SetFlexibleDirection( wxBOTH );
-	
-	m_static_refreshtimer = new wxStaticText( this, wxID_ANY, _("Refresh Timer (s):"), wxDefaultPosition, wxDefaultSize, 0 );
-	
-	fgSizerGUI->Add( m_static_refreshtimer, 0, wxALL|wxALIGN_CENTER_VERTICAL, 5 );
-	
-	m_spin_refreshtimer = new wxSpinCtrl( this, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, wxSP_ARROW_KEYS, 1, 3600, 0);
+	FlexGridSizer1->Add(FlexGridSizer2, 1, wxALL|wxEXPAND, 5);
+	Panel2 = new wxPanel(this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL, _T("wxID_ANY"));
+	Panel2->SetBackgroundColour(wxSystemSettings::GetColour(wxSYS_COLOUR_ACTIVECAPTION));
+	BoxSizer2 = new wxBoxSizer(wxHORIZONTAL);
+	StaticText5 = new wxStaticText(Panel2, wxID_ANY, _("GUI"), wxDefaultPosition, wxDefaultSize, 0, _T("wxID_ANY"));
+	BoxSizer2->Add(StaticText5, 1, wxALL|wxALIGN_CENTER_VERTICAL, 5);
+	Panel2->SetSizer(BoxSizer2);
+	BoxSizer2->Fit(Panel2);
+	BoxSizer2->SetSizeHints(Panel2);
+	FlexGridSizer1->Add(Panel2, 1, wxALL|wxEXPAND, 5);
+	FlexGridSizer3 = new wxFlexGridSizer(0, 2, 0, 0);
+	StaticText6 = new wxStaticText(this, wxID_ANY, _("Refresh Timer (s):"), wxDefaultPosition, wxDefaultSize, 0, _T("wxID_ANY"));
+	FlexGridSizer3->Add(StaticText6, 1, wxALL|wxALIGN_LEFT|wxALIGN_CENTER_VERTICAL, 5);
+	m_spin_refreshtimer = new wxSpinCtrl( this, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, wxSP_ARROW_KEYS, 1, 3600, 0, _T("wxID_ANY"));
 	m_spin_refreshtimer->SetValue(m_pcfg->GetRefreshTime());
-
-	fgSizerGUI->Add( m_spin_refreshtimer, 0, wxALL, 5 );
-	
-	m_check_usesystray = new wxCheckBox( this, wxID_ANY, _("Enable Systray Icon"), wxDefaultPosition, wxDefaultSize, 0 );
+	FlexGridSizer3->Add(m_spin_refreshtimer, 1, wxALL|wxALIGN_LEFT|wxALIGN_CENTER_VERTICAL, 5);
+	m_check_usesystray = new wxCheckBox(this, wxID_ANY, _("Enable Systray Icon"), wxDefaultPosition, wxDefaultSize, 0, wxDefaultValidator, _T("wxID_ANY"));
 	m_check_usesystray->SetValue(m_pcfg->GetUseSystray());
-	
-	fgSizerGUI->Add( m_check_usesystray, 0, wxALL, 5 );
-	
-	m_check_hidetaskbar = new wxCheckBox( this, wxID_ANY, _("Minimize to Systray"), wxDefaultPosition, wxDefaultSize, 0 );
-
+	FlexGridSizer3->Add(m_check_usesystray, 1, wxALL|wxALIGN_LEFT|wxALIGN_CENTER_VERTICAL, 5);
+	m_check_hidetaskbar = new wxCheckBox(this, wxID_ANY, _("Minimize to Systray"), wxDefaultPosition, wxDefaultSize, 0, wxDefaultValidator, _T("wxID_ANY"));
 	m_check_hidetaskbar->SetValue(m_pcfg->GetHideTaskbar());
-	
 	m_check_hidetaskbar->Enable(m_pcfg->GetUseSystray());
-	fgSizerGUI->Add( m_check_hidetaskbar, 0, wxALL, 5 );
-	
-	fgSizerMain->Add( fgSizerGUI, 1, wxEXPAND, 5 );
+	FlexGridSizer3->Add(m_check_hidetaskbar, 1, wxALL|wxALIGN_LEFT|wxALIGN_CENTER_VERTICAL, 5);
+	FlexGridSizer1->Add(FlexGridSizer3, 1, wxALL|wxEXPAND, 5);
+	Panel3 = new wxPanel(this, wxID_ANY, wxDefaultPosition, wxSize(100,100), wxTAB_TRAVERSAL, _T("wxID_ANY"));
+	Panel3->SetBackgroundColour(wxSystemSettings::GetColour(wxSYS_COLOUR_ACTIVECAPTION));
+	BoxSizer3 = new wxBoxSizer(wxHORIZONTAL);
+	StaticText7 = new wxStaticText(Panel3, wxID_ANY, _("Log"), wxDefaultPosition, wxDefaultSize, 0, _T("wxID_ANY"));
+	BoxSizer3->Add(StaticText7, 1, wxALL|wxALIGN_CENTER_VERTICAL, 5);
+	Panel3->SetSizer(BoxSizer3);
+	BoxSizer3->Fit(Panel3);
+	BoxSizer3->SetSizeHints(Panel3);
 
-
-	m_pane_infolog = new wxPanel( this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL );
-	m_pane_infolog->SetBackgroundColour( wxSystemSettings::GetColour( wxSYS_COLOUR_ACTIVECAPTION ) );
-	
-	wxBoxSizer* bSizer2;
-	bSizer2 = new wxBoxSizer( wxVERTICAL );
-	
-	m_static_infolog = new wxStaticText( m_pane_infolog, wxID_ANY, _("Log"), wxDefaultPosition, wxDefaultSize, 0 );
-	bSizer2->Add( m_static_infolog, 0, wxALL, 2 );
-	
-	m_pane_infolog->SetSizer( bSizer2 );
-	m_pane_infolog->Layout();
-	fgSizerMain->Add( m_pane_infolog, 1, wxEXPAND | wxALL, 5 );
-	
-	wxFlexGridSizer* fgSizerLog;
-	fgSizerLog = new wxFlexGridSizer( 0, 2, 0, 0 );
-	fgSizerLog->SetFlexibleDirection( wxBOTH );
-	
-	m_static_logseverity = new wxStaticText( this, wxID_ANY, _("Log Severity:"), wxDefaultPosition, wxDefaultSize, 0 );
-	fgSizerLog->Add( m_static_logseverity, 0, wxALL|wxALIGN_CENTER_VERTICAL, 5 );
-	
+	FlexGridSizer1->Add(Panel3, 1, wxALL|wxEXPAND, 5);
+	FlexGridSizer4 = new wxFlexGridSizer(0, 2, 0, 0);
+	StaticText8 = new wxStaticText(this, wxID_ANY, _("Log Severity:"), wxDefaultPosition, wxDefaultSize, 0, _T("wxID_ANY"));
+	FlexGridSizer4->Add(StaticText8, 1, wxALL|wxALIGN_LEFT|wxALIGN_CENTER_VERTICAL, 5);
 	wxString m_choice_logseverityChoices[] = { _("Debug"), _("Info"), _("Warning"), _("Critical"), _("Fatal"), _("None") };
 	int m_choice_logseverityNChoices = sizeof( m_choice_logseverityChoices ) / sizeof( wxString );
 	m_choice_logseverity = new wxChoice( this, wxID_ANY, wxDefaultPosition, wxDefaultSize, m_choice_logseverityNChoices, m_choice_logseverityChoices, 0 );
 
 	m_choice_logseverity->Select(m_pcfg->GetLogSeverity());
 
-	fgSizerLog->Add( m_choice_logseverity, 0, wxALL, 5 );
-	
-
-	m_static_loglinecount = new wxStaticText( this, wxID_ANY, _("Maximum Lines:"), wxDefaultPosition, wxDefaultSize, 0 );
-	fgSizerLog->Add( m_static_loglinecount, 0, wxALL, 5 );
-	
-	m_spin_loglinecount = new wxSpinCtrl( this, wxID_ANY, _("line"), wxDefaultPosition, wxDefaultSize, wxSP_ARROW_KEYS, 100, 10000, 0);
+	FlexGridSizer4->Add(m_choice_logseverity, 1, wxALL|wxALIGN_LEFT|wxALIGN_CENTER_VERTICAL, 5);
+	StaticText9 = new wxStaticText(this, wxID_ANY, _("Maximum Lines:"), wxDefaultPosition, wxDefaultSize, 0, _T("wxID_ANY"));
+	FlexGridSizer4->Add(StaticText9, 1, wxALL|wxALIGN_LEFT|wxALIGN_CENTER_VERTICAL, 5);
+	m_spin_loglinecount = new wxSpinCtrl(this, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, wxSP_ARROW_KEYS, 100, 10000, 0, _T("wxID_ANY"));
 	m_spin_loglinecount->SetValue(m_pcfg->GetLogLineCount());
-	fgSizerLog->Add( m_spin_loglinecount, 0, wxALL, 5 );
-
-	m_check_logtofile= new wxCheckBox( this, wxID_ANY, _("Log to File:"), wxDefaultPosition, wxDefaultSize, 0 );
+	FlexGridSizer4->Add(m_spin_loglinecount, 1, wxALL|wxALIGN_LEFT|wxALIGN_CENTER_VERTICAL, 5);
+	m_check_logtofile = new wxCheckBox(this, wxID_ANY, _("Log to File"), wxDefaultPosition, wxDefaultSize, 0, wxDefaultValidator, _T("wxID_ANY"));
 	m_check_logtofile->SetValue(m_pcfg->GetLogFile());
-
-	fgSizerLog->Add( m_check_logtofile, 0, wxALL, 5 );
-	fgSizerLog->AddSpacer( 5 );
-
-	fgSizerMain->Add( fgSizerLog, 1, wxEXPAND, 5 );
-	
-	this->SetSizer( fgSizerMain );
-	this->Layout();
-
+	FlexGridSizer4->Add(m_check_logtofile, 1, wxALL|wxALIGN_LEFT|wxALIGN_CENTER_VERTICAL, 5);
+	FlexGridSizer1->Add(FlexGridSizer4, 1, wxALL|wxALIGN_LEFT|wxALIGN_CENTER_VERTICAL, 5);
+	SetSizer(FlexGridSizer1);
+	FlexGridSizer1->Fit(this);
+	FlexGridSizer1->SetSizeHints(this);
+	//*)
 	Bind(wxEVT_CHECKBOX, &GeneralSettingPane::OnUseSystray, this, m_check_usesystray->GetId() );
+}
+
+GeneralSettingPane::~GeneralSettingPane()
+{
+	//(*Destroy(GeneralSettingPane)
+	//*)
 }
 
 int GeneralSettingPane::GetMaxStart() 
@@ -265,5 +221,15 @@ int GeneralSettingPane::GetLogLineCount()
 bool GeneralSettingPane::GetLogToFile() 
 {
 	return m_check_logtofile->GetValue();
+}
+
+int GeneralSettingPane::GetMaxActiveSeeds()
+{
+	return m_spin_max_active_seeds->GetValue();
+}
+
+bool GeneralSettingPane::GetIgnoreSlowTorrents()
+{
+	return m_check_igore_slow_torrents->GetValue();
 }
 

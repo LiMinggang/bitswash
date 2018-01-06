@@ -81,6 +81,7 @@ void Configuration::Save()
 	m_cfg->Write( _T( "/Config/use_systray" ), ( bool )m_use_systray );
 	m_cfg->Write( _T( "/Config/hidetaskbar" ), ( bool )m_hidetaskbar );
 	m_cfg->Write( _T( "/Config/exclude_seed" ), ( bool )m_exclude_seed );
+	//m_cfg->Write( _T( "/Config/single_instance" ), m_single_instance ); //Hidden
 #ifdef __WXMSW__
 	m_cfg->Write( _T( "/Config/run_at_startup" ), ( bool )m_run_at_startup );
 	wxRegKey regKey( m_startup_regkey );
@@ -250,6 +251,7 @@ void Configuration::Load()
 	if(m_max_log_files <= 0) m_max_log_files = 5;
 	if(m_max_log_files > 20) m_max_log_files = 20;
 	m_cfg->Read( _T( "/Config/use_systray" ), &m_use_systray, true );
+	m_cfg->Read( _T( "/Config/single_instance" ), &m_single_instance, true );
 	//if (! (m_cfg->Read(_T("/Config/use_systray"), &m_use_systray))) m_use_systray = true;
 	m_cfg->Read( _T( "/Config/hidetaskbar" ), &m_hidetaskbar, false ) ;
 	m_cfg->Read( _T( "/Config/exclude_seed" ), &m_exclude_seed, true );
@@ -367,7 +369,7 @@ void Configuration::Load()
 
 void Configuration::ReadSavePath()
 {
-	wxString historypathfile = wxGetApp().DataPath() + wxGetApp().PathSeparator() + _T( "save_history" );
+	wxString historypathfile = wxGetApp().DataPath() + _T( "save_history" );
 	wxTextFile *history_f = new wxTextFile( historypathfile );
 	if( history_f->Open() )
 	{
@@ -389,7 +391,7 @@ void Configuration::ReadSavePath()
 
 void Configuration::WriteSavePath()
 {
-	wxString historypathfile = wxGetApp().DataPath() + wxGetApp().PathSeparator() + _T( "save_history" );
+	wxString historypathfile = wxGetApp().DataPath() + _T( "save_history" );
 	wxTextFile *history_f = new wxTextFile( historypathfile );
 	if( history_f->Exists() )
 	{
