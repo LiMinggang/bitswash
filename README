@@ -28,9 +28,13 @@ New: Squential download
 New: Enable/disable anonymous mode
 New: Enable/disable OS cache
 New: Enable/disable supper seeding
+New: Enable/disable prefer UDP trackers
+New: Rate limite IP overhead
+New: Enabled protocol selection
 New: Active seeds limits
 New: Don't count slow torrents
 Fix: Enable preview download config won't apply
+Fix: Refactor GeneralSettingPanel
 
 0.0.7
 New: 64 bits support

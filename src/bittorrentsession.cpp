@@ -416,13 +416,29 @@ void BitTorrentSession::Configure(lt::settings_pack &settingsPack)
 	//settingsPack.set_str(lt::settings_pack::announce_ip, Utils::String::toStdString(announceIP()));
 	// Super seeding
 	settingsPack.set_bool(lt::settings_pack::strict_super_seeding, m_config->GetSupperSeeding());
-	settingsPack.set_bool(lt::settings_pack::enable_incoming_utp, true);
-	settingsPack.set_bool(lt::settings_pack::enable_outgoing_utp, true);
-	// uTP rate limiting
-	//settingsPack.set_bool(lt::settings_pack::rate_limit_utp, isUTPRateLimited());
-	//settingsPack.set_int(lt::settings_pack::mixed_mode_algorithm, isUTPRateLimited()
-	//					 ? lt::settings_pack::prefer_tcp
-	//					 : lt::settings_pack::peer_proportional);
+	switch(m_config->GetEnabledProtocols())
+	{
+		case Configuration::PROTO_TCP:
+			settingsPack.set_bool(lt::settings_pack::enable_incoming_tcp, true);
+			settingsPack.set_bool(lt::settings_pack::enable_outgoing_tcp, true);
+			settingsPack.set_bool(lt::settings_pack::enable_incoming_utp, false);
+			settingsPack.set_bool(lt::settings_pack::enable_outgoing_utp, false);
+			break;
+		case Configuration::PROTO_UTP:
+			settingsPack.set_bool(lt::settings_pack::enable_incoming_tcp, false);
+			settingsPack.set_bool(lt::settings_pack::enable_outgoing_tcp, false);
+			settingsPack.set_bool(lt::settings_pack::enable_incoming_utp, true);
+			settingsPack.set_bool(lt::settings_pack::enable_outgoing_utp, true);
+			break;
+		default:
+			settingsPack.set_bool(lt::settings_pack::enable_incoming_tcp, true);
+			settingsPack.set_bool(lt::settings_pack::enable_outgoing_tcp, true);
+			settingsPack.set_bool(lt::settings_pack::enable_incoming_utp, true);
+			settingsPack.set_bool(lt::settings_pack::enable_outgoing_utp, true);
+	}
+
+	settingsPack.set_bool(lt::settings_pack::rate_limit_ip_overhead, m_config->GetRateLimitIpOverhead());
+	settingsPack.set_bool(lt::settings_pack::prefer_udp_trackers, m_config->GetPreferUdpTrackers());
 
 	//settingsPack.set_bool(lt::settings_pack::apply_ip_filter_to_trackers, isTrackerFilteringEnabled());
 
@@ -433,29 +449,6 @@ void BitTorrentSession::Configure(lt::settings_pack &settingsPack)
 	settingsPack.set_int(lt::settings_pack::active_lsd_limit, -1);
 
 	// Set severity level of libtorrent session
-#if 0
-	int alertMask = lt::alert::error_notification
-					| lt::alert::peer_notification
-					| lt::alert::port_mapping_notification
-					| lt::alert::storage_notification
-					| lt::alert::tracker_notification
-					| lt::alert::status_notification
-					| lt::alert::ip_block_notification
-					| lt::alert::progress_notification
-					| lt::alert::stats_notification
-					;
-
-	int alertMask = lt::alert::all_categories
-				& ~(lt::alert::dht_notification
-				+ lt::alert::progress_notification
-				+ lt::alert::stats_notification
-				+ lt::alert::session_log_notification
-				+ lt::alert::torrent_log_notification
-				+ lt::alert::peer_log_notification
-				+ lt::alert::dht_log_notification
-				+ lt::alert::picker_log_notification
-				);
-#endif
 	settingsPack.set_int(lt::settings_pack::alert_mask, lt::alert::error_notification
 		| lt::alert::peer_notification
 		| lt::alert::port_mapping_notification

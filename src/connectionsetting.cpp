@@ -46,11 +46,12 @@ ConnectionSettingPane::ConnectionSettingPane( wxWindow* parent, wxWindowID id,co
 	wxFlexGridSizer* FlexGridSizer2;
 	wxFlexGridSizer* FlexGridSizer3;
 	wxFlexGridSizer* FlexGridSizer4;
+	wxFlexGridSizer* FlexGridSizer5;
 	wxPanel* Panel1;
 	wxPanel* Panel2;
 	wxPanel* Panel3;
 	wxStaticLine* StaticLine1;
-	wxStaticLine* StaticLine2;
+	wxStaticText* StaticText10;
 	wxStaticText* StaticText1;
 	wxStaticText* StaticText2;
 	wxStaticText* StaticText3;
@@ -93,8 +94,6 @@ ConnectionSettingPane::ConnectionSettingPane( wxWindow* parent, wxWindowID id,co
 	m_spinDHTPort->SetValue(pcfg->GetDHTPort());
 	FlexGridSizer2->Add(m_spinDHTPort, 1, wxALL|wxALIGN_CENTER_HORIZONTAL|wxALIGN_CENTER_VERTICAL, 5);
 	FlexGridSizer1->Add(FlexGridSizer2, 1, wxALL|wxALIGN_CENTER_HORIZONTAL|wxALIGN_CENTER_VERTICAL, 5);
-	StaticLine1 = new wxStaticLine(this, wxID_ANY, wxDefaultPosition, wxSize(10,-1), wxLI_HORIZONTAL, _T("wxID_ANY"));
-	FlexGridSizer1->Add(StaticLine1, 1, wxALL|wxEXPAND, 5);
 	Panel2 = new wxPanel(this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL, _T("wxID_ANY"));
 	Panel2->SetBackgroundColour(wxSystemSettings::GetColour(wxSYS_COLOUR_ACTIVECAPTION));
 	BoxSizer2 = new wxBoxSizer(wxHORIZONTAL);
@@ -125,9 +124,10 @@ ConnectionSettingPane::ConnectionSettingPane( wxWindow* parent, wxWindowID id,co
 	m_spinMaxUploads = new wxSpinCtrl(this, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, wxSP_ARROW_KEYS, 1, 99999999, 0, _T("wxID_ANY"));
 	m_spinMaxUploads->SetValue(pcfg->GetGlobalMaxUploads());
 	FlexGridSizer3->Add(m_spinMaxUploads, 1, wxALL|wxALIGN_LEFT|wxALIGN_CENTER_VERTICAL, 5);
+	m_check_rate_limit_ip_overhead = new wxCheckBox(this, wxID_ANY, _("Apply Rate limit to transport overhead"), wxDefaultPosition, wxDefaultSize, 0, wxDefaultValidator, _T("wxID_ANY"));
+	m_check_rate_limit_ip_overhead->SetValue(pcfg->GetRateLimitIpOverhead());
+	FlexGridSizer3->Add(m_check_rate_limit_ip_overhead, 1, wxALL|wxALIGN_LEFT|wxALIGN_CENTER_VERTICAL, 5);
 	FlexGridSizer1->Add(FlexGridSizer3, 1, wxALL|wxALIGN_LEFT|wxALIGN_CENTER_VERTICAL, 5);
-	StaticLine2 = new wxStaticLine(this, wxID_ANY, wxDefaultPosition, wxSize(10,-1), wxLI_HORIZONTAL, _T("wxID_ANY"));
-	FlexGridSizer1->Add(StaticLine2, 1, wxALL|wxEXPAND, 5);
 	Panel3 = new wxPanel(this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL, _T("wxID_ANY"));
 	Panel3->SetBackgroundColour(wxSystemSettings::GetColour(wxSYS_COLOUR_ACTIVECAPTION));
 	BoxSizer3 = new wxBoxSizer(wxHORIZONTAL);
@@ -147,7 +147,22 @@ ConnectionSettingPane::ConnectionSettingPane( wxWindow* parent, wxWindowID id,co
 	m_check_supper_seeding = new wxCheckBox(this, wxID_ANY, _("Supper Seeding"), wxDefaultPosition, wxDefaultSize, 0, wxDefaultValidator, _T("wxID_ANY"));
 	m_check_supper_seeding->SetValue(pcfg->GetSupperSeeding());
 	FlexGridSizer4->Add(m_check_supper_seeding, 1, wxALL|wxALIGN_LEFT|wxALIGN_CENTER_VERTICAL, 5);
+	m_check_prefer_udp_trackers = new wxCheckBox(this, wxID_ANY, _("Prefer UDP trackers"), wxDefaultPosition, wxDefaultSize, 0, wxDefaultValidator, _T("wxID_ANY"));
+	m_check_prefer_udp_trackers->SetValue(pcfg->GetPreferUdpTrackers());
+	FlexGridSizer4->Add(m_check_prefer_udp_trackers, 1, wxALL|wxALIGN_LEFT|wxALIGN_CENTER_VERTICAL, 5);
 	FlexGridSizer1->Add(FlexGridSizer4, 1, wxALL, 5);
+	StaticLine1 = new wxStaticLine(this, wxID_ANY, wxDefaultPosition, wxSize(10,-1), wxLI_HORIZONTAL, _T("wxID_ANY"));
+	FlexGridSizer1->Add(StaticLine1, 1, wxALL|wxEXPAND, 0);
+	FlexGridSizer5 = new wxFlexGridSizer(0, 3, 0, 0);
+	StaticText10 = new wxStaticText(this, wxID_ANY, _("Enabled Protocols:"), wxDefaultPosition, wxDefaultSize, 0, _T("wxID_ANY"));
+	FlexGridSizer5->Add(StaticText10, 1, wxALL|wxALIGN_LEFT|wxALIGN_CENTER_VERTICAL, 5);
+	m_choice_enabled_protocols = new wxChoice(this, wxID_ANY, wxDefaultPosition, wxDefaultSize, 0, 0, 0, wxDefaultValidator, _T("wxID_ANY"));
+	m_choice_enabled_protocols->Append(_("Both"));
+	m_choice_enabled_protocols->Append(wxT("TCP"));
+	m_choice_enabled_protocols->Append(wxT("\u00B5TP"));
+	m_choice_enabled_protocols->Select(pcfg->GetEnabledProtocols());
+	FlexGridSizer5->Add(m_choice_enabled_protocols, 1, wxALL|wxALIGN_LEFT|wxALIGN_CENTER_VERTICAL, 5);
+	FlexGridSizer1->Add(FlexGridSizer5, 1, wxALL|wxALIGN_LEFT|wxALIGN_CENTER_VERTICAL, 5);
 	SetSizer(FlexGridSizer1);
 	FlexGridSizer1->Fit(this);
 	FlexGridSizer1->SetSizeHints(this);
@@ -212,5 +227,19 @@ bool ConnectionSettingPane::UseOSCache()
 bool ConnectionSettingPane::GetSupperSeeding()
 {
 	return m_check_supper_seeding->GetValue();
+}
+
+int ConnectionSettingPane::GetEnabledProtocols()
+{
+	return m_choice_enabled_protocols->GetSelection();
+}
+
+bool ConnectionSettingPane::GetRateLimitIpOverhead()
+{
+	return m_check_rate_limit_ip_overhead->GetValue();
+}
+bool ConnectionSettingPane::GetPreferUdpTrackers()
+{
+	return m_check_prefer_udp_trackers->GetValue();
 }
 

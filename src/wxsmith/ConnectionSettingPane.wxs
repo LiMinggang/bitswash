@@ -88,14 +88,6 @@
 				<option>1</option>
 			</object>
 			<object class="sizeritem">
-				<object class="wxStaticLine" name="wxID_ANY" variable="StaticLine1" member="no">
-					<size>10,-1</size>
-				</object>
-				<flag>wxALL|wxEXPAND</flag>
-				<border>5</border>
-				<option>1</option>
-			</object>
-			<object class="sizeritem">
 				<object class="wxPanel" name="wxID_ANY" variable="Panel2" member="no">
 					<bg>wxSYS_COLOUR_ACTIVECAPTION</bg>
 					<object class="wxBoxSizer" variable="BoxSizer2" member="no">
@@ -186,16 +178,16 @@
 						<border>5</border>
 						<option>1</option>
 					</object>
+					<object class="sizeritem">
+						<object class="wxCheckBox" name="wxID_ANY" variable="m_check_rate_ip_overhead" member="yes">
+							<label>Apply Rate limit to transport overhead</label>
+						</object>
+						<flag>wxALL|wxALIGN_LEFT|wxALIGN_CENTER_VERTICAL</flag>
+						<border>5</border>
+						<option>1</option>
+					</object>
 				</object>
 				<flag>wxALL|wxALIGN_LEFT|wxALIGN_CENTER_VERTICAL</flag>
-				<border>5</border>
-				<option>1</option>
-			</object>
-			<object class="sizeritem">
-				<object class="wxStaticLine" name="wxID_ANY" variable="StaticLine2" member="no">
-					<size>10,-1</size>
-				</object>
-				<flag>wxALL|wxEXPAND</flag>
 				<border>5</border>
 				<option>1</option>
 			</object>
@@ -244,8 +236,51 @@
 						<border>5</border>
 						<option>1</option>
 					</object>
+					<object class="sizeritem">
+						<object class="wxCheckBox" name="wxID_ANY" variable="m_check_prefer_udp_trackers" member="yes">
+							<label>Prefer UDP trackers</label>
+						</object>
+						<flag>wxALL|wxALIGN_LEFT|wxALIGN_CENTER_VERTICAL</flag>
+						<border>5</border>
+						<option>1</option>
+					</object>
 				</object>
 				<flag>wxALL</flag>
+				<border>5</border>
+				<option>1</option>
+			</object>
+			<object class="sizeritem">
+				<object class="wxStaticLine" name="wxID_ANY" variable="StaticLine1" member="no">
+					<size>10,-1</size>
+				</object>
+				<flag>wxALL|wxEXPAND</flag>
+				<option>1</option>
+			</object>
+			<object class="sizeritem">
+				<object class="wxFlexGridSizer" variable="FlexGridSizer5" member="no">
+					<cols>3</cols>
+					<object class="sizeritem">
+						<object class="wxStaticText" name="wxID_ANY" variable="StaticText10" member="no">
+							<label>Enabled Protocols:</label>
+						</object>
+						<flag>wxALL|wxALIGN_LEFT|wxALIGN_CENTER_VERTICAL</flag>
+						<border>5</border>
+						<option>1</option>
+					</object>
+					<object class="sizeritem">
+						<object class="wxChoice" name="wxID_ANY" variable="m_choice_enabled_protocols" member="yes">
+							<content>
+								<item>Both</item>
+								<item>TCP</item>
+								<item>μTP</item>
+							</content>
+						</object>
+						<flag>wxALL|wxALIGN_LEFT|wxALIGN_CENTER_VERTICAL</flag>
+						<border>5</border>
+						<option>1</option>
+					</object>
+				</object>
+				<flag>wxALL|wxALIGN_LEFT|wxALIGN_CENTER_VERTICAL</flag>
 				<border>5</border>
 				<option>1</option>
 			</object>

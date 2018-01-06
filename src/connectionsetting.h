@@ -27,6 +27,7 @@
 
 //(*Headers(ConnectionSettingPane)
 #include <wx/checkbox.h>
+#include <wx/choice.h>
 #include <wx/panel.h>
 #include <wx/sizer.h>
 #include <wx/spinctrl.h>
@@ -50,6 +51,9 @@ public:
 	bool IsAnonymousMode();
 	bool UseOSCache();
 	bool GetSupperSeeding();
+	int GetEnabledProtocols();
+	bool GetRateLimitIpOverhead();
+	bool GetPreferUdpTrackers();
 
 private: 
 		//(*Declarations(ConnectionSettingPane)
@@ -58,7 +62,10 @@ private:
 		wxCheckBox* m_checkDHT;
 		wxCheckBox* m_check_anonymous_mode;
 		wxCheckBox* m_check_os_cache;
+		wxCheckBox* m_check_prefer_udp_trackers;
+		wxCheckBox* m_check_rate_limit_ip_overhead;
 		wxCheckBox* m_check_supper_seeding;
+		wxChoice* m_choice_enabled_protocols;
 		wxSpinCtrl* m_spinDHTPort;
 		wxSpinCtrl* m_spinMaxConnections;
 		wxSpinCtrl* m_spinMaxUploads;

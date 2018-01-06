@@ -151,7 +151,10 @@ void Configuration::Save()
 	m_cfg->Write( _T( "/Session/free_torrent_hashes" ), m_free_torrent_hashes );
 	m_cfg->Write( _T( "/Session/use_oscache" ), ( bool )m_useoscache );
 	m_cfg->Write( _T( "/Session/active_seeds" ), m_max_active_seeds );
+	m_cfg->Write( _T( "/Session/enabled_protocols" ), m_enabled_protocols );
 	m_cfg->Write( _T( "/Session/dont_count_slow_torrents" ), m_ignore_slow_torrents );
+	m_cfg->Write( _T( "/Session/rate_limit_ip_overhead" ), m_rate_limit_ip_overhead );
+	m_cfg->Write( _T( "/Session/prefer_udp_trackers" ), m_prefer_udp_trackers );
 	//legacy
 	//if( m_storagemode != lt::storage_mode_compact )
 	m_cfg->Write( _T( "/Torrent/storagemode" ), ( long )m_storagemode );
@@ -328,8 +331,12 @@ void Configuration::Load()
 	m_cfg->Read( _T( "/Session/anonymous_mode" ), &m_anonymous_mode, false );
 	m_cfg->Read( _T( "/Session/use_oscache" ), &m_useoscache, true );
 	m_max_active_seeds = m_cfg->Read( _T( "/Session/active_seeds" ), -1 );
+	m_cfg->Read( _T( "/Session/enabled_protocols" ), &m_enabled_protocols, 0 );
 	m_cfg->Read( _T( "/Session/super_seeding" ), &m_super_seeding, false );
 	m_cfg->Read( _T( "/Session/dont_count_slow_torrents" ), &m_ignore_slow_torrents, false );
+	m_cfg->Read( _T( "/Session/rate_limit_ip_overhead" ), &m_rate_limit_ip_overhead, true );
+	m_cfg->Read( _T( "/Session/prefer_udp_trackers" ), &m_prefer_udp_trackers, true );
+
 	lt::storage_mode_t defstoragemode = lt::storage_mode_sparse;
 	m_storagemode = ( lt::storage_mode_t ) m_cfg->Read( _T( "/Torrent/storagemode" ), ( long ) defstoragemode );
 	m_global_upload_limit = m_cfg->Read( _T( "/Torrent/global_upload_limit" ), -1 );

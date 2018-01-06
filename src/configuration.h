@@ -42,6 +42,12 @@ struct gui_metric {
 class Configuration : public wxFileConfig
 {
     public:
+		enum BT_PROTOCOLS
+		{
+			PROTO_BOTH = 0,
+			PROTO_TCP  = 1,
+			PROTO_UTP  = 2,
+		};
         explicit Configuration(const wxString& AppName);
         ~Configuration();
 
@@ -325,6 +331,13 @@ class Configuration : public wxFileConfig
 		bool GetSingleInstance() { return m_single_instance; }
 		void SetSingleInstance( bool single ) { m_single_instance = single ; }
 
+		int GetEnabledProtocols() { return m_enabled_protocols; }
+		void SetEnabledProtocols(int protocol) { m_enabled_protocols = protocol; }
+
+		bool GetRateLimitIpOverhead() { return m_rate_limit_ip_overhead; }
+		void SetRateLimitIpOverhead( bool enable ) { m_rate_limit_ip_overhead = enable; }
+		bool GetPreferUdpTrackers() { return m_prefer_udp_trackers; }
+		void SetPreferUdpTrackers( bool enable ) { m_prefer_udp_trackers = enable; }
 		//save path history
 #define BITSWASH_MAX_SAVE_PATH 10
 		std::vector<wxString>& GetSavePathHistory() { return m_savepathhistory; }
@@ -383,11 +396,14 @@ class Configuration : public wxFileConfig
 		unsigned int	m_fastresume_save_time;
 		unsigned int	m_max_start;
 		int				m_max_active_seeds;
+		int				m_enabled_protocols;
 		bool		m_use_systray;
 		bool 		m_hidetaskbar;
 		bool		m_enable_upnp;
 		bool		m_enable_natpmp;
 		bool		m_enable_lsd;
+		bool        m_rate_limit_ip_overhead;
+		bool        m_prefer_udp_trackers;
 	
 		bool		m_enable_metadata;
 		bool		m_enable_pex;

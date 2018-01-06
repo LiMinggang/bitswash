@@ -123,6 +123,9 @@ void SwashSetting::OnOK(wxCommandEvent& event)
 	m_pcfg->SetAnonymousMode(m_pane_connectionsettings->IsAnonymousMode());
 	m_pcfg->SetUseOSCache(m_pane_connectionsettings->UseOSCache());
 	m_pcfg->SetSupperSeeding(m_pane_connectionsettings->GetSupperSeeding());
+	m_pcfg->SetEnabledProtocols(m_pane_connectionsettings->GetEnabledProtocols());
+	m_pcfg->SetRateLimitIpOverhead(m_pane_connectionsettings->GetRateLimitIpOverhead());
+	m_pcfg->SetPreferUdpTrackers(m_pane_connectionsettings->GetPreferUdpTrackers());
 
 	m_pcfg->SetDefaultStorageMode(m_pane_torrentsettings->GetStorageMode());
 
