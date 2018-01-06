@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <wxsmith>
-	<object class="wxPanel" name="ConnectionSettingPane">
-		<id_arg>0</id_arg>
+	<object class="wxPanel" name="GeneralSettingPane">
+		<pos_arg>1</pos_arg>
+		<size_arg>1</size_arg>
 		<object class="wxFlexGridSizer" variable="FlexGridSizer1" member="no">
 			<cols>1</cols>
 			<object class="sizeritem">
@@ -10,9 +11,9 @@
 					<object class="wxBoxSizer" variable="BoxSizer1" member="no">
 						<object class="sizeritem">
 							<object class="wxStaticText" name="wxID_ANY" variable="StaticText1" member="no">
-								<label>Ports Setting</label>
+								<label>General</label>
 							</object>
-							<flag>wxALL|wxALIGN_CENTER_HORIZONTAL|wxALIGN_CENTER_VERTICAL</flag>
+							<flag>wxALL|wxEXPAND</flag>
 							<border>5</border>
 							<option>1</option>
 						</object>
@@ -24,20 +25,19 @@
 			</object>
 			<object class="sizeritem">
 				<object class="wxFlexGridSizer" variable="FlexGridSizer2" member="no">
-					<cols>4</cols>
+					<cols>2</cols>
 					<object class="sizeritem">
 						<object class="wxStaticText" name="wxID_ANY" variable="StaticText2" member="no">
-							<label>Port Range (TCP):</label>
+							<label>Maximum Running Job:</label>
 						</object>
 						<flag>wxALL|wxALIGN_LEFT|wxALIGN_CENTER_VERTICAL</flag>
 						<border>5</border>
 						<option>1</option>
 					</object>
 					<object class="sizeritem">
-						<object class="wxSpinCtrl" name="wxID_ANY" variable="m_spinPortFrom" member="yes">
-							<value>0</value>
+						<object class="wxSpinCtrl" name="wxID_ANY" variable="m_spin_maxstart" member="yes">
+							<value>1</value>
 							<min>1</min>
-							<max>65535</max>
 							<style>wxSP_ARROW_KEYS</style>
 						</object>
 						<flag>wxALL|wxALIGN_LEFT|wxALIGN_CENTER_VERTICAL</flag>
@@ -46,17 +46,16 @@
 					</object>
 					<object class="sizeritem">
 						<object class="wxStaticText" name="wxID_ANY" variable="StaticText3" member="no">
-							<label>to</label>
+							<label>Maximum Active Seeds:</label>
 						</object>
 						<flag>wxALL|wxALIGN_LEFT|wxALIGN_CENTER_VERTICAL</flag>
 						<border>5</border>
 						<option>1</option>
 					</object>
 					<object class="sizeritem">
-						<object class="wxSpinCtrl" name="wxID_ANY" variable="m_spinPortTo" member="yes">
-							<value>0</value>
-							<min>1</min>
-							<max>65535</max>
+						<object class="wxSpinCtrl" name="wxID_ANY" variable="m_spin_max_active_seeds" member="yes">
+							<value>-1</value>
+							<min>-1</min>
 							<style>wxSP_ARROW_KEYS</style>
 						</object>
 						<flag>wxALL|wxALIGN_LEFT|wxALIGN_CENTER_VERTICAL</flag>
@@ -64,32 +63,64 @@
 						<option>1</option>
 					</object>
 					<object class="sizeritem">
-						<object class="wxCheckBox" name="wxID_ANY" variable="m_checkDHT" member="yes">
-							<label>Enable DHT, Port (UDP):</label>
+						<object class="wxCheckBox" name="wxID_ANY" variable="m_check_excludeseed" member="yes">
+							<label>Exclude seeding</label>
 						</object>
 						<flag>wxALL|wxALIGN_LEFT|wxALIGN_CENTER_VERTICAL</flag>
 						<border>5</border>
 						<option>1</option>
 					</object>
 					<object class="sizeritem">
-						<object class="wxSpinCtrl" name="wxID_ANY" variable="m_spinDHTPort" member="yes">
+						<object class="wxCheckBox" name="wxID_ANY" variable="m_check_igore_slow_torrents" member="yes">
+							<label>Don&apos;t Count Slow Torrents</label>
+						</object>
+						<flag>wxALL|wxALIGN_LEFT|wxALIGN_CENTER_VERTICAL</flag>
+						<border>5</border>
+						<option>1</option>
+					</object>
+					<object class="sizeritem">
+						<object class="wxStaticText" name="wxID_ANY" variable="StaticText4" member="no">
+							<label>Save Fastresume every (s):</label>
+						</object>
+						<flag>wxALL|wxALIGN_LEFT|wxALIGN_CENTER_VERTICAL</flag>
+						<border>5</border>
+						<option>1</option>
+					</object>
+					<object class="sizeritem">
+						<object class="wxSpinCtrl" name="wxID_ANY" variable="m_spin_fastresume_save_time" member="yes">
 							<value>0</value>
 							<min>1</min>
-							<max>65535</max>
+							<max>86400</max>
 							<style>wxSP_ARROW_KEYS</style>
+						</object>
+						<flag>wxALL|wxALIGN_LEFT|wxALIGN_CENTER_VERTICAL</flag>
+						<border>5</border>
+						<option>1</option>
+					</object>
+					<object class="sizeritem">
+						<object class="wxCheckBox" name="wxID_ANY" variable="m_check_associate_torrent" member="yes">
+							<label>Associate .torrent with Bitswash</label>
 						</object>
 						<flag>wxALL|wxALIGN_CENTER_HORIZONTAL|wxALIGN_CENTER_VERTICAL</flag>
 						<border>5</border>
 						<option>1</option>
 					</object>
-				</object>
-				<flag>wxALL|wxALIGN_CENTER_HORIZONTAL|wxALIGN_CENTER_VERTICAL</flag>
-				<border>5</border>
-				<option>1</option>
-			</object>
-			<object class="sizeritem">
-				<object class="wxStaticLine" name="wxID_ANY" variable="StaticLine1" member="no">
-					<size>10,-1</size>
+					<object class="sizeritem">
+						<object class="wxCheckBox" name="wxID_ANY" variable="m_check_associate_magneturi" member="yes">
+							<label>Associate Magnet URI with Bitswash</label>
+						</object>
+						<flag>wxALL|wxALIGN_LEFT|wxALIGN_CENTER_VERTICAL</flag>
+						<border>5</border>
+						<option>1</option>
+					</object>
+					<object class="sizeritem">
+						<object class="wxCheckBox" name="wxID_ANY" variable="m_check_runatstartup" member="yes">
+							<label>Run at Windows startup</label>
+						</object>
+						<flag>wxALL|wxALIGN_LEFT|wxALIGN_CENTER_VERTICAL</flag>
+						<border>5</border>
+						<option>1</option>
+					</object>
 				</object>
 				<flag>wxALL|wxEXPAND</flag>
 				<border>5</border>
@@ -100,10 +131,10 @@
 					<bg>wxSYS_COLOUR_ACTIVECAPTION</bg>
 					<object class="wxBoxSizer" variable="BoxSizer2" member="no">
 						<object class="sizeritem">
-							<object class="wxStaticText" name="wxID_ANY" variable="StaticText4" member="no">
-								<label>Limits</label>
+							<object class="wxStaticText" name="wxID_ANY" variable="StaticText5" member="no">
+								<label>GUI</label>
 							</object>
-							<flag>wxALL|wxALIGN_CENTER_HORIZONTAL|wxALIGN_CENTER_VERTICAL</flag>
+							<flag>wxALL|wxALIGN_CENTER_VERTICAL</flag>
 							<border>5</border>
 							<option>1</option>
 						</object>
@@ -117,50 +148,18 @@
 				<object class="wxFlexGridSizer" variable="FlexGridSizer3" member="no">
 					<cols>2</cols>
 					<object class="sizeritem">
-						<object class="wxStaticText" name="wxID_ANY" variable="StaticText5" member="no">
-							<label>Download Rate Limit:</label>
-						</object>
-						<flag>wxALL|wxALIGN_LEFT|wxALIGN_CENTER_VERTICAL</flag>
-						<border>5</border>
-						<option>1</option>
-					</object>
-					<object class="sizeritem">
-						<object class="wxSpinCtrl" name="wxID_ANY" subclass="AutoSizeInput" variable="m_autoDownLimit" member="yes">
-							<value>0</value>
-						</object>
-						<flag>wxALL|wxALIGN_LEFT|wxALIGN_CENTER_VERTICAL</flag>
-						<border>5</border>
-						<option>1</option>
-					</object>
-					<object class="sizeritem">
 						<object class="wxStaticText" name="wxID_ANY" variable="StaticText6" member="no">
-							<label>Upload Rate Limit:</label>
+							<label>Refresh Timer (s):</label>
 						</object>
 						<flag>wxALL|wxALIGN_LEFT|wxALIGN_CENTER_VERTICAL</flag>
 						<border>5</border>
 						<option>1</option>
 					</object>
 					<object class="sizeritem">
-						<object class="wxSpinCtrl" name="wxID_ANY" subclass="AutoSizeInput" variable="m_autoUpLimit" member="yes">
-							<value></value>
-						</object>
-						<flag>wxALL|wxALIGN_LEFT|wxALIGN_CENTER_VERTICAL</flag>
-						<border>5</border>
-						<option>1</option>
-					</object>
-					<object class="sizeritem">
-						<object class="wxStaticText" name="wxID_ANY" variable="StaticText7" member="no">
-							<label>Maximum Connections:</label>
-						</object>
-						<flag>wxALL|wxALIGN_LEFT|wxALIGN_CENTER_VERTICAL</flag>
-						<border>5</border>
-						<option>1</option>
-					</object>
-					<object class="sizeritem">
-						<object class="wxSpinCtrl" name="wxID_ANY" variable="m_spinMaxConnections" member="yes">
-							<value></value>
+						<object class="wxSpinCtrl" name="wxID_ANY" variable="m_spin_refreshtimer" member="yes">
+							<value>0</value>
 							<min>1</min>
-							<max>99999999</max>
+							<max>3600</max>
 							<style>wxSP_ARROW_KEYS</style>
 						</object>
 						<flag>wxALL|wxALIGN_LEFT|wxALIGN_CENTER_VERTICAL</flag>
@@ -168,32 +167,21 @@
 						<option>1</option>
 					</object>
 					<object class="sizeritem">
-						<object class="wxStaticText" name="wxID_ANY" variable="StaticText8" member="no">
-							<label>Maximum Upload Slots:</label>
+						<object class="wxCheckBox" name="wxID_ANY" variable="m_check_usesystray" member="yes">
+							<label>Enable Systray Icon</label>
 						</object>
 						<flag>wxALL|wxALIGN_LEFT|wxALIGN_CENTER_VERTICAL</flag>
 						<border>5</border>
 						<option>1</option>
 					</object>
 					<object class="sizeritem">
-						<object class="wxSpinCtrl" name="wxID_ANY" variable="m_spinMaxUploads" member="yes">
-							<value></value>
-							<min>1</min>
-							<max>99999999</max>
-							<style>wxSP_ARROW_KEYS</style>
+						<object class="wxCheckBox" name="wxID_ANY" variable="m_check_hidetaskbar" member="yes">
+							<label>Minimize to Systray</label>
 						</object>
 						<flag>wxALL|wxALIGN_LEFT|wxALIGN_CENTER_VERTICAL</flag>
 						<border>5</border>
 						<option>1</option>
 					</object>
-				</object>
-				<flag>wxALL|wxALIGN_LEFT|wxALIGN_CENTER_VERTICAL</flag>
-				<border>5</border>
-				<option>1</option>
-			</object>
-			<object class="sizeritem">
-				<object class="wxStaticLine" name="wxID_ANY" variable="StaticLine2" member="no">
-					<size>10,-1</size>
 				</object>
 				<flag>wxALL|wxEXPAND</flag>
 				<border>5</border>
@@ -201,13 +189,14 @@
 			</object>
 			<object class="sizeritem">
 				<object class="wxPanel" name="wxID_ANY" variable="Panel3" member="no">
+					<size>100,100</size>
 					<bg>wxSYS_COLOUR_ACTIVECAPTION</bg>
 					<object class="wxBoxSizer" variable="BoxSizer3" member="no">
 						<object class="sizeritem">
-							<object class="wxStaticText" name="wxID_ANY" variable="StaticText9" member="no">
-								<label>Miscellaneous</label>
+							<object class="wxStaticText" name="wxID_ANY" variable="StaticText7" member="no">
+								<label>Log</label>
 							</object>
-							<flag>wxALL|wxALIGN_CENTER_HORIZONTAL|wxALIGN_CENTER_VERTICAL</flag>
+							<flag>wxALL|wxALIGN_CENTER_VERTICAL</flag>
 							<border>5</border>
 							<option>1</option>
 						</object>
@@ -221,31 +210,57 @@
 				<object class="wxFlexGridSizer" variable="FlexGridSizer4" member="no">
 					<cols>2</cols>
 					<object class="sizeritem">
-						<object class="wxCheckBox" name="wxID_ANY" variable="m_check_anonymous_mode" member="yes">
-							<label>Anonymous Mode</label>
+						<object class="wxStaticText" name="wxID_ANY" variable="StaticText8" member="no">
+							<label>Log Severity:</label>
 						</object>
 						<flag>wxALL|wxALIGN_LEFT|wxALIGN_CENTER_VERTICAL</flag>
 						<border>5</border>
 						<option>1</option>
 					</object>
 					<object class="sizeritem">
-						<object class="wxCheckBox" name="wxID_ANY" variable="m_check_os_cache" member="yes">
-							<label>Enable OS Cache</label>
+						<object class="wxChoice" name="wxID_ANY" variable="m_choice_logseverity" member="yes">
+							<content>
+								<item>Debug</item>
+								<item>Info</item>
+								<item>Warning</item>
+								<item>Critical</item>
+								<item>Fatal</item>
+								<item>None</item>
+							</content>
 						</object>
 						<flag>wxALL|wxALIGN_LEFT|wxALIGN_CENTER_VERTICAL</flag>
 						<border>5</border>
 						<option>1</option>
 					</object>
 					<object class="sizeritem">
-						<object class="wxCheckBox" name="wxID_ANY" variable="m_check_supper_seeding" member="yes">
-							<label>Supper Seeding</label>
+						<object class="wxStaticText" name="wxID_ANY" variable="StaticText9" member="no">
+							<label>Maximum Lines:</label>
+						</object>
+						<flag>wxALL|wxALIGN_LEFT|wxALIGN_CENTER_VERTICAL</flag>
+						<border>5</border>
+						<option>1</option>
+					</object>
+					<object class="sizeritem">
+						<object class="wxSpinCtrl" name="wxID_ANY" variable="m_spin_loglinecount" member="yes">
+							<value>0</value>
+							<min>100</min>
+							<max>10000</max>
+							<style>wxSP_ARROW_KEYS</style>
+						</object>
+						<flag>wxALL|wxALIGN_LEFT|wxALIGN_CENTER_VERTICAL</flag>
+						<border>5</border>
+						<option>1</option>
+					</object>
+					<object class="sizeritem">
+						<object class="wxCheckBox" name="wxID_ANY" variable="m_check_logtofile" member="yes">
+							<label>Log to File</label>
 						</object>
 						<flag>wxALL|wxALIGN_LEFT|wxALIGN_CENTER_VERTICAL</flag>
 						<border>5</border>
 						<option>1</option>
 					</object>
 				</object>
-				<flag>wxALL</flag>
+				<flag>wxALL|wxALIGN_LEFT|wxALIGN_CENTER_VERTICAL</flag>
 				<border>5</border>
 				<option>1</option>
 			</object>
