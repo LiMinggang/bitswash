@@ -24,20 +24,19 @@
 
 #ifndef _EXTENSIONSETTING_H_
 #define _EXTENSIONSETTING_H_
-
+//(*Headers(ExtensionSettingPane)
+#include <wx/checkbox.h>
 #include <wx/panel.h>
 #include <wx/sizer.h>
-#include <wx/scrolwin.h>
-#include <wx/statline.h>
-#include <wx/spinctrl.h>
 #include <wx/stattext.h>
+//*)
 
 class Configuration;
 class ExtensionSettingPane :  public wxPanel
 {
 public:
-	ExtensionSettingPane( wxWindow* parent, int id = wxID_ANY, wxPoint pos = wxDefaultPosition, wxSize size = wxDefaultSize, int style = wxTAB_TRAVERSAL);
-
+	ExtensionSettingPane(wxWindow* parent,wxWindowID id=wxID_ANY,const wxPoint& pos=wxDefaultPosition,const wxSize& size=wxDefaultSize, int style = wxTAB_TRAVERSAL);
+	virtual ~ExtensionSettingPane();
 	bool GetEnableMetadata();
 	bool GetEnablePex();
 	bool GetEnableEncryption();
@@ -48,17 +47,25 @@ public:
 
 private:
 	Configuration *m_pcfg;
-
+	//(*Declarations(ExtensionSettingPane)
+	wxCheckBox* m_check_lsd;
 	wxCheckBox* m_check_metadata;
-	wxCheckBox* m_check_pex;
+	wxCheckBox* m_check_natpmp;
 	wxCheckBox* m_check_pe;
 	wxCheckBox* m_check_pe_notforce;
+	wxCheckBox* m_check_pex;
 	wxCheckBox* m_check_upnp;
-	wxCheckBox* m_check_natpmp;
-	wxCheckBox* m_check_lsd;
+	//*)
 
+protected:
+
+	//(*Identifiers(ExtensionSettingPane)
+	//*)
+	private:
+
+	//(*Handlers(ExtensionSettingPane)
 	void OnEnablePe(wxCommandEvent& event);
-private:
+	//*)
 };
 
 

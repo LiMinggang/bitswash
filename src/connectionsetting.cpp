@@ -52,6 +52,8 @@ ConnectionSettingPane::ConnectionSettingPane( wxWindow* parent, wxWindowID id,co
 	wxPanel* Panel3;
 	wxStaticLine* StaticLine1;
 	wxStaticText* StaticText10;
+	wxStaticText* StaticText11;
+	wxStaticText* StaticText12;
 	wxStaticText* StaticText1;
 	wxStaticText* StaticText2;
 	wxStaticText* StaticText3;
@@ -150,10 +152,13 @@ ConnectionSettingPane::ConnectionSettingPane( wxWindow* parent, wxWindowID id,co
 	m_check_prefer_udp_trackers = new wxCheckBox(this, wxID_ANY, _("Prefer UDP trackers"), wxDefaultPosition, wxDefaultSize, 0, wxDefaultValidator, _T("wxID_ANY"));
 	m_check_prefer_udp_trackers->SetValue(pcfg->GetPreferUdpTrackers());
 	FlexGridSizer4->Add(m_check_prefer_udp_trackers, 1, wxALL|wxALIGN_LEFT|wxALIGN_CENTER_VERTICAL, 5);
+	m_check_allow_multiple_connections_per_ip = new wxCheckBox(this, wxID_ANY, _("Allow Multiple Connections per IP"), wxDefaultPosition, wxDefaultSize, 0, wxDefaultValidator, _T("wxID_ANY"));
+	m_check_allow_multiple_connections_per_ip->SetValue(pcfg->GetAllowMultipleConnectionsPerIP());
+	FlexGridSizer4->Add(m_check_allow_multiple_connections_per_ip, 1, wxALL|wxALIGN_LEFT|wxALIGN_CENTER_VERTICAL, 5);
 	FlexGridSizer1->Add(FlexGridSizer4, 1, wxALL, 5);
 	StaticLine1 = new wxStaticLine(this, wxID_ANY, wxDefaultPosition, wxSize(10,-1), wxLI_HORIZONTAL, _T("wxID_ANY"));
 	FlexGridSizer1->Add(StaticLine1, 1, wxALL|wxEXPAND, 0);
-	FlexGridSizer5 = new wxFlexGridSizer(0, 3, 0, 0);
+	FlexGridSizer5 = new wxFlexGridSizer(0, 2, 0, 0);
 	StaticText10 = new wxStaticText(this, wxID_ANY, _("Enabled Protocols:"), wxDefaultPosition, wxDefaultSize, 0, _T("wxID_ANY"));
 	FlexGridSizer5->Add(StaticText10, 1, wxALL|wxALIGN_LEFT|wxALIGN_CENTER_VERTICAL, 5);
 	m_choice_enabled_protocols = new wxChoice(this, wxID_ANY, wxDefaultPosition, wxDefaultSize, 0, 0, 0, wxDefaultValidator, _T("wxID_ANY"));
@@ -162,6 +167,22 @@ ConnectionSettingPane::ConnectionSettingPane( wxWindow* parent, wxWindowID id,co
 	m_choice_enabled_protocols->Append(wxT("\u00B5TP"));
 	m_choice_enabled_protocols->Select(pcfg->GetEnabledProtocols());
 	FlexGridSizer5->Add(m_choice_enabled_protocols, 1, wxALL|wxALIGN_LEFT|wxALIGN_CENTER_VERTICAL, 5);
+	StaticText11 = new wxStaticText(this, wxID_ANY, _("Choking Algorithm"), wxDefaultPosition, wxDefaultSize, 0, _T("wxID_ANY"));
+	FlexGridSizer5->Add(StaticText11, 1, wxALL|wxALIGN_LEFT|wxALIGN_CENTER_VERTICAL, 5);
+	m_choice_choking_algorithm = new wxChoice(this, wxID_ANY, wxDefaultPosition, wxDefaultSize, 0, 0, 0, wxDefaultValidator, _T("wxID_ANY"));
+	m_choice_choking_algorithm->Append(_("Fixed Slots"));
+	m_choice_choking_algorithm->Append(_("Rate Based"));
+	m_choice_choking_algorithm->Append(_("Bittyrant"));
+	m_choice_choking_algorithm->Select(pcfg->GetChokingAlgorithm());
+	FlexGridSizer5->Add(m_choice_choking_algorithm, 1, wxALL|wxALIGN_LEFT|wxALIGN_CENTER_VERTICAL, 5);
+	StaticText12 = new wxStaticText(this, wxID_ANY, _("Seed Choking Algorithm"), wxDefaultPosition, wxDefaultSize, 0, _T("wxID_ANY"));
+	FlexGridSizer5->Add(StaticText12, 1, wxALL|wxALIGN_LEFT|wxALIGN_CENTER_VERTICAL, 5);
+	m_choice_seed_choking_algorithm = new wxChoice(this, wxID_ANY, wxDefaultPosition, wxDefaultSize, 0, 0, 0, wxDefaultValidator, _T("wxID_ANY"));
+	m_choice_seed_choking_algorithm->Append(_("Round Robin"));
+	m_choice_seed_choking_algorithm->Append(_("Fastest Upload"));
+	m_choice_seed_choking_algorithm->Append(_("Anti Leech"));
+	m_choice_seed_choking_algorithm->Select(pcfg->GetSeedChokingAlgorithm());
+	FlexGridSizer5->Add(m_choice_seed_choking_algorithm, 1, wxALL|wxALIGN_LEFT|wxALIGN_CENTER_VERTICAL, 5);
 	FlexGridSizer1->Add(FlexGridSizer5, 1, wxALL|wxALIGN_LEFT|wxALIGN_CENTER_VERTICAL, 5);
 	SetSizer(FlexGridSizer1);
 	FlexGridSizer1->Fit(this);
@@ -241,5 +262,20 @@ bool ConnectionSettingPane::GetRateLimitIpOverhead()
 bool ConnectionSettingPane::GetPreferUdpTrackers()
 {
 	return m_check_prefer_udp_trackers->GetValue();
+}
+
+bool ConnectionSettingPane::GetAllowMultipleConnectionsPerIp()
+{
+	return m_check_rate_limit_ip_overhead->GetValue();
+}
+
+int  ConnectionSettingPane::GetChokingAlgorithm()
+{
+	return m_choice_choking_algorithm->GetSelection();
+}
+
+int  ConnectionSettingPane::GetSeedChokingAlgorithm()
+{
+	return m_choice_seed_choking_algorithm->GetSelection();
 }
 

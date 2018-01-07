@@ -155,6 +155,9 @@ void Configuration::Save()
 	m_cfg->Write( _T( "/Session/dont_count_slow_torrents" ), m_ignore_slow_torrents );
 	m_cfg->Write( _T( "/Session/rate_limit_ip_overhead" ), m_rate_limit_ip_overhead );
 	m_cfg->Write( _T( "/Session/prefer_udp_trackers" ), m_prefer_udp_trackers );
+	m_cfg->Write( _T( "/Session/choking_algorithm" ), m_choking_algorithm );
+	m_cfg->Write( _T( "/Session/seed_choking_algorithm" ), m_seed_choking_algorithm );
+	m_cfg->Write( _T( "/Session/allow_multiple_connections_per_ip" ), m_allow_multiple_connections_per_ip );
 	//legacy
 	//if( m_storagemode != lt::storage_mode_compact )
 	m_cfg->Write( _T( "/Torrent/storagemode" ), ( long )m_storagemode );
@@ -336,6 +339,9 @@ void Configuration::Load()
 	m_cfg->Read( _T( "/Session/dont_count_slow_torrents" ), &m_ignore_slow_torrents, false );
 	m_cfg->Read( _T( "/Session/rate_limit_ip_overhead" ), &m_rate_limit_ip_overhead, true );
 	m_cfg->Read( _T( "/Session/prefer_udp_trackers" ), &m_prefer_udp_trackers, true );
+	m_cfg->Read( _T( "/Session/choking_algorithm" ), &m_choking_algorithm, (int)Configuration::FIXED_SLOTS );
+	m_cfg->Read( _T( "/Session/seed_choking_algorithm" ), &m_seed_choking_algorithm, (int)Configuration::ROUND_ROBIN );
+	m_cfg->Read( _T( "/Session/allow_multiple_connections_per_ip" ), &m_allow_multiple_connections_per_ip, false );
 
 	lt::storage_mode_t defstoragemode = lt::storage_mode_sparse;
 	m_storagemode = ( lt::storage_mode_t ) m_cfg->Read( _T( "/Torrent/storagemode" ), ( long ) defstoragemode );

@@ -126,6 +126,9 @@ void SwashSetting::OnOK(wxCommandEvent& event)
 	m_pcfg->SetEnabledProtocols(m_pane_connectionsettings->GetEnabledProtocols());
 	m_pcfg->SetRateLimitIpOverhead(m_pane_connectionsettings->GetRateLimitIpOverhead());
 	m_pcfg->SetPreferUdpTrackers(m_pane_connectionsettings->GetPreferUdpTrackers());
+	m_pcfg->SetAllowMultipleConnectionsPerIP(m_pane_connectionsettings->GetAllowMultipleConnectionsPerIp());
+	m_pcfg->SetChokingAlgorithm(m_pane_connectionsettings->GetChokingAlgorithm());
+	m_pcfg->SetSeedChokingAlgorithm(m_pane_connectionsettings->GetSeedChokingAlgorithm());
 
 	m_pcfg->SetDefaultStorageMode(m_pane_torrentsettings->GetStorageMode());
 

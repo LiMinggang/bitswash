@@ -40,32 +40,38 @@ public:
 	ConnectionSettingPane( wxWindow* parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxDefaultSize, int style = wxTAB_TRAVERSAL);
 	virtual ~ConnectionSettingPane();
 
-	int GetPortFrom();
-	int GetPortTo();
+	int  GetPortFrom();
+	int  GetPortTo();
 	bool GetDHTState();
-	int GetDHTPort();
+	int  GetDHTPort();
 	long GetDownloadLimit();
 	long GetUploadLimit();
-	int GetMaxUploads();
-	int GetMaxConnections();
+	int  GetMaxUploads();
+	int  GetMaxConnections();
 	bool IsAnonymousMode();
 	bool UseOSCache();
 	bool GetSupperSeeding();
-	int GetEnabledProtocols();
+	int  GetEnabledProtocols();
 	bool GetRateLimitIpOverhead();
 	bool GetPreferUdpTrackers();
+	bool GetAllowMultipleConnectionsPerIp();
+	int  GetChokingAlgorithm();
+	int  GetSeedChokingAlgorithm();
 
 private: 
 		//(*Declarations(ConnectionSettingPane)
 		AutoSizeInput* m_autoDownLimit;
 		AutoSizeInput* m_autoUpLimit;
 		wxCheckBox* m_checkDHT;
+		wxCheckBox* m_check_allow_multiple_connections_per_ip;
 		wxCheckBox* m_check_anonymous_mode;
 		wxCheckBox* m_check_os_cache;
 		wxCheckBox* m_check_prefer_udp_trackers;
 		wxCheckBox* m_check_rate_limit_ip_overhead;
 		wxCheckBox* m_check_supper_seeding;
+		wxChoice* m_choice_choking_algorithm;
 		wxChoice* m_choice_enabled_protocols;
+		wxChoice* m_choice_seed_choking_algorithm;
 		wxSpinCtrl* m_spinDHTPort;
 		wxSpinCtrl* m_spinMaxConnections;
 		wxSpinCtrl* m_spinMaxUploads;

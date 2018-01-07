@@ -31,6 +31,9 @@ New: Enable/disable supper seeding
 New: Enable/disable prefer UDP trackers
 New: Rate limite IP overhead
 New: Enabled protocol selection
+New: Choking Algorithm selection
+New: Seeding Choking Algorithm selection
+New: Allow multiple connections per IP
 New: Active seeds limits
 New: Don't count slow torrents
 Fix: Enable preview download config won't apply

@@ -30,94 +30,97 @@
 #include "configuration.h"
 #include "extensionsetting.h"
 
-ExtensionSettingPane::ExtensionSettingPane( wxWindow* parent,
-		int id,
-		wxPoint pos,
-		wxSize size,
-		int style ): wxPanel( parent, id, pos, size, style )
+ExtensionSettingPane::ExtensionSettingPane(wxWindow* parent,wxWindowID id,const wxPoint& pos,const wxSize& size, int style )
 {
-	
-	wxPanel* m_pane_infoextension;
-	wxPanel* m_pane_infonetwork;
-	wxPanel* m_pane_infoencryption;
-	wxStaticText* m_static_infoextension;
-	wxStaticText* m_static_infoencryption;
-	wxStaticText* m_static_infonat;
+	//(*Initialize(ExtensionSettingPane)
+	wxBoxSizer* BoxSizer1;
+	wxBoxSizer* BoxSizer2;
+	wxBoxSizer* BoxSizer3;
+	wxFlexGridSizer* FlexGridSizer1;
+	wxFlexGridSizer* FlexGridSizer2;
+	wxFlexGridSizer* FlexGridSizer3;
+	wxFlexGridSizer* FlexGridSizer4;
+	wxPanel* Panel1;
+	wxPanel* Panel2;
+	wxPanel* Panel3;
+	wxStaticText* StaticText1;
+	wxStaticText* StaticText2;
+	wxStaticText* StaticText3;
+
+	Create(parent, id, wxDefaultPosition, wxDefaultSize, style, _T("id"));
+
 	MainFrame* pMainFrame = dynamic_cast< MainFrame* >(wxGetApp().GetTopWindow());
 	wxASSERT(pMainFrame != nullptr);
 	m_pcfg = pMainFrame->GetConfig();
-	wxFlexGridSizer* fgSizerMain;
-	fgSizerMain = new wxFlexGridSizer( 0, 1, 0, 0 );
-	fgSizerMain->SetFlexibleDirection( wxBOTH );
-	m_pane_infoextension = new wxPanel( this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL );
-	m_pane_infoextension->SetBackgroundColour( wxSystemSettings::GetColour( wxSYS_COLOUR_ACTIVECAPTION ) );
-	wxBoxSizer* bSizer1;
-	bSizer1 = new wxBoxSizer( wxVERTICAL );
-	m_static_infoextension = new wxStaticText( m_pane_infoextension, wxID_ANY, _( "Extensions" ), wxDefaultPosition, wxDefaultSize, 0 );
-	bSizer1->Add( m_static_infoextension, 0, wxALL, 2 );
-	m_pane_infoextension->SetSizer( bSizer1 );
-	bSizer1->Fit(m_pane_infoextension);
-	bSizer1->SetSizeHints(m_pane_infoextension);
-	fgSizerMain->Add( m_pane_infoextension, 1, wxEXPAND | wxALL, 5 );
-	wxFlexGridSizer* fgSizerExtensions;
-	fgSizerExtensions = new wxFlexGridSizer( 0, 1, 0, 0 );
-	fgSizerExtensions->SetFlexibleDirection( wxBOTH );
-	m_check_metadata = new wxCheckBox( this, wxID_ANY, _( "Enable Metadata" ), wxDefaultPosition, wxDefaultSize, 0 );
+
+	FlexGridSizer1 = new wxFlexGridSizer(0, 1, 0, 0);
+	Panel1 = new wxPanel(this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL, _T("wxID_ANY"));
+	Panel1->SetBackgroundColour(wxSystemSettings::GetColour(wxSYS_COLOUR_ACTIVECAPTION));
+	BoxSizer1 = new wxBoxSizer(wxHORIZONTAL);
+	StaticText1 = new wxStaticText(Panel1, wxID_ANY, _("Extensions"), wxDefaultPosition, wxDefaultSize, 0, _T("wxID_ANY"));
+	BoxSizer1->Add(StaticText1, 1, wxALL|wxALIGN_CENTER_VERTICAL, 5);
+	Panel1->SetSizer(BoxSizer1);
+	BoxSizer1->Fit(Panel1);
+	BoxSizer1->SetSizeHints(Panel1);
+	FlexGridSizer1->Add(Panel1, 1, wxALL|wxEXPAND, 5);
+	FlexGridSizer2 = new wxFlexGridSizer(0, 1, 0, 0);
+	m_check_metadata = new wxCheckBox(this, wxID_ANY, _("Enable Metadata"), wxDefaultPosition, wxDefaultSize, 0, wxDefaultValidator, _T("wxID_ANY"));
 	m_check_metadata->SetValue( m_pcfg->GetEnableMetadata() );
-	fgSizerExtensions->Add( m_check_metadata, 0, wxALL, 5 );
-	m_check_pex = new wxCheckBox( this, wxID_ANY, _( "Enable Peer Exchange" ), wxDefaultPosition, wxDefaultSize, 0 );
+	FlexGridSizer2->Add(m_check_metadata, 1, wxALL|wxALIGN_LEFT|wxALIGN_CENTER_VERTICAL, 5);
+	m_check_pex = new wxCheckBox(this, wxID_ANY, _("Enable Peer Exchange"), wxDefaultPosition, wxDefaultSize, 0, wxDefaultValidator, _T("wxID_ANY"));
 	m_check_pex->SetValue( m_pcfg->GetEnablePex() );
-	fgSizerExtensions->Add( m_check_pex, 0, wxALL, 5 );
-	fgSizerMain->Add( fgSizerExtensions, 1, wxEXPAND, 5 );
-	m_pane_infoencryption = new wxPanel( this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL );
-	m_pane_infoencryption->SetBackgroundColour( wxSystemSettings::GetColour( wxSYS_COLOUR_ACTIVECAPTION ) );
-	wxBoxSizer* bSizer11;
-	bSizer11 = new wxBoxSizer( wxVERTICAL );
-	m_static_infoencryption = new wxStaticText( m_pane_infoencryption, wxID_ANY, _( "Protocol Encryption" ), wxDefaultPosition, wxDefaultSize, 0 );
-	bSizer11->Add( m_static_infoencryption, 0, wxALL, 2 );
-	m_pane_infoencryption->SetSizer( bSizer11 );
-	bSizer11->Fit(m_pane_infoencryption);
-	bSizer11->SetSizeHints(m_pane_infoencryption);
-	fgSizerMain->Add( m_pane_infoencryption, 1, wxEXPAND | wxALL, 5 );
-	wxFlexGridSizer* fgSizerEncryption;
-	fgSizerEncryption = new wxFlexGridSizer( 0, 1, 0, 0 );
-	fgSizerEncryption->SetFlexibleDirection( wxBOTH );
-	m_check_pe = new wxCheckBox( this, wxID_ANY, _( "Enable Encryption" ), wxDefaultPosition, wxDefaultSize, 0 );
+	FlexGridSizer2->Add(m_check_pex, 1, wxALL|wxALIGN_LEFT|wxALIGN_CENTER_VERTICAL, 5);
+	FlexGridSizer1->Add(FlexGridSizer2, 1, wxALL|wxALIGN_LEFT|wxALIGN_CENTER_VERTICAL, 5);
+	Panel2 = new wxPanel(this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL, _T("wxID_ANY"));
+	Panel2->SetBackgroundColour(wxSystemSettings::GetColour(wxSYS_COLOUR_ACTIVECAPTION));
+	BoxSizer2 = new wxBoxSizer(wxHORIZONTAL);
+	StaticText2 = new wxStaticText(Panel2, wxID_ANY, _("Protocol Encryption"), wxDefaultPosition, wxDefaultSize, 0, _T("wxID_ANY"));
+	BoxSizer2->Add(StaticText2, 1, wxALL|wxALIGN_CENTER_HORIZONTAL|wxALIGN_CENTER_VERTICAL, 5);
+	Panel2->SetSizer(BoxSizer2);
+	BoxSizer2->Fit(Panel2);
+	BoxSizer2->SetSizeHints(Panel2);
+	FlexGridSizer1->Add(Panel2, 1, wxALL|wxEXPAND, 5);
+	FlexGridSizer3 = new wxFlexGridSizer(0, 1, 0, 0);
+	m_check_pe = new wxCheckBox(this, wxID_ANY, _("Enable Encryption"), wxDefaultPosition, wxDefaultSize, 0, wxDefaultValidator, _T("wxID_ANY"));
 	m_check_pe->SetValue( m_pcfg->GetEncEnabled() );
-	fgSizerEncryption->Add( m_check_pe, 0, wxALL, 5 );
-	m_check_pe_notforce = new wxCheckBox( this, wxID_ANY, _( "Accept Unencrypted Peer" ), wxDefaultPosition, wxDefaultSize, 0 );
+	FlexGridSizer3->Add(m_check_pe, 1, wxALL|wxALIGN_LEFT|wxALIGN_CENTER_VERTICAL, 5);
+	m_check_pe_notforce = new wxCheckBox(this, wxID_ANY, _("Accept Unencrypted Peer"), wxDefaultPosition, wxDefaultSize, 0, wxDefaultValidator, _T("wxID_ANY"));
 	m_check_pe_notforce->SetValue( ( m_pcfg->GetEncPolicy() > 0 ) );
-	m_check_pe_notforce->Enable( m_pcfg->GetEncEnabled() );
-	fgSizerEncryption->Add( m_check_pe_notforce, 0, wxALL, 5 );
-	fgSizerMain->Add( fgSizerEncryption, 1, wxEXPAND, 5 );
-	m_pane_infonetwork = new wxPanel( this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL );
-	m_pane_infonetwork->SetBackgroundColour( wxSystemSettings::GetColour( wxSYS_COLOUR_ACTIVECAPTION ) );
-	wxBoxSizer* bSizer111;
-	bSizer111 = new wxBoxSizer( wxVERTICAL );
-	m_static_infonat = new wxStaticText( m_pane_infonetwork, wxID_ANY, _( "NAT Service" ), wxDefaultPosition, wxDefaultSize, 0 );
-	bSizer111->Add( m_static_infonat, 0, wxALL, 2 );
-	m_pane_infonetwork->SetSizer( bSizer111 );
-	bSizer111->Fit(m_pane_infonetwork);
-	bSizer111->SetSizeHints(m_pane_infonetwork);
-	fgSizerMain->Add( m_pane_infonetwork, 1, wxEXPAND | wxALL, 5 );
-	wxFlexGridSizer* fgSizerNetwork;
-	fgSizerNetwork = new wxFlexGridSizer( 0, 1, 0, 0 );
-	fgSizerNetwork->SetFlexibleDirection( wxBOTH );
-	m_check_upnp = new wxCheckBox( this, wxID_ANY, _( "Enable UPnP" ), wxDefaultPosition, wxDefaultSize, 0 );
+	FlexGridSizer3->Add(m_check_pe_notforce, 1, wxALL|wxALIGN_LEFT|wxALIGN_CENTER_VERTICAL, 5);
+	FlexGridSizer1->Add(FlexGridSizer3, 1, wxALL|wxALIGN_LEFT|wxALIGN_CENTER_VERTICAL, 5);
+	Panel3 = new wxPanel(this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL, _T("wxID_ANY"));
+	Panel3->SetBackgroundColour(wxSystemSettings::GetColour(wxSYS_COLOUR_ACTIVECAPTION));
+	BoxSizer3 = new wxBoxSizer(wxHORIZONTAL);
+	StaticText3 = new wxStaticText(Panel3, wxID_ANY, _("NAT Service"), wxDefaultPosition, wxDefaultSize, 0, _T("wxID_ANY"));
+	BoxSizer3->Add(StaticText3, 1, wxALL|wxALIGN_CENTER_HORIZONTAL|wxALIGN_CENTER_VERTICAL, 5);
+	Panel3->SetSizer(BoxSizer3);
+	BoxSizer3->Fit(Panel3);
+	BoxSizer3->SetSizeHints(Panel3);
+	FlexGridSizer1->Add(Panel3, 1, wxALL|wxEXPAND, 5);
+	FlexGridSizer4 = new wxFlexGridSizer(0, 1, 0, 0);
+	m_check_upnp = new wxCheckBox(this, wxID_ANY, _("Enable UPnP"), wxDefaultPosition, wxDefaultSize, 0, wxDefaultValidator, _T("wxID_ANY"));
 	m_check_upnp->SetValue( m_pcfg->GetEnableUpnp() );
-	fgSizerNetwork->Add( m_check_upnp, 0, wxALL, 5 );
-	m_check_natpmp = new wxCheckBox( this, wxID_ANY, _( "Enable NAT Port Mapping" ), wxDefaultPosition, wxDefaultSize, 0 );
+	FlexGridSizer4->Add(m_check_upnp, 1, wxALL|wxALIGN_LEFT|wxALIGN_CENTER_VERTICAL, 5);
+	m_check_natpmp = new wxCheckBox(this, wxID_ANY, _("Enable NAT Port Mapping"), wxDefaultPosition, wxDefaultSize, 0, wxDefaultValidator, _T("wxID_ANY"));
 	m_check_natpmp->SetValue( m_pcfg->GetEnableNatpmp() );
-	fgSizerNetwork->Add( m_check_natpmp, 0, wxALL, 5 );
-	m_check_lsd = new wxCheckBox( this, wxID_ANY, _( "Enable Local Service Discovery" ), wxDefaultPosition, wxDefaultSize, 0 );
+	FlexGridSizer4->Add(m_check_natpmp, 1, wxALL|wxALIGN_LEFT|wxALIGN_CENTER_VERTICAL, 5);
+	m_check_lsd = new wxCheckBox(this, wxID_ANY, _("Enable Local Service Discovery"), wxDefaultPosition, wxDefaultSize, 0, wxDefaultValidator, _T("wxID_ANY"));
 	m_check_lsd->SetValue( m_pcfg->GetEnableLsd() );
-	fgSizerNetwork->Add( m_check_lsd, 0, wxALL, 5 );
-	fgSizerMain->Add( fgSizerNetwork, 1, wxEXPAND, 5 );
-	this->SetSizer( fgSizerMain );
-	//this->Layout();
-	fgSizerMain->Fit( this );
-	fgSizerMain->SetSizeHints(this);
+	FlexGridSizer4->Add(m_check_lsd, 1, wxALL|wxALIGN_LEFT|wxALIGN_CENTER_VERTICAL, 5);
+	FlexGridSizer1->Add(FlexGridSizer4, 1, wxALL|wxALIGN_LEFT|wxALIGN_CENTER_VERTICAL, 5);
+	SetSizer(FlexGridSizer1);
+	FlexGridSizer1->Fit(this);
+	FlexGridSizer1->SetSizeHints(this);
+
+	//Connect(wxID_ANY,wxEVT_COMMAND_CHECKBOX_CLICKED,(wxObjectEventFunction)&ExtensionSettingPane::OnEnablePe);
+	//*)
 	Bind( wxEVT_CHECKBOX, &ExtensionSettingPane::OnEnablePe, this, m_check_pe->GetId() );
+}
+
+ExtensionSettingPane::~ExtensionSettingPane()
+{
+	//(*Destroy(ExtensionSettingPane)
+	//*)
 }
 
 bool ExtensionSettingPane::GetEnableMetadata()

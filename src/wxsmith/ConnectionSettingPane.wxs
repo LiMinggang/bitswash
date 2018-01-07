@@ -179,8 +179,8 @@
 						<option>1</option>
 					</object>
 					<object class="sizeritem">
-						<object class="wxCheckBox" name="wxID_ANY" variable="m_check_rate_ip_overhead" member="yes">
-							<label>Apply Rate limit to transport overhead</label>
+						<object class="wxCheckBox" name="wxID_ANY" variable="m_check_rate_limit_ip_overhead" member="yes">
+							<label>Apply Rate Limit to Transport Overhead</label>
 						</object>
 						<flag>wxALL|wxALIGN_LEFT|wxALIGN_CENTER_VERTICAL</flag>
 						<border>5</border>
@@ -244,6 +244,14 @@
 						<border>5</border>
 						<option>1</option>
 					</object>
+					<object class="sizeritem">
+						<object class="wxCheckBox" name="wxID_ANY" variable="m_check_allow_multiple_connections_per_ip" member="yes">
+							<label>Allow Multiple Connections per IP</label>
+						</object>
+						<flag>wxALL|wxALIGN_LEFT|wxALIGN_CENTER_VERTICAL</flag>
+						<border>5</border>
+						<option>1</option>
+					</object>
 				</object>
 				<flag>wxALL</flag>
 				<border>5</border>
@@ -258,7 +266,7 @@
 			</object>
 			<object class="sizeritem">
 				<object class="wxFlexGridSizer" variable="FlexGridSizer5" member="no">
-					<cols>3</cols>
+					<cols>2</cols>
 					<object class="sizeritem">
 						<object class="wxStaticText" name="wxID_ANY" variable="StaticText10" member="no">
 							<label>Enabled Protocols:</label>
@@ -273,6 +281,46 @@
 								<item>Both</item>
 								<item>TCP</item>
 								<item>μTP</item>
+							</content>
+						</object>
+						<flag>wxALL|wxALIGN_LEFT|wxALIGN_CENTER_VERTICAL</flag>
+						<border>5</border>
+						<option>1</option>
+					</object>
+					<object class="sizeritem">
+						<object class="wxStaticText" name="wxID_ANY" variable="StaticText11" member="no">
+							<label>Choking Algorithm</label>
+						</object>
+						<flag>wxALL|wxALIGN_LEFT|wxALIGN_CENTER_VERTICAL</flag>
+						<border>5</border>
+						<option>1</option>
+					</object>
+					<object class="sizeritem">
+						<object class="wxChoice" name="wxID_ANY" variable="m_choice_choking_algorithm" member="yes">
+							<content>
+								<item>Fixed Slots</item>
+								<item>Rate Based</item>
+								<item>Bittyrant</item>
+							</content>
+						</object>
+						<flag>wxALL|wxALIGN_LEFT|wxALIGN_CENTER_VERTICAL</flag>
+						<border>5</border>
+						<option>1</option>
+					</object>
+					<object class="sizeritem">
+						<object class="wxStaticText" name="wxID_ANY" variable="StaticText12" member="no">
+							<label>Seed Choking Algorithm</label>
+						</object>
+						<flag>wxALL|wxALIGN_LEFT|wxALIGN_CENTER_VERTICAL</flag>
+						<border>5</border>
+						<option>1</option>
+					</object>
+					<object class="sizeritem">
+						<object class="wxChoice" name="wxID_ANY" variable="m_choice_seed_choking_algorithm" member="yes">
+							<content>
+								<item>Round Robin</item>
+								<item>Fastest Upload</item>
+								<item>Anti Leech</item>
 							</content>
 						</object>
 						<flag>wxALL|wxALIGN_LEFT|wxALIGN_CENTER_VERTICAL</flag>

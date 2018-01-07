@@ -411,7 +411,8 @@ void BitTorrentSession::Configure(lt::settings_pack &settingsPack)
 	settingsPack.set_int(lt::settings_pack::num_outgoing_ports, m_config->GetPortMax() - m_config->GetPortMin() + 1);
 
 	// Include overhead in transfer limits
-	settingsPack.set_bool(lt::settings_pack::rate_limit_ip_overhead, true);
+	settingsPack.set_bool(lt::settings_pack::rate_limit_ip_overhead, m_config->GetRateLimitIpOverhead());
+	settingsPack.set_bool(lt::settings_pack::prefer_udp_trackers, m_config->GetPreferUdpTrackers());
 	// IP address to announce to trackers
 	//settingsPack.set_str(lt::settings_pack::announce_ip, Utils::String::toStdString(announceIP()));
 	// Super seeding
@@ -436,9 +437,6 @@ void BitTorrentSession::Configure(lt::settings_pack &settingsPack)
 			settingsPack.set_bool(lt::settings_pack::enable_incoming_utp, true);
 			settingsPack.set_bool(lt::settings_pack::enable_outgoing_utp, true);
 	}
-
-	settingsPack.set_bool(lt::settings_pack::rate_limit_ip_overhead, m_config->GetRateLimitIpOverhead());
-	settingsPack.set_bool(lt::settings_pack::prefer_udp_trackers, m_config->GetPreferUdpTrackers());
 
 	//settingsPack.set_bool(lt::settings_pack::apply_ip_filter_to_trackers, isTrackerFilteringEnabled());
 
@@ -472,6 +470,7 @@ void BitTorrentSession::Configure(lt::settings_pack &settingsPack)
 	settingsPack.set_int(lt::settings_pack::seed_choking_algorithm, lt::settings_pack::fastest_upload);
 
 	settingsPack.set_bool(lt::settings_pack::enable_dht, m_config->GetDHTEnabled());
+    settingsPack.set_bool(lt::settings_pack::allow_multiple_connections_per_ip, m_config->GetAllowMultipleConnectionsPerIP());
 
 	if( m_config->GetDHTEnabled() )
 	{
@@ -480,30 +479,32 @@ void BitTorrentSession::Configure(lt::settings_pack &settingsPack)
 	settingsPack.set_bool(lt::settings_pack::enable_lsd, m_config->GetEnableLsd());
 	settingsPack.set_int(lt::settings_pack::choking_algorithm, lt::settings_pack::fixed_slots_choker);
 	settingsPack.set_int(lt::settings_pack::seed_choking_algorithm, lt::settings_pack::fastest_upload);
-	/*
-	switch (chokingAlgorithm()) {
-	case ChokingAlgorithm::FixedSlots:
+
+	switch (m_config->GetChokingAlgorithm()) {
+	case Configuration::FIXED_SLOTS:
 	default:
 		settingsPack.set_int(lt::settings_pack::choking_algorithm, lt::settings_pack::fixed_slots_choker);
 		break;
-	case ChokingAlgorithm::RateBased:
+	case Configuration::RATE_BASED:
 		settingsPack.set_int(lt::settings_pack::choking_algorithm, lt::settings_pack::rate_based_choker);
+		break;
+	case Configuration::BITTYRANT:
+		settingsPack.set_int(lt::settings_pack::choking_algorithm, lt::settings_pack::bittyrant_choker);
 		break;
 	}
 
-	switch (seedChokingAlgorithm()) {
-	case SeedChokingAlgorithm::RoundRobin:
+	switch (m_config->GetSeedChokingAlgorithm()) {
+	case Configuration::ROUND_ROBIN:
 		settingsPack.set_int(lt::settings_pack::seed_choking_algorithm, lt::settings_pack::round_robin);
 		break;
-	case SeedChokingAlgorithm::FastestUpload:
+	case Configuration::FASTEST_UPLOAD:
 	default:
 		settingsPack.set_int(lt::settings_pack::seed_choking_algorithm, lt::settings_pack::fastest_upload);
 		break;
-	case SeedChokingAlgorithm::AntiLeech:
+	case Configuration::ANTI_LEECH:
 		settingsPack.set_int(lt::settings_pack::seed_choking_algorithm, lt::settings_pack::anti_leech);
 		break;
 	}
-	*/
 }
 
 void BitTorrentSession::ConfigureSession()
