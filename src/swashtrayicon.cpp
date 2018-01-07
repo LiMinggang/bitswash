@@ -97,7 +97,7 @@ wxMenu *SwashTrayIcon::CreatePopupMenu()
 	menu->Append(TRAY_HIDETASKBAR, _("&Hide Taskbar Icon"),wxT(""), wxITEM_CHECK);
 	menu->AppendSeparator();
 	menu->Append(TRAY_OPENTORRENT, _("&Open Torrent\tCtrl+O"),_("Open Torrent"));
-	menu->Append(TRAY_OPENTORRENTURL, _("Open &URL\tCtrl+U"), _("Open URL"));
+	menu->Append(TRAY_OPENTORRENTURL, _("Open &URL/Magnet URI\tCtrl+U"), _("Open URL/Magnet URI"));
 	menu->AppendSeparator();
 	menu->Append(TRAY_PREFERENCE, _("Prefere&nce\tCtrl+F"), _("Preference"));
 

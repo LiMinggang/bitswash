@@ -542,9 +542,9 @@ void MainFrame::CreateToolBar()
 	mainToolBar->AddTool( ID_FILE_OPEN_TORRENT, _( "Open Torrent" ),
 						  wxBitmap( wxGetApp().GetAppIcon( BITSWASH_ICON_TORRENT_OPEN ) ), wxNullBitmap, wxITEM_NORMAL,
 						  _( "Open torrent file" ), _( "Open torrent file" ), 0 );
-	mainToolBar->AddTool( ID_FILE_OPEN_URL, _( "Open URL" ),
+	mainToolBar->AddTool( ID_FILE_OPEN_URL, _( "Open URL/Magnet URI" ),
 						  wxBitmap( wxGetApp().GetAppIcon( BITSWASH_ICON_TORRENT_OPENURL ) ), wxNullBitmap, wxITEM_NORMAL,
-						  _( "Open torrent from url" ), _( "Open torrent from URL" ), 0 );
+						  _( "Open torrent from url or Magnet URI" ), _( "Open torrent from URL or Magnet URI" ), 0 );
 	//mainToolBar->AddSeparator();
 #if 0 //TODO Create Torrent
 	mainToolBar->AddTool( ID_FILE_CREATE_TORRENT, _( "Create Torrent" ),

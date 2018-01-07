@@ -45,7 +45,7 @@ UrlDialog::UrlDialog(wxWindow* parent,wxWindowID id,const wxPoint& pos,const wxS
 	wxStaticText* StaticText1;
 	wxStdDialogButtonSizer* StdDialogButtonSizer1;
 
-	Create(parent, id, _("Enter Torrent URL"), wxDefaultPosition, wxDefaultSize, wxDEFAULT_DIALOG_STYLE, _T("id"));
+	Create(parent, id, _("Enter Torrent URL/Magnet URI"), wxDefaultPosition, wxDefaultSize, wxDEFAULT_DIALOG_STYLE, _T("id"));
 	SetClientSize(wxDefaultSize);
 	Move(wxDefaultPosition);
 	BoxSizer1 = new wxBoxSizer(wxHORIZONTAL);
