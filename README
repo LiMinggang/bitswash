@@ -38,6 +38,7 @@ New: Active seeds limits
 New: Don't count slow torrents
 Fix: Enable preview download config won't apply
 Fix: Refactor GeneralSettingPanel
+Fix: Change URL dialog to indicate it supports Magnet URI
 
 0.0.7
 New: 64 bits support
