@@ -39,7 +39,7 @@ class Configuration;
 class MainFrame;
 class GeneralSettingPane :  public wxPanel
 {
-	public:
+public:
 
 	GeneralSettingPane(wxWindow* parent,wxWindowID id=wxID_ANY,const wxPoint& pos=wxDefaultPosition,const wxSize& size=wxDefaultSize, int style = wxTAB_TRAVERSAL);
 	virtual ~GeneralSettingPane();
@@ -68,33 +68,33 @@ private:
 	Configuration *m_pcfg;
 	//(*Declarations(GeneralSettingPane)
 #ifdef __WXMSW__
-		wxCheckBox* m_check_associate_magneturi;
-		wxCheckBox* m_check_associate_torrent;
+	wxCheckBox* m_check_associate_magneturi;
+	wxCheckBox* m_check_associate_torrent;
 		wxCheckBox* m_check_runatstartup;
 #endif
-		wxCheckBox* m_check_excludeseed;
-		wxCheckBox* m_check_hidetaskbar;
-		wxCheckBox* m_check_igore_slow_torrents;
-		wxCheckBox* m_check_logtofile;
-		wxCheckBox* m_check_usesystray;
-		wxChoice* m_choice_logseverity;
-		wxSpinCtrl* m_spin_fastresume_save_time;
-		wxSpinCtrl* m_spin_loglinecount;
-		wxSpinCtrl* m_spin_max_active_seeds;
-		wxSpinCtrl* m_spin_maxstart;
-		wxSpinCtrl* m_spin_refreshtimer;
-		//*)
+	wxCheckBox* m_check_excludeseed;
+	wxCheckBox* m_check_hidetaskbar;
+	wxCheckBox* m_check_igore_slow_torrents;
+	wxCheckBox* m_check_logtofile;
+	wxCheckBox* m_check_usesystray;
+	wxChoice* m_choice_logseverity;
+	wxSpinCtrl* m_spin_fastresume_save_time;
+	wxSpinCtrl* m_spin_loglinecount;
+	wxSpinCtrl* m_spin_max_active_seeds;
+	wxSpinCtrl* m_spin_maxstart;
+	wxSpinCtrl* m_spin_refreshtimer;
+	//*)
+
+protected:
+
+	//(*Identifiers(GeneralSettingPane)
+	//*)
+
+private:
+
+	//(*Handlers(GeneralSettingPane)
 	void OnUseSystray(wxCommandEvent& event);
-
-	protected:
-
-		//(*Identifiers(GeneralSettingPane)
-		//*)
-
-	private:
-
-		//(*Handlers(GeneralSettingPane)
-		//*)
+	//*)
 
 };
 #endif	//_GENERALSETTING_H_

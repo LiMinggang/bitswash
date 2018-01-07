@@ -158,6 +158,8 @@ GeneralSettingPane::GeneralSettingPane(wxWindow* parent,wxWindowID id,const wxPo
 	SetSizer(FlexGridSizer1);
 	FlexGridSizer1->Fit(this);
 	FlexGridSizer1->SetSizeHints(this);
+
+	//Connect(wxID_ANY,wxEVT_COMMAND_CHECKBOX_CLICKED,(wxObjectEventFunction)&GeneralSettingPane::OnUseSystray);
 	//*)
 	Bind(wxEVT_CHECKBOX, &GeneralSettingPane::OnUseSystray, this, m_check_usesystray->GetId() );
 }

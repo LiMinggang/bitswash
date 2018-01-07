@@ -66,6 +66,8 @@ protected:
 	//(*Handlers(ExtensionSettingPane)
 	void OnEnablePe(wxCommandEvent& event);
 	//*)
+
+	//DECLARE_EVENT_TABLE()
 };
 
 

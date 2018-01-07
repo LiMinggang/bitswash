@@ -71,6 +71,7 @@
 					<object class="sizeritem">
 						<object class="wxCheckBox" name="wxID_ANY" variable="m_check_pe" member="yes">
 							<label>Enable Encryption</label>
+							<handler function="OnEnablePe" entry="EVT_CHECKBOX" />
 						</object>
 						<flag>wxALL|wxALIGN_LEFT|wxALIGN_CENTER_VERTICAL</flag>
 						<border>5</border>

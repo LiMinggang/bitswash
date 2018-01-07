@@ -22,13 +22,17 @@
 // Created on: Tue Jun 26 13:23:51 MYT 2007
 //
 
+//(*InternalHeaders(ExtensionSettingPane)
 #include <wx/sstream.h>
 #include <wx/textctrl.h>
 #include <wx/log.h>
-
+//*)
 #include "mainframe.h"
 #include "configuration.h"
 #include "extensionsetting.h"
+
+//(*IdInit(ExtensionSettingPane)
+//*)
 
 ExtensionSettingPane::ExtensionSettingPane(wxWindow* parent,wxWindowID id,const wxPoint& pos,const wxSize& size, int style )
 {
