@@ -33,6 +33,7 @@
 #include <wx/spinctrl.h>
 #include <wx/statline.h>
 #include <wx/stattext.h>
+#include <wx/textctrl.h>
 //*)
 class ConnectionSettingPane : public wxPanel
 {
@@ -57,6 +58,7 @@ public:
 	bool GetAllowMultipleConnectionsPerIp();
 	int  GetChokingAlgorithm();
 	int  GetSeedChokingAlgorithm();
+	const wxString& GetDhtBootstrapNodes();
 
 private: 
 		//(*Declarations(ConnectionSettingPane)
@@ -77,6 +79,7 @@ private:
 		wxSpinCtrl* m_spinMaxUploads;
 		wxSpinCtrl* m_spinPortFrom;
 		wxSpinCtrl* m_spinPortTo;
+		wxTextCtrl* m_dht_bootstrap_nodes;
 		//*)
 	protected:
 

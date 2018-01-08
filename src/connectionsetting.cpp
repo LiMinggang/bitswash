@@ -54,6 +54,7 @@ ConnectionSettingPane::ConnectionSettingPane( wxWindow* parent, wxWindowID id,co
 	wxStaticText* StaticText10;
 	wxStaticText* StaticText11;
 	wxStaticText* StaticText12;
+	wxStaticText* StaticText13;
 	wxStaticText* StaticText1;
 	wxStaticText* StaticText2;
 	wxStaticText* StaticText3;
@@ -183,6 +184,11 @@ ConnectionSettingPane::ConnectionSettingPane( wxWindow* parent, wxWindowID id,co
 	m_choice_seed_choking_algorithm->Append(_("Anti Leech"));
 	m_choice_seed_choking_algorithm->Select(pcfg->GetSeedChokingAlgorithm());
 	FlexGridSizer5->Add(m_choice_seed_choking_algorithm, 1, wxALL|wxALIGN_LEFT|wxALIGN_CENTER_VERTICAL, 5);
+	StaticText13 = new wxStaticText(this, wxID_ANY, _("DHT Bootstrap Nodes:"), wxDefaultPosition, wxDefaultSize, 0, _T("wxID_ANY"));
+	FlexGridSizer5->Add(StaticText13, 1, wxALL|wxALIGN_LEFT|wxALIGN_CENTER_VERTICAL, 5);
+	m_dht_bootstrap_nodes = new wxTextCtrl(this, wxID_ANY, pcfg->GetDhtBootstrapNodes(), wxDefaultPosition, wxDefaultSize, 0, wxDefaultValidator, _T("wxID_ANY"));
+	m_dht_bootstrap_nodes->SetMinSize(wxSize(300,-1));
+	FlexGridSizer5->Add(m_dht_bootstrap_nodes, 1, wxALL|wxALIGN_LEFT|wxALIGN_CENTER_VERTICAL, 5);
 	FlexGridSizer1->Add(FlexGridSizer5, 1, wxALL|wxALIGN_LEFT|wxALIGN_CENTER_VERTICAL, 5);
 	SetSizer(FlexGridSizer1);
 	FlexGridSizer1->Fit(this);
@@ -277,5 +283,10 @@ int  ConnectionSettingPane::GetChokingAlgorithm()
 int  ConnectionSettingPane::GetSeedChokingAlgorithm()
 {
 	return m_choice_seed_choking_algorithm->GetSelection();
+}
+
+const wxString& ConnectionSettingPane::GetDhtBootstrapNodes()
+{
+	return m_dht_bootstrap_nodes->GetValue();
 }
 

@@ -289,7 +289,7 @@
 					</object>
 					<object class="sizeritem">
 						<object class="wxStaticText" name="wxID_ANY" variable="StaticText11" member="no">
-							<label>Choking Algorithm</label>
+							<label>Choking Algorithm:</label>
 						</object>
 						<flag>wxALL|wxALIGN_LEFT|wxALIGN_CENTER_VERTICAL</flag>
 						<border>5</border>
@@ -309,7 +309,7 @@
 					</object>
 					<object class="sizeritem">
 						<object class="wxStaticText" name="wxID_ANY" variable="StaticText12" member="no">
-							<label>Seed Choking Algorithm</label>
+							<label>Seed Choking Algorithm:</label>
 						</object>
 						<flag>wxALL|wxALIGN_LEFT|wxALIGN_CENTER_VERTICAL</flag>
 						<border>5</border>
@@ -322,6 +322,23 @@
 								<item>Fastest Upload</item>
 								<item>Anti Leech</item>
 							</content>
+						</object>
+						<flag>wxALL|wxALIGN_LEFT|wxALIGN_CENTER_VERTICAL</flag>
+						<border>5</border>
+						<option>1</option>
+					</object>
+					<object class="sizeritem">
+						<object class="wxStaticText" name="wxID_ANY" variable="StaticText13" member="no">
+							<label>DHT Bootstrap Nodes:</label>
+						</object>
+						<flag>wxALL|wxALIGN_LEFT|wxALIGN_CENTER_VERTICAL</flag>
+						<border>5</border>
+						<option>1</option>
+					</object>
+					<object class="sizeritem">
+						<object class="wxTextCtrl" name="wxID_ANY" variable="m_dht_bootstrap_nodes" member="yes">
+							<value>Text</value>
+							<minsize>300,-1</minsize>
 						</object>
 						<flag>wxALL|wxALIGN_LEFT|wxALIGN_CENTER_VERTICAL</flag>
 						<border>5</border>

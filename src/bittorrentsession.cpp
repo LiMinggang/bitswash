@@ -474,7 +474,7 @@ void BitTorrentSession::Configure(lt::settings_pack &settingsPack)
 
 	if( m_config->GetDHTEnabled() )
 	{
-		settingsPack.set_str(lt::settings_pack::dht_bootstrap_nodes, "dht.libtorrent.org:25401,router.bittorrent.com:6881,router.utorrent.com:6881,dht.transmissionbt.com:6881,dht.aelitis.com:6881");
+		settingsPack.set_str(lt::settings_pack::dht_bootstrap_nodes, m_config->GetDhtBootstrapNodes().ToStdString());
 	}
 	settingsPack.set_bool(lt::settings_pack::enable_lsd, m_config->GetEnableLsd());
 	settingsPack.set_int(lt::settings_pack::choking_algorithm, lt::settings_pack::fixed_slots_choker);

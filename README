@@ -36,6 +36,7 @@ New: Seeding Choking Algorithm selection
 New: Allow multiple connections per IP
 New: Active seeds limits
 New: Don't count slow torrents
+New: Config DHT bootstrap nodes
 Fix: Enable preview download config won't apply
 Fix: Refactor GeneralSettingPanel
 Fix: Change URL dialog to indicate it supports Magnet URI

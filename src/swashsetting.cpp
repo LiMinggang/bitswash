@@ -109,6 +109,8 @@ void SwashSetting::OnOK(wxCommandEvent& event)
 	m_pcfg->SetMaxActiveSeeds(m_pane_generalsettings->GetMaxActiveSeeds());
 	m_pcfg->SetIgnoreSlowTorrents(m_pane_generalsettings->GetIgnoreSlowTorrents());
 
+	m_pcfg->SetDhtBootstrapNodes(m_pane_connectionsettings->GetDhtBootstrapNodes());
+
 	m_pcfg->SetPortMin(m_pane_connectionsettings->GetPortFrom());
 	m_pcfg->SetPortMax(m_pane_connectionsettings->GetPortTo());
 
