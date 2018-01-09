@@ -572,7 +572,6 @@ void BitTorrentSession::ConfigureSession()
 
 void BitTorrentSession::SetConnection()
 {
-	wxASSERT( m_libbtsession != nullptr );
 	long portmin, portmax;
 	portmin = m_config->GetPortMin();
 	portmax = m_config->GetPortMax();
@@ -588,10 +587,6 @@ void BitTorrentSession::SetConnection()
 		portmax = portmin + 8;
 	}
 	m_config->SetPortMax( portmax );
-
-	/*error_code ec;
-	m_libbtsession->listen_on( std::make_pair( portmin, portmax ), ec,
-							   m_config->m_local_ip.IPAddress().ToAscii() );*/
 }
 
 void BitTorrentSession::StartExtensions()
