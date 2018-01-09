@@ -805,8 +805,6 @@ void BitTorrentSession::RemoveTorrent( std::shared_ptr<torrent_t>& torrent, bool
 		m_torrent_queue.erase( torrent_it );
 	}
 
-	wxASSERT(torrent);
-	wxASSERT(torrent->config);
 	lt::torrent_handle& h = torrent->handle;
 	if( h.is_valid() )
 	{
@@ -816,6 +814,7 @@ void BitTorrentSession::RemoveTorrent( std::shared_ptr<torrent_t>& torrent, bool
 		m_libbtsession->remove_torrent( h, options );
 	}
 
+	wxASSERT(torrent->config);
 	enum torrent_state state = ( enum torrent_state ) torrent->config->GetTorrentState();
 
 	wxString app_prefix = wxGetApp().SaveTorrentsPath() +
@@ -2629,8 +2628,7 @@ bool BitTorrentSession::HandleMetaDataAlert(lt::metadata_received_alert *p)
 {
 	wxASSERT(p->handle.is_valid());
 	p->handle.pause(lt::torrent_handle::graceful_pause);
-	InfoHash thash(p->handle.info_hash());
-	wxString hashstr(thash);
+	wxString hashstr(InfoHash(p->handle.info_hash()));
 
 	wxMutexLocker ml( m_torrent_queue_lock );
 	torrents_map::iterator it = m_running_torrent_map.find(hashstr);
@@ -2639,21 +2637,28 @@ bool BitTorrentSession::HandleMetaDataAlert(lt::metadata_received_alert *p)
 		std::shared_ptr<torrent_t> torrent = GetTorrent(it->second);
 
 		wxASSERT(torrent);
-		lt::torrent_status st = (p->handle).status(lt::torrent_handle::query_name);
-		wxASSERT(st.has_metadata);
-		p->handle.save_resume_data(lt::torrent_handle::save_info_dict);
-		torrent->handle = p->handle;
-		torrent->info.reset(new lt::torrent_info(*(p->handle.torrent_file())));
-		torrent->name = st.name;
-
+		if(torrent)
 		{
-			wxMutexLocker ml( m_metadata_queue_lock );
-			m_metadata_queue.push_back(hashstr);
-			TorrentMetadataNotify();
-		}
+			lt::torrent_status st = (p->handle).status(lt::torrent_handle::query_name);
+			wxASSERT(st.has_metadata);
+			p->handle.save_resume_data(lt::torrent_handle::save_info_dict);
+			torrent->handle = p->handle;
+			torrent->info.reset(new lt::torrent_info(*(p->handle.torrent_file())));
+			torrent->name = st.name;
 
-		//StartTorrent(torrent, false);
-		return true;
+			{
+				wxMutexLocker ml( m_metadata_queue_lock );
+				m_metadata_queue.push_back(hashstr);
+				TorrentMetadataNotify();
+			}
+
+			//StartTorrent(torrent, false);
+			return true;
+		}
+		else
+		{
+			m_running_torrent_map.erase(it);
+		}
 	}
 
 	return false;
