@@ -1649,17 +1649,15 @@ void MainFrame::RemoveTorrent( bool deletedata )
 		/* pointer to vector items will get shifted if erased
 		 * offset is still needed to keep track shift items
 		 */
-        bool force = false;
 		/* remove data in ui list, and bt list */
 		for( i = selecteditems.size() - 1; i >= 0; i-- )
 		{
 			//std::shared_ptr<torrent_t> torrent = m_torrentlistitems[selecteditems[i] - (offset++)];
 			m_btsession->RemoveTorrent( selecteditems[i], deletedata );
-            force = true;
 		}
 
 		/* mark for list refresh */
-		UpdateUI(force);
+		UpdateUI(true);
 	}
 	else
 	{ wxLogInfo( _T( "Torrent removal cancelled\n" ) ); }

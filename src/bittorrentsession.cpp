@@ -371,10 +371,24 @@ void BitTorrentSession::Configure(lt::settings_pack &settingsPack)
 	//settingsPack.set_int(lt::settings_pack::allowed_enc_level, ( lt::pe_settings::enc_level )( m_config->GetEncLevel()));
 	settingsPack.set_bool(lt::settings_pack::prefer_rc4, m_config->GetEncEnabled());
 
+    // The most secure, rc4 only so that all streams are encrypted
+    settingsPack.set_int(lt::settings_pack::allowed_enc_level, lt::settings_pack::pe_rc4);
+    settingsPack.set_bool(lt::settings_pack::prefer_rc4, true);
 	if( m_config->GetEncEnabled() )
 	{
-		settingsPack.set_int(lt::settings_pack::out_enc_policy, lt::settings_pack::pe_enabled);
-		settingsPack.set_int(lt::settings_pack::in_enc_policy, lt::settings_pack::pe_enabled);
+		switch (m_config->GetEncPolicy()) {
+		case 0: //Enabled
+			settingsPack.set_int(lt::settings_pack::out_enc_policy, lt::settings_pack::pe_enabled);
+			settingsPack.set_int(lt::settings_pack::in_enc_policy, lt::settings_pack::pe_enabled);
+			break;
+		case 1: // Forced
+			settingsPack.set_int(lt::settings_pack::out_enc_policy, lt::settings_pack::pe_forced);
+			settingsPack.set_int(lt::settings_pack::in_enc_policy, lt::settings_pack::pe_forced);
+			break;
+		default:
+			wxASSERT(0);
+			break;
+		}
 		wxLogMessage( _T( "Encryption enabled, policy %d" ), m_config->GetEncPolicy() );
 	}
 	else
@@ -524,8 +538,6 @@ void BitTorrentSession::ConfigureSession()
 		{
 			wxLogInfo( _T( "Restoring previous DHT state " ) + dhtstatefile );
 			std::vector<char> bufin;
-			lt::bdecode_node e;
-			lt::error_code ec;
 			std::ifstream in( ( const char* )dhtstatefile.mb_str( wxConvFile ), std::ios_base::binary );
 			in.unsetf( std::ios_base::skipws );
 			// get length of file:
@@ -535,9 +547,11 @@ void BitTorrentSession::ConfigureSession()
 			if(length > 0)
 			{
 				bufin.resize(length);
-				in.read (&bufin[0], length);
+				in.read(&bufin[0], length);
 				try
 				{
+					lt::bdecode_node e;
+					lt::error_code ec;
 					if (bdecode(&bufin[0], &bufin[0] + bufin.size(), e, ec) == 0)
 						params = read_session_params(e, lt::session_handle::save_dht_state);
 				}
