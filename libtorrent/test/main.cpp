@@ -74,7 +74,9 @@ namespace {
 int old_stdout = -1;
 int old_stderr = -1;
 bool redirect_stdout = true;
-bool redirect_stderr = true;
+// sanitizer output will go to stderr and we won't get an opportunity to print
+// it, so don't redirect stderr by default
+bool redirect_stderr = false;
 bool keep_files = false;
 
 // the current tests file descriptor
@@ -416,6 +418,7 @@ int EXPORT main(int argc, char const* argv[])
 		if (ec)
 		{
 			std::printf("Failed to create unit test directory: %s\n", ec.message().c_str());
+			output_test_log_to_terminal();
 			return 1;
 		}
 		unit_directory_guard unit_dir_guard{unit_dir};
@@ -423,6 +426,7 @@ int EXPORT main(int argc, char const* argv[])
 		if (ec)
 		{
 			std::printf("Failed to change unit test directory: %s\n", ec.message().c_str());
+			output_test_log_to_terminal();
 			return 1;
 		}
 
@@ -513,8 +517,8 @@ int EXPORT main(int argc, char const* argv[])
 			fclose(t.output);
 	}
 
-	if (redirect_stdout) dup2(old_stdout, fileno(stdout));
-	if (redirect_stderr) dup2(old_stderr, fileno(stderr));
+	if (redirect_stdout && old_stdout != -1) dup2(old_stdout, fileno(stdout));
+	if (redirect_stderr && old_stderr != -1) dup2(old_stderr, fileno(stderr));
 
 	if (!tests_to_run.empty())
 	{
@@ -529,6 +533,7 @@ int EXPORT main(int argc, char const* argv[])
 	if (num_run == 0)
 	{
 		std::printf("\x1b[31mTEST_ERROR: no unit tests run\x1b[0m\n");
+		output_test_log_to_terminal();
 		return 1;
 	}
 

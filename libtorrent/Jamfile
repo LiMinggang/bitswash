@@ -86,12 +86,6 @@ rule linking ( properties * )
 		{
 			result += <library>advapi32 ;
 		}
-
-		# default to windows vista
-		if <windows-version>default in $(properties)
-		{
-			result += <define>_WIN32_WINNT=0x0600 ;
-		}
 	}
 
 	if <target-os>beos in $(properties)
@@ -431,7 +425,7 @@ feature.compose <asserts>on : <define>TORRENT_USE_ASSERTS=1 ;
 feature.compose <asserts>production : <define>TORRENT_USE_ASSERTS=1 <define>TORRENT_PRODUCTION_ASSERTS=1 ;
 feature.compose <asserts>system : <define>TORRENT_USE_ASSERTS=1 <define>TORRENT_USE_SYSTEM_ASSERTS=1 ;
 
-feature windows-version : default vista win7 xp : composite propagated link-incompatible ;
+feature windows-version : vista win7 xp : composite propagated link-incompatible ;
 feature.compose <windows-version>vista : <define>_WIN32_WINNT=0x0600 ;
 feature.compose <windows-version>win7 : <define>_WIN32_WINNT=0x0601 ;
 feature.compose <windows-version>xp : <define>_WIN32_WINNT=0x0501 ;
@@ -486,9 +480,14 @@ feature.compose <deprecated-functions>off : <define>TORRENT_NO_DEPRECATE ;
 
 feature boost-link : default static shared : propagated composite ;
 
-feature debug-iterators : off on : composite propagated link-incompatible ;
-feature.compose <debug-iterators>on : <define>_SCL_SECURE=1 <define>_GLIBCXX_DEBUG
+# msvc enables debug iterators by default in debug builds whereas GCC and
+# clang do not, that's why "default" is there. msvc has incorrect noexcept
+# constructors on some containers when enabling debug iterators, so it's
+# possible to turn them off
+feature debug-iterators : default off on : composite propagated link-incompatible ;
+feature.compose <debug-iterators>on : <define>_ITERATOR_DEBUG_LEVEL=2 <define>_GLIBCXX_DEBUG
 	<define>_GLIBCXX_DEBUG_PEDANTIC ;
+feature.compose <debug-iterators>off : <define>_ITERATOR_DEBUG_LEVEL=0 ;
 
 feature fpic : off on : composite propagated link-incompatible ;
 feature.compose <fpic>on : <cflags>-fPIC ;
@@ -514,18 +513,18 @@ feature.compose <export-extra>on : <define>TORRENT_EXPORT_EXTRA ;
 variant test_release : release
 	: <asserts>production <debug-symbols>on
 	<invariant-checks>full <boost-link>shared <optimization>off
-	<export-extra>on <debug-iterators>on <threading>multi
+	<export-extra>on <threading>multi
 	<inlining>on <deprecated-functions>off
 	;
 variant test_debug : debug
 	: <logging>on
 	<invariant-checks>full <boost-link>shared
-	<export-extra>on <debug-iterators>on <threading>multi <asserts>on
+	<export-extra>on <threading>multi <asserts>on
 	;
 variant test_barebones : debug
 	: <ipv6>off <dht>off <extensions>off <logging>off <boost-link>shared
 	<deprecated-functions>off <invariant-checks>off
-	<export-extra>on <debug-iterators>on <threading>multi <asserts>on
+	<export-extra>on <threading>multi <asserts>on
 	;
 variant test_arm : debug
 	: <ipv6>off <dht>off <extensions>off <logging>off
@@ -769,15 +768,11 @@ local usage-requirements =
 	<include>/usr/local/include
 	<variant>release:<define>NDEBUG
 	<define>_FILE_OFFSET_BITS=64
-	<define>BOOST_EXCEPTION_DISABLE
 # enable cancel support in asio
 	<define>BOOST_ASIO_ENABLE_CANCELIO
 # make sure asio uses std::chrono
 	<define>BOOST_ASIO_HAS_STD_CHRONO
 	<conditional>@linking
-# these compiler settings just makes the compiler standard conforming
-	<toolset>msvc:<cflags>/Zc:wchar_t
-	<toolset>msvc:<cflags>/Zc:forScope
 # msvc optimizations
 	<toolset>msvc,<variant>release:<linkflags>/OPT:ICF=5
 	<toolset>msvc,<variant>release:<linkflags>/OPT:REF

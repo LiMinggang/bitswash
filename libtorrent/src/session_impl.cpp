@@ -318,8 +318,8 @@ namespace aux {
 		for (int i = 0; i < len; ++i)
 		{
 			error_code ec;
-			address_v4 begin = address_v4::from_string(p[i].first, ec);
-			address_v4 end = address_v4::from_string(p[i].last, ec);
+			address_v4 begin = make_address_v4(p[i].first, ec);
+			address_v4 end = make_address_v4(p[i].last, ec);
 			if (ec) continue;
 			m_peer_class_filter.add_rule(begin, end, p[i].filter);
 		}
@@ -330,8 +330,8 @@ namespace aux {
 		for (int i = 0; i < len; ++i)
 		{
 			error_code ec;
-			address_v6 begin = address_v6::from_string(p[i].first, ec);
-			address_v6 end = address_v6::from_string(p[i].last, ec);
+			address_v6 begin = make_address_v6(p[i].first, ec);
+			address_v6 end = make_address_v6(p[i].last, ec);
 			if (ec) continue;
 			m_peer_class_filter.add_rule(begin, end, p[i].filter);
 		}
@@ -869,6 +869,9 @@ namespace aux {
 			te.second->abort();
 		}
 		m_torrents.clear();
+		m_stats_counters.set_value(counters::num_peers_up_unchoked_all, 0);
+		m_stats_counters.set_value(counters::num_peers_up_unchoked, 0);
+		m_stats_counters.set_value(counters::num_peers_up_unchoked_optimistic, 0);
 
 #ifndef TORRENT_DISABLE_LOGGING
 		session_log(" aborting all tracker requests");
@@ -879,12 +882,13 @@ namespace aux {
 		session_log(" aborting all connections (%d)", int(m_connections.size()));
 #endif
 		// abort all connections
-		// keep in mind that connections that are not associated with a torrent
-		// will remove its entry from m_connections immediately, which means we
-		// can't iterate over it here
-		auto conns = m_connections;
-		for (auto const& p : conns)
+		for (connection_map::iterator i = m_connections.begin();
+			i != m_connections.end();)
+		{
+			peer_connection* p = (*i).get();
+			++i;
 			p->disconnect(errors::stopping_torrent, operation_t::bittorrent);
+		}
 
 		// close the listen sockets
 		for (auto const& l : m_listen_sockets)
@@ -1751,7 +1755,7 @@ namespace {
 	{
 		// First, check to see if it's an IP address
 		error_code err;
-		address const adr = address::from_string(device.c_str(), err);
+		address const adr = make_address(device.c_str(), err);
 		if (!err)
 		{
 #if !TORRENT_USE_IPV6
@@ -2941,9 +2945,6 @@ namespace {
 
 		std::shared_ptr<peer_connection> c
 			= std::make_shared<bt_peer_connection>(pack, get_peer_id());
-#if TORRENT_USE_ASSERTS
-		c->m_in_constructor = false;
-#endif
 
 		if (!c->is_disconnecting())
 		{
@@ -4533,7 +4534,7 @@ namespace {
 	}
 
 	TORRENT_FORMAT(2,3)
-	void session_impl::session_log(char const* fmt, ...) const
+	void session_impl::session_log(char const* fmt, ...) const noexcept try
 	{
 		if (!m_alerts.should_post<log_alert>()) return;
 
@@ -4542,6 +4543,7 @@ namespace {
 		m_alerts.emplace_alert<log_alert>(fmt, v);
 		va_end(v);
 	}
+	catch (std::exception const&) {}
 #endif
 
 	void session_impl::get_torrent_status(std::vector<torrent_status>* ret
@@ -4975,9 +4977,7 @@ namespace {
 			l.reserve(num_torrents + 1);
 		}
 
-		torrent_ptr = std::make_shared<torrent>(*this
-			, 16 * 1024, m_paused
-			, params);
+		torrent_ptr = std::make_shared<torrent>(*this, m_paused, params);
 		torrent_ptr->set_queue_position(m_download_queue.end_index());
 
 		return std::make_pair(torrent_ptr, true);
@@ -5092,7 +5092,7 @@ namespace {
 		for (auto const& s : m_outgoing_interfaces)
 		{
 			error_code err;
-			address const ip = address::from_string(s.c_str(), err);
+			address const ip = make_address(s.c_str(), err);
 			if (err) continue;
 			if (ip == addr) return true;
 		}
@@ -7149,7 +7149,7 @@ namespace {
 			return m_ses.alerts().should_post<log_alert>();
 		}
 
-		void tracker_logger::debug_log(const char* fmt, ...) const
+		void tracker_logger::debug_log(const char* fmt, ...) const noexcept try
 		{
 			if (!m_ses.alerts().should_post<log_alert>()) return;
 
@@ -7158,5 +7158,6 @@ namespace {
 			m_ses.alerts().emplace_alert<log_alert>(fmt, v);
 			va_end(v);
 		}
+		catch (std::exception const&) {}
 #endif // TORRENT_DISABLE_LOGGING
 }}
