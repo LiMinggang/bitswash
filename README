@@ -40,6 +40,7 @@ New: Config DHT bootstrap nodes
 Fix: Enable preview download config won't apply
 Fix: Refactor GeneralSettingPanel
 Fix: Change URL dialog to indicate it supports Magnet URI
+Fix: Set Port Max/Min after the settings applied
 
 0.0.7
 New: 64 bits support

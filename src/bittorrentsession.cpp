@@ -467,7 +467,6 @@ void BitTorrentSession::Configure(lt::settings_pack &settingsPack)
 	settingsPack.set_int(lt::settings_pack::auto_scrape_interval, 1200); // 20 minutes
 	settingsPack.set_int(lt::settings_pack::auto_scrape_min_interval, 900); // 15 minutes
 	settingsPack.set_bool(lt::settings_pack::no_connect_privileged_ports, false);
-	settingsPack.set_int(lt::settings_pack::seed_choking_algorithm, lt::settings_pack::fastest_upload);
 
 	settingsPack.set_bool(lt::settings_pack::enable_dht, m_config->GetDHTEnabled());
     settingsPack.set_bool(lt::settings_pack::allow_multiple_connections_per_ip, m_config->GetAllowMultipleConnectionsPerIP());
@@ -558,6 +557,7 @@ void BitTorrentSession::ConfigureSession()
 		}
 	}
 
+	SetConnection();
 	Configure(params.settings);
 
 	m_libbtsession = new lt::session(std::move(params));
@@ -565,7 +565,6 @@ void BitTorrentSession::ConfigureSession()
 	m_libbtsession->set_alert_notify(boost::bind(&BitTorrentSession::PostLibTorrentAlertEvent, this));
 
 	//Network settings
-	SetConnection();
 	StartExtensions();
 	StartUpnp();
 	StartNatpmp();
