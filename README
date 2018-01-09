@@ -3,9 +3,10 @@
                         =================================
 About:
 -----
-Bitswash is a cross platform bittorrent client built on wxWidgets and libtorrent.
-It supports multiple torrents downloading, automatic queue management, and
-protocol encryption, peer exchange, upnp, natpmp, lsd ip and file filter etc.
+Bitswash is a cross platform bittorrent client built on wxWidgets and libtorrent
+by Arvid Norberg.It supports multiple torrents downloading, automatic queue 
+management, and protocol encryption, peer exchange, upnp, natpmp, lsd ip and
+file filter etc.
 
 Currently supported Languages:
     English
@@ -15,12 +16,15 @@ Currently supported Languages:
     Russian(ru_RU)
     Norwegian(nb_NO)
 
-Build
+Build:
 -----
 BOOST
-.\bjam.exe define=_WIN32_WINNT=0x0601 --with-thread --with-system --with-filesystem --with-regex --with-iostreams threading=multi variant=release link=static address-model=64 runtime-link=static stage
+.\bjam.exe define=_WIN32_WINNT=0x0601 --with-thread --with-system --with-filesystem
+--with-regex --with-iostreams threading=multi variant=release link=static
+address-model=64 runtime-link=static stage
 
 News:
+----
 0.0.8
 New: Upper limit of number of log files
 New: Drag and drop torrent files
