@@ -477,8 +477,6 @@ void BitTorrentSession::Configure(lt::settings_pack &settingsPack)
 		settingsPack.set_str(lt::settings_pack::dht_bootstrap_nodes, m_config->GetDhtBootstrapNodes().ToStdString());
 	}
 	settingsPack.set_bool(lt::settings_pack::enable_lsd, m_config->GetEnableLsd());
-	settingsPack.set_int(lt::settings_pack::choking_algorithm, lt::settings_pack::fixed_slots_choker);
-	settingsPack.set_int(lt::settings_pack::seed_choking_algorithm, lt::settings_pack::fastest_upload);
 
 	switch (m_config->GetChokingAlgorithm()) {
 	case Configuration::FIXED_SLOTS:
