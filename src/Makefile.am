@@ -16,7 +16,7 @@ AM_CFLAGS =\
 	 -Wall @DEBUGFLAGS@\
 	 $(WX_CPPFLAGS)
 
-AM_CXXFLAGS = @SSL_CXXFLAGS@
+AM_CXXFLAGS = 
 
 
 bin_PROGRAMS = bitswash 
