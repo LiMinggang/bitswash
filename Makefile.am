@@ -1,8 +1,8 @@
 ## Process this file with automake to produce Makefile.in
 ## Created by Anjuta
 
-SUBDIRS = src locale
-BUNDLE_DIST = libtorrent compat
+SUBDIRS = src locale libgeoip
+BUNDLE_DIST = libtorrent
 
 bitswashdocdir = ${datadir}/bitswash
 bitswashiconsdir = ${datadir}/bitswash/icons
