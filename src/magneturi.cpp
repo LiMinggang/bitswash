@@ -41,18 +41,18 @@
 
 namespace
 {
-    wxString bcLinkToMagnet(const wxString& bcLink)
-    {
+	wxString bcLinkToMagnet(const wxString& bcLink)
+	{
 		const wxScopedCharBuffer sbuf = bcLink.ToUTF8();
 		wxMemoryBuffer decoded = wxBase64Decode(((const char *)sbuf) + 8);
 		wxString rawBc((const char *)(decoded.GetData()), decoded.GetDataLen());
 
-        // Format is now AA/url_encoded_filename/size_bytes/info_hash/ZZ
-        wxStringTokenizer tkz( rawBc, '/' );
-        if (tkz.CountTokens() != 5) return wxString();
+		// Format is now AA/url_encoded_filename/size_bytes/info_hash/ZZ
+		wxStringTokenizer tkz( rawBc, '/' );
+		if (tkz.CountTokens() != 5) return wxString();
 
 		int i = 0;
-        wxString token, filename, hash;
+		wxString token, filename, hash;
 		while( tkz.HasMoreTokens() )
 		{
 			token = tkz.GetNextToken();
@@ -65,60 +65,60 @@ namespace
 			++i;
 		}
 
-        wxString magnet = "magnet:?xt=urn:btih:" + hash;
-        magnet += "&dn=" + filename;
-        return magnet;
-    }
+		wxString magnet = "magnet:?xt=urn:btih:" + hash;
+		magnet += "&dn=" + filename;
+		return magnet;
+	}
 }
 
 namespace libt = libtorrent;
 
 MagnetUri::MagnetUri(const wxString &source)
-    : m_valid(false)
-    , m_url(source)
+	: m_valid(false)
+	, m_url(source)
 {
 	wxRegEx exp1 = "[^0-9A-Fa-f]", exp2 = "[^2-7A-Za-z]";
-    if (source.IsEmpty()) return;
+	if (source.IsEmpty()) return;
 
 	size_t len = source.size();
 	wxString tmp = source.Left(20).Lower();
-    if (tmp.StartsWith(_T("bc://bt/"))) {
-        m_url = bcLinkToMagnet(source);
-    }
+	if (tmp.StartsWith(_T("bc://bt/"))) {
+		m_url = bcLinkToMagnet(source);
+	}
 	else if (((len == 60) || (len == 52)) && tmp.StartsWith(_T("magnet:?xt=urn:btih:")))
 	{
 		m_url = source;
 	}
-    else if (((len == 40) && !exp1.Matches(source))
-             || ((len == 32) && !exp2.Matches(source))) {
-        m_url = "magnet:?xt=urn:btih:" + source;
-    }
+	else if (((len == 40) && !exp1.Matches(source))
+			 || ((len == 32) && !exp2.Matches(source))) {
+		m_url = "magnet:?xt=urn:btih:" + source;
+	}
 
-    lt::error_code ec;
+	lt::error_code ec;
 	m_addTorrentParams = lt::parse_magnet_uri(std::string((const char *)(m_url.ToUTF8().data())), ec);
-    if (ec) return;
+	if (ec) return;
 
-    m_valid = true;
-    m_hash = InfoHash(m_addTorrentParams.info_hash);
+	m_valid = true;
+	m_hash = InfoHash(m_addTorrentParams.info_hash);
 	if(!m_addTorrentParams.name.empty())
-    	m_name = wxString::FromUTF8(m_addTorrentParams.name.c_str());
+		m_name = wxString::FromUTF8(m_addTorrentParams.name.c_str());
 	else
 		m_name = m_hash;
 }
 
 bool MagnetUri::isValid() const
 {
-    return m_valid;
+	return m_valid;
 }
 
 InfoHash MagnetUri::hash() const
 {
-    return m_hash;
+	return m_hash;
 }
 
 wxString MagnetUri::name() const
 {
-    return m_name;
+	return m_name;
 }
 
 const std::vector<std::string> & MagnetUri::trackers() const
@@ -128,15 +128,15 @@ const std::vector<std::string> & MagnetUri::trackers() const
 
 const std::vector<std::string> & MagnetUri::urlSeeds() const
 {
-    return m_addTorrentParams.url_seeds;
+	return m_addTorrentParams.url_seeds;
 }
 
 wxString MagnetUri::url() const
 {
-    return m_url;
+	return m_url;
 }
 
 lt::add_torrent_params MagnetUri::addTorrentParams() const
 {
-    return m_addTorrentParams;
+	return m_addTorrentParams;
 }
