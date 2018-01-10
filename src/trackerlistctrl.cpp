@@ -237,7 +237,7 @@ void TrackerListCtrl::OnMenuTracker(wxCommandEvent& event)
 			if (dialog.ShowModal() == wxID_OK)
 			{
 				wxString newtrackerurl = dialog.GetValue();
-				std::string newtrackerurl_cstr( newtrackerurl.mb_str(wxConvUTF8));
+				std::string newtrackerurl_cstr( (const char *)((newtrackerurl.ToUTF8()).data()));
 				lt::announce_entry e(newtrackerurl_cstr);
 				e.tier = (trackers.size() * 10);
 				trackers.push_back(e);
@@ -275,7 +275,7 @@ void TrackerListCtrl::OnMenuTracker(wxCommandEvent& event)
 				wxString returl = dialog.GetValue();
 				if (returl.Len() > 0)
 				{
-					std::string tmpurl(returl.mb_str(wxConvUTF8));
+					std::string tmpurl((const char *)((returl.ToUTF8()).data()));
 					tracker_it->url = tmpurl;
 
 					//pTorrent->config->SetTrackersURL(trackers);

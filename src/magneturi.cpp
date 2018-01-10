@@ -43,11 +43,10 @@ namespace
 {
     wxString bcLinkToMagnet(const wxString& bcLink)
     {
-        wxString rawBc(bcLink.ToUTF8());
-        rawBc = rawBc.Mid(8); // skip bc://bt/
-        
-		wxMemoryBuffer decoded = wxBase64Decode(rawBc);
-		rawBc.assign((char *)(decoded.GetData()), decoded.GetDataLen());
+		const wxScopedCharBuffer sbuf = bcLink.ToUTF8();
+		wxMemoryBuffer decoded = wxBase64Decode(((const char *)sbuf) + 8);
+		wxString rawBc((const char *)(decoded.GetData()), decoded.GetDataLen());
+
         // Format is now AA/url_encoded_filename/size_bytes/info_hash/ZZ
         wxStringTokenizer tkz( rawBc, '/' );
         if (tkz.CountTokens() != 5) return wxString();
@@ -96,7 +95,7 @@ MagnetUri::MagnetUri(const wxString &source)
     }
 
     lt::error_code ec;
-	m_addTorrentParams = lt::parse_magnet_uri(m_url.ToUTF8().data(), ec);
+	m_addTorrentParams = lt::parse_magnet_uri(std::string((const char *)(m_url.ToUTF8().data())), ec);
     if (ec) return;
 
     m_valid = true;

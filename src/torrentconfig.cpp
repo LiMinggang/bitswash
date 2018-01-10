@@ -219,7 +219,7 @@ void TorrentConfig::ReadTrackersUrl()
 	while( tokens.HasMoreTokens() )
 	{
 		wxString token = tokens.GetNextToken();
-		std::string t_str( token.BeforeFirst( '|' ).mb_str( wxConvUTF8 ) );
+		std::string t_str( (const char *)((token.BeforeFirst( '|' ).ToUTF8()).data()) );
 		int t_tier = wxAtoi( token.AfterFirst( '|' ) );
 		lt::announce_entry e( t_str );
 		e.tier = t_tier;
