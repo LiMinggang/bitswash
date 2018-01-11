@@ -47,6 +47,7 @@ Fix: Change URL dialog to indicate it supports Magnet URI
 Fix: Set Port Max/Min after the settings applied
 Fix: Issue to convert non-ASCII file name
 Fix: Bug in string converting in supporting bc://(not tested)
+Fix: Crash while deleting torrent with no metadata
 
 0.0.7
 New: 64 bits support

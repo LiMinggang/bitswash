@@ -891,23 +891,24 @@ void BitTorrentSession::RemoveTorrent( std::shared_ptr<torrent_t>& torrent, bool
 		else
 		{ wxLogInfo( _T( "%s: No downloaded data to remove" ), torrent->name.c_str() ); }
 	}
-	else
+
+	const std::vector<lt::download_priority_t>& fp = torrent->config->GetFilesPriorities();
+	const std::vector<lt::download_priority_t>& filespriority = torrent->config->GetFilesPriorities();
+	if (torrent->info && torrent->info->is_valid())
 	{
-		const std::vector<lt::download_priority_t>& fp = torrent->config->GetFilesPriorities();
-		const std::vector<lt::download_priority_t>& filespriority = torrent->config->GetFilesPriorities();
 		int nfiles = torrent->info->num_files();
 		const lt::file_storage &allfiles = torrent->info->files();
 		wxString fname;
 		wxASSERT(nfiles == fp.size());
-		
-		for(int i = 0; i < nfiles; ++i)
+
+		for (int i = 0; i < nfiles; ++i)
 		{
 			lt::file_index_t idx(i);
-			if( filespriority[i] == TorrentConfig::file_none )
+			if (filespriority[i] == TorrentConfig::file_none)
 			{
 				fname = (torrent->config->GetDownloadPath() + wxString::FromUTF8((allfiles.file_path(idx)).c_str()));
-				if( wxFileExists( fname ) && !wxRemoveFile( torrentfile ) )
-					wxLogError( _T( "Error removing file %s" ), torrentfile.c_str() );
+				if (wxFileExists(fname) && !wxRemoveFile(fname))
+					wxLogError(_T("Error removing file %s"), fname.c_str());
 			}
 		}
 	}
