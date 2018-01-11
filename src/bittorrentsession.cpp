@@ -903,9 +903,9 @@ void BitTorrentSession::RemoveTorrent( std::shared_ptr<torrent_t>& torrent, bool
 
 		for (int i = 0; i < nfiles; ++i)
 		{
-			lt::file_index_t idx(i);
 			if (filespriority[i] == TorrentConfig::file_none)
 			{
+				lt::file_index_t idx(i);
 				fname = (torrent->config->GetDownloadPath() + wxString::FromUTF8((allfiles.file_path(idx)).c_str()));
 				if (wxFileExists(fname) && !wxRemoveFile(fname))
 					wxLogError(_T("Error removing file %s"), fname.c_str());
