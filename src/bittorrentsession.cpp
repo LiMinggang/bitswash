@@ -2668,10 +2668,9 @@ bool BitTorrentSession::HandleMetaDataAlert(lt::metadata_received_alert *p)
 			{
 				wxMutexLocker ml( m_metadata_queue_lock );
 				m_metadata_queue.push_back(hashstr);
-				TorrentMetadataNotify();
 			}
+			TorrentMetadataNotify();
 
-			//StartTorrent(torrent, false);
 			return true;
 		}
 		else
