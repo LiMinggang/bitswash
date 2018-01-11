@@ -713,7 +713,7 @@ void BitTorrentSession::AddTorrentToSession( std::shared_ptr<torrent_t>& torrent
 		wxASSERT(torrent->info);
 		p.ti = torrent->info;
 		//p.ti.reset(const_cast<lt::torrent_info *>(torrent->info.get()));
-		p.save_path = std::string((const char*)((torrent->config->GetDownloadPath().ToUTF8())).data());
+		p.save_path = std::move(std::string((const char*)((torrent->config->GetDownloadPath().ToUTF8())).data()));
 		p.max_connections = m_config->GetMaxConnections();
 		p.max_uploads = m_config->GetMaxUploads();
 		p.upload_limit = m_config->GetDefaultUploadLimit();
@@ -1337,8 +1337,11 @@ std::shared_ptr<torrent_t> BitTorrentSession::LoadMagnetUri( MagnetUri& magnetur
 {
 	std::shared_ptr<torrent_t> torrent;
 	{
-		wxMutexLocker ml( m_torrent_queue_lock );
-		bool notfound = (m_queue_torrent_set.find(wxString(magneturi.hash())) == m_queue_torrent_set.end());
+		bool notfound = true;
+		{
+			wxMutexLocker ml(m_torrent_queue_lock);
+			notfound = (m_queue_torrent_set.find(wxString(magneturi.hash())) == m_queue_torrent_set.end());
+		}
 		if(notfound)
 		{
 			try
@@ -1351,7 +1354,7 @@ std::shared_ptr<torrent_t> BitTorrentSession::LoadMagnetUri( MagnetUri& magnetur
 				if( wxString(torrent->hash) != _T("0000000000000000000000000000000000000000"))
 				{
 					torrent->config.reset( new TorrentConfig( wxString(torrent->hash) ) );
-					p.save_path = std::string(( const char* )((torrent->config->GetDownloadPath().ToUTF8( ))).data());
+					p.save_path = std::move(std::string(( const char* )((torrent->config->GetDownloadPath().ToUTF8( ))).data()));
 
 					p.flags |= lt::torrent_flags::paused; // Start in pause
 					p.flags &= ~lt::torrent_flags::auto_managed; // Because it is added in paused state
