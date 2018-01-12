@@ -49,6 +49,7 @@ Fix: Issue to convert non-ASCII file name
 Fix: Bug in string converting in supporting bc://(not tested)
 Fix: Crash while deleting torrent with no metadata
 Fix: Deadlock issue in load magnet URI
+Fix: Crash/assertion failure to start Magnet URI with no metadata
 
 0.0.7
 New: 64 bits support
