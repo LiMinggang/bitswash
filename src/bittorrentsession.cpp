@@ -1469,15 +1469,17 @@ void BitTorrentSession::StartTorrent( std::shared_ptr<torrent_t>& torrent, bool 
 
 	if (handle.is_valid())
 	{
-		if(torrent->config->GetTorrentState() != TORRENT_STATE_FORCE_START)
-		{
-			torrent->config->SetTorrentState(force ? TORRENT_STATE_FORCE_START : TORRENT_STATE_START);
-			torrent->config->Save();
-		}
 		ConfigureTorrent(torrent);
 		if(force) handle.clear_error();
 		if(handle.status().flags & lt::torrent_flags::paused)
 			handle.resume();
+	}
+
+	wxASSERT(torrent->config);
+	if(torrent->config->GetTorrentState() != TORRENT_STATE_FORCE_START)
+	{
+		torrent->config->SetTorrentState(force ? TORRENT_STATE_FORCE_START : TORRENT_STATE_START);
+		torrent->config->Save();
 	}
 }
 
