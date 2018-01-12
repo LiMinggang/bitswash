@@ -831,13 +831,13 @@ void BitTorrentSession::RemoveTorrent( std::shared_ptr<torrent_t>& torrent, bool
 	wxASSERT(torrent->config);
 	enum torrent_state state = ( enum torrent_state ) torrent->config->GetTorrentState();
 
-	wxString app_prefix = wxGetApp().SaveTorrentsPath() +
-							  wxString(torrent->hash);
+	wxString hstr(torrent->hash);
+	wxString app_prefix = wxGetApp().SaveTorrentsPath() + hstr;
 	wxString fastresumefile = app_prefix + _T( ".resume" );
 	//wxString resumefile = app_prefix + _T( ".resume" );
 	wxString torrentconffile = app_prefix + _T( ".conf" );
 	wxString torrentfile = app_prefix + _T( ".torrent" );
-	wxString partsfile = wxGetApp().SaveTorrentsPath() + (_T(".")) + wxString(torrent->hash) + _T( ".parts" );
+	wxString partsfile = wxGetApp().SaveTorrentsPath() + (_T(".")) + hstr + _T( ".parts" );
 
 	if( ( wxFileExists( fastresumefile ) ) &&
 			( !wxRemoveFile( fastresumefile ) ) )
@@ -865,7 +865,7 @@ void BitTorrentSession::RemoveTorrent( std::shared_ptr<torrent_t>& torrent, bool
 
 	if( deletedata )
 	{
-		wxString download_data( torrent->config->GetDownloadPath() + ( wxString )torrent->name.c_str() );
+		wxString download_data( torrent->config->GetDownloadPath() + torrent->name );
 		wxLogInfo( _T( "%s: Remove Data as well in %s" ), torrent->name.c_str(), download_data.c_str() );
 
 		if( wxDirExists( download_data ) )
@@ -892,10 +892,10 @@ void BitTorrentSession::RemoveTorrent( std::shared_ptr<torrent_t>& torrent, bool
 		{ wxLogInfo( _T( "%s: No downloaded data to remove" ), torrent->name.c_str() ); }
 	}
 
-	const std::vector<lt::download_priority_t>& fp = torrent->config->GetFilesPriorities();
-	const std::vector<lt::download_priority_t>& filespriority = torrent->config->GetFilesPriorities();
 	if (torrent->info && torrent->info->is_valid())
 	{
+		const std::vector<lt::download_priority_t>& fp = torrent->config->GetFilesPriorities();
+		const std::vector<lt::download_priority_t>& filespriority = torrent->config->GetFilesPriorities();
 		int nfiles = torrent->info->num_files();
 		const lt::file_storage &allfiles = torrent->info->files();
 		wxString fname;
