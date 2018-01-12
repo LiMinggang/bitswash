@@ -1088,8 +1088,12 @@ void BitTorrentSession::ScanTorrentsDirectory( const wxString& dirname )
 					( state == TORRENT_STATE_FORCE_START ) ||
 					( state == TORRENT_STATE_PAUSE ) ))
 			{
-				AddTorrentToSession( m_torrent_queue.at( i ) );
-				++started;
+				wxASSERT(m_torrent_queue.at( i ));
+				if((m_torrent_queue.at( i )->info) && m_torrent_queue.at( i )->info->is_valid())
+				{
+					AddTorrentToSession( m_torrent_queue.at( i ) );
+					++started;
+				}
 			}
 		}
 	}
