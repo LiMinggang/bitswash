@@ -2170,7 +2170,7 @@ void BitTorrentSession::CheckQueueItem()
 			{
 				bool exseed = false;
 
-				if( torrent->handle.is_valid() )
+				if( torrent->handle.is_valid() && torrent->info && torrent->info->is_valid())
 				{
 					lt::torrent_status t_status = torrent->handle.status();
 
@@ -2216,7 +2216,7 @@ void BitTorrentSession::CheckQueueItem()
 
 		case TORRENT_STATE_FORCE_START:
 			{
-				if (!((m_torrent_queue[idx])->handle.is_valid()))
+				if ((!((m_torrent_queue[idx])->handle.is_valid()) && torrent->info && torrent->info->is_valid()))
 					StartTorrent((m_torrent_queue[idx]), true);
 
 				break;
