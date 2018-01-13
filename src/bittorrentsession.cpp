@@ -626,50 +626,21 @@ void BitTorrentSession::StartExtensions()
 void BitTorrentSession::StartUpnp()
 {
 	wxASSERT( m_libbtsession != nullptr );
-
-	if( m_config->GetEnableUpnp() )
-	{
-		// XXX workaround upnp crashed when started twice
-		// libtorrent bugs
-		if( !m_upnp_started )
-		{
-			lt::settings_pack settingsPack = m_libbtsession->get_settings();
-			settingsPack.set_bool(lt::settings_pack::enable_upnp, true );
-			m_libbtsession->apply_settings( settingsPack );
-			m_upnp_started = true;
-		}
-	}
-	else
-	{
-		lt::settings_pack settingsPack = m_libbtsession->get_settings();
-		settingsPack.set_bool(lt::settings_pack::enable_upnp, false );
-		m_libbtsession->apply_settings( settingsPack );
-		m_upnp_started = false;
-	}
+	bool enable_upnp = m_config->GetEnableUpnp();
+	lt::settings_pack settingsPack = m_libbtsession->get_settings();
+	settingsPack.set_bool(lt::settings_pack::enable_upnp, enable_upnp );
+	m_libbtsession->apply_settings( settingsPack );
+	m_upnp_started = enable_upnp;
 }
 
 void BitTorrentSession::StartNatpmp()
 {
 	wxASSERT( m_libbtsession != nullptr );
-
-	if( m_config->GetEnableNatpmp() )
-	{
-		if( !m_natpmp_started )
-		{
-			lt::settings_pack settingsPack = m_libbtsession->get_settings();
-			settingsPack.set_bool(lt::settings_pack::enable_natpmp, true );
-			m_libbtsession->apply_settings( settingsPack );
-		}
-
-		m_natpmp_started = true;
-	}
-	else
-	{
-		lt::settings_pack settingsPack = m_libbtsession->get_settings();
-		settingsPack.set_bool(lt::settings_pack::enable_natpmp, false );
-		m_libbtsession->apply_settings( settingsPack );
-		m_natpmp_started = false;
-	}
+	bool enable_natpmp = m_config->GetEnableNatpmp();
+	lt::settings_pack settingsPack = m_libbtsession->get_settings();
+	settingsPack.set_bool(lt::settings_pack::enable_natpmp, enable_natpmp );
+	m_libbtsession->apply_settings( settingsPack );
+	m_natpmp_started = enable_natpmp;
 }
 
 void BitTorrentSession::AddTorrentToSession( std::shared_ptr<torrent_t>& torrent )
@@ -980,20 +951,19 @@ void BitTorrentSession::MergeTorrent( std::shared_ptr<torrent_t>& dst_torrent, s
 void BitTorrentSession::MergeTorrent( std::shared_ptr<torrent_t>& dst_torrent, MagnetUri& src_magneturi )
 {
 	lt::torrent_handle &torrent_handle = dst_torrent->handle;
-	std::vector<std::string> const& trackers = src_magneturi.trackers();
 
 	if(torrent_handle.is_valid())
 	{
-		for( size_t i = 0; i < trackers.size(); ++i )
+		std::vector<std::string> const& trackers = src_magneturi.trackers();
+		for(auto tracker : trackers)
 		{
-			torrent_handle.add_tracker( lt::announce_entry( trackers.at( i ) ) );
+			torrent_handle.add_tracker( lt::announce_entry( tracker ) );
 		}
 
 		std::vector<std::string> const& url_seeds = src_magneturi.urlSeeds();
-
-		for( std::vector<std::string>::const_iterator i = url_seeds.begin(); i != url_seeds.end(); ++i )
+		for(auto url_seed : url_seeds)
 		{
-			torrent_handle.add_url_seed( *i );
+			torrent_handle.add_url_seed( url_seed );
 		}
 	}
 }
