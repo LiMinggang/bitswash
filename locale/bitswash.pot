@@ -8,130 +8,207 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2017-12-26 22:10+0800\n"
+"POT-Creation-Date: 2018-01-13 20:19+0800\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "Language: \n"
 "MIME-Version: 1.0\n"
-"Content-Type: text/plain; charset=CHARSET\n"
+"Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-#: ../src/bitswash.cpp:170
+#: ../src/bitswash.cpp:216
 msgid "Failed to create an IPC service.\n"
 msgstr ""
 
-#: ../src/bitswash.cpp:202
+#: ../src/bitswash.cpp:248
 msgid ""
 "Sorry, the existing instance may be too busy too respond.\n"
 "Please close any open dialogs and retry."
 msgstr ""
 
-#: ../src/bittorrentsession.cpp:679
+#: ../src/bittorrentsession.cpp:650
 msgid "Torrent hash is invalid! "
 msgstr ""
 
-#: ../src/bittorrentsession.cpp:733 ../src/torrentsetting.cpp:188
-#: ../src/torrentsetting.cpp:197
+#: ../src/bittorrentsession.cpp:704 ../src/torrentsetting.cpp:191
+#: ../src/torrentsetting.cpp:200
 msgid "Full"
 msgstr ""
 
-#: ../src/bittorrentsession.cpp:739 ../src/torrentsetting.cpp:189
-#: ../src/torrentsetting.cpp:201
+#: ../src/bittorrentsession.cpp:710 ../src/torrentsetting.cpp:192
+#: ../src/torrentsetting.cpp:204
 msgid "Sparse"
 msgstr ""
 
-#: ../src/bittorrentsession.cpp:1012
+#: ../src/bittorrentsession.cpp:982
 #, c-format
 msgid "Error opening directory %s for processing"
 msgstr ""
 
-#: ../src/bittorrentsession.cpp:1319
+#: ../src/bittorrentsession.cpp:1294
 msgid "Parse torrent failed:The torrent is invalid!"
 msgstr ""
 
-#: ../src/bittorrentsession.cpp:1319 ../src/bittorrentsession.cpp:1378
-#: ../src/mainframe.cpp:1933
+#: ../src/bittorrentsession.cpp:1294 ../src/bittorrentsession.cpp:1356
+#: ../src/bittorrentsession.cpp:1916 ../src/mainframe.cpp:1893
 msgid "Error"
 msgstr ""
 
-#: ../src/bittorrentsession.cpp:1378
+#: ../src/bittorrentsession.cpp:1356
 msgid "Parse magnet URI failed:The torrent is invalid!"
 msgstr ""
 
-#: ../src/connectionsetting.cpp:65
+#: ../src/bittorrentsession.cpp:1916
+#, c-format
+msgid "Failed to copy %s to %s!"
+msgstr ""
+
+#: ../src/connectionsetting.cpp:76
 msgid "Ports Setting"
 msgstr ""
 
-#: ../src/connectionsetting.cpp:77
+#: ../src/connectionsetting.cpp:83
 msgid "Port Range (TCP):"
 msgstr ""
 
-#: ../src/connectionsetting.cpp:84
+#: ../src/connectionsetting.cpp:88
 msgid "to"
 msgstr ""
 
-#: ../src/connectionsetting.cpp:98
+#: ../src/connectionsetting.cpp:93
 msgid "Enable DHT, Port (UDP):"
 msgstr ""
 
-#: ../src/connectionsetting.cpp:119
+#: ../src/connectionsetting.cpp:103
 msgid "Limits"
 msgstr ""
 
-#: ../src/connectionsetting.cpp:131 ../src/torrentsetting.cpp:206
+#: ../src/connectionsetting.cpp:110 ../src/torrentsetting.cpp:209
 msgid "Download Rate Limit:"
 msgstr ""
 
-#: ../src/connectionsetting.cpp:139 ../src/torrentsetting.cpp:211
+#: ../src/connectionsetting.cpp:115 ../src/torrentsetting.cpp:214
 msgid "Upload Rate Limit:"
 msgstr ""
 
-#: ../src/connectionsetting.cpp:146 ../src/torrentsetting.cpp:216
+#: ../src/connectionsetting.cpp:120 ../src/torrentsetting.cpp:219
 msgid "Maximum Connections:"
 msgstr ""
 
-#: ../src/connectionsetting.cpp:153 ../src/torrentsetting.cpp:222
+#: ../src/connectionsetting.cpp:125 ../src/torrentsetting.cpp:225
 msgid "Maximum Upload Slots:"
 msgstr ""
 
-#: ../src/extensionsetting.cpp:56 ../src/swashsetting.cpp:64
+#: ../src/connectionsetting.cpp:130
+msgid "Apply Rate Limit to Transport Overhead"
+msgstr ""
+
+#: ../src/connectionsetting.cpp:137
+msgid "Miscellaneous"
+msgstr ""
+
+#: ../src/connectionsetting.cpp:144
+msgid "Anonymous Mode"
+msgstr ""
+
+#: ../src/connectionsetting.cpp:147
+msgid "Enable OS Cache"
+msgstr ""
+
+#: ../src/connectionsetting.cpp:150
+msgid "Supper Seeding"
+msgstr ""
+
+#: ../src/connectionsetting.cpp:153
+msgid "Prefer UDP trackers"
+msgstr ""
+
+#: ../src/connectionsetting.cpp:156
+msgid "Allow Multiple Connections per IP"
+msgstr ""
+
+#: ../src/connectionsetting.cpp:163
+msgid "Enabled Protocols:"
+msgstr ""
+
+#: ../src/connectionsetting.cpp:166
+msgid "TCP and µTP"
+msgstr ""
+
+#: ../src/connectionsetting.cpp:171
+msgid "Choking Algorithm"
+msgstr ""
+
+#: ../src/connectionsetting.cpp:174
+msgid "Fixed Slots"
+msgstr ""
+
+#: ../src/connectionsetting.cpp:175
+msgid "Rate Based"
+msgstr ""
+
+#: ../src/connectionsetting.cpp:176
+msgid "Bittyrant"
+msgstr ""
+
+#: ../src/connectionsetting.cpp:179
+msgid "Seed Choking Algorithm"
+msgstr ""
+
+#: ../src/connectionsetting.cpp:182
+msgid "Round Robin"
+msgstr ""
+
+#: ../src/connectionsetting.cpp:183
+msgid "Fastest Upload"
+msgstr ""
+
+#: ../src/connectionsetting.cpp:184
+msgid "Anti Leech"
+msgstr ""
+
+#: ../src/connectionsetting.cpp:187
+msgid "DHT Bootstrap Nodes:"
+msgstr ""
+
+#: ../src/extensionsetting.cpp:64 ../src/swashsetting.cpp:64
 msgid "Extensions"
 msgstr ""
 
-#: ../src/extensionsetting.cpp:64
+#: ../src/extensionsetting.cpp:71
 msgid "Enable Metadata"
 msgstr ""
 
-#: ../src/extensionsetting.cpp:67
+#: ../src/extensionsetting.cpp:74
 msgid "Enable Peer Exchange"
 msgstr ""
 
-#: ../src/extensionsetting.cpp:75
+#: ../src/extensionsetting.cpp:81
 msgid "Protocol Encryption"
 msgstr ""
 
-#: ../src/extensionsetting.cpp:83
+#: ../src/extensionsetting.cpp:88
 msgid "Enable Encryption"
 msgstr ""
 
-#: ../src/extensionsetting.cpp:86
+#: ../src/extensionsetting.cpp:91
 msgid "Accept Unencrypted Peer"
 msgstr ""
 
-#: ../src/extensionsetting.cpp:95
+#: ../src/extensionsetting.cpp:98
 msgid "NAT Service"
 msgstr ""
 
-#: ../src/extensionsetting.cpp:103
+#: ../src/extensionsetting.cpp:105
 msgid "Enable UPnP"
 msgstr ""
 
-#: ../src/extensionsetting.cpp:106
+#: ../src/extensionsetting.cpp:108
 msgid "Enable NAT Port Mapping"
 msgstr ""
 
-#: ../src/extensionsetting.cpp:109
+#: ../src/extensionsetting.cpp:111
 msgid "Enable Local Service Discovery"
 msgstr ""
 
@@ -222,93 +299,97 @@ msgstr ""
 msgid "s"
 msgstr ""
 
-#: ../src/generalsetting.cpp:65 ../src/swashsetting.cpp:61
+#: ../src/generalsetting.cpp:66 ../src/swashsetting.cpp:61
 msgid "General"
 msgstr ""
 
-#: ../src/generalsetting.cpp:76
+#: ../src/generalsetting.cpp:73
 msgid "Maximum Running Job:"
 msgstr ""
 
-#: ../src/generalsetting.cpp:84
+#: ../src/generalsetting.cpp:78
+msgid "Maximum Active Seeds:"
+msgstr ""
+
+#: ../src/generalsetting.cpp:83
 msgid "Exclude seeding"
 msgstr ""
 
-#: ../src/generalsetting.cpp:92
+#: ../src/generalsetting.cpp:86
+msgid "Don't Count Slow Torrents"
+msgstr ""
+
+#: ../src/generalsetting.cpp:89
 msgid "Save Fastresume every (s):"
 msgstr ""
 
-#: ../src/generalsetting.cpp:102
-msgid "Associate Magnet URI with Bitswash"
-msgstr ""
-
-#: ../src/generalsetting.cpp:108
+#: ../src/generalsetting.cpp:95
 msgid "Associate .torrent with Bitswash"
 msgstr ""
 
-#: ../src/generalsetting.cpp:114
+#: ../src/generalsetting.cpp:98
+msgid "Associate Magnet URI with Bitswash"
+msgstr ""
+
+#: ../src/generalsetting.cpp:101
 msgid "Run at Windows startup"
 msgstr ""
 
-#: ../src/generalsetting.cpp:130
+#: ../src/generalsetting.cpp:109
 msgid "GUI"
 msgstr ""
 
-#: ../src/generalsetting.cpp:141
+#: ../src/generalsetting.cpp:116
 msgid "Refresh Timer (s):"
 msgstr ""
 
-#: ../src/generalsetting.cpp:150
+#: ../src/generalsetting.cpp:121
 msgid "Enable Systray Icon"
 msgstr ""
 
-#: ../src/generalsetting.cpp:155
+#: ../src/generalsetting.cpp:124
 msgid "Minimize to Systray"
 msgstr ""
 
-#: ../src/generalsetting.cpp:171 ../src/torrentinfo.cpp:66
+#: ../src/generalsetting.cpp:132 ../src/torrentinfo.cpp:66
 msgid "Log"
 msgstr ""
 
-#: ../src/generalsetting.cpp:182
+#: ../src/generalsetting.cpp:140
 msgid "Log Severity:"
 msgstr ""
 
-#: ../src/generalsetting.cpp:185 ../src/loggerctrl.cpp:60
+#: ../src/generalsetting.cpp:142 ../src/loggerctrl.cpp:60
 msgid "Debug"
 msgstr ""
 
-#: ../src/generalsetting.cpp:185 ../src/loggerctrl.cpp:60
+#: ../src/generalsetting.cpp:142 ../src/loggerctrl.cpp:60
 #: ../src/summarypane.cpp:78
 msgid "Info"
 msgstr ""
 
-#: ../src/generalsetting.cpp:185 ../src/loggerctrl.cpp:60
+#: ../src/generalsetting.cpp:142 ../src/loggerctrl.cpp:60
 msgid "Warning"
 msgstr ""
 
-#: ../src/generalsetting.cpp:185 ../src/loggerctrl.cpp:60
+#: ../src/generalsetting.cpp:142 ../src/loggerctrl.cpp:60
 msgid "Critical"
 msgstr ""
 
-#: ../src/generalsetting.cpp:185 ../src/loggerctrl.cpp:60
+#: ../src/generalsetting.cpp:142 ../src/loggerctrl.cpp:60
 msgid "Fatal"
 msgstr ""
 
-#: ../src/generalsetting.cpp:185 ../src/loggerctrl.cpp:60
+#: ../src/generalsetting.cpp:142 ../src/loggerctrl.cpp:60
 msgid "None"
 msgstr ""
 
-#: ../src/generalsetting.cpp:194
+#: ../src/generalsetting.cpp:149
 msgid "Maximum Lines:"
 msgstr ""
 
-#: ../src/generalsetting.cpp:197
-msgid "line"
-msgstr ""
-
-#: ../src/generalsetting.cpp:201
-msgid "Log to File:"
+#: ../src/generalsetting.cpp:154 ../src/loggerctrl.cpp:65
+msgid "Log to File"
 msgstr ""
 
 #: ../src/icons.cpp:28
@@ -1279,10 +1360,6 @@ msgstr ""
 msgid "Severity"
 msgstr ""
 
-#: ../src/loggerctrl.cpp:65
-msgid "Log to File"
-msgstr ""
-
 #: ../src/loggerctrl.cpp:68
 msgid "Clear Log"
 msgstr ""
@@ -1291,97 +1368,96 @@ msgstr ""
 msgid "Pause Log"
 msgstr ""
 
-#: ../src/mainframe.cpp:371
+#: ../src/mainframe.cpp:372
 msgid "Categories"
 msgstr ""
 
-#: ../src/mainframe.cpp:373
+#: ../src/mainframe.cpp:374
 msgid "All"
 msgstr ""
 
-#: ../src/mainframe.cpp:374
+#: ../src/mainframe.cpp:375
 msgid "Downloads"
 msgstr ""
 
-#: ../src/mainframe.cpp:375
+#: ../src/mainframe.cpp:376
 msgid "Seeds"
 msgstr ""
 
-#: ../src/mainframe.cpp:414
+#: ../src/mainframe.cpp:415
 msgid "Bittorrent Client"
 msgstr ""
 
-#: ../src/mainframe.cpp:416
+#: ../src/mainframe.cpp:417
 msgid "Bitswash Homepage"
 msgstr ""
 
-#: ../src/mainframe.cpp:459 ../src/swashtrayicon.cpp:99
+#: ../src/mainframe.cpp:460 ../src/swashtrayicon.cpp:99
 msgid "&Open Torrent\tCtrl+O"
 msgstr ""
 
-#: ../src/mainframe.cpp:459 ../src/mainframe.cpp:542
+#: ../src/mainframe.cpp:460 ../src/mainframe.cpp:542
 #: ../src/swashtrayicon.cpp:99
 msgid "Open Torrent"
 msgstr ""
 
-#: ../src/mainframe.cpp:461 ../src/swashtrayicon.cpp:100
+#: ../src/mainframe.cpp:462
 msgid "Open &URL\tCtrl+U"
 msgstr ""
 
-#: ../src/mainframe.cpp:461 ../src/mainframe.cpp:545
-#: ../src/swashtrayicon.cpp:100
+#: ../src/mainframe.cpp:462
 msgid "Open URL"
 msgstr ""
 
-#: ../src/mainframe.cpp:467
+#: ../src/mainframe.cpp:468
 msgid "E&xit\tAlt-F4"
 msgstr ""
 
-#: ../src/mainframe.cpp:467 ../src/mainframe.cpp:598
+#: ../src/mainframe.cpp:468 ../src/mainframe.cpp:598
 msgid "Exit Bitswash"
 msgstr ""
 
-#: ../src/mainframe.cpp:469
+#: ../src/mainframe.cpp:470
 msgid "&File"
 msgstr ""
 
-#: ../src/mainframe.cpp:471
+#: ../src/mainframe.cpp:472
 msgid "View &Toolbar"
 msgstr ""
 
-#: ../src/mainframe.cpp:471
+#: ../src/mainframe.cpp:472
 msgid "View Toolbar"
 msgstr ""
 
-#: ../src/mainframe.cpp:472
+#: ../src/mainframe.cpp:473
 msgid "View &Status"
 msgstr ""
 
-#: ../src/mainframe.cpp:472
+#: ../src/mainframe.cpp:473
 msgid "View Status"
 msgstr ""
 
-#: ../src/mainframe.cpp:473
+#: ../src/mainframe.cpp:474
 msgid "View Torrent &Information"
 msgstr ""
 
-#: ../src/mainframe.cpp:473
+#: ../src/mainframe.cpp:474
 msgid "View Torrent Information"
 msgstr ""
 
-#: ../src/mainframe.cpp:475
+#: ../src/mainframe.cpp:476
 msgid "&View"
 msgstr ""
 
-#: ../src/mainframe.cpp:477
+#: ../src/mainframe.cpp:478
 msgid "&Torrent"
 msgstr ""
 
-#: ../src/mainframe.cpp:479 ../src/swashtrayicon.cpp:102
+#: ../src/mainframe.cpp:480 ../src/swashtrayicon.cpp:102
 msgid "Prefere&nce\tCtrl+F"
 msgstr ""
 
-#: ../src/mainframe.cpp:479 ../src/mainframe.cpp:589
+#: ../src/mainframe.cpp:480 ../src/mainframe.cpp:589
 #: ../src/swashtrayicon.cpp:102
 msgid "Preference"
 msgstr ""
@@ -1434,12 +1510,16 @@ msgstr ""
 msgid "Open torrent file"
 msgstr ""
 
-#: ../src/mainframe.cpp:547
-msgid "Open torrent from url"
+#: ../src/mainframe.cpp:545 ../src/swashtrayicon.cpp:100
+msgid "Open URL/Magnet URI"
 msgstr ""
 
 #: ../src/mainframe.cpp:547
-msgid "Open torrent from URL"
+msgid "Open torrent from url or Magnet URI"
+msgstr ""
+
+#: ../src/mainframe.cpp:547
+msgid "Open torrent from URL or Magnet URI"
 msgstr ""
 
 #: ../src/mainframe.cpp:550
@@ -1506,7 +1586,7 @@ msgstr ""
 msgid "Move Up"
 msgstr ""
 
-#: ../src/mainframe.cpp:577 ../src/mainframe.cpp:2010
+#: ../src/mainframe.cpp:577 ../src/mainframe.cpp:1970
 msgid "Move torrent up"
 msgstr ""
 
@@ -1518,7 +1598,7 @@ msgstr ""
 msgid "Move Down"
 msgstr ""
 
-#: ../src/mainframe.cpp:581 ../src/mainframe.cpp:2013
+#: ../src/mainframe.cpp:581 ../src/mainframe.cpp:1973
 msgid "Move torrent down"
 msgstr ""
 
@@ -1558,170 +1638,179 @@ msgstr ""
 msgid "Exit"
 msgstr ""
 
-#: ../src/mainframe.cpp:732
+#: ../src/mainframe.cpp:735
 msgid ""
 "It seemed that the torrent had been downloaded before. Are you going to "
 "download it again?"
 msgstr ""
 
-#: ../src/mainframe.cpp:732 ../src/torrentlistctrl.cpp:121
+#: ../src/mainframe.cpp:735 ../src/torrentlistctrl.cpp:121
 msgid "Downloading"
 msgstr ""
 
-#: ../src/mainframe.cpp:762 ../src/mainframe.cpp:904
+#: ../src/mainframe.cpp:765 ../src/mainframe.cpp:907
 msgid "Torrent Exists. Do you want to update trackers/seeds from the torrent?"
 msgstr ""
 
-#: ../src/mainframe.cpp:762 ../src/mainframe.cpp:904
+#: ../src/mainframe.cpp:765 ../src/mainframe.cpp:907 ../src/mainframe.cpp:2011
 msgid "Confirm"
 msgstr ""
 
-#: ../src/mainframe.cpp:789
+#: ../src/mainframe.cpp:792
 msgid "Open Torrent(s)..."
 msgstr ""
 
-#: ../src/mainframe.cpp:999
+#: ../src/mainframe.cpp:1001
 msgid "Download cancelled"
 msgstr ""
 
-#: ../src/mainframe.cpp:1674
+#: ../src/mainframe.cpp:1628
 msgid "torrent"
 msgstr ""
 
-#: ../src/mainframe.cpp:1677
+#: ../src/mainframe.cpp:1631
 msgid "torrents"
 msgstr ""
 
-#: ../src/mainframe.cpp:1680
+#: ../src/mainframe.cpp:1634
 msgid " and data"
 msgstr ""
 
-#: ../src/mainframe.cpp:1682
+#: ../src/mainframe.cpp:1636
 msgid "Remove "
 msgstr ""
 
-#: ../src/mainframe.cpp:1683
+#: ../src/mainframe.cpp:1637
 msgid "Confirm Remove"
 msgstr ""
 
-#: ../src/mainframe.cpp:1932
+#: ../src/mainframe.cpp:1892
 msgid "Ok"
 msgstr ""
 
-#: ../src/mainframe.cpp:1943
+#: ../src/mainframe.cpp:1903
 msgid "DLR"
 msgstr ""
 
-#: ../src/mainframe.cpp:1944
+#: ../src/mainframe.cpp:1904
 msgid "ULR"
 msgstr ""
 
-#: ../src/mainframe.cpp:1945
+#: ../src/mainframe.cpp:1905
 msgid "PRS"
 msgstr ""
 
-#: ../src/mainframe.cpp:1946
+#: ../src/mainframe.cpp:1906
 msgid "DHT"
 msgstr ""
 
-#: ../src/mainframe.cpp:1947
+#: ../src/mainframe.cpp:1907
 msgid "INC"
 msgstr ""
 
-#: ../src/mainframe.cpp:1996
+#: ../src/mainframe.cpp:1956
 msgid "&Queue Torrent\tCtrl+S"
 msgstr ""
 
-#: ../src/mainframe.cpp:1996
+#: ../src/mainframe.cpp:1956
 msgid "Queue Download"
 msgstr ""
 
-#: ../src/mainframe.cpp:1998
+#: ../src/mainframe.cpp:1958
 msgid "&Force Start Torrent\tCtrl+Alt+S"
 msgstr ""
 
-#: ../src/mainframe.cpp:1998
+#: ../src/mainframe.cpp:1958
 msgid "Force Torrent Download"
 msgstr ""
 
-#: ../src/mainframe.cpp:2000
+#: ../src/mainframe.cpp:1960
 msgid "&Pause Torrent\tCtrl+P"
 msgstr ""
 
-#: ../src/mainframe.cpp:2000
+#: ../src/mainframe.cpp:1960
 msgid "Pause Download"
 msgstr ""
 
-#: ../src/mainframe.cpp:2002
+#: ../src/mainframe.cpp:1962
 msgid "St&op Torrent\tCtrl+T"
 msgstr ""
 
-#: ../src/mainframe.cpp:2002
+#: ../src/mainframe.cpp:1962
 msgid "Stop Download"
 msgstr ""
 
-#: ../src/mainframe.cpp:2005
+#: ../src/mainframe.cpp:1965
 msgid "&Remove Torrent"
 msgstr ""
 
-#: ../src/mainframe.cpp:2005
+#: ../src/mainframe.cpp:1965
 msgid "Delete Torrent"
 msgstr ""
 
-#: ../src/mainframe.cpp:2007
+#: ../src/mainframe.cpp:1967
 msgid "Remove Torrent and &Data"
 msgstr ""
 
-#: ../src/mainframe.cpp:2007
+#: ../src/mainframe.cpp:1967
 msgid "Delete Torrent and Data"
 msgstr ""
 
-#: ../src/mainframe.cpp:2010
+#: ../src/mainframe.cpp:1970
 msgid "Move &Up\tAlt+UP"
 msgstr ""
 
-#: ../src/mainframe.cpp:2013
+#: ../src/mainframe.cpp:1973
 msgid "Move Do&wn\tAlt+DOWN"
 msgstr ""
 
-#: ../src/mainframe.cpp:2017
+#: ../src/mainframe.cpp:1977
 msgid "Re&announce Torrent"
 msgstr ""
 
-#: ../src/mainframe.cpp:2017
+#: ../src/mainframe.cpp:1977
 msgid "Force Reannounce Torrent"
 msgstr ""
 
-#: ../src/mainframe.cpp:2019
+#: ../src/mainframe.cpp:1979
 msgid "Force Re&check Torrent"
 msgstr ""
 
-#: ../src/mainframe.cpp:2019
+#: ../src/mainframe.cpp:1979
 msgid "Force Recheck Torrent"
 msgstr ""
 
-#: ../src/mainframe.cpp:2020
+#: ../src/mainframe.cpp:1980
 msgid "Open &Directory"
 msgstr ""
 
-#: ../src/mainframe.cpp:2020
+#: ../src/mainframe.cpp:1980
 msgid "Open downloaded directory"
 msgstr ""
 
-#: ../src/mainframe.cpp:2022
+#: ../src/mainframe.cpp:1982
 msgid "Propert&ies"
 msgstr ""
 
-#: ../src/mainframe.cpp:2022
+#: ../src/mainframe.cpp:1982
 msgid "Torrent Properties"
 msgstr ""
 
-#: ../src/mainframe.cpp:2025
+#: ../src/mainframe.cpp:1985
 msgid "Copy &Magnet URI\tCtrl+C"
 msgstr ""
 
-#: ../src/mainframe.cpp:2025
+#: ../src/mainframe.cpp:1985
 msgid "Copy Magnet URI"
+msgstr ""
+
+#: ../src/mainframe.cpp:1997
+msgid "Adding torrent files, wait please..."
+msgstr ""
+
+#: ../src/mainframe.cpp:2011
+msgid ""
+"Do you want apply default config for all torrents, aka. select all files?"
 msgstr ""
 
 #: ../src/peerlistctrl.cpp:57 ../src/peerlistctrl.cpp:72
@@ -1992,6 +2081,10 @@ msgstr ""
 msgid "&Hide Taskbar Icon"
 msgstr ""
 
+#: ../src/swashtrayicon.cpp:100
+msgid "Open &URL/Magnet URI\tCtrl+U"
+msgstr ""
+
 #: ../src/swashtrayicon.cpp:106
 msgid "E&xit"
 msgstr ""
@@ -2185,15 +2278,19 @@ msgstr ""
 msgid "Enable preview video file(s)"
 msgstr ""
 
-#: ../src/torrentsetting.cpp:184
+#: ../src/torrentsetting.cpp:180
+msgid "Sequential Download"
+msgstr ""
+
+#: ../src/torrentsetting.cpp:187
 msgid "Storage Allocation Mode:"
 msgstr ""
 
-#: ../src/torrentsetting.cpp:228
+#: ../src/torrentsetting.cpp:231
 msgid "Seed Ratio:"
 msgstr ""
 
-#: ../src/torrentsetting.cpp:282
+#: ../src/torrentsetting.cpp:289
 msgid "Choose default download directory"
 msgstr ""
 
@@ -2260,9 +2357,9 @@ msgid "Confirm remove tracker"
 msgstr ""
 
 #: ../src/urldialog.cpp:48
-msgid "Enter Torrent URL"
+msgid "Enter Torrent URL or Magnet URI"
 msgstr ""
 
 #: ../src/urldialog.cpp:54
-msgid "URL:"
+msgid "URL or Magnet URI(Please use carriage return to seperate multiples):"
 msgstr ""

@@ -808,7 +808,7 @@ void BitTorrentSession::RemoveTorrent( std::shared_ptr<torrent_t>& torrent, bool
 	//wxString resumefile = app_prefix + _T( ".resume" );
 	wxString torrentconffile = app_prefix + _T( ".conf" );
 	wxString torrentfile = app_prefix + _T( ".torrent" );
-	wxString partsfile = wxGetApp().SaveTorrentsPath() + (_T(".")) + hstr + _T( ".parts" );
+	wxString partsfile = wxGetApp().SaveTorrentsPath() + _T(".") + hstr + _T( ".parts" );
 
 	if( ( wxFileExists( fastresumefile ) ) &&
 			( !wxRemoveFile( fastresumefile ) ) )

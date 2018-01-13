@@ -278,7 +278,7 @@
 					<object class="sizeritem">
 						<object class="wxChoice" name="wxID_ANY" variable="m_choice_enabled_protocols" member="yes">
 							<content>
-								<item>Both</item>
+								<item>TCP and μTP</item>
 								<item>TCP</item>
 								<item>μTP</item>
 							</content>
@@ -300,7 +300,7 @@
 							<content>
 								<item>Fixed Slots</item>
 								<item>Rate Based</item>
-								<item>Bittyrant</item>
+								<item>BitTyrant</item>
 							</content>
 						</object>
 						<flag>wxALL|wxALIGN_LEFT|wxALIGN_CENTER_VERTICAL</flag>
