@@ -1530,15 +1530,15 @@ void BitTorrentSession::StopTorrent( std::shared_ptr<torrent_t>& torrent )
 	{
 		enum torrent_state state = ( enum torrent_state ) torrent->config->GetTorrentState();
 
+		torrent->config->SetTorrentState( TORRENT_STATE_STOP );
+		torrent->config->Save();
+
 		//XXX redundant ? StartTorrent below will call the same thing
 		if( ( state == TORRENT_STATE_START ) ||
 				( state == TORRENT_STATE_FORCE_START ))
 		{
 			PostQueueUpdateEvent();
 		}
-
-		torrent->config->SetTorrentState( TORRENT_STATE_STOP );
-		torrent->config->Save();
 	}
 }
 
