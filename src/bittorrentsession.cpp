@@ -2555,7 +2555,7 @@ bool BitTorrentSession::HandleAddTorrentAlert(lt::add_torrent_alert * p)
 
 			if( torrent->config->GetQIndex() == -1 )
 			{
-				torrents_t::const_reverse_iterator it = m_torrent_queue.rbegin();
+				auto it = m_torrent_queue.rbegin();
 
 				int qidx = 0, index = m_torrent_queue.size();
 				while( it != m_torrent_queue.rend() )
