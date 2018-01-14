@@ -51,6 +51,7 @@ Fix: Crash while deleting torrent with no metadata
 Fix: Deadlock issue in load magnet URI
 Fix: Crash/assertion failure to start Magnet URI with no metadata
 Fix: Force start can't start torrent by first call
+Fix: Crash after removing torrents
 
 0.0.7
 New: 64 bits support

@@ -788,6 +788,10 @@ void BitTorrentSession::RemoveTorrent( std::shared_ptr<torrent_t>& torrent, bool
 		torrents_t::iterator torrent_it = m_torrent_queue.begin() + idx;
 		m_running_torrent_map.erase( wxString(( *torrent_it )->hash) );
 		m_torrent_queue.erase( torrent_it );
+		for(size_t i = idx; i < m_torrent_queue.size(); ++i)
+		{
+			m_running_torrent_map[ wxString(m_torrent_queue[i]->hash) ] = i;
+		}
 	}
 
 	lt::torrent_handle& h = torrent->handle;
