@@ -1,3 +1,31 @@
+0.0.8 2018.1.14
+New: Upper limit of number of log files
+New: Drag and drop torrent files
+New: Squential download
+New: Enable/disable anonymous mode
+New: Enable/disable OS cache
+New: Enable/disable supper seeding
+New: Enable/disable prefer UDP trackers
+New: Rate limite IP overhead
+New: Enabled protocol selection
+New: Choking Algorithm selection
+New: Seeding Choking Algorithm selection
+New: Allow multiple connections per IP
+New: Active seeds limits
+New: Don't count slow torrents
+New: Config DHT bootstrap nodes
+Fix: Enable preview download config won't apply
+Fix: Refactor GeneralSettingPanel
+Fix: Change URL dialog to indicate it supports Magnet URI
+Fix: Set Port Max/Min after the settings applied
+Fix: Issue to convert non-ASCII file name
+Fix: Bug in string converting in supporting bc://(not tested)
+Fix: Crash while deleting torrent with no metadata
+Fix: Deadlock issue in load magnet URI
+Fix: Crash/assertion failure to start Magnet URI with no metadata
+Fix: Force start can't start torrent by first call
+Fix: Crash after removing torrents
+
 0.0.7
 Changes since 0.0.6
 Fix: Crash on startup if no icons

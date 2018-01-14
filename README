@@ -53,34 +53,6 @@ Fix: Crash/assertion failure to start Magnet URI with no metadata
 Fix: Force start can't start torrent by first call
 Fix: Crash after removing torrents
 
-0.0.7
-New: 64 bits support
-New: Checkbox indicator on File list dialog
-New: Click column to sort on File list control
-New: Free disk space on File list dialog
-New: Select all/none on File list dialog
-New: Double click to open the directory of the torrent or open the file by default application
-New: Preview video files
-New: Magnet URI support
-New: Fast resume
-New: Single instance
-New: Command line support
-New: Add/remove/copy tracker
-New: Crash dumper
-New: Start on OS startup(Windows only)
-New: Associate .torrent and Magnet URI to this application(Windows only)
-New: GeoIP support(v4/v6)
-New: DHT status
-New: Save/load DHT
-Fix: Clear zombie torrent in UI controls
-Fix: List selection indicator resizing issue
-Fix: Remove temporary files while remove torrent
-Fix: Lots of race conditions and bugs
-Performance improvement
-Change help&forum URL to github
-Update libtorrent to latest
-Update to wxWidgets 3.1
-
 
 Author:
 ------
