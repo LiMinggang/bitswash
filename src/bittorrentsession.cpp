@@ -935,19 +935,21 @@ void BitTorrentSession::MergeTorrent( std::shared_ptr<torrent_t>& dst_torrent, s
 	if(torrent_handle.is_valid())
 	{
 		std::vector<lt::announce_entry> const& trackers = src_torrent->info->trackers();
-		for( size_t i = 0; i < trackers.size(); ++i )
+		for(auto tracker : trackers)
 		{
-			torrent_handle.add_tracker( trackers.at( i ) );
+			torrent_handle.add_tracker( tracker );
 		}
 
 		std::vector<lt::web_seed_entry> const& web_seeds = src_torrent->info->web_seeds();
-
-		for( std::vector<lt::web_seed_entry>::const_iterator i = web_seeds.begin(); i != web_seeds.end(); ++i )
+		for(auto web_seed : web_seeds)
 		{
-			if( i->type == lt::web_seed_entry::url_seed )
-			{ torrent_handle.add_url_seed( i->url ); }
-			else if( i->type == lt::web_seed_entry::http_seed )
-			{ torrent_handle.add_http_seed( i->url ); }
+			if( web_seed.type == lt::web_seed_entry::url_seed )
+			{ torrent_handle.add_url_seed( web_seed.url ); }
+			else if( web_seed.type == lt::web_seed_entry::http_seed )
+			{ torrent_handle.add_http_seed( web_seed.url ); }
+			else
+			{wxLogError(_T("Unsupported web seed type %d"), web_seed.type);}
+				
 		}
 	}
 }
@@ -1601,6 +1603,7 @@ void BitTorrentSession::MoveTorrentDown( std::shared_ptr<torrent_t>& torrent )
 {
 	wxMutexLocker ml( m_torrent_queue_lock );
 	int idx = find_torrent_from_hash( wxString(torrent->hash));
+
 	if( idx < 0 )
 	{
 		wxLogError( _T( "MoveTorrentDown %s: Torrent not found in queue" ), torrent->name.c_str() );
@@ -1772,6 +1775,7 @@ void BitTorrentSession::RecheckTorrent( std::shared_ptr<torrent_t>& torrent )
 	{
 		return;
 	}
+
 	enum torrent_state prev_state = ( enum torrent_state ) torrent->config->GetTorrentState();
 
 	if( ( prev_state == TORRENT_STATE_START ) ||
