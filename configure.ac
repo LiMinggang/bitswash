@@ -1,704 +1,394 @@
-#                                               -*- Autoconf -*-
-# Process this file with autoconf to produce a configure script.
+dnl Process this file with autoconf to produce a configure script.
+dnl Created by Anjuta application wizard.
 
-# $Id$
-
-AC_PREREQ([2.63])
-
-AC_INIT([bitswash],[0.0.7],[minggang.li@gmail.com])
-AC_CONFIG_SRCDIR([src/bitswash.cpp])
-AC_CONFIG_AUX_DIR([build-aux])
-AC_CONFIG_MACRO_DIR([m4])
-ALL_LINGUAS="zh_CN zh_TW ru_RU de_DE nb_NO"
-AM_GNU_GETTEXT
-AC_SUBST(ALL_LINGUAS)
-# Silencing build output (automake-1.11)
-m4_ifdef([AM_SILENT_RULES],[AM_SILENT_RULES([yes])])
+AC_INIT(configure.ac)
+AM_INIT_AUTOMAKE(bitswash, 0.0.7)
+#libtorrent is not using config.h .. guess we've to sticked to it
+#AM_CONFIG_HEADER(config.h)
+#AM_MAINTAINER_MODE
 
 
-###############################################################################
-dnl ---------------------------------------------------------------------------
-dnl interface version info
-dnl ---------------------------------------------------------------------------
-dnl Advanced information about versioning:
-dnl   * "Writing shared libraries" by Mike Hearn
-dnl         http://navi.cx/~mike/writing-shared-libraries.html
-dnl   * libtool.info chapter "Versioning"
-dnl   * libtool.info chapter "Updating library version information"
-dnl ---------------------------------------------------------------------------
-dnl Versioning:
-dnl  - CURRENT (Major):  Increment if the interface has changes. AGE is always
-dnl                      *changed* at the same time.
-dnl  - AGE (Micro):      Increment if any interfaces have been added; set to 0
-dnl                      if any interfaces have been removed. Removal has
-dnl                      precedence over adding, so set to 0 if both happened.
-dnl                      It denotes upward compatibility.
-dnl  - REVISION (Minor): Increment any time the source changes; set to
-dnl                      0 if you incremented CURRENT.
-dnl
-dnl  To summarize. Any interface *change* increment CURRENT. If that interface
-dnl  change does not break upward compatibility (ie it is an addition),
-dnl  increment AGE, Otherwise AGE is reset to 0. If CURRENT has changed,
-dnl  REVISION is set to 0, otherwise REVISION is incremented.
-dnl ---------------------------------------------------------------------------
-
-m4_define([VERSION_INFO_CURRENT],[9])
-m4_define([VERSION_INFO_REVISION],[0])
-m4_define([VERSION_INFO_AGE],[0])
-INTERFACE_VERSION_INFO=VERSION_INFO_CURRENT:VERSION_INFO_REVISION:VERSION_INFO_AGE
-AC_SUBST(INTERFACE_VERSION_INFO)
-###############################################################################
-
-
-###############################################################################
-# Start
-###############################################################################
-
-AS_ECHO
-AS_ECHO "Building $PACKAGE_STRING"
-
-
-###############################################################################
-# Performing some basic checks and initializing the build system
-###############################################################################
-
-AS_ECHO
-AS_ECHO "Checking for a C/C++ compiler to use:"
+AC_ISC_POSIX
 AC_PROG_CC
+AM_PROG_CC_STDC
+AC_HEADER_STDC
+
+
+# Check for wx
+AM_OPTIONS_WXCONFIG
+AM_PATH_WXCONFIG(3.1.0, wx31=1, wxcheck26=0 )
+WXAUILIB="\$(top_builddir)/compat/wxaui/lib/libwxaui.a"
+WXABOUTDLG="\$(top_builddir)/compat/wx/aboutdlgg.a"
+if test "$wx28" = 1; then
+  AC_DEFINE_UNQUOTED(WXVER, ${WX_VERSION//./}, [WXVERSION wxwidgets version])
+  WXAUI=""
+  WXAUIDEP=""
+  WXAUIINCL=""
+  WXAUIDIR=""
+
+  WXABOUTDLGDEP=""
+  WXABOUTDLGDIR=""
+  WXABOUTDLGINCL=""
+fi
+
+if test "$wxcheck26" = 1 ; then 
+  AM_PATH_WXCONFIG(2.6.0, wx26=1)
+  if test "$wx26" != 1 ; then
+	  AC_MSG_ERROR([
+		wxWidgets must be installed on your system but wx-config 
+		script couldn't be found. Please check that wx-config is 
+		in path or specified by --with-wx-config=path flag, the 
+		directory where wxWidgets libraries are installed (returned 
+		by 'wx-config --libs' command) is in LD_LIBRARY_PATH or
+		equivalent variable and wxWidgets version is 2.6.0 or above.
+	])
+
+  fi
+  AC_DEFINE_UNQUOTED(WXVER, ${WX_VERSION//./}, [WXVERSION wxwidgets version])
+
+  WXAUI="\$(WXAUILIB)"
+  WXAUIDEP="\$(WXAUILIB)"
+  WXAUIINCL="-I\$(top_builddir)/compat/wxaui/include"
+  WXAUIDIR="\$(top_builddir)/compat/wxaui"
+
+  WXABOUTDLGDEP="\$(WXABOUTDLG)"
+  WXABOUTDLGDIR="\$(top_builddir)/compat/wx"
+  WXABOUTDLGINCL="-I\$(top_builddir)/compat"
+fi
+
+dnl make WXAUI and WXAUIDIR visible to Makefiles
+
+AC_SUBST([WXAUILIB])
+AC_SUBST([WXAUI])
+AC_SUBST([WXAUIDEP])
+AC_SUBST([WXAUIDIR])
+AC_SUBST([WXAUIINCL])
+
+dnl uses wxaboutdialog
+AC_SUBST([WXABOUTDLG])
+AC_SUBST([WXABOUTDLGDEP])
+AC_SUBST([WXABOUTDLGDIR])
+AC_SUBST([WXABOUTDLGINCL])
+AC_DEFINE_UNQUOTED(wxUSE_ABOUTDLG, 1, [wxUSE_ABOUTDLG use wxAboutDlg])
+
 AC_PROG_CPP
-AC_PROG_CC_C_O
 AC_PROG_CXX
-AC_PROG_CXXCPP
-AC_PROG_CXX_C_O
 
-AS_ECHO
-AS_ECHO "Checking system type:"
-AC_CANONICAL_BUILD
-AC_CANONICAL_HOST
-AC_CANONICAL_TARGET
-
-AS_ECHO
-AS_ECHO "Initializing Automake:"
-AM_INIT_AUTOMAKE([1.11 foreign])
-AM_MAINTAINER_MODE([enable])
-
-AS_ECHO
-AS_ECHO "Initializing Libtool:"
-LT_PREREQ([2.2.6])
-LT_INIT
-
-
-###############################################################################
-# Checking for needed base libraries
-###############################################################################
-
-AS_ECHO
-AS_ECHO "Checking for posix thread support:"
-
-AX_PTHREAD()
-
-LIBS="$PTHREAD_LIBS $LIBS"
-CFLAGS="$PTHREAD_CFLAGS $CFLAGS"
-CC="$PTHREAD_CC"
-CXXFLAGS="$CXXFLAGS -ftemplate-depth=120 -Wno-format-zero-length"
-
-AS_ECHO "Checking for visibility support:"
-AC_CACHE_CHECK([for __attribute__((visibility("hidden")))],
-    ac_cv_hidden_visibility_attribute, [
-    echo 'int __attribute__ ((visibility ("hidden"))) foo (void) { return 1; }' > visibility_conftest.c
-    ac_cv_hidden_visibility_attribute=no
-    if AC_TRY_COMMAND(${CC-cc} -fvisibility=hidden -S visibility_conftest.c -o visibility_conftest.s 1>&AS_MESSAGE_LOG_FD);
-    then
-        AS_ECHO "found"
-        ac_cv_hidden_visibility_attribute=yes
-    fi
-    rm -f visibility_conftest.*
-])
-
-AS_ECHO
-AS_ECHO "Checking for boost libraries:"
-
-AX_BOOST_BASE([1.53])
-
-AX_BOOST_SYSTEM()
-AS_IF([test -z "$BOOST_SYSTEM_LIB"],
-      [AC_MSG_ERROR(Boost.System library not found. Try using --with-boost-system=lib)])
-
-AX_BOOST_CHRONO()
-AS_IF([test -z "$BOOST_CHRONO_LIB"],
-      [AC_MSG_ERROR(Boost.Chrono library not found. Try using --with-boost-chrono=lib)])
-
-AX_BOOST_RANDOM()
-AS_IF([test -z "$BOOST_RANDOM_LIB"],
-      [AC_MSG_ERROR(Boost.Random library not found. Try using --with-boost-random=lib)])
-
-CPPFLAGS="$BOOST_CPPFLAGS $CPPFLAGS"
-LDFLAGS="$BOOST_LDFLAGS $LDFLAGS"
-LIBS="$BOOST_CHRONO_LIB $BOOST_RANDOM_LIB $LIBS"
-
-###############################################################################
-# Checking for functions and other stuffs
-###############################################################################
-
-
-AS_ECHO
-AS_ECHO "Checking for pkg-config:"
-
-PKG_PROG_PKG_CONFIG([0.20])
-
-AS_ECHO
-AS_ECHO "Checking for functions and headers:"
-
-AC_SYS_LARGEFILE
+AC_CACHE_SAVE
 AC_PROG_INSTALL
-AC_PROG_LN_S
 AC_PROG_MAKE_SET
 
-AC_CHECK_FUNCS([clock_gettime], [],
-    [AC_CHECK_LIB([rt], [clock_gettime], [],
-      [AC_CHECK_LIB([posix4], [clock_gettime], [],
-      [AC_MSG_WARN([clock_gettime function not found.])])])]
-)
+dnl Set program prefix 
+test "$prefix" = "NONE" && prefix=/usr/local
+PREFIX=$prefix
+AC_SUBST(PREFIX)
+AC_DEFINE_UNQUOTED(PREFIX, "$PREFIX", [PREFIX program prefix])
+
+dnl Set gettext package name
+GETTEXT_PACKAGE=bitswash
+AC_SUBST(GETTEXT_PACKAGE)
+AC_DEFINE_UNQUOTED(GETTEXT_PACKAGE,"$GETTEXT_PACKAGE", [GETTEXT package name])
+
+dnl Add the languages which your application supports here.
+ALL_LINGUAS="de_DE ru_RU zh_CN zh_TW"
+AM_GLIB_GNU_GETTEXT
+AC_SUBST(ALL_LINGUAS)
 
 
-dnl Pass some build options to .pc file
-COMPILETIME_OPTIONS=""
-
-
-###############################################################################
-# Setting configure options
-###############################################################################
-
-AC_ARG_ENABLE(
-  [logging],
-  [AS_HELP_STRING(
-    [--enable-logging],
-    [enable logging alerts [default=yes]])],
-  [[ARG_ENABLE_LOGGING=$enableval]],
-  [[ARG_ENABLE_LOGGING=yes]]
-)
-
-AC_ARG_ENABLE(
-  [debug],
-  [AS_HELP_STRING(
-    [--enable-debug],
-    [enable debug build [default=no]])],
-  [
-   ARG_ENABLE_DEBUG=$enableval
-   ac_arg_enable_debug=$enableval
-  ],
-  [
-   ARG_ENABLE_DEBUG=no
-   ac_arg_enable_debug=no
-  ]
-)
-
-AC_ARG_ENABLE(
-  [dht],
-  [AS_HELP_STRING(
-    [--enable-dht],
-    [enable dht support [default=yes]])],
-  [[ARG_ENABLE_DHT=$enableval]],
-  [[ARG_ENABLE_DHT=yes]]
-)
-
-AC_ARG_ENABLE(
-  [encryption],
-  [AS_HELP_STRING(
-    [--enable-encryption],
-    [enable encryption support (requires OpenSSL to be installed on your system, you can use --with-openssl to set the path) [default=yes]])],
-  [[ARG_ENABLE_ENCRYPTION=$enableval]],
-  [[ARG_ENABLE_ENCRYPTION=yes]]
-)
-
-AC_ARG_ENABLE(
-  [export-all],
-  [AS_HELP_STRING(
-    [--enable-export-all],
-    [export all symbols from libtorrent, including non-public ones [default=no]])],
-  [[ARG_ENABLE_FULL_EXPORT=$enableval]],
-  [[ARG_ENABLE_FULL_EXPORT=no]]
-)
-
-AC_ARG_ENABLE(
-  [pool-allocators],
-  [AS_HELP_STRING(
-    [--enable-pool-allocators],
-    [enable pool allocators for send buffers [default=yes]])],
-  [[ARG_ENABLE_POOL_ALLOC=$enableval]],
-  [[ARG_ENABLE_POOL_ALLOC=yes]]
-)
-
-AC_ARG_ENABLE(
-  [invariant-checks],
-  [AS_HELP_STRING(
-    [--enable-invariant-checks],
-    [enable invariant checks (use value "full" to turn on extra expensive invariant checks) @<:@default=yes if debug is enabled, no otherwhise@:>@])],
-  [[ARG_ENABLE_INVARIANT=$enableval]],
-  [
-   AS_IF([test "x$ac_arg_enable_debug" = "xyes"],
-         [ARG_ENABLE_INVARIANT=yes],
-         [ARG_ENABLE_INVARIANT=no])
-  ]
-)
-
-AC_ARG_ENABLE(
-  [deprecated-functions],
-  [AS_HELP_STRING(
-    [--enable-deprecated-functions],
-    [enable deprecated functions in the API [default=yes]])],
-  [[ARG_ENABLE_DEPRECATED=$enableval]],
-  [[ARG_ENABLE_DEPRECATED=yes]]
-)
-
-AC_ARG_ENABLE(
-  [disk-stats],
-  [AS_HELP_STRING(
-    [--enable-disk-stats],
-    [enable disk activity logging feature [default=no]])],
-  [[ARG_ENABLE_DISK_STATS=$enableval]],
-  [[ARG_ENABLE_DISK_STATS=no]]
-)
-
-AC_ARG_ENABLE(
-  [examples],
-  [AS_HELP_STRING(
-    [--enable-examples],
-    [build example files [default=no]])],
-  [[ARG_ENABLE_EXAMPLES=$enableval]],
-  [[ARG_ENABLE_EXAMPLES=no]]
-)
-
-AC_ARG_ENABLE(
-  [tests],
-  [AS_HELP_STRING(
-    [--enable-tests],
-    [build test files [default=no]])],
-  [[ARG_ENABLE_TESTS=$enableval]],
-  [[ARG_ENABLE_TESTS=no]]
-)
-
-AC_ARG_ENABLE(
-  [python-binding],
-  [AS_HELP_STRING(
-    [--enable-python-binding],
-    [build python bindings [default=no]])],
-  [[ARG_ENABLE_PYTHON_BINDING=$enableval]],
-  [[ARG_ENABLE_PYTHON_BINDING=no]]
-)
 
 AC_ARG_WITH(
-  [libiconv],
-  [AS_HELP_STRING(
-    [--with-libiconv],
-    [enable linking against system libiconv [default=no]])],
-  [[ARG_WITH_LIBICONV=$withval]],
-  [[ARG_WITH_LIBICONV=no]]
+	    [libtorrent],
+	    AS_HELP_STRING([--with-libtorrent=shipped|system],[Use libttorent shipped or installed libtorrent]),
+	    [[libtorrent=$withval]],
+	    [[libtorrent=shipped]]
 )
 
-###############################################################################
-# Checking configure options
-###############################################################################
+dnl Check the value for --with-libtorrent switch
+AC_MSG_CHECKING([where libtorrent is install])
+case "$libtorrent" in
+	"shipped")
+		AC_MSG_RESULT(shipped)
+		;;
+	"system")
+		AC_MSG_RESULT(system)
+		AC_CHECK_LIB(z, main, ,
+			     AC_MSG_ERROR([bitswash depends on libtorrent but libtorrent was not found on your system.])
+		)
+		;;
+	"no")
+		AC_MSG_RESULT()
+		AC_MSG_ERROR([bitswash depends on libtorrent, you must specify either "system" or "shipped".])
+		;;
+	*)
+		AC_MSG_RESULT()
+		AC_MSG_ERROR([Unknown libtorrent option "$libtorrent". Use either "system" or "shipped".])
+		;;
+esac
 
-AS_ECHO
-AS_ECHO "Checking build options:"
+AM_PROG_LIBTOOL
+LIBTORRENTLIB="\$(top_builddir)/libtorrent/src/.libs/libtorrent.a"
+if [[ "$libtorrent" = "shipped" ]]; then
+enable_shared=no
+	LIBTORRENT="\$(LIBTORRENTLIB)"
+	LIBTORRENTDEP="\$(LIBTORRENTLIB)"
+	#LIBTORRENT="-L\$(top_builddir)/libtorrent/src/.libs -ltorrent"
+	LIBTORRENTDIR="\$(top_builddir)/libtorrent"
+	LIBTORRENTINCL="-I\$(top_srcdir)/libtorrent/include -I\$(top_srcdir)/libtorrent/include/libtorrent"
+	AC_CONFIG_FILES(libtorrent/Makefile libtorrent/src/Makefile libtorrent/include/Makefile libtorrent/test/Makefile libtorrent/libtorrent.pc)
+elif [[ "$libtorrent" = "system" ]]; then
+	LIBTORRENT="-ltorrent"
+	LIBTORRENTDEP=""
+	LIBTORRENTDIR=""
+	LIBTORRENTINCL=""
+fi
 
-AC_MSG_CHECKING([whether deprecated functions should be enabled])
-AS_CASE(["$ARG_ENABLE_DEPRECATED"],
-  ["yes"|"on"], [
-      AC_MSG_RESULT([yes])
-    ],
-  ["no"|"off"], [
-      AC_MSG_RESULT([no])
-      AC_DEFINE([TORRENT_NO_DEPRECATE],[1],[Define to exclude all deprecated functions from the API.])
-      COMPILETIME_OPTIONS="$COMPILETIME_OPTIONS -DTORRENT_NO_DEPRECATE "
-    ],
-  [AC_MSG_RESULT([$ARG_ENABLE_DEPRECATED])
-   AC_MSG_ERROR([Unknown option "$ARG_ENABLE_DEPRECATED". Use either "yes" or "no".])]
+
+dnl make LIBTORRENT and LIBTORRENTDIR visible to Makefiles
+AC_SUBST([LIBTORRENTLIB])
+AC_SUBST([LIBTORRENTDEP])
+AC_SUBST([LIBTORRENT])
+AC_SUBST([LIBTORRENTDIR])
+AC_SUBST([LIBTORRENTINCL])
+
+dnl Check for pthreads and boost libraries.
+ACX_PTHREAD
+
+AX_BOOST_DATE_TIME
+
+dnl check that Boost.DateTime was found:
+if test -z "$BOOST_DATE_TIME_LIB"; then
+AC_MSG_ERROR([Unable to find Boost.DateTime library, currently this is required.])
+fi
+
+AX_BOOST_FILESYSTEM
+
+dnl check that Boost.Filesystem was found:
+if test -z "$BOOST_FILESYSTEM_LIB"; then
+AC_MSG_ERROR([Unable to find Boost.Filesystem library, currently this is required.])
+fi
+
+AX_BOOST_THREAD
+
+dnl check that Boost.Thread was found:
+if test -z "$BOOST_THREAD_LIB"; then
+AC_MSG_ERROR([Unable to find Boost.Thread library, currently this is required.])
+fi
+
+AX_BOOST_REGEX
+
+dnl check that Boost.Regex was found:
+if test -z "$BOOST_REGEX_LIB"; then
+AC_MSG_RESULT([Unable to find Boost.Regex library, example test_client will not be build.])
+BUILD_TESTCLIENT=no;
+fi
+
+dnl try different ways of resolving gethostbyname
+AC_CHECK_FUNC(gethostbyname, ,
+AC_CHECK_LIB(resolv, gethostbyname, ,
+AC_CHECK_LIB(nsl, gethostbyname, ,
+AC_CHECK_LIB(ws2_32, main, ,
+AC_CHECK_LIB(wsock32, main, ,
+AC_MSG_ERROR([gethostbyname not found. Stopped.])))))
 )
 
-AC_MSG_CHECKING([whether debug build should be enabled])
-AS_CASE(["$ARG_ENABLE_DEBUG"],
-  ["yes"], [
-      AC_MSG_RESULT([yes])
-      AC_DEFINE([TORRENT_DEBUG],[1],[Define to enable debug code.])
-      COMPILETIME_OPTIONS="$COMPILETIME_OPTIONS -DTORRENT_DEBUG "
-      DEBUGFLAGS="-g"
-   ],
-  ["no"], [
-      AC_MSG_RESULT([no])
-      AC_DEFINE([NDEBUG],[1],[Define to disable debug code.])
-      #COMPILETIME_OPTIONS="$COMPILETIME_OPTIONS -DNDEBUG "
-      DEBUGFLAGS="-Os"
-   ],
-  [AC_MSG_RESULT([$ARG_ENABLE_DEBUG])
-   AC_MSG_ERROR([Unknown option "$ARG_ENABLE_DEBUG". Use either "yes" or "no".])]
+dnl find out what kind of logging to use
+AC_ARG_WITH(
+[logging],
+AS_HELP_STRING([--with-logging=none|default|verbose],[Specify how much logging to use. Default is none.]),
+[[logging=$withval]],
+[[logging=none]]
+)
+dnl Check the value for the --with-logging switch
+AC_MSG_CHECKING([what form of logging to use])
+case "$logging" in
+"none")
+	AC_MSG_RESULT(none)
+	;;
+"default")
+	AC_MSG_RESULT(default)
+	AC_DEFINE(TORRENT_LOGGING,,[define to use some logging])
+	;;
+"verbose")
+	AC_MSG_RESULT(verbose)
+	AC_DEFINE(TORRENT_VERBOSE_LOGGING,,[define to use verbose logging])
+	;;
+*)
+	AC_MSG_RESULT()
+	AC_MSG_ERROR([Unknown logging option "$logging". Use either "none", "default" or "verbose".])
+	;;
+esac
+
+
+dnl Check whether the examples should be build
+AC_ARG_ENABLE(
+[examples],
+AS_HELP_STRING([--enable-examples],[Build the examples. Default is not to build them.]),
+[[examples=$enableval]],
+[[examples=no]]
+)
+dnl Check the value of the --with-examples switch
+AC_MSG_CHECKING([if the examples should be build])
+case "$examples" in
+"yes")
+	AC_MSG_RESULT(yes)
+	EXAMPLESDIR="examples"
+	;;
+"no")
+	AC_MSG_RESULT(no)
+	EXAMPLESDIR=""
+	;;
+"")
+	AC_MSG_RESULT(yes (default))
+	EXAMPLESDIR="examples"
+	;;
+*)
+	AC_MSG_RESULT()
+	AC_MSG_ERROR([Unknown --enable-examples option "$examples". Use either "yes" or "no".])
+	;;
+esac
+dnl make $examples visible to Makefiles
+AC_SUBST([EXAMPLESDIR])
+
+	
+dnl find out what kind of dht-support to use
+AC_ARG_WITH(
+	[dht],
+	AS_HELP_STRING([--with-dht=on|off|logging],[Specify how to use DHT support. Option logging will add extra logging. Default is on.]),
+	[[dht=$withval]],
+	[[dht=on]]
+)
+dnl Check the value for the --with-dht switch
+AC_MSG_CHECKING([how to use DHT])
+case "$dht" in
+	"on")
+		AC_MSG_RESULT(on)
+		;;
+	"off")
+		AC_MSG_RESULT(off)
+		AC_DEFINE(TORRENT_DISABLE_DHT,,[define not to use DHT support])
+		;;
+	"logging")
+		AC_MSG_RESULT(logging)
+		AC_DEFINE(TORRENT_DHT_VERBOSE_LOGGING,,[define to use DHT support with extra logging])
+		;;
+	*)
+		AC_MSG_RESULT()
+		AC_MSG_ERROR([Unknown dht option "$dht". Use either "on", "off" or "logging".])
+		;;
+esac
+AM_CONDITIONAL(USE_DHT, test "x$dht" != "xoff")
+
+dnl encryption support.
+AC_ARG_WITH(
+       [encryption],
+       AS_HELP_STRING([--with-encryption=on|off],[Specify how to use encryption support. Default is on.]),
+       [[encryption=$withval]],
+       [[encryption=on]]
 )
 
-AC_MSG_CHECKING([whether invariant check should be enabled]) #depends: $ac_arg_enable_debug
-AS_CASE(["$ARG_ENABLE_INVARIANT"],
-  ["yes"|"on"], [
-      AC_MSG_RESULT([yes])
-      AS_IF([test "x$ac_arg_enable_debug" = "xno"],
-            [AC_MSG_ERROR([invariant-checks: this setting only affects debug build. Try using --enable-debug.])])
-    ],
-  ["no"|"off"], [
-      AC_MSG_RESULT([no])
-      AS_IF([test "x$ac_arg_enable_debug" = "xyes"],
-            [AC_DEFINE([TORRENT_DISABLE_INVARIANT_CHECKS],[1],[Define to disable internal invariant checks. Asserts are still enabled while debug is on.])])
-    ],
-  ["full"], [
-      AC_MSG_RESULT([full])
-      AS_IF([test "x$ac_arg_enable_debug" = "xyes"],
-            [AC_DEFINE([TORRENT_EXPENSIVE_INVARIANT_CHECKS],[1],[Define to enable extra expensive invariant checks.])],
-            [AC_MSG_ERROR([invariant-checks: this setting only affects debug build. Try using --enable-debug.])])
-    ],
-  [AC_MSG_RESULT([$ARG_ENABLE_INVARIANT])
-   AC_MSG_ERROR([Unknown option "$ARG_ENABLE_INVARIANT". Use either "yes", "no" or "full".])]
+dnl Check the value for the --with-encryption switch
+AC_MSG_CHECKING([how to use encryption])
+case "$encryption" in
+       "on")
+               AC_MSG_RESULT(on)
+                CHECK_SSL()
+               AC_DEFINE(TORRENT_USE_OPENSSL,,[define to use openssl with libtorrent])
+
+               ;;
+       "off")
+               AC_MSG_RESULT(off)
+               AC_DEFINE(TORRENT_DISABLE_ENCRYPTION,,[define not to use encryption support])
+               ;;
+       *)
+               AC_MSG_RESULT()
+               AC_MSG_ERROR([Unknown encryption option "$encryption". Use either "on" or "off".])
+               ;;
+esac
+AM_CONDITIONAL(USE_ENCRYPTION, test "x$encryption" != "xoff")
+
+
+dnl the user can choose which zlib to use
+AC_ARG_WITH(
+	[zlib],
+	AS_HELP_STRING([--with-zlib=shipped|system],[Specify the zlib to use, shipped or system. Default is to autodetect system and fallback to shipped.]),
+	[[zlib=$withval]],
+	[[zlib=detect]]
 )
+dnl Check the value for the --with-zlib switch
+AC_MSG_CHECKING([which zlib implementation to use])
+case "$zlib" in
+	"detect")
+		AC_MSG_RESULT([autodetect])
+		AC_CHECK_LIB(z, main,
+			[zlib="system"],
+			[zlib="shipped"]
+		)
+		;;
+	"shipped")
+		AC_MSG_RESULT(shipped)
+		;;
+	"system")
+		AC_MSG_RESULT(system)
+		AC_CHECK_LIB(z, main, ,
+			AC_MSG_ERROR([libtorrent depends on zlib but zlib was not found on your system.])
+		)
+		;;
+	"no")
+		AC_MSG_RESULT()
+		AC_MSG_ERROR([libtorrent depends on zlib, you must specify either "system" or "shipped".])
+		;;
+	*)
+		AC_MSG_RESULT()
+		AC_MSG_ERROR([Unknown zlib option "$zlib". Use either "system" or "shipped".])
+		;;
+esac
+if [[ "$zlib" = "shipped" ]]; then
+	ZLIB="\$(top_builddir)/libtorrent/zlib/libzlib.la"
+	ZLIBDIR="zlib"
+	ZLIBINCL="-I\$(top_srcdir)/libtorrent/zlib"
+	AC_CONFIG_FILES(libtorrent/zlib/Makefile)
+elif [[ "$zlib" = "system" ]]; then
+	ZLIB="-lz"
+	ZLIBDIR=""
+	ZLIBINCL=""
+fi
 
-AC_MSG_CHECKING([whether logging to disk should be enabled])
-AS_CASE(["$ARG_ENABLE_LOGGING"],
-  ["yes"|"default"], [
-      AC_MSG_RESULT([yes])
-    ],
-  ["no"|"none"], [
-      AC_MSG_RESULT([no])
-      AC_DEFINE([TORRENT_DISABLE_LOGGING],[1],[Define to disable support for logging alerts])
-      COMPILETIME_OPTIONS="$COMPILETIME_OPTIONS -DTORRENT_DISABLE_LOGGING "
-    ],
-  [AC_MSG_RESULT([$ARG_ENABLE_LOGGING])
-   AC_MSG_ERROR([Unknown option "$ARG_ENABLE_LOGGING". Use either "yes" or "no"])]
+dnl make ZLIB and ZLIBDIR visible to Makefiles
+AC_SUBST([ZLIB])
+AC_SUBST([ZLIBDIR])
+AC_SUBST([ZLIBINCL])
+
+
+#disable example
+EXAMPLESDIR=""
+dnl make $examples visible to Makefiles
+AC_SUBST([EXAMPLESDIR])
+
+dnl want some debugging symbols with that?
+AC_ARG_ENABLE(
+	[debug],
+	AS_HELP_STRING([--enable-debug],[Set compiler flags for debug symbols, default is no debugging.]),
+	[case "$enableval" in
+		no)
+			AC_DEFINE(NDEBUG,,[Define to disable debugging])
+			DEBUGFLAGS=""
+			;;
+		yes)
+			AC_DEFINE(__WXDEBUG__,1,[Define to disable debugging])
+			DEBUGFLAGS="-g"
+			;;
+		*)
+			DEBUGFLAGS="$enableval"
+			;;
+	esac],
+	[DEBUGFLAGS=""
+	AC_DEFINE(NDEBUG,,[Define to disable debugging])]
 )
-
-AC_MSG_CHECKING([whether disk activity logging should be enabled])
-AS_CASE(["$ARG_ENABLE_DISK_STATS"],
-  ["yes"|"on"], [
-      AC_MSG_RESULT([yes])
-      AC_DEFINE([TORRENT_DISK_STATS],[1],[Define to create a log of all disk activities.])
-    ],
-  ["no"|"off"], [
-      AC_MSG_RESULT([no])
-    ],
-  [AC_MSG_RESULT([$ARG_ENABLE_DISK_STATS])
-   AC_MSG_ERROR([Unknown option "$ARG_ENABLE_DISK_STATS". Use either "yes" or "no".])]
-)
-
-AS_ECHO
-AS_ECHO "Checking features to be enabled:"
-
-AC_MSG_CHECKING([whether encryption support should be enabled])
-AS_CASE(["$ARG_ENABLE_ENCRYPTION"],
-  ["yes"|"on"], [
-      AC_MSG_RESULT([yes])
-      AC_MSG_NOTICE([encryption support: now checking for the OpenSSL library...])
-
-      AX_CHECK_OPENSSL([
-          AC_DEFINE([TORRENT_USE_OPENSSL],[1],[Define to use OpenSSL support.])
-          COMPILETIME_OPTIONS="$COMPILETIME_OPTIONS -DTORRENT_USE_OPENSSL "
-        ], [
-          AC_MSG_ERROR([OpenSSL library not found. Try using --with-openssl=DIR or disabling encryption at all.])
-      ])
-    ],
-  ["no"|"off"], [
-      AC_MSG_RESULT([no])
-      AC_DEFINE([TORRENT_DISABLE_ENCRYPTION],[1],[Define to disable any encryption support and avoid linking against OpenSSL.])
-      COMPILETIME_OPTIONS="$COMPILETIME_OPTIONS -DTORRENT_DISABLE_ENCRYPTION "
-    ],
-  [AC_MSG_RESULT([$ARG_ENABLE_ENCRYPTION])
-   AC_MSG_ERROR([Unknown option "$ARG_ENABLE_ENCRYPTION". Use either "yes" or "no".])]
-)
-
-AC_MSG_CHECKING([whether dht support should be enabled])
-AS_CASE(["$ARG_ENABLE_DHT"],
-  ["yes"|"on"], [
-      AC_MSG_RESULT([yes])
-    ],
-  ["no"|"off"], [
-      AC_MSG_RESULT([no])
-      AC_DEFINE([TORRENT_DISABLE_DHT],[1],[Define to disable the DHT support.])
-      COMPILETIME_OPTIONS="$COMPILETIME_OPTIONS -DTORRENT_DISABLE_DHT "
-    ],
-  [AC_MSG_RESULT([$ARG_ENABLE_DHT])
-   AC_MSG_ERROR([Unknown option "$ARG_ENABLE_DHT". Use either "yes" or "no".])]
-)
-
-AC_MSG_CHECKING([whether pool allocators should be enabled])
-AS_CASE(["$ARG_ENABLE_POOL_ALLOC"],
-  ["yes"|"on"], [
-      AC_MSG_RESULT([yes])
-    ],
-  ["no"|"off"], [
-      AC_MSG_RESULT([no])
-      AC_DEFINE([TORRENT_DISABLE_POOL_ALLOCATOR],[1],[Define to disable use of boost::pool for pool allocators.])
-    ],
-  [AC_MSG_RESULT([$ARG_ENABLE_POOL_ALLOC])
-   AC_MSG_ERROR([Unknown option "$ARG_ENABLE_POOL_ALLOC". Use either "yes" or "no".])]
-)
-
-AS_IF([test "x$ac_cv_hidden_visibility_attribute" = "xyes"], [
-  AS_IF([test "x$ARG_ENABLE_FULL_EXPORT" = "xno"], [
-     CXXFLAGS="$CXXFLAGS -fvisibility=hidden -fvisibility-inlines-hidden"
-     CFLAGS="$CFLAGS -fvisibility=hidden"
-     LDFLAGS="$LDFLAGS -fvisibility=hidden -fvisibility-inlines-hidden"
-  ])
-])
-
-AS_ECHO
-AS_ECHO "Checking for extra build files:"
-
-AC_MSG_CHECKING([whether example files should be built])
-AS_CASE(["$ARG_ENABLE_EXAMPLES"],
-  ["yes"], [AC_MSG_RESULT([yes])],
-  ["no"],  [AC_MSG_RESULT([no])],
-  [AC_MSG_RESULT([$ARG_ENABLE_EXAMPLES])
-   AC_MSG_ERROR([Unknown option "$ARG_ENABLE_EXAMPLES". Use either "yes" or "no".])]
-)
-
-AC_MSG_CHECKING([whether test files should be built])
-AS_CASE(["$ARG_ENABLE_TESTS"],
-  ["yes"], [
-      AC_MSG_RESULT([yes])
-      AC_DEFINE([TORRENT_EXPORT_EXTRA],[1],[Define to export additional symbols for unit tests.])
-      COMPILETIME_OPTIONS="$COMPILETIME_OPTIONS -DTORRENT_EXPORT_EXTRA "
-    ],
-  ["no"],  [AC_MSG_RESULT([no])],
-  [AC_MSG_RESULT([$ARG_ENABLE_TESTS])
-   AC_MSG_ERROR([Unknown option "$ARG_ENABLE_TESTS". Use either "yes" or "no".])]
-)
-
-AC_MSG_CHECKING([whether python bindings should be built])
-AS_CASE(["$ARG_ENABLE_PYTHON_BINDING"],
-  ["yes"], [
-      AC_MSG_RESULT([yes])
-
-      AM_PATH_PYTHON([2.4], [], AC_MSG_ERROR([Python interpreter not found.]))
-      AX_PYTHON_DEVEL([>= '2.4'])
-      AX_BOOST_PYTHON()
-
-      AS_IF([test -z "$BOOST_PYTHON_LIB"],
-            [AC_MSG_ERROR([Boost.Python library not found. Try using --with-boost-python=lib.])])
-
-      BOOST_PYTHON_LIB="-l$BOOST_PYTHON_LIB"
-    ],
-  ["no"], [
-      AC_MSG_RESULT([no])
-    ],
-  [AC_MSG_RESULT([$ARG_ENABLE_PYTHON_BINDING])
-   AC_MSG_ERROR([Unknown option "$ARG_ENABLE_PYTHON_BINDING". Use either "yes" or "no".])]
-)
-
-AS_ECHO
-AS_ECHO "Checking for external libraries:"
-
-AC_MSG_CHECKING([whether to link against system libiconv])
-AS_CASE(["$ARG_WITH_LIBICONV"],
-  ["yes"], [
-      AC_MSG_RESULT([yes])
-      AM_ICONV()
-      AS_IF([test "x$am_cv_func_iconv" = "xyes"], [
-           ICONV_LIBS=$LIBICONV
-           AC_SUBST([ICONV_LIBS])
-           LIBS="$ICONV_LIBS $LIBS"
-      ], [
-           AC_MSG_ERROR([Iconv library not found.])
-      ])
-   ],
-  ["no"], [
-        ARG_WITH_LIBICONV="no"
-   ],
-  [AC_MSG_RESULT([$ARG_WITH_LIBICONV])
-   AC_MSG_ERROR([Unknown option "$ARG_WITH_LIBICONV". Use either "yes" or "no".])]
-)
-
-###############################################################################
-# Setting conditional variables for Makefiles
-###############################################################################
-
-AM_CONDITIONAL([ENABLE_DHT], [test "x$ARG_ENABLE_DHT" = "xyes" -o "x$ARG_ENABLE_DHT" = "xlogging" ])
-AM_CONDITIONAL([ENABLE_EXAMPLES], [test "x$ARG_ENABLE_EXAMPLES" = "xyes"])
-AM_CONDITIONAL([ENABLE_TESTS], [test "x$ARG_ENABLE_TESTS" = "xyes"])
-AM_CONDITIONAL([ENABLE_PYTHON_BINDING], [test "x$ARG_ENABLE_PYTHON_BINDING" = "xyes"])
-
-AM_CONDITIONAL([WITH_OPENSSL], [test "x$ARG_ENABLE_ENCRYPTION" = "xyes" -o "x$ARG_ENABLE_ENCRYPTION" = "xon" ])
-
-
-###############################################################################
-# Other useful stuff
-###############################################################################
-
-# this works around a bug in asio in boost-1.39
-# see: https://svn.boost.org/trac/boost/ticket/3095
-AC_DEFINE([BOOST_ASIO_HASH_MAP_BUCKETS],[1021],[Define to fix a wrong behavior in boost 1.39.])
-COMPILETIME_OPTIONS="$COMPILETIME_OPTIONS -DBOOST_ASIO_HASH_MAP_BUCKETS=1021 "
-
-AC_DEFINE([BOOST_EXCEPTION_DISABLE],[1],[Define to disable the boost.exception features.])
-COMPILETIME_OPTIONS="$COMPILETIME_OPTIONS -DBOOST_EXCEPTION_DISABLE "
-
-AC_DEFINE([BOOST_ASIO_ENABLE_CANCELIO],[1],[Define to enable cancel support in asio on windows XP and older.])
-COMPILETIME_OPTIONS="$COMPILETIME_OPTIONS -DBOOST_ASIO_ENABLE_CANCELIO "
-
-dnl Use possibly specific python install params
-AC_ARG_VAR([PYTHON_INSTALL_PARAMS], [Set specific install parameters for python bindings.])
-AS_IF([test "x$PYTHON_INSTALL_PARAMS" = "x"],
-      [PYTHON_INSTALL_PARAMS='--prefix=$(DESTDIR)$(prefix)'])
-
-dnl Set some defines if we are building a shared library
-AS_IF([test "x$enable_shared" = "xyes"],
-      [AC_DEFINE([TORRENT_BUILDING_SHARED],[1],[Define to exports functions and classes with default visibility in GCC.])
-       COMPILETIME_OPTIONS="$COMPILETIME_OPTIONS -DTORRENT_LINKING_SHARED "])
-
 AC_SUBST(DEBUGFLAGS)
-AC_SUBST(PYTHON_INSTALL_PARAMS)
-AC_SUBST(COMPILETIME_OPTIONS)
-
-# Disable deprecated warnings for the Python binding builds.
-PYTHON_CXXFLAGS="${PYTHON_CXXFLAGS} -Wno-deprecated-declarations"
-AC_SUBST(PYTHON_CXXFLAGS)
-
-# Try to guess real git revision if any, fallback to hardcoded otherwise
-GIT_REVISION=`git log -1 --format=format:%h 2>/dev/null`
-AS_IF([test -z "$GIT_REVISION"],
-      [GIT_REVISION=`sed -n -e "s/^#define LIBTORRENT_REVISION \"\([0-9a-z]*\)\"$/\1/p" $(dirname $0)/include/libtorrent/version.hpp`])
 
 
-###############################################################################
-# Generating Makefiles
-###############################################################################
-
-AS_ECHO
-AS_ECHO "Generating Makefiles:"
-
-AC_CONFIG_FILES(
-  [Makefile]
-  [src/Makefile]
-  [include/libtorrent/Makefile]
-  [examples/Makefile]
-  [test/Makefile]
-  [tools/Makefile]
-  [bindings/Makefile]
-  [bindings/python/Makefile]
-  [bindings/python/link_flags]
-  [bindings/python/compile_flags]
-  [libtorrent-rasterbar.pc]
-  [libtorrent-rasterbar-cmake.pc]
-)
-
-AC_OUTPUT
-
-
-###############################################################################
-# Generating config.report
-###############################################################################
-
-AS_ECHO
-AS_ECHO "Configure script has finished system check."
-AS_ECHO
-
-cat > config.report << END
-   Config results:
-  -=-=-=-=-=-=-=-=-
-
-Package:
-  name:                 ${PACKAGE_NAME}
-  version:              ${PACKAGE_VERSION}
-  git revision:         ${GIT_REVISION}
-
-Build environment:
-  build system:         ${build}
-  host system:          ${host}
-  target system:        ${target}
-
-Compiler and linker flags:
-  CPPFlags:             ${CPPFLAGS}
-  CFlags:               ${CFLAGS}
-  CXXFlags:             ${CXXFLAGS}
-  LDFlags:              ${LDFLAGS}
-  Libs:                 ${LIBS}
-  Defs:                 ${DEFS}
-
-Build options:
-  deprecated functions: ${ARG_ENABLE_DEPRECATED:-yes}
-  debug build:          ${ARG_ENABLE_DEBUG:-no}
-  invariant checks:     ${ARG_ENABLE_INVARIANT:-no}
-  logging support:      ${ARG_ENABLE_LOGGING:-yes}
-  disk statistics:      ${ARG_ENABLE_DISK_STATS:-no}
-
-Features:
-  encryption support:   ${ARG_ENABLE_ENCRYPTION:-yes}
-  dht support:          ${ARG_ENABLE_DHT:-yes}
-  pool allocators:      ${ARG_ENABLE_POOL_ALLOC:-yes}
-
-Extra builds:
-  examples:             ${ARG_ENABLE_EXAMPLES:-no}
-  tests:                ${ARG_ENABLE_TESTS:-no}
-  python bindings:      ${ARG_ENABLE_PYTHON_BINDING:-no}
-
-Pthread library:
-  CFlags:               ${PTHREAD_CFLAGS}
-  Libs:                 ${PTHREAD_LIBS}
-
-Boost libraries:
-  version:              ${BOOST_VERSION}
-  CPPFlags:             ${BOOST_CPPFLAGS}
-  LDFlags:              ${BOOST_LDFLAGS}
-  boost.system:         ${BOOST_SYSTEM_LIB}
-  boost.chrono:         ${BOOST_CHRONO_LIB}
-  boost.random:         ${BOOST_RANDOM_LIB}
-END
-
-AS_IF([test "x$ARG_ENABLE_PYTHON_BINDING" = "xyes"], [
-cat >> config.report << END
-  boost.python:         ${BOOST_PYTHON_LIB}
-
-Python environment:
-  -automake-
-  binary:               ${PYTHON}
-  version:              ${PYTHON_VERSION}
-  platform:             ${PYTHON_PLATFORM}
-  prefix:               ${PYTHON_PREFIX}
-  exec_prefix:          ${PYTHON_EXEC_PREFIX}
-  pythondir:            ${pythondir}
-  pkgpythondir:         ${pkgpythondir}
-  pyexecdir:            ${pyexecdir}
-  pkgpyexecdir:         ${pkgpyexecdir}
-
-  -m4-
-  cppflags:             ${PYTHON_CPPFLAGS}
-  ldflags:              ${PYTHON_LDFLAGS}
-  extra libs:           ${PYTHON_EXTRA_LIBS}
-
-END
+AC_OUTPUT([
+Makefile
+src/Makefile
+locale/Makefile
 ])
-
-cat >> config.report << END
-
-External libraries:
-  system libiconv:      ${ARG_WITH_LIBICONV:-no}
-END
-
-AS_IF([test "x$ARG_WITH_LIBICONV" = "xyes"], [
-cat >> config.report << END
-
-Iconv library:
-  Iconv Libs:           ${ICONV_LIBS}
-END
-])
-
-AS_IF([test "x$ARG_ENABLE_ENCRYPTION" = "xyes"], [
-cat >> config.report << END
-
-OpenSSL library:
-  OpenSSL Libs:         ${OPENSSL_LIBS}
-  OpenSSL LDFlags:      ${OPENSSL_LDFLAGS}
-  OpenSSL Includes:     ${OPENSSL_INCLUDES}
-END
-])
-
-cat config.report
-
-AS_ECHO
-AS_ECHO "Type 'make' to compile $PACKAGE_STRING"
-AS_ECHO "or type 'make V=1' for verbose compiling"
-AS_ECHO "and then 'make install' to install it into $prefix"
-AS_ECHO
