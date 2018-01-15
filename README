@@ -25,6 +25,11 @@ address-model=64 runtime-link=static stage
 
 News:
 ----
+0.0.9
+
+Update libtorrent to 785fffd97627d03e73d00b69fff93d52d700c56e
+Code improvement
+
 0.0.8
 New: Upper limit of number of log files
 New: Drag and drop torrent files
