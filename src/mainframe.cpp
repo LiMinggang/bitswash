@@ -413,7 +413,7 @@ void MainFrame::OnAbout( wxCommandEvent& event )
 	info.SetName( _T( "Bitswash-Mod" ) );
 	info.SetVersion( BITSWASH_VERSION );
 	info.SetDescription( _( "Bittorrent Client" ) );
-	info.SetCopyright( _T( "(c) 2017 Bitswash Developers" ) );
+	info.SetCopyright( _T( "(c) 2018 Bitswash Developers" ) );
 	info.SetWebSite( _T( "https://github.com/LiMinggang/bitswash" ), _( "Bitswash Homepage" ) );
 	info.SetLicence( _T( " \n\n \
  This program is free software; you can redistribute it and/or modify\n \
