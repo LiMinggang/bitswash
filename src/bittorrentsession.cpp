@@ -731,6 +731,66 @@ void BitTorrentSession::AddTorrentToSession( std::shared_ptr<torrent_t>& torrent
 	}
 }
 
+
+void BitTorrentSession::AddMagnetUriToSession(std::shared_ptr<torrent_t>& torrent)
+{
+
+	try
+	{
+		wxASSERT(torrent);
+		wxASSERT(torrent->config);
+		const wxString & url = torrent->config->GetTorrentMagnetUri();
+		if(!url.IsEmpty())
+		{
+			lt::error_code ec;
+			lt::add_torrent_params p = lt::parse_magnet_uri(std::string((const char *)(url.ToUTF8().data())), ec);
+			if (ec)
+			{
+				wxLogError( wxString::FromUTF8( ec.message().c_str() ) );
+			}
+			else
+			{
+				if( wxString(torrent->hash) != _T("0000000000000000000000000000000000000000"))
+				{
+					p.save_path = std::move(std::string(( const char* )((torrent->config->GetDownloadPath().ToUTF8( ))).data()));
+			
+					p.flags |= lt::torrent_flags::paused; // Start in pause
+					p.flags &= ~lt::torrent_flags::auto_managed; // Because it is added in paused state
+					p.flags &= ~lt::torrent_flags::duplicate_is_error; // Already checked
+					// Solution to avoid accidental file writes
+					p.flags |= lt::torrent_flags::upload_mode;
+					p.max_connections = m_config->GetMaxConnections();
+					p.max_uploads = m_config->GetMaxUploads();
+					p.upload_limit = m_config->GetDefaultUploadLimit();
+					p.download_limit = m_config->GetDefaultDownloadLimit();
+			
+					// Adding torrent to BitTorrent session
+					m_libbtsession->async_add_torrent( p );
+					wxMutexLocker ml( m_torrent_queue_lock );
+					if(m_queue_torrent_set.find(wxString(torrent->hash)) == m_queue_torrent_set.end())
+					{
+						m_queue_torrent_set.insert(wxString(torrent->hash));
+						m_torrent_queue.push_back( torrent );
+						m_running_torrent_map.insert( std::pair<wxString, int>( wxString(torrent->hash), (int)(m_torrent_queue.size() - 1 )) );
+					}
+				}
+				else
+				{
+					wxMessageBox( _( "Parse magnet URI failed:The torrent is invalid!" ), _( "Error" ),  wxOK | wxICON_ERROR );
+				}
+			}
+		}
+	}
+	catch( std::exception &e )
+	{
+		wxLogFatalError( wxString::FromUTF8( e.what() ) );
+	}
+	catch (...)
+	{
+		wxLogFatalError(_T("Unknown Exception: %s"), __FUNCTION__ );
+	}
+}
+
 bool BitTorrentSession::AddTorrent( std::shared_ptr<torrent_t>& torrent )
 {
 	wxLogDebug( _T( "Add Torrent %s, state %d" ),  torrent->name.c_str(), torrent->config->GetTorrentState() );
@@ -1334,28 +1394,11 @@ std::shared_ptr<torrent_t> BitTorrentSession::LoadMagnetUri( MagnetUri& magnetur
 				if( wxString(torrent->hash) != _T("0000000000000000000000000000000000000000"))
 				{
 					torrent->config.reset( new TorrentConfig( wxString(torrent->hash) ) );
-					p.save_path = std::move(std::string(( const char* )((torrent->config->GetDownloadPath().ToUTF8( ))).data()));
-
-					p.flags |= lt::torrent_flags::paused; // Start in pause
-					p.flags &= ~lt::torrent_flags::auto_managed; // Because it is added in paused state
-					p.flags &= ~lt::torrent_flags::duplicate_is_error; // Already checked
-					// Solution to avoid accidental file writes
-					p.flags |= lt::torrent_flags::upload_mode;
-					p.max_connections = m_config->GetMaxConnections();
-					p.max_uploads = m_config->GetMaxUploads();
-					p.upload_limit = m_config->GetDefaultUploadLimit();
-					p.download_limit = m_config->GetDefaultDownloadLimit();
-
-					// Adding torrent to BitTorrent session
-					torrent->config->SetTorrentState( TORRENT_STATE_START );
 					torrent->config->SetTorrentMagnetUri(magneturi.url());
+					torrent->config->SetTorrentState( TORRENT_STATE_START );
 
 					torrent->isvalid = false;
-					m_libbtsession->async_add_torrent( p );
-					wxMutexLocker ml( m_torrent_queue_lock );
-					m_queue_torrent_set.insert(wxString(torrent->hash));
-					m_torrent_queue.push_back( torrent );
-					m_running_torrent_map.insert( std::pair<wxString, int>( wxString(torrent->hash), (int)(m_torrent_queue.size() - 1 )) );
+					AddMagnetUriToSession(torrent);
 				}
 				else
 				{
@@ -1454,7 +1497,10 @@ void BitTorrentSession::StartTorrent( std::shared_ptr<torrent_t>& torrent, bool 
 
 	if( !handle.is_valid() || ( ( handle.status(lt::torrent_handle::query_save_path).save_path).empty() ) )
 	{
-		AddTorrentToSession( torrent );
+		if(torrent->info)
+			AddTorrentToSession( torrent );
+		else
+			AddMagnetUriToSession(torrent);
 	}
 }
 

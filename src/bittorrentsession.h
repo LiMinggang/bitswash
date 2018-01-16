@@ -121,6 +121,7 @@ public:
 	void StartNatpmp();
 	
 	void AddTorrentToSession(std::shared_ptr<torrent_t>& torrent);
+	void AddMagnetUriToSession(std::shared_ptr<torrent_t>& torrent);
 	bool AddTorrent(std::shared_ptr<torrent_t>& torrent);
 	void RemoveTorrent(std::shared_ptr<torrent_t>& torrent, bool deletedata);
 	int FindTorrent(const wxString &hash);
