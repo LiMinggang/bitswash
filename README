@@ -28,6 +28,7 @@ News:
 0.0.9
 Fix: Can't start stoppred torrent(by MagnetURI) without meta data
 Fix: Duplicated Magnet URI torrents would be added
+Fix: Race condition in AddTorrentToSession
 Update libtorrent to 785fffd97627d03e73d00b69fff93d52d700c56e
 Code improvement
 
