@@ -734,7 +734,6 @@ void BitTorrentSession::AddTorrentToSession( std::shared_ptr<torrent_t>& torrent
 
 void BitTorrentSession::AddMagnetUriToSession(std::shared_ptr<torrent_t>& torrent)
 {
-
 	try
 	{
 		wxASSERT(torrent);
@@ -767,11 +766,14 @@ void BitTorrentSession::AddMagnetUriToSession(std::shared_ptr<torrent_t>& torren
 					// Adding torrent to BitTorrent session
 					m_libbtsession->async_add_torrent( p );
 					wxMutexLocker ml( m_torrent_queue_lock );
-					if(m_queue_torrent_set.find(wxString(torrent->hash)) == m_queue_torrent_set.end())
+					wxString thash(torrent->hash);
+					bool notfound = ((m_queue_torrent_set.find( thash ) == m_queue_torrent_set.end())
+						&& (find_torrent_from_hash( thash ) < 0));
+					if(notfound)
 					{
-						m_queue_torrent_set.insert(wxString(torrent->hash));
+						m_queue_torrent_set.insert(thash);
 						m_torrent_queue.push_back( torrent );
-						m_running_torrent_map.insert( std::pair<wxString, int>( wxString(torrent->hash), (int)(m_torrent_queue.size() - 1 )) );
+						m_running_torrent_map.insert( std::pair<wxString, int>(thash, (int)(m_torrent_queue.size() - 1 )) );
 					}
 				}
 				else
@@ -1378,9 +1380,11 @@ std::shared_ptr<torrent_t> BitTorrentSession::LoadMagnetUri( MagnetUri& magnetur
 	std::shared_ptr<torrent_t> torrent;
 	{
 		bool notfound = true;
+		wxString thash(magneturi.hash());
 		{
 			wxMutexLocker ml(m_torrent_queue_lock);
-			notfound = (m_queue_torrent_set.find(wxString(magneturi.hash())) == m_queue_torrent_set.end());
+			notfound = ((m_queue_torrent_set.find( thash ) == m_queue_torrent_set.end())
+				&& (find_torrent_from_hash( thash ) < 0));
 		}
 		if(notfound)
 		{
@@ -1393,7 +1397,7 @@ std::shared_ptr<torrent_t> BitTorrentSession::LoadMagnetUri( MagnetUri& magnetur
 				torrent->hash = magneturi.hash();
 				if( wxString(torrent->hash) != _T("0000000000000000000000000000000000000000"))
 				{
-					torrent->config.reset( new TorrentConfig( wxString(torrent->hash) ) );
+					torrent->config.reset( new TorrentConfig( thash ) );
 					torrent->config->SetTorrentMagnetUri(magneturi.url());
 					torrent->config->SetTorrentState( TORRENT_STATE_START );
 
@@ -1590,7 +1594,10 @@ void BitTorrentSession::QueueTorrent(std::shared_ptr<torrent_t>& torrent, int st
 	}
 	else
 	{
-		AddTorrentToSession(torrent);
+		if(torrent->info)
+			AddTorrentToSession( torrent );
+		else
+			AddMagnetUriToSession(torrent);
 	}
 }
 
