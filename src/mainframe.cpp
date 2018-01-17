@@ -1155,7 +1155,9 @@ void MainFrame::OnUpdateUI_MenuTorrentStart( wxUpdateUIEvent& event )
 			{
 				std::shared_ptr<torrent_t> torrent = m_btsession->GetTorrent( selecteditems[i] );
 				wxASSERT(torrent);
-				if(torrent && torrent->isvalid && (!torrent->handle.is_valid()))
+				int torrent_state = torrent->config->GetTorrentState();
+				if(torrent && torrent->isvalid &&
+					(( torrent_state == TORRENT_STATE_STOP) || ( torrent_state == TORRENT_STATE_PAUSE)))
 				{
 					enable = true;
 					break;
