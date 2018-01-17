@@ -106,6 +106,17 @@ WX_DECLARE_HASH_SET( wxString, wxStringHash, wxStringEqual, BitwashStrSet );
 class BitTorrentSession : public wxThread
 {
 public:
+	enum TORRENT_STATUS
+	{
+		TORRENT_STATUS_QUEUED,				  //_( "Queued" )
+		TORRENT_STATUS_CHECKING,			  //_( "Checking" )
+		TORRENT_STATUS_DOWNLOADING_META_DATA, //_( "Downloading meta data" )
+		TORRENT_STATUS_DOWNLOADING, 		  //_( "Downloading" )
+		TORRENT_STATUS_FINISHED,			  //_( "Finished" )
+		TORRENT_STATUS_SEEDING, 			  //_( "Seeding" )
+		TORRENT_STATUS_ALLOCATING,			  //_( "Allocating" )
+		TORRENT_STATUS_CHECKING_RESUME_DATA,  //_( "Checking resume data" )
+	};
 	BitTorrentSession(wxApp* pParent, Configuration* config, wxMutex *mutex = 0, wxCondition *condition = 0);
 	~BitTorrentSession();
 
