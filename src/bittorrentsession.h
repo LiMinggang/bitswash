@@ -171,9 +171,9 @@ public:
 	void GetPendingMetadata(metadata_t & mdq);
 	//lt::session* GetLibTorrent() { return m_libbtsession;}
 
-	void HandleTorrentAlert();
-	bool HandleAddTorrentAlert(lt::add_torrent_alert *p);
-	bool HandleMetaDataAlert(lt::metadata_received_alert *p);
+	void HandleTorrentAlerts();
+	bool HandleTorrentAddAlert(lt::add_torrent_alert *p);
+	bool HandleTorrentMetaDataAlert(lt::metadata_received_alert *p);
 	void PostEvent(bts_event & evt) { m_evt_queue.Post(evt);}
 	void PostLibTorrentAlertEvent()
 		{

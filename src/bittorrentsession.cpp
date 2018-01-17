@@ -212,7 +212,7 @@ void *BitTorrentSession::Entry()
 				{
 					case BTS_EVENT_ALERT:
 					{
-						HandleTorrentAlert();
+						HandleTorrentAlerts();
 						break;
 					}
 					case BTS_EVENT_QUEUEUPDATE:
@@ -2305,15 +2305,13 @@ void BitTorrentSession::CheckQueueItem()
 	{
 		i = start_torrents.size() - 1;
 
-		while( ( start_count-- > maxstart ) && ( i >= 0 ) )
+		while( ( start_count > maxstart ) && ( i >= 0 ) )
 		{
-			if(!m_torrent_queue[start_torrents[i]]->info) //Magnet URI waiting for meta data
-			{
-				if(m_queue_torrent_set.find(wxString(m_torrent_queue[start_torrents[i]]->hash)) == m_queue_torrent_set.end())
-					QueueTorrent( m_torrent_queue[start_torrents[i]] );
-			}
-			else
+			if(m_queue_torrent_set.find(wxString(m_torrent_queue[start_torrents[i]]->hash)) == m_queue_torrent_set.end())
+			{         
 				QueueTorrent( m_torrent_queue[start_torrents[i]] );
+				--start_count;
+			}
 			--i;
 		}
 	}
@@ -2329,7 +2327,7 @@ void BitTorrentSession::CheckQueueItem()
 	}
 }
 
-void BitTorrentSession::HandleTorrentAlert()
+void BitTorrentSession::HandleTorrentAlerts()
 {
 	wxString event_string;
 	std::vector<lt::alert*> alerts;
@@ -2354,7 +2352,7 @@ void BitTorrentSession::HandleTorrentAlert()
 						}
 						else
 						{
-							HandleAddTorrentAlert(p);
+							HandleTorrentAddAlert(p);
 							event_string << _T("Metadata: ") <<  wxString::FromUTF8(p->message().c_str());
 						}
 					}
@@ -2416,7 +2414,7 @@ void BitTorrentSession::HandleTorrentAlert()
 					if( lt::metadata_received_alert* p = lt::alert_cast<lt::metadata_received_alert>( alert ) )
 					{
 						event_string << _T( "Metadata: " ) << wxString::FromUTF8(p->message().c_str());
-						HandleMetaDataAlert(p);
+						HandleTorrentMetaDataAlert(p);
 					}
 					break;
 				case lt::save_resume_data_alert::alert_type:
@@ -2606,7 +2604,7 @@ void BitTorrentSession::HandleTorrentAlert()
 }
 
 /*Check error before call it. So, assume no p->error*/
-bool BitTorrentSession::HandleAddTorrentAlert(lt::add_torrent_alert * p)
+bool BitTorrentSession::HandleTorrentAddAlert(lt::add_torrent_alert * p)
 {
 	try
 	{
@@ -2682,7 +2680,8 @@ bool BitTorrentSession::HandleAddTorrentAlert(lt::add_torrent_alert * p)
 		{
 			if( p->handle.is_valid() )
 			{
-				p->handle.pause(lt::torrent_handle::graceful_pause);
+				wxLogError( _("Torrent Add Alert: %s was not found in torrent list, maybe deleted?"), shash.c_str());
+				p->handle.pause();
 				m_libbtsession->remove_torrent( p->handle );
 			}
 		}
@@ -2702,7 +2701,7 @@ bool BitTorrentSession::HandleAddTorrentAlert(lt::add_torrent_alert * p)
 }
 
 extern void TorrentMetadataNotify( );
-bool BitTorrentSession::HandleMetaDataAlert(lt::metadata_received_alert *p)
+bool BitTorrentSession::HandleTorrentMetaDataAlert(lt::metadata_received_alert *p)
 {
 	wxASSERT(p->handle.is_valid());
 	p->handle.pause(lt::torrent_handle::graceful_pause);
