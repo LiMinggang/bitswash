@@ -2216,12 +2216,7 @@ void BitTorrentSession::CheckQueueItem()
 		std::shared_ptr<torrent_t>& torrent = m_torrent_queue[idx];
 		WXLOGDEBUG(( _T( "Processing torrent %s" ), torrent->name.c_str() ));
 		wxASSERT(torrent);
- 		wxASSERT(torrent->config);
-		if(!torrent->info) //Magnet URI waiting for meta data
-		{
-			if(m_queue_torrent_set.find(wxString(torrent->hash)) != m_queue_torrent_set.end())
-				continue;
-		}
+		wxASSERT(torrent->config);
 		switch( torrent->config->GetTorrentState() )
 		{
 		case TORRENT_STATE_START:
@@ -2312,7 +2307,13 @@ void BitTorrentSession::CheckQueueItem()
 
 		while( ( start_count-- > maxstart ) && ( i >= 0 ) )
 		{
-			QueueTorrent( m_torrent_queue[start_torrents[i]] );
+			if(!m_torrent_queue[start_torrents[i]]->info) //Magnet URI waiting for meta data
+			{
+				if(m_queue_torrent_set.find(wxString(m_torrent_queue[start_torrents[i]]->hash)) == m_queue_torrent_set.end())
+					QueueTorrent( m_torrent_queue[start_torrents[i]] );
+			}
+			else
+				QueueTorrent( m_torrent_queue[start_torrents[i]] );
 			--i;
 		}
 	}
