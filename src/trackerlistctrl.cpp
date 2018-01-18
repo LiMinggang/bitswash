@@ -249,9 +249,6 @@ void TrackerListCtrl::OnMenuTracker(wxCommandEvent& event)
 				TrackerListCtrl* pThis = const_cast<TrackerListCtrl*>(this);
 				pThis->SetItemCount(trackers.size());
 				refreshtrk = true;
-#if 0
-				h.replace_trackers(trackers);
-#endif
 			}
 
 			break;
@@ -261,7 +258,7 @@ void TrackerListCtrl::OnMenuTracker(wxCommandEvent& event)
 			if ((item < 0) || (item >= trackers.size()))
 				return;
 
-			std::vector<lt::announce_entry>::iterator tracker_it = trackers.begin() + item;
+			auto tracker_it = trackers.begin() + item;
 			wxString trackerurl = wxString::FromUTF8(tracker_it->url.c_str());
 			int tier = tracker_it->tier;
 			wxTextEntryDialog dialog(this,
@@ -291,7 +288,7 @@ void TrackerListCtrl::OnMenuTracker(wxCommandEvent& event)
 			if ((item < 0) || (item >= trackers.size()))
 				return;
 
-			std::vector<lt::announce_entry>::iterator tracker_it = trackers.begin() + item;
+			auto tracker_it = trackers.begin() + item;
 
 			wxMessageDialog dialogConfirm(nullptr, 
 							_("Remove tracker ") + wxString::FromUTF8(tracker_it->url.c_str()) + _T("?"), 
@@ -318,7 +315,7 @@ void TrackerListCtrl::OnMenuTracker(wxCommandEvent& event)
 					if ((item < 0) || (item >= trackers.size()))
 						return;
 
-					std::vector<lt::announce_entry>::iterator tracker_it = trackers.begin() + item;
+					auto tracker_it = trackers.begin() + item;
 					lt::announce_entry tracker= trackers.at(item);
 					trackerurls += wxString(wxConvUTF8.cMB2WC(tracker.url.c_str())) + _T("\n");
 
@@ -335,7 +332,7 @@ void TrackerListCtrl::OnMenuTracker(wxCommandEvent& event)
 		}
 		case TRACKERLISTCTRL_MENU_REANNOUCE:
 		{
-			lt::torrent_handle& handle = pTorrent->handle;
+			auto & handle = pTorrent->handle;
 			if(handle.is_valid())
 			{
 				handle.force_reannounce(0, item);

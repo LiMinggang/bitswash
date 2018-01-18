@@ -797,7 +797,7 @@ bool BitTorrentSession::AddTorrent( std::shared_ptr<torrent_t>& torrent )
 		wxString thash(torrent->hash);
 		{
 			wxMutexLocker ml( m_torrent_queue_lock );
-			if( find_torrent_from_hash( thash ) >= 0 )
+			if( find_torrent_by_hash( thash ) >= 0 )
 			{
 				wxLogWarning( _T( "Torrent %s already exists" ), torrent->name.c_str() );
 				return false;
@@ -838,7 +838,7 @@ void BitTorrentSession::RemoveTorrent( std::shared_ptr<torrent_t>& torrent, bool
 	wxString thash(torrent->hash);
 	{
 		wxMutexLocker ml( m_torrent_queue_lock );
-		int idx = find_torrent_from_hash( thash );
+		int idx = find_torrent_by_hash( thash );
 
 		if( idx < 0 )
 		{
@@ -959,7 +959,7 @@ void BitTorrentSession::RemoveTorrent( std::shared_ptr<torrent_t>& torrent, bool
 int BitTorrentSession::FindTorrent( const wxString &hash )
 {
 	wxMutexLocker ml(m_torrent_queue_lock);
-	int idx = find_torrent_from_hash(hash);
+	int idx = find_torrent_by_hash(hash);
 
 	return idx;
 }
@@ -967,7 +967,7 @@ int BitTorrentSession::FindTorrent( const wxString &hash )
 std::shared_ptr<torrent_t> BitTorrentSession::GetTorrent( const wxString &hash )
 {
 	wxMutexLocker ml(m_torrent_queue_lock);
-	int idx = find_torrent_from_hash(hash);
+	int idx = find_torrent_by_hash(hash);
 
 	if( idx >= 0 )
 		return m_torrent_queue.at( idx );
@@ -1067,14 +1067,13 @@ void BitTorrentSession::ScanTorrentsDirectory( const wxString& dirname )
 			{
 				wxString thash(torrent->hash);
 				wxMutexLocker ml( m_torrent_queue_lock );
-				if( find_torrent_from_hash( thash ) >= 0 )
+				if( find_torrent_by_hash( thash ) >= 0 )
 				{
 					wxLogWarning( _T( "Torrent %s already exists" ), torrent->name.c_str() );
 				}
 				else
 				{
 					m_torrent_queue.push_back( torrent );
-					//m_running_torrent_map.insert( std::pair<wxString, int>( thash, (int)(m_torrent_queue.size() - 1 )) );
 				}
 			}
 		}
@@ -1120,18 +1119,27 @@ void BitTorrentSession::ScanTorrentsDirectory( const wxString& dirname )
 			wxASSERT(torrent);
 			m_running_torrent_map[wxString(torrent->hash)] = i;
 
-			enum torrent_state state = ( enum torrent_state ) torrent->config->GetTorrentState();
-			
 			//XXX redundant ? StartTorrent below will call the same thing
-			if((started < maxstart) && torrent->isvalid &&
-					( ( state == TORRENT_STATE_START ) ||
-					( state == TORRENT_STATE_FORCE_START ) ||
-					( state == TORRENT_STATE_PAUSE ) ))
+			if((started < maxstart) && torrent->isvalid )
 			{
-				if((torrent->info) && torrent->info->is_valid())
+				wxASSERT(torrent->config);
+				if(torrent->config)
 				{
-					start_torrents.push_back(i);
-					++started; //Do NOT break
+					enum torrent_state state = ( enum torrent_state ) torrent->config->GetTorrentState();
+					if(( ( state == TORRENT_STATE_START ) ||
+							( state == TORRENT_STATE_FORCE_START ) ||
+							( state == TORRENT_STATE_PAUSE ) ))
+					{
+						if((torrent->info) && torrent->info->is_valid())
+						{
+							start_torrents.push_back(i);
+							++started; //Do NOT break!
+						}
+					}
+				}
+				else
+				{
+					wxLogError( _T( "Torrent %s doesn't have config" ), torrent->name.c_str() );
 				}
 			}
 		}
@@ -1148,7 +1156,7 @@ size_t BitTorrentSession::GetTorrentQueueSize()
 }
 
 //find and return index of torrent handle from hash string
-int BitTorrentSession::find_torrent_from_hash( const wxString& hash )
+int BitTorrentSession::find_torrent_by_hash( const wxString& hash )
 {
 	int j = -1;
 	wxMutexLocker ml( m_torrent_queue_lock );
@@ -1333,7 +1341,7 @@ void BitTorrentSession::DumpTorrents()
 std::shared_ptr<torrent_t> BitTorrentSession::ParseTorrent( const wxString& filename )
 {
 	std::shared_ptr<torrent_t> torrent;
-	WXLOGDEBUG(( _T( "Parse Torrent: %s" ), filename.c_str() ));
+	wxLogInfo(( _T( "Parse Torrent: %s" ), filename.c_str() ));
 
 	try
 	{
@@ -1386,10 +1394,11 @@ std::shared_ptr<torrent_t> BitTorrentSession::LoadMagnetUri( MagnetUri& magnetur
 	{
 		bool notfound = true;
 		wxString thash(magneturi.hash());
+		wxLogInfo(( _T( "LoadMagnetUri: hash %s" ), thash.c_str() ));
 		{
 			wxMutexLocker ml(m_torrent_queue_lock);
 			notfound = ((m_queue_torrent_set.find( thash ) == m_queue_torrent_set.end())
-				&& (find_torrent_from_hash( thash ) < 0));
+				&& (find_torrent_by_hash( thash ) < 0));
 		}
 		if(notfound)
 		{
@@ -1628,7 +1637,7 @@ void BitTorrentSession::MoveTorrentUp( std::shared_ptr<torrent_t>& torrent )
 {
 	wxString thash( torrent->hash );
 	wxMutexLocker ml( m_torrent_queue_lock );
-	int idx = find_torrent_from_hash( thash );
+	int idx = find_torrent_by_hash( thash );
 	if( idx <= 0 )
 	{
 		if( idx == 0 )
@@ -1674,7 +1683,7 @@ void BitTorrentSession::MoveTorrentDown( std::shared_ptr<torrent_t>& torrent )
 {
 	wxString thash( torrent->hash );
 	wxMutexLocker ml( m_torrent_queue_lock );
-	int idx = find_torrent_from_hash( thash );
+	int idx = find_torrent_by_hash( thash );
 
 	if( idx < 0 )
 	{
@@ -1734,7 +1743,7 @@ void BitTorrentSession::MoveTorrentBottom( std::shared_ptr<torrent_t>& torrent )
 {
 	wxString thash( torrent->hash );
 	wxMutexLocker ml( m_torrent_queue_lock );
-	int idx = find_torrent_from_hash( thash );
+	int idx = find_torrent_by_hash( thash );
 	if( idx < 0 )
 	{
 		wxLogError( _T( "MoveTorrentDown %s: Torrent not found in queue" ), torrent->name.c_str() );
@@ -1790,7 +1799,7 @@ void BitTorrentSession::MoveTorrentBottom( std::shared_ptr<torrent_t>& torrent )
 void BitTorrentSession::MoveTorrentTop( std::shared_ptr<torrent_t>& torrent )
 {
 	wxMutexLocker ml( m_torrent_queue_lock );
-	int idx = find_torrent_from_hash( wxString(torrent->hash));
+	int idx = find_torrent_by_hash( wxString(torrent->hash));
 	if( idx <= 0 )
 	{
 		if( idx == 0 )
@@ -2619,7 +2628,7 @@ bool BitTorrentSession::HandleTorrentAddAlert(lt::add_torrent_alert * p)
 		std::shared_ptr<torrent_t> torrent;
 		wxMutexLocker ml( m_torrent_queue_lock );
 		m_queue_torrent_set.erase(shash);
-		int idx = find_torrent_from_hash( shash );
+		int idx = find_torrent_by_hash( shash );
 
 		if(idx >= 0)
 		{

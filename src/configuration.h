@@ -368,7 +368,7 @@ public:
 	std::vector<wxString>& GetSavePathHistory() { return m_savepathhistory; }
 	void AddSavePath(wxString path)
 	{
-		std::vector<wxString>::iterator p = m_savepathhistory.begin();
+		auto p = m_savepathhistory.begin();
 		wxString existpath;
 		for(p=m_savepathhistory.begin(); p != m_savepathhistory.end(); ++p)
 		{

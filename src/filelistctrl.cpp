@@ -537,7 +537,6 @@ void FileListCtrl::ShowContextMenu( const wxPoint& pos )
 		wxString filepath = pTorrent->config->GetDownloadPath();
 		enable_openpath = wxFileName::DirExists( filepath );
 		std::vector<lt::download_priority_t> & filespriority = pTorrent->config->GetFilesPriorities();
-		std::vector<lt::download_priority_t>::iterator file_it ;
 
 		if( filespriority.size() != pTorrent->info->num_files() )
 		{
@@ -551,7 +550,7 @@ void FileListCtrl::ShowContextMenu( const wxPoint& pos )
 		{
 			if(pTorrent->info->num_files() > 1)
 				selectedfiles = ConvertItemId(pTorrent, selectedfiles);
-			file_it = filespriority.begin() + selectedfiles;
+			auto file_it = filespriority.begin() + selectedfiles;
 			disable_priority = (std::uint8_t(*file_it) + FILELISTCTRL_MENU_PRIORITY0);
 			enable_openpath = (enable_openpath && ((*file_it) != lt::download_priority_t(FILELISTCTRL_MENU_PRIORITY0)));
 		}
