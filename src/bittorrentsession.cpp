@@ -1654,7 +1654,7 @@ void BitTorrentSession::MoveTorrentUp( std::shared_ptr<torrent_t>& torrent )
 	long qindex = torrent->config->GetQIndex();
 	if(qindex < 0)
 	{
-		wxLogInfo( _T( "Torrent is not in download que %d-%s" ), idx, torrent->name.c_str() );
+		wxLogInfo( _T( "Torrent is not in download queue %d-%s" ), idx, torrent->name.c_str() );
 		return;
 	}
 
@@ -1953,14 +1953,14 @@ void BitTorrentSession::ConfigureTorrentFilesPriority( std::shared_ptr<torrent_t
 
 void BitTorrentSession::ConfigureTorrentTrackers( std::shared_ptr<torrent_t>& torrent )
 {
-	lt::torrent_handle& t_handle = torrent->handle;
+	auto & t_handle = torrent->handle;
 	if( t_handle.is_valid() )
 	{ t_handle.replace_trackers( torrent->config->GetTrackersURL() ); }
 }
 
 void BitTorrentSession::ConfigureTorrent( std::shared_ptr<torrent_t>& torrent )
 {
-	lt::torrent_handle &h = torrent->handle;
+	auto &h = torrent->handle;
 	WXLOGDEBUG(( _T( "%s: Configure" ), torrent->name.c_str() ));
 
 	if(torrent->info && torrent->info->is_valid())
@@ -2215,7 +2215,6 @@ void BitTorrentSession::CheckQueueItem()
 {
 	std::vector<int> start_torrents, queue_torrents;
 	int idx = 0;
-
 	int pause_count = 0;
 	int start_count = 0;
 	int i = 0;
@@ -2372,7 +2371,7 @@ void BitTorrentSession::HandleTorrentAlerts()
 				case lt::torrent_finished_alert::alert_type:
 					if( lt::torrent_finished_alert* p = lt::alert_cast<lt::torrent_finished_alert>( alert ) )
 					{
-						lt::torrent_status st = (p->handle).status(lt::torrent_handle::query_name);
+						auto st = (p->handle).status(lt::torrent_handle::query_name);
 						event_string << st.name << _T(": ") << wxString::FromUTF8(p->message().c_str());
 						wxASSERT(st.has_metadata == true);
 						(p->handle).save_resume_data(lt::torrent_handle::save_info_dict);
@@ -2382,7 +2381,7 @@ void BitTorrentSession::HandleTorrentAlerts()
 				case lt::save_resume_data_failed_alert::alert_type:
 					if (lt::save_resume_data_failed_alert* p = lt::alert_cast<lt::save_resume_data_failed_alert>( alert ))
 					{
-						lt::torrent_handle & h = p->handle;
+						auto & h = p->handle;
 						log_severity = 1;
 						event_string << _T("FAILED TO SAVE RESUME DATA:: ") << wxString::FromUTF8(p->message().c_str());
 
@@ -2413,8 +2412,8 @@ void BitTorrentSession::HandleTorrentAlerts()
 				case lt::torrent_paused_alert::alert_type:
 					if (lt::torrent_paused_alert* p = lt::alert_cast<lt::torrent_paused_alert>( alert ))
 					{
-						lt::torrent_handle& h = p->handle;
-						lt::torrent_status st = h.status(lt::torrent_handle::query_name);
+						auto& h = p->handle;
+						auto st = h.status(lt::torrent_handle::query_name);
 						if (st.has_metadata)
 							h.save_resume_data(lt::torrent_handle::save_info_dict);
 
@@ -2433,7 +2432,7 @@ void BitTorrentSession::HandleTorrentAlerts()
 					if( lt::save_resume_data_alert *p = lt::alert_cast<lt::save_resume_data_alert>( alert ) )
 					{
 						SaveTorrentResumeData(p);
-						lt::torrent_handle& h = p->handle;
+						auto& h = p->handle;
 						InfoHash thash(h.info_hash());
 						wxMutexLocker ml(m_torrent_queue_lock);
 						auto it = m_running_torrent_map.find(wxString(thash));
@@ -2692,7 +2691,7 @@ bool BitTorrentSession::HandleTorrentAddAlert(lt::add_torrent_alert * p)
 		{
 			if( p->handle.is_valid() )
 			{
-				wxLogError( _("Torrent Add Alert: %s was not found in torrent list, maybe deleted?"), shash.c_str());
+				wxLogError( _T("Torrent Add Alert: %s was not found in torrent list, maybe deleted?"), shash.c_str());
 				p->handle.pause();
 				m_libbtsession->remove_torrent( p->handle );
 			}

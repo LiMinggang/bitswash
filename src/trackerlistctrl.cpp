@@ -308,9 +308,9 @@ void TrackerListCtrl::OnMenuTracker(wxCommandEvent& event)
 		}
 		case TRACKERLISTCTRL_MENU_COPY:
 		{
-			wxString trackerurls;
 			if(wxTheClipboard)
 			{
+				wxString trackerurls;
 				do {
 					if ((item < 0) || (item >= trackers.size()))
 						return;

@@ -998,7 +998,7 @@ void MainFrame::OpenTorrentUrl()
 	}
 	else
 	{
-		wxLogMessage( _( "Download cancelled" ) );
+		wxLogMessage( _T( "Download cancelled" ) );
 	}
 }
 

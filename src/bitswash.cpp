@@ -213,7 +213,7 @@ bool BitSwash::OnInit()
 
 			if( !m_AppServer->Create( g_BitSwashServerStr ) )
 			{
-				wxLogDebug( _( "Failed to create an IPC service.\n" ) );
+				wxLogDebug( _T( "Failed to create an IPC service.\n" ) );
 			}
 		}
 		else
