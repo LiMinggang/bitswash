@@ -98,7 +98,7 @@ typedef struct torrent_handle_t {
 
 /* watch out the s after torrent */
 typedef std::vector<std::shared_ptr<torrent_t> > torrents_t;
-typedef std::map<wxString, int> torrents_map;
+typedef std::map<wxString, size_t> torrents_map;
 typedef std::set<wxString> torrents_set;
 typedef std::vector<wxString> metadata_t;
 WX_DECLARE_HASH_SET( wxString, wxStringHash, wxStringEqual, BitwashStrSet );
