@@ -1556,8 +1556,8 @@ void BitTorrentSession::StopTorrent( std::shared_ptr<torrent_t>& torrent )
 			{
 				torrent->handle.save_resume_data(lt::torrent_handle::save_info_dict);
 			}
-
-			m_libbtsession->remove_torrent(handle);
+			else
+				m_libbtsession->remove_torrent(handle);
 		}
 		catch (std::exception& e)
 		{
@@ -2440,7 +2440,7 @@ void BitTorrentSession::HandleTorrentAlerts()
 						{
 							std::shared_ptr<torrent_t> torrent = BitTorrentSession::GetTorrent(it->second);
 							wxASSERT(torrent);
-							if(torrent->config->GetTorrentState() == TORRENT_STATE_STOP)
+							if(torrent->config->GetTorrentState() == TORRENT_STATE_STOP && h.is_valid())
 							{
 								m_libbtsession->remove_torrent( h );
 							}
