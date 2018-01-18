@@ -98,7 +98,7 @@ public:
 
 	void OnListItemClick( long item );
 
-	static void ReceiveTorrent( wxString fileorurl );
+	static void ReceiveTorrent(const       wxString & fileorurl );
 	static const long ID_OPTIONS_PREFERENCES; // Share with Tray Icon;
 
 private:
@@ -120,7 +120,8 @@ private:
 #endif
 	void UpdateTrayInfo();
 
-	void AddTorrent( wxString filename, bool usedefault = false );
+	void AddTorrent( const wxString & filename, bool usedefault = false );
+	void OpenTorrentUrls(const wxString& urls);
 	void RemoveTorrent( bool deletedata );
 	void OnTorrentMetadata( wxCommandEvent& event );
 	void OnMenuOpenTorrent( wxCommandEvent& event );
@@ -169,7 +170,6 @@ private:
 	void OnUpdateUI_MenuProperties( wxUpdateUIEvent& event );
 	void OnUpdateUI_MenuRemove( wxUpdateUIEvent& event );
 	void OnUpdateUI_MenuRemovedata( wxUpdateUIEvent& event );
-	void OnDropFiles(wxDropFilesEvent& event);
 
 	void LoadIcons();
 	//void SaveTorrentResumeData(std::shared_ptr<ptorrent_t>& torrent);
@@ -266,6 +266,7 @@ private:
 	static const long ID_TIMER_BT_UPDATE;
 
 	static const long ID_OPTIONS_LANGUAGE;
+	friend class BitswashDropTarget;
 };
 
 #endif // _MAINFRAME_H_

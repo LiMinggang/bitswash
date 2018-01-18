@@ -282,6 +282,90 @@ MainFrame::MainFrame( wxFrame *frame, const wxString& title )
 	//
 }
 
+class BitswashDropTarget : public wxDropTarget
+{
+public:
+	BitswashDropTarget::BitswashDropTarget()
+	{
+		wxDataObjectComposite* dataobj = new wxDataObjectComposite();
+		dataobj->Add(new wxFileDataObject(), true); 
+		dataobj->Add(new wxTextDataObject());
+		SetDataObject(dataobj);
+	}
+private:
+	virtual wxDragResult OnData(wxCoord x, wxCoord y, wxDragResult defResult)
+	{
+		static MainFrame* frame = nullptr;
+		if(frame == nullptr)
+			frame = wxDynamicCast( wxGetApp().GetTopWindow(), MainFrame );
+		if(frame!= nullptr && GetData())
+		{
+			wxDataObjectComposite * dataobjComp = static_cast<wxDataObjectComposite *>(GetDataObject()); 
+			wxDataFormat format = dataobjComp->GetReceivedFormat();
+			wxDataObject *dataobj = dataobjComp->GetObject(format); 
+			switch ( format.GetType() )
+			{
+				case wxDF_TEXT:
+				case wxDF_UNICODETEXT:
+					{
+						wxTextDataObject * dataobjText = static_cast<wxTextDataObject *>(dataobj);
+						wxASSERT(dataobjText != nullptr);
+						if(dataobjText)
+						{
+							wxString data = dataobjText->GetText();
+							if (!data.IsEmpty())
+							{
+								frame->OpenTorrentUrls( data );
+								defResult = wxDragCopy;
+							}
+						}
+					}
+					break;
+				case wxDF_FILENAME:
+					{
+						wxFileDataObject * dataobjFile = static_cast<wxFileDataObject *>(dataobj);
+						wxASSERT(dataobjFile != nullptr);
+						if(dataobjFile)
+						{
+							wxArrayString filenames = dataobjFile->GetFilenames();
+							size_t count = filenames.GetCount();
+							if(count > 0)
+							{
+								wxArrayString files;
+								{
+									wxBusyInfo busyInfo(_("Adding torrent files, wait please..."));
+									for (size_t i = 0; i < count; ++i)
+									{
+										if (wxFileExists(filenames[i]))
+											files.push_back(filenames[i]);
+										else if (wxDirExists(filenames[i]))
+											wxDir::GetAllFiles(filenames[i], &files, _T("*.torrent"));
+									}
+								}
+							
+								if(files.size() > 0)
+								{
+									int answer = wxMessageBox( _("Do you want apply default config for all torrents, aka. select all files?"), _("Confirm"), wxYES_NO | wxICON_QUESTION , frame);
+									bool usedefault = ( answer == wxYES );
+									defResult = wxDragCopy;
+									for (size_t i = 0; i < files.size(); ++i)
+									{
+										frame->AddTorrent( files[i], usedefault );
+									}
+								}
+							}							
+						}
+					}
+					break;
+				default:
+					wxFAIL_MSG( "unexpected data object format" );
+			}
+		}
+
+		return defResult;
+	}
+};
+
 MainFrame::~MainFrame()
 {
 	//free members
@@ -648,11 +732,12 @@ void MainFrame::CreateTorrentList()
 			wxDefaultPosition, wxDefaultSize,
 			flags );
 	wxASSERT(m_torrentlistctrl != nullptr);
-	m_torrentlistctrl->DragAcceptFiles(true);
-	m_torrentlistctrl->Bind(wxEVT_DROP_FILES, &MainFrame::OnDropFiles, this);
+	m_torrentlistctrl->SetDropTarget( new BitswashDropTarget() );
+	//m_torrentlistctrl->DragAcceptFiles(true);
+	//m_torrentlistctrl->Bind(wxEVT_DROP_FILES, &MainFrame::OnDropFiles, this);
 }
 
-void MainFrame::ReceiveTorrent( wxString fileorurl )
+void MainFrame::ReceiveTorrent( const wxString & fileorurl )
 {
 	if( g_BitSwashMainFrame )
 	{
@@ -679,7 +764,7 @@ void MainFrame::TorrentMetadataReceived( )
 }
 
 /* parse torrent file and add to session */
-void MainFrame::AddTorrent( wxString filename, bool usedefault )
+void MainFrame::AddTorrent( const wxString & filename, bool usedefault )
 {
 	WXLOGDEBUG(( _T( "MainFrame: Add Torrent: %s\n" ), filename.c_str() ));
 	std::shared_ptr<torrent_t> torrent = m_btsession->ParseTorrent( filename );
@@ -977,28 +1062,35 @@ void MainFrame::OpenTorrentUrl()
 
 	if( urldialog.ShowModal() == wxID_OK )
 	{
-		wxString urls = urldialog.m_textURL->GetValue(), url, strDelimiters = _T( " \t\r\n" );
-        wxStringTokenizer tkz( urls, strDelimiters );
-
-        while( tkz.HasMoreTokens() )
-	    {
-    		url = tkz.GetNextToken();
-    		wxURL torrenturl( url );
-			WXLOGDEBUG((_T("openurl: Fetch URL %s\n"), url.c_str()));
-
-    		if( isUrl( torrenturl.GetScheme() ) )
-    		{
-    			DownloadTorrent(torrenturl);
-    		}
-    		else
-    		{
-    			OpenMagnetURI(url);
-    		}
-        }
-	}
+		wxString urls = urldialog.m_textURL->GetValue() ;
+		OpenTorrentUrls( urls );
+ 	}
 	else
 	{
 		wxLogMessage( _T( "Download cancelled" ) );
+	}
+}
+
+void MainFrame::OpenTorrentUrls(const wxString& urls)
+{
+	wxString url, strDelimiters = _T( " \t\r\n" );
+
+	wxStringTokenizer tkz( urls, strDelimiters );
+	
+	while( tkz.HasMoreTokens() )
+	{
+		url = tkz.GetNextToken();
+		wxURL torrenturl( url );
+		WXLOGDEBUG((_T("openurl: Fetch URL %s\n"), url.c_str()));
+	
+		if( isUrl( torrenturl.GetScheme() ) )
+		{
+			DownloadTorrent(torrenturl);
+		}
+		else
+		{
+			OpenMagnetURI(url);
+		}
 	}
 }
 
@@ -1985,6 +2077,7 @@ wxMenu* MainFrame::GetNewTorrentMenu()
 	return torrentMenu;
 }
 
+#if 0
 void MainFrame::OnDropFiles(wxDropFilesEvent& event)
 {
 	if (event.GetNumberOfFiles() > 0) {
@@ -2016,4 +2109,4 @@ void MainFrame::OnDropFiles(wxDropFilesEvent& event)
 		}
 	}
 }
-
+#endif
