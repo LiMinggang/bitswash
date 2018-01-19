@@ -246,12 +246,12 @@ void *BitTorrentSession::Entry()
 		}
 		catch( std::exception& e )
 		{
-			wxLogFatalError( _T( "%s" ), e.what() );
+			wxLogFatalError( _T( "[%s]:%s! exiting..." ), __FUNCTION__, e.what() );
 			break;
 		}
 		catch(...)
 		{
-			wxLogFatalError( _T( "FATAL ERROR!! exiting..." ) );
+			wxLogFatalError( _T( "[%s]:FATAL ERROR!! exiting..." ), __FUNCTION__  );
 			break;
 		}
 
