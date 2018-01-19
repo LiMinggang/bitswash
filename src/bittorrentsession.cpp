@@ -733,7 +733,6 @@ void BitTorrentSession::AddTorrentToSession( std::shared_ptr<torrent_t>& torrent
 	}
 }
 
-
 void BitTorrentSession::AddMagnetUriToSession(std::shared_ptr<torrent_t>& torrent)
 {
 	try
@@ -2413,10 +2412,12 @@ void BitTorrentSession::HandleTorrentAlerts()
 					if (lt::torrent_paused_alert* p = lt::alert_cast<lt::torrent_paused_alert>( alert ))
 					{
 						auto& h = p->handle;
-						auto st = h.status(lt::torrent_handle::query_name);
-						if (st.has_metadata)
-							h.save_resume_data(lt::torrent_handle::save_info_dict);
-
+						if (h.is_valid())
+						{
+							auto st = h.status(lt::torrent_handle::query_name);
+							if (st.has_metadata && !((st.state == lt::torrent_status::seeding) || (st.state == lt::torrent_status::finished)))
+								h.save_resume_data(lt::torrent_handle::save_info_dict);
+						}
 						log_severity = 1;
 						event_string << _T("Torrent paused: ") << wxString::FromUTF8(p->message().c_str());
 					}
@@ -2433,16 +2434,19 @@ void BitTorrentSession::HandleTorrentAlerts()
 					{
 						SaveTorrentResumeData(p);
 						auto& h = p->handle;
-						InfoHash thash(h.info_hash());
-						wxMutexLocker ml(m_torrent_queue_lock);
-						auto it = m_running_torrent_map.find(wxString(thash));
-						if (it != m_running_torrent_map.end() )
+						if (h.is_valid())
 						{
-							std::shared_ptr<torrent_t> torrent = BitTorrentSession::GetTorrent(it->second);
-							wxASSERT(torrent);
-							if(torrent->config->GetTorrentState() == TORRENT_STATE_STOP && h.is_valid())
+							InfoHash thash(h.info_hash());
+							wxMutexLocker ml(m_torrent_queue_lock);
+							auto it = m_running_torrent_map.find(wxString(thash));
+							if (it != m_running_torrent_map.end())
 							{
-								m_libbtsession->remove_torrent( h );
+								std::shared_ptr<torrent_t> torrent = BitTorrentSession::GetTorrent(it->second);
+								wxASSERT(torrent);
+								if (torrent->config->GetTorrentState() == TORRENT_STATE_STOP && h.is_valid())
+								{
+									m_libbtsession->remove_torrent(h);
+								}
 							}
 						}
 						event_string << h.status(lt::torrent_handle::query_name).name << _T( ": " ) << wxString::FromUTF8(p->message().c_str());
