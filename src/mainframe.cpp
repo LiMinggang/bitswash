@@ -342,7 +342,7 @@ private:
 											wxDir::GetAllFiles(filenames[i], &files, _T("*.torrent"));
 									}
 								}
-							
+
 								if(files.size() > 0)
 								{
 									int answer = wxMessageBox( _("Do you want apply default config for all torrents, aka. select all files?"), _("Confirm"), wxYES_NO | wxICON_QUESTION , frame);

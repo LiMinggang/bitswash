@@ -251,7 +251,7 @@ void *BitTorrentSession::Entry()
 		}
 		catch(...)
 		{
-			wxLogFatalError( _T( "[%s]:FATAL ERROR!! exiting..." ), __FUNCTION__  );
+			wxLogFatalError( _T( "[%s]:FATAL ERROR!! exiting..." ), __FUNCTION__ );
 			break;
 		}
 
@@ -725,7 +725,7 @@ void BitTorrentSession::AddTorrentToSession( std::shared_ptr<torrent_t>& torrent
 	catch( std::exception& e )
 	{
 		//posibly duplicate torrent
-		wxLogFatalError( wxString::FromUTF8( e.what() ) );
+		wxLogFatalError( _T("Exception: [%s]:%s"), __FUNCTION__, wxString::FromUTF8(e.what()).c_str() );
 	}
 	catch (...)
 	{
@@ -779,7 +779,7 @@ void BitTorrentSession::AddMagnetUriToSession(std::shared_ptr<torrent_t>& torren
 	}
 	catch( std::exception &e )
 	{
-		wxLogFatalError( wxString::FromUTF8( e.what() ) );
+		wxLogFatalError( _T("Exception: [%s]:%s"), __FUNCTION__, wxString::FromUTF8(e.what()).c_str() );
 	}
 	catch (...)
 	{
@@ -818,7 +818,7 @@ bool BitTorrentSession::AddTorrent( std::shared_ptr<torrent_t>& torrent )
 	}
 	catch( std::exception& e )
 	{
-		wxLogFatalError( wxString::FromUTF8( e.what() ) );
+		wxLogFatalError( _T("Exception: [%s]:%s"), __FUNCTION__, wxString::FromUTF8(e.what()).c_str() );
 		return false;
 	}
 	catch (...)
@@ -1377,7 +1377,7 @@ std::shared_ptr<torrent_t> BitTorrentSession::ParseTorrent( const wxString& file
 	}
 	catch( std::exception &e )
 	{
-		wxLogFatalError( wxString::FromUTF8( e.what() ) );
+		wxLogFatalError( _T("Exception: [%s]:%s"), __FUNCTION__, wxString::FromUTF8(e.what()).c_str() );
 	}
 	catch (...)
 	{
@@ -1428,7 +1428,7 @@ std::shared_ptr<torrent_t> BitTorrentSession::LoadMagnetUri( MagnetUri& magnetur
 			}
 			catch( std::exception &e )
 			{
-				wxLogFatalError( wxString::FromUTF8( e.what() ) );
+				wxLogFatalError( _T("Exception: [%s]:%s"), __FUNCTION__, wxString::FromUTF8(e.what()).c_str() );
 			}
 			catch (...)
 			{
@@ -1484,7 +1484,7 @@ bool BitTorrentSession::SaveTorrent( std::shared_ptr<torrent_t>& torrent, const 
 	}
 	catch( std::exception &e )
 	{
-		wxLogFatalError( wxString::FromUTF8( e.what() ) );
+		wxLogFatalError( _T("Exception: [%s]:%s"), __FUNCTION__, wxString::FromUTF8(e.what()).c_str() );
 		return false;
 	}
 	catch (...)
@@ -1561,7 +1561,7 @@ void BitTorrentSession::StopTorrent( std::shared_ptr<torrent_t>& torrent )
 		catch (std::exception& e)
 		{
 			//posibly duplicate torrent
-			wxLogFatalError(wxString::FromUTF8(e.what()));
+			wxLogFatalError( _T("Exception: [%s]:%s"), __FUNCTION__, wxString::FromUTF8(e.what()).c_str() );
 		}
 		catch (...)
 		{
@@ -2609,11 +2609,11 @@ void BitTorrentSession::HandleTorrentAlerts()
 		}
 		TORRENT_CATCH(std::exception& e)
 		{
-			wxLogFatalError( _T( "Exception: %s" ), e.what() );
+			wxLogFatalError( _T("Exception: [%s]:%s"), __FUNCTION__, wxString::FromUTF8(e.what()).c_str() );
 		}
 		TORRENT_CATCH(...)
 		{
-			wxLogFatalError( _T( "Unknown Exception: %s" ), __FUNCTION__ );
+			wxLogFatalError( _T( "Unknown Exception: [%s]" ), __FUNCTION__ );
 		}
 	}
 }
@@ -2703,7 +2703,7 @@ bool BitTorrentSession::HandleTorrentAddAlert(lt::add_torrent_alert * p)
 	}
 	catch( std::exception& e )
 	{
-		wxLogFatalError( wxString::FromUTF8( e.what() ) );
+		wxLogFatalError( _T("Exception: [%s]:%s"), __FUNCTION__, wxString::FromUTF8(e.what()).c_str() );
 		return false;
 	}
 	catch (...)
