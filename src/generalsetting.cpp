@@ -73,7 +73,7 @@ GeneralSettingPane::GeneralSettingPane(wxWindow* parent,wxWindowID id,const wxPo
 	StaticText2 = new wxStaticText(this, wxID_ANY, _("Maximum Running Job:"), wxDefaultPosition, wxDefaultSize, 0, _T("wxID_ANY"));
 	FlexGridSizer2->Add(StaticText2, 1, wxALL|wxALIGN_LEFT|wxALIGN_CENTER_VERTICAL, 5);
 	m_spin_maxstart = new wxSpinCtrl(this, wxID_ANY, _T("1"), wxDefaultPosition, wxDefaultSize, wxSP_ARROW_KEYS, 1, 100, 1, _T("wxID_ANY"));
-	m_spin_maxstart->SetValue(_T("1"));
+	m_spin_maxstart->SetValue(m_pcfg->GetMaxStart());
 	FlexGridSizer2->Add(m_spin_maxstart, 1, wxALL|wxALIGN_LEFT|wxALIGN_CENTER_VERTICAL, 5);
 	StaticText3 = new wxStaticText(this, wxID_ANY, _("Maximum Active Seeds:"), wxDefaultPosition, wxDefaultSize, 0, _T("wxID_ANY"));
 	FlexGridSizer2->Add(StaticText3, 1, wxALL|wxALIGN_LEFT|wxALIGN_CENTER_VERTICAL, 5);

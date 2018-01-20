@@ -31,6 +31,7 @@ Fix: Can't start stopped torrent(by MagnetURI) without meta data
 Fix: Duplicated Magnet URI torrents would be added
 Fix: Race condition in AddTorrentToSession
 Fix: Crash on stop torrent
+Fix: MaxStart initial value issue
 Update libtorrent to 785fffd97627d03e73d00b69fff93d52d700c56e
 Code improvement
 
