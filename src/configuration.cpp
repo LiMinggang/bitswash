@@ -76,6 +76,7 @@ void Configuration::Save()
 	m_cfg->Write( _T( "/Config/portmin" ), ( int )m_portmin );
 	m_cfg->Write( _T( "/Config/portmax" ), ( int )m_portmax );
 	m_cfg->Write( _T( "/Config/refreshtime" ), ( int )m_refreshtime );
+	m_cfg->Write( _T( "/Config/exit_waiting_time" ), ( int )m_exit_waiting_time);
 	m_cfg->Write( _T( "/Config/fastresume_save_time" ), ( int )m_fastresume_save_time );
 	m_cfg->Write( _T( "/Config/max_start" ), ( int )m_max_start );
 	m_cfg->Write( _T( "/Config/use_systray" ), ( bool )m_use_systray );
@@ -242,6 +243,7 @@ void Configuration::Load()
 	m_portmin = m_cfg->Read( _T( "/Config/portmin" ), 16881 );
 	m_portmax = m_cfg->Read( _T( "/Config/portmax" ), 16889 );
 	m_refreshtime = m_cfg->Read( _T( "/Config/refreshtime" ), 5 );
+	m_exit_waiting_time = m_cfg->Read( _T( "/Config/exit_waiting_time" ), 10 );
 	//legacy
 	if( m_refreshtime >= 1000 )
 		m_refreshtime /= 1000;

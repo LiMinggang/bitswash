@@ -971,7 +971,7 @@ std::shared_ptr<torrent_t> BitTorrentSession::GetTorrent( const wxString &hash )
 	if( idx >= 0 )
 		return m_torrent_queue.at( idx );
 	else
-		return std::shared_ptr<torrent_t>();
+		return {};
 }
 
 std::shared_ptr<torrent_t> BitTorrentSession::GetTorrent( int idx )
@@ -1226,7 +1226,7 @@ void BitTorrentSession::SaveAllTorrent()
 
 	while( num_outstanding_resume_data > 0 )
 	{
-		lt::alert const* a = m_libbtsession->wait_for_alert(lt::seconds( 10 ) );
+		lt::alert const* a = m_libbtsession->wait_for_alert(lt::seconds( m_config->GetExitWaitingTime() ) );
 
 		if( a == 0 ) { continue; }
 

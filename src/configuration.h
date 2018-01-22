@@ -138,6 +138,10 @@ public:
 
 	unsigned int GetMaxStart() { return m_max_start; }
 	void SetMaxStart(unsigned int max_start) { m_max_start = max_start; }
+	
+	unsigned int GetExitWaitingTime() { return m_exit_waiting_time; }
+	void SetExitWaitingTime(unsigned int waiting_time) { m_exit_waiting_time = waiting_time; }
+
 	bool GetEnableUpnp() { return m_enable_upnp; }
 	void SetEnableUpnp( bool enable_upnp ) { m_enable_upnp = enable_upnp ; }
 
@@ -161,8 +165,10 @@ public:
 #ifdef __WXMSW__
     bool GetRunAtStartup() { return m_run_at_startup; }
     void SetRunAtStartup(bool run_at_startup ) { m_run_at_startup = run_at_startup; }
+
     bool GetAssociateTorrent() { return m_associate_torrent; }
     void SetAssociateTorrent(bool associate_torrent) { m_associate_torrent = associate_torrent; }
+
     bool GetAssociateMagnetURI() { return m_associate_magneturi; }
     void SetAssociateMagnetURI(bool associate_magneturi) { m_associate_magneturi = associate_magneturi; }
 #endif
@@ -421,6 +427,7 @@ private:
 	unsigned int	m_refreshtime;
 	unsigned int	m_fastresume_save_time;
 	unsigned int	m_max_start;
+	unsigned int	m_exit_waiting_time;
 	int				m_max_active_seeds;
 	int				m_enabled_protocols;
 	bool		m_use_systray;
@@ -669,7 +676,6 @@ private:
 	//	 peers in the middle of the download to trade with each other.
 	int m_choking_algorithm;
 	int m_seed_choking_algorithm;
-
 
 	/***************************************************************
 	 * end from libtorrent/include/libtorrent/settings_pack.hpp *
