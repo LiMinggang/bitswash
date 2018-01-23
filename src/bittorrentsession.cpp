@@ -1105,11 +1105,11 @@ void BitTorrentSession::ScanTorrentsDirectory( const wxString& dirname )
 	std::vector<size_t> start_torrents;
 	{
 		int maxstart = m_config->GetMaxStart(), started = 0;
-		m_running_torrent_map.clear();
 		wxMutexLocker ml( m_torrent_queue_lock );
+		m_running_torrent_map.clear();
 		std::sort( m_torrent_queue.begin(), m_torrent_queue.end(), [&] ( const std::shared_ptr<torrent_t>& torrent_start, const std::shared_ptr<torrent_t>& torrent_end )
 			{
-				return ((torrent_end->config->GetQIndex() > 0) && (torrent_start->config->GetQIndex() < torrent_end->config->GetQIndex()));
+				return ((torrent_end->config->GetQIndex() >= 0 && torrent_start->config->GetQIndex() >= 0) && (torrent_start->config->GetQIndex() < torrent_end->config->GetQIndex()));
 			});
 
 		for( size_t i = 0; i < m_torrent_queue.size(); ++i )
