@@ -483,7 +483,7 @@ void BitSwash::LoadSettingIcons()
 	}
 }
 
-bool BitSwash::SetLocale( wxString lang )
+bool BitSwash::SetLocale( const wxString& lang )
 {
 	const wxLanguageInfo * const langinfo = wxLocale::FindLanguageInfo( lang );
 	int langid = wxLANGUAGE_DEFAULT;
@@ -503,10 +503,10 @@ bool BitSwash::SetLocale( wxString lang )
 	else
 	{
 #ifdef  __WXMSW__
-		wxString localedir =  wxStandardPaths::Get().GetDataDir() + wxFileName::GetPathSeparator( wxPATH_NATIVE ) + _T( "locale" );
+		wxString localedir = wxStandardPaths::Get().GetDataDir() + wxFileName::GetPathSeparator( wxPATH_NATIVE ) + _T( "locale" );
 #else
 #ifndef PACKAGE_LOCALE_DIR
-		wxString localedir =  wxString::FromAscii( PREFIX ) + _T( "/share/locale" );
+		wxString localedir = wxString::FromAscii( PREFIX ) + _T( "/share/locale" );
 #else
 		wxString localedir = wxString::FromAscii( PACKAGE_LOCALE_DIR );
 #endif

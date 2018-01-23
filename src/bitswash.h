@@ -142,7 +142,7 @@ public:
 	wxImageList* GetCountryFlagsList() { return m_imglist_ctryflags;} 
 	wxImageList* GetSettingIconsList() { return m_imglist_settingicons;} 
 
-	bool SetLocale(wxString lang);
+	bool SetLocale(const wxString& lang);
 
 	void SetLogLevel();
 
