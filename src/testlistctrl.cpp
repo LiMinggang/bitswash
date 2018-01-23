@@ -34,12 +34,11 @@ TestListCtrl::TestListCtrl(wxWindow *parent,
 TestListCtrl::~TestListCtrl()
 {
 #if 1
-	std::vector<wxGauge*>::const_iterator git = m_gauge_list.begin();
-	for (git; git != m_gauge_list.end(); ++git)
+	for (auto &pgauge : m_gauge_list)
 	{
-		wxGauge* tmpGauge = *git;
+		wxGauge* tmpGauge = pgauge;
 		tmpGauge->Show(0);
-		delete *git;
+		delete pgauge;
 	}
 	m_gauge_list.clear();
 	m_gauge_list.swap(m_gauge_list);

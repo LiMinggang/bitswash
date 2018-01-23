@@ -156,11 +156,10 @@ void TorrentConfig::Load()
 void TorrentConfig::WriteFilesPriority()
 {
 	wxString filespriority_data = wxEmptyString;
-	std::vector<lt::download_priority_t>::const_iterator i = m_files_priority.begin();
 
-	for( i = m_files_priority.begin(); i != m_files_priority.end() ; ++i )
+	for( auto & pr : m_files_priority )
 	{
-		filespriority_data << int(std::uint8_t(*i)) << _T( "," );
+		filespriority_data << int(std::uint8_t(pr)) << _T( "," );
 	}
 
 	filespriority_data = filespriority_data.BeforeLast( ',' );
@@ -170,17 +169,16 @@ void TorrentConfig::WriteFilesPriority()
 void TorrentConfig::WriteTrackersUrl()
 {
 	wxString trackers = wxEmptyString;
-	std::vector<lt::announce_entry>::const_iterator t = m_trackers_url.begin();
 
 	if( m_trackers_url.size() == 0 )
 	{ return ; }
 
 	std::string t_url;
 
-	for( t = m_trackers_url.begin(); t != m_trackers_url.end() ; ++t )
+	for( auto & tr : m_trackers_url )
 	{
-		t_url = t->url;
-		int t_tier = t->tier;
+		t_url = tr.url;
+		int t_tier = tr.tier;
 		trackers += wxString::FromUTF8( t_url.c_str() ) + _T( "|" ) + wxString::Format( _T( "%d" ), t_tier ) + _T( ";" );
 	}
 
@@ -195,10 +193,11 @@ void TorrentConfig::ReadFilesPriority()
 	m_cfg->Read( _T( "/Torrent/files_priority" ), &files_priority );
 	m_files_priority.clear();
 	wxStringTokenizer tokens( files_priority, _T( "," ) );
+	wxString token;
 
 	while( tokens.HasMoreTokens() )
 	{
-		wxString token = tokens.GetNextToken();
+		token = tokens.GetNextToken();
 		std::uint8_t pr = wxAtoi(token);
 		if (pr > 7) pr = 4;
 		m_files_priority.push_back(lt::download_priority_t(pr) );
@@ -207,7 +206,7 @@ void TorrentConfig::ReadFilesPriority()
 
 void TorrentConfig::ReadTrackersUrl()
 {
-	wxString trackers = wxEmptyString;
+	wxString trackers = wxEmptyString, token;
 	m_cfg->Read( _T( "/Torrent/trackers" ), &trackers );
 	m_trackers_url.clear();
 
@@ -218,7 +217,7 @@ void TorrentConfig::ReadTrackersUrl()
 
 	while( tokens.HasMoreTokens() )
 	{
-		wxString token = tokens.GetNextToken();
+		token = tokens.GetNextToken();
 		std::string t_str( (const char *)((token.BeforeFirst( '|' ).ToUTF8()).data()) );
 		int t_tier = wxAtoi( token.AfterFirst( '|' ) );
 		lt::announce_entry e( t_str );

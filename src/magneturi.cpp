@@ -95,7 +95,7 @@ MagnetUri::MagnetUri(const wxString &source)
 	}
 
 	lt::error_code ec;
-	m_addTorrentParams = lt::parse_magnet_uri(std::string((const char *)(m_url.ToUTF8().data())), ec);
+	m_addTorrentParams = lt::parse_magnet_uri(std::move(std::string((const char *)(m_url.ToUTF8().data()))), ec);
 	if (ec) return;
 
 	m_valid = true;

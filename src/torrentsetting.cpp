@@ -94,9 +94,9 @@ TorrentSettingPane::TorrentSettingPane( wxWindow* parent, std::shared_ptr<torren
 	m_combo_saveas->SetMinSize(wxSize(260,-1));
 	m_combo_saveas->Append( t_saveas );
 
-	std::vector<wxString>::reverse_iterator path;
+	std::vector<wxString>::reverse_iterator path  = historypath.rbegin();
 
-	for(path = historypath.rbegin(); path != historypath.rend(); ++path)
+	for(; path != historypath.rend(); ++path)
 	{
 		if((t_saveas.Cmp(*path)) == 0)
 			continue;
