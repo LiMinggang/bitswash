@@ -2362,7 +2362,19 @@ void BitTorrentSession::HandleTorrentAlerts()
 						}
 						else
 						{
-							HandleTorrentAddAlert(p);
+							TORRENT_TRY
+							{
+								HandleTorrentAddAlert(p);
+							}
+							TORRENT_CATCH(std::exception& e)
+							{
+								wxLogError( _T("Exception: [add_torrent_alert]:%s"),  wxString::FromUTF8(e.what()).c_str() );
+							}
+							TORRENT_CATCH(...)
+							{
+								wxLogError( _T( "Unknown Exception: [%s]:#%d" ), __FUNCTION__, __LINE__ );
+							}
+							
 							event_string << _T("Metadata: ") <<  wxString::FromUTF8(p->message().c_str());
 						}
 					}
@@ -2373,7 +2385,18 @@ void BitTorrentSession::HandleTorrentAlerts()
 						auto st = (p->handle).status(lt::torrent_handle::query_name);
 						event_string << st.name << _T(": ") << wxString::FromUTF8(p->message().c_str());
 						wxASSERT(st.has_metadata == true);
-						(p->handle).save_resume_data(lt::torrent_handle::save_info_dict);
+						TORRENT_TRY
+						{
+							(p->handle).save_resume_data(lt::torrent_handle::save_info_dict);
+						}
+						TORRENT_CATCH(std::exception& e)
+						{
+							wxLogError( _T("Exception: [torrent_finished_alert]:%s"),  wxString::FromUTF8(e.what()).c_str() );
+						}
+						TORRENT_CATCH(...)
+						{
+							wxLogError( _T( "Unknown Exception: [%s]:#%d" ), __FUNCTION__, __LINE__ );
+						}
 						//(p->handle).set_max_connections(max_connections_per_torrent / 2);
 					}
 					break;
@@ -2386,17 +2409,28 @@ void BitTorrentSession::HandleTorrentAlerts()
 
 						if (h.is_valid() && p->error != lt::errors::resume_data_not_modified)
 						{
-							log_severity = 4;
-							InfoHash thash(h.info_hash());
-							wxMutexLocker ml(m_torrent_queue_lock);
-							auto it = m_running_torrent_map.find(wxString(thash));
-							if (it != m_running_torrent_map.end())
+							TORRENT_TRY
 							{
-								m_libbtsession->remove_torrent(h);
-								std::shared_ptr<torrent_t> torrent = BitTorrentSession::GetTorrent(it->second);
-								wxASSERT(torrent);
-								torrent->config->SetTorrentState(TORRENT_STATE_STOP);
-								torrent->config->Save();
+								log_severity = 4;
+								InfoHash thash(h.info_hash());
+								wxMutexLocker ml(m_torrent_queue_lock);
+								auto it = m_running_torrent_map.find(wxString(thash));
+								if (it != m_running_torrent_map.end())
+								{
+									m_libbtsession->remove_torrent(h);
+									std::shared_ptr<torrent_t> torrent = BitTorrentSession::GetTorrent(it->second);
+									wxASSERT(torrent);
+									torrent->config->SetTorrentState(TORRENT_STATE_STOP);
+									torrent->config->Save();
+								}
+							}							
+							TORRENT_CATCH(std::exception& e)
+							{
+								wxLogError( _T("Exception: [save_resume_data_failed_alert]:%s"),  wxString::FromUTF8(e.what()).c_str() );
+							}
+							TORRENT_CATCH(...)
+							{
+								wxLogError( _T( "Unknown Exception: [%s]:#%d" ), __FUNCTION__, __LINE__ );
 							}
 						}
 					}
@@ -2414,9 +2448,20 @@ void BitTorrentSession::HandleTorrentAlerts()
 						auto& h = p->handle;
 						if (h.is_valid())
 						{
-							auto st = h.status(lt::torrent_handle::query_name);
-							if (st.has_metadata && !((st.state == lt::torrent_status::seeding) || (st.state == lt::torrent_status::finished)))
-								h.save_resume_data(lt::torrent_handle::save_info_dict);
+							TORRENT_TRY
+							{
+								auto st = h.status(lt::torrent_handle::query_name);
+								if (st.has_metadata && !((st.state == lt::torrent_status::seeding) || (st.state == lt::torrent_status::finished)))
+									h.save_resume_data(lt::torrent_handle::save_info_dict);
+							}
+							TORRENT_CATCH(std::exception& e)
+							{
+								wxLogError( _T("Exception: [torrent_paused_alert]:%s"),  wxString::FromUTF8(e.what()).c_str() );
+							}
+							TORRENT_CATCH(...)
+							{
+								wxLogError( _T( "Unknown Exception: [%s]:#%d" ), __FUNCTION__, __LINE__ );
+							}
 						}
 						log_severity = 1;
 						event_string << _T("Torrent paused: ") << wxString::FromUTF8(p->message().c_str());
@@ -2436,20 +2481,32 @@ void BitTorrentSession::HandleTorrentAlerts()
 						auto& h = p->handle;
 						if (h.is_valid())
 						{
-							InfoHash thash(h.info_hash());
-							wxMutexLocker ml(m_torrent_queue_lock);
-							auto it = m_running_torrent_map.find(wxString(thash));
-							if (it != m_running_torrent_map.end())
+							TORRENT_TRY
 							{
-								std::shared_ptr<torrent_t> torrent = BitTorrentSession::GetTorrent(it->second);
-								wxASSERT(torrent);
-								if (torrent->config->GetTorrentState() == TORRENT_STATE_STOP && h.is_valid())
+								InfoHash thash(h.info_hash());
+								wxMutexLocker ml(m_torrent_queue_lock);
+								auto it = m_running_torrent_map.find(wxString(thash));
+								if (it != m_running_torrent_map.end())
 								{
-									m_libbtsession->remove_torrent(h);
+									std::shared_ptr<torrent_t> torrent = BitTorrentSession::GetTorrent(it->second);
+									wxASSERT(torrent);
+									if (torrent->config->GetTorrentState() == TORRENT_STATE_STOP && h.is_valid())
+									{
+										m_libbtsession->remove_torrent(h);
+									}
 								}
 							}
+								TORRENT_CATCH(std::exception& e)
+							{
+								wxLogError(_T("Exception: [save_resume_data_alert]:%s"), wxString::FromUTF8(e.what()).c_str());
+							}
+							TORRENT_CATCH(...)
+							{
+								wxLogError(_T("Unknown Exception: [%s]:#%d"), __FUNCTION__, __LINE__);
+							}
 						}
-						event_string << h.status(lt::torrent_handle::query_name).name << _T( ": " ) << wxString::FromUTF8(p->message().c_str());
+
+						event_string << h.status(lt::torrent_handle::query_name).name << _T(": ") << wxString::FromUTF8(p->message().c_str());
 					}
 					break;
 				case lt::dht_stats_alert::alert_type:
