@@ -2609,11 +2609,11 @@ void BitTorrentSession::HandleTorrentAlerts()
 		}
 		TORRENT_CATCH(std::exception& e)
 		{
-			wxLogFatalError( _T("Exception: [%s]:%s"), __FUNCTION__, wxString::FromUTF8(e.what()).c_str() );
+			wxLogError( _T("Exception: [%s]:%s"), __FUNCTION__, wxString::FromUTF8(e.what()).c_str() );
 		}
 		TORRENT_CATCH(...)
 		{
-			wxLogFatalError( _T( "Unknown Exception: [%s]" ), __FUNCTION__ );
+			wxLogError( _T( "Unknown Exception: [%s]" ), __FUNCTION__ );
 		}
 	}
 }
