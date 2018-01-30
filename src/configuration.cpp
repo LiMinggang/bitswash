@@ -160,6 +160,9 @@ void Configuration::Save()
 	m_cfg->Write( _T( "/Session/choking_algorithm" ), m_choking_algorithm );
 	m_cfg->Write( _T( "/Session/seed_choking_algorithm" ), m_seed_choking_algorithm );
 	m_cfg->Write( _T( "/Session/allow_multiple_connections_per_ip" ), m_allow_multiple_connections_per_ip );
+	m_cfg->Write( _T( "/Session/rate_limit_peers_on_lan" ), ( bool )m_rate_limit_peers_on_lan );
+	m_cfg->Write( _T( "/Session/rate_limit_utp" ), ( bool )m_rate_limit_utp );
+
 	//legacy
 	//if( m_storagemode != lt::storage_mode_compact )
 	m_cfg->Write( _T( "/Torrent/storagemode" ), ( long )m_storagemode );
@@ -346,6 +349,8 @@ void Configuration::Load()
 	m_cfg->Read( _T( "/Session/choking_algorithm" ), &m_choking_algorithm, (int)Configuration::FIXED_SLOTS );
 	m_cfg->Read( _T( "/Session/seed_choking_algorithm" ), &m_seed_choking_algorithm, (int)Configuration::ROUND_ROBIN );
 	m_cfg->Read( _T( "/Session/allow_multiple_connections_per_ip" ), &m_allow_multiple_connections_per_ip, false );
+	m_cfg->Read( _T( "/Session/rate_limit_peers_on_lan" ), &m_rate_limit_peers_on_lan, false );
+	m_cfg->Read( _T( "/Session/rate_limit_utp" ), &m_rate_limit_utp, false );
 
 	lt::storage_mode_t defstoragemode = lt::storage_mode_sparse;
 	m_storagemode = ( lt::storage_mode_t ) m_cfg->Read( _T( "/Torrent/storagemode" ), ( long ) defstoragemode );
@@ -355,6 +360,7 @@ void Configuration::Load()
 	m_global_max_uploads = m_cfg->Read( _T( "/Torrent/global_max_uploads" ), 20 );
 	if( m_global_max_uploads < 2 ) m_global_max_uploads = 2;
 	m_cfg->Read( _T( "/Torrent/use_default" ), &m_usedefault, false );
+
 	//dht
 	//
 	m_cfg->Read( _T( "/DHT/dht_enabled" ), &m_dht_enabled, true );

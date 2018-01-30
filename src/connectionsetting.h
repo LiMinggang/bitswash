@@ -54,6 +54,8 @@ public:
 	bool GetSupperSeeding();
 	int  GetEnabledProtocols();
 	bool GetRateLimitIpOverhead();
+	bool GetRateLimitUtp();
+	bool GetRateLimitPeersOnLan();
 	bool GetPreferUdpTrackers();
 	bool GetAllowMultipleConnectionsPerIp();
 	int  GetChokingAlgorithm();
@@ -70,6 +72,8 @@ private:
 		wxCheckBox* m_check_os_cache;
 		wxCheckBox* m_check_prefer_udp_trackers;
 		wxCheckBox* m_check_rate_limit_ip_overhead;
+		wxCheckBox* m_check_rate_limit_peers_on_lan;
+		wxCheckBox* m_check_rate_limit_utp_protocol;
 		wxCheckBox* m_check_supper_seeding;
 		wxChoice* m_choice_choking_algorithm;
 		wxChoice* m_choice_enabled_protocols;

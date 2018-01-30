@@ -52,8 +52,8 @@ public:
 	enum choking_algorithm
 	{
 		FIXED_SLOTS = 0,
-		RATE_BASED = 1,
-		BITTYRANT = 2,
+		RATE_BASED  = 1,
+		BITTYRANT   = 2,
 	};
 
 	enum seed_choking_algorithm
@@ -272,6 +272,12 @@ public:
 	bool GetAllowMultipleConnectionsPerIP() { return m_allow_multiple_connections_per_ip; }
 	void SetAllowMultipleConnectionsPerIP(bool allow_multiple_connections_per_ip) { m_allow_multiple_connections_per_ip = allow_multiple_connections_per_ip ; }
 	
+	bool GetRateLimitPeersOnLan() { return m_rate_limit_peers_on_lan; }
+	void SetRateLimitPeersOnLan(bool rate_limit_peers_on_lan) { m_rate_limit_peers_on_lan = rate_limit_peers_on_lan ; }
+
+	bool GetRateLimitUtp() { return m_rate_limit_utp; }
+	void SetRateLimitUtp(bool rate_limit_utp) { m_rate_limit_utp = rate_limit_utp ; }
+
 	 int GetMaxFailCount() { return m_max_failcount ; }
 	void SetMaxFailCount( int max_failcount) { m_max_failcount = max_failcount; }
 	
@@ -458,6 +464,8 @@ private:
 	int 	m_global_max_uploads;
 	int 	m_global_max_connections;
 	bool 	m_usedefault;
+	bool    m_rate_limit_peers_on_lan;
+	bool    m_rate_limit_utp;
 
 	/***********************************************************
 	 * from libtorrent/include/libtorrent/settings_pack.hpp *

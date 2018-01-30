@@ -125,6 +125,7 @@ public:
 
 	void Configure(lt::settings_pack &settingsPack);
 	void ConfigureSession();
+	void configurePeerClasses();
 	void SetConnection();
 	void SetEncryption();
 	void StartExtensions();

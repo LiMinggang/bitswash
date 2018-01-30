@@ -42,6 +42,7 @@ ConnectionSettingPane::ConnectionSettingPane( wxWindow* parent, wxWindowID id,co
 	wxBoxSizer* BoxSizer1;
 	wxBoxSizer* BoxSizer2;
 	wxBoxSizer* BoxSizer3;
+	wxBoxSizer* BoxSizer4;
 	wxFlexGridSizer* FlexGridSizer1;
 	wxFlexGridSizer* FlexGridSizer2;
 	wxFlexGridSizer* FlexGridSizer3;
@@ -127,10 +128,18 @@ ConnectionSettingPane::ConnectionSettingPane( wxWindow* parent, wxWindowID id,co
 	m_spinMaxUploads = new wxSpinCtrl(this, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, wxSP_ARROW_KEYS, 1, 99999999, 0, _T("wxID_ANY"));
 	m_spinMaxUploads->SetValue(pcfg->GetGlobalMaxUploads());
 	FlexGridSizer3->Add(m_spinMaxUploads, 1, wxALL|wxALIGN_LEFT|wxALIGN_CENTER_VERTICAL, 5);
+	FlexGridSizer1->Add(FlexGridSizer3, 1, wxALL|wxALIGN_LEFT|wxALIGN_CENTER_VERTICAL, 5);
+	BoxSizer4 = new wxBoxSizer(wxVERTICAL);
 	m_check_rate_limit_ip_overhead = new wxCheckBox(this, wxID_ANY, _("Apply Rate Limit to Transport Overhead"), wxDefaultPosition, wxDefaultSize, 0, wxDefaultValidator, _T("wxID_ANY"));
 	m_check_rate_limit_ip_overhead->SetValue(pcfg->GetRateLimitIpOverhead());
-	FlexGridSizer3->Add(m_check_rate_limit_ip_overhead, 1, wxALL|wxALIGN_LEFT|wxALIGN_CENTER_VERTICAL, 5);
-	FlexGridSizer1->Add(FlexGridSizer3, 1, wxALL|wxALIGN_LEFT|wxALIGN_CENTER_VERTICAL, 5);
+	BoxSizer4->Add(m_check_rate_limit_ip_overhead, 1, wxALL, 5);
+	m_check_rate_limit_peers_on_lan = new wxCheckBox(this, wxID_ANY, _("Apply Rate Limit to Peers on LAN"), wxDefaultPosition, wxDefaultSize, 0, wxDefaultValidator, _T("wxID_ANY"));
+	m_check_rate_limit_peers_on_lan->SetValue(pcfg->GetRateLimitPeersOnLan());
+	BoxSizer4->Add(m_check_rate_limit_peers_on_lan, 1, wxALL|wxALIGN_LEFT, 5);
+	m_check_rate_limit_utp_protocol = new wxCheckBox(this, wxID_ANY, _("Apply Rate Limit to ¦ÌTP Protocol"), wxDefaultPosition, wxDefaultSize, 0, wxDefaultValidator, _T("wxID_ANY"));
+	m_check_rate_limit_utp_protocol->SetValue(pcfg->GetRateLimitUtp());
+	BoxSizer4->Add(m_check_rate_limit_utp_protocol, 1, wxALL|wxALIGN_LEFT, 5);
+	FlexGridSizer1->Add(BoxSizer4, 1, wxALL|wxALIGN_LEFT|wxALIGN_CENTER_VERTICAL, 5);
 	Panel3 = new wxPanel(this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL, _T("wxID_ANY"));
 	Panel3->SetBackgroundColour(wxSystemSettings::GetColour(wxSYS_COLOUR_ACTIVECAPTION));
 	BoxSizer3 = new wxBoxSizer(wxHORIZONTAL);
@@ -163,9 +172,9 @@ ConnectionSettingPane::ConnectionSettingPane( wxWindow* parent, wxWindowID id,co
 	StaticText10 = new wxStaticText(this, wxID_ANY, _("Enabled Protocols:"), wxDefaultPosition, wxDefaultSize, 0, _T("wxID_ANY"));
 	FlexGridSizer5->Add(StaticText10, 1, wxALL|wxALIGN_LEFT|wxALIGN_CENTER_VERTICAL, 5);
 	m_choice_enabled_protocols = new wxChoice(this, wxID_ANY, wxDefaultPosition, wxDefaultSize, 0, 0, 0, wxDefaultValidator, _T("wxID_ANY"));
-	m_choice_enabled_protocols->Append(_("TCP and \u00B5TP"));
-	m_choice_enabled_protocols->Append(wxT("TCP"));
-	m_choice_enabled_protocols->Append(wxT("\u00B5TP"));
+	m_choice_enabled_protocols->Append(_("TCP and ¦ÌTP"));
+	m_choice_enabled_protocols->Append(_("TCP"));
+	m_choice_enabled_protocols->Append(_("¦ÌTP"));
 	m_choice_enabled_protocols->Select(pcfg->GetEnabledProtocols());
 	FlexGridSizer5->Add(m_choice_enabled_protocols, 1, wxALL|wxALIGN_LEFT|wxALIGN_CENTER_VERTICAL, 5);
 	StaticText11 = new wxStaticText(this, wxID_ANY, _("Choking Algorithm"), wxDefaultPosition, wxDefaultSize, 0, _T("wxID_ANY"));
@@ -288,5 +297,15 @@ int  ConnectionSettingPane::GetSeedChokingAlgorithm()
 const wxString& ConnectionSettingPane::GetDhtBootstrapNodes()
 {
 	return m_dht_bootstrap_nodes->GetValue();
+}
+
+bool ConnectionSettingPane::GetRateLimitPeersOnLan()
+{
+	return m_check_rate_limit_peers_on_lan->GetValue();
+}
+
+bool ConnectionSettingPane::GetRateLimitUtp()
+{
+	return m_check_rate_limit_utp_protocol->GetValue();
 }
 

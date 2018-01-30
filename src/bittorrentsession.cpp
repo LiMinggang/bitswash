@@ -308,6 +308,82 @@ void BitTorrentSession::OnExit()
 	}
 }
 
+void BitTorrentSession::configurePeerClasses()
+{
+    lt::ip_filter f;
+    f.add_rule(lt::address_v4::from_string("0.0.0.0")
+               , lt::address_v4::from_string("255.255.255.255")
+               , 1 << static_cast<std::uint32_t>(lt::session::global_peer_class_id));
+#if TORRENT_USE_IPV6
+    // IPv6 may not be available on OS and the parsing
+    // would result in an exception -> abnormal program termination
+    // Affects Windows XP
+    try {
+        f.add_rule(lt::address_v6::from_string("::0")
+                   , lt::address_v6::from_string("ffff:ffff:ffff:ffff:ffff:ffff:ffff:ffff")
+                   , 1 << static_cast<std::uint32_t>(lt::session::global_peer_class_id));
+    }
+    catch (std::exception &) {}
+#endif
+    if (!m_config->GetRateLimitPeersOnLan()) {
+        // local networks
+        f.add_rule(lt::address_v4::from_string("10.0.0.0")
+                   , lt::address_v4::from_string("10.255.255.255")
+                   , 1 << static_cast<std::uint32_t>(lt::session::local_peer_class_id));
+        f.add_rule(lt::address_v4::from_string("172.16.0.0")
+                   , lt::address_v4::from_string("172.31.255.255")
+                   , 1 << static_cast<std::uint32_t>(lt::session::local_peer_class_id));
+        f.add_rule(lt::address_v4::from_string("192.168.0.0")
+                   , lt::address_v4::from_string("192.168.255.255")
+                   , 1 << static_cast<std::uint32_t>(lt::session::local_peer_class_id));
+        // link local
+        f.add_rule(lt::address_v4::from_string("169.254.0.0")
+                   , lt::address_v4::from_string("169.254.255.255")
+                   , 1 << static_cast<std::uint32_t>(lt::session::local_peer_class_id));
+        // loopback
+        f.add_rule(lt::address_v4::from_string("127.0.0.0")
+                   , lt::address_v4::from_string("127.255.255.255")
+                   , 1 << static_cast<std::uint32_t>(lt::session::local_peer_class_id));
+#if TORRENT_USE_IPV6
+        // IPv6 may not be available on OS and the parsing
+        // would result in an exception -> abnormal program termination
+        // Affects Windows XP
+        try {
+            // link local
+            f.add_rule(lt::address_v6::from_string("fe80::")
+                       , lt::address_v6::from_string("febf:ffff:ffff:ffff:ffff:ffff:ffff:ffff")
+                       , 1 << static_cast<std::uint32_t>(lt::session::local_peer_class_id));
+            // unique local addresses
+            f.add_rule(lt::address_v6::from_string("fc00::")
+                       , lt::address_v6::from_string("fdff:ffff:ffff:ffff:ffff:ffff:ffff:ffff")
+                       , 1 << static_cast<std::uint32_t>(lt::session::local_peer_class_id));
+            // loopback
+            f.add_rule(lt::address_v6::from_string("::1")
+                       , lt::address_v6::from_string("::1")
+                       , 1 << static_cast<std::uint32_t>(lt::session::local_peer_class_id));
+        }
+        catch (std::exception &) {}
+#endif
+    }
+    m_libbtsession->set_peer_class_filter(f);
+
+    lt::peer_class_type_filter peerClassTypeFilter;
+    peerClassTypeFilter.add(lt::peer_class_type_filter::tcp_socket, lt::session::tcp_peer_class_id);
+    peerClassTypeFilter.add(lt::peer_class_type_filter::ssl_tcp_socket, lt::session::tcp_peer_class_id);
+    peerClassTypeFilter.add(lt::peer_class_type_filter::i2p_socket, lt::session::tcp_peer_class_id);
+    if (m_config->GetRateLimitUtp()) {
+        peerClassTypeFilter.add(lt::peer_class_type_filter::utp_socket
+            , lt::session::local_peer_class_id);
+        peerClassTypeFilter.add(lt::peer_class_type_filter::utp_socket
+            , lt::session::global_peer_class_id);
+        peerClassTypeFilter.add(lt::peer_class_type_filter::ssl_utp_socket
+            , lt::session::local_peer_class_id);
+        peerClassTypeFilter.add(lt::peer_class_type_filter::ssl_utp_socket
+            , lt::session::global_peer_class_id);
+    }
+    m_libbtsession->set_peer_class_type_filter(peerClassTypeFilter);
+}
+
 void BitTorrentSession::Configure(lt::settings_pack &settingsPack)
 {
 	std::string peerId = lt::generate_fingerprint(PEER_ID, BITSWASH_FINGERPRINT_VERSION);
@@ -577,6 +653,8 @@ void BitTorrentSession::ConfigureSession()
 	m_libbtsession = new lt::session(std::move(params));
 
 	m_libbtsession->set_alert_notify(boost::bind(&BitTorrentSession::PostLibTorrentAlertEvent, this));
+
+	configurePeerClasses();
 
 	//Network settings
 	StartExtensions();
