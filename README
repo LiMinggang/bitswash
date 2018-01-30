@@ -30,6 +30,7 @@ New: Drag and Drop for both file and URL/Magnet URI strings
 New: Rate limit on peers on LAN
 New: Rate limit on UTP
 New: SSL support
+New: IPv6 support
 Fix: Can't start stopped torrent(by MagnetURI) without meta data
 Fix: Duplicated Magnet URI torrents would be added
 Fix: Race condition in AddTorrentToSession
