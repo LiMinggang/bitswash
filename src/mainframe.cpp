@@ -919,7 +919,7 @@ void MainFrame::OnTorrentMetadata( wxCommandEvent& WXUNUSED( event ) )
 				if( torrent->handle.status().has_metadata )
 				{
 					wxString torrent_backup = wxGetApp().SaveTorrentsPath() + wxString(torrent->hash) + _T( ".torrent" );
-					m_btsession->SaveTorrent( torrent, torrent_backup );
+					BitTorrentSession::SaveTorrent( torrent, torrent_backup );
 				}
 
 				if( !m_config->GetUseDefault() )
@@ -975,7 +975,7 @@ void MainFrame::OpenMagnetURI(const wxString & magneturi)
 				if( torrent->handle.status().has_metadata )
 				{
 					wxString torrent_backup = wxGetApp().SaveTorrentsPath() + wxString(torrent->hash) + _T( ".torrent" );
-					m_btsession->SaveTorrent( torrent, torrent_backup );
+					BitTorrentSession::SaveTorrent( torrent, torrent_backup );
 				}
 
 				m_btsession->PostQueueUpdateEvent();

@@ -1623,8 +1623,8 @@ void BitTorrentSession::StopTorrent( std::shared_ptr<torrent_t>& torrent )
 		{
 			stats_t& torrentstats = torrent->config->GetTorrentStats();
 			torrentstats.progress = status.progress;
-			torrentstats.total_download += status.total_payload_download;
-			torrentstats.total_upload += status.total_payload_upload;
+			torrentstats.total_download = status.total_payload_download;
+			torrentstats.total_upload = status.total_payload_upload;
 		}
 
 		try

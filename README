@@ -38,6 +38,7 @@ Fix: Crash on stop torrent
 Fix: MaxStart initial value issue
 Fix: Icon issue of Windows
 Fix: Download/upload size is not accumulated
+Fix: Add/Remove tracker
 Update libtorrent to 785fffd97627d03e73d00b69fff93d52d700c56e
 Code improvement
 

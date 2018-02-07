@@ -240,6 +240,12 @@ void TrackerListCtrl::OnMenuTracker(wxCommandEvent& event)
 				std::string newtrackerurl_cstr( (const char *)((newtrackerurl.ToUTF8()).data()));
 				lt::announce_entry e(newtrackerurl_cstr);
 				e.tier = (trackers.size() * 10);
+				if(pTorrent->handle.is_valid())
+				{
+					pTorrent->handle.add_tracker(e);                     
+					wxString torrent_backup = wxGetApp().SaveTorrentsPath() + wxString(pTorrent->hash) + _T( ".torrent" );
+					BitTorrentSession::SaveTorrent(pTorrent, torrent_backup );
+				}
 				trackers.push_back(e);
 				//wxLogDebug(_T("Add new tracker %s tier %d, trackers.size %d"), newtrackerurl.c_str(), e.tier , trackers.size()) ;
 				
@@ -274,6 +280,12 @@ void TrackerListCtrl::OnMenuTracker(wxCommandEvent& event)
 				{
 					std::string tmpurl((const char *)((returl.ToUTF8()).data()));
 					tracker_it->url = tmpurl;
+					if(pTorrent->handle.is_valid())
+					{               
+						pTorrent->handle.replace_trackers(trackers);
+						wxString torrent_backup = wxGetApp().SaveTorrentsPath() + wxString(pTorrent->hash) + _T( ".torrent" );
+						BitTorrentSession::SaveTorrent(pTorrent, torrent_backup );
+					}
 
 					//pTorrent->config->SetTrackersURL(trackers);
 					pTorrent->config->Save();
@@ -293,12 +305,18 @@ void TrackerListCtrl::OnMenuTracker(wxCommandEvent& event)
 			wxMessageDialog dialogConfirm(nullptr, 
 							_("Remove tracker ") + wxString::FromUTF8(tracker_it->url.c_str()) + _T("?"), 
 							_("Confirm remove tracker"), 
-							wxNO_DEFAULT | wxYES_NO| wxICON_QUESTION);
+							wxNO_DEFAULT | wxYES_NO | wxICON_QUESTION);
 
 			if (dialogConfirm.ShowModal() == wxID_YES)
 			{
 				trackers.erase(tracker_it);
-
+                
+				if(pTorrent->handle.is_valid())
+				{
+					pTorrent->handle.replace_trackers(trackers);
+					wxString torrent_backup = wxGetApp().SaveTorrentsPath() + wxString(pTorrent->hash) + _T( ".torrent" );
+					BitTorrentSession::SaveTorrent(pTorrent, torrent_backup );
+				}
 				//pTorrent->config->SetTrackersURL(trackers);
 				pTorrent->config->Save();
 

@@ -146,7 +146,7 @@ public:
 	std::shared_ptr<torrent_t> LoadMagnetUri( MagnetUri& magneturi );
 	void UpdateTorrentFileSize(std::shared_ptr<torrent_t>& torrent);
 	void LoadMagnetUri( const wxString& magneturi );
-	bool SaveTorrent(std::shared_ptr<torrent_t>& torrent, const wxString& filename);
+	static bool SaveTorrent(std::shared_ptr<torrent_t>& torrent, const wxString& filename);
 	
 	size_t GetTorrentQueueSize();
 
