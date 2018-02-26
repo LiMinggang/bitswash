@@ -88,6 +88,7 @@ POSSIBILITY OF SUCH DAMAGE.
 #include "libtorrent/aux_/bind_to_device.hpp"
 #include "libtorrent/hex.hpp" // to_hex, from_hex
 #include "libtorrent/aux_/scope_end.hpp"
+#include "libtorrent/aux_/set_socket_buffer.hpp"
 
 #ifndef TORRENT_DISABLE_LOGGING
 
@@ -537,7 +538,6 @@ namespace aux {
 		{
 			session_log("   max connections: %d", m_settings.get_int(settings_pack::connections_limit));
 			session_log("   max files: %d", max_files);
-			session_log(" generated peer ID: %s", m_peer_id.to_string().c_str());
 		}
 #endif
 
@@ -999,50 +999,6 @@ namespace aux {
 		TORRENT_ASSERT(is_single_thread());
 		return m_port_filter;
 	}
-
-namespace {
-
-
-	template <class Socket>
-	void set_socket_buffer_size(Socket& s, session_settings const& sett, error_code& ec)
-	{
-		int const snd_size = sett.get_int(settings_pack::send_socket_buffer_size);
-		if (snd_size)
-		{
-			typename Socket::send_buffer_size prev_option;
-			s.get_option(prev_option, ec);
-			if (!ec && prev_option.value() != snd_size)
-			{
-				typename Socket::send_buffer_size option(snd_size);
-				s.set_option(option, ec);
-				if (ec)
-				{
-					// restore previous value
-					s.set_option(prev_option, ec);
-					return;
-				}
-			}
-		}
-		int const recv_size = sett.get_int(settings_pack::recv_socket_buffer_size);
-		if (recv_size)
-		{
-			typename Socket::receive_buffer_size prev_option;
-			s.get_option(prev_option, ec);
-			if (!ec && prev_option.value() != recv_size)
-			{
-				typename Socket::receive_buffer_size option(recv_size);
-				s.set_option(option, ec);
-				if (ec)
-				{
-					// restore previous value
-					s.set_option(prev_option, ec);
-					return;
-				}
-			}
-		}
-	}
-
-	} // anonymous namespace
 
 	peer_class_t session_impl::create_peer_class(char const* name)
 	{
@@ -2930,7 +2886,19 @@ namespace {
 		if (m_alerts.should_post<incoming_connection_alert>())
 			m_alerts.emplace_alert<incoming_connection_alert>(s->type(), endp);
 
-		setup_socket_buffers(*s);
+		{
+			error_code err;
+			set_socket_buffer_size(*s, m_settings, err);
+#ifndef TORRENT_DISABLE_LOGGING
+			if (err && should_log())
+			{
+				error_code ignore;
+				session_log("socket buffer size [ %s %d]: (%d) %s"
+					, s->local_endpoint().address().to_string(ignore).c_str()
+					, s->local_endpoint().port(), err.value(), err.message().c_str());
+			}
+#endif
+		}
 
 		peer_connection_args pack;
 		pack.ses = this;
@@ -2944,7 +2912,7 @@ namespace {
 		pack.peerinfo = nullptr;
 
 		std::shared_ptr<peer_connection> c
-			= std::make_shared<bt_peer_connection>(pack, get_peer_id());
+			= std::make_shared<bt_peer_connection>(pack);
 
 		if (!c->is_disconnecting())
 		{
@@ -2961,12 +2929,6 @@ namespace {
 			m_connections.insert(c);
 			c->start();
 		}
-	}
-
-	void session_impl::setup_socket_buffers(socket_type& s)
-	{
-		error_code ec;
-		set_socket_buffer_size(s, m_settings, ec);
 	}
 
 	void session_impl::close_connection(peer_connection* p) noexcept
@@ -2995,10 +2957,12 @@ namespace {
 		}
 	}
 
-	void session_impl::set_peer_id(peer_id const& id)
+#ifndef TORRENT_NO_DEPRECATE
+	peer_id session_impl::deprecated_get_peer_id() const
 	{
-		m_peer_id = id;
+		return generate_peer_id(m_settings);
 	}
+#endif
 
 	int session_impl::next_port() const
 	{
@@ -5345,20 +5309,6 @@ namespace {
 #endif
 	}
 
-	void session_impl::update_peer_fingerprint()
-	{
-		// ---- generate a peer id ----
-		std::string print = m_settings.get_str(settings_pack::peer_fingerprint);
-		if (print.size() > m_peer_id.size()) print.resize(m_peer_id.size());
-
-		// the client's fingerprint
-		std::copy(print.begin(), print.begin() + int(print.length()), m_peer_id.begin());
-		if (print.size() < m_peer_id.size())
-		{
-			url_random(span<char>(m_peer_id).subspan(print.length()));
-		}
-	}
-
 	void session_impl::update_dht_bootstrap_nodes()
 	{
 #ifndef TORRENT_DISABLE_DHT
@@ -6148,7 +6098,7 @@ namespace {
 		template <typename Socket>
 		void set_tos(Socket& s, int v, error_code& ec)
 		{
-#if TORRENT_USE_IPV6
+#if TORRENT_USE_IPV6 && defined IPV6_TCLASS
 			if (s.local_endpoint(ec).address().is_v6())
 				s.set_option(traffic_class(char(v)), ec);
 			else if (!ec)
@@ -6395,7 +6345,6 @@ namespace {
 		}
 
 		if (m_upnp) m_upnp->set_user_agent("");
-		url_random(m_peer_id);
 	}
 
 	void session_impl::update_force_proxy()

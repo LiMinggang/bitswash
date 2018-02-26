@@ -49,6 +49,8 @@ POSSIBILITY OF SUCH DAMAGE.
 
 using namespace lt;
 
+namespace {
+
 auto const mask = alert::all_categories & ~(alert::performance_warning | alert::stats_notification);
 
 void wait_for_complete(lt::session& ses, torrent_handle h)
@@ -60,8 +62,8 @@ void wait_for_complete(lt::session& ses, torrent_handle h)
 		print_alerts(ses, "ses1");
 		torrent_status st = h.status();
 		std::printf("%f s -  %f %%\n"
-			, total_milliseconds(clock_type::now() - last_change) / 1000.f
-			, st.progress_ppm / 10000.f);
+			, total_milliseconds(clock_type::now() - last_change) / 1000.0
+			, st.progress_ppm / 10000.0);
 		if (st.progress_ppm == 1000000) return;
 		if (st.progress_ppm != last_progress)
 		{
@@ -73,6 +75,8 @@ void wait_for_complete(lt::session& ses, torrent_handle h)
 	}
 	TEST_ERROR("torrent did not finish");
 }
+
+} // anonymous namespace
 
 TORRENT_TEST(recheck)
 {
@@ -115,4 +119,3 @@ TORRENT_TEST(recheck)
 	TEST_CHECK(st1.progress_ppm <= 1000000);
 	wait_for_complete(ses1, tor1);
 }
-

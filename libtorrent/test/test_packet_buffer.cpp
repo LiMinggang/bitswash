@@ -39,10 +39,12 @@ using lt::packet_ptr;
 using lt::packet_pool;
 using lt::packet;
 
+namespace {
+
 packet_ptr make_pkt(packet_pool& pool, int const val)
 {
 	packet_ptr ret = pool.acquire(20);
-	*reinterpret_cast<std::uint8_t*>(ret->buf) = val;
+	*reinterpret_cast<std::uint8_t*>(ret->buf) = std::uint8_t(val);
 	return ret;
 }
 
@@ -51,6 +53,8 @@ int get_val(packet* pkt)
 	TORRENT_ASSERT(pkt != nullptr);
 	return *reinterpret_cast<std::uint8_t*>(pkt->buf);
 }
+
+} // anonymous namespace
 
 // test packet_buffer
 TORRENT_TEST(insert)
@@ -104,14 +108,14 @@ TORRENT_TEST(insert)
 	for (int i = 0; i < 0xff; ++i)
 	{
 		int index = (i + 0xfff0) & 0xffff;
-		pb.insert(index, make_pkt(pool, index + 1));
+		pb.insert(packet_buffer::index_type(index), make_pkt(pool, index + 1));
 		std::printf("insert: %u (mask: %x)\n", index, int(pb.capacity() - 1));
 		TEST_EQUAL(pb.capacity(), 512);
 		if (i >= 14)
 		{
 			index = (index - 14) & 0xffff;
 			std::printf("remove: %u\n", index);
-			TEST_EQUAL(get_val(pb.remove(index).get()), std::uint8_t(index + 1));
+			TEST_EQUAL(get_val(pb.remove(packet_buffer::index_type(index)).get()), std::uint8_t(index + 1));
 			TEST_EQUAL(pb.size(), 14);
 		}
 	}
@@ -147,7 +151,7 @@ TORRENT_TEST(wrap2)
 	pb.insert(0xfff3, make_pkt(pool, 1));
 	TEST_EQUAL(get_val(pb.at(0xfff3)), 1);
 
-	int new_index = (0xfff3 + pb.capacity()) & 0xffff;
+	auto const new_index = packet_buffer::index_type((0xfff3 + pb.capacity()) & 0xffff);
 	pb.insert(new_index, make_pkt(pool, 2));
 	TEST_EQUAL(get_val(pb.at(new_index)), 2);
 
@@ -168,7 +172,7 @@ TORRENT_TEST(reverse_wrap)
 	pb.insert(0xfff3, make_pkt(pool, 1));
 	TEST_EQUAL(get_val(pb.at(0xfff3)), 1);
 
-	int new_index = (0xfff3 + pb.capacity()) & 0xffff;
+	auto const new_index = packet_buffer::index_type((0xfff3 + pb.capacity()) & 0xffff);
 	pb.insert(new_index, make_pkt(pool, 2));
 	TEST_EQUAL(get_val(pb.at(new_index)), 2);
 
@@ -179,4 +183,3 @@ TORRENT_TEST(reverse_wrap)
 
 	pb.insert(0xffff, make_pkt(pool, 3));
 }
-

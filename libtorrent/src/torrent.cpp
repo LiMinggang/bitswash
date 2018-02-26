@@ -98,6 +98,7 @@ POSSIBILITY OF SUCH DAMAGE.
 #include "libtorrent/disk_io_thread.hpp" // for cache_status
 #include "libtorrent/aux_/numeric_cast.hpp"
 #include "libtorrent/aux_/path.hpp"
+#include "libtorrent/aux_/set_socket_buffer.hpp"
 
 #ifndef TORRENT_DISABLE_LOGGING
 #include "libtorrent/aux_/session_impl.hpp" // for tracker_logger
@@ -121,6 +122,19 @@ namespace libtorrent {
 		: web_seed_entry(url_, type_, auth_, extra_headers_)
 	{
 		peer_info.web_seed = true;
+	}
+
+	peer_id generate_peer_id(aux::session_settings const& sett)
+	{
+		peer_id ret;
+		std::string print = sett.get_str(settings_pack::peer_fingerprint);
+		if (print.size() > ret.size()) print.resize(ret.size());
+
+		// the client's fingerprint
+		std::copy(print.begin(), print.end(), ret.begin());
+		if (print.length() < ret.size())
+			url_random(span<char>(ret).subspan(print.length()));
+		return ret;
 	}
 
 	torrent_hot_members::torrent_hot_members(aux::session_interface& ses
@@ -161,6 +175,7 @@ namespace libtorrent {
 		, m_info_hash(p.info_hash)
 		, m_error_file(torrent_status::error_file_none)
 		, m_sequence_number(-1)
+		, m_peer_id(generate_peer_id(settings()))
 		, m_announce_to_trackers(!(p.flags & torrent_flags::paused))
 		, m_announce_to_lsd(!(p.flags & torrent_flags::paused))
 		, m_has_incoming(false)
@@ -185,9 +200,6 @@ namespace libtorrent {
 		, m_padding(0)
 		, m_incomplete(0xffffff)
 		, m_announce_to_dht(!(p.flags & torrent_flags::paused))
-		, m_in_state_updates(false)
-		, m_is_active_download(false)
-		, m_is_active_finished(false)
 		, m_ssl_torrent(false)
 		, m_deleted(false)
 		, m_auto_managed(p.flags & torrent_flags::auto_managed)
@@ -1764,6 +1776,8 @@ namespace libtorrent {
 		}
 		else
 		{
+			need_picker();
+
 			int num_pad_files = 0;
 			TORRENT_ASSERT(block_size() > 0);
 
@@ -1773,10 +1787,6 @@ namespace libtorrent {
 
 				if (!fs.pad_file_at(i) || fs.file_size(i) == 0) continue;
 				m_padding += std::uint32_t(fs.file_size(i));
-
-				// TODO: instead of creating the picker up front here,
-				// maybe this whole section should move to need_picker()
-				need_picker();
 
 				peer_request pr = m_torrent_file->map_file(i, 0, int(fs.file_size(i)));
 				int off = pr.start & (block_size() - 1);
@@ -1789,7 +1799,7 @@ namespace libtorrent {
 				for (; pr.length >= block; pr.length -= block, ++pb.block_index)
 				{
 					if (pb.block_index == blocks_per_piece) { pb.block_index = 0; ++pb.piece_index; }
-					m_picker->mark_as_finished(pb, nullptr);
+					m_picker->mark_as_pad(pb);
 				}
 				// ugly edge case where padfiles are not used they way they're
 				// supposed to be. i.e. added back-to back or at the end
@@ -1926,7 +1936,7 @@ namespace libtorrent {
 		return nullptr;
 	}
 
-	peer_connection* torrent::find_peer(sha1_hash const& pid)
+	peer_connection* torrent::find_peer(peer_id const& pid)
 	{
 		for (auto p : m_connections)
 		{
@@ -2698,7 +2708,7 @@ namespace libtorrent {
 		req.private_torrent = m_torrent_file->priv();
 
 		req.info_hash = m_torrent_file->info_hash();
-		req.pid = m_ses.get_peer_id();
+		req.pid = m_peer_id;
 		req.downloaded = m_stat.total_payload_download() - m_total_failed_bytes;
 		req.uploaded = m_stat.total_payload_upload();
 		req.corrupt = m_total_failed_bytes;
@@ -3148,7 +3158,7 @@ namespace libtorrent {
 		for (auto const& i : resp.peers)
 		{
 			// don't make connections to ourself
-			if (i.pid == m_ses.get_peer_id())
+			if (i.pid == m_peer_id)
 				continue;
 
 #if TORRENT_USE_I2P
@@ -3308,11 +3318,6 @@ namespace libtorrent {
 		}
 
 		if (want_peers()) m_ses.prioritize_connections(shared_from_this());
-	}
-
-	time_point torrent::next_announce() const
-	{
-		return m_waiting_tracker ? m_tracker_timer.expires_at() : min_time();
 	}
 
 	// this is the entry point for the client to force a re-announce. It's
@@ -5896,8 +5901,8 @@ namespace libtorrent {
 		if (!web->have_files.empty()
 			&& web->have_files.none_set()) return;
 
-		std::shared_ptr<socket_type> s
-			= std::make_shared<socket_type>(m_ses.get_io_service());
+		std::shared_ptr<aux::socket_type> s
+			= std::make_shared<aux::socket_type>(m_ses.get_io_service());
 		if (!s) return;
 
 		void* userdata = nullptr;
@@ -6474,7 +6479,7 @@ namespace libtorrent {
 			|| !m_ip_filter
 			|| (m_ip_filter->access(peerinfo->address()) & ip_filter::blocked) == 0);
 
-		std::shared_ptr<socket_type> s = std::make_shared<socket_type>(m_ses.get_io_service());
+		std::shared_ptr<aux::socket_type> s = std::make_shared<aux::socket_type>(m_ses.get_io_service());
 
 #if TORRENT_USE_I2P
 		bool const i2p = peerinfo->is_i2p_addr;
@@ -6548,7 +6553,7 @@ namespace libtorrent {
 				// for ssl sockets, set the hostname
 				std::string host_name = aux::to_hex(m_torrent_file->info_hash());
 
-#define CASE(t) case socket_type_int_impl<ssl_stream<t>>::value: \
+#define CASE(t) case aux::socket_type_int_impl<ssl_stream<t>>::value: \
 	s->get<ssl_stream<t>>()->set_host_name(host_name); break;
 
 				switch (s->type())
@@ -6564,7 +6569,19 @@ namespace libtorrent {
 #endif
 		}
 
-		m_ses.setup_socket_buffers(*s);
+		{
+			error_code err;
+			aux::set_socket_buffer_size(*s, settings(), err);
+#ifndef TORRENT_DISABLE_LOGGING
+			if (err && should_log())
+			{
+				error_code ignore;
+				debug_log("socket buffer size [ %s %d]: (%d) %s"
+					, s->local_endpoint().address().to_string(ignore).c_str()
+					, s->local_endpoint().port(), ignore.value(), ignore.message().c_str());
+			}
+#endif
+		}
 
 		peer_connection_args pack;
 		pack.ses = &m_ses;
@@ -6577,8 +6594,7 @@ namespace libtorrent {
 		pack.endp = a;
 		pack.peerinfo = peerinfo;
 
-		std::shared_ptr<peer_connection> c = std::make_shared<bt_peer_connection>(
-			pack, m_ses.get_peer_id());
+		std::shared_ptr<peer_connection> c = std::make_shared<bt_peer_connection>(pack);
 
 #if TORRENT_USE_ASSERTS
 		c->m_in_constructor = false;
@@ -6725,10 +6741,10 @@ namespace libtorrent {
 		if (is_ssl_torrent())
 		{
 			// if this is an SSL torrent, don't allow non SSL peers on it
-			std::shared_ptr<socket_type> s = p->get_socket();
+			std::shared_ptr<aux::socket_type> s = p->get_socket();
 
 			//
-#define SSL(t) socket_type_int_impl<ssl_stream<t>>::value: \
+#define SSL(t) aux::socket_type_int_impl<ssl_stream<t>>::value: \
 			ssl_conn = s->get<ssl_stream<t>>()->native_handle(); \
 			break;
 
@@ -9574,7 +9590,7 @@ namespace libtorrent {
 			// the backup lists
 			picker->add_blocks(i->piece, c.get_bitfield(), interesting_blocks
 				, backup1, backup2, blocks_in_piece, 0, c.peer_info_struct()
-				, ignore, 0);
+				, ignore, {});
 
 			interesting_blocks.insert(interesting_blocks.end()
 				, backup1.begin(), backup1.end());
@@ -10693,10 +10709,10 @@ namespace {
 		st->download_payload_rate = m_stat.download_payload_rate();
 		st->upload_payload_rate = m_stat.upload_payload_rate();
 
-		if (m_waiting_tracker && !is_paused())
-			st->next_announce = next_announce() - now;
-		else
+		if (is_paused() || m_tracker_timer.expires_at() < now)
 			st->next_announce = seconds(0);
+		else
+			st->next_announce = m_tracker_timer.expires_at() - now;
 
 		if (st->next_announce.count() < 0)
 			st->next_announce = seconds(0);

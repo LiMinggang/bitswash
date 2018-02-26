@@ -46,6 +46,8 @@ using namespace lt;
 
 using lt::portmap_protocol;
 
+namespace {
+
 broadcast_socket* sock = nullptr;
 int g_port = 0;
 
@@ -96,8 +98,14 @@ void incoming_msearch(udp::endpoint const& from, span<char const> buffer)
 
 	TORRENT_ASSERT(g_port != 0);
 	char buf[sizeof(msg) + 30];
-	int len = std::snprintf(buf, sizeof(buf), msg, g_port);
-
+#ifdef __clang__
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wformat-nonliteral"
+#endif
+	int const len = std::snprintf(buf, sizeof(buf), msg, g_port);
+#ifdef __clang__
+#pragma clang diagnostic pop
+#endif
 	error_code ec;
 	sock->send(buf, len, ec);
 
@@ -115,14 +123,14 @@ struct callback_info
 
 std::list<callback_info> callbacks;
 
-namespace
+namespace // TODO: remove this nested namespace
 {
-	struct upnp_callback : aux::portmap_callback
+	struct upnp_callback final : aux::portmap_callback
 	{
 		void on_port_mapping(port_mapping_t const mapping
 			, address const& ip, int port
 			, portmap_protocol const protocol, error_code const& err
-			, portmap_transport const transport) override
+			, portmap_transport) override
 		{
 			callback_info info = {mapping, port, err};
 			callbacks.push_back(info);
@@ -132,12 +140,12 @@ namespace
 				<< ", error: \"" << err.message() << "\"\n";
 		}
 	#ifndef TORRENT_DISABLE_LOGGING
-		virtual bool should_log_portmap(portmap_transport transport) const override
+		bool should_log_portmap(portmap_transport) const override
 		{
 			return true;
 		}
 
-		virtual void log_portmap(portmap_transport transport, char const* msg) const override
+		void log_portmap(portmap_transport, char const* msg) const override
 		{
 			std::cout << "UPnP: " << msg << std::endl;
 			//TODO: store the log and verify that some key messages are there
@@ -146,7 +154,7 @@ namespace
 	};
 }
 
-void run_upnp_test(char const* root_filename, char const* router_model, char const* control_name, int igd_version)
+void run_upnp_test(char const* root_filename, char const* control_name, int igd_version)
 {
 	lt::io_service ios;
 
@@ -164,7 +172,14 @@ void run_upnp_test(char const* root_filename, char const* router_model, char con
 		TEST_CHECK(false);
 		return;
 	}
+#ifdef __clang__
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wformat-nonliteral"
+#endif
 	std::fprintf(xml_file, &buf[0], g_port);
+#ifdef __clang__
+#pragma clang diagnostic pop
+#endif
 	fclose(xml_file);
 
 	std::ofstream xml(control_name, std::ios::trunc);
@@ -193,12 +208,12 @@ void run_upnp_test(char const* root_filename, char const* router_model, char con
 			ec.clear();
 			break;
 		}
-		if (upnp_handler->router_model() != "") break;
+		if (!upnp_handler->router_model().empty()) break;
 		std::this_thread::sleep_for(lt::milliseconds(100));
 	}
 
 	std::cout << "router: " << upnp_handler->router_model() << std::endl;
-	TEST_EQUAL(upnp_handler->router_model(), router_model);
+	TEST_CHECK(!upnp_handler->router_model().empty());
 
 	auto const mapping1 = upnp_handler->add_mapping(portmap_protocol::tcp, 500, ep("127.0.0.1", 500));
 	auto const mapping2 = upnp_handler->add_mapping(portmap_protocol::udp, 501, ep("127.0.0.1", 501));
@@ -253,11 +268,13 @@ void run_upnp_test(char const* root_filename, char const* router_model, char con
 	delete sock;
 }
 
+} // anonymous namespace
+
 TORRENT_TEST(upnp)
 {
-	run_upnp_test(combine_path("..", "root1.xml").c_str(), "Xtreme N GIGABIT Router", "wipconn", 1);
-	run_upnp_test(combine_path("..", "root2.xml").c_str(), "D-Link Router", "WANIPConnection", 1);
-	run_upnp_test(combine_path("..", "root3.xml").c_str(), "D-Link Router", "WANIPConnection_2", 2);
+	run_upnp_test(combine_path("..", "root1.xml").c_str(), "wipconn", 1);
+	run_upnp_test(combine_path("..", "root2.xml").c_str(), "WANIPConnection", 1);
+	run_upnp_test(combine_path("..", "root3.xml").c_str(), "WANIPConnection_2", 2);
 }
 
 TORRENT_TEST(upnp_max_mappings)

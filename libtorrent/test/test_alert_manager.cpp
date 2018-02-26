@@ -100,10 +100,12 @@ TORRENT_TEST(priority_limit)
 	TEST_EQUAL(alerts.size(), 200);
 }
 
+namespace {
 void test_notify_fun(int& cnt)
 {
 	++cnt;
 }
+} // anonymous namespace
 
 TORRENT_TEST(notify_function)
 {
@@ -148,18 +150,19 @@ TORRENT_TEST(notify_function)
 }
 
 #ifndef TORRENT_DISABLE_EXTENSIONS
+namespace {
 int plugin_alerts[3] = { 0, 0, 0 };
 
 struct test_plugin : lt::plugin
 {
 	explicit test_plugin(int index) : m_index(index) {}
-	void on_alert(alert const* a) override
+	void on_alert(alert const*) override
 	{
 		++plugin_alerts[m_index];
 	}
 	int m_index;
 };
-
+} // anonymous namespace
 #endif
 
 TORRENT_TEST(extensions)
@@ -188,11 +191,15 @@ TORRENT_TEST(extensions)
 #endif
 }
 
+namespace {
+
 void post_torrent_added(alert_manager* mgr)
 {
 	std::this_thread::sleep_for(lt::milliseconds(10));
 	mgr->emplace_alert<add_torrent_alert>(torrent_handle(), add_torrent_params(), error_code());
 }
+
+} // anonymous namespace
 
 TORRENT_TEST(wait_for_alert)
 {
@@ -267,4 +274,3 @@ TORRENT_TEST(dropped_alerts)
 	// it should have been cleared now though
 	TEST_CHECK(mgr.dropped_alerts().none());
 }
-

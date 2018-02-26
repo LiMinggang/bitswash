@@ -44,7 +44,7 @@ POSSIBILITY OF SUCH DAMAGE.
 #include "libtorrent/extensions.hpp"
 #include "libtorrent/aux_/session_interface.hpp"
 #include "libtorrent/peer_list.hpp"
-#include "libtorrent/socket_type.hpp"
+#include "libtorrent/aux_/socket_type.hpp"
 #include "libtorrent/assert.hpp"
 #include "libtorrent/broadcast_socket.hpp"
 #include "libtorrent/torrent.hpp"
@@ -859,14 +859,14 @@ namespace libtorrent {
 	bool peer_connection::on_parole() const
 	{ return peer_info_struct() && peer_info_struct()->on_parole; }
 
-	int peer_connection::picker_options() const
+	picker_options_t peer_connection::picker_options() const
 	{
 		TORRENT_ASSERT(is_single_thread());
-		int ret = m_picker_options;
+		picker_options_t ret = m_picker_options;
 
 		std::shared_ptr<torrent> t = m_torrent.lock();
 		TORRENT_ASSERT(t);
-		if (!t) return 0;
+		if (!t) return {};
 
 		if (t->num_time_critical_pieces() > 0)
 		{

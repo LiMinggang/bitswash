@@ -49,6 +49,8 @@ POSSIBILITY OF SUCH DAMAGE.
 
 using namespace lt;
 
+namespace {
+
 struct mock_torrent;
 
 struct mock_peer_connection
@@ -64,7 +66,7 @@ struct mock_peer_connection
 		, m_disconnect_called(false)
 		, m_torrent(*tor)
 	{
-		for (int i = 0; i < 20; ++i) m_id[i] = rand();
+		aux::random_bytes(m_id);
 	}
 
 	virtual ~mock_peer_connection() = default;
@@ -73,12 +75,19 @@ struct mock_peer_connection
 	bool should_log(peer_log_alert::direction_t) const noexcept override
 	{ return true; }
 
-	void peer_log(peer_log_alert::direction_t dir, char const* event
+	void peer_log(peer_log_alert::direction_t, char const* /*event*/
 		, char const* fmt, ...) const noexcept override
 	{
 		va_list v;
 		va_start(v, fmt);
-		vprintf(fmt, v);
+#ifdef __clang__
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wformat-nonliteral"
+#endif
+		std::vprintf(fmt, v);
+#ifdef __clang__
+#pragma clang diagnostic pop
+#endif
 		va_end(v);
 	}
 #endif
@@ -96,7 +105,7 @@ struct mock_peer_connection
 	bool m_disconnect_called;
 	mock_torrent& m_torrent;
 
-	void get_peer_info(peer_info& p) const override {}
+	void get_peer_info(peer_info&) const override {}
 	tcp::endpoint const& remote() const override { return m_remote; }
 	tcp::endpoint local_endpoint() const override { return m_local; }
 	void disconnect(error_code const& ec
@@ -119,7 +128,7 @@ struct mock_torrent
 	explicit mock_torrent(torrent_state* st) : m_p(nullptr), m_state(st) {}
 	virtual ~mock_torrent() = default;
 
-	bool connect_to_peer(torrent_peer* peerinfo, bool ignore_limit = false)
+	bool connect_to_peer(torrent_peer* peerinfo)
 	{
 		TORRENT_ASSERT(peerinfo->connection == nullptr);
 		if (peerinfo->connection) return false;
@@ -131,23 +140,13 @@ struct mock_torrent
 		return true;
 	}
 
-#ifndef TORRENT_DISABLE_LOGGING
-	void debug_log(const char* fmt, ...) const
-	{
-		va_list v;
-		va_start(v, fmt);
-		vprintf(fmt, v);
-		va_end(v);
-	}
-#endif
-
 	peer_list* m_p;
 	torrent_state* m_state;
 	std::vector<std::shared_ptr<mock_peer_connection>> m_connections;
 };
 
-void mock_peer_connection::disconnect(error_code const& ec
-	, operation_t op, int error)
+void mock_peer_connection::disconnect(error_code const&
+	, operation_t, int /*error*/)
 {
 	m_torrent.m_p->connection_closed(*this, 0, m_torrent.m_state);
 	auto const i = std::find(m_torrent.m_connections.begin(), m_torrent.m_connections.end()
@@ -199,6 +198,8 @@ void connect_peer(peer_list& p, mock_torrent& t, torrent_state& st)
 }
 
 static torrent_peer_allocator allocator;
+
+} // anonymous namespace
 
 // test multiple peers with the same IP
 // when disallowing it
@@ -371,11 +372,13 @@ TORRENT_TEST(update_peer_port_collide)
 	st.erased.clear();
 }
 
+namespace {
 std::shared_ptr<mock_peer_connection> shared_from_this(lt::peer_connection_interface* p)
 {
 	return std::static_pointer_cast<mock_peer_connection>(
 		static_cast<mock_peer_connection*>(p)->shared_from_this());
 }
+} // anonymous namespace
 
 // test ip filter
 TORRENT_TEST(ip_filter)
@@ -539,7 +542,7 @@ TORRENT_TEST(set_ip_filter)
 	for (int i = 0; i < 100; ++i)
 	{
 		p.add_peer(tcp::endpoint(
-			address_v4((10 << 24) + ((i + 10) << 16)), 353), {}, {}, &st);
+			address_v4(std::uint32_t((10 << 24) + ((i + 10) << 16))), 353), {}, {}, &st);
 		TEST_EQUAL(st.erased.size(), 0);
 		st.erased.clear();
 	}
@@ -569,7 +572,7 @@ TORRENT_TEST(set_port_filter)
 	for (int i = 0; i < 100; ++i)
 	{
 		p.add_peer(tcp::endpoint(
-			address_v4((10 << 24) + ((i + 10) << 16)), i + 10), {}, {}, &st);
+			address_v4(std::uint32_t((10 << 24) + ((i + 10) << 16))), std::uint16_t(i + 10)), {}, {}, &st);
 		TEST_EQUAL(st.erased.size(), 0);
 		st.erased.clear();
 	}
@@ -599,7 +602,7 @@ TORRENT_TEST(set_max_failcount)
 	for (int i = 0; i < 100; ++i)
 	{
 		torrent_peer* peer = p.add_peer(tcp::endpoint(
-			address_v4((10 << 24) + ((i + 10) << 16)), i + 10), {}, {}, &st);
+			address_v4(std::uint32_t((10 << 24) + ((i + 10) << 16))), std::uint16_t(i + 10)), {}, {}, &st);
 		TEST_EQUAL(st.erased.size(), 0);
 		st.erased.clear();
 		// every other peer has a failcount of 1
@@ -629,7 +632,7 @@ TORRENT_TEST(set_seed)
 	for (int i = 0; i < 100; ++i)
 	{
 		torrent_peer* peer = p.add_peer(tcp::endpoint(
-			address_v4((10 << 24) + ((i + 10) << 16)), i + 10), {}, {}, &st);
+			address_v4(std::uint32_t((10 << 24) + ((i + 10) << 16))), std::uint16_t(i + 10)), {}, {}, &st);
 		TEST_EQUAL(st.erased.size(), 0);
 		st.erased.clear();
 		// make every other peer a seed
@@ -807,6 +810,43 @@ TORRENT_TEST(double_connection_loose)
 	// the rules are documented in peer_list.cpp
 	TEST_EQUAL(con_out->was_disconnected(), true);
 	TEST_EQUAL(con_in->was_disconnected(), false);
+}
+
+// test double connection with identical ports (random)
+TORRENT_TEST(double_connection_random)
+{
+	int in = 0;
+	int out = 0;
+	for (int i = 0; i < 30; ++i)
+	{
+		torrent_state st = init_state();
+		mock_torrent t(&st);
+		st.allow_multiple_connections_per_ip = false;
+		peer_list p(allocator);
+		t.m_p = &p;
+
+		// we are 10.0.0.1 and the other peer is 10.0.0.2
+
+		// our outgoing connection
+		torrent_peer* peer = add_peer(p, st, ep("10.0.0.2", 3000));
+		connect_peer(p, t, st);
+
+		auto con_out = static_cast<mock_peer_connection*>(peer->connection)->shared_from_this();
+		con_out->set_local_ep(ep("10.0.0.1", 3000));
+
+		// and the incoming connection
+		auto con_in = std::make_shared<mock_peer_connection>(&t, false, ep("10.0.0.2", 3000));
+		con_in->set_local_ep(ep("10.0.0.1", 3000));
+
+		p.new_connection(*con_in, 0, &st);
+
+		// the rules are documented in peer_list.cpp
+		out += con_out->was_disconnected();
+		in += con_in->was_disconnected();
+	}
+	// we should have gone different ways randomly
+	TEST_CHECK(out > 0);
+	TEST_CHECK(in > 0);
 }
 
 // test double connection (we win)

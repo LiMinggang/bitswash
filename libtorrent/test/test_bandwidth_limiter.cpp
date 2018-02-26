@@ -52,6 +52,8 @@ struct peer_connection;
 using namespace lt;
 using namespace std::placeholders;
 
+namespace {
+
 const float sample_time = 20.f; // seconds
 
 //#define VERBOSE_LOGGING
@@ -71,7 +73,6 @@ struct peer_connection: bandwidth_socket, std::enable_shared_from_this<peer_conn
 	{}
 
 	bool is_disconnecting() const override { return false; }
-	bool ignore_bandwidth_limits() { return m_ignore_limits; }
 	void assign_bandwidth(int channel, int amount) override;
 
 	void throttle(int limit) { m_bandwidth_channel.throttle(limit); }
@@ -89,7 +90,7 @@ struct peer_connection: bandwidth_socket, std::enable_shared_from_this<peer_conn
 	std::int64_t m_quota;
 };
 
-void peer_connection::assign_bandwidth(int channel, int amount)
+void peer_connection::assign_bandwidth(int /*channel*/, int amount)
 {
 	m_quota += amount;
 #ifdef VERBOSE_LOGGING
@@ -454,6 +455,8 @@ void test_no_starvation(int limit)
 		<< " target: " << (limit / 200 / num_peers) << std::endl;
 	TEST_CHECK(close_to(p->m_quota / sample_time, float(limit) / 200 / num_peers, 5));
 }
+
+} // anonymous namespace
 
 TORRENT_TEST(equal_connection)
 {

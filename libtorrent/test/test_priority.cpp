@@ -52,6 +52,8 @@ POSSIBILITY OF SUCH DAMAGE.
 using namespace lt;
 using std::ignore;
 
+namespace {
+
 alert_category_t const mask = alert::all_categories & ~(alert::performance_warning | alert::stats_notification);
 
 int peer_disconnects = 0;
@@ -136,7 +138,7 @@ void test_transfer(settings_pack const& sett, bool test_deprecated = false)
 		, true, false, true, "_priority", 8 * 1024, &t, false, nullptr);
 
 	int const num_pieces = tor2.torrent_file()->num_pieces();
-	aux::vector<download_priority_t, piece_index_t> priorities(num_pieces, 1_pri);
+	aux::vector<download_priority_t, piece_index_t> priorities(std::size_t(num_pieces), 1_pri);
 	// set half of the pieces to priority 0
 	std::fill(priorities.begin(), priorities.begin() + (num_pieces / 2), 0_pri);
 	tor2.prioritize_pieces(priorities);
@@ -287,6 +289,7 @@ done:
 
 	std::cout << "re-adding" << std::endl;
 	add_torrent_params p;
+	TORRENT_UNUSED(test_deprecated);
 #ifndef TORRENT_NO_DEPRECATE
 	if (test_deprecated)
 	{
@@ -295,9 +298,9 @@ done:
 	else
 #endif
 	{
-		error_code ec;
-		p = read_resume_data(resume_data, ec);
-		TEST_CHECK(!ec);
+		error_code ec1;
+		p = read_resume_data(resume_data, ec1);
+		TEST_CHECK(!ec1);
 	}
 	p.flags &= ~torrent_flags::paused;
 	p.flags &= ~torrent_flags::auto_managed;
@@ -385,6 +388,8 @@ done:
 	sp.push_back(ses1.abort());
 	sp.push_back(ses2.abort());
 }
+
+} // anonymous namespace
 
 TORRENT_TEST(priority)
 {

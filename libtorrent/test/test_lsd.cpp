@@ -41,6 +41,8 @@ POSSIBILITY OF SUCH DAMAGE.
 #include "setup_transfer.hpp"
 #include <iostream>
 
+namespace {
+
 void test_lsd()
 {
 	using namespace lt;
@@ -57,14 +59,14 @@ void test_lsd()
 	pack.set_bool(settings_pack::enable_lsd, true);
 	pack.set_bool(settings_pack::enable_upnp, false);
 	pack.set_bool(settings_pack::enable_natpmp, false);
-	pack.set_str(settings_pack::listen_interfaces, "127.0.0.1:48100");
+	pack.set_str(settings_pack::listen_interfaces, "0.0.0.0:48100");
 #ifndef TORRENT_NO_DEPRECATE
 	pack.set_bool(settings_pack::rate_limit_utp, true);
 #endif
 
 	lt::session ses1(pack);
 
-	pack.set_str(settings_pack::listen_interfaces, "127.0.0.1:49100");
+	pack.set_str(settings_pack::listen_interfaces, "0.0.0.0:49100");
 	lt::session ses2(pack);
 
 	torrent_handle tor1;
@@ -96,6 +98,8 @@ void test_lsd()
 	p1 = ses1.abort();
 	p2 = ses2.abort();
 }
+
+} // anonymous namespace
 
 TORRENT_TEST(lsd)
 {

@@ -6,6 +6,273 @@ set (VERSION "1.2.0")
 
 list(APPEND CMAKE_MODULE_PATH ${libtorrent_SOURCE_DIR}/cmake/Modules)
 
+set(libtorrent_include_files
+	add_torrent_params
+	address
+	alert
+	alert_manager
+	alert_types
+	allocator
+	announce_entry
+	assert
+	bandwidth_limit
+	bandwidth_manager
+	bandwidth_queue_entry
+	bandwidth_socket
+	bdecode
+	bencode
+	bitfield
+	block_cache
+	bloom_filter
+	broadcast_socket
+	bt_peer_connection
+	buffer
+	build_config
+	chained_buffer
+	choker
+	close_reason
+	config
+	ConvertUTF
+	copy_ptr
+	crc32c
+	create_torrent
+	deadline_timer
+	debug
+	disk_buffer_holder
+	disk_buffer_pool
+	disk_interface
+	disk_io_job
+	disk_io_thread
+	disk_io_thread_pool
+	disk_job_pool
+	disk_observer
+	download_priority
+	ed25519
+	entry
+	enum_net
+	error
+	error_code
+	export
+	extensions
+	file
+	file_pool
+	file_storage
+	fingerprint
+	flags
+	fwd
+	gzip
+	hasher
+	hasher512
+	heterogeneous_queue
+	hex
+	http_connection
+	http_parser
+	http_seed_connection
+	http_stream
+	http_tracker_connection
+	i2p_stream
+	identify_client
+	instantiate_connection
+	invariant_check
+	io
+	io_service
+	io_service_fwd
+	ip_filter
+	ip_voter
+	lazy_entry
+	link
+	linked_list
+	lsd
+	magnet_uri
+	natpmp
+	netlink
+	operations
+	optional
+	packet_buffer
+	packet_pool
+	parse_url
+	part_file
+	pe_crypto
+	peer
+	peer_class
+	peer_class_set
+	peer_class_type_filter
+	peer_connection
+	peer_connection_handle
+	peer_connection_interface
+	peer_id
+	peer_info
+	peer_list
+	peer_request
+	performance_counters
+	pex_flags
+	piece_block
+	piece_block_progress
+	piece_picker
+	platform_util
+	portmap
+	proxy_base
+	puff
+	random
+	read_resume_data
+	receive_buffer
+	request_blocks
+	resolve_links
+	resolver
+	resolver_interface
+	session
+	session_handle
+	session_settings
+	session_stats
+	session_status
+	session_types
+	settings_pack
+	sha1
+	sha1_hash
+	sha512
+	sliding_average
+	socket
+	socket_io
+	socks5_stream
+	span
+	ssl_stream
+	stack_allocator
+	stat
+	stat_cache
+	storage
+	storage_defs
+	string_util
+	string_view
+	tailqueue
+	time
+	timestamp_history
+	torrent
+	torrent_flags
+	torrent_handle
+	torrent_info
+	torrent_peer
+	torrent_peer_allocator
+	torrent_status
+	tracker_manager
+	udp_socket
+	udp_tracker_connection
+	union_endpoint
+	units
+	upnp
+	utf8
+	utp_socket_manager
+	utp_stream
+	vector_utils
+	version
+	web_connection_base
+	web_peer_connection
+	write_resume_data
+	xml_parse)
+
+set(libtorrent_kademlia_include_files
+	dht_observer
+	dht_settings
+	dht_state
+	dht_storage
+	dht_tracker
+	direct_request
+	dos_blocker
+	ed25519
+	find_data
+	get_item
+	get_peers
+	io
+	item
+	msg
+	node
+	node_entry
+	node_id
+	observer
+	put_data
+	refresh
+	routing_table
+	rpc_manager
+	sample_infohashes
+	traversal_algorithm
+	types)
+
+set(libtorrent_extensions_include_files
+	smart_ban
+	ut_metadata
+	ut_pex)
+
+set(libtorrent_aux_include_files
+	aligned_storage
+	aligned_union
+	alloca
+	allocating_handler
+	array
+	bind_to_device
+	block_cache_reference
+	byteswap
+	cppint_import_export
+	cpuid
+	deferred_handler
+	deque
+	dev_random
+	disable_warnings_pop
+	disable_warnings_push
+	disk_job_fence
+	escape_string
+	ffs
+	file_progress
+	has_block
+	io
+	ip_notifier
+	listen_socket_handle
+	lsd
+	max_path
+	merkle
+	noexcept_movable
+	numeric_cast
+	openssl
+	path
+	portmap
+	proxy_settings
+	range
+	route
+	scope_end
+	session_call
+	session_impl
+	session_interface
+	session_settings
+	session_udp_sockets
+	set_socket_buffer
+	socket_type
+	storage_piece_set
+	storage_utils
+	string_ptr
+	suggest_piece
+	throw
+	time
+	torrent_impl
+	typed_span
+	unique_ptr
+	vector
+	win_crypto_provider
+	win_util)
+
+foreach(s ${libtorrent_include_files})
+	list(APPEND include_files include/libtorrent/${s})
+endforeach(s)
+
+foreach(s ${libtorrent_kademlia_include_files})
+	list(APPEND include_files include/libtorrent/kademlia/${s})
+endforeach(s)
+
+foreach(s ${libtorrent_extensions_include_files})
+	list(APPEND include_files include/libtorrent/extensions/${s})
+endforeach(s)
+
+foreach(s ${libtorrent_aux_include_files})
+	list(APPEND include_files include/libtorrent/aux_/${s})
+endforeach(s)
+
 set(sources
 	web_connection_base
 	alert
@@ -183,6 +450,19 @@ option(logging "build with logging" ON)
 option(build_tests "build tests" OFF)
 option(build_examples "build examples" OFF)
 
+set(CMAKE_CONFIGURATION_TYPES Debug Release RelWithDebInfo)
+
+if (NOT CMAKE_BUILD_TYPE)
+	set(CMAKE_BUILD_TYPE Release FORCE)
+endif()
+
+# add_definitions() doesn't seem to let you say wich build type to apply it to
+set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -DTORRENT_DEBUG")
+if(UNIX)
+	set(CMAKE_C_FLAGS_RELWITHDEBINFO "-Os -g")
+	set(CMAKE_CXX_FLAGS_RELWITHDEBINFO "${CMAKE_C_FLAGS_RELWITHDEBINFO}")
+endif()
+
 find_package(Threads REQUIRED)
 
 include_directories(${includes})
@@ -212,9 +492,52 @@ if (dht)
 	endif()
 endif()
 
+list(APPEND sources2 ${include_files})
+
+if(CMAKE_CXX_COMPILER_ID MATCHES Clang)
+	add_compile_options(
+		-Weverything
+		-Wno-documentation
+		-Wno-c++98-compat-pedantic
+		-Wno-padded
+		-Wno-global-constructors
+		-Wno-exit-time-destructors
+		-Wno-weak-vtables)
+elseif(CMAKE_CXX_COMPILER_ID MATCHES GNU)
+	add_compile_options(
+		-Wall
+		-Wextra
+		-Wpedantic
+		-Wparentheses
+		-Wvla
+		-Wc++11-compat
+		-Wno-format-zero-length
+		-ftemplate-depth=512)
+elseif(MSVC)
+	add_compile_options(
+		/W4
+		# C4251: 'identifier' : class 'type' needs to have dll-interface to be
+		#        used by clients of class 'type2'
+		/wd4251
+		# C4275: non DLL-interface classkey 'identifier' used as base for
+		#        DLL-interface classkey 'identifier'
+		/wd4275
+		# C4373: virtual function overrides, previous versions of the compiler
+		#        did not override when parameters only differed by const/volatile qualifiers
+		/wd4373
+		# C4268: 'identifier' : 'const' static/global data initialized
+		#        with compiler generated default constructor fills the object with zeros
+		/wd4268
+		# C4503: 'identifier': decorated name length exceeded, name was truncated
+		/wd4503)
+endif()
+
 if (shared)
 	add_library(torrent-rasterbar SHARED ${sources2})
-	target_compile_definitions(torrent-rasterbar PRIVATE TORRENT_BUILDING_SHARED)
+	target_compile_definitions(torrent-rasterbar
+		PRIVATE TORRENT_BUILDING_SHARED
+		INTERFACE TORRENT_LINKING_SHARED
+	)
 	if(NOT MSVC)
 		set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -fvisibility=hidden")
 		set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fvisibility=hidden -fvisibility-inlines-hidden")
@@ -243,15 +566,11 @@ else()
 	add_library(torrent-rasterbar STATIC ${sources2})
 endif()
 
+target_compile_features(torrent-rasterbar PUBLIC cxx_std_11)
+
 target_compile_definitions(torrent-rasterbar PUBLIC $<$<CONFIG:Debug>:TORRENT_DEBUG>)
 
 target_compile_definitions(torrent-rasterbar PRIVATE TORRENT_BUILDING_LIBRARY)
-
-if (build_tests)
-	# this will make some internal functions available in the
-	# DLL interface, for the tests to access
-	target_compile_definitions(torrent-rasterbar PUBLIC TORRENT_EXPORT_EXTRA)
-endif (build_tests)
 
 if (libiconv)
 	find_package(Iconv REQUIRED)
@@ -350,10 +669,6 @@ target_compile_definitions(torrent-rasterbar PUBLIC BOOST_ASIO_HAS_STD_CHRONO)
 set_target_properties(torrent-rasterbar PROPERTIES
 	SOVERSION ${SOVERSION})
 
-# libtorrent requires at least C++11
-set_property(TARGET torrent-rasterbar PROPERTY CXX_STANDARD 11)
-set_property(TARGET torrent-rasterbar PROPERTY CXX_STANDARD_REQUIRED ON)
-
 get_property (COMPILETIME_OPTIONS_LIST
 	DIRECTORY ${CMAKE_CURRENT_SOURCE_DIRECTORY}
 	PROPERTY COMPILE_DEFINITIONS
@@ -419,29 +734,8 @@ endif()
 
 # === build tests ===
 if(build_tests)
-	if (NOT logging)
-		message(FATAL_ERROR "tests require logging to be enabled")
-	endif()
-
-	file(GLOB tests RELATIVE "${PROJECT_SOURCE_DIR}" "test/test_*.cpp")
-	list(REMOVE_ITEM tests "test/test_natpmp.cpp") # doesn't build at time of writing
-	list(REMOVE_ITEM tests "test/test_utils.cpp") # helper file, not a test
-
-	add_library(test_common STATIC test/main.cpp test/test.cpp
-		test/setup_transfer.cpp test/dht_server.cpp test/udp_tracker.cpp
-		test/peer_server.cpp test/web_seed_suite.cpp test/swarm_suite.cpp
-		test/test_utils.cpp test/make_torrent.hpp test/make_torrent.cpp
-		test/settings.hpp test/settings.cpp)
-	set_target_properties(test_common PROPERTIES CXX_STANDARD 11 CXX_STANDARD_REQUIRED ON)
-	target_link_libraries(test_common torrent-rasterbar)
 	enable_testing()
-
-	foreach(s ${tests})
-		get_filename_component (sn ${s} NAME_WE)
-		add_executable(${sn} ${s})
-		target_link_libraries(${sn} test_common)
-		set_target_properties(${sn} PROPERTIES VS_DEBUGGER_WORKING_DIRECTORY "${PROJECT_SOURCE_DIR}/test")
-		set_target_properties(${sn} PROPERTIES CXX_STANDARD 11 CXX_STANDARD_REQUIRED ON)
-		add_test(NAME ${sn} COMMAND ${sn} WORKING_DIRECTORY "${PROJECT_SOURCE_DIR}/test")
-	endforeach(s)
+	# this will make some internal functions available in the DLL interface
+	target_compile_definitions(torrent-rasterbar PUBLIC TORRENT_EXPORT_EXTRA)
+	add_subdirectory(test)
 endif()

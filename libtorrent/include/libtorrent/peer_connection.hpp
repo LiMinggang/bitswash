@@ -41,13 +41,11 @@ POSSIBILITY OF SUCH DAMAGE.
 #include "libtorrent/peer_request.hpp"
 #include "libtorrent/piece_block_progress.hpp"
 #include "libtorrent/bandwidth_limit.hpp"
-#include "libtorrent/socket_type_fwd.hpp"
 #include "libtorrent/assert.hpp"
 #include "libtorrent/chained_buffer.hpp"
 #include "libtorrent/disk_buffer_holder.hpp"
 #include "libtorrent/bitfield.hpp"
 #include "libtorrent/bandwidth_socket.hpp"
-#include "libtorrent/socket_type_fwd.hpp"
 #include "libtorrent/error_code.hpp"
 #include "libtorrent/sliding_average.hpp"
 #include "libtorrent/peer_class.hpp"
@@ -66,6 +64,7 @@ POSSIBILITY OF SUCH DAMAGE.
 #include "libtorrent/peer_info.hpp"
 #include "libtorrent/aux_/vector.hpp"
 #include "libtorrent/disk_interface.hpp"
+#include "libtorrent/piece_picker.hpp" // for picker_options_t
 
 #include <ctime>
 #include <algorithm>
@@ -88,8 +87,10 @@ namespace libtorrent {
 
 namespace aux {
 
-		struct session_interface;
-	}
+	struct socket_type;
+	struct session_interface;
+
+}
 
 	struct pending_block
 	{
@@ -142,7 +143,7 @@ namespace aux {
 		disk_interface* disk_thread;
 		io_service* ios;
 		std::weak_ptr<torrent> tor;
-		std::shared_ptr<socket_type> s;
+		std::shared_ptr<aux::socket_type> s;
 		tcp::endpoint endp;
 		torrent_peer* peerinfo;
 	};
@@ -154,11 +155,11 @@ namespace aux {
 			std::weak_ptr<torrent> t
 			, aux::session_interface& ses
 			, aux::session_settings const& sett)
-			: m_torrent(t)
+			: m_torrent(std::move(t))
 			, m_ses(ses)
 			, m_settings(sett)
 			, m_disconnecting(false)
-			, m_connecting(!t.expired())
+			, m_connecting(!m_torrent.expired())
 			, m_endgame_mode(false)
 			, m_snubbed(false)
 			, m_interesting(false)
@@ -322,8 +323,7 @@ namespace aux {
 
 		void on_metadata_impl();
 
-		void picker_options(int o)
-		{ m_picker_options = o; }
+		void picker_options(picker_options_t o) { m_picker_options = o; }
 
 		int prefer_contiguous_blocks() const
 		{
@@ -333,7 +333,7 @@ namespace aux {
 
 		bool on_parole() const;
 
-		int picker_options() const;
+		picker_options_t picker_options() const;
 
 		void prefer_contiguous_blocks(int num)
 		{ m_prefer_contiguous_blocks = num; }
@@ -442,9 +442,7 @@ namespace aux {
 		// is called once every second by the main loop
 		void second_tick(int tick_interval_ms);
 
-		void timeout_requests();
-
-		std::shared_ptr<socket_type> get_socket() const { return m_socket; }
+		std::shared_ptr<aux::socket_type> get_socket() const { return m_socket; }
 		tcp::endpoint const& remote() const override { return m_remote; }
 		tcp::endpoint local_endpoint() const override { return m_local; }
 
@@ -472,11 +470,6 @@ namespace aux {
 		// returns true if this connection is still waiting to
 		// finish the connection attempt
 		bool is_connecting() const { return m_connecting; }
-
-		// This is called for every peer right after the upload
-		// bandwidth has been distributed among them
-		// It will reset the used bandwidth to 0.
-		void reset_upload_quota();
 
 		// trust management.
 		virtual void received_valid_data(piece_index_t index);
@@ -653,7 +646,7 @@ namespace aux {
 		bool piece_failed;
 #endif
 
-		time_t last_seen_complete() const { return m_last_seen_complete; }
+		std::time_t last_seen_complete() const { return m_last_seen_complete; }
 		void set_last_seen_complete(int ago) { m_last_seen_complete = ::time(nullptr) - ago; }
 
 		std::int64_t uploaded_in_last_round() const
@@ -675,7 +668,6 @@ namespace aux {
 
 		int num_reading_bytes() const { return m_reading_bytes; }
 
-		enum sync_t { read_async, read_sync };
 		void setup_receive();
 
 		std::shared_ptr<peer_connection> self()
@@ -775,7 +767,7 @@ namespace aux {
 		int wanted_transfer(int channel);
 		int request_bandwidth(int channel, int bytes = 0);
 
-		std::shared_ptr<socket_type> m_socket;
+		std::shared_ptr<aux::socket_type> m_socket;
 
 		// the queue of blocks we have requested
 		// from this peer
@@ -844,10 +836,6 @@ namespace aux {
 		std::list<std::shared_ptr<peer_plugin>> m_extensions;
 #endif
 	private:
-
-		// the average rate of receiving complete piece messages
-		sliding_average<20> m_piece_rate;
-		sliding_average<20> m_send_rate;
 
 		// the average time between incoming pieces. Or, if there is no
 		// outstanding request, the time since the piece was requested. It
@@ -984,10 +972,6 @@ namespace aux {
 		// remote peer's id
 		peer_id m_peer_id;
 
-		// the bandwidth channels, upload and download
-		// keeps track of the current quotas
-		bandwidth_channel m_bandwidth_channel[num_channels];
-
 	protected:
 
 		template <typename Fun, typename... Args>
@@ -1023,7 +1007,7 @@ namespace aux {
 		// be augmented with flags controlled by other settings
 		// like sequential download etc. These are here to
 		// let plugins control flags that should always be set
-		int m_picker_options = 0;
+		picker_options_t m_picker_options{};
 
 		// the number of invalid piece-requests
 		// we have got from this peer. If the request
@@ -1198,7 +1182,7 @@ namespace aux {
 
 			// pretend that there's an outstanding send operation already, to
 			// prevent future calls to setup_send() from actually causing an
-			// asyc_send() to be issued.
+			// async_send() to be issued.
 			m_pc.m_channel_state[peer_connection::upload_channel] |= peer_info::bw_network;
 			m_need_uncork = true;
 		}

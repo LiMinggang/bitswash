@@ -31,6 +31,8 @@ POSSIBILITY OF SUCH DAMAGE.
 */
 
 #include <cstring>
+#include <array>
+
 #include "test.hpp"
 #include "libtorrent/part_file.hpp"
 #include "libtorrent/aux_/path.hpp"
@@ -49,7 +51,7 @@ TORRENT_TEST(part_file)
 	if (ec) std::printf("remove_all: %s\n", ec.message().c_str());
 
 	int piece_size = 16 * 0x4000;
-	char buf[1024];
+	std::array<char, 1024> buf;
 
 	{
 		create_directory(combine_path(cwd, "partfile_test_dir"), ec);
@@ -67,7 +69,7 @@ TORRENT_TEST(part_file)
 		TEST_CHECK(!exists(combine_path(combine_path(cwd, "partfile_test_dir"), "partfile.parts")));
 
 		// write something to the metadata file
-		for (int i = 0; i < 1024; ++i) buf[i] = i;
+		for (int i = 0; i < 1024; ++i) buf[std::size_t(i)] = char(i & 0xff);
 
 		iovec_t v = buf;
 		pf.writev(v, piece_index_t(10), 0, ec);
@@ -86,36 +88,36 @@ TORRENT_TEST(part_file)
 		TEST_CHECK(!exists(combine_path(combine_path(cwd, "partfile_test_dir"), "partfile.parts")));
 		TEST_CHECK(exists(combine_path(combine_path(cwd, "partfile_test_dir2"), "partfile.parts")));
 
-		memset(buf, 0, sizeof(buf));
+		buf.fill(0);
 
 		pf.readv(v, piece_index_t(10), 0, ec);
 		if (ec) std::printf("part_file::readv: %s\n", ec.message().c_str());
 
 		for (int i = 0; i < 1024; ++i)
-			TEST_CHECK(buf[i] == char(i));
+			TEST_CHECK(buf[std::size_t(i)] == char(i));
 	}
 
 	{
 		// load the part file back in
 		part_file pf(combine_path(cwd, "partfile_test_dir2"), "partfile.parts", 100, piece_size);
 
-		memset(buf, 0, sizeof(buf));
+		buf.fill(0);
 
 		iovec_t v = buf;
 		pf.readv(v, piece_index_t(10), 0, ec);
 		if (ec) std::printf("part_file::readv: %s\n", ec.message().c_str());
 
 		for (int i = 0; i < 1024; ++i)
-			TEST_CHECK(buf[i] == static_cast<char>(i));
+			TEST_CHECK(buf[std::size_t(i)] == static_cast<char>(i));
 
 		// test exporting the piece to a file
 
 		std::string output_filename = combine_path(combine_path(cwd, "partfile_test_dir")
 			, "part_file_test_export");
 
-		pf.export_file([](std::int64_t file_offset, span<char> buf)
+		pf.export_file([](std::int64_t file_offset, span<char> buf_data)
 		{
-			for (char i : buf)
+			for (char i : buf_data)
 			{
 				// make sure we got the bytes we expected
 				TEST_CHECK(i == static_cast<char>(file_offset));
@@ -136,4 +138,3 @@ TORRENT_TEST(part_file)
 		if (ec) std::printf("exists: %s\n", ec.message().c_str());
 	}
 }
-

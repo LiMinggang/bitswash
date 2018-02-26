@@ -10,18 +10,6 @@
 using namespace boost::python;
 using namespace lt;
 
-object bitfield_to_list(bitfield const& bf)
-{
-	list ret;
-
-	for (bitfield::const_iterator i(bf.begin()), e(bf.end()); i != e; ++i)
-		ret.append(*i);
-	return ret;
-}
-
-object pieces(torrent_status const& s) { return bitfield_to_list(s.pieces); }
-object verified_pieces(torrent_status const& s) { return bitfield_to_list(s.verified_pieces); }
-
 using by_value = return_value_policy<return_by_value>;
 std::shared_ptr<const torrent_info> get_torrent_file(torrent_status const& st)
 {
@@ -69,8 +57,8 @@ void bind_torrent_status()
         .def_readonly("list_seeds", &torrent_status::list_seeds)
         .def_readonly("list_peers", &torrent_status::list_peers)
         .def_readonly("connect_candidates", &torrent_status::connect_candidates)
-        .add_property("pieces", &pieces)
-        .add_property("verified_pieces", &verified_pieces)
+        .add_property("pieces", make_getter(&torrent_status::pieces, by_value()))
+        .add_property("verified_pieces", make_getter(&torrent_status::verified_pieces, by_value()))
         .def_readonly("num_pieces", &torrent_status::num_pieces)
         .def_readonly("total_done", &torrent_status::total_done)
         .def_readonly("total_wanted_done", &torrent_status::total_wanted_done)
@@ -111,7 +99,7 @@ void bind_torrent_status()
         .def_readonly("added_time", &torrent_status::added_time)
         .def_readonly("completed_time", &torrent_status::completed_time)
         .def_readonly("last_seen_complete", &torrent_status::last_seen_complete)
-        .def_readonly("queue_position", &torrent_status::queue_position)
+        .add_property("queue_position", make_getter(&torrent_status::queue_position, by_value()))
         .def_readonly("need_save_resume", &torrent_status::need_save_resume)
 #ifndef TORRENT_NO_DEPRECATE
         .def_readonly("ip_filter_applies", &torrent_status::ip_filter_applies)

@@ -48,6 +48,8 @@ POSSIBILITY OF SUCH DAMAGE.
 
 using namespace lt;
 
+namespace {
+
 char const* proxy_name[] = {
 	"none",
 	"socks4",
@@ -118,7 +120,7 @@ session_proxy test_proxy(settings_pack::proxy_type_t proxy_type, int flags)
 
 	// since multiple sessions may exist simultaneously (because of the
 	// pipelining of the tests) they actually need to use different ports
-	static int listen_port = 10000 + lt::random(50000);
+	static int listen_port = 10000 + int(lt::random(50000));
 	char iface[200];
 	std::snprintf(iface, sizeof(iface), "127.0.0.1:%d", listen_port);
 	listen_port += lt::random(10) + 1;
@@ -168,7 +170,7 @@ session_proxy test_proxy(settings_pack::proxy_type_t proxy_type, int flags)
 	torrent_handle h = s->add_torrent(addp);
 
 	std::printf("connect_peer: 127.0.0.1:%d\n", peer_port);
-	h.connect_peer(tcp::endpoint(address_v4::from_string("127.0.0.1"), peer_port));
+	h.connect_peer({address_v4::from_string("127.0.0.1"), std::uint16_t(peer_port)});
 
 	rejected_trackers.clear();
 
@@ -243,6 +245,8 @@ session_proxy test_proxy(settings_pack::proxy_type_t proxy_type, int flags)
 	stop_web_server();
 	return pr;
 }
+
+} // anonymous namespace
 
 // not using anonymous mode
 // UDP fails open if we can't connect to the proxy
@@ -330,4 +334,3 @@ TORRENT_TEST(anon_i2p)
 	test_proxy(settings_pack::i2p_proxy, force_proxy_mode);
 }
 #endif
-

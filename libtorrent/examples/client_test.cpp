@@ -84,6 +84,8 @@ using lt::address_v4;
 using lt::address_v6;
 #endif
 
+using std::chrono::duration_cast;
+
 #ifdef _WIN32
 
 #include <windows.h>
@@ -714,7 +716,7 @@ int save_file(std::string const& filename, std::vector<char> const& v)
 // returns true if the alert was handled (and should not be printed to the log)
 // returns false if the alert was not handled
 bool handle_alert(torrent_view& view, session_view& ses_view
-	, lt::session& ses, lt::alert* a)
+	, lt::session&, lt::alert* a)
 {
 	using namespace lt;
 
@@ -878,6 +880,10 @@ bool handle_alert(torrent_view& view, session_view& ses_view
 	{
 		view.update_torrents(std::move(p->status));
 		return true;
+	}
+	else if (torrent_removed_alert* p = alert_cast<torrent_removed_alert>(a))
+	{
+		view.remove_torrent(std::move(p->handle));
 	}
 	return false;
 
@@ -1296,9 +1302,14 @@ MAGNETURL is a magnet link
 
 		int terminal_width = 80;
 		int terminal_height = 50;
-		terminal_size(&terminal_width, &terminal_height);
-		view.set_size(terminal_width, terminal_height / 3);
-		ses_view.set_pos(terminal_height / 3);
+		std::tie(terminal_width, terminal_height) = terminal_size();
+
+		// the ratio of torrent-list and details below depend on the number of
+		// torrents we have in the session
+		int const height = std::min(terminal_height / 2
+			, std::max(5, view.num_visible_torrents() + 2));
+		view.set_size(terminal_width, height);
+		ses_view.set_pos(height);
 
 		int c = 0;
 		if (sleep_and_input(&c, refresh_delay))
@@ -1676,6 +1687,13 @@ COLUMN OPTIONS
 
 			if (print_trackers)
 			{
+				snprintf(str, sizeof(str), "next_announce: %4" PRId64 " | current tracker: %s\x1b[K\n"
+					, std::int64_t(duration_cast<seconds>(s.next_announce).count())
+					, s.current_tracker.c_str());
+				out += str;
+				pos += 1;
+				std::vector<lt::announce_entry> tr = h.trackers();
+				lt::time_point now = lt::clock_type::now();
 				for (lt::announce_entry const& ae : h.trackers())
 				{
 					auto best_ae = std::min_element(ae.endpoints.begin(), ae.endpoints.end()
