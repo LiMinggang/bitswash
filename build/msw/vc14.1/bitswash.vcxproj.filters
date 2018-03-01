@@ -921,6 +921,15 @@
     <ClInclude Include="..\..\..\libtorrent\include\libtorrent\aux_\torrent_impl.hpp">
       <Filter>Header Files\libtorrent\aux</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\..\libtorrent\include\libtorrent\aux_\route.h">
+      <Filter>Header Files\libtorrent\aux</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\libtorrent\include\libtorrent\aux_\set_socket_buffer.hpp">
+      <Filter>Header Files\libtorrent\aux</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\libtorrent\include\libtorrent\aux_\socket_type.hpp">
+      <Filter>Header Files\libtorrent\aux</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="..\..\..\src\bitswash.rc">

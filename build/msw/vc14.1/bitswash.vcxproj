@@ -239,12 +239,15 @@
     <ClInclude Include="..\..\..\libtorrent\include\libtorrent\aux_\portmap.hpp" />
     <ClInclude Include="..\..\..\libtorrent\include\libtorrent\aux_\proxy_settings.hpp" />
     <ClInclude Include="..\..\..\libtorrent\include\libtorrent\aux_\range.hpp" />
+    <ClInclude Include="..\..\..\libtorrent\include\libtorrent\aux_\route.h" />
     <ClInclude Include="..\..\..\libtorrent\include\libtorrent\aux_\scope_end.hpp" />
     <ClInclude Include="..\..\..\libtorrent\include\libtorrent\aux_\session_call.hpp" />
     <ClInclude Include="..\..\..\libtorrent\include\libtorrent\aux_\session_impl.hpp" />
     <ClInclude Include="..\..\..\libtorrent\include\libtorrent\aux_\session_interface.hpp" />
     <ClInclude Include="..\..\..\libtorrent\include\libtorrent\aux_\session_settings.hpp" />
     <ClInclude Include="..\..\..\libtorrent\include\libtorrent\aux_\session_udp_sockets.hpp" />
+    <ClInclude Include="..\..\..\libtorrent\include\libtorrent\aux_\set_socket_buffer.hpp" />
+    <ClInclude Include="..\..\..\libtorrent\include\libtorrent\aux_\socket_type.hpp" />
     <ClInclude Include="..\..\..\libtorrent\include\libtorrent\aux_\storage_piece_set.hpp" />
     <ClInclude Include="..\..\..\libtorrent\include\libtorrent\aux_\storage_utils.hpp" />
     <ClInclude Include="..\..\..\libtorrent\include\libtorrent\aux_\string_ptr.hpp" />
