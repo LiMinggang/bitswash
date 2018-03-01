@@ -1001,7 +1001,7 @@ void MainFrame::OpenMagnetURI(const wxString & magneturi)
 	}
 	else
 	{
-		wxLogMessage( _T( "Not Supported\n" ) );
+		wxLogMessage( _T( "Not Supported URL string\n" ) );
 	}
 }
 
