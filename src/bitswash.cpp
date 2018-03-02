@@ -360,7 +360,7 @@ bool BitSwash::OnInit()
 int BitSwash::OnExit()
 {
 	wxLogDebug( _T( "Awaiting BitTorrent session exit ...\n" ) );
-	if( m_btsession->IsAlive() )
+	if( m_btsession && m_btsession->IsAlive() )
 	{
 		wxThread::ExitCode retcode;
 		m_btsession->Delete(&retcode,  wxTHREAD_WAIT_BLOCK);
@@ -387,6 +387,7 @@ int BitSwash::OnExit()
 	if(m_geoipv6) GeoIP_delete(m_geoipv6);
 #endif
 	if(m_condition) delete m_condition;
+	if(m_btsession) delete m_btsession;
 	return 0;
 }
 
