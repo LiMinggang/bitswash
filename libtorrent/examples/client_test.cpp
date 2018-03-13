@@ -979,6 +979,18 @@ void print_piece(lt::partial_piece_info const* pp
 	out += "]";
 }
 
+bool is_resume_file(std::string const& s)
+{
+	static std::string const hex_digit = "0123456789abcdef";
+	if (s.size() != 40 + 7) return false;
+	if (s.substr(40) != ".resume") return false;
+	for (char const c : s.substr(0, 40))
+	{
+		if (hex_digit.find(c) == std::string::npos) return false;
+	}
+	return true;
+}
+
 int main(int argc, char* argv[])
 {
 #ifndef _WIN32
@@ -1036,6 +1048,13 @@ DISK OPTIONS
 
 TORRENT is a path to a .torrent file
 MAGNETURL is a magnet link
+
+example alert_masks:
+   dht | errors                   =  1025
+   peer-log | errors              = 32769
+   torrent-log | errors           = 16385
+   ses-log | errors               =  8193
+   ses-log | torrent-log | errors = 24578
 )") ;
 		return 0;
 	}
@@ -1246,7 +1265,7 @@ MAGNETURL is a magnet link
 	std::thread resume_data_loader([&ses]
 	{
 		// load resume files
-	lt::error_code ec;
+		lt::error_code ec;
 		std::string const resume_dir = path_append(save_path, ".resume");
 		std::vector<std::string> ents = list_dir(resume_dir
 			, [](lt::string_view p) { return p.size() > 7 && p.substr(p.size() - 7) == ".resume"; }, ec);
@@ -1259,6 +1278,8 @@ MAGNETURL is a magnet link
 		{
 			for (auto const& e : ents)
 			{
+				// only load resume files of the form <info-hash>.resume
+				if (!is_resume_file(e)) continue;
 				std::string const file = path_append(resume_dir, e);
 
 				std::vector<char> resume_data;
@@ -1310,6 +1331,7 @@ MAGNETURL is a magnet link
 			, std::max(5, view.num_visible_torrents() + 2));
 		view.set_size(terminal_width, height);
 		ses_view.set_pos(height);
+		ses_view.set_width(terminal_width);
 
 		int c = 0;
 		if (sleep_and_input(&c, refresh_delay))
@@ -1540,7 +1562,6 @@ MAGNETURL is a magnet link
 				if (c == 'f') print_file_progress = !print_file_progress;
 				if (c == 'P') show_pad_files = !show_pad_files;
 				if (c == 'g') show_dht_status = !show_dht_status;
-				if (c == 'u') ses_view.print_utp_stats(!ses_view.print_utp_stats());
 				if (c == 'x') print_disk_stats = !print_disk_stats;
 				// toggle columns
 				if (c == '1') print_ip = !print_ip;
@@ -1580,10 +1601,10 @@ DISPLAY OPTIONS
 left/right arrow keys: select torrent filter
 up/down arrow keys: select torrent
 [i] toggle show peers                           [d] toggle show downloading pieces
-[u] show uTP stats                              [f] toggle show files
+[P] show pad files (in file list)               [f] toggle show files
 [g] show DHT                                    [x] toggle disk cache stats
 [t] show trackers                               [l] toggle show log
-[P] show pad files (in file list)               [y] toggle show piece matrix
+[y] toggle show piece matrix
 
 COLUMN OPTIONS
 [1] toggle IP column                            [2]
@@ -1675,7 +1696,7 @@ COLUMN OPTIONS
 		{
 			torrent_status const& s = view.get_active_torrent();
 
-			print((piece_bar(s.pieces, 126) + "\x1b[K\n").c_str());
+			print((piece_bar(s.pieces, terminal_width - 2) + "\x1b[K\n").c_str());
 			pos += 1;
 
 			if ((print_downloads && s.state != torrent_status::seeding)
@@ -1715,7 +1736,7 @@ COLUMN OPTIONS
 			if (print_matrix)
 			{
 				int height = 0;
-				print(piece_matrix(s.pieces, std::min(terminal_width, 160), &height).c_str());
+				print(piece_matrix(s.pieces, terminal_width, &height).c_str());
 				pos += height;
 			}
 

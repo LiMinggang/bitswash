@@ -58,8 +58,6 @@ namespace libtorrent {
 		torrent_status(torrent_status const&);
 		torrent_status& operator=(torrent_status const&);
 		torrent_status(torrent_status&&) noexcept;
-		// TODO: 2 msvc and GCC did not make std::string nothrow move-assignable
-		// until C++17
 		torrent_status& operator=(torrent_status&&);
 
 		// compares if the torrent status objects come from the same torrent. i.e.
@@ -152,6 +150,9 @@ namespace libtorrent {
 		// there was a serious error reported in this torrent. The error code
 		// or a torrent log alert may provide more information.
 		static constexpr file_index_t error_file_exception{-5};
+
+		// the error occurred with the partfile
+		static constexpr file_index_t error_file_partfile{-6};
 
 		// the path to the directory where this torrent's files are stored.
 		// It's typically the path as was given to async_add_torrent() or
