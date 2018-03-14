@@ -368,6 +368,7 @@ private:
 
 MainFrame::~MainFrame()
 {
+	DeletePendingEvents();
 	//free members
 	if( m_config->GetUseSystray() )
 	{ delete m_swashtrayicon; }
@@ -382,6 +383,7 @@ MainFrame::~MainFrame()
 void MainFrame::OnClose( wxCloseEvent& event )
 {
 	if( m_closed ) { return; }
+	m_closed = true;
 
 	WXLOGDEBUG(( _T( "MainFrame Closing\n" ) ));
 	//stop update timer
@@ -398,7 +400,6 @@ void MainFrame::OnClose( wxCloseEvent& event )
 	if( m_swashsetting ) { delete m_swashsetting; }
 
 	Destroy();
-	m_closed = true;
 }
 
 void MainFrame::OnMinimize( wxIconizeEvent& event )
@@ -758,9 +759,8 @@ void MainFrame::ReceiveTorrent( const wxString & fileorurl )
 
 void MainFrame::TorrentMetadataReceived( )
 {
-	wxCommandEvent event( CHECK_METADATA );
-	event.SetEventObject( this );
-	AddPendingEvent( event );
+	wxCommandEvent *pevt = new wxCommandEvent( CHECK_METADATA );
+	wxQueueEvent(this, pevt);
 }
 
 /* parse torrent file and add to session */
