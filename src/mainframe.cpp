@@ -903,6 +903,7 @@ void MainFrame::OnTorrentMetadata( wxCommandEvent& WXUNUSED( event ) )
 	if(!mdq.empty())
 	{
 		std::shared_ptr<torrent_t> torrent;
+		bool added = false;
 		for(auto& hash : mdq)
 		{
 			torrent = m_btsession->GetTorrent( hash );
@@ -936,16 +937,20 @@ void MainFrame::OnTorrentMetadata( wxCommandEvent& WXUNUSED( event ) )
 						{
 							wxLogError( _T( "Error removing file %s" ), configfile.c_str() );
 						}
-						return;
+						continue;
 					}
-
 				}
 
 				torrent->handle.unset_flags(lt::torrent_flags::upload_mode);
 				m_btsession->StartTorrent(torrent, false);
-				m_btsession->PostQueueUpdateEvent();
-				UpdateUI();
+				added = true;
 			}
+		}
+
+		if(added)
+		{
+			m_btsession->PostQueueUpdateEvent();
+			UpdateUI();
 		}
 	}
 }
