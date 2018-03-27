@@ -49,14 +49,17 @@ POSSIBILITY OF SUCH DAMAGE.
 
 // tests are expected to even test deprecated functionality. There is no point
 // in warning about deprecated use in any of the tests.
-
+// the unreachable code warnings are disabled since the test macros may
+// sometimes have conditions that are known at compile time
 #if defined __clang__
 #pragma clang diagnostic ignored "-Wdeprecated"
 #pragma clang diagnostic ignored "-Wdeprecated-declarations"
+#pragma clang diagnostic ignored "-Wunreachable-code"
 
 #elif defined __GNUC__
 #pragma GCC diagnostic ignored "-Wdeprecated"
 #pragma GCC diagnostic ignored "-Wdeprecated-declarations"
+#pragma GCC diagnostic ignored "-Wunreachable-code"
 
 #elif defined _MSC_VER
 #pragma warning(disable : 4996)
@@ -75,7 +78,7 @@ int EXPORT print_failures();
 int EXPORT test_counter();
 void EXPORT reset_output();
 
-typedef void (*unit_test_fun_t)();
+using unit_test_fun_t = void (*)();
 
 struct unit_test_t
 {
@@ -100,7 +103,7 @@ extern int _g_test_idx;
 			t.name = __FILE__ "." #test_name; \
 			t.num_failures = 0; \
 			t.run = false; \
-			t.output = NULL; \
+			t.output = nullptr; \
 			_g_num_unit_tests++; \
 		} \
 	} BOOST_PP_CAT(_static_registrar_, test_name); \
