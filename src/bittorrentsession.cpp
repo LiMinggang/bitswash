@@ -128,6 +128,8 @@ BitTorrentSession::BitTorrentSession( wxApp* pParent, Configuration* config, wxM
 	m_dht_nodes_idx = find_metric_idx("dht.dht_nodes");
 	m_download_rate = 0.0;
 	m_upload_rate = 0.0;
+	for( auto tms: m_timestamp )
+		tms = 0;
 
 	if(m_preview_ext_set.empty())
 	{

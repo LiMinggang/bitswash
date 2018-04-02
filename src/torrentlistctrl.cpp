@@ -124,6 +124,7 @@ wxString TorrentListCtrl::GetItemValue( long item, long columnid ) const
 		_( "Allocating" ),
 		_( "Checking resume data" )
 	};
+
 	static size_t state_size = ( sizeof( state_str ) / ( sizeof( wxChar * ) ) );
 
 	switch( columnid )

@@ -110,7 +110,7 @@ wxString PeerListCtrl::GetItemValue(long item, long columnid) const
 
 	const PeerListCtrl::peer_list_t *peers_list = pMainFrame->GetPeersList();
 
-	if ((peers_list == nullptr) || (peers_list->size() <= 0) || item >= peers_list->size())
+	if ((peers_list == nullptr) || (peers_list->empty()) || item >= peers_list->size())
 	{
 		return ret;
 	}
@@ -306,7 +306,7 @@ int PeerListCtrl::OnGetItemImage(long item) const
 
 	const PeerListCtrl::peer_list_t *peers_list = pMainFrame->GetPeersList();
 
-	if ((peers_list == nullptr) || (peers_list->size() <= 0))
+	if ((peers_list == nullptr) || (peers_list->empty()))
 	{
 		return -1;
 	}

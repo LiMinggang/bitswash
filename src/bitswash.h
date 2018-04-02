@@ -116,6 +116,8 @@ protected:
 class BitSwash : public wxApp
 {
 public:
+	BitSwash() = default;
+	~BitSwash() = default;
 	virtual bool OnInit();
 	virtual int OnExit();
     virtual void OnInitCmdLine(wxCmdLineParser& cmdParser);

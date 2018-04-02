@@ -224,7 +224,7 @@ void LoggerCtrl::RotateLog( int line )
 void LoggerCtrl::PopSuspendedLog()
 {
 	std::list<struct log_data>::const_iterator logdata_i;
-	if( m_issuspend || m_suspended_logdata.size() <= 0 )
+	if( m_issuspend || m_suspended_logdata.empty() )
 		return;
 	RotateLog( m_suspended_logdata.size() );
 	for( logdata_i = m_suspended_logdata.begin();

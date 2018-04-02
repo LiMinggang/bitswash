@@ -42,8 +42,7 @@
 TorrentSettingPane::TorrentSettingPane( wxWindow* parent, std::shared_ptr<torrent_t>& pTorrent, wxWindowID id, const wxPoint& pos, const wxSize& size, int style) : 
 		m_directory_change_func(nullptr)
 {
-	MainFrame * pMainFrame = nullptr;
-	pMainFrame = dynamic_cast<MainFrame *>( wxGetApp().GetTopWindow() );
+	MainFrame * pMainFrame = dynamic_cast<MainFrame *>( wxGetApp().GetTopWindow() );
 	wxASSERT(pMainFrame != nullptr);
 
 	Configuration* pcfg = pMainFrame->GetConfig();
