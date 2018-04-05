@@ -56,6 +56,7 @@ namespace aux {
 	struct TORRENT_EXPORT disk_job_fence
 	{
 		disk_job_fence() = default;
+
 #if TORRENT_USE_ASSERTS
 		~disk_job_fence()
 		{
