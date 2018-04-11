@@ -565,7 +565,7 @@ void Configuration::AddMagnetLinkType( )
 {
 	wxString type(wxT("magnet"));
 	wxString bitswash_type = wxString(APPNAME) + wxT(".") + type;
-	wxRegKey *pRegKey = new wxRegKey( m_bitswash_regkey_path + type );
+	wxRegKey *pRegKey = nullptr;
 
 	wxString name(m_bitswash_regkey_path);
 	name +=  wxT("\\magnet\\shell\\open\\command");

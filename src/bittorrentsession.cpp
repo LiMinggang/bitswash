@@ -1994,13 +1994,14 @@ void BitTorrentSession::ConfigureTorrentFilesPriority( std::shared_ptr<torrent_t
 		}
 
 		torrent->handle.prioritize_files(filespriority);
-		bool ppchanged = false, set = torrent->config->GetEnableVideoPreview();
+		bool set = torrent->config->GetEnableVideoPreview();
 
 		if(set)
 		{
-			int npieces = torrent->info->num_pieces(), piece_len = torrent->info->piece_length();
+			int piece_len = torrent->info->piece_length();
 			std::vector<lt::download_priority_t> pp(torrent->handle.get_piece_priorities());
 			const lt::file_storage &allfiles = torrent->info->files();
+			bool ppchanged = false;
 
 			wxFileName filename;
 			for(int i = 0; i < nfiles; ++i)
@@ -2013,7 +2014,7 @@ void BitTorrentSession::ConfigureTorrentFilesPriority( std::shared_ptr<torrent_t
 					const auto firstOffset = allfiles.file_offset(idx);
 					int first = static_cast<int>(firstOffset / piece_len);
 					int last = static_cast<int>((firstOffset + fileSize - 1) / piece_len);
-					lt::download_priority_t prio(set ? TorrentConfig::file_highest : filespriority[i]);
+					lt::download_priority_t prio(TorrentConfig::file_highest);
 					int nNumPieces = ceil(fileSize * 0.01 / piece_len);
 					for (int j = 0; j < nNumPieces; ++j)
 					{
@@ -2942,52 +2943,50 @@ void BitTorrentSession::UpdateCounters(lt::span<std::int64_t const>& stats_count
 bool BitTorrentSession::DHTStatusToString(wxString & status)
 {
 	static wxString lastStatus;
-	static char const* progress_bar =
-		"################################"
-		"################################"
-		"################################"
-		"################################";
-	static char const* short_progress_bar = "--------";
 	bool changed = false;
-	int bucket = 0;
+	wxMutexLocker ml(m_dht_status_lock);
+	changed = m_dht_changed;
+	if (m_dht_changed == true)
 	{
-		wxMutexLocker ml(m_dht_status_lock);
-		changed = m_dht_changed;
-		if (m_dht_changed == true)
+        int bucket = 0;
+		lastStatus = wxT("\n");
+		for (lt::dht_routing_bucket const& n : m_dht_routing_table)
 		{
-			lastStatus = wxT("\n");
-			for (lt::dht_routing_bucket const& n : m_dht_routing_table)
-			{
-				lastStatus += wxString::Format(wxT("%3d [%3d, %d] %s%s\n")
-					, bucket, n.num_nodes, n.num_replacements
-					, progress_bar + (128 - n.num_nodes)
-					, short_progress_bar + (8 - (std::min)(8, n.num_replacements)));
-			}
-
-			for (lt::dht_lookup const& l : m_dht_active_requests)
-			{
-				lastStatus += wxString::Format(wxT("  %10s target: %s "
-					"[limit: %2d] "
-					"in-flight: %-2d "
-					"left: %-3d "
-					"1st-timeout: %-2d "
-					"timeouts: %-2d "
-					"responses: %-2d "
-					"last_sent: %-2d\n")
-					, l.type
-					, to_hex(l.target).c_str()
-					, l.branch_factor
-					, l.outstanding_requests
-					, l.nodes_left
-					, l.first_timeout
-					, l.timeouts
-					, l.responses
-					, l.last_sent);
-			}
-
-			m_dht_changed = false;
-			status = lastStatus;
+			static char const* progress_bar =
+				"################################"
+				"################################"
+				"################################"
+				"################################";
+			static char const* short_progress_bar = "--------";
+			lastStatus += wxString::Format(wxT("%3d [%3d, %d] %s%s\n")
+				, bucket, n.num_nodes, n.num_replacements
+				, progress_bar + (128 - n.num_nodes)
+				, short_progress_bar + (8 - (std::min)(8, n.num_replacements)));
 		}
+
+		for (lt::dht_lookup const& l : m_dht_active_requests)
+		{
+			lastStatus += wxString::Format(wxT("  %10s target: %s "
+				"[limit: %2d] "
+				"in-flight: %-2d "
+				"left: %-3d "
+				"1st-timeout: %-2d "
+				"timeouts: %-2d "
+				"responses: %-2d "
+				"last_sent: %-2d\n")
+				, l.type
+				, to_hex(l.target).c_str()
+				, l.branch_factor
+				, l.outstanding_requests
+				, l.nodes_left
+				, l.first_timeout
+				, l.timeouts
+				, l.responses
+				, l.last_sent);
+		}
+
+		m_dht_changed = false;
+		status = lastStatus;
 	}
 
 	return changed;
