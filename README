@@ -39,6 +39,7 @@ Fix: MaxStart initial value issue
 Fix: Icon issue of Windows
 Fix: Download/upload size is not accumulated
 Fix: Add/Remove tracker
+Fix: Selected file size is not updated on changing selecting
 Update libtorrent to 9b1e79660f4bbfd7e377363b877575bda966258e
 Code improvement
 
