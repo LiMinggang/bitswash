@@ -447,7 +447,7 @@ void FileListCtrl::OnLeftDown(wxMouseEvent& event)
 					filespriority[item] = TorrentConfig::file_normal; /*Normal*/
 				}
 
-				BitTorrentSession* btSession = wxGetApp().GetBitTorrentSession();
+				static BitTorrentSession* btSession = wxGetApp().GetBitTorrentSession();
 				wxASSERT(btSession != nullptr);
 				btSession->ConfigureTorrentFilesPriority( pTorrent );
 				btSession->UpdateTorrentFileSize(pTorrent);
