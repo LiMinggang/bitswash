@@ -546,7 +546,7 @@ void BitTorrentSession::Configure(lt::settings_pack &settingsPack)
 		| lt::alert::tracker_notification
 		| lt::alert::status_notification
 		| lt::alert::ip_block_notification
-		| lt::alert::progress_notification
+//		| lt::alert::progress_notification
 		| lt::alert::stats_notification);
 	settingsPack.set_str(lt::settings_pack::peer_fingerprint, peerId);
 	settingsPack.set_bool(lt::settings_pack::listen_system_port_fallback, false);
