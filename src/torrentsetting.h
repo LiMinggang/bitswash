@@ -75,8 +75,6 @@ class TorrentSettingPane: public wxPanel
 
 		//(*Handlers(TorrentSettingPane)
 		void OnSaveDirectoryChanged(wxCommandEvent& event);
-		void OnPreviewVideoFilesClick(wxCommandEvent& event);
-		void OnSequentialDownloadClick(wxCommandEvent& event);
 		void OnButtonOpenDirClick(wxCommandEvent& event);
 		void OnSaveDirClick(wxCommandEvent& event);
 		void OnOpenDirectoryChanged(wxCommandEvent& event);

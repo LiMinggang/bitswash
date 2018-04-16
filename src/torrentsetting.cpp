@@ -283,8 +283,6 @@ TorrentSettingPane::TorrentSettingPane( wxWindow* parent, std::shared_ptr<torren
 		Bind(wxEVT_BUTTON, &TorrentSettingPane::OnButtonOpenDirClick, this, m_button_opendir->GetId());
 		Bind(wxEVT_TEXT_ENTER, &TorrentSettingPane::OnOpenDirectoryChanged, this, m_combo_open->GetId());
 	}
-	Bind(wxEVT_CHECKBOX, &TorrentSettingPane::OnPreviewVideoFilesClick, this, m_check_preview_video_files->GetId());
-	Bind(wxEVT_CHECKBOX, &TorrentSettingPane::OnSequentialDownloadClick, this, m_check_sequential_download->GetId());
 }
 
 TorrentSettingPane::~TorrentSettingPane()
@@ -373,19 +371,10 @@ void TorrentSettingPane::OnSaveDirectoryChanged(wxCommandEvent& event)
 	m_label_diskfreespace->SetLabelText(HumanReadableByte(wxDouble(free.ToDouble())));
 }
 
-void TorrentSettingPane::OnPreviewVideoFilesClick(wxCommandEvent& event)
-{
-	m_check_sequential_download->SetValue(false);
-}
-
-void TorrentSettingPane::OnSequentialDownloadClick(wxCommandEvent& event)
-{
-	m_check_preview_video_files->SetValue(false);
-}
-
 void TorrentSettingPane::OnButtonOpenDirClick(wxCommandEvent& event)
 {
 	wxASSERT(m_button_opendir != nullptr);
+	wxASSERT(m_combo_open != nullptr);
 #if WXVER >= 280
 	long dirstyle = wxDD_DEFAULT_STYLE| wxDD_DIR_MUST_EXIST |wxDD_CHANGE_DIR;
 #else
@@ -405,7 +394,6 @@ void TorrentSettingPane::OnButtonOpenDirClick(wxCommandEvent& event)
 
 void TorrentSettingPane::OnOpenDirectoryChanged(wxCommandEvent& event)
 {
-	wxASSERT(m_combo_open != nullptr);
 	wxString openTorrentPath = m_combo_open->GetValue();
 	wxFileName fdir;
 	fdir.AssignDir(openTorrentPath); // make sure we got path seperator at the end
