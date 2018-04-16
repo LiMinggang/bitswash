@@ -39,7 +39,7 @@
 //(*IdInit(TorrentSettingPane)
 //*)
 
-TorrentSettingPane::TorrentSettingPane( wxWindow* parent, std::shared_ptr<torrent_t>& pTorrent, wxWindowID id, const wxPoint& pos, const wxSize& size, int style) : 
+TorrentSettingPane::TorrentSettingPane( wxWindow* parent, std::shared_ptr<torrent_t>& pTorrent, wxWindowID id, const wxPoint& pos, const wxSize& size, int style) :
 		m_directory_change_func(nullptr)
 {
 	MainFrame * pMainFrame = dynamic_cast<MainFrame *>( wxGetApp().GetTopWindow() );
@@ -61,6 +61,7 @@ TorrentSettingPane::TorrentSettingPane( wxWindow* parent, std::shared_ptr<torren
 	wxStaticLine* StaticLine1;
 	wxStaticText* StaticText1;
 	wxStaticText* StaticText2;
+	wxStaticText* StaticText3;
 	wxStaticText* StaticText4;
 	wxStaticText* StaticText5;
 	wxStaticText* StaticText6;
@@ -89,9 +90,9 @@ TorrentSettingPane::TorrentSettingPane( wxWindow* parent, std::shared_ptr<torren
 	std::vector<wxString>& historypath = pcfg->GetSavePathHistory();
 	
 	wxString t_saveas = isTorrent?m_pTorrent->config->GetDownloadPath():pcfg->GetDownloadPath();
-	m_combo_saveas = new wxComboBox( this, wxID_ANY, t_saveas, wxDefaultPosition, wxDefaultSize, 0, nullptr, 0 );
+	m_combo_saveas = new wxComboBox( this, wxID_ANY, t_saveas, wxDefaultPosition, wxDefaultSize, 0, 0, wxTE_PROCESS_ENTER, wxDefaultValidator, _T("wxID_ANY"));
 	m_combo_saveas->SetMinSize(wxSize(260,-1));
-	m_combo_saveas->Append( t_saveas );
+	//m_combo_saveas->Append( t_saveas );
 
 	std::vector<wxString>::reverse_iterator path  = historypath.rbegin();
 
@@ -103,8 +104,15 @@ TorrentSettingPane::TorrentSettingPane( wxWindow* parent, std::shared_ptr<torren
 	}
 	m_combo_saveas->SetValue(t_saveas);
 	FlexGridSizer3->Add(m_combo_saveas, 1, wxALL|wxALIGN_LEFT|wxALIGN_CENTER_VERTICAL, 5);
-	m_button_showdir = new wxButton(this, wxID_ANY, wxT("..."), wxDefaultPosition, wxDefaultSize, 0, wxDefaultValidator, _T("wxID_ANY"));
-	FlexGridSizer3->Add(m_button_showdir, 1, wxALL|wxALIGN_LEFT|wxALIGN_CENTER_VERTICAL, 5);
+	m_button_saveasdir = new wxButton(this, wxID_ANY, wxT("..."), wxDefaultPosition, wxDefaultSize, 0, wxDefaultValidator, _T("wxID_ANY"));
+	FlexGridSizer3->Add(m_button_saveasdir, 1, wxALL|wxALIGN_LEFT|wxALIGN_CENTER_VERTICAL, 5);
+	StaticText3 = new wxStaticText(this, wxID_ANY, _("Open:"), wxDefaultPosition, wxDefaultSize, 0, _T("wxID_ANY"));
+	FlexGridSizer3->Add(StaticText3, 1, wxALL|wxALIGN_LEFT|wxALIGN_CENTER_VERTICAL, 5);
+	m_combo_open = new wxComboBox(this, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, 0, 0, wxTE_PROCESS_ENTER, wxDefaultValidator, _T("wxID_ANY"));
+	m_combo_open->SetMinSize(wxSize(260,-1));
+	FlexGridSizer3->Add(m_combo_open, 1, wxALL|wxALIGN_LEFT|wxALIGN_CENTER_VERTICAL, 5);
+	m_button_opendir = new wxButton(this, wxID_ANY, wxT("..."), wxDefaultPosition, wxDefaultSize, 0, wxDefaultValidator, _T("wxID_ANY"));
+	FlexGridSizer3->Add(m_button_opendir, 1, wxALL|wxALIGN_CENTER_HORIZONTAL|wxALIGN_CENTER_VERTICAL, 5);
 	StaticText2 = new wxStaticText(this, wxID_ANY, _("Free:"), wxDefaultPosition, wxDefaultSize, 0, _T("wxID_ANY"));
 	FlexGridSizer3->Add(StaticText2, 1, wxALL|wxALIGN_LEFT|wxALIGN_CENTER_VERTICAL, 5);
 
@@ -239,14 +247,18 @@ TorrentSettingPane::TorrentSettingPane( wxWindow* parent, std::shared_ptr<torren
 	FlexGridSizer1->Fit(this);
 	FlexGridSizer1->SetSizeHints(this);
 
-	//Connect(wxID_ANY,wxEVT_COMMAND_TEXT_UPDATED,(wxObjectEventFunction)&TorrentSettingPane::OnSaveDirectoryChanged);
-	//Connect(wxID_ANY,wxEVT_COMMAND_BUTTON_CLICKED,(wxObjectEventFunction)&TorrentSettingPane::OnButtonShowDirClick);
+	//Connect(wxID_ANY,wxEVT_COMMAND_TEXT_ENTER,(wxObjectEventFunction)&TorrentSettingPane::OnSaveDirectoryChanged);
+	//Connect(wxID_ANY,wxEVT_COMMAND_BUTTON_CLICKED,(wxObjectEventFunction)&TorrentSettingPane::OnButtonSaveDirClick);
+	//Connect(wxID_ANY,wxEVT_COMMAND_TEXT_ENTER,(wxObjectEventFunction)&TorrentSettingPane::OnOpenDirectoryChanged);
+	//Connect(wxID_ANY,wxEVT_COMMAND_BUTTON_CLICKED,(wxObjectEventFunction)&TorrentSettingPane::OnButtonOpenDirClick);
 	//Connect(wxID_ANY,wxEVT_COMMAND_CHECKBOX_CLICKED,(wxObjectEventFunction)&TorrentSettingPane::OnPreviewVideoFilesClick);
 	//Connect(wxID_ANY,wxEVT_COMMAND_CHECKBOX_CLICKED,(wxObjectEventFunction)&TorrentSettingPane::OnSequentialDownloadClick);
 	//*)
 
-	Bind(wxEVT_BUTTON, &TorrentSettingPane::OnButtonShowDirClick, this, m_button_showdir->GetId());
-	Bind(wxEVT_TEXT, &TorrentSettingPane::OnSaveDirectoryChanged, this, m_combo_saveas->GetId());
+	Bind(wxEVT_BUTTON, &TorrentSettingPane::OnButtonSaveDirClick, this, m_button_saveasdir->GetId());
+	Bind(wxEVT_TEXT_ENTER, &TorrentSettingPane::OnSaveDirectoryChanged, this, m_combo_saveas->GetId());
+	Bind(wxEVT_BUTTON, &TorrentSettingPane::OnButtonOpenDirClick, this, m_button_opendir->GetId());
+	Bind(wxEVT_TEXT_ENTER, &TorrentSettingPane::OnOpenDirectoryChanged, this, m_combo_open->GetId());
 	Bind(wxEVT_CHECKBOX, &TorrentSettingPane::OnPreviewVideoFilesClick, this, m_check_preview_video_files->GetId());
 	Bind(wxEVT_CHECKBOX, &TorrentSettingPane::OnSequentialDownloadClick, this, m_check_sequential_download->GetId());
 }
@@ -264,6 +276,13 @@ wxString TorrentSettingPane::GetDownloadPath()
 	return fn.GetPathWithSep();
 }
 
+wxString TorrentSettingPane::GetOpenTorrentPath()
+{
+	wxFileName fn;
+	fn.AssignDir(m_combo_open->GetValue());
+	return fn.GetPathWithSep();
+}
+
 lt::storage_mode_t TorrentSettingPane::GetStorageMode()
 {
 	switch (m_combo_storagemode->GetCurrentSelection())
@@ -277,7 +296,7 @@ lt::storage_mode_t TorrentSettingPane::GetStorageMode()
 	}
 }
 
-void TorrentSettingPane::OnButtonShowDirClick(wxCommandEvent& event)
+void TorrentSettingPane::OnButtonSaveDirClick(wxCommandEvent& event)
 {
 #if WXVER >= 280
 	long dirstyle = wxDD_DEFAULT_STYLE| wxDD_DIR_MUST_EXIST |wxDD_CHANGE_DIR;
@@ -299,27 +318,35 @@ void TorrentSettingPane::OnButtonShowDirClick(wxCommandEvent& event)
 void TorrentSettingPane::OnSaveDirectoryChanged(wxCommandEvent& event)
 {
 	wxString downloadPath = m_combo_saveas->GetValue();
-	if(downloadPath != wxEmptyString)
+	wxFileName fdir;
+	fdir.AssignDir(downloadPath); // make sure we got path seperator at the end
+	fdir.MakeAbsolute();
+	if(!fdir.DirExists())
 	{
-		wxFileName fdir;
-		fdir.AssignDir(downloadPath); // make sure we got path seperator at the end
-		fdir.MakeAbsolute();
-		size_t dcount = fdir.GetDirCount( );
-		while(dcount-- > 0)
-		{
-			if(!fdir.DirExists()) fdir.RemoveLastDir();
-			else break;
-		}
+		wxMessageDialog dlg( this, fdir.GetFullPath() + _("does not exists! Do you want to create it?"), wxT( "Bitswash" ), wxYES_NO | wxICON_QUESTION );
+		dlg.SetYesNoLabels( wxMessageDialog::ButtonLabel( _( "&Yes" ) ), wxMessageDialog::ButtonLabel( _( "&No" ) ) );
 
-		if(fdir.DirExists())
+		if( dlg.ShowModal() == wxID_YES )
 		{
-			wxLongLong free(0);  
-			if(wxGetDiskSpace( fdir.GetPathWithSep(), nullptr, &free))
-			{
-				m_label_diskfreespace->SetLabelText(HumanReadableByte(wxDouble(free.ToDouble())));
-			}
+			wxMkdir(fdir.GetFullPath());
 		}
+		else
+			return;
 	}
+		
+	size_t dcount = fdir.GetDirCount( );
+	while(dcount-- > 0)
+	{
+		if(!fdir.DirExists()) fdir.RemoveLastDir();
+		else break;
+	}
+
+	wxLongLong free(0);  
+	if(fdir.DirExists())
+	{
+		wxGetDiskSpace( fdir.GetPathWithSep(), nullptr, &free);
+	}
+	m_label_diskfreespace->SetLabelText(HumanReadableByte(wxDouble(free.ToDouble())));
 }
 
 void TorrentSettingPane::OnPreviewVideoFilesClick(wxCommandEvent& event)
@@ -330,4 +357,41 @@ void TorrentSettingPane::OnPreviewVideoFilesClick(wxCommandEvent& event)
 void TorrentSettingPane::OnSequentialDownloadClick(wxCommandEvent& event)
 {
 	m_check_preview_video_files->SetValue(false);
+}
+
+void TorrentSettingPane::OnButtonOpenDirClick(wxCommandEvent& event)
+{
+#if WXVER >= 280
+	long dirstyle = wxDD_DEFAULT_STYLE| wxDD_DIR_MUST_EXIST |wxDD_CHANGE_DIR;
+#else
+	long dirstyle = wxDD_DEFAULT_STYLE| wxDD_CHANGE_DIR;
+#endif
+
+	wxDirDialog dir_dlg(this, _("Choose default open torrent directory"), m_combo_saveas->GetValue(),dirstyle );
+
+	if (dir_dlg.ShowModal() == wxID_OK)
+	{
+		wxString newpath = dir_dlg.GetPath();
+		//wxLogDebug(_T("DirDlg return %s"), newpath.c_str());
+		m_combo_open->SetValue(newpath);
+	}
+	event.Skip();
+}
+
+void TorrentSettingPane::OnOpenDirectoryChanged(wxCommandEvent& event)
+{
+	wxString downloadPath = m_combo_saveas->GetValue();
+	wxFileName fdir;
+	fdir.AssignDir(downloadPath); // make sure we got path seperator at the end
+	fdir.MakeAbsolute();
+	if(!fdir.DirExists())
+	{
+		wxMessageDialog dlg( this, fdir.GetFullPath() + _("does not exists! Do you want to create it?"), wxT( "Bitswash" ), wxYES_NO | wxICON_QUESTION );
+		dlg.SetYesNoLabels( wxMessageDialog::ButtonLabel( _( "&Yes" ) ), wxMessageDialog::ButtonLabel( _( "&No" ) ) );
+
+		if( dlg.ShowModal() == wxID_YES )
+		{
+			wxMkdir(fdir.GetFullPath());
+		}
+	}
 }

@@ -90,6 +90,43 @@ SwashSetting::~SwashSetting()
 
 void SwashSetting::OnOK(wxCommandEvent& event)
 {
+	wxFileName dpath, opath;
+	dpath.AssignDir(m_pane_torrentsettings->GetDownloadPath());
+	dpath.MakeAbsolute();
+	if(!dpath.DirExists())
+	{
+		wxMessageDialog dlg( this, dpath.GetFullPath() + _("does not exists! Do you want to create it?"), wxT( "Bitswash" ), wxYES_NO | wxICON_QUESTION );
+		dlg.SetYesNoLabels( wxMessageDialog::ButtonLabel( _( "&Yes" ) ), wxMessageDialog::ButtonLabel( _( "&No" ) ) );
+
+		if( dlg.ShowModal() == wxID_YES )
+		{
+			wxMkdir(dpath.GetFullPath());
+		}
+		else
+		{
+			m_pane_torrentsettings->m_combo_saveas->SetFocus();
+			return;
+		}
+	}
+
+	opath.AssignDir(m_pane_torrentsettings->GetOpenTorrentPath());
+	opath.MakeAbsolute();
+	if(!opath.DirExists())
+	{
+		wxMessageDialog dlg( this, opath.GetFullPath() + _("does not exists! Do you want to create it?"), wxT( "Bitswash" ), wxYES_NO | wxICON_QUESTION );
+		dlg.SetYesNoLabels( wxMessageDialog::ButtonLabel( _( "&Yes" ) ), wxMessageDialog::ButtonLabel( _( "&No" ) ) );
+
+		if( dlg.ShowModal() == wxID_YES )
+		{
+			wxMkdir(opath.GetFullPath());
+		}
+		else
+		{
+			m_pane_torrentsettings->m_combo_open->SetFocus();
+			return;
+		}
+	}
+
 	m_pcfg->SetMaxStart(m_pane_generalsettings->GetMaxStart());
 	m_pcfg->SetExcludeSeed(m_pane_generalsettings->GetExcludeSeed());
 
@@ -137,8 +174,6 @@ void SwashSetting::OnOK(wxCommandEvent& event)
 	m_pcfg->SetDefaultState((m_pane_torrentsettings->GetStartTorrent())?TORRENT_STATE_QUEUE:TORRENT_STATE_STOP);
 	m_pcfg->SetUseDefault(m_pane_torrentsettings->GetUseDefault());
 
-	wxFileName dpath;
-	dpath.AssignDir(m_pane_torrentsettings->GetDownloadPath());
 	m_pcfg->SetDownloadPath(dpath.GetPathWithSep());
 	m_pcfg->SetDefaultDownloadLimit(m_pane_torrentsettings->GetDownloadRate());
 	m_pcfg->SetDefaultUploadLimit(m_pane_torrentsettings->GetUploadRate());

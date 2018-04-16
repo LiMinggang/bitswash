@@ -51,11 +51,13 @@ class TorrentSettingPane: public wxPanel
 		//(*Declarations(TorrentSettingPane)
 		AutoSizeInput* m_autoDownLimit;
 		AutoSizeInput* m_autoUpLimit;
-		wxButton* m_button_showdir;
+		wxButton* m_button_opendir;
+		wxButton* m_button_saveasdir;
 		wxCheckBox* m_check_preview_video_files;
 		wxCheckBox* m_check_sequential_download;
 		wxCheckBox* m_check_start;
 		wxCheckBox* m_check_usedefault;
+		wxComboBox* m_combo_open;
 		wxComboBox* m_combo_saveas;
 		wxComboBox* m_combo_storagemode;
 		wxSpinCtrl* m_spin_maxconnect;
@@ -72,10 +74,13 @@ class TorrentSettingPane: public wxPanel
 	private:
 
 		//(*Handlers(TorrentSettingPane)
-		void OnButtonShowDirClick(wxCommandEvent& event);
 		void OnSaveDirectoryChanged(wxCommandEvent& event);
 		void OnPreviewVideoFilesClick(wxCommandEvent& event);
 		void OnSequentialDownloadClick(wxCommandEvent& event);
+		void OnButtonOpenDirClick(wxCommandEvent& event);
+		void OnSaveDirClick(wxCommandEvent& event);
+		void OnOpenDirectoryChanged(wxCommandEvent& event);
+		void OnButtonSaveDirClick(wxCommandEvent& event);
 		//*)
 		
 		std::shared_ptr<torrent_t> m_pTorrent;
@@ -84,6 +89,7 @@ class TorrentSettingPane: public wxPanel
 	public:
 
 		wxString GetDownloadPath();
+		wxString GetOpenTorrentPath();
 		libtorrent::storage_mode_t GetStorageMode();
 
 		bool GetStartTorrent()

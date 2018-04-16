@@ -1500,7 +1500,6 @@ std::shared_ptr<torrent_t> BitTorrentSession::LoadMagnetUri( MagnetUri& magnetur
 					AddMagnetUriToSession(torrent);
 					wxMutexLocker ml(m_torrent_queue_lock);
 					int idx = (int)m_torrent_queue.size();
-					wxASSERT(idx > 0);
 					m_torrent_queue.push_back( torrent );
 					m_running_torrent_map.insert(std::pair<wxString, int>( thash, idx));
 				}

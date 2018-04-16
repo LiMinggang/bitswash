@@ -31,6 +31,7 @@ New: Rate limit on peers on LAN
 New: Rate limit on UTP
 New: SSL support
 New: IPv6 support
+New: Torrent open directory settings
 Fix: Can't start stopped torrent(by MagnetURI) without meta data
 Fix: Duplicated Magnet URI torrents would be added
 Fix: Race condition in AddTorrentToSession
@@ -40,6 +41,7 @@ Fix: Icon issue of Windows
 Fix: Download/upload size is not accumulated
 Fix: Add/Remove tracker
 Fix: Selected file size is not updated on changing selecting
+Fix: Torrent saving directory validation
 Update libtorrent to 9b1e79660f4bbfd7e377363b877575bda966258e
 Code improvement
 
