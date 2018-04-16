@@ -73,6 +73,7 @@ void Configuration::Save()
 	m_cfg->Write( _T( "/GUI/trackerlistctrlsetting" ), m_trackerlistctrlsetting );
 	//Config
 	m_cfg->Write( _T( "/Config/downloadpath" ), m_downloadpath );
+	m_cfg->Write( _T( "/Config/opentorrentpath" ), m_opentorrentpath );
 	m_cfg->Write( _T( "/Config/portmin" ), ( int )m_portmin );
 	m_cfg->Write( _T( "/Config/portmax" ), ( int )m_portmax );
 	m_cfg->Write( _T( "/Config/refreshtime" ), ( int )m_refreshtime );
@@ -243,6 +244,12 @@ void Configuration::Load()
 	wxFileName dpath;
 	dpath.AssignDir(m_cfg->Read( _T( "/Config/downloadpath" ), def_download_path ));
 	m_downloadpath = dpath.GetPathWithSep();
+	def_download_path = wxEmptyString;
+	dpath.AssignDir(m_cfg->Read( _T( "/Config/opentorrentpath" ), def_download_path ));
+	if(def_download_path != wxEmptyString)
+		m_opentorrentpath = dpath.GetPathWithSep();
+	else
+		m_opentorrentpath = wxEmptyString;
 	m_portmin = m_cfg->Read( _T( "/Config/portmin" ), 16881 );
 	m_portmax = m_cfg->Read( _T( "/Config/portmax" ), 16889 );
 	m_refreshtime = m_cfg->Read( _T( "/Config/refreshtime" ), 5 );

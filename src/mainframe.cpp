@@ -875,7 +875,7 @@ void MainFrame::OpenTorrent()
 		);
 #endif
 	wxFileDialog file_dialog( this, _( "Open Torrent(s)..." ),
-							  wxEmptyString, wxEmptyString, wildcards,
+							  m_config->GetOpenTorrentPath(), wxEmptyString, wildcards,
 							  wxFD_OPEN | wxFD_MULTIPLE | wxFD_CHANGE_DIR );
 
 	if( file_dialog.ShowModal() == wxID_OK )

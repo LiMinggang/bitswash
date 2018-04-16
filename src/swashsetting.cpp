@@ -175,6 +175,7 @@ void SwashSetting::OnOK(wxCommandEvent& event)
 	m_pcfg->SetUseDefault(m_pane_torrentsettings->GetUseDefault());
 
 	m_pcfg->SetDownloadPath(dpath.GetPathWithSep());
+	m_pcfg->SetOpenTorrentPath(opath.GetPathWithSep());
 	m_pcfg->SetDefaultDownloadLimit(m_pane_torrentsettings->GetDownloadRate());
 	m_pcfg->SetDefaultUploadLimit(m_pane_torrentsettings->GetUploadRate());
 	m_pcfg->SetMaxConnections(m_pane_torrentsettings->GetMaxConnections());

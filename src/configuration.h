@@ -111,6 +111,8 @@ public:
 	// Config
 	const wxString GetDownloadPath() { return m_downloadpath; }
 	void SetDownloadPath(const wxString& path) { m_downloadpath = path; AddSavePath(path); }
+	const wxString GetOpenTorrentPath() { return m_opentorrentpath; }
+	void SetOpenTorrentPath(const wxString& path) { m_opentorrentpath = path; AddOpenPath(path); }
 
 	unsigned int GetRefreshTime() { return m_refreshtime; }
 	void SetRefreshTime(unsigned int refreshtime) { m_refreshtime = refreshtime; }
@@ -377,6 +379,7 @@ public:
 
 	//save path history
 #define BITSWASH_MAX_SAVE_PATH 10
+#define BITSWASH_MAX_OPEN_PATH 10
 	std::vector<wxString>& GetSavePathHistory() { return m_savepathhistory; }
 	void AddSavePath(wxString path)
 	{
@@ -397,6 +400,28 @@ public:
 			m_savepathhistory.erase(p);
 		}
 		m_savepathhistory.push_back(path);
+	}
+
+	std::vector<wxString>& GetOpenPathHistory() { return m_openpathhistory; }
+	void AddOpenPath(wxString path)
+	{
+		auto p = m_openpathhistory.begin();
+		wxString existpath;
+		for(p=m_openpathhistory.begin(); p != m_openpathhistory.end(); ++p)
+		{
+			existpath = *p;
+			if ((existpath.CmpNoCase(path)) == 0)
+			{
+				m_openpathhistory.erase(p);
+				break;
+			}
+		}
+		if (m_openpathhistory.size() >= BITSWASH_MAX_OPEN_PATH)
+		{
+			p = m_openpathhistory.begin();
+			m_openpathhistory.erase(p);
+		}
+		m_openpathhistory.push_back(path);
 	}
 #ifdef __WXMSW__
 	bool DetectType(const wxString& type);
@@ -428,6 +453,7 @@ private:
 
 	// Config
 	wxString m_downloadpath;
+	wxString m_opentorrentpath;
 	unsigned int	m_portmin;
 	unsigned int	m_portmax;
 	unsigned int	m_refreshtime;
@@ -723,6 +749,7 @@ private:
 
 	//torrent history
 	std::vector<wxString> m_savepathhistory;
+	std::vector<wxString> m_openpathhistory;
 };
 
 #endif // _CONFIGURATION_H_

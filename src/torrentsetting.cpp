@@ -106,13 +106,34 @@ TorrentSettingPane::TorrentSettingPane( wxWindow* parent, std::shared_ptr<torren
 	FlexGridSizer3->Add(m_combo_saveas, 1, wxALL|wxALIGN_LEFT|wxALIGN_CENTER_VERTICAL, 5);
 	m_button_saveasdir = new wxButton(this, wxID_ANY, wxT("..."), wxDefaultPosition, wxDefaultSize, 0, wxDefaultValidator, _T("wxID_ANY"));
 	FlexGridSizer3->Add(m_button_saveasdir, 1, wxALL|wxALIGN_LEFT|wxALIGN_CENTER_VERTICAL, 5);
-	StaticText3 = new wxStaticText(this, wxID_ANY, _("Open:"), wxDefaultPosition, wxDefaultSize, 0, _T("wxID_ANY"));
-	FlexGridSizer3->Add(StaticText3, 1, wxALL|wxALIGN_LEFT|wxALIGN_CENTER_VERTICAL, 5);
-	m_combo_open = new wxComboBox(this, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, 0, 0, wxTE_PROCESS_ENTER, wxDefaultValidator, _T("wxID_ANY"));
-	m_combo_open->SetMinSize(wxSize(260,-1));
-	FlexGridSizer3->Add(m_combo_open, 1, wxALL|wxALIGN_LEFT|wxALIGN_CENTER_VERTICAL, 5);
-	m_button_opendir = new wxButton(this, wxID_ANY, wxT("..."), wxDefaultPosition, wxDefaultSize, 0, wxDefaultValidator, _T("wxID_ANY"));
-	FlexGridSizer3->Add(m_button_opendir, 1, wxALL|wxALIGN_CENTER_HORIZONTAL|wxALIGN_CENTER_VERTICAL, 5);
+	if(!isTorrent)
+	{
+		StaticText3 = new wxStaticText(this, wxID_ANY, _("Open:"), wxDefaultPosition, wxDefaultSize, 0, _T("wxID_ANY"));
+		FlexGridSizer3->Add(StaticText3, 1, wxALL|wxALIGN_LEFT|wxALIGN_CENTER_VERTICAL, 5);
+		wxString t_open = pcfg->GetOpenTorrentPath();
+		m_combo_open = new wxComboBox(this, wxID_ANY, t_open, wxDefaultPosition, wxDefaultSize, 0, 0, wxTE_PROCESS_ENTER, wxDefaultValidator, _T("wxID_ANY"));
+		m_combo_open->SetMinSize(wxSize(260,-1));
+		
+		std::vector<wxString>& ohispath = pcfg->GetOpenPathHistory();
+		std::vector<wxString>::reverse_iterator opath  = ohispath.rbegin();
+		
+		for(; opath != ohispath.rend(); ++opath)
+		{
+			if((t_open.Cmp(*opath)) == 0)
+				continue;
+			m_combo_open->Append(*opath);
+		}
+
+		FlexGridSizer3->Add(m_combo_open, 1, wxALL|wxALIGN_LEFT|wxALIGN_CENTER_VERTICAL, 5);
+		m_button_opendir = new wxButton(this, wxID_ANY, wxT("..."), wxDefaultPosition, wxDefaultSize, 0, wxDefaultValidator, _T("wxID_ANY"));
+		FlexGridSizer3->Add(m_button_opendir, 1, wxALL|wxALIGN_CENTER_HORIZONTAL|wxALIGN_CENTER_VERTICAL, 5);
+	}
+	else
+	{
+		StaticText3 = nullptr;
+		m_combo_open = nullptr;
+		m_button_opendir = nullptr;
+	}
 	StaticText2 = new wxStaticText(this, wxID_ANY, _("Free:"), wxDefaultPosition, wxDefaultSize, 0, _T("wxID_ANY"));
 	FlexGridSizer3->Add(StaticText2, 1, wxALL|wxALIGN_LEFT|wxALIGN_CENTER_VERTICAL, 5);
 
@@ -257,8 +278,11 @@ TorrentSettingPane::TorrentSettingPane( wxWindow* parent, std::shared_ptr<torren
 
 	Bind(wxEVT_BUTTON, &TorrentSettingPane::OnButtonSaveDirClick, this, m_button_saveasdir->GetId());
 	Bind(wxEVT_TEXT_ENTER, &TorrentSettingPane::OnSaveDirectoryChanged, this, m_combo_saveas->GetId());
-	Bind(wxEVT_BUTTON, &TorrentSettingPane::OnButtonOpenDirClick, this, m_button_opendir->GetId());
-	Bind(wxEVT_TEXT_ENTER, &TorrentSettingPane::OnOpenDirectoryChanged, this, m_combo_open->GetId());
+	if(!isTorrent)
+	{
+		Bind(wxEVT_BUTTON, &TorrentSettingPane::OnButtonOpenDirClick, this, m_button_opendir->GetId());
+		Bind(wxEVT_TEXT_ENTER, &TorrentSettingPane::OnOpenDirectoryChanged, this, m_combo_open->GetId());
+	}
 	Bind(wxEVT_CHECKBOX, &TorrentSettingPane::OnPreviewVideoFilesClick, this, m_check_preview_video_files->GetId());
 	Bind(wxEVT_CHECKBOX, &TorrentSettingPane::OnSequentialDownloadClick, this, m_check_sequential_download->GetId());
 }
