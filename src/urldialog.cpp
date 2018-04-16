@@ -54,7 +54,7 @@ UrlDialog::UrlDialog(wxWindow* parent,wxWindowID id,const wxPoint& pos,const wxS
 	StaticText1 = new wxStaticText(Panel1, wxID_ANY, _("URL or Magnet URI(Please use carriage return to seperate multiples):"), wxDefaultPosition, wxDefaultSize, 0, _T("wxID_ANY"));
 	FlexGridSizer1->Add(StaticText1, 1, wxALL|wxALIGN_LEFT|wxALIGN_TOP, 5);
 	m_textURL = new wxTextCtrl(Panel1, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, wxTE_MULTILINE|wxVSCROLL, wxDefaultValidator, _T("wxID_ANY"));
-	m_textURL->SetMinSize(wxSize(380,-1));
+	m_textURL->SetMinSize(wxSize(380,120));
 	FlexGridSizer1->Add(m_textURL, 1, wxALL|wxEXPAND, 5);
 	StdDialogButtonSizer1 = new wxStdDialogButtonSizer();
 	StdDialogButtonSizer1->AddButton(new wxButton(Panel1, wxID_OK, wxEmptyString));

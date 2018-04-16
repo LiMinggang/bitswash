@@ -385,6 +385,7 @@ void TorrentSettingPane::OnSequentialDownloadClick(wxCommandEvent& event)
 
 void TorrentSettingPane::OnButtonOpenDirClick(wxCommandEvent& event)
 {
+	wxASSERT(m_button_opendir != nullptr);
 #if WXVER >= 280
 	long dirstyle = wxDD_DEFAULT_STYLE| wxDD_DIR_MUST_EXIST |wxDD_CHANGE_DIR;
 #else
@@ -404,9 +405,10 @@ void TorrentSettingPane::OnButtonOpenDirClick(wxCommandEvent& event)
 
 void TorrentSettingPane::OnOpenDirectoryChanged(wxCommandEvent& event)
 {
-	wxString downloadPath = m_combo_saveas->GetValue();
+	wxASSERT(m_combo_open != nullptr);
+	wxString openTorrentPath = m_combo_open->GetValue();
 	wxFileName fdir;
-	fdir.AssignDir(downloadPath); // make sure we got path seperator at the end
+	fdir.AssignDir(openTorrentPath); // make sure we got path seperator at the end
 	fdir.MakeAbsolute();
 	if(!fdir.DirExists())
 	{
