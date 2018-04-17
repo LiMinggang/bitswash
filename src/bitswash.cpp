@@ -249,6 +249,7 @@ bool BitSwash::OnInit()
 							   APPNAME, wxICON_INFORMATION | wxOK );
 			}
 
+			delete m_SigleAppChecker;
 			delete client;
 			return false;
 		}

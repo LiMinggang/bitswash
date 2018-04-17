@@ -399,7 +399,7 @@ void MainFrame::OnClose( wxCloseEvent& event )
 
 	if( m_swashsetting ) { delete m_swashsetting; }
 
-	Destroy();
+	event.Skip();
 }
 
 void MainFrame::OnMinimize( wxIconizeEvent& event )
