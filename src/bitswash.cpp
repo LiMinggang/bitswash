@@ -250,6 +250,7 @@ bool BitSwash::OnInit()
 			}
 
 			delete m_SigleAppChecker;
+			delete m_config;
 			delete client;
 			return false;
 		}
@@ -389,6 +390,7 @@ int BitSwash::OnExit()
 #endif
 	if(m_condition) delete m_condition;
 	if(m_btsession) delete m_btsession;
+	if(m_config) delete m_config;
 	return 0;
 }
 
