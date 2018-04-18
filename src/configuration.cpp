@@ -43,7 +43,7 @@ Configuration::Configuration( const wxString& AppName )
 	: wxFileConfig( wxEmptyString, wxEmptyString, AppName, wxEmptyString, wxCONFIG_USE_LOCAL_FILE | wxCONFIG_USE_RELATIVE_PATH )
 {
 	//ctor
-	m_configfile        = wxGetApp().ConfigPath();
+	m_configfile = wxGetApp().ConfigPath();
 	wxFileInputStream fis( m_configfile );
 	m_appname = AppName;
 	//wxLogDebug( _T( "Init Configuration %s\n" ), AppName.c_str() );
