@@ -119,6 +119,8 @@ public:
 	};
 	BitTorrentSession(wxApp* pParent, Configuration* config, wxMutex *mutex = 0, wxCondition *condition = 0);
 	~BitTorrentSession();
+	BitTorrentSession(BitTorrentSession &) = delete;
+	BitTorrentSession& operator=(BitTorrentSession&) = delete;
 
 	virtual void *Entry();
 	virtual void OnExit();
