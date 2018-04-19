@@ -65,7 +65,6 @@ public:
     explicit Configuration(const wxString& AppName);
     ~Configuration();
 
-
 	wxIPV4address m_local_ip;
 
 	void Save();
