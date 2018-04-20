@@ -136,9 +136,9 @@ ConnectionSettingPane::ConnectionSettingPane( wxWindow* parent, wxWindowID id,co
 	m_check_rate_limit_peers_on_lan = new wxCheckBox(this, wxID_ANY, _("Apply Rate Limit to Peers on LAN"), wxDefaultPosition, wxDefaultSize, 0, wxDefaultValidator, _T("wxID_ANY"));
 	m_check_rate_limit_peers_on_lan->SetValue(pcfg->GetRateLimitPeersOnLan());
 	BoxSizer4->Add(m_check_rate_limit_peers_on_lan, 1, wxALL|wxALIGN_LEFT, 5);
-	wxString clabel(_("Apply Rate Limit to ");
+	wxString clabel(_("Apply Rate Limit to "));
 	clabel += wxT("\u03BCTP");
-	clable += _(" Protocol");
+	clabel += _(" Protocol");
 	m_check_rate_limit_utp_protocol = new wxCheckBox(this, wxID_ANY, clabel, wxDefaultPosition, wxDefaultSize, 0, wxDefaultValidator, _T("wxID_ANY"));
 	m_check_rate_limit_utp_protocol->SetValue(pcfg->GetRateLimitUtp());
 	BoxSizer4->Add(m_check_rate_limit_utp_protocol, 1, wxALL|wxALIGN_LEFT, 5);
