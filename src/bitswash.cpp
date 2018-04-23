@@ -391,6 +391,7 @@ int BitSwash::OnExit()
 	if(m_condition) delete m_condition;
 	if(m_btsession) delete m_btsession;
 	if(m_config) delete m_config;
+	if(m_locale) delete m_locale;
 	return 0;
 }
 
