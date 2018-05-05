@@ -25,6 +25,9 @@ address-model=64 runtime-link=static stage
 
 News:
 ----
+0.0.10
+Fix: Open directory save issue
+
 0.0.9
 New: Drag and Drop for both file and URL/Magnet URI strings
 New: Rate limit on peers on LAN

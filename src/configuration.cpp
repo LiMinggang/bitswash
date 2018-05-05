@@ -204,6 +204,7 @@ void Configuration::Save()
 	wxFileOutputStream fos( m_configfile );
 	m_cfg->Save( fos );
 	WriteSavePath();
+	WriteOpenPath();
 }
 
 void Configuration::Load()
@@ -393,6 +394,7 @@ void Configuration::Load()
 	if( m_default_max_uploads < 2 ) m_default_max_uploads = 2;
 	//read save path
 	ReadSavePath();
+	ReadOpenPath();
 	m_cfg->Read( _T( "/Torrent/enable_video_preview" ), &m_enable_video_preview, true );
 	m_cfg->Read( _T( "/Torrent/sequential_download" ), &m_sequential_download, false );
 }
@@ -451,6 +453,62 @@ void Configuration::WriteSavePath()
 		}
 	}
 }
+
+void Configuration::ReadOpenPath()
+{
+	wxString historypathfile = wxGetApp().DataPath() + _T( "open_history" );
+	wxTextFile *history_f = new wxTextFile( historypathfile );
+	if( history_f->Open() )
+	{
+		wxString path;
+		for( path = history_f->GetFirstLine(); !history_f->Eof(); path = history_f->GetNextLine() )
+		{
+			m_openpathhistory.push_back( path );
+			if( m_openpathhistory.size() >= BITSWASH_MAX_SAVE_PATH )
+			{
+				break;
+			}
+		}
+	}
+	else
+	{
+		wxLogError( _T( "Failed opening download path history file %s\n" ), historypathfile.c_str() );
+	}
+}
+
+void Configuration::WriteOpenPath()
+{
+	wxString historypathfile = wxGetApp().DataPath() + _T( "open_history" );
+	wxTextFile *history_f = new wxTextFile( historypathfile );
+	if( history_f->Exists() )
+	{
+		if( !history_f->Open() )
+		{
+			wxLogError( _T( "Failed opening %n for writing\n" ), historypathfile.c_str() );
+		}
+	}
+	else
+	{
+		if( !history_f->Create() )
+		{
+			wxLogError( _T( "Failed creating %n for writing\n" ), historypathfile.c_str() );
+		}
+	}
+	if( history_f->IsOpened() )
+	{
+		history_f->Clear();
+		std::vector<wxString>::const_iterator path;
+		for( path = m_openpathhistory.begin(); path != m_openpathhistory.end(); ++path )
+		{
+			history_f->AddLine( *path );
+		}
+		if( !history_f->Write() )
+		{
+			wxLogError( _T( "Error writing into file %s\n" ), historypathfile.c_str() );
+		}
+	}
+}
+
 
 #ifdef __WXMSW__
 bool Configuration::DetectType(const wxString& type)

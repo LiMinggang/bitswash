@@ -390,7 +390,7 @@ int BitSwash::OnExit()
 #endif
 	if(m_condition) delete m_condition;
 	if(m_btsession) delete m_btsession;
-	if(m_config) delete m_config;
+	//if(m_config) delete m_config;
 	if(m_imglist_ctryflags) delete m_imglist_ctryflags;
 	if(m_imglist_settingicons) delete m_imglist_settingicons;
 	if(m_locale) delete m_locale;

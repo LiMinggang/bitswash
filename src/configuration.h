@@ -432,6 +432,8 @@ public:
 protected:
 	void ReadSavePath();
 	void WriteSavePath();
+	void ReadOpenPath();
+	void WriteOpenPath();
 
 private:
 	wxString m_appname;
