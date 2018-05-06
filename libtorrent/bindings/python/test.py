@@ -167,9 +167,11 @@ class test_torrent_handle(unittest.TestCase):
         sessionStart = datetime.datetime.now().replace(microsecond=0)
         self.setup()
         st = self.h.status()
+        for attr in dir(st):
+           print('%s: %s' % (attr, getattr(st, attr)))
         # last upload and download times are at session start time
-        self.assertLessEqual(abs(st.last_upload - sessionStart), datetime.timedelta(seconds=1))
-        self.assertLessEqual(abs(st.last_download - sessionStart), datetime.timedelta(seconds=1))
+        self.assertEqual(st.last_upload, None)
+        self.assertEqual(st.last_download, None)
 
     def test_serialize_trackers(self):
         """Test to ensure the dict contains only python built-in types"""
@@ -421,9 +423,19 @@ class test_sha1hash(unittest.TestCase):
 class test_magnet_link(unittest.TestCase):
 
     def test_parse_magnet_uri(self):
-        ses = lt.session(settings)
+        ses = lt.session({})
         magnet = 'magnet:?xt=urn:btih:C6EIF4CCYDBTIJVG3APAGM7M4NDONCTI'
         p = lt.parse_magnet_uri(magnet)
+        self.assertEqual(str(p.info_hash), '178882f042c0c33426a6d81e0333ece346e68a68')
+        p.save_path = '.'
+        h = ses.add_torrent(p)
+        self.assertEqual(str(h.info_hash()), '178882f042c0c33426a6d81e0333ece346e68a68')
+
+    def test_parse_magnet_uri_dict(self):
+        ses = lt.session({})
+        magnet = 'magnet:?xt=urn:btih:C6EIF4CCYDBTIJVG3APAGM7M4NDONCTI'
+        p = lt.parse_magnet_uri_dict(magnet)
+        self.assertEqual(binascii.hexlify(p['info_hash']), b'178882f042c0c33426a6d81e0333ece346e68a68')
         p['save_path'] = '.'
         h = ses.add_torrent(p)
         self.assertEqual(str(h.info_hash()), '178882f042c0c33426a6d81e0333ece346e68a68')

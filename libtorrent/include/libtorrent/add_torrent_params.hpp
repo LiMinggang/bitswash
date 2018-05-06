@@ -1,6 +1,6 @@
 /*
 
-Copyright (c) 2009-2016, Arvid Norberg
+Copyright (c) 2009-2018, Arvid Norberg
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
@@ -330,6 +330,9 @@ namespace libtorrent {
 		// this is a map of file indices in the torrent and new filenames to be
 		// applied before the torrent is added.
 		aux::noexcept_movable<std::map<file_index_t, std::string>> renamed_files;
+
+		std::time_t last_download = 0;
+		std::time_t last_upload = 0;
 
 #ifndef TORRENT_NO_DEPRECATE
 		// deprecated in 1.2

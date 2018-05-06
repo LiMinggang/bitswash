@@ -1,6 +1,6 @@
 /*
 
-Copyright (c) 2014-2016, Arvid Norberg
+Copyright (c) 2014-2018, Arvid Norberg
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
@@ -36,7 +36,7 @@ POSSIBILITY OF SUCH DAMAGE.
 #include "libtorrent/aux_/disable_warnings_push.hpp"
 
 #include <boost/crc.hpp>
-#if (defined _MSC_VER && _MSC_VER >= 1600)
+#if (defined _MSC_VER && _MSC_VER >= 1600 && (defined _M_IX86 || defined _M_X64))
 #include <nmmintrin.h>
 #endif
 

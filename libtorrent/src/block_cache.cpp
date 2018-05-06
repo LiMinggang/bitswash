@@ -1,6 +1,6 @@
 /*
 
-Copyright (c) 2010-2016, Arvid Norberg
+Copyright (c) 2010-2018, Arvid Norberg
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
@@ -283,7 +283,7 @@ static_assert(int(job_action_name.size()) == static_cast<int>(job_action_t::num_
 				, int(pe->outstanding_flush), int(pe->piece), int(pe->num_dirty)
 				, int(pe->num_blocks), int(pe->blocks_in_piece), int(pe->hashing_done)
 				, int(pe->marked_for_eviction), int(pe->need_readback), pe->hash_passes
-				, int(pe->read_jobs.size()), int(pe->jobs.size()));
+				, pe->read_jobs.size(), pe->jobs.size());
 			bool first = true;
 			for (auto const& log : pe->piece_log)
 			{
@@ -766,7 +766,7 @@ cached_piece_entry* block_cache::add_dirty_block(disk_io_job* j)
 // (since these blocks now are part of the read cache) the refcounts of the
 // blocks are also decremented by this function. They are expected to have been
 // incremented by the caller.
-void block_cache::blocks_flushed(cached_piece_entry* pe, int const* flushed, int num_flushed)
+bool block_cache::blocks_flushed(cached_piece_entry* pe, int const* flushed, int num_flushed)
 {
 	TORRENT_PIECE_ASSERT(pe->in_use, pe);
 
@@ -790,7 +790,7 @@ void block_cache::blocks_flushed(cached_piece_entry* pe, int const* flushed, int
 	pe->num_dirty -= num_flushed;
 
 	update_cache_state(pe);
-	maybe_free_piece(pe);
+	return maybe_free_piece(pe);
 }
 
 std::pair<block_cache::const_iterator, block_cache::const_iterator> block_cache::all_pieces() const

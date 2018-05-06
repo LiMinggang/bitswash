@@ -1,6 +1,6 @@
 /*
 
-Copyright (c) 2007-2016, Arvid Norberg, Steven Siloti
+Copyright (c) 2007-2018, Arvid Norberg, Steven Siloti
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
@@ -62,9 +62,10 @@ POSSIBILITY OF SUCH DAMAGE.
 #define DEBUG_DISK_THREAD 0
 
 #if DEBUG_DISK_THREAD
-#include <cstdarg>
+#include <cstdarg> // for va_list
 #include <sstream>
 #include <cstdio> // for vsnprintf
+
 #define DLOG(...) debug_log(__VA_ARGS__)
 #else
 #define DLOG(...) do {} while(false)
@@ -727,7 +728,7 @@ constexpr disk_job_flags_t disk_interface::cache_hit;
 	// It is necessary to call this function with the blocks produced by
 	// build_iovec, to reset their state to not being flushed anymore
 	// the cache needs to be locked when calling this function
-	void disk_io_thread::iovec_flushed(cached_piece_entry* pe
+	bool disk_io_thread::iovec_flushed(cached_piece_entry* pe
 		, int* flushing, int const num_blocks, int const block_offset
 		, storage_error const& error
 		, jobqueue_t& completed_jobs)
@@ -742,7 +743,8 @@ constexpr disk_job_flags_t disk_interface::cache_hit;
 			DLOG("%d ", flushing[i]);
 		DLOG("]\n");
 #endif
-		m_disk_cache.blocks_flushed(pe, flushing, num_blocks);
+		if (m_disk_cache.blocks_flushed(pe, flushing, num_blocks))
+			return true;
 
 		if (error)
 		{
@@ -770,6 +772,8 @@ constexpr disk_job_flags_t disk_interface::cache_hit;
 				j = next;
 			}
 		}
+
+		return false;
 	}
 
 	// issues write operations for blocks in the given
@@ -802,9 +806,8 @@ constexpr disk_job_flags_t disk_interface::cache_hit;
 			flush_iovec(pe, iov, flushing, iov_len, error);
 		}
 
-		iovec_flushed(pe, flushing.data(), iov_len, 0, error, completed_jobs);
-
-		m_disk_cache.maybe_free_piece(pe);
+		if (!iovec_flushed(pe, flushing.data(), iov_len, 0, error, completed_jobs))
+			m_disk_cache.maybe_free_piece(pe);
 
 		// if the cache is under high pressure, we need to evict
 		// the blocks we just flushed to make room for more write pieces
@@ -2442,7 +2445,6 @@ constexpr disk_job_flags_t disk_interface::cache_hit;
 		// the error message indicates that the fast resume data was rejected
 		// if 'fatal_disk_error' is returned, the error message indicates what
 		// when wrong in the disk access
-		storage_error se;
 		if ((rd->have_pieces.empty()
 			|| !j->storage->verify_resume_data(*rd
 				, links ? *links : aux::vector<std::string, file_index_t>(), j->error))
@@ -2451,17 +2453,11 @@ constexpr disk_job_flags_t disk_interface::cache_hit;
 			// j->error may have been set at this point, by verify_resume_data()
 			// it's important to not have it cleared out subsequent calls, as long
 			// as they succeed.
-			bool const has_files = j->storage->has_any_file(se);
-
-			if (se)
-			{
-				j->error = se;
-				return status_t::fatal_disk_error;
-			}
-
-			if (has_files)
+			storage_error ignore;
+			if (j->storage->has_any_file(ignore))
 			{
 				// always initialize the storage
+				storage_error se;
 				j->storage->initialize(se);
 				if (se)
 				{
@@ -2472,6 +2468,7 @@ constexpr disk_job_flags_t disk_interface::cache_hit;
 			}
 		}
 
+		storage_error se;
 		j->storage->initialize(se);
 		if (se)
 		{

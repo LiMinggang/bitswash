@@ -1,6 +1,6 @@
 /*
 
-Copyright (c) 2006-2016, Arvid Norberg
+Copyright (c) 2006-2018, Arvid Norberg
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
@@ -31,7 +31,7 @@ POSSIBILITY OF SUCH DAMAGE.
 */
 
 #include <vector>
-#include <iterator> // std::distance()
+#include <iterator> // std::distance(), std::next
 #include <algorithm> // std::copy, std::remove_copy_if
 #include <functional>
 #include <numeric>

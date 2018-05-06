@@ -1,6 +1,6 @@
 /*
 
-Copyright (c) 2005-2016, Arvid Norberg
+Copyright (c) 2005-2018, Arvid Norberg
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
@@ -568,7 +568,7 @@ constexpr std::size_t TORRENT_WRITE_HANDLER_MAX_SIZE = 342;
 
 #endif // TORRENT_HAS_SSE
 
-#if (defined __arm__ || defined __aarch64__)
+#if (defined __arm__ || defined __aarch64__ || defined _M_ARM || defined _M_ARM64)
 #define TORRENT_HAS_ARM 1
 #else
 #define TORRENT_HAS_ARM 0

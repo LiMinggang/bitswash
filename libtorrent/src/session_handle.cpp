@@ -1,6 +1,6 @@
 /*
 
-Copyright (c) 2003-2016, Arvid Norberg
+Copyright (c) 2003-2018, Arvid Norberg
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
@@ -308,6 +308,8 @@ namespace {
 		atp.seeding_time = resume_data.seeding_time;
 
 		atp.last_seen_complete = resume_data.last_seen_complete;
+		atp.last_upload = resume_data.last_upload;
+		atp.last_download = resume_data.last_download;
 		atp.url = resume_data.url;
 		atp.uuid = resume_data.uuid;
 

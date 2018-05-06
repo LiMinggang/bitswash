@@ -1,6 +1,6 @@
 /*
 
-Copyright (c) 2006-2016, Arvid Norberg, Magnus Jonsson
+Copyright (c) 2006-2018, Arvid Norberg, Magnus Jonsson
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
@@ -96,6 +96,8 @@ POSSIBILITY OF SUCH DAMAGE.
 
 // for logging stat layout
 #include "libtorrent/stat.hpp"
+
+#include <cstdarg> // for va_list
 
 // for logging the size of DHT structures
 #ifndef TORRENT_DISABLE_DHT

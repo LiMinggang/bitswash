@@ -181,6 +181,8 @@ bool is_downloading_state(int const st)
 		, bool const session_paused
 		, add_torrent_params const& p)
 		: torrent_hot_members(ses, p, session_paused)
+		, m_total_uploaded(p.total_uploaded)
+		, m_total_downloaded(p.total_downloaded)
 		, m_tracker_timer(ses.get_io_service())
 		, m_inactivity_timer(ses.get_io_service())
 		, m_trackerid(p.trackerid)
@@ -224,6 +226,8 @@ bool is_downloading_state(int const st)
 		, m_announce_to_dht(!(p.flags & torrent_flags::paused))
 		, m_ssl_torrent(false)
 		, m_deleted(false)
+		, m_last_download(seconds32(p.last_download))
+		, m_last_upload(seconds32(p.last_upload))
 		, m_auto_managed(p.flags & torrent_flags::auto_managed)
 		, m_current_gauge_state(static_cast<std::uint32_t>(no_gauge_state))
 		, m_moving_storage(false)
@@ -1312,7 +1316,7 @@ bool is_downloading_state(int const st)
 				&& picker().is_finished(block))
 				continue;
 
-			p.length = std::min(piece_size - p.start, int(block_size()));
+			p.length = std::min(piece_size - p.start, block_size());
 
 			m_stats_counters.inc_stats_counter(counters::queued_write_bytes, p.length);
 			m_ses.disk_thread().async_write(m_storage, p, data + p.start, nullptr
@@ -1987,6 +1991,8 @@ bool is_downloading_state(int const st)
 
 		TORRENT_ASSERT(is_single_thread());
 
+		if (m_abort) return;
+
 		if (status == status_t::fatal_disk_error)
 		{
 			TORRENT_ASSERT(m_outstanding_check_files == false);
@@ -1998,8 +2004,6 @@ bool is_downloading_state(int const st)
 			if (should_check_files()) start_checking();
 			return;
 		}
-
-		if (m_abort) return;
 
 		state_updated();
 
@@ -2865,8 +2869,8 @@ bool is_downloading_state(int const st)
 					// in force_proxy mode we don't talk directly to trackers
 					// we only allow trackers if there is a proxy and issue
 					// a warning if there isn't one
-					std::string protocol = req.url.substr(0, req.url.find(':'));
-					int proxy_type = settings().get_int(settings_pack::proxy_type);
+					std::string const protocol = req.url.substr(0, req.url.find(':'));
+					int const proxy_type = settings().get_int(settings_pack::proxy_type);
 
 					// http can run over any proxy, so as long as one is used
 					// it's OK. If no proxy is configured, skip this tracker
@@ -2964,11 +2968,11 @@ bool is_downloading_state(int const st)
 		update_tracker_timer(now);
 	}
 
-	void torrent::scrape_tracker(int idx, bool user_triggered)
+	void torrent::scrape_tracker(int idx, bool const user_triggered)
 	{
 		TORRENT_ASSERT(is_single_thread());
 #ifndef TORRENT_NO_DEPRECATE
-		m_last_scrape = std::int16_t(m_ses.session_time());
+		m_last_scrape = aux::time_now32();
 #endif
 
 		if (m_trackers.empty()) return;
@@ -3108,9 +3112,9 @@ bool is_downloading_state(int const st)
 				, resp.external_ip
 				, aux::session_interface::source_tracker, tracker_ip);
 
-		time_point32 now = aux::time_now32();
+		time_point32 const now = aux::time_now32();
 
-		auto interval = std::max(resp.interval, seconds32(
+		auto const interval = std::max(resp.interval, seconds32(
 			settings().get_int(settings_pack::min_announce_interval)));
 
 		announce_entry* ae = find_tracker(r.url);
@@ -3133,7 +3137,7 @@ bool is_downloading_state(int const st)
 				aep->min_announce = now + resp.min_interval;
 				aep->updating = false;
 				aep->fails = 0;
-				int tracker_index = int(ae - &m_trackers[0]);
+				int tracker_index = int(ae - m_trackers.data());
 				m_last_working_tracker = std::int8_t(prioritize_tracker(tracker_index));
 
 				if ((!resp.trackerid.empty()) && (ae->trackerid != resp.trackerid))
@@ -3151,7 +3155,7 @@ bool is_downloading_state(int const st)
 
 #ifndef TORRENT_NO_DEPRECATE
 		if (resp.complete >= 0 && resp.incomplete >= 0)
-			m_last_scrape = std::int16_t(m_ses.session_time());
+			m_last_scrape = aux::time_now32();
 #endif
 
 #ifndef TORRENT_DISABLE_LOGGING
@@ -4152,8 +4156,8 @@ bool is_downloading_state(int const st)
 				// ban it.
 				if (m_ses.alerts().should_post<peer_ban_alert>())
 				{
-					peer_id pid(nullptr);
-					if (p->connection) pid = p->connection->pid();
+					peer_id const pid = p->connection
+						? p->connection->pid() : peer_id();
 					m_ses.alerts().emplace_alert<peer_ban_alert>(
 						get_handle(), p->ip(), pid);
 				}
@@ -6110,6 +6114,8 @@ bool is_downloading_state(int const st)
 		ret.finished_time = static_cast<int>(total_seconds(finished_time()));
 		ret.seeding_time = static_cast<int>(total_seconds(seeding_time()));
 		ret.last_seen_complete = m_last_seen_complete;
+		ret.last_upload = std::time_t(total_seconds(m_last_upload.time_since_epoch()));
+		ret.last_download = std::time_t(total_seconds(m_last_download.time_since_epoch()));
 
 		ret.num_complete = m_complete;
 		ret.num_incomplete = m_incomplete;
@@ -8296,14 +8302,7 @@ bool is_downloading_state(int const st)
 		if (a < b) return 0;
 		return std::uint16_t(a - b);
 	}
-#ifndef TORRENT_NO_DEPRECATE
-	std::int16_t clamped_subtract_s16(int a, int b)
-	{
-		if (a + std::numeric_limits<std::int16_t>::min() < b)
-			return std::numeric_limits<std::int16_t>::min();
-		return std::int16_t(a - b);
-	}
-#endif
+
 	} // anonymous namespace
 
 	// this is called every time the session timer takes a step back. Since the
@@ -8324,10 +8323,6 @@ bool is_downloading_state(int const st)
 				pe->last_connected = clamped_subtract_u16(pe->last_connected, seconds);
 			}
 		}
-
-#ifndef TORRENT_NO_DEPRECATE
-		m_last_scrape = clamped_subtract_s16(m_last_scrape, seconds);
-#endif
 	}
 
 	// the higher seed rank, the more important to seed
@@ -10637,8 +10632,7 @@ bool is_downloading_state(int const st)
 		st->completed_time = m_completed_time;
 
 #ifndef TORRENT_NO_DEPRECATE
-		st->last_scrape = m_last_scrape == std::numeric_limits<std::int16_t>::min() ? -1
-			: clamped_subtract_u16(m_ses.session_time(), m_last_scrape);
+		st->last_scrape = static_cast<int>(total_seconds(aux::time_now32() - m_last_scrape));
 #endif
 
 #ifndef TORRENT_NO_DEPRECATE
@@ -10667,10 +10661,12 @@ bool is_downloading_state(int const st)
 		st->active_time = int(total_seconds(active_time()));
 		st->seeding_time = int(total_seconds(seeding_time()));
 
-		st->time_since_upload = int(total_seconds(aux::time_now()
-			- m_last_upload));
-		st->time_since_download = int(total_seconds(aux::time_now()
-			- m_last_download));
+		time_point32 const unset{seconds32(0)};
+
+		st->time_since_upload = m_last_upload == unset ? -1
+			: static_cast<int>(total_seconds(aux::time_now32() - m_last_upload));
+		st->time_since_download = m_last_download == unset ? -1
+			: static_cast<int>(total_seconds(aux::time_now32() - m_last_download));
 #endif
 
 		st->finished_duration = finished_time();

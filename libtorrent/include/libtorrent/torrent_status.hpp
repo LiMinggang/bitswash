@@ -1,6 +1,6 @@
 /*
 
-Copyright (c) 2015-2016, Arvid Norberg
+Copyright (c) 2015-2018, Arvid Norberg
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
@@ -87,7 +87,7 @@ namespace libtorrent {
 			// The torrent is in the queue for being checked. But there
 			// currently is another torrent that are being checked.
 			// This torrent will wait for its turn.
-			queued_for_checking,
+			queued_for_checking TORRENT_DEPRECATED_ENUM,
 #else
 			// internal
 			unused_enum_for_backwards_compatibility,
@@ -588,9 +588,7 @@ namespace libtorrent {
 		// the info-hash for this torrent
 		sha1_hash info_hash;
 
-		// This value is not persistent and get set to session start time.
 		time_point last_upload;
-		// This value is not persistent and get set to session start time.
 		time_point last_download;
 
 		seconds active_duration;

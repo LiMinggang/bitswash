@@ -634,6 +634,15 @@ namespace
 		 return lt::find_metric_idx(name);
 	 }
 
+	bytes write_resume_data_buf_(add_torrent_params const& atp)
+	{
+		bytes ret;
+		auto buf = write_resume_data_buf(atp);
+		ret.arr.resize(buf.size());
+		std::copy(buf.begin(), buf.end(), ret.arr.begin());
+		return ret;
+	}
+
 } // anonymous namespace
 
 struct dummy1 {};
@@ -753,6 +762,8 @@ void bind_session()
         .def_readwrite("added_time", &add_torrent_params::added_time)
         .def_readwrite("completed_time", &add_torrent_params::completed_time)
         .def_readwrite("last_seen_complete", &add_torrent_params::last_seen_complete)
+        .def_readwrite("last_download", &add_torrent_params::last_download)
+        .def_readwrite("last_upload", &add_torrent_params::last_upload)
         .def_readwrite("num_complete", &add_torrent_params::num_complete)
         .def_readwrite("num_incomplete", &add_torrent_params::num_incomplete)
         .def_readwrite("num_downloaded", &add_torrent_params::num_downloaded)
@@ -1098,7 +1109,7 @@ void bind_session()
     def("default_settings", default_settings_wrapper);
     def("read_resume_data", read_resume_data_wrapper);
     def("write_resume_data", write_resume_data);
-    def("write_resume_data_buf", write_resume_data_buf);
+    def("write_resume_data_buf", write_resume_data_buf_);
 
 	class_<stats_metric>("stats_metric")
 		.def_readonly("name", &stats_metric::name)
