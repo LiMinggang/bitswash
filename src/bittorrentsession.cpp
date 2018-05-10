@@ -1198,6 +1198,7 @@ void BitTorrentSession::ScanTorrentsDirectory( const wxString& dirname )
 		{
 			auto & torrent = m_torrent_queue.at( i );
 			wxASSERT(torrent);
+			torrent->config->SetQIndex(i); //Make sure
 			m_running_torrent_map[wxString(torrent->hash)] = i;
 
 			//XXX redundant ? StartTorrent below will call the same thing
