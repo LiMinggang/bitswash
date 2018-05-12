@@ -243,12 +243,20 @@ void Configuration::Load()
 	m_trackerlistctrlsetting = m_cfg->Read( _T( "/GUI/trackerlistctrlsetting" ), wxEmptyString );
 	//config
 	wxFileName dpath;
-	dpath.AssignDir(m_cfg->Read( _T( "/Config/downloadpath" ), def_download_path ));
-	m_downloadpath = dpath.GetPathWithSep();
-	def_download_path = wxEmptyString;
-	dpath.AssignDir(m_cfg->Read( _T( "/Config/opentorrentpath" ), def_download_path ));
+	def_download_path = m_cfg->Read(_T("/Config/downloadpath"), wxEmptyString);
+	if (def_download_path != wxEmptyString)
+	{
+		dpath.AssignDir(def_download_path );
+		m_downloadpath = dpath.GetPathWithSep();
+	}
+	else
+		m_downloadpath = wxEmptyString;
+	def_download_path = m_cfg->Read(_T("/Config/opentorrentpath"), wxEmptyString);
 	if(def_download_path != wxEmptyString)
+	{
+		dpath.AssignDir(def_download_path);
 		m_opentorrentpath = dpath.GetPathWithSep();
+	}
 	else
 		m_opentorrentpath = wxEmptyString;
 	m_portmin = m_cfg->Read( _T( "/Config/portmin" ), 16881 );
