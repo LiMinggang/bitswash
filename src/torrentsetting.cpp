@@ -123,6 +123,7 @@ TorrentSettingPane::TorrentSettingPane( wxWindow* parent, std::shared_ptr<torren
 				continue;
 			m_combo_open->Append(*opath);
 		}
+		m_combo_open->SetValue(t_open);
 
 		FlexGridSizer3->Add(m_combo_open, 1, wxALL|wxALIGN_LEFT|wxALIGN_CENTER_VERTICAL, 5);
 		m_button_opendir = new wxButton(this, wxID_ANY, wxT("..."), wxDefaultPosition, wxDefaultSize, 0, wxDefaultValidator, _T("wxID_ANY"));
