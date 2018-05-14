@@ -175,9 +175,9 @@ ConnectionSettingPane::ConnectionSettingPane( wxWindow* parent, wxWindowID id,co
 	StaticText10 = new wxStaticText(this, wxID_ANY, _("Enabled Protocols:"), wxDefaultPosition, wxDefaultSize, 0, _T("wxID_ANY"));
 	FlexGridSizer5->Add(StaticText10, 1, wxALL|wxALIGN_LEFT|wxALIGN_CENTER_VERTICAL, 5);
 	m_choice_enabled_protocols = new wxChoice(this, wxID_ANY, wxDefaultPosition, wxDefaultSize, 0, 0, 0, wxDefaultValidator, _T("wxID_ANY"));
-	m_choice_enabled_protocols->Append(_("TCP and ¦ÌTP"));
-	m_choice_enabled_protocols->Append(_("TCP"));
-	m_choice_enabled_protocols->Append(_("¦ÌTP"));
+	m_choice_enabled_protocols->Append(_("TCP and \u03BCTP"));
+	m_choice_enabled_protocols->Append(wxT("TCP"));
+	m_choice_enabled_protocols->Append(wxT("\u03BCTP"));
 	m_choice_enabled_protocols->Select(pcfg->GetEnabledProtocols());
 	FlexGridSizer5->Add(m_choice_enabled_protocols, 1, wxALL|wxALIGN_LEFT|wxALIGN_CENTER_VERTICAL, 5);
 	StaticText11 = new wxStaticText(this, wxID_ANY, _("Choking Algorithm"), wxDefaultPosition, wxDefaultSize, 0, _T("wxID_ANY"));
