@@ -76,7 +76,6 @@ POSSIBILITY OF SUCH DAMAGE.
 #include "libtorrent/lsd.hpp"
 #include "libtorrent/instantiate_connection.hpp"
 #include "libtorrent/peer_info.hpp"
-#include "libtorrent/build_config.hpp"
 #include "libtorrent/random.hpp"
 #include "libtorrent/magnet_uri.hpp"
 #include "libtorrent/aux_/session_settings.hpp"
@@ -518,10 +517,8 @@ namespace aux {
 
 #ifndef TORRENT_DISABLE_LOGGING
 
-		session_log("config: %s version: %s revision: %s"
-			, TORRENT_CFG_STRING
-			, LIBTORRENT_VERSION
-			, LIBTORRENT_REVISION);
+		session_log("version: %s revision: %s"
+			, LIBTORRENT_VERSION, LIBTORRENT_REVISION);
 
 #endif // TORRENT_DISABLE_LOGGING
 
@@ -666,7 +663,7 @@ namespace aux {
 		}
 #endif
 
-#ifndef TORRENT_NO_DEPRECATE
+#if TORRENT_ABI_VERSION == 1
 		bool need_update_proxy = false;
 		if (flags & session_handle::save_proxy)
 		{
@@ -724,7 +721,7 @@ namespace aux {
 #ifndef TORRENT_DISABLE_DHT
 				need_update_dht = false;
 #endif
-#ifndef TORRENT_NO_DEPRECATE
+#if TORRENT_ABI_VERSION == 1
 				need_update_proxy = false;
 #endif
 			}
@@ -733,7 +730,7 @@ namespace aux {
 #ifndef TORRENT_DISABLE_DHT
 		if (need_update_dht) start_dht();
 #endif
-#ifndef TORRENT_NO_DEPRECATE
+#if TORRENT_ABI_VERSION == 1
 		if (need_update_proxy) update_proxy();
 #endif
 
@@ -1269,7 +1266,7 @@ namespace aux {
 	void session_impl::apply_settings_pack_impl(settings_pack const& pack)
 	{
 		bool const reopen_listen_port =
-#ifndef TORRENT_NO_DEPRECATE
+#if TORRENT_ABI_VERSION == 1
 			(pack.has_val(settings_pack::ssl_listen)
 				&& pack.get_int(settings_pack::ssl_listen)
 					!= m_settings.get_int(settings_pack::ssl_listen))
@@ -1519,7 +1516,6 @@ namespace aux {
 				return ret;
 			}
 			ret->local_endpoint = ret->sock->local_endpoint(ec);
-			ret->device = lep.device;
 			last_op = operation_t::getname;
 			if (ec)
 			{
@@ -1537,7 +1533,6 @@ namespace aux {
 				}
 				return ret;
 			}
-			ret->tracker_key = get_tracker_key(ret->local_endpoint.address());
 
 			ret->tcp_external_port = ret->local_endpoint.port();
 			TORRENT_ASSERT(ret->tcp_external_port == bind_ep.port()
@@ -1568,7 +1563,7 @@ namespace aux {
 			= (lep.ssl == transport::ssl)
 			? socket_type_t::utp_ssl
 			: socket_type_t::udp;
-		udp::endpoint const udp_bind_ep(bind_ep.address(), bind_ep.port());
+		udp::endpoint udp_bind_ep(bind_ep.address(), bind_ep.port());
 
 		ret->udp_sock = std::make_shared<session_udp_socket>(m_io_service);
 		ret->udp_sock->sock.open(udp_bind_ep.protocol(), ec);
@@ -1616,6 +1611,36 @@ namespace aux {
 #endif
 		ret->udp_sock->sock.bind(udp_bind_ep, ec);
 
+		while (ec == error_code(error::address_in_use) && retries > 0)
+		{
+			TORRENT_ASSERT_VAL(ec, ec);
+#ifndef TORRENT_DISABLE_LOGGING
+			if (should_log())
+			{
+				session_log("failed to bind udp socket to: %s on device: %s :"
+					" [%s] (%d) %s (retries: %d)"
+					, print_endpoint(bind_ep).c_str()
+					, lep.device.c_str()
+					, ec.category().name(), ec.value(), ec.message().c_str()
+					, retries);
+			}
+#endif
+			ec.clear();
+			--retries;
+			udp_bind_ep.port(udp_bind_ep.port() + 1);
+			ret->udp_sock->sock.bind(udp_bind_ep, ec);
+		}
+
+		if (ec == error_code(error::address_in_use)
+			&& m_settings.get_bool(settings_pack::listen_system_port_fallback)
+			&& udp_bind_ep.port() != 0)
+		{
+			// instead of giving up, try let the OS pick a port
+			udp_bind_ep.port(0);
+			ec.clear();
+			ret->udp_sock->sock.bind(udp_bind_ep, ec);
+		}
+
 		last_op = operation_t::sock_bind;
 		if (ec)
 		{
@@ -1642,6 +1667,9 @@ namespace aux {
 			auto const udp_ep = ret->udp_sock->local_endpoint();
 			ret->local_endpoint = tcp::endpoint(udp_ep.address(), udp_ep.port());
 		}
+
+		ret->tracker_key = get_tracker_key(ret->local_endpoint.address());
+		ret->device = lep.device;
 
 		error_code err;
 		set_socket_buffer_size(ret->udp_sock->sock, m_settings, err);
@@ -2587,6 +2615,10 @@ namespace aux {
 		}
 		async_accept(listener, ssl);
 
+		// don't accept any connections from our local sockets
+		if (m_settings.get_bool(settings_pack::force_proxy))
+			return;
+
 #ifdef TORRENT_USE_OPENSSL
 		if (ssl == transport::ssl)
 		{
@@ -2958,7 +2990,7 @@ namespace aux {
 		}
 	}
 
-#ifndef TORRENT_NO_DEPRECATE
+#if TORRENT_ABI_VERSION == 1
 	peer_id session_impl::deprecated_get_peer_id() const
 	{
 		return generate_peer_id(m_settings);
@@ -4348,7 +4380,7 @@ namespace aux {
 		, std::string uuid)
 	{
 		m_torrents.insert(std::make_pair(ih, t));
-#ifndef TORRENT_NO_DEPRECATE
+#if TORRENT_ABI_VERSION == 1
 		//deprecated in 1.2
 		if (!uuid.empty()) m_uuids.insert(std::make_pair(uuid, t));
 #else
@@ -4431,7 +4463,7 @@ namespace aux {
 	}
 #endif
 
-#ifndef TORRENT_NO_DEPRECATE
+#if TORRENT_ABI_VERSION == 1
 	//deprecated in 1.2
 	std::weak_ptr<torrent> session_impl::find_torrent(std::string const& uuid) const
 	{
@@ -4634,7 +4666,7 @@ namespace aux {
 	{
 		std::unique_ptr<add_torrent_params> holder(params);
 
-#ifndef TORRENT_NO_DEPRECATE
+#if TORRENT_ABI_VERSION == 1
 		if (!params->ti && string_begins_no_case("file://", params->url.c_str()))
 		{
 			if (!m_torrent_load_thread)
@@ -4661,7 +4693,7 @@ namespace aux {
 		add_torrent(std::move(*params), ec);
 	}
 
-#ifndef TORRENT_NO_DEPRECATE
+#if TORRENT_ABI_VERSION == 1
 	void session_impl::on_async_load_torrent(add_torrent_params* params, error_code ec)
 	{
 		std::unique_ptr<add_torrent_params> holder(params);
@@ -4723,7 +4755,7 @@ namespace aux {
 		}
 #endif
 
-#ifndef TORRENT_NO_DEPRECATE
+#if TORRENT_ABI_VERSION == 1
 		if (m_alerts.should_post<torrent_added_alert>())
 			m_alerts.emplace_alert<torrent_added_alert>(handle);
 #endif
@@ -4787,7 +4819,7 @@ namespace aux {
 #endif
 		}
 
-#ifndef TORRENT_NO_DEPRECATE
+#if TORRENT_ABI_VERSION == 1
 		//deprecated in 1.2
 		if (!params.uuid.empty() || !params.url.empty())
 			m_uuids.insert(std::make_pair(params.uuid.empty()
@@ -4832,7 +4864,7 @@ namespace aux {
 
 		using ptr_t = std::shared_ptr<torrent>;
 
-#ifndef TORRENT_NO_DEPRECATE
+#if TORRENT_ABI_VERSION == 1
 		if (string_begins_no_case("magnet:", params.url.c_str()))
 		{
 			parse_magnet_uri(params.url, params, ec);
@@ -4880,7 +4912,7 @@ namespace aux {
 		// figure out the info hash of the torrent and make sure params.info_hash
 		// is set correctly
 		if (params.ti) params.info_hash = params.ti->info_hash();
-#ifndef TORRENT_NO_DEPRECATE
+#if TORRENT_ABI_VERSION == 1
 		//deprecated in 1.2
 		else if (!params.url.empty())
 		{
@@ -4901,7 +4933,7 @@ namespace aux {
 
 		// is the torrent already active?
 		std::shared_ptr<torrent> torrent_ptr = find_torrent(params.info_hash).lock();
-#ifndef TORRENT_NO_DEPRECATE
+#if TORRENT_ABI_VERSION == 1
 		//deprecated in 1.2
 		if (!torrent_ptr && !params.uuid.empty()) torrent_ptr = find_torrent(params.uuid).lock();
 		// if we still can't find the torrent, look for it by url
@@ -4919,7 +4951,7 @@ namespace aux {
 		{
 			if (!(params.flags & torrent_flags::duplicate_is_error))
 			{
-#ifndef TORRENT_NO_DEPRECATE
+#if TORRENT_ABI_VERSION == 1
 				//deprecated in 1.2
 				if (!params.uuid.empty() && torrent_ptr->uuid().empty())
 					torrent_ptr->set_uuid(params.uuid);
@@ -4964,6 +4996,11 @@ namespace aux {
 #endif
 	}
 
+	bool session_impl::has_udp_outgoing_sockets() const
+	{
+		return !m_outgoing_sockets.sockets.empty();
+	}
+
 	tcp::endpoint session_impl::bind_outgoing_socket(socket_type& s, address
 		const& remote_address, error_code& ec) const
 	{
@@ -4988,8 +5025,8 @@ namespace aux {
 
 		if (is_utp(s))
 		{
-			auto ep = m_outgoing_sockets.bind(s, remote_address);
-			if (ep.port() != 0)
+			auto ep = m_outgoing_sockets.bind(s, remote_address, ec);
+			if (ep.port() != 0 || ec)
 				return ep;
 		}
 
@@ -5097,7 +5134,7 @@ namespace aux {
 	void session_impl::remove_torrent_impl(std::shared_ptr<torrent> tptr
 		, remove_flags_t const options)
 	{
-#ifndef TORRENT_NO_DEPRECATE
+#if TORRENT_ABI_VERSION == 1
 		// deprecated in 1.2
 		// remove from uuid list
 		if (!tptr->uuid().empty())
@@ -5109,7 +5146,7 @@ namespace aux {
 
 		auto i = m_torrents.find(tptr->torrent_file().info_hash());
 
-#ifndef TORRENT_NO_DEPRECATE
+#if TORRENT_ABI_VERSION == 1
 		// deprecated in 1.2
 		// this torrent might be filed under the URL-hash
 		if (i == m_torrents.end() && !tptr->url().empty())
@@ -5166,7 +5203,7 @@ namespace aux {
 		TORRENT_ASSERT(m_torrents.find(i_hash) == m_torrents.end());
 	}
 
-#ifndef TORRENT_NO_DEPRECATE
+#if TORRENT_ABI_VERSION == 1
 
 	void session_impl::update_ssl_listen()
 	{
@@ -5203,7 +5240,7 @@ namespace aux {
 		m_settings.set_str(settings_pack::listen_interfaces
 			, print_listen_interfaces(current_ifaces));
 	}
-#endif // TORRENT_NO_DEPRECATE
+#endif // TORRENT_ABI_VERSION
 
 	void session_impl::update_listen_interfaces()
 	{
@@ -5495,7 +5532,7 @@ namespace aux {
 		}
 	}
 
-#ifndef TORRENT_NO_DEPRECATE
+#if TORRENT_ABI_VERSION == 1
 	session_status session_impl::status() const
 	{
 //		INVARIANT_CHECK;
@@ -5619,7 +5656,7 @@ namespace aux {
 
 		return s;
 	}
-#endif // TORRENT_NO_DEPRECATE
+#endif // TORRENT_ABI_VERSION
 
 	void session_impl::get_cache_info(torrent_handle h, cache_status* ret, int flags) const
 	{
@@ -5745,7 +5782,7 @@ namespace aux {
 		m_dht_storage_constructor = std::move(sc);
 	}
 
-#ifndef TORRENT_NO_DEPRECATE
+#if TORRENT_ABI_VERSION == 1
 	entry session_impl::dht_state() const
 	{
 		return m_dht ? dht::save_dht_state(m_dht->state()) : entry();
@@ -6036,7 +6073,7 @@ namespace aux {
 #endif
 	}
 
-#ifndef TORRENT_NO_DEPRECATE
+#if TORRENT_ABI_VERSION == 1
 	int session_impl::max_connections() const
 	{
 		return m_settings.get_int(settings_pack::connections_limit);
@@ -6228,7 +6265,7 @@ namespace aux {
 			|| m_settings.get_int(settings_pack::unchoke_slots_limit) < 0;
 	}
 
-#ifndef TORRENT_NO_DEPRECATE
+#if TORRENT_ABI_VERSION == 1
 	void session_impl::update_dht_upload_rate_limit()
 	{
 #ifndef TORRENT_DISABLE_DHT
@@ -6420,7 +6457,7 @@ namespace aux {
 #endif
 	}
 
-#ifndef TORRENT_NO_DEPRECATE
+#if TORRENT_ABI_VERSION == 1
 	void session_impl::update_local_download_rate()
 	{
 		if (m_settings.get_int(settings_pack::local_download_rate_limit) < 0)
@@ -6529,7 +6566,7 @@ namespace aux {
 		m_alerts.get_all(*alerts);
 	}
 
-#ifndef TORRENT_NO_DEPRECATE
+#if TORRENT_ABI_VERSION == 1
 	void session_impl::update_rate_limit_utp()
 	{
 		if (m_settings.get_bool(settings_pack::rate_limit_utp))
@@ -6593,7 +6630,7 @@ namespace aux {
 		return m_alerts.wait_for_alert(max_wait);
 	}
 
-#ifndef TORRENT_NO_DEPRECATE
+#if TORRENT_ABI_VERSION == 1
 	std::size_t session_impl::set_alert_queue_size_limit(std::size_t queue_size_limit_)
 	{
 		m_settings.set_int(settings_pack::alert_queue_size, int(queue_size_limit_));

@@ -46,31 +46,6 @@
 
 class MagnetUri;
 
-namespace libtorrent
-{
-	class session;
-    class alert;
-    struct stats_alert;
-    struct torrent_checked_alert;
-    struct torrent_finished_alert;
-    struct torrent_paused_alert;
-    struct torrent_resumed_alert;
-    struct save_resume_data_alert;
-    struct save_resume_data_failed_alert;
-    struct file_renamed_alert;
-    struct file_rename_failed_alert;
-    struct storage_moved_alert;
-    struct storage_moved_failed_alert;
-    struct metadata_received_alert;
-    struct file_completed_alert;
-    struct tracker_error_alert;
-    struct tracker_reply_alert;
-    struct tracker_warning_alert;
-    struct fastresume_rejected_alert;
-    struct torrent_status;
-	struct add_torrent_alert;
-}
-
 enum BTS_EVENT_TYPE
 	{
 	BTS_EVENT_INVALID = 0,
