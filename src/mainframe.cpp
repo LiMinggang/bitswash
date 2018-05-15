@@ -937,6 +937,8 @@ void MainFrame::OnTorrentMetadata( wxCommandEvent& WXUNUSED( event ) )
 						{
 							wxLogError( _T( "Error removing file %s" ), configfile.c_str() );
 						}
+
+						m_btsession->RemoveTorrent( torrent, true );
 						continue;
 					}
 				}
