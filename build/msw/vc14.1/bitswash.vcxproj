@@ -22,8 +22,8 @@
     <ProjectGuid>{4EFBB1F8-4E95-43CE-8873-628348CBD8E9}</ProjectGuid>
     <RootNamespace>bitswash</RootNamespace>
     <Keyword>Win32Proj</Keyword>
-    <WindowsTargetPlatformVersion>10.0.16299.0</WindowsTargetPlatformVersion>
     <ProjectName>bitswash</ProjectName>
+    <WindowsTargetPlatformVersion>10.0.17134.0</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
@@ -116,7 +116,7 @@
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <ClCompile>
-      <Optimization>Disabled</Optimization>
+      <Optimization>MaxSpeed</Optimization>
       <AdditionalIncludeDirectories>$(WXWIN)\include;$(WXWIN)\include\msvc;$(OPENSSL)\include;$(BOOST);..\..\..\libtorrent\include\libtorrent;..\..\..\libtorrent\include\;..\..\..\libtorrent\zlib;..\..\..\libgeoip;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>WIN32_LEAN_AND_MEAN;_SCL_SECURE_NO_DEPRECATE;_CRT_SECURE_NO_WARNINGS;UNICODE;_UNICODE;WIN32;_DEBUG;_WINDOWS;_CRT_SECURE_NO_DEPRECATE;_FILE_OFFSET_BITS=64;_WIN32_WINNT=0x0601;__USE_W32_SOCKETS;BOOST_CONFIG_SUPPRESS_OUTDATED_MESSAGE;BOOST_ALL_NO_LIB;BOOST_ASIO_ENABLE_CANCELIO;BOOST_ASIO_DISABLE_CONNECTEX;BOOST_ASIO_HASH_MAP_BUCKETS=1021;BOOST_USE_WINAPI_VERSION=0x0601;BOOST_SYSTEM_STATIC_LINK=1;BOOST_THREAD_USE_LIB;BOOST_THREAD_BUILD_LIB=1;BOOST_MULTI_INDEX_DISABLE_SERIALIZATION;TORRENT_USE_IPV6;TORRENT_USE_I2P=1;TORRENT_USE_TOMMATH;TORRENT_USE_OPENSSL;TORRENT_USE_LIBCRYPTO;TORRENT_DEBUG;TORRENT_NO_DEPRECATE;__WXMSW__;__WXDEBUG__;wxUSE_LIBPNG=1;WXVER=310;GEOIP_STATIC;USE_LIBGEOIP;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>

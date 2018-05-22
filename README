@@ -26,7 +26,7 @@ address-model=64 runtime-link=static stage
 News:
 ----
 0.0.10
-Fix: Open directory save issue
+Fix: Open directory not take effect in next run
 Fix: Remove canclled Magnet URI download
 Update translations
 Update libTorrent to 17055ad4d188cef43196c4f994d5b1f38eae0f9d
