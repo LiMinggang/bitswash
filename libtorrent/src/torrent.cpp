@@ -852,7 +852,7 @@ bool is_downloading_state(int const st)
 		}
 
 		std::shared_ptr<read_piece_struct> rp = std::make_shared<read_piece_struct>();
-		rp->piece_data.reset(new (std::nothrow) char[piece_size]);
+		rp->piece_data.reset(new (std::nothrow) char[std::size_t(piece_size)]);
 		if (!rp->piece_data)
 		{
 			m_ses.alerts().emplace_alert<read_piece_alert>(
@@ -2745,10 +2745,32 @@ bool is_downloading_state(int const st)
 		req.ssl_ctx = m_ssl_ctx.get();
 #endif
 
+		req.redundant = m_total_redundant_bytes;
 		// exclude redundant bytes if we should
 		if (!settings().get_bool(settings_pack::report_true_downloaded))
+		{
 			req.downloaded -= m_total_redundant_bytes;
-		req.redundant = m_total_redundant_bytes;
+
+			// if the torrent is complete we know that all incoming pieces will be
+			// marked redundant so add them to the redundant count
+			// this is mainly needed to cover the case where a torrent has just completed
+			// but still has partially downloaded pieces
+			// if the incoming pieces are not accounted for it could cause the downloaded
+			// amount to exceed the total size of the torrent which upsets some trackers
+			if (is_seed())
+			{
+				for (auto c : m_connections)
+				{
+					TORRENT_INCREMENT(m_iterating_connections);
+					auto const pbp = c->downloading_piece_progress();
+					if (pbp.bytes_downloaded > 0)
+					{
+						req.downloaded -= pbp.bytes_downloaded;
+						req.redundant += pbp.bytes_downloaded;
+					}
+				}
+			}
+		}
 		if (req.downloaded < 0) req.downloaded = 0;
 
 		req.event = e;
@@ -5495,7 +5517,7 @@ bool is_downloading_state(int const st)
 				else
 				{
 					auto const& pieces = p->get_bitfield();
-					TORRENT_ASSERT(pieces.count() <= int(pieces.size()));
+					TORRENT_ASSERT(pieces.count() <= pieces.size());
 					m_picker->dec_refcount(pieces, pp);
 				}
 			}
@@ -6622,9 +6644,10 @@ bool is_downloading_state(int const st)
 			if (err && should_log())
 			{
 				error_code ignore;
+				auto const lep = s->local_endpoint(ignore);
 				debug_log("socket buffer size [ %s %d]: (%d) %s"
-					, s->local_endpoint().address().to_string(ignore).c_str()
-					, s->local_endpoint().port(), ignore.value(), ignore.message().c_str());
+					, lep.address().to_string(ignore).c_str()
+					, lep.port(), err.value(), err.message().c_str());
 			}
 #endif
 		}
@@ -7501,24 +7524,6 @@ bool is_downloading_state(int const st)
 			return;
 		}
 
-		// we might be finished already, in which case we should
-		// not switch to downloading mode. If all files are
-		// filtered, we're finished when we start.
-		if (m_state != torrent_status::finished
-			&& m_state != torrent_status::seeding
-			&& !m_seed_mode)
-		{
-			set_state(torrent_status::downloading);
-		}
-
-		INVARIANT_CHECK;
-
-		if (m_ses.alerts().should_post<torrent_checked_alert>())
-		{
-			m_ses.alerts().emplace_alert<torrent_checked_alert>(
-				get_handle());
-		}
-
 		// calling pause will also trigger the auto managed
 		// recalculation
 		// if we just got here by downloading the metadata,
@@ -7553,6 +7558,24 @@ bool is_downloading_state(int const st)
 			if (m_state != torrent_status::finished
 				&& m_state != torrent_status::seeding)
 				finished();
+		}
+
+		// we might be finished already, in which case we should
+		// not switch to downloading mode. If all files are
+		// filtered, we're finished when we start.
+		if (m_state != torrent_status::finished
+			&& m_state != torrent_status::seeding
+			&& !m_seed_mode)
+		{
+			set_state(torrent_status::downloading);
+		}
+
+		INVARIANT_CHECK;
+
+		if (m_ses.alerts().should_post<torrent_checked_alert>())
+		{
+			m_ses.alerts().emplace_alert<torrent_checked_alert>(
+				get_handle());
 		}
 
 #ifndef TORRENT_DISABLE_EXTENSIONS
