@@ -29,7 +29,7 @@ News:
 Fix: Open directory not take effect in next run
 Fix: Remove canclled Magnet URI download
 Update translations
-Update libTorrent to 17055ad4d188cef43196c4f994d5b1f38eae0f9d
+Update libTorrent to f5a201530280497abfc022695c04f96f09d147cf
 
 0.0.9
 New: Drag and Drop for both file and URL/Magnet URI strings
