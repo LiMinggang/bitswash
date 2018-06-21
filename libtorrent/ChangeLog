@@ -1,10 +1,11 @@
+	* add support for Port Control Protocol (PCP)
+	* deliver notification of alerts being dropped via alerts_dropped_alert
 	* deprecated alert::progress_notification alert category, split into
 	  finer grained categories
 	* update plugin interface functions for improved type-safety
 	* implemented support magnet URI extension, select specific file indices
 	  for download, BEP53
 	* make tracker keys multi-homed. remove set_key() function on session.
-	* add API to query whether alerts have been dropped or not
 	* add flags()/set_flags()/unset_flags() to torrent_handle, deprecate individual functions
 	* added alert for block being sent to the send buffer
 	* drop support for windows compilers without std::wstring
@@ -84,14 +85,24 @@
 	* resume data no longer has timestamps of files
 	* require C++11 to build libtorrent
 
+	* fix race condition in part_file
+	* fix part_file open mode compatibility test
+	* fixed race condition in random number generator
+	* fix race condition in stat_cache (disk storage)
+	* improve error handling of failing to change file priority
+	  The API for custom storage implementations was altered
+	* set the hidden attribute when creating the part file
+	* fix tracker announces reporting more data downloaded than the size of the torrent
 	* fix recent regression with force_proxy setting
+
+1.1.7 release
+
 	* don't perform DNS lookups for the DHT bootstrap unless DHT is enabled
 	* fix issue where setting file/piece priority would stop checking
 	* expose post_dht_stats() to python binding
 	* fix backwards compatibility to downloads without partfiles
 	* improve part-file related error messages
 	* fix reporting &redundant= in tracker announces
-	* fix tracker announces reporting more data downloaded than the size of the torrent
 	* fix tie-break in duplicate peer connection disconnect logic
 	* fix issue with SSL tracker connections left in CLOSE_WAIT state
 	* defer truncating existing files until the first time we write to them

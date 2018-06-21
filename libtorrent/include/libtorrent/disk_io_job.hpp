@@ -36,8 +36,6 @@ POSSIBILITY OF SUCH DAMAGE.
 #include "libtorrent/fwd.hpp"
 #include "libtorrent/error_code.hpp"
 #include "libtorrent/tailqueue.hpp"
-#include "libtorrent/peer_request.hpp"
-#include "libtorrent/aux_/block_cache_reference.hpp"
 #include "libtorrent/sha1_hash.hpp"
 #include "libtorrent/disk_interface.hpp"
 #include "libtorrent/aux_/vector.hpp"
@@ -140,6 +138,7 @@ namespace libtorrent {
 		using check_handler = std::function<void(status_t, storage_error const&)>;
 		using rename_handler = std::function<void(std::string, file_index_t, storage_error const&)>;
 		using clear_piece_handler = std::function<void(piece_index_t)>;
+		using set_file_prio_handler = std::function<void(storage_error const&, aux::vector<download_priority_t, file_index_t> const&)>;
 
 		boost::variant<read_handler
 			, write_handler
@@ -148,7 +147,8 @@ namespace libtorrent {
 			, release_handler
 			, check_handler
 			, rename_handler
-			, clear_piece_handler> callback;
+			, clear_piece_handler
+			, set_file_prio_handler> callback;
 
 		// the error code from the file operation
 		// on error, this also contains the path of the

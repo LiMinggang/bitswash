@@ -169,9 +169,9 @@ namespace libtorrent {
 	{
 		explicit scoped_unlocker_impl(Lock& l) : m_lock(&l) { m_lock->unlock(); }
 		~scoped_unlocker_impl() { if (m_lock) m_lock->lock(); }
-		scoped_unlocker_impl(scoped_unlocker_impl&& rhs) : m_lock(rhs.m_lock)
+		scoped_unlocker_impl(scoped_unlocker_impl&& rhs) noexcept : m_lock(rhs.m_lock)
 		{ rhs.m_lock = nullptr; }
-		scoped_unlocker_impl& operator=(scoped_unlocker_impl&& rhs)
+		scoped_unlocker_impl& operator=(scoped_unlocker_impl&& rhs) noexcept
 		{
 			if (&rhs == this) return *this;
 			if (m_lock) m_lock->lock();
@@ -1922,7 +1922,7 @@ constexpr disk_job_flags_t disk_interface::cache_hit;
 
 	void disk_io_thread::async_set_file_priority(storage_index_t const storage
 		, aux::vector<download_priority_t, file_index_t> prios
-		, std::function<void(storage_error const&)> handler)
+		, std::function<void(storage_error const&, aux::vector<download_priority_t, file_index_t> const&)> handler)
 	{
 		disk_io_job* j = allocate_job(job_action_t::file_priority);
 		j->storage = m_torrents[storage]->shared_from_this();

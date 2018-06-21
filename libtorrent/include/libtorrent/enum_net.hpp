@@ -94,7 +94,9 @@ namespace libtorrent {
 	TORRENT_EXTRA_EXPORT bool in_local_network(std::vector<ip_interface> const& net
 		, address const& addr);
 
-	TORRENT_EXTRA_EXPORT address get_default_gateway(io_service& ios, error_code& ec);
+	// returns the first default gateway found if device is empty
+	TORRENT_EXTRA_EXPORT address get_default_gateway(io_service& ios
+		, string_view device, bool v6, error_code& ec);
 
 	// attempt to bind socket to the device with the specified name. For systems
 	// that don't support SO_BINDTODEVICE the socket will be bound to one of the
@@ -105,7 +107,7 @@ namespace libtorrent {
 	// TODO: 3 use string_view for device_name
 	template <class Socket>
 	address bind_socket_to_device(io_service& ios, Socket& sock
-		, boost::asio::ip::tcp const& protocol
+		, tcp const& protocol
 		, char const* device_name, int port, error_code& ec)
 	{
 		tcp::endpoint bind_ep(address_v4::any(), std::uint16_t(port));

@@ -59,6 +59,8 @@ POSSIBILITY OF SUCH DAMAGE.
 #include <boost/shared_array.hpp>
 #include "libtorrent/aux_/disable_warnings_pop.hpp"
 
+#include <bitset>
+
 #if TORRENT_ABI_VERSION == 1
 #define PROGRESS_NOTIFICATION | alert::progress_notification
 #else
@@ -72,8 +74,14 @@ namespace libtorrent {
 	TORRENT_DEPRECATED_EXPORT char const* operation_name(int op);
 #endif
 
+	// internal
+	TORRENT_EXTRA_EXPORT char const* alert_name(int alert_type);
+
 	// user defined alerts should use IDs greater than this
-	static const int user_alert_id = 10000;
+	constexpr int user_alert_id = 10000;
+
+	// this constant represents "max_alert_index" + 1
+	constexpr int num_alert_types = 96;
 
 	enum alert_priority
 	{
@@ -190,7 +198,7 @@ TORRENT_VERSION_NAMESPACE_2
 	static const int alert_type = seq; \
 	virtual int type() const noexcept override { return alert_type; } \
 	virtual alert_category_t category() const noexcept override { return static_category; } \
-	virtual char const* what() const noexcept override { return #name; }
+	virtual char const* what() const noexcept override { return alert_name(alert_type); }
 
 #define TORRENT_DEFINE_ALERT(name, seq) \
 	TORRENT_DEFINE_ALERT_IMPL(name, seq, alert_priority_normal)
@@ -544,7 +552,7 @@ TORRENT_VERSION_NAMESPACE_2
 			, torrent_handle const& h, tcp::endpoint const& ep
 			, int incomp, int comp, string_view u);
 
-		TORRENT_DEFINE_ALERT(scrape_reply_alert, 13)
+		TORRENT_DEFINE_ALERT_PRIO(scrape_reply_alert, 13, alert_priority_critical)
 
 		static constexpr alert_category_t static_category = alert::tracker_notification;
 		std::string message() const override;
@@ -568,7 +576,7 @@ TORRENT_VERSION_NAMESPACE_2
 			, torrent_handle const& h, tcp::endpoint const& ep
 			, string_view u, string_view m);
 
-		TORRENT_DEFINE_ALERT(scrape_failed_alert, 14)
+		TORRENT_DEFINE_ALERT_PRIO(scrape_failed_alert, 14, alert_priority_critical)
 
 		static constexpr alert_category_t static_category = alert::tracker_notification | alert::error_notification;
 		std::string message() const override;
@@ -1326,6 +1334,7 @@ TORRENT_VERSION_NAMESPACE_2
 		udp_error_alert(
 			aux::stack_allocator& alloc
 			, udp::endpoint const& ep
+			, operation_t op
 			, error_code const& ec);
 
 		TORRENT_DEFINE_ALERT(udp_error_alert, 46)
@@ -1335,6 +1344,9 @@ TORRENT_VERSION_NAMESPACE_2
 
 		// the source address associated with the error (if any)
 		aux::noexcept_movable<udp::endpoint> endpoint;
+
+		// the operation that failed
+		operation_t operation;
 
 		// the error code describing the error
 		error_code const error;
@@ -1638,7 +1650,7 @@ TORRENT_VERSION_NAMESPACE_2
 			, torrent_handle const& h, error_code const& ec, string_view file
 			, operation_t op);
 
-		TORRENT_DEFINE_ALERT(fastresume_rejected_alert, 53)
+		TORRENT_DEFINE_ALERT_PRIO(fastresume_rejected_alert, 53, alert_priority_critical)
 
 		static constexpr alert_category_t static_category = alert::status_notification
 			| alert::error_notification;
@@ -1844,7 +1856,7 @@ TORRENT_VERSION_NAMESPACE_2
 	};
 
 	// This alert is posted whenever a tracker responds with a ``trackerid``.
-	// The tracker ID is like a cookie. The libtorrent will store the tracker ID
+	// The tracker ID is like a cookie. libtorrent will store the tracker ID
 	// for this tracker and repeat it in subsequent announces.
 	struct TORRENT_EXPORT trackerid_alert final : tracker_alert
 	{
@@ -2835,6 +2847,25 @@ TORRENT_VERSION_NAMESPACE_2
 		piece_index_t const piece_index;
 	};
 
+	// this alert is posted to indicate to the client that some alerts were
+	// dropped. Dropped meaning that the alert failed to be delivered to the
+	// client. The most common cause of such failure is that the internal alert
+	// queue grew too big (controlled by alert_queue_size).
+	struct TORRENT_EXPORT alerts_dropped_alert final : alert
+	{
+		explicit alerts_dropped_alert(aux::stack_allocator& alloc
+			, std::bitset<num_alert_types> const&);
+		TORRENT_DEFINE_ALERT_PRIO(alerts_dropped_alert, 95, alert_priority_critical + 1)
+
+		static constexpr alert_category_t static_category = alert::error_notification;
+		std::string message() const override;
+
+		// a bitmask indicating which alerts were dropped. Each bit represents the
+		// alert type ID, where bit 0 represents whether any alert of type 0 has
+		// been dropped, and so on.
+		std::bitset<num_alert_types> dropped_alerts;
+	};
+
 TORRENT_VERSION_NAMESPACE_2_END
 
 #undef TORRENT_DEFINE_ALERT_IMPL
@@ -2842,7 +2873,6 @@ TORRENT_VERSION_NAMESPACE_2_END
 #undef TORRENT_DEFINE_ALERT_PRIO
 #undef PROGRESS_NOTIFICATION
 
-	constexpr int num_alert_types = 95; // this constant represents "max_alert_index" + 1
 }
 
 #endif

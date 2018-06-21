@@ -58,6 +58,7 @@ TORRENT_TEST(alerts_types)
 	TEST_EQUAL(name::alert_type, seq); \
 	TEST_EQUAL(name::static_category, cat); \
 	TEST_EQUAL(count_alert_types, seq); \
+	TEST_EQUAL(std::string(alert_name(name::alert_type)) + "_alert", #name); \
 	count_alert_types++;
 
 #if TORRENT_ABI_VERSION == 1
@@ -81,8 +82,8 @@ TORRENT_TEST(alerts_types)
 	TEST_ALERT_TYPE(state_changed_alert, 10, 1, alert::status_notification);
 	TEST_ALERT_TYPE(tracker_error_alert, 11, 1, alert::tracker_notification | alert::error_notification);
 	TEST_ALERT_TYPE(tracker_warning_alert, 12, 0, alert::tracker_notification | alert::error_notification);
-	TEST_ALERT_TYPE(scrape_reply_alert, 13, 0, alert::tracker_notification);
-	TEST_ALERT_TYPE(scrape_failed_alert, 14, 0, alert::tracker_notification | alert::error_notification);
+	TEST_ALERT_TYPE(scrape_reply_alert, 13, 2, alert::tracker_notification);
+	TEST_ALERT_TYPE(scrape_failed_alert, 14, 2, alert::tracker_notification | alert::error_notification);
 	TEST_ALERT_TYPE(tracker_reply_alert, 15, 0, alert::tracker_notification);
 	TEST_ALERT_TYPE(dht_reply_alert, 16, 0, alert::dht_notification | alert::tracker_notification);
 	TEST_ALERT_TYPE(tracker_announce_alert, 17, 0, alert::tracker_notification);
@@ -121,7 +122,7 @@ TORRENT_TEST(alerts_types)
 	TEST_ALERT_TYPE(portmap_error_alert, 50, 0, alert::port_mapping_notification | alert::error_notification);
 	TEST_ALERT_TYPE(portmap_alert, 51, 0, alert::port_mapping_notification);
 	TEST_ALERT_TYPE(portmap_log_alert, 52, 0, alert::port_mapping_log_notification);
-	TEST_ALERT_TYPE(fastresume_rejected_alert, 53, 0, alert::status_notification | alert::error_notification);
+	TEST_ALERT_TYPE(fastresume_rejected_alert, 53, 2, alert::status_notification | alert::error_notification);
 	TEST_ALERT_TYPE(peer_blocked_alert, 54, 0, alert::ip_block_notification);
 	TEST_ALERT_TYPE(dht_announce_alert, 55, 0, alert::dht_notification);
 	TEST_ALERT_TYPE(dht_get_peers_alert, 56, 0, alert::dht_notification);
@@ -171,10 +172,11 @@ TORRENT_TEST(alerts_types)
 	TEST_ALERT_TYPE(session_stats_header_alert, 92, 0, alert::stats_notification);
 	TEST_ALERT_TYPE(dht_sample_infohashes_alert, 93, 0, alert::dht_operation_notification);
 	TEST_ALERT_TYPE(block_uploaded_alert, 94, 0, PROGRESS_NOTIFICATION alert::upload_notification);
+	TEST_ALERT_TYPE(alerts_dropped_alert, 95, 3, alert::error_notification);
 
 #undef TEST_ALERT_TYPE
 
-	TEST_EQUAL(num_alert_types, 95);
+	TEST_EQUAL(num_alert_types, 96);
 	TEST_EQUAL(num_alert_types, count_alert_types);
 }
 

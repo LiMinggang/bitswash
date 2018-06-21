@@ -33,7 +33,7 @@ POSSIBILITY OF SUCH DAMAGE.
 #include "libtorrent/utp_stream.hpp"
 #include "libtorrent/udp_socket.hpp"
 #include "libtorrent/utp_socket_manager.hpp"
-#include "libtorrent/instantiate_connection.hpp"
+#include "libtorrent/aux_/instantiate_connection.hpp"
 #include "libtorrent/socket_io.hpp"
 #include "libtorrent/socket.hpp" // for TORRENT_HAS_DONT_FRAGMENT
 #include "libtorrent/broadcast_socket.hpp" // for is_teredo
@@ -45,8 +45,6 @@ POSSIBILITY OF SUCH DAMAGE.
 // #define TORRENT_DEBUG_MTU 1135
 
 namespace libtorrent {
-
-	using namespace libtorrent::aux;
 
 	utp_socket_manager::utp_socket_manager(
 		send_fun_t const& send_fun
@@ -183,8 +181,7 @@ namespace libtorrent {
 			return utp_incoming_packet(m_last_socket, p, ep, receive_time);
 		}
 
-		std::pair<socket_map_t::iterator, socket_map_t::iterator> r =
-			m_utp_sockets.equal_range(id);
+		auto r = m_utp_sockets.equal_range(id);
 
 		for (; r.first != r.second; ++r.first)
 		{
@@ -216,7 +213,7 @@ namespace libtorrent {
 			// create the new socket with this ID
 			m_new_connection = id;
 
-			instantiate_connection(m_ios, aux::proxy_settings(), *c
+			aux::instantiate_connection(m_ios, aux::proxy_settings(), *c
 				, m_ssl_context, this, true, false);
 
 			utp_stream* str = nullptr;
@@ -351,7 +348,7 @@ namespace libtorrent {
 			recv_id = send_id - 1;
 		}
 		utp_socket_impl* impl = construct_utp_impl(recv_id, send_id, str, *this);
-		m_utp_sockets.insert(std::make_pair(recv_id, impl));
+		m_utp_sockets.emplace(recv_id, impl);
 		return impl;
 	}
 }

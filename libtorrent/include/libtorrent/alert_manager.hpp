@@ -54,22 +54,16 @@ namespace libtorrent {
 	struct plugin;
 #endif
 
-	// this bitset is used to indicate which alert types have been dropped since
-	// last queried.
-	using dropped_alerts_t = std::bitset<num_alert_types>;
-
 	class TORRENT_EXTRA_EXPORT alert_manager
 	{
 	public:
-		alert_manager(int queue_limit
+		explicit alert_manager(int queue_limit
 			, alert_category_t alert_mask = alert::error_notification);
 
 		alert_manager(alert_manager const&) = delete;
 		alert_manager& operator=(alert_manager const&) = delete;
 
 		~alert_manager();
-
-		dropped_alerts_t dropped_alerts();
 
 		template <class T, typename... Args>
 		void emplace_alert(Args&&... args) try
@@ -79,8 +73,8 @@ namespace libtorrent {
 			// don't add more than this number of alerts, unless it's a
 			// high priority alert, in which case we try harder to deliver it
 			// for high priority alerts, double the upper limit
-			if (m_alerts[m_generation].size() >= m_queue_size_limit
-				* (1 + T::priority))
+			if (m_alerts[m_generation].size() / (1 + T::priority)
+				>= m_queue_size_limit)
 			{
 				// record that we dropped an alert of this type
 				m_dropped.set(T::alert_type);
@@ -135,9 +129,7 @@ namespace libtorrent {
 
 		// this mutex protects everything. Since it's held while executing user
 		// callbacks (the notify function and extension on_alert()) it must be
-		// recursive to post new alerts. This is implemented by storing the
-		// current thread-id in m_mutex_holder, if it matches ours, we don't need
-		// to lock
+		// recursive to support recursively post new alerts.
 		mutable std::recursive_mutex m_mutex;
 		std::condition_variable_any m_condition;
 		std::atomic<alert_category_t> m_alert_mask;
@@ -147,7 +139,7 @@ namespace libtorrent {
 		// an alert (because the queue is full or of some other error) we set the
 		// corresponding bit in this mask, to communicate to the client that it
 		// may have missed an update.
-		dropped_alerts_t m_dropped;
+		std::bitset<num_alert_types> m_dropped;
 
 		// this function (if set) is called whenever the number of alerts in
 		// the alert queue goes from 0 to 1. The client is expected to wake up

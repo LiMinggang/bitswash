@@ -63,7 +63,6 @@ nobase_include_HEADERS = \
   http_tracker_connection.hpp  \
   i2p_stream.hpp               \
   identify_client.hpp          \
-  instantiate_connection.hpp   \
   invariant_check.hpp          \
   io.hpp                       \
   io_service.hpp               \
@@ -160,6 +159,7 @@ nobase_include_HEADERS = \
   xml_parse.hpp                \
   span.hpp                     \
   download_priority.hpp        \
+  index_range.hpp              \
   \
   aux_/allocating_handler.hpp       \
   aux_/aligned_storage.hpp          \
@@ -215,6 +215,8 @@ nobase_include_HEADERS = \
   aux_/ip_notifier.hpp              \
   aux_/noexcept_movable.hpp         \
   aux_/torrent_impl.hpp             \
+  aux_/instantiate_connection.hpp   \
+  aux_/range.hpp                    \
   \
   extensions/smart_ban.hpp          \
   extensions/ut_metadata.hpp        \

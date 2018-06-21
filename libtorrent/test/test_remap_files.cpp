@@ -63,16 +63,14 @@ void test_remap_files(storage_mode_t storage_mode = storage_mode_sparse)
 
 	// create a torrent with 2 files, remap them into 3 files and make sure
 	// the file priorities don't break things
-	static const int file_sizes[] = {100000, 100000};
-	const int num_files = 2;
-	const int piece_size = 0x8000;
-	auto t = make_torrent(file_sizes, num_files, piece_size);
+	static std::array<const int, 2> const file_sizes{{100000, 100000}};
+	int const piece_size = 0x8000;
+	auto t = make_torrent(file_sizes, piece_size);
 
-	static const int remap_file_sizes[] = {10000, 10000, int(t->total_size() - 20000)};
-	int const num_new_files = 3;
+	static std::array<const int, 3> const remap_file_sizes
+		{{10000, 10000, int(t->total_size() - 20000)}};
 
-	file_storage fs = make_file_storage(remap_file_sizes, num_new_files
-		, piece_size, "multifile-");
+	file_storage fs = make_file_storage(remap_file_sizes, piece_size, "multifile-");
 
 	t->remap_files(fs);
 
@@ -95,14 +93,14 @@ void test_remap_files(storage_mode_t storage_mode = storage_mode_sparse)
 	torrent_handle tor1 = ses.add_torrent(params);
 
 	// write pieces
-	for (piece_index_t i(0); i < fs.end_piece(); ++i)
+	for (auto const i : fs.piece_range())
 	{
 		std::vector<char> const piece = generate_piece(i, fs.piece_size(i));
 		tor1.add_piece(i, piece.data());
 	}
 
 	// read pieces
-	for (piece_index_t i(0); i < fs.end_piece(); ++i)
+	for (auto const i : fs.piece_range())
 	{
 		tor1.read_piece(i);
 	}
@@ -162,7 +160,7 @@ void test_remap_files(storage_mode_t storage_mode = storage_mode_sparse)
 	// just because we can read them back throught libtorrent, doesn't mean the
 	// files have hit disk yet (because of the cache). Retry a few times to try
 	// to pick up the files
-	for (file_index_t i(0); i < file_index_t(num_new_files); ++i)
+	for (file_index_t i(0); i < file_index_t(int(remap_file_sizes.size())); ++i)
 	{
 		std::string name = fs.file_path(i);
 		for (int j = 0; j < 10 && !exists(name); ++j)

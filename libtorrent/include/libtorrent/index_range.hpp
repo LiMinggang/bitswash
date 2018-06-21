@@ -1,6 +1,6 @@
 /*
 
-Copyright (c) 2007-2018, Arvid Norberg
+Copyright (c) 2018, Arvid Norberg
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
@@ -30,27 +30,43 @@ POSSIBILITY OF SUCH DAMAGE.
 
 */
 
-#ifndef TORRENT_INSTANTIATE_CONNECTION
-#define TORRENT_INSTANTIATE_CONNECTION
-
-#include "libtorrent/aux_/socket_type.hpp"
+#ifndef TORRENT_INDEX_RANGE_HPP
+#define TORRENT_INDEX_RANGE_HPP
 
 namespace libtorrent {
 
-	namespace aux {
-
-		struct proxy_settings;
+template <typename Index>
+struct index_iter
+{
+	explicit index_iter(Index i) : m_idx(i) {}
+	index_iter operator++()
+	{
+		++m_idx;
+		return *this;
 	}
+	index_iter operator--()
+	{
+		--m_idx;
+		return *this;
+	}
+	Index operator*() const { return m_idx; }
+	friend inline bool operator==(index_iter lhs, index_iter rhs)
+	{ return lhs.m_idx == rhs.m_idx; }
+	friend inline bool operator!=(index_iter lhs, index_iter rhs)
+	{ return lhs.m_idx != rhs.m_idx; }
+private:
+	Index m_idx;
+};
 
-	struct utp_socket_manager;
+template <typename Index>
+struct index_range
+{
+	Index _begin;
+	Index _end;
+	index_iter<Index> begin() { return index_iter<Index>{_begin}; }
+	index_iter<Index> end() { return index_iter<Index>{_end}; }
+};
 
-	// instantiate a socket_type (s) according to the specified criteria
-	TORRENT_EXTRA_EXPORT bool instantiate_connection(io_service& ios
-		, aux::proxy_settings const& ps, aux::socket_type& s
-		, void* ssl_context
-		, utp_socket_manager* sm
-		, bool peer_connection
-		, bool tracker_connection);
 }
 
 #endif
