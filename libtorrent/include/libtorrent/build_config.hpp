@@ -1,6 +1,6 @@
 /*
 
-Copyright (c) 2003-2017, Arvid Norberg
+Copyright (c) 2010-2018, Arvid Norberg
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
@@ -30,28 +30,45 @@ POSSIBILITY OF SUCH DAMAGE.
 
 */
 
-#ifndef TORRENT_PORTMAP_HPP_INCLUDED
-#define TORRENT_PORTMAP_HPP_INCLUDED
+#ifndef TORRENT_BUILD_CONFIG_HPP_INCLUDED
+#define TORRENT_BUILD_CONFIG_HPP_INCLUDED
 
 #include "libtorrent/config.hpp"
-#include "libtorrent/units.hpp"
+#include <boost/preprocessor/cat.hpp>
+#include <boost/preprocessor/stringize.hpp>
 
-namespace libtorrent {
+// TODO: 2 instead of using a dummy function to cause link errors when
+// incompatible build configurations are used, make the namespace name
+// depend on the configuration, and have a using declaration in the headers
+// to pull it into libtorrent.
+#if TORRENT_USE_IPV6
+#define TORRENT_CFG_IPV6 ipv6_
+#else
+#define TORRENT_CFG_IPV6 noipv6_
+#endif
 
-	enum class portmap_transport : std::uint8_t
-	{
-		// natpmp can be NAT-PMP or PCP
-		natpmp, upnp
-	};
+#ifdef TORRENT_NO_DEPRECATE
+#define TORRENT_CFG_DEPR nodeprecate_
+#else
+#define TORRENT_CFG_DEPR deprecated_
+#endif
 
-	enum class portmap_protocol : std::uint8_t
-	{
-		none, tcp, udp
-	};
+#if defined TORRENT_EXPORT_EXTRA
+#if TORRENT_USE_ASSERTS
+#define TORRENT_CFG_ASSERTS asserts_
+#else
+#define TORRENT_CFG_ASSERTS noasserts_
+#endif
+#else
+#define TORRENT_CFG_ASSERTS
+#endif
 
-	// this type represents an index referring to a port mapping
-	using port_mapping_t = aux::strong_typedef<int, struct port_mapping_tag>;
+#define TORRENT_CFG \
+	BOOST_PP_CAT(TORRENT_CFG_IPV6, \
+	BOOST_PP_CAT(TORRENT_CFG_DEPR, \
+	TORRENT_CFG_ASSERTS))
 
-}
+#define TORRENT_CFG_STRING BOOST_PP_STRINGIZE(TORRENT_CFG)
 
-#endif  //TORRENT_PORTMAP_HPP_INCLUDED
+#endif
+

@@ -28,8 +28,9 @@ News:
 0.0.10
 Fix: Open directory not take effect in next run
 Fix: Remove canclled Magnet URI download
+Fix: Text blurry issue under high DPI Windows 10
 Update translations
-Update libTorrent to f5a201530280497abfc022695c04f96f09d147cf
+Update libTorrent to ab56bf964f1ae214bf31a5972a27e66dd1ca38ee
 
 0.0.9
 New: Drag and Drop for both file and URL/Magnet URI strings

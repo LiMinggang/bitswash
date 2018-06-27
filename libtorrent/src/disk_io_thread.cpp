@@ -321,7 +321,7 @@ constexpr disk_job_flags_t disk_interface::cache_hit;
 
 		int const num_threads = m_settings.get_int(settings_pack::aio_threads);
 		// add one hasher thread for every three generic threads
-		int const num_hash_threads = num_threads / 4;
+		int const num_hash_threads = num_threads / hasher_thread_divisor;
 		m_generic_threads.set_max_threads(num_threads - num_hash_threads);
 		m_hash_threads.set_max_threads(num_hash_threads);
 	}
@@ -821,12 +821,12 @@ constexpr disk_job_flags_t disk_interface::cache_hit;
 	{
 		jobqueue_t jobs;
 		fail_jobs_impl(e, jobs_, jobs);
-		if (jobs.size()) add_completed_jobs(jobs);
+		if (!jobs.empty()) add_completed_jobs(jobs);
 	}
 
 	void disk_io_thread::fail_jobs_impl(storage_error const& e, jobqueue_t& src, jobqueue_t& dst)
 	{
-		while (src.size())
+		while (!src.empty())
 		{
 			disk_io_job* j = src.pop_front();
 			TORRENT_ASSERT((j->flags & disk_io_job::in_progress) || !j->storage);
@@ -1307,8 +1307,7 @@ constexpr disk_job_flags_t disk_interface::cache_hit;
 		// if this is the last piece, adjust the size of the
 		// last buffer to match up
 		iov[iov_len - 1] = iov[iov_len - 1].first(aux::numeric_cast<std::size_t>(
-				std::min(int(piece_size - adjusted_offset)
-			- (iov_len - 1) * default_block_size, default_block_size)));
+				std::min(piece_size - (iov_len - 1) * default_block_size, default_block_size)));
 		TORRENT_ASSERT(iov[iov_len - 1].size() > 0);
 
 		// at this point, all the buffers are allocated and iov is initialized
@@ -1350,12 +1349,12 @@ constexpr disk_job_flags_t disk_interface::cache_hit;
 			}
 			TORRENT_PIECE_ASSERT(pe->outstanding_read == 1, pe);
 
-			if (pe->read_jobs.size() > 0)
+			if (!pe->read_jobs.empty())
 				fail_jobs_impl(j->error, pe->read_jobs, completed_jobs);
-			TORRENT_PIECE_ASSERT(pe->read_jobs.size() == 0, pe);
+			TORRENT_PIECE_ASSERT(pe->read_jobs.empty(), pe);
 			pe->outstanding_read = 0;
 #if TORRENT_USE_ASSERTS
-			pe->piece_log.push_back(piece_log_t(piece_log_t::clear_outstanding_jobs));
+			pe->piece_log.emplace_back(piece_log_t::clear_outstanding_jobs);
 #endif
 			m_disk_cache.maybe_free_piece(pe);
 			return status_t::fatal_disk_error;
@@ -1397,10 +1396,10 @@ constexpr disk_job_flags_t disk_interface::cache_hit;
 		{
 			fail_jobs_impl(storage_error(boost::asio::error::operation_aborted)
 				, pe->read_jobs, completed_jobs);
-			TORRENT_PIECE_ASSERT(pe->read_jobs.size() == 0, pe);
+			TORRENT_PIECE_ASSERT(pe->read_jobs.empty(), pe);
 			pe->outstanding_read = 0;
 #if TORRENT_USE_ASSERTS
-			pe->piece_log.push_back(piece_log_t(piece_log_t::clear_outstanding_jobs));
+			pe->piece_log.emplace_back(piece_log_t::clear_outstanding_jobs);
 #endif
 			m_disk_cache.maybe_free_piece(pe);
 			return;
@@ -1417,7 +1416,7 @@ constexpr disk_job_flags_t disk_interface::cache_hit;
 		// the next job to issue (i.e. this is a cache-miss)
 		disk_io_job* next_job = nullptr;
 
-		while (stalled_jobs.size() > 0)
+		while (!stalled_jobs.empty())
 		{
 			disk_io_job* j = stalled_jobs.pop_front();
 			TORRENT_ASSERT(j->flags & disk_io_job::in_progress);
@@ -1460,10 +1459,10 @@ constexpr disk_job_flags_t disk_interface::cache_hit;
 		}
 		else
 		{
-			TORRENT_PIECE_ASSERT(pe->read_jobs.size() == 0, pe);
+			TORRENT_PIECE_ASSERT(pe->read_jobs.empty(), pe);
 			pe->outstanding_read = 0;
 #if TORRENT_USE_ASSERTS
-			pe->piece_log.push_back(piece_log_t(piece_log_t::clear_outstanding_jobs));
+			pe->piece_log.emplace_back(piece_log_t::clear_outstanding_jobs);
 #endif
 			m_disk_cache.maybe_free_piece(pe);
 		}
@@ -1789,8 +1788,7 @@ constexpr disk_job_flags_t disk_interface::cache_hit;
 		cached_piece_entry* pe = m_disk_cache.find_piece(j);
 		if (pe != nullptr && !pe->hashing && pe->hash && pe->hash->offset == piece_size)
 		{
-			sha1_hash result = pe->hash->h.final();
-			j->d.piece_hash = result;
+			j->d.piece_hash = pe->hash->h.final();
 
 			pe->hash.reset();
 
@@ -2065,9 +2063,9 @@ constexpr disk_job_flags_t disk_interface::cache_hit;
 			else pe->jobs.push_back(j);
 			j = next;
 		}
-		if (hash_jobs.size())
+		if (!hash_jobs.empty())
 		{
-			sha1_hash result = pe->hash->h.final();
+			sha1_hash const result = pe->hash->h.final();
 
 			for (auto i = hash_jobs.iterate(); i.get(); i.next())
 			{
@@ -2131,8 +2129,7 @@ constexpr disk_job_flags_t disk_interface::cache_hit;
 
 		m_disk_cache.free_buffer(iov.data());
 
-		sha1_hash piece_hash = h.final();
-		j->d.piece_hash = piece_hash;
+		j->d.piece_hash = h.final();
 		return ret >= 0 ? status_t::no_error : status_t::fatal_disk_error;
 	}
 
@@ -2166,8 +2163,7 @@ constexpr disk_job_flags_t disk_interface::cache_hit;
 			if (pe->hash && !pe->hashing && pe->hash->offset == piece_size)
 			{
 				DLOG("do_hash: (%d) (already done)\n", int(pe->piece));
-				sha1_hash piece_hash = pe->hash->h.final();
-				j->d.piece_hash = piece_hash;
+				j->d.piece_hash = pe->hash->h.final();
 				pe->hash.reset();
 				if (pe->cache_state != cached_piece_entry::volatile_read_lru)
 					pe->hashing_done = 1;
@@ -2224,6 +2220,26 @@ constexpr disk_job_flags_t disk_interface::cache_hit;
 
 		int const blocks_in_piece = (piece_size + default_block_size - 1) / default_block_size;
 
+		// we don't care about anything to the left of ph->offset
+		// since those blocks have already been hashed.
+		// we just care about [firs_block, first_block + blocks_left]
+		int const first_block = ph->offset / default_block_size;
+		int const blocks_left = blocks_in_piece - first_block;
+
+		//   ph->offset
+		//           |  first_block
+		//           |   |
+		//           v   v
+		// +---+---+---+---+---+---+
+		// |   |   |   |   |   |   |
+		// +---+---+---+---+---+---+
+		//
+		//             \-----------/
+		//               blocks_left
+		//
+		// \-----------------------/
+		//     blocks_in_piece
+
 		// keep track of which blocks we have locked by incrementing
 		// their refcounts. This is used to decrement only these blocks
 		// later.
@@ -2234,13 +2250,13 @@ constexpr disk_job_flags_t disk_interface::cache_hit;
 		// increment the refcounts of all
 		// blocks up front, and then hash them without holding the lock
 		TORRENT_PIECE_ASSERT(ph->offset % default_block_size == 0, pe);
-		for (int i = ph->offset / default_block_size; i < blocks_in_piece; ++i)
+		for (int i = 0; i < blocks_left; ++i)
 		{
 			// is the block not in the cache?
-			if (pe->blocks[i].buf == nullptr) continue;
+			if (pe->blocks[first_block + i].buf == nullptr) continue;
 
-			// if we fail to lock the block, it' no longer in the cache
-			if (m_disk_cache.inc_block_refcount(pe, i, block_cache::ref_hashing) == false)
+			// if we fail to lock the block, it's no longer in the cache
+			if (m_disk_cache.inc_block_refcount(pe, first_block + i, block_cache::ref_hashing) == false)
 				continue;
 
 			locked_blocks[num_locked_blocks++] = i;
@@ -2257,91 +2273,142 @@ constexpr disk_job_flags_t disk_interface::cache_hit;
 
 		l.unlock();
 
-		status_t ret = status_t::no_error;
-		int next_locked_block = 0;
-		for (int i = offset / default_block_size; i < blocks_in_piece; ++i)
+		bool slow_path = true;
+
+		if (num_locked_blocks == 0)
 		{
-			if (next_locked_block < num_locked_blocks
-				&& locked_blocks[next_locked_block] == i)
+			// this is the fast path where we don't have any blocks in the cache.
+			// We'll need to read all (remaining blocks) from disk
+			TORRENT_ALLOCA(iov, iovec_t, blocks_left);
+			if (m_disk_cache.allocate_iovec(iov) >= 0)
 			{
-				int const len = std::min(default_block_size, piece_size - offset);
-				++next_locked_block;
-				TORRENT_PIECE_ASSERT(pe->blocks[i].buf, pe);
-				TORRENT_PIECE_ASSERT(offset == i * default_block_size, pe);
-				offset += len;
-				ph->h.update({pe->blocks[i].buf, aux::numeric_cast<std::size_t>(len)});
-			}
-			else
-			{
-				iovec_t const iov = { m_disk_cache.allocate_buffer("hashing")
-					, aux::numeric_cast<std::size_t>(std::min(default_block_size, piece_size - offset))};
-
-				if (iov.data() == nullptr)
-				{
-					l.lock();
-
-					// decrement the refcounts of the blocks we just hashed
-					for (int k = 0; k < num_locked_blocks; ++k)
-						m_disk_cache.dec_block_refcount(pe, locked_blocks[k], block_cache::ref_hashing);
-
-					refcount_holder.release();
-					pe->hashing = false;
-					pe->hash.reset();
-
-					m_disk_cache.maybe_free_piece(pe);
-
-					j->error.ec = errors::no_memory;
-					j->error.operation = operation_t::alloc_cache_piece;
-					return status_t::fatal_disk_error;
-				}
-
-				DLOG("do_hash: reading (piece: %d block: %d)\n"
-					, static_cast<int>(pe->piece), i);
+				// if this is the last piece, adjust the size of the
+				// last buffer to match up
+				iov[blocks_left - 1] = iov[blocks_left - 1].first(aux::numeric_cast<std::size_t>(
+					piece_size - (blocks_in_piece - 1) * default_block_size));
+				TORRENT_ASSERT(iov[blocks_left - 1].size() > 0);
+				TORRENT_ASSERT(iov[blocks_left - 1].size() <= default_block_size);
 
 				time_point const start_time = clock_type::now();
+				int const read_ret = j->storage->readv(iov
+					, j->piece, offset, file_flags, j->error);
 
-				TORRENT_PIECE_ASSERT(offset == i * default_block_size, pe);
-				int read_ret = j->storage->readv(iov, j->piece
-					, offset, file_flags, j->error);
-
-				if (read_ret < 0)
-				{
-					ret = status_t::fatal_disk_error;
-					TORRENT_ASSERT(j->error.ec && j->error.operation != operation_t::unknown);
-					m_disk_cache.free_buffer(iov.data());
-					break;
-				}
-
-				// treat a short read as an error. The hash will be invalid, the
-				// block cannot be cached and the main thread should skip the rest
-				// of this file
-				if (read_ret != int(iov.size()))
-				{
-					ret = status_t::fatal_disk_error;
-					j->error.ec = boost::asio::error::eof;
-					j->error.operation = operation_t::file_read;
-					m_disk_cache.free_buffer(iov.data());
-					break;
-				}
-
-				if (!j->error.ec)
+				if (read_ret == piece_size - offset)
 				{
 					std::int64_t const read_time = total_microseconds(clock_type::now() - start_time);
 
-					m_stats_counters.inc_stats_counter(counters::num_read_back);
-					m_stats_counters.inc_stats_counter(counters::num_blocks_read);
+					m_stats_counters.inc_stats_counter(counters::num_read_back, blocks_left);
+					m_stats_counters.inc_stats_counter(counters::num_blocks_read, blocks_left);
 					m_stats_counters.inc_stats_counter(counters::num_read_ops);
 					m_stats_counters.inc_stats_counter(counters::disk_read_time, read_time);
 					m_stats_counters.inc_stats_counter(counters::disk_job_time, read_time);
+
+					for (auto const& v : iov)
+					{
+						offset += int(v.size());
+						ph->h.update(v);
+					}
+
+					slow_path = false;
+
+					TORRENT_ASSERT(offset == piece_size);
+
+					l.lock();
+					m_disk_cache.insert_blocks(pe, first_block, iov, j);
+					l.unlock();
 				}
+				else
+				{
+					m_disk_cache.free_iovec(iov);
+				}
+			}
+		}
 
-				TORRENT_PIECE_ASSERT(offset == i * default_block_size, pe);
-				offset += int(iov.size());
-				ph->h.update(iov);
+		status_t ret = status_t::no_error;
+		if (slow_path)
+		{
+			int next_locked_block = 0;
+			for (int i = 0; i < blocks_left; ++i)
+			{
+				if (next_locked_block < num_locked_blocks
+					&& locked_blocks[next_locked_block] == i)
+				{
+					int const len = std::min(default_block_size, piece_size - offset);
+					++next_locked_block;
+					TORRENT_PIECE_ASSERT(pe->blocks[first_block + i].buf, pe);
+					TORRENT_PIECE_ASSERT(offset == (first_block + i) * default_block_size, pe);
+					offset += len;
+					ph->h.update({pe->blocks[first_block + i].buf, aux::numeric_cast<std::size_t>(len)});
+				}
+				else
+				{
+					iovec_t const iov = { m_disk_cache.allocate_buffer("hashing")
+						, aux::numeric_cast<std::size_t>(std::min(default_block_size, piece_size - offset))};
 
-				l.lock();
-				m_disk_cache.insert_blocks(pe, i, iov, j);
-				l.unlock();
+					if (iov.data() == nullptr)
+					{
+						l.lock();
+						// decrement the refcounts of the blocks we just hashed
+						for (int k = 0; k < num_locked_blocks; ++k)
+							m_disk_cache.dec_block_refcount(pe, first_block + locked_blocks[k], block_cache::ref_hashing);
+
+						refcount_holder.release();
+						pe->hashing = false;
+						pe->hash.reset();
+						m_disk_cache.maybe_free_piece(pe);
+
+						j->error.ec = errors::no_memory;
+						j->error.operation = operation_t::alloc_cache_piece;
+						return status_t::fatal_disk_error;
+					}
+
+					DLOG("do_hash: reading (piece: %d block: %d)\n"
+						, static_cast<int>(pe->piece), first_block + i);
+
+					time_point const start_time = clock_type::now();
+					TORRENT_PIECE_ASSERT(offset == (first_block + i) * default_block_size, pe);
+					int const read_ret = j->storage->readv(iov, j->piece
+						, offset, file_flags, j->error);
+
+					if (read_ret < 0)
+					{
+						ret = status_t::fatal_disk_error;
+						TORRENT_ASSERT(j->error.ec && j->error.operation != operation_t::unknown);
+						m_disk_cache.free_buffer(iov.data());
+						break;
+					}
+
+					// treat a short read as an error. The hash will be invalid, the
+					// block cannot be cached and the main thread should skip the rest
+					// of this file
+					if (read_ret != int(iov.size()))
+					{
+						ret = status_t::fatal_disk_error;
+						j->error.ec = boost::asio::error::eof;
+						j->error.operation = operation_t::file_read;
+						m_disk_cache.free_buffer(iov.data());
+						break;
+					}
+
+					if (!j->error.ec)
+					{
+						std::int64_t const read_time = total_microseconds(clock_type::now() - start_time);
+
+						m_stats_counters.inc_stats_counter(counters::num_read_back);
+						m_stats_counters.inc_stats_counter(counters::num_blocks_read);
+						m_stats_counters.inc_stats_counter(counters::num_read_ops);
+						m_stats_counters.inc_stats_counter(counters::disk_read_time, read_time);
+						m_stats_counters.inc_stats_counter(counters::disk_job_time, read_time);
+					}
+
+					TORRENT_PIECE_ASSERT(offset == (first_block + i) * default_block_size, pe);
+					offset += int(iov.size());
+					ph->h.update(iov);
+
+					l.lock();
+					m_disk_cache.insert_blocks(pe, first_block + i, iov, j);
+					l.unlock();
+				}
 			}
 		}
 
@@ -2352,7 +2419,7 @@ constexpr disk_job_flags_t disk_interface::cache_hit;
 
 		// decrement the refcounts of the blocks we just hashed
 		for (int i = 0; i < num_locked_blocks; ++i)
-			m_disk_cache.dec_block_refcount(pe, locked_blocks[i], block_cache::ref_hashing);
+			m_disk_cache.dec_block_refcount(pe, first_block + locked_blocks[i], block_cache::ref_hashing);
 
 		refcount_holder.release();
 
@@ -2549,7 +2616,7 @@ constexpr disk_job_flags_t disk_interface::cache_hit;
 		m_disk_cache.update_stats_counters(c);
 	}
 
-	void disk_io_thread::get_cache_info(cache_status* ret, storage_index_t st
+	void disk_io_thread::get_cache_info(cache_status* ret, storage_index_t const st
 		, bool const no_pieces, bool const session) const
 	{
 		std::unique_lock<std::mutex> l(m_cache_mutex);
@@ -2651,7 +2718,7 @@ constexpr disk_job_flags_t disk_interface::cache_hit;
 		if (pe == nullptr) return status_t::no_error;
 
 #if TORRENT_USE_ASSERTS
-		pe->piece_log.push_back(piece_log_t(j->action));
+		pe->piece_log.emplace_back(j->action);
 #endif
 		try_flush_hashed(pe, m_settings.get_int(
 			settings_pack::write_cache_line_size), completed_jobs, l);
@@ -2680,7 +2747,7 @@ constexpr disk_job_flags_t disk_interface::cache_hit;
 //		TORRENT_PIECE_ASSERT(pe->outstanding_flush == 1, pe);
 
 #if TORRENT_USE_ASSERTS
-		pe->piece_log.push_back(piece_log_t(j->action));
+		pe->piece_log.emplace_back(j->action);
 #endif
 		TORRENT_PIECE_ASSERT(pe->cache_state <= cached_piece_entry::read_lru1
 			|| pe->cache_state == cached_piece_entry::read_lru2, pe);
@@ -2753,7 +2820,7 @@ constexpr disk_job_flags_t disk_interface::cache_hit;
 		pe->hashing_done = false;
 
 #if TORRENT_USE_ASSERTS
-		pe->piece_log.push_back(piece_log_t(j->action));
+		pe->piece_log.emplace_back(j->action);
 #endif
 
 		// evict_piece returns true if the piece was in fact
@@ -2936,7 +3003,7 @@ constexpr disk_job_flags_t disk_interface::cache_hit;
 		jobqueue_t completed_jobs;
 		flush_expired_write_blocks(completed_jobs, l);
 		l.unlock();
-		if (completed_jobs.size())
+		if (!completed_jobs.empty())
 			add_completed_jobs(completed_jobs);
 	}
 
@@ -2953,7 +3020,7 @@ constexpr disk_job_flags_t disk_interface::cache_hit;
 		}
 
 		perform_job(j, completed_jobs);
-		if (completed_jobs.size())
+		if (!completed_jobs.empty())
 			add_completed_jobs(completed_jobs);
 	}
 
@@ -3179,9 +3246,9 @@ constexpr disk_job_flags_t disk_interface::cache_hit;
 			// jobs are added to the new_completed_jobs queue and
 			// we need to re-issue those
 			add_completed_jobs_impl(jobs, new_completed_jobs);
-			TORRENT_ASSERT(jobs.size() == 0);
+			TORRENT_ASSERT(jobs.empty());
 			jobs.swap(new_completed_jobs);
-		} while (jobs.size() > 0);
+		} while (!jobs.empty());
 	}
 
 	void disk_io_thread::add_completed_jobs_impl(jobqueue_t& jobs
@@ -3189,7 +3256,7 @@ constexpr disk_job_flags_t disk_interface::cache_hit;
 	{
 		jobqueue_t new_jobs;
 		int ret = 0;
-		for (tailqueue_iterator<disk_io_job> i = jobs.iterate(); i.get(); i.next())
+		for (auto i = jobs.iterate(); i.get(); i.next())
 		{
 			disk_io_job* j = i.get();
 			TORRENT_ASSERT((j->flags & disk_io_job::in_progress) || !j->storage);
@@ -3224,10 +3291,10 @@ constexpr disk_job_flags_t disk_interface::cache_hit;
 		m_stats_counters.inc_stats_counter(counters::blocked_disk_jobs, -ret);
 		TORRENT_ASSERT(int(m_stats_counters[counters::blocked_disk_jobs]) >= 0);
 
-		if (new_jobs.size() > 0)
+		if (!new_jobs.empty())
 		{
 #if TORRENT_USE_ASSERTS
-			for (tailqueue_iterator<disk_io_job> i = new_jobs.iterate(); i.get(); i.next())
+			for (auto i = new_jobs.iterate(); i.get(); i.next())
 			{
 				disk_io_job const* j = static_cast<disk_io_job const*>(i.get());
 				TORRENT_ASSERT((j->flags & disk_io_job::in_progress) || !j->storage);
@@ -3247,7 +3314,7 @@ constexpr disk_job_flags_t disk_interface::cache_hit;
 			jobqueue_t other_jobs;
 			jobqueue_t flush_jobs;
 			std::unique_lock<std::mutex> l_(m_cache_mutex);
-			while (new_jobs.size() > 0)
+			while (!new_jobs.empty())
 			{
 				disk_io_job* j = new_jobs.pop_front();
 
@@ -3316,7 +3383,7 @@ constexpr disk_job_flags_t disk_interface::cache_hit;
 				m_generic_io_jobs.m_queued_jobs.append(other_jobs);
 			}
 
-			while (flush_jobs.size() > 0)
+			while (!flush_jobs.empty())
 			{
 				disk_io_job* j = flush_jobs.pop_front();
 				add_job(j, false);

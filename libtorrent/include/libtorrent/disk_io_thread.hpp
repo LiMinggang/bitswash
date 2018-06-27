@@ -289,6 +289,12 @@ namespace aux {
 		~disk_io_thread();
 #endif
 
+		enum
+		{
+			// every 4:th thread is a hash thread
+			hasher_thread_divisor = 4
+		};
+
 		void set_settings(settings_pack const* sett);
 
 		void abort(bool wait);
@@ -488,7 +494,7 @@ namespace aux {
 		void execute_job(disk_io_job* j);
 		void immediate_execute();
 		void abort_jobs();
-		void abort_hash_jobs(storage_index_t const storage);
+		void abort_hash_jobs(storage_index_t storage);
 
 		// returns the maximum number of threads
 		// the actual number of threads may be less
