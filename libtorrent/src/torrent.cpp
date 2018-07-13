@@ -92,6 +92,7 @@ POSSIBILITY OF SUCH DAMAGE.
 #include "libtorrent/alert_manager.hpp"
 #include "libtorrent/disk_interface.hpp"
 #include "libtorrent/broadcast_socket.hpp" // for is_ip_address
+#include "libtorrent/download_priority.hpp"
 #include "libtorrent/hex.hpp" // to_hex
 #include "libtorrent/aux_/range.hpp"
 // TODO: factor out cache_status to its own header
@@ -565,11 +566,11 @@ bool is_downloading_state(int const st)
 		m_current_gauge_state = static_cast<std::uint32_t>(new_gauge_state);
 	}
 
-	void torrent::leave_seed_mode(bool skip_checking)
+	void torrent::leave_seed_mode(seed_mode_t const checking)
 	{
 		if (!m_seed_mode) return;
 
-		if (!skip_checking)
+		if (checking == seed_mode_t::check_files)
 		{
 			// this means the user promised we had all the
 			// files, but it turned out we didn't. This is
@@ -584,12 +585,13 @@ bool is_downloading_state(int const st)
 
 #ifndef TORRENT_DISABLE_LOGGING
 		debug_log("*** LEAVING SEED MODE (%s)"
-			, skip_checking ? "as seed" : "as non-seed");
+			, checking == seed_mode_t::skip_checking ? "as seed" : "as non-seed");
 #endif
 		m_seed_mode = false;
 		// seed is false if we turned out not
 		// to be a seed after all
-		if (!skip_checking && state() != torrent_status::checking_resume_data)
+		if (checking == seed_mode_t::check_files
+			&& state() != torrent_status::checking_resume_data)
 		{
 			m_have_all = false;
 			set_state(torrent_status::downloading);
@@ -946,7 +948,7 @@ bool is_downloading_state(int const st)
 		if ((mask & torrent_flags::seed_mode)
 			&& !(flags & torrent_flags::seed_mode))
 		{
-			leave_seed_mode(false);
+			leave_seed_mode(seed_mode_t::check_files);
 		}
 		if (mask & torrent_flags::upload_mode)
 			set_upload_mode(bool(flags & torrent_flags::upload_mode));
@@ -979,17 +981,15 @@ bool is_downloading_state(int const st)
 #ifndef TORRENT_DISABLE_LOGGING
 		debug_log("*** set-share-mode: %d", s);
 #endif
-
-		// in share mode, all pieces have their priorities initialized to 0
-		if (m_share_mode && valid_metadata())
+		if (m_share_mode)
 		{
-			m_file_priority.clear();
-			m_file_priority.resize(m_torrent_file->num_files(), dont_download);
+			std::size_t const num_files = valid_metadata()
+				? std::size_t(m_torrent_file->num_files())
+				: m_file_priority.size();
+			// in share mode, all pieces have their priorities initialized to
+			// dont_download
+			prioritize_files(aux::vector<download_priority_t, file_index_t>(num_files, dont_download));
 		}
-
-		update_piece_priorities();
-
-		if (m_share_mode) recalc_share_mode();
 	}
 
 	void torrent::set_upload_mode(bool b)
@@ -2135,7 +2135,7 @@ bool is_downloading_state(int const st)
 
 					// being in seed mode and missing a piece is not compatible.
 					// Leave seed mode if that happens
-					if (m_seed_mode) leave_seed_mode(true);
+					if (m_seed_mode) leave_seed_mode(seed_mode_t::skip_checking);
 
 					if (has_picker() && m_picker->have_piece(piece))
 					{
@@ -2206,7 +2206,7 @@ bool is_downloading_state(int const st)
 
 		// we're checking everything anyway, no point in assuming we are a seed
 		// now.
-		leave_seed_mode(true);
+		leave_seed_mode(seed_mode_t::skip_checking);
 
 		m_ses.disk_thread().async_release_files(m_storage);
 
@@ -2242,7 +2242,7 @@ bool is_downloading_state(int const st)
 
 		// this will clear the stat cache, to make us actually query the
 		// filesystem for files again
-		m_ses.disk_thread().async_release_files(m_storage, []{});
+		m_ses.disk_thread().async_release_files(m_storage);
 
 		aux::vector<std::string, file_index_t> links;
 		m_ses.disk_thread().async_check_files(m_storage, nullptr
@@ -2290,9 +2290,9 @@ bool is_downloading_state(int const st)
 		int num_outstanding = settings().get_int(settings_pack::checking_mem_usage) * block_size()
 			/ m_torrent_file->piece_length();
 		// if we only keep a single read operation in-flight at a time, we suffer
-		// significant performance degradation. Always keep at least two jobs
+		// significant performance degradation. Always keep at least 4 jobs
 		// outstanding per hasher thread
-		int const min_outstanding = 2
+		int const min_outstanding = 4
 			* std::max(1, settings().get_int(settings_pack::aio_threads)
 				/ disk_io_thread::hasher_thread_divisor);
 		if (num_outstanding < min_outstanding) num_outstanding = min_outstanding;
@@ -2586,12 +2586,6 @@ bool is_downloading_state(int const st)
 
 		TORRENT_ASSERT(!m_paused);
 
-#ifdef TORRENT_USE_OPENSSL
-		int port = is_ssl_torrent() ? m_ses.ssl_listen_port() : m_ses.listen_port();
-#else
-		int port = m_ses.listen_port();
-#endif
-
 #ifndef TORRENT_DISABLE_LOGGING
 		debug_log("START DHT announce");
 		m_dht_start_time = aux::time_now();
@@ -2599,16 +2593,25 @@ bool is_downloading_state(int const st)
 
 		// if we're a seed, we tell the DHT for better scrape stats
 		int flags = is_seed() ? dht::dht_tracker::flag_seed : 0;
+
+		// If this is an SSL torrent the announce needs to specify an SSL
+		// listen port. DHT nodes only operate on non-SSL ports so SSL
+		// torrents cannot use implied_port.
 		// if we allow incoming uTP connections, set the implied_port
 		// argument in the announce, this will make the DHT node use
 		// our source port in the packet as our listen port, which is
 		// likely more accurate when behind a NAT
-		if (settings().get_bool(settings_pack::enable_incoming_utp))
+		if (is_ssl_torrent())
+		{
+			flags |= dht::dht_tracker::flag_ssl_torrent;
+		}
+		else if (settings().get_bool(settings_pack::enable_incoming_utp))
+		{
 			flags |= dht::dht_tracker::flag_implied_port;
+		}
 
 		std::weak_ptr<torrent> self(shared_from_this());
-		m_ses.dht()->announce(m_torrent_file->info_hash()
-			, port, flags
+		m_ses.dht()->announce(m_torrent_file->info_hash(), 0, flags
 			, std::bind(&torrent::on_dht_announce_response_disp, self, _1));
 	}
 
@@ -2888,48 +2891,6 @@ bool is_downloading_state(int const st)
 
 				req.triggered_manually = aep.triggered_manually;
 				aep.triggered_manually = false;
-
-				if (settings().get_bool(settings_pack::force_proxy))
-				{
-					// in force_proxy mode we don't talk directly to trackers
-					// we only allow trackers if there is a proxy and issue
-					// a warning if there isn't one
-					std::string const protocol = req.url.substr(0, req.url.find(':'));
-					int const proxy_type = settings().get_int(settings_pack::proxy_type);
-
-					// http can run over any proxy, so as long as one is used
-					// it's OK. If no proxy is configured, skip this tracker
-					if ((protocol == "http" || protocol == "https")
-						&& proxy_type == settings_pack::none)
-					{
-						aep.next_announce = now + minutes32(10);
-						if (m_ses.alerts().should_post<anonymous_mode_alert>()
-							|| req.triggered_manually)
-						{
-							m_ses.alerts().emplace_alert<anonymous_mode_alert>(get_handle()
-								, anonymous_mode_alert::tracker_not_anonymous, req.url);
-						}
-						continue;
-					}
-
-					// for UDP, only socks5 and i2p proxies will work.
-					// if we're not using one of those proxies with a UDP
-					// tracker, skip it
-					if (protocol == "udp"
-						&& proxy_type != settings_pack::socks5
-						&& proxy_type != settings_pack::socks5_pw
-						&& proxy_type != settings_pack::i2p_proxy)
-					{
-						aep.next_announce = now + minutes32(10);
-						if (m_ses.alerts().should_post<anonymous_mode_alert>()
-							|| req.triggered_manually)
-						{
-							m_ses.alerts().emplace_alert<anonymous_mode_alert>(get_handle()
-								, anonymous_mode_alert::tracker_not_anonymous, req.url);
-						}
-						continue;
-					}
-				}
 
 #if TORRENT_ABI_VERSION == 1
 				req.auth = tracker_login();
@@ -5017,15 +4978,44 @@ bool is_downloading_state(int const st)
 		m_picker->piece_priorities(*pieces);
 	}
 
+	namespace
+	{
+		aux::vector<download_priority_t, file_index_t> fix_priorities(
+			aux::vector<download_priority_t, file_index_t> const& input
+			, file_storage const* fs)
+		{
+			aux::vector<download_priority_t, file_index_t> files(input.begin(), input.end());
+
+			if (fs) files.resize(fs->num_files(), default_priority);
+
+			for (file_index_t i : files.range())
+			{
+				// initialize pad files to priority 0
+				if (files[i] > dont_download && fs && fs->pad_file_at(i))
+					files[i] = dont_download;
+				else if (files[i] > top_priority)
+					files[i] = top_priority;
+			}
+
+			return files;
+		}
+	}
+
 	void torrent::on_file_priority(storage_error const& err
-		, aux::vector<download_priority_t, file_index_t> const& prios)
+		, aux::vector<download_priority_t, file_index_t> prios)
 	{
 		COMPLETE_ASYNC("file_priority");
-		if (m_file_priority == prios) return;
+		if (m_file_priority != prios)
+		{
+			m_file_priority = std::move(prios);
+			update_piece_priorities();
+			if (m_share_mode)
+				recalc_share_mode();
+		}
+
+		if (!err) return;
 
 		// in this case, some file priorities failed to get set
-		m_file_priority = prios;
-		update_piece_priorities();
 
 		if (alerts().should_post<file_error_alert>())
 			alerts().emplace_alert<file_error_alert>(err.ec
@@ -5039,33 +5029,22 @@ bool is_downloading_state(int const st)
 	{
 		INVARIANT_CHECK;
 
-		// this call is only valid on torrents with metadata
-		if (!valid_metadata() || is_seed()) return;
+		if (is_seed()) return;
 
-		file_storage const& fs = m_torrent_file->files();
-		file_index_t const limit = std::min(files.end_index(), fs.end_file());
+		auto new_priority = fix_priorities(files
+			, valid_metadata() ? &m_torrent_file->files() : nullptr);
 
-		if (m_file_priority.end_index() < limit)
-			m_file_priority.resize(static_cast<int>(limit), default_priority);
-
-		auto si = files.begin();
-		for (file_index_t i(0); i < limit; ++i, ++si)
-		{
-			// initialize pad files to priority 0
-			m_file_priority[i] = fs.pad_file_at(i)
-				? dont_download
-				: aux::clamp(*si, dont_download, top_priority);
-		}
-
-		// storage may be nullptr during construction and shutdown
-		if (m_torrent_file->num_pieces() > 0 && m_storage)
+		// storage may be NULL during shutdown
+		if (m_storage)
 		{
 			ADD_OUTSTANDING_ASYNC("file_priority");
 			m_ses.disk_thread().async_set_file_priority(m_storage
-				, m_file_priority, std::bind(&torrent::on_file_priority, shared_from_this(), _1, _2));
+				, std::move(new_priority), std::bind(&torrent::on_file_priority, shared_from_this(), _1, _2));
 		}
-
-		update_piece_priorities();
+		else
+		{
+			m_file_priority = std::move(new_priority);
+		}
 	}
 
 	void torrent::set_file_priority(file_index_t const index
@@ -5078,33 +5057,33 @@ bool is_downloading_state(int const st)
 		// setting file priority on a torrent that doesn't have metadata yet is
 		// similar to having passed in file priorities through add_torrent_params.
 		// we store the priorities in m_file_priority until we get the metadata
-		file_storage const& fs = m_torrent_file->files();
-		if (index < file_index_t(0) || (valid_metadata() && index >= fs.end_file()))
+		if (index < file_index_t(0)
+			|| (valid_metadata() && index >= m_torrent_file->files().end_file()))
 		{
 			return;
 		}
 
 		prio = aux::clamp(prio, dont_download, top_priority);
-		if (m_file_priority.end_index() <= index)
+		auto new_priority = m_file_priority;
+		if (new_priority.end_index() <= index)
 		{
 			// any unallocated slot is assumed to have the default priority
-			if (prio == default_priority) return;
-			m_file_priority.resize(static_cast<int>(index) + 1, default_priority);
+			new_priority.resize(static_cast<int>(index) + 1, default_priority);
 		}
 
-		if (m_file_priority[index] == prio) return;
-		m_file_priority[index] = prio;
-
-		if (!valid_metadata()) return;
+		new_priority[index] = prio;
 
 		// storage may be nullptr during shutdown
 		if (m_storage)
 		{
 			ADD_OUTSTANDING_ASYNC("file_priority");
 			m_ses.disk_thread().async_set_file_priority(m_storage
-				, m_file_priority, std::bind(&torrent::on_file_priority, shared_from_this(), _1, _2));
+				, std::move(new_priority), std::bind(&torrent::on_file_priority, shared_from_this(), _1, _2));
 		}
-		update_piece_priorities();
+		else
+		{
+			m_file_priority = std::move(new_priority);
+		}
 	}
 
 	download_priority_t torrent::file_priority(file_index_t const index) const
@@ -5133,17 +5112,14 @@ bool is_downloading_state(int const st)
 	{
 		INVARIANT_CHECK;
 
+		files->assign(m_file_priority.begin(), m_file_priority.end());
+
 		if (!valid_metadata())
 		{
-			files->resize(m_file_priority.size());
-			std::copy(m_file_priority.begin(), m_file_priority.end(), files->begin());
 			return;
 		}
 
-		files->clear();
 		files->resize(m_torrent_file->num_files(), default_priority);
-		TORRENT_ASSERT(int(m_file_priority.size()) <= m_torrent_file->num_files());
-		std::copy(m_file_priority.begin(), m_file_priority.end(), files->begin());
 	}
 
 	void torrent::update_piece_priorities()
@@ -7406,7 +7382,7 @@ bool is_downloading_state(int const st)
 		{
 			// we need to keep the object alive during this operation
 			m_ses.disk_thread().async_release_files(m_storage
-				, std::bind(&torrent::on_cache_flushed, shared_from_this()));
+				, std::bind(&torrent::on_cache_flushed, shared_from_this(), false));
 		}
 
 		// this torrent just completed downloads, which means it will fall
@@ -7430,7 +7406,7 @@ bool is_downloading_state(int const st)
 
 		// we're downloading now, which means we're no longer in seed mode
 		if (m_seed_mode)
-			leave_seed_mode(false);
+			leave_seed_mode(seed_mode_t::check_files);
 
 		TORRENT_ASSERT(!is_finished());
 		set_state(torrent_status::downloading);
@@ -8490,16 +8466,16 @@ bool is_downloading_state(int const st)
 			return;
 		}
 		m_ses.disk_thread().async_release_files(m_storage
-			, std::bind(&torrent::on_cache_flushed, shared_from_this()));
+			, std::bind(&torrent::on_cache_flushed, shared_from_this(), true));
 	}
 
-	void torrent::on_cache_flushed() try
+	void torrent::on_cache_flushed(bool const manually_triggered) try
 	{
 		TORRENT_ASSERT(is_single_thread());
 
 		if (m_ses.is_aborted()) return;
 
-		if (alerts().should_post<cache_flushed_alert>())
+		if (manually_triggered || alerts().should_post<cache_flushed_alert>())
 			alerts().emplace_alert<cache_flushed_alert>(get_handle());
 	}
 	catch (...) { handle_exception(); }

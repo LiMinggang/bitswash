@@ -1,3 +1,5 @@
+	* deprecate anonymous_mode_alert
+	* deprecated force_proxy setting (when set, the proxy is always used)
 	* add support for Port Control Protocol (PCP)
 	* deliver notification of alerts being dropped via alerts_dropped_alert
 	* deprecated alert::progress_notification alert category, split into
@@ -84,6 +86,12 @@
 	* improved support for listening on multiple sockets and interfaces
 	* resume data no longer has timestamps of files
 	* require C++11 to build libtorrent
+
+	* fix potential deadlock on Windows, caused by performing restricted
+	  tasks from within DllMain
+	* fix issue when subsequent file priority updates cause torrent to stop
+
+1.1.8 release
 
 	* coalesce reads and writes by default on windows
 	* fixed disk I/O performance of checking hashes and creating torrents

@@ -32,6 +32,7 @@ POSSIBILITY OF SUCH DAMAGE.
 
 #include "libtorrent/config.hpp"
 #include "libtorrent/aux_/disable_warnings_push.hpp"
+#include <mutex> // for call_once
 
 #ifdef __GNUC__
 #pragma GCC diagnostic push
@@ -53,6 +54,7 @@ POSSIBILITY OF SUCH DAMAGE.
 #ifndef TORRENT_WINDOWS
 #include <sys/uio.h> // for iovec
 #else
+#include <boost/scope_exit.hpp>
 namespace {
 struct iovec
 {
@@ -200,28 +202,42 @@ namespace {
 		}
 
 		int ret = 0;
+		int num_waits = num_bufs;
 		for (int i = 0; i < num_bufs; ++i)
 		{
 			DWORD num_read;
-			if (ReadFile(fd, bufs[i].iov_base, DWORD(bufs[i].iov_len), &num_read, &ol[i]) == FALSE
-				&& GetLastError() != ERROR_IO_PENDING
-#ifdef ERROR_CANT_WAIT
-				&& GetLastError() != ERROR_CANT_WAIT
-#endif
-				)
+			if (ReadFile(fd, bufs[i].iov_base, DWORD(bufs[i].iov_len), &num_read, &ol[i]) == FALSE)
 			{
-				ret = -1;
-				goto done;
+				DWORD const last_error = GetLastError();
+				if (last_error == ERROR_HANDLE_EOF)
+				{
+					num_waits = i;
+					break;
+				}
+				else if (last_error != ERROR_IO_PENDING
+#ifdef ERROR_CANT_WAIT
+					&& last_error != ERROR_CANT_WAIT
+#endif
+					)
+				{
+					ret = -1;
+					goto done;
+				}
 			}
 		}
 
-		if (wait_for_multiple_objects(int(h.size()), h.data()) == WAIT_FAILED)
+		if (num_waits == 0)
+		{
+			goto done;
+		}
+
+		if (wait_for_multiple_objects(num_waits, h.data()) == WAIT_FAILED)
 		{
 			ret = -1;
 			goto done;
 		}
 
-		for (auto& o : ol)
+		for (auto& o : libtorrent::span<OVERLAPPED>(ol).first(num_waits))
 		{
 			if (WaitForSingleObject(o.hEvent, INFINITE) == WAIT_FAILED)
 			{
@@ -231,11 +247,15 @@ namespace {
 			DWORD num_read;
 			if (GetOverlappedResult(fd, &o, &num_read, FALSE) == FALSE)
 			{
+				DWORD const last_error = GetLastError();
+				if (last_error != ERROR_HANDLE_EOF)
+				{
 #ifdef ERROR_CANT_WAIT
-				TORRENT_ASSERT(GetLastError() != ERROR_CANT_WAIT);
+					TORRENT_ASSERT(last_error != ERROR_CANT_WAIT);
 #endif
-				ret = -1;
-				break;
+					ret = -1;
+					break;
+				}
 			}
 			ret += num_read;
 		}
@@ -316,7 +336,7 @@ done:
 
 		return ret;
 	}
-}
+} // namespace
 # else
 #  undef _BSD_SOURCE
 #  define _BSD_SOURCE // deprecated since glibc 2.20
@@ -475,10 +495,7 @@ static_assert(!(open_mode::sparse & open_mode::attribute_mask), "internal flags 
 
 
 #ifdef TORRENT_WINDOWS
-	bool get_manage_volume_privs();
-
-	// this needs to be run before CreateFile
-	bool file::has_manage_volume_privs = get_manage_volume_privs();
+	void acquire_manage_volume_privs();
 #endif
 
 	file::file() : m_file_handle(INVALID_HANDLE_VALUE)
@@ -540,6 +557,14 @@ static_assert(!(open_mode::sparse & open_mode::attribute_mask), "internal flags 
 			| a
 			| FILE_FLAG_OVERLAPPED
 			| ((mode & open_mode::no_cache) ? FILE_FLAG_WRITE_THROUGH : 0);
+
+		if (!(mode & open_mode::sparse))
+		{
+			// Enable privilege required by SetFileValidData()
+			// https://docs.microsoft.com/en-us/windows/desktop/api/fileapi/nf-fileapi-setfilevaliddata
+			static std::once_flag flag;
+			std::call_once(flag, acquire_manage_volume_privs);
+		}
 
 		handle_type handle = CreateFileW(file_path.c_str(), m.rw_mode
 			, FILE_SHARE_READ | FILE_SHARE_WRITE
@@ -1045,13 +1070,11 @@ namespace {
 	}
 
 #ifdef TORRENT_WINDOWS
-	bool get_manage_volume_privs()
+	void acquire_manage_volume_privs()
 	{
-		using OpenProcessToken_t = BOOL (WINAPI*)(
-			HANDLE, DWORD, PHANDLE);
+		using OpenProcessToken_t = BOOL (WINAPI*)(HANDLE, DWORD, PHANDLE);
 
-		using LookupPrivilegeValue_t = BOOL (WINAPI*)(
-			LPCSTR, LPCSTR, PLUID);
+		using LookupPrivilegeValue_t = BOOL (WINAPI*)(LPCSTR, LPCSTR, PLUID);
 
 		using AdjustTokenPrivileges_t = BOOL (WINAPI*)(
 			HANDLE, BOOL, PTOKEN_PRIVILEGES, DWORD, PTOKEN_PRIVILEGES, PDWORD);
@@ -1063,31 +1086,34 @@ namespace {
 		auto AdjustTokenPrivileges =
 			aux::get_library_procedure<aux::advapi32, AdjustTokenPrivileges_t>("AdjustTokenPrivileges");
 
-		if (OpenProcessToken == nullptr || LookupPrivilegeValue == nullptr || AdjustTokenPrivileges == nullptr) return false;
+		if (OpenProcessToken == nullptr
+			|| LookupPrivilegeValue == nullptr
+			|| AdjustTokenPrivileges == nullptr)
+		{
+			return;
+		}
 
 
 		HANDLE token;
 		if (!OpenProcessToken(GetCurrentProcess()
 			, TOKEN_ADJUST_PRIVILEGES | TOKEN_QUERY, &token))
-			return false;
+			return;
 
-		TOKEN_PRIVILEGES privs;
+		BOOST_SCOPE_EXIT_ALL(&token) {
+			CloseHandle(token);
+		};
+
+		TOKEN_PRIVILEGES privs{};
 		if (!LookupPrivilegeValue(nullptr, "SeManageVolumePrivilege"
 			, &privs.Privileges[0].Luid))
 		{
-			CloseHandle(token);
-			return false;
+			return;
 		}
 
 		privs.PrivilegeCount = 1;
 		privs.Privileges[0].Attributes = SE_PRIVILEGE_ENABLED;
 
-		bool ret = AdjustTokenPrivileges(token, FALSE, &privs, 0, nullptr, nullptr)
-			&& GetLastError() == ERROR_SUCCESS;
-
-		CloseHandle(token);
-
-		return ret;
+		AdjustTokenPrivileges(token, FALSE, &privs, 0, nullptr, nullptr);
 	}
 
 	void set_file_valid_data(HANDLE f, std::int64_t size)
@@ -1096,11 +1122,12 @@ namespace {
 		auto SetFileValidData =
 			aux::get_library_procedure<aux::kernel32, SetFileValidData_t>("SetFileValidData");
 
-		if (SetFileValidData == nullptr) return;
-
-		// we don't necessarily expect to have enough
-		// privilege to do this, so ignore errors.
-		SetFileValidData(f, size);
+		if (SetFileValidData)
+		{
+			// we don't necessarily expect to have enough
+			// privilege to do this, so ignore errors.
+			SetFileValidData(f, size);
+		}
 	}
 #endif
 

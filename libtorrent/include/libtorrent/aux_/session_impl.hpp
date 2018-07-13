@@ -593,6 +593,8 @@ namespace aux {
 			std::uint16_t ssl_listen_port() const override;
 			std::uint16_t ssl_listen_port(listen_socket_t* sock) const;
 
+			int get_listen_port(transport ssl, aux::listen_socket_handle const& s) override;
+
 			std::uint32_t get_tracker_key(address const& iface) const;
 
 			void for_each_listen_socket(std::function<void(aux::listen_socket_handle const&)> f) override
@@ -752,7 +754,6 @@ namespace aux {
 			void update_socket_buffer_size();
 			void update_dht_announce_interval();
 			void update_anonymous_mode();
-			void update_force_proxy();
 			void update_download_rate();
 			void update_upload_rate();
 			void update_connections_limit();

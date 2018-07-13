@@ -569,7 +569,7 @@ namespace libtorrent {
 		void set_file_priority(file_index_t index, download_priority_t priority);
 		download_priority_t file_priority(file_index_t index) const;
 
-		void on_file_priority(storage_error const& err, aux::vector<download_priority_t, file_index_t> const& prios);
+		void on_file_priority(storage_error const& err, aux::vector<download_priority_t, file_index_t> prios);
 		void prioritize_files(aux::vector<download_priority_t, file_index_t> const& files);
 		void file_priorities(aux::vector<download_priority_t, file_index_t>*) const;
 
@@ -1063,7 +1063,10 @@ namespace libtorrent {
 		queue_position_t sequence_number() const { return m_sequence_number; }
 
 		bool seed_mode() const { return m_seed_mode; }
-		void leave_seed_mode(bool skip_checking);
+
+		enum class seed_mode_t { check_files, skip_checking };
+
+		void leave_seed_mode(seed_mode_t checking);
 
 		bool all_verified() const
 		{ return int(m_num_verified) == m_torrent_file->num_pieces(); }
@@ -1171,7 +1174,7 @@ namespace libtorrent {
 		void on_file_renamed(std::string const& filename
 			, file_index_t file_idx
 			, storage_error const& error);
-		void on_cache_flushed();
+		void on_cache_flushed(bool manually_triggered);
 
 		// this is used when a torrent is being removed.It synchronizes with the
 		// disk thread

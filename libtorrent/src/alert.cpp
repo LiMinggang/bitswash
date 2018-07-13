@@ -1297,6 +1297,7 @@ namespace {
 		, torrent_handle const& h)
 		: torrent_alert(alloc, h) {}
 
+#if TORRENT_ABI_VERSION == 1
 	anonymous_mode_alert::anonymous_mode_alert(aux::stack_allocator& alloc
 		, torrent_handle const& h, int k, string_view s)
 		: torrent_alert(alloc, h)
@@ -1315,6 +1316,7 @@ namespace {
 			, msgs[kind], str.c_str());
 		return msg;
 	}
+#endif // TORRENT_ABI_VERSION
 
 	lsd_peer_alert::lsd_peer_alert(aux::stack_allocator& alloc, torrent_handle const& h
 		, tcp::endpoint const& i)
@@ -1678,8 +1680,8 @@ namespace {
 	// TODO: 2 the salt here is allocated on the heap. It would be nice to
 	// allocate in in the stack_allocator
 	dht_mutable_item_alert::dht_mutable_item_alert(aux::stack_allocator&
-		, std::array<char, 32> k
-		, std::array<char, 64> sig
+		, std::array<char, 32> const& k
+		, std::array<char, 64> const& sig
 		, std::int64_t sequence
 		, string_view s
 		, entry const& i
@@ -1709,8 +1711,8 @@ namespace {
 	{}
 
 	dht_put_alert::dht_put_alert(aux::stack_allocator&
-		, std::array<char, 32> key
-		, std::array<char, 64> sig
+		, std::array<char, 32> const& key
+		, std::array<char, 64> const& sig
 		, std::string s
 		, std::int64_t sequence_number
 		, int n)
@@ -2173,7 +2175,7 @@ namespace {
 			peers.push_back(detail::read_v6_endpoint<tcp::endpoint>(v6_ptr));
 #endif
 
-		return peers;
+		return std::move(peers);
 	}
 
 	dht_direct_response_alert::dht_direct_response_alert(
@@ -2409,7 +2411,7 @@ namespace {
 		TORRENT_UNUSED(v6_nodes_idx);
 #endif
 
-		return nodes;
+		return std::move(nodes);
 	}
 	}
 
@@ -2507,7 +2509,7 @@ namespace {
 		const char *ptr = m_alloc.get().ptr(m_samples_idx);
 		std::memcpy(samples.data(), ptr, samples.size() * 20);
 
-		return samples;
+		return std::move(samples);
 	}
 
 	int dht_sample_infohashes_alert::num_nodes() const
@@ -2673,7 +2675,6 @@ namespace {
 	constexpr alert_category_t dht_get_peers_alert::static_category;
 	constexpr alert_category_t stats_alert::static_category;
 	constexpr alert_category_t cache_flushed_alert::static_category;
-	constexpr alert_category_t anonymous_mode_alert::static_category;
 	constexpr alert_category_t lsd_peer_alert::static_category;
 	constexpr alert_category_t trackerid_alert::static_category;
 	constexpr alert_category_t dht_bootstrap_alert::static_category;
@@ -2707,6 +2708,7 @@ namespace {
 	constexpr alert_category_t block_uploaded_alert::static_category;
 	constexpr alert_category_t alerts_dropped_alert::static_category;
 #if TORRENT_ABI_VERSION == 1
+	constexpr alert_category_t anonymous_mode_alert::static_category;
 	constexpr alert_category_t mmap_cache_alert::static_category;
 	constexpr alert_category_t torrent_added_alert::static_category;
 	constexpr alert_category_t torrent_update_alert::static_category;

@@ -1015,7 +1015,7 @@ namespace aux {
 
 	peer_class_info session_impl::get_peer_class(peer_class_t const cid) const
 	{
-		peer_class_info ret;
+		peer_class_info ret{};
 		peer_class const* pc = m_classes.at(cid);
 		// if you hit this assert, you're passing in an invalid cid
 		TORRENT_ASSERT_PRECOND(pc);
@@ -1272,10 +1272,7 @@ namespace aux {
 					!= m_settings.get_int(settings_pack::ssl_listen))
 			||
 #endif
-			(pack.has_val(settings_pack::force_proxy)
-				&& !pack.get_bool(settings_pack::force_proxy)
-				&& m_settings.get_bool(settings_pack::force_proxy))
-			|| (pack.has_val(settings_pack::listen_interfaces)
+			(pack.has_val(settings_pack::listen_interfaces)
 				&& pack.get_str(settings_pack::listen_interfaces)
 					!= m_settings.get_str(settings_pack::listen_interfaces));
 
@@ -1660,7 +1657,6 @@ namespace aux {
 					, operation_t::alloc_recvbuf, err);
 		}
 
-		ret->udp_sock->sock.set_force_proxy(m_settings.get_bool(settings_pack::force_proxy));
 		// this call is necessary here because, unless the settings actually
 		// change after the session is up and listening, at no other point
 		// set_proxy_settings is called with the correct proxy configuration,
@@ -1785,7 +1781,7 @@ namespace aux {
 		// of a new socket failing to bind due to a conflict with a stale socket
 		std::vector<listen_endpoint_t> eps;
 
-		duplex const incoming = m_settings.get_bool(settings_pack::force_proxy)
+		duplex const incoming = m_settings.get_int(settings_pack::proxy_type) != settings_pack::none
 			? duplex::only_outgoing
 			: duplex::accept_incoming;
 
@@ -2071,7 +2067,6 @@ namespace aux {
 						, operation_t::alloc_recvbuf, err);
 			}
 
-			udp_sock->sock.set_force_proxy(m_settings.get_bool(settings_pack::force_proxy));
 			// this call is necessary here because, unless the settings actually
 			// change after the session is up and listening, at no other point
 			// set_proxy_settings is called with the correct proxy configuration,
@@ -2604,8 +2599,9 @@ namespace aux {
 		}
 		async_accept(listener, ssl);
 
-		// don't accept any connections from our local sockets
-		if (m_settings.get_bool(settings_pack::force_proxy))
+		// don't accept any connections from our local sockets if we're using a
+		// proxy
+		if (m_settings.get_int(settings_pack::proxy_type) != settings_pack::none)
 			return;
 
 #ifdef TORRENT_USE_OPENSSL
@@ -5387,12 +5383,17 @@ namespace aux {
 
 	std::uint16_t session_impl::listen_port(listen_socket_t* sock) const
 	{
-		// if not, don't tell the tracker anything if we're in force_proxy
-		// mode. We don't want to leak our listen port since it can
-		// potentially identify us if it is leaked elsewhere
-		if (m_settings.get_bool(settings_pack::force_proxy)) return 0;
 		if (m_listen_sockets.empty()) return 0;
-		if (sock) return std::uint16_t(sock->tcp_external_port);
+		if (sock)
+		{
+			// if we're using a proxy, we won't be able to accept any TCP
+			// connections. We may be able to accept uTP connections though, so
+			// announce the UDP port instead
+			if (m_settings.get_int(settings_pack::proxy_type) != settings_pack::none)
+				return std::uint16_t(sock->udp_external_port);
+			else
+				return std::uint16_t(sock->tcp_external_port);
+		}
 		return std::uint16_t(m_listen_sockets.front()->tcp_external_port);
 	}
 
@@ -5406,20 +5407,53 @@ namespace aux {
 	std::uint16_t session_impl::ssl_listen_port(listen_socket_t* sock) const
 	{
 #ifdef TORRENT_USE_OPENSSL
-		if (sock) return std::uint16_t(sock->tcp_external_port);
 
-		// if not, don't tell the tracker anything if we're in force_proxy
-		// mode. We don't want to leak our listen port since it can
-		// potentially identify us if it is leaked elsewhere
-		if (m_settings.get_bool(settings_pack::force_proxy)) return 0;
+		if (sock)
+		{
+			// if we're using a proxy, we won't be able to accept any TCP
+			// connections. We may be able to accept uTP connections though, so
+			// announce the UDP port instead
+			if (m_settings.get_int(settings_pack::proxy_type) != settings_pack::none)
+				return std::uint16_t(sock->udp_external_port);
+			else
+				return std::uint16_t(sock->tcp_external_port);
+		}
+
+		if (m_settings.get_int(settings_pack::proxy_type) != settings_pack::none)
+			return 0;
+
 		for (auto const& s : m_listen_sockets)
 		{
-			if (s->ssl == transport::ssl) return std::uint16_t(s->tcp_external_port);
+			if (s->ssl == transport::ssl)
+			{
+				if (m_settings.get_int(settings_pack::proxy_type) != settings_pack::none)
+					return std::uint16_t(s->udp_external_port);
+				else
+					return std::uint16_t(s->tcp_external_port);
+			}
 		}
 #else
 		TORRENT_UNUSED(sock);
 #endif
 		return 0;
+	}
+
+	int session_impl::get_listen_port(transport const ssl, aux::listen_socket_handle const& s)
+	{
+		auto socket = s.get();
+		if (socket->ssl != ssl)
+		{
+			auto alt_socket = std::find_if(m_listen_sockets.begin(), m_listen_sockets.end()
+				, [&](std::shared_ptr<listen_socket_t> const& e)
+			{
+				return e->ssl == ssl
+					&& e->external_address.external_address()
+						== socket->external_address.external_address();
+			});
+			if (alt_socket != m_listen_sockets.end())
+				socket = alt_socket->get();
+		}
+		return socket->udp_external_port;
 	}
 
 	void session_impl::announce_lsd(sha1_hash const& ih, int port, bool broadcast)
@@ -6411,56 +6445,6 @@ namespace aux {
 		if (m_upnp) m_upnp->set_user_agent("");
 	}
 
-	void session_impl::update_force_proxy()
-	{
-		if (!m_settings.get_bool(settings_pack::force_proxy))
-		{
-#ifndef TORRENT_DISABLE_LOGGING
-			session_log("force-proxy disabled");
-#endif
-			// we need to close and remove all listen sockets during a transition
-			// from force-proxy to not-force-proxy. reopen_listen_sockets() won't
-			// do anything with half-opened sockets.
-			error_code ec;
-			for (auto& i : m_listen_sockets)
-			{
-				if (i->udp_sock) i->udp_sock->sock.close();
-				if (i->sock) i->sock->close(ec);
-			}
-			m_listen_sockets.clear();
-			return;
-		}
-
-#ifndef TORRENT_DISABLE_LOGGING
-		session_log("force-proxy enabled");
-#endif
-
-		// when enabling force-proxy, we no longer wand to accept connections via
-		// a regular listen socket, only via a proxy. We also want to enable
-		// force-proxy on all udp sockets
-		for (auto& i : m_listen_sockets)
-		{
-			i->udp_sock->sock.set_force_proxy(m_settings.get_bool(settings_pack::force_proxy));
-
-			// close the TCP listen sockets
-			if (i->sock)
-			{
-				error_code ec;
-				i->sock->close(ec);
-				i->sock.reset();
-			}
-		}
-
-		// enable force_proxy mode. We don't want to accept any incoming
-		// connections, except through a proxy.
-		stop_lsd();
-		stop_upnp();
-		stop_natpmp();
-#ifndef TORRENT_DISABLE_DHT
-		stop_dht();
-#endif
-	}
-
 #if TORRENT_ABI_VERSION == 1
 	void session_impl::update_local_download_rate()
 	{
@@ -6785,8 +6769,7 @@ namespace aux {
 		auto i = iface.m_sock.lock();
 		TORRENT_ASSERT(i);
 		if (!i) return;
-		set_external_address(std::static_pointer_cast<listen_socket_t>(i), ip
-			, source_dht, source);
+		set_external_address(i, ip, source_dht, source);
 	}
 
 	void session_impl::get_peers(sha1_hash const& ih)

@@ -1808,16 +1808,17 @@ TORRENT_VERSION_NAMESPACE_2
 		// internal
 		cache_flushed_alert(aux::stack_allocator& alloc, torrent_handle const& h);
 
-		TORRENT_DEFINE_ALERT(cache_flushed_alert, 58)
+		TORRENT_DEFINE_ALERT_PRIO(cache_flushed_alert, 58, alert_priority_high)
 
 		static constexpr alert_category_t static_category = alert::storage_notification;
 	};
 
+#if TORRENT_ABI_VERSION == 1
 	// This alert is posted when a bittorrent feature is blocked because of the
 	// anonymous mode. For instance, if the tracker proxy is not set up, no
 	// trackers will be used, because trackers can only be used through proxies
 	// when in anonymous mode.
-	struct TORRENT_EXPORT anonymous_mode_alert final : torrent_alert
+	struct TORRENT_DEPRECATED_EXPORT anonymous_mode_alert final : torrent_alert
 	{
 		// internal
 		anonymous_mode_alert(aux::stack_allocator& alloc, torrent_handle const& h
@@ -1840,6 +1841,7 @@ TORRENT_VERSION_NAMESPACE_2
 		int kind;
 		std::string str;
 	};
+#endif // TORRENT_ABI_VERSION
 
 	// This alert is generated when we receive a local service discovery message
 	// from a peer for a torrent we're currently participating in.
@@ -2212,7 +2214,7 @@ TORRENT_VERSION_NAMESPACE_2
 	struct TORRENT_EXPORT dht_mutable_item_alert final : alert
 	{
 		dht_mutable_item_alert(aux::stack_allocator& alloc
-			, std::array<char, 32> k, std::array<char, 64> sig
+			, std::array<char, 32> const& k, std::array<char, 64> const& sig
 			, std::int64_t sequence, string_view s, entry const& i, bool a);
 
 		TORRENT_DEFINE_ALERT_PRIO(dht_mutable_item_alert, 75, alert_priority_critical)
@@ -2250,8 +2252,8 @@ TORRENT_VERSION_NAMESPACE_2
 	{
 		// internal
 		dht_put_alert(aux::stack_allocator& alloc, sha1_hash const& t, int n);
-		dht_put_alert(aux::stack_allocator& alloc, std::array<char, 32> key
-			, std::array<char, 64> sig
+		dht_put_alert(aux::stack_allocator& alloc, std::array<char, 32> const& key
+			, std::array<char, 64> const& sig
 			, std::string s
 			, std::int64_t sequence_number
 			, int n);
