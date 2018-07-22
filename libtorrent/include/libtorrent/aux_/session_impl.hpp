@@ -76,6 +76,7 @@ POSSIBILITY OF SUCH DAMAGE.
 #include "libtorrent/peer_class_type_filter.hpp"
 #include "libtorrent/kademlia/dht_observer.hpp"
 #include "libtorrent/kademlia/dht_state.hpp"
+#include "libtorrent/kademlia/announce_flags.hpp"
 #include "libtorrent/resolver.hpp"
 #include "libtorrent/invariant_check.hpp"
 #include "libtorrent/extensions.hpp"
@@ -418,7 +419,7 @@ namespace aux {
 				, std::string salt = std::string());
 
 			void dht_get_peers(sha1_hash const& info_hash);
-			void dht_announce(sha1_hash const& info_hash, int port = 0, int flags = 0);
+			void dht_announce(sha1_hash const& info_hash, int port = 0, dht::announce_flags_t flags = {});
 
 			void dht_live_nodes(sha1_hash const& nid);
 			void dht_sample_infohashes(udp::endpoint const& ep, sha1_hash const& target);
@@ -593,7 +594,11 @@ namespace aux {
 			std::uint16_t ssl_listen_port() const override;
 			std::uint16_t ssl_listen_port(listen_socket_t* sock) const;
 
+			// used by the DHT tracker, returns a UDP listen port
 			int get_listen_port(transport ssl, aux::listen_socket_handle const& s) override;
+			// used by peer connections, returns a TCP listen port
+			// or zero if no matching listen socket is found
+			int listen_port(transport ssl, address const& local_addr) override;
 
 			std::uint32_t get_tracker_key(address const& iface) const;
 

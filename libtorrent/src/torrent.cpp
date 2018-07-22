@@ -2276,7 +2276,7 @@ bool is_downloading_state(int const st)
 			m_num_checked_pieces = piece_index_t(0);
 
 			set_state(torrent_status::checking_files);
-			if (m_auto_managed) pause(true);
+			if (m_auto_managed) pause(torrent_handle::graceful_pause);
 			if (should_check_files()) start_checking();
 			else m_ses.trigger_auto_manage();
 		}
@@ -2460,7 +2460,7 @@ bool is_downloading_state(int const st)
 			// managed logic runs again (which is triggered further down)
 			// setting flags to 0 prevents the disk cache from being evicted as a
 			// result of this
-			set_paused(true, 0);
+			set_paused(true, {});
 		}
 
 		// we're done checking! (this should cause a call to trigger_auto_manage)
@@ -2592,7 +2592,7 @@ bool is_downloading_state(int const st)
 #endif
 
 		// if we're a seed, we tell the DHT for better scrape stats
-		int flags = is_seed() ? dht::dht_tracker::flag_seed : 0;
+		dht::announce_flags_t flags = is_seed() ? dht::announce::seed : dht::announce_flags_t{};
 
 		// If this is an SSL torrent the announce needs to specify an SSL
 		// listen port. DHT nodes only operate on non-SSL ports so SSL
@@ -2603,11 +2603,11 @@ bool is_downloading_state(int const st)
 		// likely more accurate when behind a NAT
 		if (is_ssl_torrent())
 		{
-			flags |= dht::dht_tracker::flag_ssl_torrent;
+			flags |= dht::announce::ssl_torrent;
 		}
 		else if (settings().get_bool(settings_pack::enable_incoming_utp))
 		{
-			flags |= dht::dht_tracker::flag_implied_port;
+			flags |= dht::announce::implied_port;
 		}
 
 		std::weak_ptr<torrent> self(shared_from_this());
@@ -3546,7 +3546,7 @@ bool is_downloading_state(int const st)
 		}
 
 		TORRENT_ASSERT(num_have() >= m_picker->num_have_filtered());
-		st.total_wanted_done = std::int64_t(num_passed() - m_picker->num_have_filtered())
+		st.total_wanted_done = std::int64_t(num_have() - m_picker->num_have_filtered())
 			* piece_size;
 		TORRENT_ASSERT(st.total_wanted_done >= 0);
 
@@ -3580,7 +3580,7 @@ bool is_downloading_state(int const st)
 			st.total_done += corr;
 			if (m_picker->piece_priority(last_piece) != dont_download)
 			{
-				TORRENT_ASSERT(st.total_wanted_done >= piece_size);
+				TORRENT_ASSERT(st.total_wanted_done >= -corr);
 				st.total_wanted_done += corr;
 			}
 		}
@@ -3600,7 +3600,7 @@ bool is_downloading_state(int const st)
 				for (piece_index_t j = p.piece; p.length > 0; ++j)
 				{
 					int const deduction = std::min(p.length, piece_size - p.start);
-					bool const done = m_picker->has_piece_passed(j);
+					bool const done = m_picker->have_piece(j);
 					bool const wanted = m_picker->piece_priority(j) > dont_download;
 					if (done) st.total_done -= deduction;
 					if (wanted) st.total_wanted -= deduction;
@@ -5029,8 +5029,6 @@ bool is_downloading_state(int const st)
 	{
 		INVARIANT_CHECK;
 
-		if (is_seed()) return;
-
 		auto new_priority = fix_priorities(files
 			, valid_metadata() ? &m_torrent_file->files() : nullptr);
 
@@ -5051,8 +5049,6 @@ bool is_downloading_state(int const st)
 		, download_priority_t prio)
 	{
 		INVARIANT_CHECK;
-
-		if (is_seed()) return;
 
 		// setting file priority on a torrent that doesn't have metadata yet is
 		// similar to having passed in file priorities through add_torrent_params.
@@ -7439,8 +7435,8 @@ bool is_downloading_state(int const st)
 				m_file_progress.clear();
 			}
 			m_have_all = true;
-			update_gauge();
 		}
+		update_gauge();
 	}
 
 	// called when torrent is complete. i.e. all pieces downloaded
@@ -8494,7 +8490,7 @@ bool is_downloading_state(int const st)
 		return m_paused || m_session_paused;
 	}
 
-	void torrent::pause(bool const graceful)
+	void torrent::pause(pause_flags_t const flags)
 	{
 		TORRENT_ASSERT(is_single_thread());
 		INVARIANT_CHECK;
@@ -8505,11 +8501,10 @@ bool is_downloading_state(int const st)
 			set_need_save_resume();
 		}
 
-		int const flags = graceful ? flag_graceful_pause : 0;
-		set_paused(true, flags | flag_clear_disk_cache);
+		set_paused(true, flags | torrent_handle::clear_disk_cache);
 	}
 
-	void torrent::do_pause(bool const clear_disk_cache)
+	void torrent::do_pause(pause_flags_t const flags)
 	{
 		TORRENT_ASSERT(is_single_thread());
 		if (!is_paused()) return;
@@ -8579,7 +8574,7 @@ bool is_downloading_state(int const st)
 		{
 			// this will make the storage close all
 			// files and flush all cached data
-			if (m_storage && clear_disk_cache)
+			if (m_storage && (flags & torrent_handle::clear_disk_cache))
 			{
 				// the torrent_paused alert will be posted from on_torrent_paused
 				m_ses.disk_thread().async_stop_torrent(m_storage
@@ -8682,7 +8677,7 @@ bool is_downloading_state(int const st)
 		else do_resume();
 	}
 
-	void torrent::set_paused(bool const b, int flags)
+	void torrent::set_paused(bool const b, pause_flags_t flags)
 	{
 		TORRENT_ASSERT(is_single_thread());
 
@@ -8692,7 +8687,7 @@ bool is_downloading_state(int const st)
 		// if there are no peers, we must not enter graceful pause mode, and post
 		// the torrent_paused_alert immediately instead.
 		if (num_peers() == 0)
-			flags &= ~flag_graceful_pause;
+			flags &= ~torrent_handle::graceful_pause;
 
 		if (m_paused == b)
 		{
@@ -8701,7 +8696,7 @@ bool is_downloading_state(int const st)
 			// paused mode, we need to actually pause the torrent properly
 			if (m_paused == true
 				&& m_graceful_pause_mode == true
-				&& (flags & flag_graceful_pause) == 0)
+				&& !(flags & torrent_handle::graceful_pause))
 			{
 				m_graceful_pause_mode = false;
 				update_gauge();
@@ -8718,9 +8713,9 @@ bool is_downloading_state(int const st)
 		// the effective state of the torrent did not change
 		if (paused_before == is_paused()) return;
 
-		m_graceful_pause_mode = (flags & flag_graceful_pause) ? true : false;
+		m_graceful_pause_mode = bool(flags & torrent_handle::graceful_pause);
 
-		if (b) do_pause((flags & flag_clear_disk_cache) != 0);
+		if (b) do_pause(flags & torrent_handle::clear_disk_cache);
 		else do_resume();
 	}
 
@@ -10790,7 +10785,12 @@ bool is_downloading_state(int const st)
 		if (st->state == torrent_status::finished
 			|| st->state == torrent_status::seeding)
 		{
-			TORRENT_ASSERT(st->is_finished);
+			// this assumption does not always hold. We transition to "finished"
+			// when we receive the last block of the last piece, which is before
+			// the hash check comes back. "is_finished" is set to true once all the
+			// pieces have been hash checked. So, there's a short window where it
+			// doesn't hold.
+//			TORRENT_ASSERT(st->is_finished);
 		}
 #endif
 

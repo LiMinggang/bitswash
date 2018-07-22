@@ -49,6 +49,7 @@ POSSIBILITY OF SUCH DAMAGE.
 
 #include "libtorrent/kademlia/dht_storage.hpp"
 #include "libtorrent/kademlia/dht_settings.hpp"
+#include "libtorrent/kademlia/announce_flags.hpp"
 
 #if TORRENT_ABI_VERSION == 1
 #include "libtorrent/session_settings.hpp"
@@ -435,7 +436,7 @@ namespace libtorrent {
 			, std::string salt = std::string());
 
 		void dht_get_peers(sha1_hash const& info_hash);
-		void dht_announce(sha1_hash const& info_hash, int port = 0, int flags = 0);
+		void dht_announce(sha1_hash const& info_hash, int port = 0, dht::announce_flags_t flags = {});
 
 		// Retrieve all the live DHT (identified by ``nid``) nodes. All the
 		// nodes id and endpoint will be returned in the list of nodes in the
@@ -618,10 +619,9 @@ namespace libtorrent {
 		//
 		// .. code:: c++
 		//
-		// 	ip_filter f;
+		// 	ip_filter f = ses.get_peer_class_filter();
 		// 	peer_class_t my_class = ses.create_peer_class("200.1.x.x IP range");
-		// 	f.add_rule(address_v4::from_string("200.1.1.0")
-		// 		, address_v4::from_string("200.1.255.255")
+		// 	f.add_rule(make_address("200.1.1.0"), make_address("200.1.255.255")
 		// 		, 1 << static_cast<std::uint32_t>(my_class));
 		// 	ses.set_peer_class_filter(f);
 		//

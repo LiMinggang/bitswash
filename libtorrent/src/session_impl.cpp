@@ -350,10 +350,8 @@ namespace aux {
 	// extension is used to know which torrent the incoming connection is
 	// trying to connect to. The 40 first bytes in the name is expected to
 	// be the hex encoded info-hash
-	int servername_callback(SSL* s, int* ad, void* arg)
+	int servername_callback(SSL* s, int*, void* arg)
 	{
-		TORRENT_UNUSED(ad);
-
 		auto* ses = reinterpret_cast<session_impl*>(arg);
 		const char* servername = SSL_get_servername(s, TLSEXT_NAMETYPE_host_name);
 
@@ -880,8 +878,7 @@ namespace aux {
 		session_log(" aborting all connections (%d)", int(m_connections.size()));
 #endif
 		// abort all connections
-		for (connection_map::iterator i = m_connections.begin();
-			i != m_connections.end();)
+		for (auto i = m_connections.begin(); i != m_connections.end();)
 		{
 			peer_connection* p = (*i).get();
 			++i;
@@ -1004,7 +1001,7 @@ namespace aux {
 		return m_classes.new_peer_class(name);
 	}
 
-	void session_impl::delete_peer_class(peer_class_t cid)
+	void session_impl::delete_peer_class(peer_class_t const cid)
 	{
 		TORRENT_ASSERT(is_single_thread());
 		// if you hit this assert, you're deleting a non-existent peer class
@@ -1083,7 +1080,7 @@ namespace aux {
 					listen_port(ls.get());
 
 				// we combine the per-torrent key with the per-interface key to make
-				// them consistent and uniqiue per torrent and interface
+				// them consistent and unique per torrent and interface
 				req.key ^= ls->tracker_key;
 				req.outgoing_socket = ls;
 				m_tracker_manager.queue_request(get_io_service(), req, c);
@@ -1091,7 +1088,7 @@ namespace aux {
 		}
 	}
 
-	void session_impl::set_peer_class(peer_class_t cid, peer_class_info const& pci)
+	void session_impl::set_peer_class(peer_class_t const cid, peer_class_info const& pci)
 	{
 		peer_class* pc = m_classes.at(cid);
 		// if you hit this assert, you're passing in an invalid cid
@@ -1190,7 +1187,7 @@ namespace aux {
 	// returns the number of pointers copied
 	// channel is upload_channel or download_channel
 	int session_impl::copy_pertinent_channels(peer_class_set const& set
-		, int channel, bandwidth_channel** dst, int max)
+		, int channel, bandwidth_channel** dst, int const max)
 	{
 		int num_channels = set.num_classes();
 		int num_copied = 0;
@@ -1215,10 +1212,10 @@ namespace aux {
 		return (ch->throttle() > 0 && ch->throttle() < amount);
 	}
 
-	int session_impl::use_quota_overhead(peer_class_set& set, int amount_down, int amount_up)
+	int session_impl::use_quota_overhead(peer_class_set& set, int const amount_down, int const amount_up)
 	{
 		int ret = 0;
-		int num = set.num_classes();
+		int const num = set.num_classes();
 		for (int i = 0; i < num; ++i)
 		{
 			peer_class* p = m_classes.at(set.class_at(i));
@@ -3762,8 +3759,8 @@ namespace aux {
 				t->log_to_all_peers("auto manager pausing torrent");
 #endif
 			// use graceful pause for auto-managed torrents
-			t->set_paused(true, torrent::flag_graceful_pause
-				| torrent::flag_clear_disk_cache);
+			t->set_paused(true, torrent_handle::graceful_pause
+				| torrent_handle::clear_disk_cache);
 			t->set_announce_to_dht(false);
 			t->set_announce_to_trackers(false);
 			t->set_announce_to_lsd(false);
@@ -5456,6 +5453,21 @@ namespace aux {
 		return socket->udp_external_port;
 	}
 
+	int session_impl::listen_port(transport const ssl, address const& local_addr)
+	{
+		auto socket = std::find_if(m_listen_sockets.begin(), m_listen_sockets.end()
+			, [&](std::shared_ptr<listen_socket_t> const& e)
+		{
+			auto const& listen_addr = e->external_address.external_address();
+			return e->ssl == ssl
+				&& (listen_addr == local_addr
+					|| (listen_addr.is_v4() == local_addr.is_v4() && listen_addr.is_unspecified()));
+		});
+		if (socket != m_listen_sockets.end())
+			return (*socket)->tcp_external_port;
+		return 0;
+	}
+
 	void session_impl::announce_lsd(sha1_hash const& ih, int port, bool broadcast)
 	{
 		// use internal listen port for local peers
@@ -6019,7 +6031,7 @@ namespace aux {
 		m_dht->get_peers(info_hash, std::bind(&on_dht_get_peers, std::ref(m_alerts), info_hash, _1));
 	}
 
-	void session_impl::dht_announce(sha1_hash const& info_hash, int port, int flags)
+	void session_impl::dht_announce(sha1_hash const& info_hash, int port, dht::announce_flags_t const flags)
 	{
 		if (!m_dht) return;
 		m_dht->announce(info_hash, port, flags, std::bind(&on_dht_get_peers, std::ref(m_alerts), info_hash, _1));
@@ -6189,7 +6201,7 @@ namespace aux {
 	{
 		return download_rate_limit(m_global_class);
 	}
-#endif
+#endif // DEPRECATE
 
 
 	namespace {

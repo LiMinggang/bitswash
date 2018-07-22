@@ -552,6 +552,7 @@ TORRENT_IPV6_NAMESPACE_END
 		// disconnected. This is a graceful shut down of the torrent in the sense
 		// that no downloaded bytes are wasted.
 		static constexpr pause_flags_t graceful_pause = 0_bit;
+		static constexpr pause_flags_t clear_disk_cache = 1_bit;
 
 		// ``pause()``, and ``resume()`` will disconnect all peers and reconnect
 		// all peers respectively. When a torrent is paused, it will however
@@ -693,8 +694,7 @@ TORRENT_IPV6_NAMESPACE_END
 		//		torrent_handle& h = *i;
 		//		if (!h.is_valid()) continue;
 		//		torrent_status s = h.status();
-		//		if (!s.has_metadata) continue;
-		//		if (!s.need_save_resume_data()) continue;
+		//		if (!s.has_metadata || !s.need_save_resume_data()) continue;
 		//
 		//		h.save_resume_data();
 		//		++outstanding_resume_data;
