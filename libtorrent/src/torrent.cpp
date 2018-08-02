@@ -100,6 +100,7 @@ POSSIBILITY OF SUCH DAMAGE.
 #include "libtorrent/aux_/numeric_cast.hpp"
 #include "libtorrent/aux_/path.hpp"
 #include "libtorrent/aux_/set_socket_buffer.hpp"
+#include "libtorrent/aux_/generate_peer_id.hpp"
 
 #ifndef TORRENT_DISABLE_LOGGING
 #include "libtorrent/aux_/session_impl.hpp" // for tracker_logger
@@ -133,6 +134,8 @@ bool is_downloading_state(int const st)
 }
 } // anonymous namespace
 
+	constexpr web_seed_flag_t torrent::ephemeral;
+
 	web_seed_t::web_seed_t(web_seed_entry const& wse)
 		: web_seed_entry(wse)
 	{
@@ -145,19 +148,6 @@ bool is_downloading_state(int const st)
 		: web_seed_entry(url_, type_, auth_, extra_headers_)
 	{
 		peer_info.web_seed = true;
-	}
-
-	peer_id generate_peer_id(aux::session_settings const& sett)
-	{
-		peer_id ret;
-		std::string print = sett.get_str(settings_pack::peer_fingerprint);
-		if (print.size() > ret.size()) print.resize(ret.size());
-
-		// the client's fingerprint
-		std::copy(print.begin(), print.end(), ret.begin());
-		if (print.length() < ret.size())
-			url_random(span<char>(ret).subspan(print.length()));
-		return ret;
 	}
 
 	torrent_hot_members::torrent_hot_members(aux::session_interface& ses
@@ -200,7 +190,7 @@ bool is_downloading_state(int const st)
 		, m_info_hash(p.info_hash)
 		, m_error_file(torrent_status::error_file_none)
 		, m_sequence_number(-1)
-		, m_peer_id(generate_peer_id(settings()))
+		, m_peer_id(aux::generate_peer_id(settings()))
 		, m_announce_to_trackers(!(p.flags & torrent_flags::paused))
 		, m_announce_to_lsd(!(p.flags & torrent_flags::paused))
 		, m_has_incoming(false)
@@ -502,7 +492,7 @@ bool is_downloading_state(int const st)
 		aux::random_shuffle(ws.begin(), ws.end());
 		for (auto& w : ws) m_web_seeds.push_back(std::move(w));
 
-#if !defined(TORRENT_DISABLE_ENCRYPTION) && !defined(TORRENT_DISABLE_EXTENSIONS)
+#if !defined TORRENT_DISABLE_ENCRYPTION
 		static char const req2[4] = {'r', 'e', 'q', '2'};
 		hasher h(req2);
 		h.update(m_torrent_file->info_hash());
@@ -830,11 +820,23 @@ bool is_downloading_state(int const st)
 
 	void torrent::read_piece(piece_index_t const piece)
 	{
+		error_code ec;
 		if (m_abort || m_deleted)
 		{
-			// failed
-			m_ses.alerts().emplace_alert<read_piece_alert>(
-				get_handle(), piece, error_code(boost::system::errc::operation_canceled, generic_category()));
+			ec.assign(boost::system::errc::operation_canceled, generic_category());
+		}
+		else if (!valid_metadata())
+		{
+			ec.assign(errors::no_metadata, libtorrent_category());
+		}
+		else if (piece < piece_index_t{0} || piece >= m_torrent_file->end_piece())
+		{
+			ec.assign(errors::invalid_piece_index, libtorrent_category());
+		}
+
+		if (ec)
+		{
+			m_ses.alerts().emplace_alert<read_piece_alert>(get_handle(), piece, ec);
 			return;
 		}
 
@@ -1769,9 +1771,12 @@ bool is_downloading_state(int const st)
 			}
 		}
 
-		// if we've already loaded file priorities, don't load piece priorities,
-		// they will interfere.
-		if (m_add_torrent_params && m_file_priority.empty())
+		// in case file priorities were passed in via the add_torrent_params
+		// and also in the case of share mode, we need to update the priorities
+		// this has to be applied before piece priority
+		if (!m_file_priority.empty()) update_piece_priorities(m_file_priority);
+
+		if (m_add_torrent_params)
 		{
 			piece_index_t idx(0);
 			for (auto prio : m_add_torrent_params->piece_priorities)
@@ -1786,13 +1791,6 @@ bool is_downloading_state(int const st)
 			update_gauge();
 		}
 
-		// in case file priorities were passed in via the add_torrent_params
-		// and also in the case of share mode, we need to update the priorities
-		if (!m_file_priority.empty() && std::find(m_file_priority.begin()
-			, m_file_priority.end(), dont_download) != m_file_priority.end())
-		{
-			update_piece_priorities();
-		}
 
 		if (m_seed_mode)
 		{
@@ -5008,7 +5006,6 @@ bool is_downloading_state(int const st)
 		if (m_file_priority != prios)
 		{
 			m_file_priority = std::move(prios);
-			update_piece_priorities();
 			if (m_share_mode)
 				recalc_share_mode();
 		}
@@ -5035,6 +5032,13 @@ bool is_downloading_state(int const st)
 		// storage may be NULL during shutdown
 		if (m_storage)
 		{
+			// the update of m_file_priority is deferred until the disk job comes
+			// back, but to preserve sanity and consistency, the piece priorities are
+			// updated immediately. If, on the off-chance, there's a disk failure, the
+			// piece priorities still stay the same, but the file priorities are
+			// possibly not fully updated.
+			update_piece_priorities(new_priority);
+
 			ADD_OUTSTANDING_ASYNC("file_priority");
 			m_ses.disk_thread().async_set_file_priority(m_storage
 				, std::move(new_priority), std::bind(&torrent::on_file_priority, shared_from_this(), _1, _2));
@@ -5072,6 +5076,12 @@ bool is_downloading_state(int const st)
 		// storage may be nullptr during shutdown
 		if (m_storage)
 		{
+			// the update of m_file_priority is deferred until the disk job comes
+			// back, but to preserve sanity and consistency, the piece priorities are
+			// updated immediately. If, on the off-chance, there's a disk failure, the
+			// piece priorities still stay the same, but the file priorities are
+			// possibly not fully updated.
+			update_piece_priorities(new_priority);
 			ADD_OUTSTANDING_ASYNC("file_priority");
 			m_ses.disk_thread().async_set_file_priority(m_storage
 				, std::move(new_priority), std::bind(&torrent::on_file_priority, shared_from_this(), _1, _2));
@@ -5118,7 +5128,8 @@ bool is_downloading_state(int const st)
 		files->resize(m_torrent_file->num_files(), default_priority);
 	}
 
-	void torrent::update_piece_priorities()
+	void torrent::update_piece_priorities(
+		aux::vector<download_priority_t, file_index_t> const& file_prios)
 	{
 		INVARIANT_CHECK;
 
@@ -5140,8 +5151,8 @@ bool is_downloading_state(int const st)
 			// pad files always have priority 0
 			download_priority_t const file_prio
 				= fs.pad_file_at(i) ? dont_download
-				: i >= m_file_priority.end_index() ? default_priority
-				: m_file_priority[i];
+				: i >= file_prios.end_index() ? default_priority
+				: file_prios[i];
 
 			if (file_prio == dont_download)
 			{
@@ -6331,20 +6342,15 @@ bool is_downloading_state(int const st)
 
 		// piece priorities and file priorities are mutually exclusive. If there
 		// are file priorities set, don't save piece priorities.
-		if (!m_file_priority.empty())
+		// when in seed mode (i.e. the client promises that we have all files)
+		// it does not make sense to save file priorities.
+		if (!m_file_priority.empty() && !m_seed_mode)
 		{
-			// when in seed mode (i.e. the client promises that we have all files)
-			// it does not make sense to save file priorities.
-			if (!m_seed_mode)
-			{
-				// write file priorities
-				ret.file_priorities.clear();
-				ret.file_priorities.reserve(m_file_priority.size());
-				for (auto const prio : m_file_priority)
-					ret.file_priorities.push_back(prio);
-			}
+			// write file priorities
+			ret.file_priorities = m_file_priority;
 		}
-		else if (has_picker())
+
+		if (has_picker())
 		{
 			// write piece priorities
 			// but only if they are not set to the default
@@ -8652,10 +8658,10 @@ bool is_downloading_state(int const st)
 		, web_seed_entry::type_t const type
 		, std::string const& auth
 		, web_seed_entry::headers_t const& extra_headers
-		, bool const ephemeral)
+		, web_seed_flag_t const flags)
 	{
 		web_seed_t ent(url, type, auth, extra_headers);
-		ent.ephemeral = ephemeral;
+		ent.ephemeral = bool(flags & ephemeral);
 
 		// don't add duplicates
 		auto const it = std::find(m_web_seeds.begin(), m_web_seeds.end(), ent);
@@ -10785,12 +10791,12 @@ bool is_downloading_state(int const st)
 		if (st->state == torrent_status::finished
 			|| st->state == torrent_status::seeding)
 		{
+			// it may be tempting to assume that st->is_finished == true here, but
 			// this assumption does not always hold. We transition to "finished"
 			// when we receive the last block of the last piece, which is before
 			// the hash check comes back. "is_finished" is set to true once all the
 			// pieces have been hash checked. So, there's a short window where it
 			// doesn't hold.
-//			TORRENT_ASSERT(st->is_finished);
 		}
 #endif
 

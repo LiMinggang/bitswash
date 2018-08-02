@@ -478,7 +478,7 @@ namespace aux {
 
 		// a connection is local if it was initiated by us.
 		// if it was an incoming connection, it is remote
-		bool is_outgoing() const override { return m_outgoing; }
+		bool is_outgoing() const final { return m_outgoing; }
 
 		bool received_listen_port() const { return m_received_listen_port; }
 		void received_listen_port()
@@ -516,9 +516,9 @@ namespace aux {
 		int est_reciprocation_rate() const { return m_est_reciprocation_rate; }
 
 #ifndef TORRENT_DISABLE_LOGGING
-		bool should_log(peer_log_alert::direction_t direction) const override final;
+		bool should_log(peer_log_alert::direction_t direction) const final;
 		void peer_log(peer_log_alert::direction_t direction
-			, char const* event, char const* fmt, ...) const noexcept override final TORRENT_FORMAT(4,5);
+			, char const* event, char const* fmt, ...) const noexcept final TORRENT_FORMAT(4,5);
 		void peer_log(peer_log_alert::direction_t direction
 			, char const* event) const noexcept;
 

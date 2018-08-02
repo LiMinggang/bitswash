@@ -104,7 +104,7 @@ namespace libtorrent {
 	struct tracker_request;
 	class bt_peer_connection;
 
-	peer_id generate_peer_id(aux::session_settings const& sett);
+	using web_seed_flag_t = flags::bitfield_flag<std::uint8_t, struct web_seed_flag_tag>;
 
 	enum class waste_reason
 	{
@@ -572,7 +572,8 @@ namespace libtorrent {
 		void set_piece_deadline(piece_index_t piece, int t, deadline_flags_t flags);
 		void reset_piece_deadline(piece_index_t piece);
 		void clear_time_critical();
-		void update_piece_priorities();
+		void update_piece_priorities(
+			aux::vector<download_priority_t, file_index_t> const& file_prios);
 
 		void status(torrent_status* st, status_flags_t flags);
 
@@ -612,13 +613,15 @@ namespace libtorrent {
 // --------------------------------------------
 		// PEER MANAGEMENT
 
+		constexpr static web_seed_flag_t ephemeral = 0_bit;
+
 		// add_web_seed won't add duplicates. If we have already added an entry
 		// with this URL, we'll get back the existing entry
 		web_seed_t* add_web_seed(std::string const& url
 			, web_seed_t::type_t type
 			, std::string const& auth = std::string()
 			, web_seed_t::headers_t const& extra_headers = web_seed_entry::headers_t()
-			, bool ephemeral = false);
+			, web_seed_flag_t flags = {});
 
 		void remove_web_seed(std::string const& url, web_seed_t::type_t type);
 		void disconnect_web_seed(peer_connection* p);
@@ -773,6 +776,15 @@ namespace libtorrent {
 		bool have_piece(piece_index_t index) const
 		{
 			if (!valid_metadata()) return false;
+			if (!has_picker()) return m_have_all;
+			return m_picker->have_piece(index);
+		}
+
+		// returns true if we have downloaded the given piece
+		bool user_have_piece(piece_index_t index) const
+		{
+			if (!valid_metadata()) return false;
+			if (index < piece_index_t{0} || index >= m_torrent_file->end_piece()) return false;
 			if (!has_picker()) return m_have_all;
 			return m_picker->have_piece(index);
 		}

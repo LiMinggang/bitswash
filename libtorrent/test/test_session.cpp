@@ -424,7 +424,9 @@ TORRENT_TEST(save_state_peer_id)
 	TEST_EQUAL(ses.get_settings().get_str(settings_pack::peer_fingerprint), "foobar");
 }
 
-#ifndef TORRENT_DISABLE_LOGGING
+#if !defined TORRENT_DISABLE_LOGGING
+
+#if !defined TORRENT_DISABLE_DHT
 
 auto const count_dht_inits = [](session& ses)
 {
@@ -496,6 +498,8 @@ TORRENT_TEST(init_dht_empty_bootstrap)
 	TEST_EQUAL(count, 1);
 }
 
+#endif // TORRENT_DISABLE_DHT
+
 TORRENT_TEST(reopen_network_sockets)
 {
 	auto count_alerts = [](session& ses, int const listen, int const portmap)
@@ -548,11 +552,11 @@ TORRENT_TEST(reopen_network_sockets)
 
 	s.reopen_network_sockets(session_handle::reopen_map_ports);
 
-	TEST_CHECK(count_alerts(s, 2, 4));
+	TEST_CHECK(count_alerts(s, 0, 4));
 
-	s.reopen_network_sockets(reopen_network_flags_t{0});
+	s.reopen_network_sockets({});
 
-	TEST_CHECK(count_alerts(s, 2, 0));
+	TEST_CHECK(count_alerts(s, 0, 0));
 
 	p.set_bool(settings_pack::enable_upnp, false);
 	p.set_bool(settings_pack::enable_natpmp, false);
@@ -560,7 +564,7 @@ TORRENT_TEST(reopen_network_sockets)
 
 	s.reopen_network_sockets(session_handle::reopen_map_ports);
 
-	TEST_CHECK(count_alerts(s, 2, 0));
+	TEST_CHECK(count_alerts(s, 0, 0));
 }
 #endif
 

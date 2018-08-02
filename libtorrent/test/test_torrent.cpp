@@ -225,13 +225,14 @@ TORRENT_TEST(total_wanted)
 	torrent_handle h = ses.add_torrent(std::move(p));
 
 	torrent_status st = h.status();
-	std::cout << "total_wanted: " << st.total_wanted << " : " << 1024 << std::endl;
 	TEST_EQUAL(st.total_wanted, 1024);
-	std::cout << "total_wanted_done: " << st.total_wanted_done << " : 0" << std::endl;
 	TEST_EQUAL(st.total_wanted_done, 0);
 
+	// make sure that selecting and unseleting a file quickly still end up with
+	// the last set priority
 	h.file_priority(file_index_t{1}, default_priority);
 	h.file_priority(file_index_t{1}, dont_download);
+	TEST_EQUAL(h.status({}).total_wanted, 0);
 	TEST_CHECK(wait_priority(h, aux::vector<download_priority_t, file_index_t>(static_cast<std::size_t>(fs.num_files()))));
 	TEST_EQUAL(h.status({}).total_wanted, 0);
 }
@@ -617,4 +618,77 @@ TORRENT_TEST(test_move_storage_no_metadata)
 	h.move_storage("save_path_1");
 
 	TEST_EQUAL(h.status().save_path, complete("save_path_1"));
+}
+
+TORRENT_TEST(test_have_piece_no_metadata)
+{
+	lt::session ses(settings());
+	error_code ec;
+	add_torrent_params p = parse_magnet_uri("magnet?xt=urn:btih:abababababababababababababababababababab", ec);
+	p.save_path = "save_path";
+	torrent_handle h = ses.add_torrent(p);
+
+	TEST_EQUAL(h.have_piece(piece_index_t{-1}), false);
+	TEST_EQUAL(h.have_piece(piece_index_t{0}), false);
+	TEST_EQUAL(h.have_piece(piece_index_t{100}), false);
+}
+
+TORRENT_TEST(test_have_piece_out_of_range)
+{
+	lt::session ses(settings());
+	error_code ec;
+
+	add_torrent_params p;
+	static std::array<const int, 2> const file_sizes{{100000, 100000}};
+	int const piece_size = 0x8000;
+	p.ti = make_torrent(file_sizes, piece_size);
+	p.save_path = "save_path";
+	p.flags |= torrent_flags::seed_mode;
+	torrent_handle h = ses.add_torrent(p);
+
+	TEST_EQUAL(h.have_piece(piece_index_t{-1}), false);
+	TEST_EQUAL(h.have_piece(piece_index_t{0}), true);
+	TEST_EQUAL(h.have_piece(piece_index_t{100}), false);
+}
+
+TORRENT_TEST(test_read_piece_no_metadata)
+{
+	lt::session ses(settings());
+	error_code ec;
+	add_torrent_params p = parse_magnet_uri("magnet?xt=urn:btih:abababababababababababababababababababab", ec);
+	p.save_path = "save_path";
+	torrent_handle h = ses.add_torrent(p);
+
+	h.read_piece(piece_index_t{-1});
+
+	alert const* a = wait_for_alert(ses, read_piece_alert::alert_type, "read_piece_alert");
+	TEST_CHECK(a);
+	if (auto* rp = alert_cast<read_piece_alert>(a))
+	{
+		TEST_CHECK(rp->error == error_code(lt::errors::no_metadata, lt::libtorrent_category()));
+	}
+}
+
+TORRENT_TEST(test_read_piece_out_of_range)
+{
+	lt::session ses(settings());
+	error_code ec;
+
+	add_torrent_params p;
+	static std::array<const int, 2> const file_sizes{{100000, 100000}};
+	int const piece_size = 0x8000;
+	p.ti = make_torrent(file_sizes, piece_size);
+	p.save_path = "save_path";
+	p.flags |= torrent_flags::seed_mode;
+	torrent_handle h = ses.add_torrent(p);
+
+	h.read_piece(piece_index_t{-1});
+
+	alert const* a = wait_for_alert(ses, read_piece_alert::alert_type, "read_piece_alert");
+	TEST_CHECK(a);
+	if (auto* rp = alert_cast<read_piece_alert>(a))
+	{
+		TEST_CHECK(rp->error == error_code(lt::errors::invalid_piece_index
+			, lt::libtorrent_category()));
+	}
 }

@@ -930,6 +930,30 @@
     <ClInclude Include="..\..\..\libtorrent\include\libtorrent\aux_\socket_type.hpp">
       <Filter>Header Files\libtorrent\aux</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\..\libtorrent\include\libtorrent\aux_\container_wrapper.hpp">
+      <Filter>Header Files\libtorrent\aux</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\libtorrent\include\libtorrent\aux_\generate_peer_id.hpp">
+      <Filter>Header Files\libtorrent\aux</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\libtorrent\include\libtorrent\kademlia\announce_flags.hpp">
+      <Filter>Header Files\libtorrent\kademlia</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\libtorrent\include\libtorrent\fwd.hpp">
+      <Filter>Header Files\libtorrent</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\libtorrent\include\libtorrent\index_range.hpp">
+      <Filter>Header Files\libtorrent</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\libtorrent\include\libtorrent\pex_flags.hpp">
+      <Filter>Header Files\libtorrent</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\libtorrent\include\libtorrent\aux_\export.hpp">
+      <Filter>Header Files\libtorrent\aux</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\libtorrent\include\libtorrent\aux_\instantiate_connection.hpp">
+      <Filter>Header Files\libtorrent\aux</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="..\..\..\src\bitswash.rc">
@@ -1537,6 +1561,9 @@
     <ClCompile Include="..\..\..\src\torrentinfo.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\..\libtorrent\src\generate_peer_id.cpp">
+      <Filter>Source Files\libtorrent</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="..\..\..\src\wx\msw\hand.cur">
@@ -1568,6 +1595,9 @@
     </None>
     <None Include="..\..\..\src\wx\msw\cross.cur">
       <Filter>Resource Files</Filter>
+    </None>
+    <None Include="..\..\..\libtorrent\include\libtorrent\Makefile.am">
+      <Filter>Header Files\libtorrent</Filter>
     </None>
   </ItemGroup>
   <ItemGroup>

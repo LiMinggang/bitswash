@@ -388,13 +388,19 @@ namespace
     }
 #endif // TORRENT_ABI_VERSION
 
-    void alert_notify(object cb)
+    void alert_notify(object cb) try
     {
         lock_gil lock;
         if (cb)
         {
             cb();
         }
+    }
+    catch (boost::python::error_already_set const&)
+    {
+        // this callback isn't supposed to throw an error.
+        // just swallow and ignore the exception
+        TORRENT_ASSERT_FAIL_VAL("python notify callback threw exception");
     }
 
     void set_alert_notify(lt::session& s, object cb)
@@ -1131,6 +1137,11 @@ void bind_session()
 		.def_readonly("value_index", &stats_metric::value_index)
 		.def_readonly("type", &stats_metric::type)
 	;
+
+	enum_<metric_type_t>("metric_type_t")
+		.value("counter", metric_type_t::counter)
+		.value("gauge", metric_type_t::gauge)
+		;
 
     def("session_stats_metrics", session_stats_metrics);
     def("find_metric_idx", find_metric_idx_wrap);

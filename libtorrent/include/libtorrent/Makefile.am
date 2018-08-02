@@ -166,6 +166,7 @@ nobase_include_HEADERS = \
   aux_/aligned_union.hpp            \
   aux_/bind_to_device.hpp           \
   aux_/block_cache_reference.hpp    \
+  aux_/container_wrapper.hpp        \
   aux_/cpuid.hpp                    \
   aux_/disable_warnings_push.hpp    \
   aux_/disable_warnings_pop.hpp     \
@@ -175,6 +176,7 @@ nobase_include_HEADERS = \
   aux_/deque.hpp                    \
   aux_/escape_string.hpp            \
   aux_/export.hpp                   \
+  aux_/generate_peer_id.hpp         \
   aux_/io.hpp                       \
   aux_/listen_socket_handle.hpp     \
   aux_/max_path.hpp                 \

@@ -226,6 +226,7 @@
     <ClInclude Include="..\..\..\libtorrent\include\libtorrent\aux_\bind_to_device.hpp" />
     <ClInclude Include="..\..\..\libtorrent\include\libtorrent\aux_\block_cache_reference.hpp" />
     <ClInclude Include="..\..\..\libtorrent\include\libtorrent\aux_\byteswap.hpp" />
+    <ClInclude Include="..\..\..\libtorrent\include\libtorrent\aux_\container_wrapper.hpp" />
     <ClInclude Include="..\..\..\libtorrent\include\libtorrent\aux_\cppint_import_export.hpp" />
     <ClInclude Include="..\..\..\libtorrent\include\libtorrent\aux_\cpuid.hpp" />
     <ClInclude Include="..\..\..\libtorrent\include\libtorrent\aux_\deferred_handler.hpp" />
@@ -235,9 +236,12 @@
     <ClInclude Include="..\..\..\libtorrent\include\libtorrent\aux_\disable_warnings_push.hpp" />
     <ClInclude Include="..\..\..\libtorrent\include\libtorrent\aux_\disk_job_fence.hpp" />
     <ClInclude Include="..\..\..\libtorrent\include\libtorrent\aux_\escape_string.hpp" />
+    <ClInclude Include="..\..\..\libtorrent\include\libtorrent\aux_\export.hpp" />
     <ClInclude Include="..\..\..\libtorrent\include\libtorrent\aux_\ffs.hpp" />
     <ClInclude Include="..\..\..\libtorrent\include\libtorrent\aux_\file_progress.hpp" />
+    <ClInclude Include="..\..\..\libtorrent\include\libtorrent\aux_\generate_peer_id.hpp" />
     <ClInclude Include="..\..\..\libtorrent\include\libtorrent\aux_\has_block.hpp" />
+    <ClInclude Include="..\..\..\libtorrent\include\libtorrent\aux_\instantiate_connection.hpp" />
     <ClInclude Include="..\..\..\libtorrent\include\libtorrent\aux_\io.hpp" />
     <ClInclude Include="..\..\..\libtorrent\include\libtorrent\aux_\ip_notifier.hpp" />
     <ClInclude Include="..\..\..\libtorrent\include\libtorrent\aux_\listen_socket_handle.hpp" />
@@ -324,6 +328,7 @@
     <ClInclude Include="..\..\..\libtorrent\include\libtorrent\file_storage.hpp" />
     <ClInclude Include="..\..\..\libtorrent\include\libtorrent\fingerprint.hpp" />
     <ClInclude Include="..\..\..\libtorrent\include\libtorrent\flags.hpp" />
+    <ClInclude Include="..\..\..\libtorrent\include\libtorrent\fwd.hpp" />
     <ClInclude Include="..\..\..\libtorrent\include\libtorrent\GeoIP.h" />
     <ClInclude Include="..\..\..\libtorrent\include\libtorrent\gzip.hpp" />
     <ClInclude Include="..\..\..\libtorrent\include\libtorrent\hasher.hpp" />
@@ -337,6 +342,7 @@
     <ClInclude Include="..\..\..\libtorrent\include\libtorrent\http_tracker_connection.hpp" />
     <ClInclude Include="..\..\..\libtorrent\include\libtorrent\i2p_stream.hpp" />
     <ClInclude Include="..\..\..\libtorrent\include\libtorrent\identify_client.hpp" />
+    <ClInclude Include="..\..\..\libtorrent\include\libtorrent\index_range.hpp" />
     <ClInclude Include="..\..\..\libtorrent\include\libtorrent\instantiate_connection.hpp" />
     <ClInclude Include="..\..\..\libtorrent\include\libtorrent\intrusive_ptr_base.hpp" />
     <ClInclude Include="..\..\..\libtorrent\include\libtorrent\invariant_check.hpp" />
@@ -345,6 +351,7 @@
     <ClInclude Include="..\..\..\libtorrent\include\libtorrent\io_service_fwd.hpp" />
     <ClInclude Include="..\..\..\libtorrent\include\libtorrent\ip_filter.hpp" />
     <ClInclude Include="..\..\..\libtorrent\include\libtorrent\ip_voter.hpp" />
+    <ClInclude Include="..\..\..\libtorrent\include\libtorrent\kademlia\announce_flags.hpp" />
     <ClInclude Include="..\..\..\libtorrent\include\libtorrent\kademlia\dht_observer.hpp" />
     <ClInclude Include="..\..\..\libtorrent\include\libtorrent\kademlia\dht_settings.hpp" />
     <ClInclude Include="..\..\..\libtorrent\include\libtorrent\kademlia\dht_state.hpp" />
@@ -396,6 +403,7 @@
     <ClInclude Include="..\..\..\libtorrent\include\libtorrent\peer_list.hpp" />
     <ClInclude Include="..\..\..\libtorrent\include\libtorrent\peer_request.hpp" />
     <ClInclude Include="..\..\..\libtorrent\include\libtorrent\performance_counters.hpp" />
+    <ClInclude Include="..\..\..\libtorrent\include\libtorrent\pex_flags.hpp" />
     <ClInclude Include="..\..\..\libtorrent\include\libtorrent\pe_crypto.hpp" />
     <ClInclude Include="..\..\..\libtorrent\include\libtorrent\piece_block.hpp" />
     <ClInclude Include="..\..\..\libtorrent\include\libtorrent\piece_block_progress.hpp" />
@@ -581,6 +589,7 @@
     <ClCompile Include="..\..\..\libtorrent\src\file_progress.cpp" />
     <ClCompile Include="..\..\..\libtorrent\src\file_storage.cpp" />
     <ClCompile Include="..\..\..\libtorrent\src\fingerprint.cpp" />
+    <ClCompile Include="..\..\..\libtorrent\src\generate_peer_id.cpp" />
     <ClCompile Include="..\..\..\libtorrent\src\gzip.cpp" />
     <ClCompile Include="..\..\..\libtorrent\src\hasher.cpp" />
     <ClCompile Include="..\..\..\libtorrent\src\hasher512.cpp" />
@@ -766,6 +775,7 @@
     <ClCompile Include="..\..\..\src\urldialog.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="..\..\..\libtorrent\include\libtorrent\Makefile.am" />
     <None Include="..\..\..\src\wx\msw\blank.cur" />
     <None Include="..\..\..\src\wx\msw\bullseye.cur" />
     <None Include="..\..\..\src\wx\msw\cross.cur" />
