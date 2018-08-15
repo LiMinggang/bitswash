@@ -552,8 +552,6 @@ namespace aux {
 #ifndef TORRENT_DISABLE_LOGGING
 		session_log(" *** session thread init");
 #endif
-		if (m_alerts.should_post<session_stats_header_alert>())
-			m_alerts.emplace_alert<session_stats_header_alert>();
 
 		// this is where we should set up all async operations. This
 		// is called from within the network thread as opposed to the
@@ -4087,16 +4085,14 @@ namespace aux {
 		// attempt this tick
 		int max_connections = m_settings.get_int(settings_pack::connection_speed);
 
-		// zero connections speeds are allowed, we just won't make any connections
-		if (max_connections <= 0) return;
-
 		// this loop will "hand out" connection_speed to the torrents, in a round
 		// robin fashion, so that every torrent is equally likely to connect to a
 		// peer
 
 		// boost connections are connections made by torrent connection
 		// boost, which are done immediately on a tracker response. These
-		// connections needs to be deducted from this second
+		// connections needs to be deducted from the regular connection attempt
+		// quota for this tick
 		if (m_boost_connections > 0)
 		{
 			if (m_boost_connections > max_connections)
@@ -4110,6 +4106,9 @@ namespace aux {
 				m_boost_connections = 0;
 			}
 		}
+
+		// zero connections speeds are allowed, we just won't make any connections
+		if (max_connections <= 0) return;
 
 		// TODO: use a lower limit than m_settings.connections_limit
 		// to allocate the to 10% or so of connection slots for incoming
@@ -4622,6 +4621,11 @@ namespace aux {
 
 	void session_impl::post_session_stats()
 	{
+		if (!m_posted_stats_header)
+		{
+			m_posted_stats_header = true;
+			m_alerts.emplace_alert<session_stats_header_alert>();
+		}
 		m_disk_thread.update_stats_counters(m_stats_counters);
 
 #ifndef TORRENT_DISABLE_DHT

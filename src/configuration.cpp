@@ -166,6 +166,7 @@ void Configuration::Save()
 
 	//legacy
 	//if( m_storagemode != lt::storage_mode_compact )
+	m_cfg->Write( _T( "/Torrent/connect_boost" ), ( long )m_connect_boost );
 	m_cfg->Write( _T( "/Torrent/storagemode" ), ( long )m_storagemode );
 	m_cfg->Write( _T( "/Torrent/global_upload_limit" ), m_global_upload_limit );
 	m_cfg->Write( _T( "/Torrent/global_download_limit" ), m_global_download_limit );
@@ -370,6 +371,7 @@ void Configuration::Load()
 
 	lt::storage_mode_t defstoragemode = lt::storage_mode_sparse;
 	m_storagemode = ( lt::storage_mode_t ) m_cfg->Read( _T( "/Torrent/storagemode" ), ( long ) defstoragemode );
+	m_connect_boost = static_cast<std::uint8_t>(m_cfg->Read( _T( "/Torrent/connect_boost" ), 255 ));
 	m_global_upload_limit = m_cfg->Read( _T( "/Torrent/global_upload_limit" ), -1 );
 	m_global_download_limit = m_cfg->Read( _T( "/Torrent/global_download_limit" ), -1 );
 	m_global_max_connections = m_cfg->Read( _T( "/Torrent/global_max_connections" ), 250 );

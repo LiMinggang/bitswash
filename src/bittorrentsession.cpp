@@ -392,6 +392,7 @@ void BitTorrentSession::Configure(lt::settings_pack &settingsPack)
 	settingsPack.set_str( lt::settings_pack::user_agent, wxGetApp().UserAgent().ToStdString( ));
 
 	// Speed limit
+	settingsPack.set_int( lt::settings_pack::torrent_connect_boost, m_config->GetConnectBoostCounter() );
 	settingsPack.set_int( lt::settings_pack::upload_rate_limit, m_config->GetGlobalUploadLimit() );
 	settingsPack.set_int( lt::settings_pack::download_rate_limit, m_config->GetGlobalDownloadLimit() );
 	// * Max Half-open connections

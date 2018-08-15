@@ -363,10 +363,6 @@ namespace libtorrent {
 		// returns the number of blocks there is in the given piece
 		int blocks_in_piece(piece_index_t index) const;
 
-		// the number of downloaded blocks that hasn't passed
-		// the hash-check yet
-		int unverified_blocks() const;
-
 		// return the peer pointers to all peers that participated in
 		// this piece
 		void get_downloaders(std::vector<torrent_peer*>& d, piece_index_t index) const;
@@ -395,9 +391,9 @@ namespace libtorrent {
 		int num_passed() const { return m_num_passed; }
 
 		// return true if we have all the pieces we wanted
-		bool is_finished() const { return m_num_have - m_num_have_filtered == int(m_piece_map.size()) - m_num_filtered; }
+		bool is_finished() const { return m_num_have - m_num_have_filtered == num_pieces() - m_num_filtered; }
 
-		bool is_seeding() const { return m_num_have == int(m_piece_map.size()); }
+		bool is_seeding() const { return m_num_have == num_pieces(); }
 
 		// the number of pieces we want and don't have
 		int num_want_left() const { return num_pieces() - m_num_have - m_num_filtered + m_num_have_filtered; }
@@ -428,8 +424,6 @@ namespace libtorrent {
 		{ return m_blocks_in_last_piece; }
 
 		std::pair<int, int> distributed_copies() const;
-
-		void set_num_pad_files(int n) { m_num_pad_files = n; }
 
 		// return the array of block_info objects for a given downloading_piece.
 		// this array has m_blocks_per_piece elements in it
@@ -765,13 +759,6 @@ namespace libtorrent {
 		// the number of pieces we have (i.e. passed + flushed).
 		// This includes pieces that we have filtered but still have
 		int m_num_have = 0;
-
-		// this is the number of partial download pieces
-		// that may be caused by pad files. We raise the limit
-		// of number of partial pieces by this amount, to not
-		// prioritize pieces that intersect pad files for no
-		// apparent reason
-		int m_num_pad_files = 0;
 
 		// if this is set to true, it means update_pieces()
 		// has to be called before accessing m_pieces.

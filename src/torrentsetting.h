@@ -51,6 +51,7 @@ class TorrentSettingPane: public wxPanel
 		//(*Declarations(TorrentSettingPane)
 		AutoSizeInput* m_autoDownLimit;
 		AutoSizeInput* m_autoUpLimit;
+		wxSpinCtrl* m_connectBoostCounter;
 		wxButton* m_button_opendir;
 		wxButton* m_button_saveasdir;
 		wxCheckBox* m_check_preview_video_files;
@@ -108,6 +109,11 @@ class TorrentSettingPane: public wxPanel
 		bool GetSquentialDownload()
 		{
 			return (m_check_sequential_download->IsChecked());
+		}
+
+		long GetConnectBoostCounter()
+		{
+			return m_connectBoostCounter->GetValue();
 		}
 
 		long GetDownloadRate()

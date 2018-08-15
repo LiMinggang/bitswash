@@ -180,6 +180,9 @@ public:
 	bool GetSequentialDownload() { return m_sequential_download; }
 	void SetSequentialDownload(bool isSequential) { m_sequential_download = isSequential; }
 
+	std::uint8_t GetConnectBoostCounter() { return m_connect_boost; }
+	void SetConnectBoostCounter(const std::uint8_t connectBoost) { m_connect_boost = connectBoost; } 
+
 	libtorrent::storage_mode_t GetDefaultStorageMode() { return m_storagemode; }
 	void SetDefaultStorageMode(const libtorrent::storage_mode_t& storagemode) { m_storagemode = storagemode; } 
 
@@ -490,6 +493,7 @@ private:
 	int 	m_global_download_limit;
 	int 	m_global_max_uploads;
 	int 	m_global_max_connections;
+	std::uint8_t m_connect_boost;
 	bool 	m_usedefault;
 	bool    m_rate_limit_peers_on_lan;
 	bool    m_rate_limit_utp;

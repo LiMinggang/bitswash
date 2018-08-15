@@ -74,6 +74,7 @@ void TorrentConfig::Save()
 	m_cfg->Write( _T( "/Torrent/qindex" ), m_qindex );
 	m_cfg->Write( _T( "/Torrent/downloadpath" ), m_downloadpath );
 
+	m_cfg->Write( _T( "/Torrent/connect_boost" ), ( long )m_connect_boost );
 	m_cfg->Write( _T( "/Torrent/storagemode" ), ( long )m_storagemode );
 	m_cfg->Write( _T( "/Torrent/state" ), m_torrent_state );
 	m_cfg->Write( _T( "/Torrent/ratio" ), m_torrent_ratio );
@@ -114,6 +115,7 @@ void TorrentConfig::Load()
 	wxFileName fn;
 	fn.AssignDir(m_cfg->Read( _T( "/Torrent/downloadpath" ), m_maincfg->GetDownloadPath() ));
 	m_downloadpath = fn.GetPathWithSep();
+	m_connect_boost = static_cast<std::uint8_t>(m_cfg->Read( _T( "/Torrent/connect_boost" ), 255 ));
 	m_storagemode = ( lt::storage_mode_t ) m_cfg->Read( _T( "/Torrent/storagemode" ), ( long ) m_maincfg->GetDefaultStorageMode() );
 	m_torrent_state = m_cfg->Read( _T( "/Torrent/state" ), m_maincfg->GetDefaultState() );
 	m_torrent_ratio = m_cfg->Read( _T( "/Torrent/ratio" ), m_maincfg->GetDefaultRatio() );

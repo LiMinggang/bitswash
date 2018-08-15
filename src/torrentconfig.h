@@ -82,6 +82,9 @@ public:
 	bool GetEnableVideoPreview() { return m_enable_video_preview; }
 	void SetEnableVideoPreview( bool enable ) { m_enable_video_preview = enable; }
 
+	std::uint8_t GetConnectBoostCounter() { return m_connect_boost; }
+	void SetConnectBoostCounter(const std::uint8_t connectBoost) { m_connect_boost = connectBoost; } 
+
 	libtorrent::storage_mode_t GetTorrentStorageMode() { return m_storagemode; }
 	void SetTorrentStorageMode( libtorrent::storage_mode_t storagemode ) { m_storagemode = storagemode; }
 
@@ -141,6 +144,7 @@ private:
 	wxString m_downloadpath;
 	wxString m_magneturi;
 
+	std::uint8_t m_connect_boost;
 	bool m_sequential_download;
 	bool m_enable_video_preview;
 	libtorrent::storage_mode_t m_storagemode;

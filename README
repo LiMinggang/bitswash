@@ -26,6 +26,7 @@ address-model=64 runtime-link=static stage
 News:
 ----
 0.0.10
+New: Connection boost counter config for torrent
 Fix: Open directory not take effect in next run
 Fix: Remove canclled Magnet URI download
 Fix: Text blurry issue under high DPI Windows 10

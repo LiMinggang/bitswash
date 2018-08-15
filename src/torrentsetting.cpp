@@ -59,6 +59,7 @@ TorrentSettingPane::TorrentSettingPane( wxWindow* parent, std::shared_ptr<torren
 	wxFlexGridSizer* FlexGridSizer5;
 	wxPanel* pane_info1;
 	wxStaticLine* StaticLine1;
+	wxStaticText* StaticText10;
 	wxStaticText* StaticText1;
 	wxStaticText* StaticText2;
 	wxStaticText* StaticText3;
@@ -235,6 +236,12 @@ TorrentSettingPane::TorrentSettingPane( wxWindow* parent, std::shared_ptr<torren
 	}
 	m_combo_storagemode->SetValue(strStorageMode);
 	FlexGridSizer5->Add(m_combo_storagemode, 1, wxALL|wxALIGN_LEFT|wxALIGN_CENTER_VERTICAL, 5);
+	StaticText10 = new wxStaticText(this, wxID_ANY, _("Connection Boost Counter:"), wxDefaultPosition, wxDefaultSize, 0, _T("wxID_ANY"));
+	FlexGridSizer5->Add(StaticText10, 1, wxALL|wxALIGN_CENTER_HORIZONTAL|wxALIGN_CENTER_VERTICAL, 5);
+	m_connectBoostCounter = new wxSpinCtrl(this, wxID_ANY, _T("255"), wxDefaultPosition, wxDefaultSize, 0, 1, 255, 255, _T("wxID_ANY"));
+	wxString t_boost= wxString::Format(_T("%d"), pcfg->GetConnectBoostCounter());
+	m_connectBoostCounter->SetValue(t_boost);
+	FlexGridSizer5->Add(m_connectBoostCounter, 1, wxALL|wxALIGN_CENTER_HORIZONTAL|wxALIGN_CENTER_VERTICAL, 5);
 	StaticText5 = new wxStaticText(this, wxID_ANY, _("Download Rate Limit:"), wxDefaultPosition, wxDefaultSize, 0, _T("wxID_ANY"));
 	FlexGridSizer5->Add(StaticText5, 1, wxALL|wxALIGN_LEFT|wxALIGN_CENTER_VERTICAL, 5);
 	m_autoDownLimit = new AutoSizeInput(this, _T("Bps"));

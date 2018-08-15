@@ -364,7 +364,7 @@ namespace libtorrent {
 	void piece_picker::verify_pick(std::vector<piece_block> const& picked
 		, typed_bitfield<piece_index_t> const& bits) const
 	{
-		TORRENT_ASSERT(bits.size() == int(m_piece_map.size()));
+		TORRENT_ASSERT(bits.size() == num_pieces());
 		for (piece_block const& pb : picked)
 		{
 			TORRENT_ASSERT(bits[pb.piece_index]);
@@ -486,7 +486,7 @@ namespace libtorrent {
 		}
 
 		if (t != nullptr)
-			TORRENT_ASSERT(int(m_piece_map.size()) == t->torrent_file().num_pieces());
+			TORRENT_ASSERT(num_pieces() == t->torrent_file().num_pieces());
 
 		for (download_queue_t j{}; j != piece_pos::num_download_categories; ++j)
 		{
@@ -588,9 +588,8 @@ namespace libtorrent {
 				, end(m_piece_map.end()); i != end && (i->have() || i->filtered());
 				++i, ++index);
 			TORRENT_ASSERT(m_cursor == index);
-			int const num_pieces = int(m_piece_map.size());
 			index = m_piece_map.end_index();
-			if (num_pieces > 0)
+			if (num_pieces() > 0)
 			{
 				for (auto i = m_piece_map.rend() - static_cast<int>(index); index > piece_index_t(0)
 					&& (i->have() || i->filtered()); ++i, --index);
@@ -730,9 +729,9 @@ namespace libtorrent {
 	std::pair<int, int> piece_picker::distributed_copies() const
 	{
 		TORRENT_ASSERT(m_seeds >= 0);
-		const int num_pieces = int(m_piece_map.size());
+		const int npieces = num_pieces();
 
-		if (num_pieces == 0) return std::make_pair(1, 0);
+		if (npieces == 0) return std::make_pair(1, 0);
 		int min_availability = piece_pos::max_peer_count;
 		// find the lowest availability count
 		// count the number of pieces that have that availability
@@ -761,8 +760,8 @@ namespace libtorrent {
 				++fraction_part;
 			}
 		}
-		TORRENT_ASSERT(integer_part + fraction_part == num_pieces);
-		return std::make_pair(min_availability + m_seeds, fraction_part * 1000 / num_pieces);
+		TORRENT_ASSERT(integer_part + fraction_part == npieces);
+		return std::make_pair(min_availability + m_seeds, fraction_part * 1000 / npieces);
 	}
 
 	prio_index_t piece_picker::priority_begin(int const prio) const
@@ -1882,13 +1881,11 @@ namespace {
 		// make this scale by the number of peers we have. For large
 		// scale clients, we would have more peers, and allow a higher
 		// threshold for the number of partials
-		// deduct pad files because they case partial pieces which are OK
 		// the second condition is to make sure we cap the number of partial
 		// _bytes_. The larger the pieces are, the fewer partial pieces we want.
 		// 2048 corresponds to 32 MiB
 		// TODO: 2 make the 2048 limit configurable
-		const int num_partials = int(m_downloads[piece_pos::piece_downloading].size())
-			- m_num_pad_files;
+		const int num_partials = int(m_downloads[piece_pos::piece_downloading].size());
 		if (num_partials > num_peers * 3 / 2
 			|| num_partials * m_blocks_per_piece > 2048)
 		{
@@ -3591,19 +3588,6 @@ get_out:
 		}
 
 		i = update_piece_state(i);
-	}
-
-	int piece_picker::unverified_blocks() const
-	{
-		int counter = 0;
-		for (auto const& c : m_downloads)
-		{
-			for (auto const& dp : c)
-			{
-				counter += int(dp.finished);
-			}
-		}
-		return counter;
 	}
 
 }
