@@ -612,26 +612,26 @@ TORRENT_TEST(resize)
 	// make sure init preserves priorities
 	auto p = setup_picker("1111111", "       ", "1111111", "");
 
-	TEST_CHECK(p->num_filtered() == 0);
-	TEST_CHECK(p->num_have_filtered() == 0);
-	TEST_CHECK(p->num_have() == 0);
+	TEST_EQUAL(p->want().num_pieces, 7);
+	TEST_EQUAL(p->have_want().num_pieces, 0);
+	TEST_EQUAL(p->have().num_pieces, 0);
 
 	p->set_piece_priority(piece_index_t(0), dont_download);
-	TEST_CHECK(p->num_filtered() == 1);
-	TEST_CHECK(p->num_have_filtered() == 0);
-	TEST_CHECK(p->num_have() == 0);
+	TEST_EQUAL(p->want().num_pieces, 6);
+	TEST_EQUAL(p->have_want().num_pieces, 0);
+	TEST_EQUAL(p->have().num_pieces, 0);
 
 	p->we_have(piece_index_t(0));
 
-	TEST_CHECK(p->num_filtered() == 0);
-	TEST_CHECK(p->num_have_filtered() == 1);
-	TEST_CHECK(p->num_have() == 1);
+	TEST_EQUAL(p->want().num_pieces, 6);
+	TEST_EQUAL(p->have_want().num_pieces, 0);
+	TEST_EQUAL(p->have().num_pieces, 1);
 
 	p->resize(blocks_per_piece, blocks_per_piece, blocks_per_piece * 7);
-	TEST_CHECK(p->piece_priority(piece_index_t(0)) == dont_download);
-	TEST_CHECK(p->num_filtered() == 1);
-	TEST_CHECK(p->num_have_filtered() == 0);
-	TEST_CHECK(p->num_have() == 0);
+	TEST_EQUAL(p->piece_priority(piece_index_t(0)), dont_download);
+	TEST_EQUAL(p->want().num_pieces, blocks_per_piece * 7 - 1);
+	TEST_EQUAL(p->have_want().num_pieces, 0);
+	TEST_EQUAL(p->have().num_pieces, 0);
 }
 
 TORRENT_TEST(dont_pick_requested_blocks)
@@ -992,15 +992,16 @@ TORRENT_TEST(piece_priorities)
 {
 	// test piece priorities
 	auto p = setup_picker("5555555", "       ", "7654321", "");
-	TEST_CHECK(p->num_filtered() == 0);
-	TEST_CHECK(p->num_have_filtered() == 0);
+	TEST_EQUAL(p->want().num_pieces, 7);
+	TEST_EQUAL(p->have_want().num_pieces, 0);
 	p->set_piece_priority(piece_index_t(0), dont_download);
-	TEST_CHECK(p->num_filtered() == 1);
-	TEST_CHECK(p->num_have_filtered() == 0);
+	TEST_EQUAL(p->want().num_pieces, 6);
+	TEST_EQUAL(p->have_want().num_pieces, 0);
 	p->mark_as_finished({piece_index_t(0), 0}, nullptr);
 	p->we_have(piece_index_t(0));
-	TEST_CHECK(p->num_filtered() == 0);
-	TEST_CHECK(p->num_have_filtered() == 1);
+	TEST_EQUAL(p->want().num_pieces, 6);
+	TEST_EQUAL(p->have_want().num_pieces, 0);
+	TEST_EQUAL(p->have().num_pieces, 1);
 
 	p->we_dont_have(piece_index_t(0));
 	p->set_piece_priority(piece_index_t(0), top_priority);
@@ -1537,28 +1538,28 @@ TORRENT_TEST(piece_passed)
 	TEST_EQUAL(p->has_piece_passed(piece_index_t(0)), true);
 	TEST_EQUAL(p->has_piece_passed(piece_index_t(1)), false);
 	TEST_EQUAL(p->num_passed(), 1);
-	TEST_EQUAL(p->num_have(), 1);
+	TEST_EQUAL(p->have().num_pieces, 1);
 
 	p->piece_passed(piece_index_t(1));
 	TEST_EQUAL(p->num_passed(), 2);
-	TEST_EQUAL(p->num_have(), 1);
+	TEST_EQUAL(p->have().num_pieces, 1);
 
 	p->we_have(piece_index_t(1));
-	TEST_EQUAL(p->num_have(), 2);
+	TEST_EQUAL(p->have().num_pieces, 2);
 
 	p->mark_as_finished({piece_index_t(2), 0}, &tmp1);
 	p->piece_passed(piece_index_t(2));
 	TEST_EQUAL(p->num_passed(), 3);
 	// just because the hash check passed doesn't mean
 	// we "have" the piece. We need to write it to disk first
-	TEST_EQUAL(p->num_have(), 2);
+	TEST_EQUAL(p->have().num_pieces, 2);
 
 	// piece 2 already passed the hash check, as soon as we've
 	// written all the blocks to disk, we should have that piece too
 	p->mark_as_finished({piece_index_t(2), 1}, &tmp1);
 	p->mark_as_finished({piece_index_t(2), 2}, &tmp1);
 	p->mark_as_finished({piece_index_t(2), 3}, &tmp1);
-	TEST_EQUAL(p->num_have(), 3);
+	TEST_EQUAL(p->have().num_pieces, 3);
 	TEST_EQUAL(p->have_piece(piece_index_t(2)), true);
 }
 
@@ -1569,15 +1570,15 @@ TORRENT_TEST(piece_passed_causing_we_have)
 	TEST_EQUAL(p->has_piece_passed(piece_index_t(0)), true);
 	TEST_EQUAL(p->has_piece_passed(piece_index_t(1)), false);
 	TEST_EQUAL(p->num_passed(), 1);
-	TEST_EQUAL(p->num_have(), 1);
+	TEST_EQUAL(p->have().num_pieces, 1);
 
 	p->mark_as_finished({piece_index_t(1), 3}, &tmp1);
 	TEST_EQUAL(p->num_passed(), 1);
-	TEST_EQUAL(p->num_have(), 1);
+	TEST_EQUAL(p->have().num_pieces, 1);
 
 	p->piece_passed(piece_index_t(1));
 	TEST_EQUAL(p->num_passed(), 2);
-	TEST_EQUAL(p->num_have(), 2);
+	TEST_EQUAL(p->have().num_pieces, 2);
 }
 
 TORRENT_TEST(break_one_seed)
@@ -1604,9 +1605,9 @@ TORRENT_TEST(we_dont_have2)
 	TEST_EQUAL(p->has_piece_passed(piece_index_t(1)), false);
 	TEST_EQUAL(p->has_piece_passed(piece_index_t(2)), true);
 	TEST_EQUAL(p->num_passed(), 2);
-	TEST_EQUAL(p->num_have(), 2);
-	TEST_EQUAL(p->num_have_filtered(), 1);
-	TEST_EQUAL(p->num_filtered(), 0);
+	TEST_EQUAL(p->have().num_pieces, 2);
+	TEST_EQUAL(p->have_want().num_pieces, 1);
+	TEST_EQUAL(p->want().num_pieces, 6);
 
 	p->we_dont_have(piece_index_t(0));
 
@@ -1614,17 +1615,17 @@ TORRENT_TEST(we_dont_have2)
 	TEST_EQUAL(p->has_piece_passed(piece_index_t(1)), false);
 	TEST_EQUAL(p->has_piece_passed(piece_index_t(2)), true);
 	TEST_EQUAL(p->num_passed(), 1);
-	TEST_EQUAL(p->num_have(), 1);
-	TEST_EQUAL(p->num_have_filtered(), 1);
+	TEST_EQUAL(p->have().num_pieces, 1);
+	TEST_EQUAL(p->have_want().num_pieces, 0);
 
 	p = setup_picker("1111111", "* *    ", "1101111", "");
 	TEST_EQUAL(p->has_piece_passed(piece_index_t(0)), true);
 	TEST_EQUAL(p->has_piece_passed(piece_index_t(1)), false);
 	TEST_EQUAL(p->has_piece_passed(piece_index_t(2)), true);
 	TEST_EQUAL(p->num_passed(), 2);
-	TEST_EQUAL(p->num_have(), 2);
-	TEST_EQUAL(p->num_have_filtered(), 1);
-	TEST_EQUAL(p->num_filtered(), 0);
+	TEST_EQUAL(p->have().num_pieces, 2);
+	TEST_EQUAL(p->have_want().num_pieces, 1);
+	TEST_EQUAL(p->want().num_pieces, 6);
 
 	p->we_dont_have(piece_index_t(2));
 
@@ -1632,8 +1633,9 @@ TORRENT_TEST(we_dont_have2)
 	TEST_EQUAL(p->has_piece_passed(piece_index_t(1)), false);
 	TEST_EQUAL(p->has_piece_passed(piece_index_t(2)), false);
 	TEST_EQUAL(p->num_passed(), 1);
-	TEST_EQUAL(p->num_have(), 1);
-	TEST_EQUAL(p->num_have_filtered(), 0);
+	TEST_EQUAL(p->have().num_pieces, 1);
+	TEST_EQUAL(p->have_want().num_pieces, 1);
+	TEST_EQUAL(p->want().num_pieces, 6);
 }
 
 TORRENT_TEST(dont_have_but_passed_hash_check)
@@ -2023,6 +2025,7 @@ TORRENT_TEST(mark_as_pad_whole_piece_seeding)
 	p->mark_as_pad({piece_index_t{0}, 1});
 	p->mark_as_pad({piece_index_t{0}, 2});
 	p->mark_as_pad({piece_index_t{0}, 3});
+	TEST_CHECK(p->have_piece(piece_index_t{0}));
 
 	TEST_CHECK(!p->is_seeding());
 
@@ -2034,6 +2037,113 @@ TORRENT_TEST(mark_as_pad_whole_piece_seeding)
 	TEST_CHECK(!p->is_seeding());
 	p->piece_passed(piece_index_t{1});
 	TEST_CHECK(p->is_seeding());
+}
+
+TORRENT_TEST(pad_blocks_in_piece)
+{
+	auto p = setup_picker("11", "  ", "44", "");
+	p->mark_as_pad({piece_index_t{0}, 0});
+	p->mark_as_pad({piece_index_t{0}, 1});
+	p->mark_as_pad({piece_index_t{0}, 2});
+
+	TEST_EQUAL(p->pad_blocks_in_piece(piece_index_t{0}), 3);
+	TEST_EQUAL(p->pad_blocks_in_piece(piece_index_t{1}), 0);
+}
+
+TORRENT_TEST(pad_blocks_in_last_piece)
+{
+	auto p = setup_picker("11", "  ", "44", "");
+	p->mark_as_pad({piece_index_t{1}, 0});
+	p->mark_as_pad({piece_index_t{1}, 1});
+	p->mark_as_pad({piece_index_t{1}, 2});
+
+	TEST_EQUAL(p->pad_blocks_in_piece(piece_index_t{1}), 3);
+	TEST_EQUAL(p->pad_blocks_in_piece(piece_index_t{0}), 0);
+}
+
+namespace {
+void validate_piece_count(piece_count const& c)
+{
+	// it's an impossible combination to have 0 pieces, but still have one of them be the last piece
+	TEST_CHECK(!(c.num_pieces == 0 && c.last_piece == true));
+
+	// if we have 0 pieces, we can't have any pad blocks either
+	TEST_CHECK(!(c.num_pieces == 0 && c.pad_blocks > 0));
+
+	// if we have all pieces, we must also have the last one
+	TEST_CHECK(!(c.num_pieces == 4 && c.last_piece == false));
+}
+
+void validate_all_pieces(piece_count const& c)
+{
+	TEST_EQUAL(c.last_piece, true);
+	TEST_EQUAL(c.num_pieces, 4);
+	TEST_EQUAL(c.pad_blocks, 3);
+}
+
+void validate_no_pieces(piece_count const& c)
+{
+	TEST_EQUAL(c.last_piece, false);
+	TEST_EQUAL(c.num_pieces, 0);
+	TEST_EQUAL(c.pad_blocks, 0);
+}
+}
+
+TORRENT_TEST(pad_blocks_all_filtered)
+{
+	auto p = setup_picker("1111", "    ", "0000", "");
+	p->mark_as_pad({piece_index_t{1}, 0});
+	p->mark_as_pad({piece_index_t{1}, 1});
+	p->mark_as_pad({piece_index_t{2}, 0});
+
+	validate_piece_count(p->all_pieces());
+	validate_piece_count(p->have());
+	validate_piece_count(p->have_want());
+	validate_piece_count(p->want());
+
+	validate_all_pieces(p->all_pieces());
+	validate_no_pieces(p->have());
+	validate_no_pieces(p->have_want());
+	validate_no_pieces(p->want());
+}
+
+TORRENT_TEST(pad_blocks_all_wanted)
+{
+	auto p = setup_picker("1111", "    ", "4444", "");
+	p->mark_as_pad({piece_index_t{1}, 0});
+	p->mark_as_pad({piece_index_t{1}, 1});
+	p->mark_as_pad({piece_index_t{2}, 0});
+
+	validate_piece_count(p->all_pieces());
+	validate_piece_count(p->have());
+	validate_piece_count(p->have_want());
+	validate_piece_count(p->want());
+
+	validate_all_pieces(p->all_pieces());
+	validate_all_pieces(p->want());
+	validate_no_pieces(p->have());
+	validate_no_pieces(p->have_want());
+}
+
+TORRENT_TEST(pad_blocks_some_wanted)
+{
+	auto p = setup_picker("1111", "    ", "0404", "");
+	p->mark_as_pad({piece_index_t{1}, 0});
+	p->mark_as_pad({piece_index_t{1}, 1});
+	p->mark_as_pad({piece_index_t{2}, 0});
+
+	validate_piece_count(p->all_pieces());
+	validate_piece_count(p->have());
+	validate_piece_count(p->have_want());
+	validate_piece_count(p->want());
+
+	validate_all_pieces(p->all_pieces());
+	validate_no_pieces(p->have());
+	validate_no_pieces(p->have_want());
+
+	TEST_EQUAL(p->want().num_pieces, 2);
+	TEST_EQUAL(p->want().last_piece, true);
+	TEST_EQUAL(p->want().pad_blocks, 2);
 }
 
 //TODO: 2 test picking with partial pieces and other peers present so that both

@@ -113,6 +113,8 @@ namespace libtorrent {
 		, max
 	};
 
+	TORRENT_EXTRA_EXPORT std::int64_t calc_bytes(file_storage const& fs, piece_count const& pc);
+
 	struct time_critical_piece
 	{
 		// when this piece was first requested
@@ -387,6 +389,10 @@ namespace libtorrent {
 		bt_peer_connection* find_peer(tcp::endpoint const& ep) const;
 		peer_connection* find_peer(peer_id const& pid);
 
+		// checks to see if this peer id is used in one of our own outgoing
+		// connections.
+		bool is_self_connection(peer_id const& pid) const;
+
 		void on_resume_data_checked(status_t status, storage_error const& error);
 		void on_force_recheck(status_t status, storage_error const& error);
 		void on_piece_hashed(piece_index_t piece, sha1_hash const& piece_hash
@@ -477,8 +483,8 @@ namespace libtorrent {
 
 		stat statistics() const { return m_stat; }
 		boost::optional<std::int64_t> bytes_left() const;
-		int block_bytes_wanted(piece_block const& p) const;
-		void bytes_done(torrent_status& st, bool accurate) const;
+
+		void bytes_done(torrent_status& st, status_flags_t) const;
 
 		void sent_bytes(int bytes_payload, int bytes_protocol);
 		void received_bytes(int bytes_payload, int bytes_protocol);
@@ -628,7 +634,7 @@ namespace libtorrent {
 		void retry_web_seed(peer_connection* p, boost::optional<seconds32> retry = boost::none);
 
 		void remove_web_seed_conn(peer_connection* p, error_code const& ec
-			, operation_t op, int error = 0);
+			, operation_t op, disconnect_severity_t error = peer_connection_interface::normal);
 
 		std::set<std::string> web_seeds(web_seed_entry::type_t type) const;
 
@@ -741,7 +747,7 @@ namespace libtorrent {
 		void do_connect_boost();
 
 		// forcefully sets next_announce to the current time
-		void force_tracker_request(time_point, int tracker_idx);
+		void force_tracker_request(time_point, int tracker_idx, reannounce_flags_t flags);
 		void scrape_tracker(int idx, bool user_triggered);
 		void announce_with_tracker(std::uint8_t e
 			= tracker_request::none);
@@ -816,13 +822,10 @@ namespace libtorrent {
 		int num_have() const
 		{
 			// pretend we have every piece when in seed mode
-			if (m_seed_mode) {
-				return m_torrent_file->num_pieces();
-			}
-
-			return has_picker()
-				? m_picker->num_have()
-				: m_have_all ? m_torrent_file->num_pieces() : 0;
+			if (m_seed_mode) return m_torrent_file->num_pieces();
+			if (has_picker()) return m_picker->have().num_pieces;
+			if (m_have_all) return m_torrent_file->num_pieces();
+			return 0;
 		}
 
 		// the number of pieces that have passed
@@ -830,9 +833,9 @@ namespace libtorrent {
 		// flushed to disk yet
 		int num_passed() const
 		{
-			return has_picker()
-				? m_picker->num_passed()
-				: m_have_all ? m_torrent_file->num_pieces() : 0;
+			if (has_picker()) return m_picker->num_passed();
+			if (m_have_all) return m_torrent_file->num_pieces();
+			return 0;
 		}
 
 		// when we get a have message, this is called for that piece
@@ -1433,6 +1436,11 @@ namespace libtorrent {
 		aux::handler_storage<64> m_deferred_handler_storage;
 #endif
 
+		// these are the peer IDs we've used for our outgoing peer connections for
+		// this torrent. If we get an incoming peer claiming to have one of these,
+		// it's a connection to ourself, and we should reject it.
+		std::set<peer_id> m_outgoing_pids;
+
 		// for torrents who have a bandwidth limit, this is != 0
 		// and refers to a peer_class in the session.
 		peer_class_t m_peer_class{0};
@@ -1591,8 +1599,9 @@ namespace libtorrent {
 
 // ----
 
-		// the number of bytes of padding files
-		std::uint32_t m_padding:24;
+		// the number of (16kiB) blocks that fall entirely in pad files
+		// i.e. blocks that we consider we have on start-up
+		std::uint16_t m_padding_blocks = 0;
 
 		// this is set to the connect boost quota for this torrent.
 		// After having received this many priority peer connection attempts, it

@@ -43,6 +43,7 @@ POSSIBILITY OF SUCH DAMAGE.
 #include <cstdint>
 #include <tuple>
 #include <set>
+#include <unordered_map>
 
 #include "libtorrent/peer_id.hpp"
 #include "libtorrent/assert.hpp"
@@ -69,8 +70,23 @@ namespace libtorrent {
 	using picker_options_t = flags::bitfield_flag<std::uint16_t, struct picker_options_tag>;
 	using download_queue_t = aux::strong_typedef<std::uint8_t, struct dl_queue_tag>;
 
+	struct piece_count
+	{
+		// the number of pieces included in the "set"
+		int num_pieces;
+		// the number of blocks, out of those pieces, that are pad
+		// blocks (i.e. entirely part of pad files)
+		int pad_blocks;
+		// true if the last piece is part of the set
+		bool last_piece;
+	};
+
 	class TORRENT_EXTRA_EXPORT piece_picker
 	{
+		// only defined when TORRENT_PICKER_LOG is defined, used for debugging
+		// unit tests
+		friend void print_pieces(piece_picker const& p);
+
 	public:
 
 		enum
@@ -375,16 +391,38 @@ namespace libtorrent {
 
 		torrent_peer* get_downloader(piece_block block) const;
 
-		// the number of filtered pieces we don't have
-		int num_filtered() const { return m_num_filtered; }
 
-		// the number of filtered pieces we already have
-		int num_have_filtered() const { return m_num_have_filtered; }
+		// piece states
+		//
+		//       have: -----------
+		//     pieces: # # # # # # # # # # #
+		//   filtered:         -------
+		//   pads blk: ^       ^         ^
+		//
+		//  want-have: * * * *
+		//       want: * * * *         * * *
+		// total-have: * * * * * *
+		//
+		// we only care about:
+		// 1. pieces we have (less pad blocks we have)
+		// 2. pieces we have AND want (less pad blocks we have and want)
+		// 3. pieces we want (less pad blocks we want)
 
-		// number of pieces whose hash has passed _and_ they have
-		// been successfully flushed to disk. Including pieces we have
-		// also filtered with priority 0 but have anyway.
-		int num_have() const { return m_num_have; }
+		// number of pieces not filtered, as well as the number of
+		// blocks out of those pieces that are pad blocks.
+		// ``last_piece`` is set if the last piece is one of the
+		// pieces.
+		piece_count want() const;
+
+		// number of pieces we have out of the ones we have not filtered
+		piece_count have_want() const;
+
+		// number of pieces we have (regardless of whether they are filtered)
+		piece_count have() const;
+
+		piece_count all_pieces() const;
+
+		int pad_blocks_in_piece(piece_index_t const index) const;
 
 		// number of pieces whose hash has passed (but haven't necessarily
 		// been flushed to disk yet)
@@ -431,6 +469,8 @@ namespace libtorrent {
 
 	private:
 
+		int num_pad_blocks() const { return m_num_pad_blocks; }
+
 		aux::typed_span<block_info> mutable_blocks_for_piece(downloading_piece const& dp);
 
 		std::tuple<bool, bool, int, int> requested_from(
@@ -443,10 +483,6 @@ namespace libtorrent {
 		expand_piece(piece_index_t piece, int whole_pieces
 			, typed_bitfield<piece_index_t> const& have
 			, picker_options_t options) const;
-
-		// only defined when TORRENT_PICKER_LOG is defined, used for debugging
-		// unit tests
-		void print_pieces() const;
 
 		struct piece_pos
 		{
@@ -690,10 +726,28 @@ namespace libtorrent {
 		// TODO: should this be allocated lazily?
 		mutable aux::vector<piece_pos, piece_index_t> m_piece_map;
 
-		// this maps pieces to a range of blocks that are pad files and should not
-		// be picked
+		// this indicates whether a block has been marked as a pad
+		// block or not. It's indexed by block index, i.e. piece_index
+		// * blocks_per_piece + block. These blocks should not be
+		// picked and are considered to be had
 		// TODO: this could be a much more efficient data structure
-		std::set<piece_block> m_pad_blocks;
+		bitfield m_pad_blocks;
+
+		// tracks the number of blocks in a specific piece that are pad blocks
+		std::unordered_map<piece_index_t, int> m_pads_in_piece;
+
+		// the number of bits set in the m_pad_blocks bitfield, i.e.
+		// the number of blocks marked as pads
+		int m_num_pad_blocks = 0;
+
+		// the number of pad blocks that we already have
+		int m_have_pad_blocks = 0;
+
+		// the number of pad blocks part of filtered pieces we don't have
+		int m_filtered_pad_blocks = 0;
+
+		// the number of pad blocks we have that are also filtered
+		int m_have_filtered_pad_blocks = 0;
 
 		// the number of seeds. These are not added to
 		// the availability counters of the pieces
@@ -742,6 +796,8 @@ namespace libtorrent {
 		// have. total_number_of_pieces - number_of_pieces_we_have
 		// - num_filtered is supposed to the number of pieces
 		// we still want to download
+		// TODO: it would be more intuitive to account "wanted" pieces
+		// instead of filtered
 		int m_num_filtered = 0;
 
 		// the number of pieces we have that also are filtered

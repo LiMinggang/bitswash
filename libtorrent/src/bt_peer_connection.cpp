@@ -123,14 +123,11 @@ namespace {
 #ifndef TORRENT_DISABLE_EXTENSIONS
 	bool ut_pex_peer_store::was_introduced_by(tcp::endpoint const &ep)
 	{
-#if TORRENT_USE_IPV6
 		if (is_v4(ep))
 		{
-#endif
 			peers4_t::value_type const v(ep.address().to_v4().to_bytes(), ep.port());
 			auto const i = std::lower_bound(m_peers.begin(), m_peers.end(), v);
 			return i != m_peers.end() && *i == v;
-#if TORRENT_USE_IPV6
 		}
 		else
 		{
@@ -138,7 +135,6 @@ namespace {
 			auto const i = std::lower_bound(m_peers6.begin(), m_peers6.end(), v);
 			return i != m_peers6.end() && *i == v;
 		}
-#endif
 	}
 #endif // TORRENT_DISABLE_EXTENSIONS
 
@@ -155,7 +151,7 @@ namespace {
 		, m_rc4_encrypted(false)
 		, m_recv_buffer(peer_connection::m_recv_buffer)
 #endif
-		, m_our_peer_id(aux::generate_peer_id(*pack.sett))
+		, m_our_peer_id(pack.our_peer_id)
 	{
 #ifndef TORRENT_DISABLE_LOGGING
 		peer_log(peer_log_alert::info, "CONSTRUCT", "bt_peer_connection");
@@ -798,7 +794,7 @@ namespace {
 		received_bytes(0, received);
 		if (m_recv_buffer.packet_size() != 1)
 		{
-			disconnect(errors::invalid_choke, operation_t::bittorrent, 2);
+			disconnect(errors::invalid_choke, operation_t::bittorrent, peer_error);
 			return;
 		}
 		if (!m_recv_buffer.packet_finished()) return;
@@ -848,7 +844,7 @@ namespace {
 		received_bytes(0, received);
 		if (m_recv_buffer.packet_size() != 1)
 		{
-			disconnect(errors::invalid_unchoke, operation_t::bittorrent, 2);
+			disconnect(errors::invalid_unchoke, operation_t::bittorrent, peer_error);
 			return;
 		}
 		if (!m_recv_buffer.packet_finished()) return;
@@ -868,7 +864,7 @@ namespace {
 		received_bytes(0, received);
 		if (m_recv_buffer.packet_size() != 1)
 		{
-			disconnect(errors::invalid_interested, operation_t::bittorrent, 2);
+			disconnect(errors::invalid_interested, operation_t::bittorrent, peer_error);
 			return;
 		}
 		if (!m_recv_buffer.packet_finished()) return;
@@ -897,7 +893,7 @@ namespace {
 		received_bytes(0, received);
 		if (m_recv_buffer.packet_size() != 1)
 		{
-			disconnect(errors::invalid_not_interested, operation_t::bittorrent, 2);
+			disconnect(errors::invalid_not_interested, operation_t::bittorrent, peer_error);
 			return;
 		}
 		if (!m_recv_buffer.packet_finished()) return;
@@ -917,7 +913,7 @@ namespace {
 		received_bytes(0, received);
 		if (m_recv_buffer.packet_size() != 5)
 		{
-			disconnect(errors::invalid_have, operation_t::bittorrent, 2);
+			disconnect(errors::invalid_have, operation_t::bittorrent, peer_error);
 			return;
 		}
 		if (!m_recv_buffer.packet_finished()) return;
@@ -947,9 +943,9 @@ namespace {
 		// if we don't have the metadata, we cannot
 		// verify the bitfield size
 		if (t->valid_metadata()
-			&& m_recv_buffer.packet_size() - 1 != (t->torrent_file().num_pieces() + 7) / 8)
+			&& m_recv_buffer.packet_size() - 1 != (t->torrent_file().num_pieces() + CHAR_BIT - 1) / CHAR_BIT)
 		{
-			disconnect(errors::invalid_bitfield_size, operation_t::bittorrent, 2);
+			disconnect(errors::invalid_bitfield_size, operation_t::bittorrent, peer_error);
 			return;
 		}
 
@@ -959,7 +955,7 @@ namespace {
 
 		typed_bitfield<piece_index_t> bits;
 		bits.assign(recv_buffer.begin() + 1
-			, t->valid_metadata()?get_bitfield().size():(m_recv_buffer.packet_size()-1)*8);
+			, t->valid_metadata()?get_bitfield().size():(m_recv_buffer.packet_size()-1)*CHAR_BIT);
 
 		incoming_bitfield(bits);
 	}
@@ -976,7 +972,7 @@ namespace {
 		received_bytes(0, received);
 		if (m_recv_buffer.packet_size() != 13)
 		{
-			disconnect(errors::invalid_request, operation_t::bittorrent, 2);
+			disconnect(errors::invalid_request, operation_t::bittorrent, peer_error);
 			return;
 		}
 		if (!m_recv_buffer.packet_finished()) return;
@@ -1027,13 +1023,13 @@ namespace {
 
 				if (list_size > m_recv_buffer.packet_size() - 13)
 				{
-					disconnect(errors::invalid_hash_list, operation_t::bittorrent, 2);
+					disconnect(errors::invalid_hash_list, operation_t::bittorrent, peer_error);
 					return;
 				}
 
 				if (m_recv_buffer.packet_size() - 13 - list_size > t->block_size())
 				{
-					disconnect(errors::packet_too_large, operation_t::bittorrent, 2);
+					disconnect(errors::packet_too_large, operation_t::bittorrent, peer_error);
 					return;
 				}
 			}
@@ -1044,7 +1040,7 @@ namespace {
 			{
 				if (m_recv_buffer.packet_size() - 9 > t->block_size())
 				{
-					disconnect(errors::packet_too_large, operation_t::bittorrent, 2);
+					disconnect(errors::packet_too_large, operation_t::bittorrent, peer_error);
 					return;
 				}
 			}
@@ -1134,7 +1130,7 @@ namespace {
 			if (bdecode(recv_buffer.begin() + 13, recv_buffer.begin() + 13 + list_size
 				, hash_list, ec) != 0)
 			{
-				disconnect(errors::invalid_hash_piece, operation_t::bittorrent, 2);
+				disconnect(errors::invalid_hash_piece, operation_t::bittorrent, peer_error);
 				return;
 			}
 
@@ -1142,7 +1138,7 @@ namespace {
 			// [ [node-index, hash], [node-index, hash], ... ]
 			if (hash_list.type() != bdecode_node::list_t)
 			{
-				disconnect(errors::invalid_hash_list, operation_t::bittorrent, 2);
+				disconnect(errors::invalid_hash_list, operation_t::bittorrent, peer_error);
 				return;
 			}
 
@@ -1161,7 +1157,7 @@ namespace {
 			}
 			if (!nodes.empty() && !t->add_merkle_nodes(nodes, p.piece))
 			{
-				disconnect(errors::invalid_hash_piece, operation_t::bittorrent, 2);
+				disconnect(errors::invalid_hash_piece, operation_t::bittorrent, peer_error);
 				return;
 			}
 		}
@@ -1181,7 +1177,7 @@ namespace {
 		received_bytes(0, received);
 		if (m_recv_buffer.packet_size() != 13)
 		{
-			disconnect(errors::invalid_cancel, operation_t::bittorrent, 2);
+			disconnect(errors::invalid_cancel, operation_t::bittorrent, peer_error);
 			return;
 		}
 		if (!m_recv_buffer.packet_finished()) return;
@@ -1209,7 +1205,7 @@ namespace {
 		received_bytes(0, received);
 		if (m_recv_buffer.packet_size() != 3)
 		{
-			disconnect(errors::invalid_dht_port, operation_t::bittorrent, 2);
+			disconnect(errors::invalid_dht_port, operation_t::bittorrent, peer_error);
 			return;
 		}
 		if (!m_recv_buffer.packet_finished()) return;
@@ -1235,7 +1231,7 @@ namespace {
 		received_bytes(0, received);
 		if (!m_supports_fast)
 		{
-			disconnect(errors::invalid_suggest, operation_t::bittorrent, 2);
+			disconnect(errors::invalid_suggest, operation_t::bittorrent, peer_error);
 			return;
 		}
 
@@ -1255,7 +1251,7 @@ namespace {
 		received_bytes(0, received);
 		if (!m_supports_fast)
 		{
-			disconnect(errors::invalid_have_all, operation_t::bittorrent, 2);
+			disconnect(errors::invalid_have_all, operation_t::bittorrent, peer_error);
 			return;
 		}
 		incoming_have_all();
@@ -1268,7 +1264,7 @@ namespace {
 		received_bytes(0, received);
 		if (!m_supports_fast)
 		{
-			disconnect(errors::invalid_have_none, operation_t::bittorrent, 2);
+			disconnect(errors::invalid_have_none, operation_t::bittorrent, peer_error);
 			return;
 		}
 		incoming_have_none();
@@ -1281,7 +1277,7 @@ namespace {
 		received_bytes(0, received);
 		if (!m_supports_fast)
 		{
-			disconnect(errors::invalid_reject, operation_t::bittorrent, 2);
+			disconnect(errors::invalid_reject, operation_t::bittorrent, peer_error);
 			return;
 		}
 
@@ -1305,7 +1301,7 @@ namespace {
 		received_bytes(0, received);
 		if (!m_supports_fast)
 		{
-			disconnect(errors::invalid_allow_fast, operation_t::bittorrent, 2);
+			disconnect(errors::invalid_allow_fast, operation_t::bittorrent, peer_error);
 			return;
 		}
 
@@ -1354,14 +1350,12 @@ namespace {
 			// IPv4 address
 			ep = detail::read_v4_endpoint<tcp::endpoint>(ptr);
 		}
-#if TORRENT_USE_IPV6
 		else if (addr_type == 1)
 		{
 			// IPv6 address
 			if (int(recv_buffer.size()) < 2 + 18 + 2) return;
 			ep = detail::read_v6_endpoint<tcp::endpoint>(ptr);
 		}
-#endif
 		else
 		{
 #ifndef TORRENT_DISABLE_LOGGING
@@ -1546,13 +1540,13 @@ namespace {
 		received_bytes(0, received);
 		if (m_recv_buffer.packet_size() < 2)
 		{
-			disconnect(errors::invalid_extended, operation_t::bittorrent, 2);
+			disconnect(errors::invalid_extended, operation_t::bittorrent, peer_error);
 			return;
 		}
 
 		if (associated_torrent().expired())
 		{
-			disconnect(errors::invalid_extended, operation_t::bittorrent, 2);
+			disconnect(errors::invalid_extended, operation_t::bittorrent, peer_error);
 			return;
 		}
 
@@ -1652,7 +1646,7 @@ namespace {
 		}
 #endif
 
-		disconnect(errors::invalid_message, operation_t::bittorrent, 2);
+		disconnect(errors::invalid_message, operation_t::bittorrent, peer_error);
 	}
 
 	void bt_peer_connection::on_extended_handshake()
@@ -1685,7 +1679,7 @@ namespace {
 		if (should_log(peer_log_alert::incoming_message))
 		{
 			peer_log(peer_log_alert::incoming_message, "EXTENDED_HANDSHAKE"
-				, "%s", print_entry(root).c_str());
+				, "%s", print_entry(root, true).c_str());
 		}
 #endif
 
@@ -1750,7 +1744,6 @@ namespace {
 					, address_v4(bytes)
 					, aux::session_interface::source_peer, remote().address());
 			}
-#if TORRENT_USE_IPV6
 			else if (myip.size() == std::tuple_size<address_v6::bytes_type>::value)
 			{
 				address_v6::bytes_type bytes;
@@ -1765,7 +1758,6 @@ namespace {
 						, ipv6_address
 						, aux::session_interface::source_peer, remote().address());
 			}
-#endif
 		}
 
 		// if we're finished and this peer is uploading only
@@ -1999,7 +1991,9 @@ namespace {
 		const int num_pieces = t->torrent_file().num_pieces();
 		TORRENT_ASSERT(num_pieces > 0);
 
-		const int packet_size = (num_pieces + 7) / 8 + 5;
+		constexpr std::uint8_t char_bit_mask = CHAR_BIT - 1;
+
+		const int packet_size = (num_pieces + char_bit_mask) / CHAR_BIT + 5;
 
 		TORRENT_ALLOCA(msg, char, packet_size);
 		if (msg.data() == nullptr) return; // out of memory
@@ -2013,7 +2007,7 @@ namespace {
 			std::fill_n(ptr, packet_size - 5, std::uint8_t{0xff});
 
 			// Clear trailing bits
-			msg.back() = static_cast<char>((0xff << ((8 - (num_pieces & 7)) & 7)) & 0xff);
+			msg.back() = static_cast<char>((0xff << ((CHAR_BIT - (num_pieces & char_bit_mask)) & char_bit_mask)) & 0xff);
 		}
 		else
 		{
@@ -2035,7 +2029,7 @@ namespace {
 		// add predictive pieces to the bitfield as well, since we won't
 		// announce them again
 		for (piece_index_t const p : t->predictive_pieces())
-			msg[5 + static_cast<int>(p) / 8] |= (0x80 >> (static_cast<int>(p) & 7));
+			msg[5 + static_cast<int>(p) / CHAR_BIT] |= (0x80 >> (static_cast<int>(p) & char_bit_mask));
 
 #ifndef TORRENT_DISABLE_LOGGING
 		if (should_log(peer_log_alert::outgoing_message))
@@ -2045,7 +2039,7 @@ namespace {
 			bitfield_string.resize(n_pieces);
 			for (std::size_t k = 0; k < n_pieces; ++k)
 			{
-				if (msg[5 + int(k) / 8] & (0x80 >> (k % 8))) bitfield_string[k] = '1';
+				if (msg[5 + int(k) / CHAR_BIT] & (0x80 >> (k % CHAR_BIT))) bitfield_string[k] = '1';
 				else bitfield_string[k] = '0';
 			}
 			peer_log(peer_log_alert::outgoing_message, "BITFIELD"
@@ -2174,7 +2168,7 @@ namespace {
 		if (should_log(peer_log_alert::outgoing_message))
 		{
 			peer_log(peer_log_alert::outgoing_message, "EXTENDED_HANDSHAKE"
-				, "%s", handshake.to_string().c_str());
+				, "%s", handshake.to_string(true).c_str());
 		}
 #endif
 	}
@@ -2372,7 +2366,7 @@ namespace {
 			if (!m_recv_buffer.crypto_packet_finished()
 				&& m_recv_buffer.crypto_packet_size() > 1025 * 1024)
 			{
-				disconnect(errors::packet_too_large, operation_t::encryption, 2);
+				disconnect(errors::packet_too_large, operation_t::encryption, peer_error);
 				return;
 			}
 
@@ -2487,7 +2481,7 @@ namespace {
 				received_bytes(0, int(bytes_transferred));
 
 				if (m_recv_buffer.packet_finished())
-					disconnect(errors::sync_hash_not_found, operation_t::bittorrent, 1);
+					disconnect(errors::sync_hash_not_found, operation_t::bittorrent, failure);
 				return;
 			}
 
@@ -2524,7 +2518,7 @@ namespace {
 				m_sync_bytes_read += bytes_processed;
 				if (m_sync_bytes_read >= 512)
 				{
-					disconnect(errors::sync_hash_not_found, operation_t::encryption, 1);
+					disconnect(errors::sync_hash_not_found, operation_t::encryption, failure);
 					return;
 				}
 
@@ -2600,7 +2594,7 @@ namespace {
 
 			if (!m_rc4)
 			{
-				disconnect(errors::invalid_info_hash, operation_t::bittorrent, 1);
+				disconnect(errors::invalid_info_hash, operation_t::bittorrent, failure);
 				return;
 			}
 
@@ -2610,7 +2604,7 @@ namespace {
 			static const char sh_vc[] = {0,0,0,0, 0,0,0,0};
 			if (!std::equal(sh_vc, sh_vc + 8, recv_buffer.begin() + 20))
 			{
-				disconnect(errors::invalid_encryption_constant, operation_t::encryption, 2);
+				disconnect(errors::invalid_encryption_constant, operation_t::encryption, peer_error);
 				return;
 			}
 
@@ -2634,7 +2628,7 @@ namespace {
 			{
 				received_bytes(0, int(bytes_transferred));
 				if (m_recv_buffer.packet_finished())
-					disconnect(errors::invalid_encryption_constant, operation_t::encryption, 2);
+					disconnect(errors::invalid_encryption_constant, operation_t::encryption, peer_error);
 				return;
 			}
 
@@ -2665,7 +2659,7 @@ namespace {
 
 				if (m_sync_bytes_read >= 512)
 				{
-					disconnect(errors::invalid_encryption_constant, operation_t::encryption, 2);
+					disconnect(errors::invalid_encryption_constant, operation_t::encryption, peer_error);
 					return;
 				}
 
@@ -2753,7 +2747,7 @@ namespace {
 
 				if (crypto_select == 0)
 				{
-					disconnect(errors::unsupported_encryption_mode, operation_t::encryption, 1);
+					disconnect(errors::unsupported_encryption_mode, operation_t::encryption, failure);
 					return;
 				}
 
@@ -2769,7 +2763,7 @@ namespace {
 				if (crypto_field == 0)
 				{
 					// we don't allow any of the offered encryption levels
-					disconnect(errors::unsupported_encryption_mode_selected, operation_t::encryption, 2);
+					disconnect(errors::unsupported_encryption_mode_selected, operation_t::encryption, peer_error);
 					return;
 				}
 
@@ -2782,7 +2776,7 @@ namespace {
 			int const len_pad = aux::read_int16(recv_buffer);
 			if (len_pad < 0 || len_pad > 512)
 			{
-				disconnect(errors::invalid_pad_size, operation_t::encryption, 2);
+				disconnect(errors::invalid_pad_size, operation_t::encryption, peer_error);
 				return;
 			}
 
@@ -2827,7 +2821,7 @@ namespace {
 
 				if (len_ia < 0)
 				{
-					disconnect(errors::invalid_encrypt_handshake, operation_t::encryption, 2);
+					disconnect(errors::invalid_encrypt_handshake, operation_t::encryption, peer_error);
 					return;
 				}
 
@@ -2961,7 +2955,7 @@ namespace {
 					peer_log(peer_log_alert::info, "ENCRYPTION"
 						, "SSL peers are not allowed to use any other encryption");
 #endif
-					disconnect(errors::invalid_info_hash, operation_t::bittorrent, 1);
+					disconnect(errors::invalid_info_hash, operation_t::bittorrent, failure);
 					return;
 				}
 #endif // TORRENT_USE_OPENSSL
@@ -2980,7 +2974,7 @@ namespace {
 				// handshake by this point
 				if (m_encrypted || is_outgoing())
 				{
-					disconnect(errors::invalid_info_hash, operation_t::bittorrent, 1);
+					disconnect(errors::invalid_info_hash, operation_t::bittorrent, failure);
 					return;
 				}
 
@@ -2992,7 +2986,7 @@ namespace {
 				TORRENT_ASSERT(!m_recv_buffer.packet_finished());
 				return;
 #else
-				disconnect(errors::invalid_info_hash, operation_t::bittorrent, 1);
+				disconnect(errors::invalid_info_hash, operation_t::bittorrent, failure);
 				return;
 #endif // TORRENT_DISABLE_ENCRYPTION
 			}
@@ -3086,7 +3080,7 @@ namespace {
 #ifndef TORRENT_DISABLE_LOGGING
 					peer_log(peer_log_alert::info, "ERROR", "received invalid info_hash");
 #endif
-					disconnect(errors::invalid_info_hash, operation_t::bittorrent, 1);
+					disconnect(errors::invalid_info_hash, operation_t::bittorrent, failure);
 					return;
 				}
 
@@ -3178,6 +3172,12 @@ namespace {
 			{
 				// if this is a bitcomet client, lower the request queue size limit
 				if (max_out_request_queue() > 50) max_out_request_queue(50);
+			}
+
+			if (t->is_self_connection(pid))
+			{
+				disconnect(errors::self_connection, operation_t::bittorrent);
+				return;
 			}
 
 #ifndef TORRENT_DISABLE_EXTENSIONS
@@ -3274,7 +3274,7 @@ namespace {
 			{
 				// packet too large
 				received_bytes(0, int(bytes_transferred));
-				disconnect(errors::packet_too_large, operation_t::bittorrent, 2);
+				disconnect(errors::packet_too_large, operation_t::bittorrent, peer_error);
 				return;
 			}
 
@@ -3305,7 +3305,7 @@ namespace {
 			if (!t)
 			{
 				received_bytes(0, int(bytes_transferred));
-				disconnect(errors::torrent_removed, operation_t::bittorrent, 1);
+				disconnect(errors::torrent_removed, operation_t::bittorrent, failure);
 				return;
 			}
 #if TORRENT_USE_ASSERTS

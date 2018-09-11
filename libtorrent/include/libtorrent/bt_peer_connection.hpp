@@ -70,10 +70,8 @@ namespace libtorrent {
 		// cheap since the lists' size is limited
 		using peers4_t = std::vector<std::pair<address_v4::bytes_type, std::uint16_t>>;
 		peers4_t m_peers;
-#if TORRENT_USE_IPV6
 		using peers6_t = std::vector<std::pair<address_v6::bytes_type, std::uint16_t>>;
 		peers6_t m_peers6;
-#endif
 
 		bool was_introduced_by(tcp::endpoint const& ep);
 
@@ -107,6 +105,8 @@ namespace libtorrent {
 		};
 
 		~bt_peer_connection() override;
+
+		peer_id our_pid() const override { return m_our_peer_id; }
 
 #if !defined TORRENT_DISABLE_ENCRYPTION
 		bool supports_encryption() const
@@ -414,7 +414,7 @@ namespace libtorrent {
 		std::string m_client_version;
 
 		// the peer ID we advertise for ourself
-		peer_id m_our_peer_id;
+		peer_id const m_our_peer_id;
 
 		// this is a queue of ranges that describes
 		// where in the send buffer actual payload

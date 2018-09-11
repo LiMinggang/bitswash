@@ -80,9 +80,8 @@ namespace aux {
 	using pause_flags_t = flags::bitfield_flag<std::uint8_t, struct pause_flags_tag>;
 	using deadline_flags_t = flags::bitfield_flag<std::uint8_t, struct deadline_flags_tag>;
 	using resume_data_flags_t = flags::bitfield_flag<std::uint8_t, struct resume_data_flags_tag>;
+	using reannounce_flags_t = flags::bitfield_flag<std::uint8_t, struct reannounce_flags_tag>;
 	using queue_position_t = aux::strong_typedef<int, struct queue_position_tag>;
-
-TORRENT_IPV6_NAMESPACE
 
 	// holds the state of a block in a piece. Who we requested
 	// it from and how far along we are at downloading it.
@@ -106,10 +105,9 @@ TORRENT_IPV6_NAMESPACE
 		union addr_t
 		{
 			address_v4::bytes_type v4;
-#if TORRENT_USE_IPV6
 			address_v6::bytes_type v6;
-#endif
-		} addr;
+		};
+		addr_t addr;
 
 		std::uint16_t port;
 	public:
@@ -117,22 +115,18 @@ TORRENT_IPV6_NAMESPACE
 		// The peer is the ip address of the peer this block was downloaded from.
 		void set_peer(tcp::endpoint const& ep)
 		{
-#if TORRENT_USE_IPV6
 			is_v6_addr = is_v6(ep);
 			if (is_v6_addr)
 				addr.v6 = ep.address().to_v6().to_bytes();
 			else
-#endif
 				addr.v4 = ep.address().to_v4().to_bytes();
 			port = ep.port();
 		}
 		tcp::endpoint peer() const
 		{
-#if TORRENT_USE_IPV6
 			if (is_v6_addr)
 				return tcp::endpoint(address_v6(addr.v6), port);
 			else
-#endif
 				return tcp::endpoint(address_v4(addr.v4), port);
 		}
 
@@ -150,10 +144,8 @@ TORRENT_IPV6_NAMESPACE
 		// by more peers in parallel to speed things up.
 		unsigned num_peers:14;
 	private:
-#if TORRENT_USE_IPV6
 		// the type of the addr union
 		bool is_v6_addr:1;
-#endif
 	};
 
 	// This class holds information about pieces that have outstanding requests
@@ -215,8 +207,6 @@ TORRENT_IPV6_NAMESPACE
 		state_t TORRENT_DEPRECATED_MEMBER piece_state;
 #endif
 	};
-
-TORRENT_IPV6_NAMESPACE_END
 
 	// for std::hash (and to support using this type in unordered_map etc.)
 	TORRENT_EXPORT std::size_t hash_value(torrent_handle const& h);
@@ -316,9 +306,11 @@ TORRENT_IPV6_NAMESPACE_END
 		// calculates ``distributed_copies``, ``distributed_full_copies`` and
 		// ``distributed_fraction``.
 		static constexpr status_flags_t query_distributed_copies = 0_bit;
+
 		// includes partial downloaded blocks in ``total_done`` and
 		// ``total_wanted_done``.
 		static constexpr status_flags_t query_accurate_download_counters = 1_bit;
+
 		// includes ``last_seen_complete``.
 		static constexpr status_flags_t query_last_seen_complete = 2_bit;
 		// populate the ``pieces`` field in torrent_status.
@@ -1030,6 +1022,11 @@ TORRENT_IPV6_NAMESPACE_END
 		std::vector<int> file_priorities() const;
 #endif
 
+		// by default, force-reannounce will still honor the min-interval
+		// published by the tracker. If this flag is set, it will be ignored
+		// and the tracker is announced immediately.
+		static constexpr reannounce_flags_t ignore_min_interval = 0_bit;
+
 		// ``force_reannounce()`` will force this torrent to do another tracker
 		// request, to receive new peers. The ``seconds`` argument specifies how
 		// many seconds from now to issue the tracker announces.
@@ -1042,9 +1039,12 @@ TORRENT_IPV6_NAMESPACE_END
 		// The ``tracker_index`` argument specifies which tracker to re-announce.
 		// If set to -1 (which is the default), all trackers are re-announce.
 		//
+		// The ``flags`` argument can be used to affect the re-announce. See
+		// ignore_min_interval.
+		//
 		// ``force_dht_announce`` will announce the torrent to the DHT
 		// immediately.
-		void force_reannounce(int seconds = 0, int tracker_index = -1) const;
+		void force_reannounce(int seconds = 0, int tracker_index = -1, reannounce_flags_t = {}) const;
 		void force_dht_announce() const;
 
 #if TORRENT_ABI_VERSION == 1
