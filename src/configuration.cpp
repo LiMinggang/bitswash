@@ -323,7 +323,7 @@ void Configuration::Load()
 	m_language = m_cfg->Read( _T( "/Config/language" ), _T( "" ) );
 	//session
 	//
-	m_dhtbootstrapnodes = m_cfg->Read( _T( "/Session/dht_bootstrap_nodes" ), _T("dht.libtorrent.org:25401,router.bittorrent.com:6881,router.utorrent.com:6881,dht.transmissionbt.com:6881,dht.aelitis.com:6881") );
+	m_dhtbootstrapnodes = m_cfg->Read( _T( "/Session/dht_bootstrap_nodes" ), _T("dht.libtorrent.org:25401,router.bittorrent.com:6881,router.utorrent.com:6881,dht.transmissionbt.com:6881,dht.aelitis.com:6881, router.bitcomet.com, 6881") );
 	m_tracker_completion_timeout = m_cfg->Read( _T( "/Session/tracker_completion_timeout" ), 60 );
 	m_tracker_receive_timeout = m_cfg->Read( _T( "/Session/tracker_receive_timeout" ), 20 );
 	m_stop_tracker_timeout = m_cfg->Read( _T( "/Session/stop_tracker_timeout" ), 5 );
