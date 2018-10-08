@@ -747,8 +747,7 @@ void test_fastresume(bool const test_deprecated)
 		else
 #endif
 		{
-			p = read_resume_data(resume_data, ec);
-			TEST_CHECK(!ec);
+			p = read_resume_data(resume_data);
 		}
 
 		p.flags &= ~torrent_flags::paused;
@@ -800,12 +799,7 @@ TORRENT_TEST(rename_file)
 	file_storage fs;
 	std::shared_ptr<torrent_info> info = setup_torrent_info(fs, buf);
 
-	auto const mask = alert::all_categories
-		& ~(alert::performance_warning
-			| alert::stats_notification);
-
 	settings_pack pack = settings();
-	pack.set_int(settings_pack::alert_mask, mask);
 	pack.set_bool(settings_pack::disable_hash_checks, true);
 	lt::session ses(pack);
 
@@ -933,8 +927,7 @@ void test_rename_file_fastresume(bool test_deprecated)
 		else
 #endif
 		{
-			p = read_resume_data(resume_data, ec);
-			TEST_CHECK(!ec);
+			p = read_resume_data(resume_data);
 		}
 		p.ti = std::make_shared<torrent_info>(std::cref(*t));
 		p.save_path = combine_path(test_path, "tmp2");

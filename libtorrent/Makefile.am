@@ -85,7 +85,9 @@ DOCS_PAGES = \
   docs/utp.rst                    \
   docs/streaming.rst              \
   docs/tutorial.rst               \
+  docs/header.rst                 \
   docs/tutorial.html              \
+  docs/upgrade_to_1.2-ref.html    \
   docs/reference-Alerts.html      \
   docs/reference-Bdecoding.html   \
   docs/reference-Bencoding.html   \
@@ -115,6 +117,7 @@ EXTRA_DIST = \
   Jamfile \
   Jamroot.jam \
   CMakeLists.txt \
+  test/CMakeLists.txt \
   setup.py \
   LICENSE \
   README.rst \

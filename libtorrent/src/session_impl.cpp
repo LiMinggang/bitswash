@@ -1854,6 +1854,10 @@ namespace aux {
 		// an existing socket
 		for (auto const& ep : eps)
 		{
+#ifndef BOOST_NO_EXCEPTIONS
+			try
+#endif
+		{
 			std::shared_ptr<listen_socket_t> s = setup_listener(ep, ec);
 
 			if (!ec && (s->sock || s->udp_sock))
@@ -1868,6 +1872,21 @@ namespace aux {
 				TORRENT_ASSERT((s->incoming == duplex::accept_incoming) == bool(s->sock));
 				if (s->sock) async_accept(s->sock, s->ssl);
 			}
+		}
+#ifndef BOOST_NO_EXCEPTIONS
+		catch (std::exception const& e)
+		{
+#ifndef TORRENT_DISABLE_LOGGING
+			if (should_log())
+			{
+				session_log("setup_listener(%s) device: %s failed: %s"
+					, print_endpoint(ep.addr, ep.port).c_str()
+					, ep.device.c_str()
+					, e.what());
+			}
+#endif // TORRENT_DISABLE_LOGGING
+		}
+#endif // BOOST_NO_EXCEPTIONS
 		}
 
 		if (m_listen_sockets.empty())
@@ -2104,11 +2123,6 @@ namespace aux {
 			if (ep != EndpointType())
 				map_handle = m.add_mapping(protocol, ep.port(), ep);
 		}
-
-		tcp::endpoint to_tcp(udp::endpoint const& ep)
-		{
-			return tcp::endpoint(ep.address(), ep.port());
-		}
 	}
 
 	void session_impl::remap_ports(remap_port_mask_t const mask
@@ -2120,12 +2134,12 @@ namespace aux {
 		if ((mask & remap_natpmp) && s.natpmp_mapper)
 		{
 			map_port(*s.natpmp_mapper, portmap_protocol::tcp, tcp_ep, s.tcp_port_mapping[0]);
-			map_port(*s.natpmp_mapper, portmap_protocol::udp, to_tcp(udp_ep), s.udp_port_mapping[0]);
+			map_port(*s.natpmp_mapper, portmap_protocol::udp, make_tcp(udp_ep), s.udp_port_mapping[0]);
 		}
 		if ((mask & remap_upnp) && m_upnp)
 		{
 			map_port(*m_upnp, portmap_protocol::tcp, tcp_ep, s.tcp_port_mapping[1]);
-			map_port(*m_upnp, portmap_protocol::udp, to_tcp(udp_ep), s.udp_port_mapping[1]);
+			map_port(*m_upnp, portmap_protocol::udp, make_tcp(udp_ep), s.udp_port_mapping[1]);
 		}
 	}
 

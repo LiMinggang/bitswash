@@ -472,7 +472,7 @@ struct utp_socket_impl
 	std::int32_t m_recv_delay = 0;
 
 	// average RTT
-	sliding_average<16> m_rtt;
+	sliding_average<int, 16> m_rtt;
 
 	// if this is != 0, it means the upper layer provided a reason for why
 	// the connection is being closed. The reason is indicated by this
@@ -1447,7 +1447,7 @@ void utp_socket_impl::parse_close_reason(std::uint8_t const* ptr, int const size
 	UTP_LOGV("%8p: incoming close_reason: %d\n"
 		, static_cast<void*>(this), int(incoming_close_reason));
 
-	if (m_userdata == nullptr) return;
+	if (m_userdata == nullptr || !m_attached) return;
 
 	utp_stream::on_close_reason(m_userdata, incoming_close_reason);
 }

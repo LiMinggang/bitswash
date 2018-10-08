@@ -78,7 +78,7 @@ bool prioritize_files(torrent_handle const& h, aux::vector<download_priority_t, 
 void test_running_torrent(std::shared_ptr<torrent_info> info, std::int64_t file_size)
 {
 	settings_pack pack = settings();
-	pack.set_int(settings_pack::alert_mask, alert::file_progress_notification | alert::storage_notification);
+	pack.set_int(settings_pack::alert_mask, alert::piece_progress_notification | alert::storage_notification);
 	pack.set_str(settings_pack::listen_interfaces, "0.0.0.0:48130");
 	pack.set_int(settings_pack::max_retry_port_bind, 10);
 	lt::session ses(pack);
@@ -609,7 +609,7 @@ TORRENT_TEST(test_move_storage_no_metadata)
 {
 	lt::session ses(settings());
 	error_code ec;
-	add_torrent_params p = parse_magnet_uri("magnet?xt=urn:btih:abababababababababababababababababababab", ec);
+	add_torrent_params p = parse_magnet_uri("magnet:?xt=urn:btih:abababababababababababababababababababab", ec);
 	p.save_path = "save_path";
 	torrent_handle h = ses.add_torrent(p);
 
@@ -624,7 +624,7 @@ TORRENT_TEST(test_have_piece_no_metadata)
 {
 	lt::session ses(settings());
 	error_code ec;
-	add_torrent_params p = parse_magnet_uri("magnet?xt=urn:btih:abababababababababababababababababababab", ec);
+	add_torrent_params p = parse_magnet_uri("magnet:?xt=urn:btih:abababababababababababababababababababab", ec);
 	p.save_path = "save_path";
 	torrent_handle h = ses.add_torrent(p);
 
@@ -655,7 +655,7 @@ TORRENT_TEST(test_read_piece_no_metadata)
 {
 	lt::session ses(settings());
 	error_code ec;
-	add_torrent_params p = parse_magnet_uri("magnet?xt=urn:btih:abababababababababababababababababababab", ec);
+	add_torrent_params p = parse_magnet_uri("magnet:?xt=urn:btih:abababababababababababababababababababab", ec);
 	p.save_path = "save_path";
 	torrent_handle h = ses.add_torrent(p);
 
