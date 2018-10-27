@@ -34,7 +34,7 @@ def plot_nodes(nodes, frame):
 
     try:
         os.mkdir('dht_frames')
-    except BaseException:
+    except Exception:
         pass
 
     out = open('dht_frames/plot-%02d.dot' % frame, 'w+')
@@ -64,7 +64,7 @@ def plot_nodes(nodes, frame):
             if nodes[dst]['c'] != 'white' and nodes[e]['c'] != 'white':
                 style = 'solid'
                 col = 'black'
-                print('"%s" -- "%s" [style="%s" color="%s"];' % (e, dst, style, col), file=out)
+            print('"%s" -- "%s" [style="%s" color="%s"];' % (e, dst, style, col), file=out)
 
     print('}', file=out)
     out.close()

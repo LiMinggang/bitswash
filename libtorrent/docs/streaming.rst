@@ -10,7 +10,7 @@ piece picking
 -------------
 
 The standard bittorrent piece picker is peer-centric. A peer unchokes us or we
-complte a block from a peer and we want to make another request to that peer.
+complete a block from a peer and we want to make another request to that peer.
 The piece picker answers the question: which block should we request from this
 peer.
 
@@ -79,7 +79,7 @@ swarm is well seeded, most peers will send data to you at close to the same
 rate. This makes it important to support streaming from many slow peers. For
 instance, this means you can't make assumptions about the download time of a
 block being less than some absolute time. You may be downloading at well above
-the bitrate of the video, but each individual peer only transfers at 5 kiB/s.
+the bit rate of the video, but each individual peer only transfers at 5 kiB/s.
 
 In this state, your download rate is a zero-sum-game. Any block you request
 that is not urgent, will take away from the bandwidth you get for peers that
@@ -89,7 +89,7 @@ Some requests will stall. It appears to be very hard to have enough accuracy in
 the prediction of download queue time such that all requests come back within a
 reasonable amount of time.
 
-To support adaptive timeuts, each torrent maintains a running average of how
+To support adaptive timeouts, each torrent maintains a running average of how
 long it takes to complete a piece. There is also a running average of the
 deviation from the mean download time.
 
@@ -112,7 +112,7 @@ even though it has already been requested from another peer.
 
 This has the effect of getting more and more aggressive in requesting blocks
 the longer it takes to complete the piece. If this mechanism is too aggressive,
-a significant amount of bandwidht may be lost in redundant download (keep in
+a significant amount of bandwidth may be lost in redundant download (keep in
 mind the zero-sum game).
 
 It never makes sense to request a block twice from the same peer. There is logic

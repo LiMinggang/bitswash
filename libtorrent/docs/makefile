@@ -31,7 +31,7 @@ REFERENCE_TARGETS = \
 	reference-Bdecoding \
 	reference-ed25519
 
-TARGETS = index \
+MANUAL_TARGETS = index \
 	udp_tracker_protocol \
 	dht_rss \
 	dht_store \
@@ -50,8 +50,10 @@ TARGETS = index \
 	tuning \
 	hacking \
 	streaming \
-	tutorial \
-	single-page-ref \
+	tutorial
+
+TARGETS = single-page-ref \
+	$(MANUAL_TARGETS) \
 	$(REFERENCE_TARGETS)
 
 FIGURES = \
@@ -77,10 +79,10 @@ single-page-ref.rst: $(REFERENCE_TARGETS:=.rst)
 	python join_rst.py $(filter-out reference.rst, $(REFERENCE_TARGETS:=.rst)) >single-page-ref.rst
 
 settings.rst: ../include/libtorrent/settings_pack.hpp
-	python gen_settings_doc.py
+	python gen_settings_doc.py || { rm $@; exit 1; }
 
 stats_counters.rst: ../src/session_stats.cpp ../include/libtorrent/performance_counters.hpp
-	python gen_stats_doc.py
+	python gen_stats_doc.py || { rm $@; exit 1; }
 
 manual.rst: stats_counters.rst
 	touch manual.rst
@@ -100,8 +102,9 @@ endif
 $(REFERENCE_TARGETS:=.rst) plain_text_out.txt:gen_reference_doc.py ../include/libtorrent/*.hpp ../include/libtorrent/kademlia/*.hpp manual.rst settings.rst stats_counters.rst
 	python gen_reference_doc.py --plain-output
 
-spell-check:plain_text_out.txt
+spell-check:plain_text_out.txt $(MANUAL_TARGETS:=.html)
 	hunspell -d hunspell/en_US -p hunspell/libtorrent.dic -l plain_text_out.txt >hunspell-report.txt
+	hunspell -d hunspell/en_US -p hunspell/libtorrent.dic -H -l $(MANUAL_TARGETS:=.html) >>hunspell-report.txt
 	@if [ -s hunspell-report.txt ]; then echo 'spellcheck failed, fix words or add to dictionary:'; cat hunspell-report.txt; false; fi;
 
 %.epub:%.rst
@@ -111,19 +114,19 @@ spell-check:plain_text_out.txt
 	rst2pdf $? -o $@ --stylesheets stylesheet
 
 %.html:%.rst
-	$(RST2HTML) --exit-status=2 --template=template.txt --stylesheet-path=style.css --link-stylesheet --no-toc-backlinks $? > $@
+	$(RST2HTML) --exit-status=2 --template=template.txt --stylesheet-path=style.css --link-stylesheet --no-toc-backlinks $? > $@ || { rm $@; exit 1; }
 ifneq ($(STAGE),)
-	$(RST2HTML) --exit-status=2 --template=template2.txt --stylesheet-path=style.css --link-stylesheet --no-toc-backlinks $? > $(WEB_PATH)/$@
+	$(RST2HTML) --exit-status=2 --template=template2.txt --stylesheet-path=style.css --link-stylesheet --no-toc-backlinks $? > $(WEB_PATH)/$@ || { rm $@; exit 1; }
 endif
 
 %.png:%.dot
-	dot -Tpng $? >$@
+	dot -Tpng $? >$@ || { rm $@; exit 1; }
 ifneq ($(STAGE),)
 	cp $@ $(WEB_PATH)/$@
 endif
 
 %.png:%.diagram
-	$(AAFIGURE) --scale 0.6 -o $@ $?
+	$(AAFIGURE) --scale 0.6 -o $@ $? || { rm $@; exit 1; }
 ifneq ($(STAGE),)
 	cp $@ $(WEB_PATH)/$@
 endif

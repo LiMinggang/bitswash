@@ -27,7 +27,7 @@ if socket_filter is None:
         try:
             a = l.strip().split(" ")
             socket_index = a[1][:-1]
-        except BaseException:
+        except Exception:
             continue
 
         # msvc's runtime library doesn't prefix pointers
@@ -91,7 +91,7 @@ metrics = {
     'recv_buffer': ['receive buffer size (B)', 'x1y1', 'lines']
 }
 
-histogram_quantization = 1
+histogram_quantization = 1.0
 socket_index = None
 
 columns = []
@@ -127,7 +127,7 @@ for line in file:
         a = line.strip().split(" ")
         t = a[0][1:-1]
         socket_index = a[1][:-1]
-    except BaseException:
+    except Exception:
         continue
 #    if socket_index[:2] != '0x':
 #        continue
@@ -179,7 +179,7 @@ for line in file:
     for i in a[2:]:
         try:
             n, v = i.split(':')
-        except BaseException:
+        except Exception:
             continue
         v = float(v)
         if n == "our_delay":
@@ -202,7 +202,7 @@ out.close()
 
 out = open('%s.histogram' % out_file, 'wb')
 for d, f in delay_histogram.items():
-    print(float(d * histogram_quantization) + histogram_quantization / 2, f, file=out)
+    print(float(d * histogram_quantization) + histogram_quantization / 2.0, f, file=out)
 out.close()
 
 out = open('%s_packet_size.histogram' % out_file, 'wb')
