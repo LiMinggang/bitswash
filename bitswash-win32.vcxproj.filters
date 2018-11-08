@@ -96,9 +96,6 @@
     <ClInclude Include="libtorrent\include\libtorrent\buffer.hpp">
       <Filter>Header Files\libtorrent</Filter>
     </ClInclude>
-    <ClInclude Include="libtorrent\include\libtorrent\build_config.hpp">
-      <Filter>Header Files\libtorrent</Filter>
-    </ClInclude>
     <ClInclude Include="libtorrent\include\libtorrent\chained_buffer.hpp">
       <Filter>Header Files\libtorrent</Filter>
     </ClInclude>
@@ -736,9 +733,6 @@
       <Filter>Header Files\libgeoip</Filter>
     </ClInclude>
     <ClInclude Include="src\icon.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="src\magneturihandler.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="libtorrent\include\libtorrent\kademlia\dht_settings.hpp">
@@ -1501,9 +1495,6 @@
     <ClCompile Include="src\icons.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\magneturihandler.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="libtorrent\src\add_torrent_params.cpp">
       <Filter>Source Files\libtorrent</Filter>
     </ClCompile>
@@ -1566,6 +1557,9 @@
     </ClCompile>
     <ClCompile Include="libtorrent\src\kademlia\sample_infohashes.cpp">
       <Filter>Source Files\libtorrent\kademlia</Filter>
+    </ClCompile>
+    <ClCompile Include="libtorrent\src\generate_peer_id.cpp">
+      <Filter>Source Files\libtorrent</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

@@ -82,7 +82,7 @@ namespace libtorrent { namespace aux {
 	void clear_bufs(span<iovec_t const> bufs)
 	{
 		for (auto buf : bufs)
-			std::memset(buf.data(), 0, buf.size());
+			std::fill(buf.begin(), buf.end(), 0);
 	}
 
 #if TORRENT_USE_ASSERTS
@@ -382,7 +382,7 @@ namespace libtorrent { namespace aux {
 			error_code err;
 			std::string subdir = combine_path(save_path, s);
 
-			while (subdir != save_path && !err)
+			while (!compare_path(subdir, save_path) && !err)
 			{
 				remove(subdir, err);
 				subdir = parent_path(subdir);
