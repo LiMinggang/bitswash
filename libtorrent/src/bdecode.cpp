@@ -33,6 +33,7 @@ POSSIBILITY OF SUCH DAMAGE.
 #include "libtorrent/bdecode.hpp"
 #include "libtorrent/aux_/alloca.hpp"
 #include "libtorrent/aux_/numeric_cast.hpp"
+#include "libtorrent/error_code.hpp"
 #include <limits>
 #include <cstring> // for memset
 #include <cstdio> // for snprintf
@@ -300,7 +301,7 @@ namespace {
 				if (m_buffer[tokens[token].offset + 1] == '0'
 					&& m_buffer[tokens[token].offset + 2] != 'e')
 				{
-					std::snprintf(error.data(), error.size(), "leading zero in integer");
+					std::snprintf(error.data(), std::size_t(error.size()), "leading zero in integer");
 					return true;
 				}
 				break;
@@ -308,7 +309,7 @@ namespace {
 				if (m_buffer[tokens[token].offset] == '0'
 					&& m_buffer[tokens[token].offset + 1] != ':')
 				{
-					std::snprintf(error.data(), error.size(), "leading zero in string length");
+					std::snprintf(error.data(), std::size_t(error.size()), "leading zero in string length");
 					return true;
 				}
 				break;
@@ -348,12 +349,12 @@ namespace {
 						int cmp = std::memcmp(m_buffer + k1_start, m_buffer + k2_start, std::size_t(min_len));
 						if (cmp > 0 || (cmp == 0 && k1_len > k2_len))
 						{
-							std::snprintf(error.data(), error.size(), "unsorted dictionary key");
+							std::snprintf(error.data(), std::size_t(error.size()), "unsorted dictionary key");
 							return true;
 						}
 						else if (cmp == 0 && k1_len == k2_len)
 						{
-							std::snprintf(error.data(), error.size(), "duplicate dictionary key");
+							std::snprintf(error.data(), std::size_t(error.size()), "duplicate dictionary key");
 							return true;
 						}
 
@@ -384,7 +385,7 @@ namespace {
 		TORRENT_ASSERT(m_token_idx != -1);
 		bdecode_token const& t = m_root_tokens[m_token_idx];
 		bdecode_token const& next = m_root_tokens[m_token_idx + t.next_item];
-		return {m_buffer + t.offset, std::size_t(next.offset - t.offset)};
+		return {m_buffer + t.offset, static_cast<std::ptrdiff_t>(next.offset - t.offset)};
 	}
 
 	bdecode_node bdecode_node::list_at(int i) const
@@ -731,8 +732,16 @@ namespace {
 	int bdecode(char const* start, char const* end, bdecode_node& ret
 		, error_code& ec, int* error_pos, int const depth_limit, int token_limit)
 	{
-		ret = bdecode({start, static_cast<size_t>(end - start)}, ec, error_pos, depth_limit, token_limit);
+		ret = bdecode({start, end - start}, ec, error_pos, depth_limit, token_limit);
 		return ec ? -1 : 0;
+	}
+
+	bdecode_node bdecode(span<char const> buffer, int depth_limit, int token_limit)
+	{
+		error_code ec;
+		bdecode_node ret = bdecode(buffer, ec, nullptr, depth_limit, token_limit);
+		if (ec) throw system_error(ec);
+		return ret;
 	}
 
 	bdecode_node bdecode(span<char const> buffer

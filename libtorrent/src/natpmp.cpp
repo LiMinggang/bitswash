@@ -583,15 +583,20 @@ void natpmp::send_map_request(port_mapping_t const i)
 		// linear back-off instead of exponential
 		++m_retry_count;
 		m_send_timer.expires_from_now(milliseconds(250 * m_retry_count), ec);
-		m_send_timer.async_wait(std::bind(&natpmp::resend_request, self(), i, _1));
+		m_send_timer.async_wait(std::bind(&natpmp::on_resend_request, self(), i, _1));
 	}
 }
 
-void natpmp::resend_request(port_mapping_t const i, error_code const& e)
+void natpmp::on_resend_request(port_mapping_t const i, error_code const& e)
 {
 	TORRENT_ASSERT(is_single_thread());
 	COMPLETE_ASYNC("natpmp::resend_request");
 	if (e) return;
+	resend_request(i);
+}
+
+void natpmp::resend_request(port_mapping_t const i)
+{
 	if (m_currently_mapping != i) return;
 
 	// if we're shutting down, don't retry, just move on
@@ -627,6 +632,8 @@ void natpmp::on_reply(error_code const& e
 #endif
 		return;
 	}
+
+	if (m_abort) return;
 
 	ADD_OUTSTANDING_ASYNC("natpmp::on_reply");
 	// make a copy of the response packet buffer
@@ -696,7 +703,7 @@ void natpmp::on_reply(error_code const& e
 		if (m_version == version_pcp && !is_v6(m_socket.local_endpoint()))
 		{
 			m_version = version_natpmp;
-			resend_request(m_currently_mapping, error_code());
+			resend_request(m_currently_mapping);
 			send_get_ip_address_request();
 		}
 		return;
@@ -777,7 +784,7 @@ void natpmp::on_reply(error_code const& e
 #ifndef TORRENT_DISABLE_LOGGING
 	char msg[200];
 	int const num_chars = std::snprintf(msg, sizeof(msg), "<== port map ["
-		" transport: %s protocol: %s local: %u external: %u ttl: %u ]"
+		" transport: %s protocol: %s local: %d external: %d ttl: %d ]"
 		, version_to_string(protocol_version(version))
 		, (protocol == portmap_protocol::udp ? "udp" : "tcp")
 		, private_port, public_port, lifetime);
@@ -839,8 +846,6 @@ void natpmp::on_reply(error_code const& e
 		m_callback.on_port_mapping(port_mapping_t{index}, ext_ip, m->external_port, proto
 			, errors::pcp_success, portmap_transport::natpmp);
 	}
-
-	if (m_abort) return;
 
 	m_currently_mapping = port_mapping_t{-1};
 	m->act = portmap_action::none;

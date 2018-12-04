@@ -48,6 +48,7 @@ POSSIBILITY OF SUCH DAMAGE.
 #include <libtorrent/aux_/vector.hpp>
 #include <libtorrent/aux_/numeric_cast.hpp>
 #include <libtorrent/broadcast_socket.hpp> // for ip_v4
+#include <libtorrent/bdecode.hpp>
 
 namespace libtorrent { namespace dht {
 namespace {
@@ -115,7 +116,7 @@ namespace {
 			item.value.reset(new char[std::size_t(size)]);
 			item.size = size;
 		}
-		std::memcpy(item.value.get(), buf.data(), buf.size());
+		std::copy(buf.begin(), buf.end(), item.value.get());
 	}
 
 	void touch_item(dht_immutable_item& f, address const& addr)
@@ -355,8 +356,8 @@ namespace {
 			auto const i = m_immutable_table.find(target);
 			if (i == m_immutable_table.end()) return false;
 
-			item["v"] = bdecode(i->second.value.get()
-				, i->second.value.get() + i->second.size);
+			error_code ec;
+			item["v"] = bdecode({i->second.value.get(), i->second.size}, ec);
 			return true;
 		}
 
@@ -412,7 +413,8 @@ namespace {
 			item["seq"] = f.seq.value;
 			if (force_fill || (sequence_number(0) <= seq && seq < f.seq))
 			{
-				item["v"] = bdecode(f.value.get(), f.value.get() + f.size);
+				error_code ec;
+				item["v"] = bdecode({f.value.get(), f.size}, ec);
 				item["sig"] = f.sig.bytes;
 				item["k"] = f.key.bytes;
 			}
@@ -479,7 +481,7 @@ namespace {
 
 			aux::vector<sha1_hash> const& samples = m_infohashes_sample.samples;
 			item["samples"] = span<char const>(
-				reinterpret_cast<char const*>(samples.data()), samples.size() * 20);
+				reinterpret_cast<char const*>(samples.data()), static_cast<std::ptrdiff_t>(samples.size()) * 20);
 
 			return m_infohashes_sample.count();
 		}

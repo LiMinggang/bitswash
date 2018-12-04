@@ -73,7 +73,7 @@ struct obs : dht::dht_observer
 
 #ifndef TORRENT_DISABLE_LOGGING
 	bool should_log(module_t) const override { return true; }
-	void log(dht_logger::module_t l, char const* fmt, ...) override
+	void log(dht_logger::module_t, char const* fmt, ...) override
 	{
 		va_list v;
 		va_start(v, fmt);
@@ -124,7 +124,7 @@ TORRENT_TEST(dht_rate_limit)
 	std::unique_ptr<lt::dht::dht_storage_interface> dht_storage(dht::dht_default_storage_constructor(dhtsett));
 	auto dht = std::make_shared<lt::dht::dht_tracker>(
 		&o, dht_ios, std::bind(&send_packet, std::ref(sock), _1, _2, _3, _4, _5)
-		, dhtsett, cnt, *dht_storage, state);
+		, dhtsett, cnt, *dht_storage, std::move(state));
 	dht->new_socket(ls);
 
 	bool stop = false;
@@ -245,7 +245,7 @@ TORRENT_TEST(dht_delete_socket)
 	std::unique_ptr<lt::dht::dht_storage_interface> dht_storage(dht::dht_default_storage_constructor(dhtsett));
 	auto dht = std::make_shared<lt::dht::dht_tracker>(
 		&o, dht_ios, std::bind(&send_packet, std::ref(sock), _1, _2, _3, _4, _5)
-		, dhtsett, cnt, *dht_storage, state);
+		, dhtsett, cnt, *dht_storage, std::move(state));
 
 	dht->start([](std::vector<std::pair<dht::node_entry, std::string>> const&){});
 	dht->new_socket(ls);

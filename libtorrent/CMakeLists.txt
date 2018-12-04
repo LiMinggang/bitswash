@@ -1,15 +1,18 @@
 cmake_minimum_required(VERSION 3.12.0 FATAL_ERROR)
 
+list(APPEND CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/cmake/Modules)
+include(LibtorrentMacros)
+
+read_version("${CMAKE_CURRENT_SOURCE_DIR}/include/libtorrent/version.hpp" VER_MAJOR VER_MINOR VER_TINY)
+
 project(libtorrent
 	DESCRIPTION "Bittorrent library"
-	VERSION 1.2.0
+	VERSION ${VER_MAJOR}.${VER_MINOR}.${VER_TINY}
 )
 set (SOVERSION "10")
 
-list(APPEND CMAKE_MODULE_PATH ${libtorrent_SOURCE_DIR}/cmake/Modules)
 include(GNUInstallDirs)
 include(GeneratePkgConfig)
-include(LibtorrentMacros)
 
 set(libtorrent_include_files
 	add_torrent_params
@@ -17,7 +20,6 @@ set(libtorrent_include_files
 	alert
 	alert_manager
 	alert_types
-	allocator
 	announce_entry
 	assert
 	bandwidth_limit
@@ -257,7 +259,6 @@ set(libtorrent_aux_include_files
 	throw
 	time
 	torrent_impl
-	typed_span
 	unique_ptr
 	vector
 	win_crypto_provider
@@ -267,7 +268,6 @@ set(sources
 	web_connection_base
 	alert
 	alert_manager
-	allocator
 	announce_entry
 	assert
 	bandwidth_limit
@@ -740,7 +740,7 @@ if(developer-options)
 		ENABLED TORRENT_PROFILE_CALLS=1)
 endif()
 
-generate_and_install_pkg_config_file(torrent-rasterbar)
+generate_and_install_pkg_config_file(torrent-rasterbar libtorrent-rasterbar)
 
 include(CheckCXXCompilerFlag)
 

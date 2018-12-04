@@ -1,6 +1,6 @@
 /*
 
-Copyright (c) 2003-2018, Arvid Norberg
+Copyright (c) 2018, Arvid Norberg, Steven Siloti
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
@@ -30,38 +30,21 @@ POSSIBILITY OF SUCH DAMAGE.
 
 */
 
-#include "libtorrent/aux_/proxy_settings.hpp"
-#include "libtorrent/settings_pack.hpp"
-#include "libtorrent/aux_/session_settings.hpp"
+#ifndef TORRENT_WINDOWS_HPP_INCLUDED
+#define TORRENT_WINDOWS_HPP_INCLUDED
 
-namespace libtorrent { namespace aux {
+#ifndef WIN32_LEAN_AND_MEAN
+#define WIN32_LEAN_AND_MEAN
+#endif
+#ifndef VC_EXTRALEAN
+#define VC_EXTRALEAN
+#endif
+#ifndef STRICT
+#define STRICT
+#endif
+#include <windows.h>
 
-namespace {
+#endif // TORRENT_WINDOWS_HPP_INCLUDED
 
-template <typename Settings>
-void init(proxy_settings& p, Settings const& sett)
-{
-	p.hostname = sett.get_str(settings_pack::proxy_hostname);
-	p.username = sett.get_str(settings_pack::proxy_username);
-	p.password = sett.get_str(settings_pack::proxy_password);
-	p.type = settings_pack::proxy_type_t(sett.get_int(settings_pack::proxy_type));
-	p.port = std::uint16_t(sett.get_int(settings_pack::proxy_port));
-	p.proxy_hostnames = sett.get_bool(settings_pack::proxy_hostnames);
-	p.proxy_peer_connections = sett.get_bool(
-		settings_pack::proxy_peer_connections);
-	p.proxy_tracker_connections = sett.get_bool(
-		settings_pack::proxy_tracker_connections);
-}
 
-}
 
-proxy_settings::proxy_settings() = default;
-
-proxy_settings::proxy_settings(settings_pack const& sett)
-{ init(*this, sett); }
-
-proxy_settings::proxy_settings(aux::session_settings const& sett)
-{ init(*this, sett); }
-
-} // namespace aux
-} // namespace libtorrent

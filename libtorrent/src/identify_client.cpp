@@ -324,13 +324,13 @@ namespace {
 			name = temp;
 		}
 
-		int num_chars = std::snprintf(identity, sizeof(identity), "%s %u.%u.%u", name
+		int num_chars = std::snprintf(identity, sizeof(identity), "%s %d.%d.%d", name
 			, f.major_version, f.minor_version, f.revision_version);
 
 		if (f.tag_version != 0)
 		{
 			std::snprintf(identity + num_chars, sizeof(identity) - aux::numeric_cast<std::size_t>(num_chars)
-				, ".%u", f.tag_version);
+				, ".%d", f.tag_version);
 		}
 
 		return identity;
@@ -359,9 +359,7 @@ namespace libtorrent {
 		if (f) return f;
 
 		// look for mainline style id
-		f = parse_mainline_style(p);
-		if (f) return f;
-		return f;
+		return parse_mainline_style(p);
 	}
 
 #endif

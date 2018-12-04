@@ -1,5 +1,6 @@
 1.2 release
 
+	* support &ipv4= tracker argument for private torrents
 	* renamed debug_notification to connect_notification
 	* when updating listen sockets, only post alerts for new ones
 	* deprecate anonymous_mode_alert
@@ -90,6 +91,8 @@
 	* improved support for listening on multiple sockets and interfaces
 	* resume data no longer has timestamps of files
 	* require C++11 to build libtorrent
+
+1.1.11 release
 
 	* fix move_storage with save_path with a trailing slash
 	* fix tracker announce issue, advertising port 0 in secondary IPv6 announce

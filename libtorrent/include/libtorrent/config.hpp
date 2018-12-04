@@ -200,9 +200,7 @@ POSSIBILITY OF SUCH DAMAGE.
 #define TORRENT_ANDROID
 #define TORRENT_HAS_FALLOCATE 0
 #define TORRENT_USE_ICONV 0
-#define TORRENT_USE_MEMALIGN 1
 #else // ANDROID
-#define TORRENT_USE_POSIX_MEMALIGN 1
 
 // posix_fallocate() is available under this condition
 #if _XOPEN_SOURCE >= 600 || _POSIX_C_SOURCE >= 200112L
@@ -307,7 +305,6 @@ POSSIBILITY OF SUCH DAMAGE.
 #ifndef TORRENT_USE_ICONV
 #define TORRENT_USE_ICONV 0
 #endif
-#define TORRENT_USE_MEMALIGN 1
 
 // ==== GNU/Hurd ===
 #elif defined __GNU__
@@ -384,14 +381,6 @@ POSSIBILITY OF SUCH DAMAGE.
 
 #ifndef TORRENT_HAS_SEM_RELTIMEDWAIT
 #define TORRENT_HAS_SEM_RELTIMEDWAIT 0
-#endif
-
-#ifndef TORRENT_USE_MEMALIGN
-#define TORRENT_USE_MEMALIGN 0
-#endif
-
-#ifndef TORRENT_USE_POSIX_MEMALIGN
-#define TORRENT_USE_POSIX_MEMALIGN 0
 #endif
 
 #ifndef TORRENT_USE_LOCALE
@@ -497,7 +486,7 @@ POSSIBILITY OF SUCH DAMAGE.
 #endif
 
 #if !defined(TORRENT_READ_HANDLER_MAX_SIZE)
-# ifdef _GLIBCXX_DEBUG
+# if defined _GLIBCXX_DEBUG || !defined NDEBUG
 constexpr std::size_t TORRENT_READ_HANDLER_MAX_SIZE = 400;
 # else
 // if this is not divisible by 8, we're wasting space
@@ -506,7 +495,7 @@ constexpr std::size_t TORRENT_READ_HANDLER_MAX_SIZE = 342;
 #endif
 
 #if !defined(TORRENT_WRITE_HANDLER_MAX_SIZE)
-# ifdef _GLIBCXX_DEBUG
+# if defined _GLIBCXX_DEBUG || !defined NDEBUG
 constexpr std::size_t TORRENT_WRITE_HANDLER_MAX_SIZE = 400;
 # else
 // if this is not divisible by 8, we're wasting space

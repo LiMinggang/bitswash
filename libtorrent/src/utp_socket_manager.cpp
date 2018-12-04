@@ -105,10 +105,6 @@ namespace libtorrent {
 		}
 #endif
 
-		// clamp the MTU within reasonable bounds
-		if (mtu < TORRENT_INET_MIN_MTU) mtu = TORRENT_INET_MIN_MTU;
-		else if (mtu > TORRENT_INET_MAX_MTU) mtu = TORRENT_INET_MAX_MTU;
-
 		int const link_mtu = mtu;
 
 		mtu -= TORRENT_UDP_HEADER;
@@ -149,7 +145,7 @@ namespace libtorrent {
 		if ((flags & dont_fragment) && len > TORRENT_DEBUG_MTU) return;
 #endif
 
-		m_send_fun(std::move(sock), ep, {p, std::size_t(len)}, ec
+		m_send_fun(std::move(sock), ep, {p, len}, ec
 			, (flags & udp_socket::dont_fragment)
 				| udp_socket::peer_connection);
 	}
@@ -159,7 +155,7 @@ namespace libtorrent {
 	{
 //		UTP_LOGV("incoming packet size:%d\n", size);
 
-		if (p.size() < sizeof(utp_header)) return false;
+		if (p.size() < std::ptrdiff_t(sizeof(utp_header))) return false;
 
 		auto const* ph = reinterpret_cast<utp_header const*>(p.data());
 

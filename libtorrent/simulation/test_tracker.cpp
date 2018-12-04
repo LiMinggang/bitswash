@@ -124,7 +124,7 @@ void test_interval(int interval)
 			}
 		}
 		// terminate
-		, [&](int const ticks, lt::session& ses) -> bool {
+		, [&](int const ticks, lt::session&) -> bool {
 			if (ticks > duration + 1)
 			{
 				ran_to_completion = true;
@@ -479,7 +479,7 @@ void test_udpv6_support(char const* listen_interfaces
 					}
 					else if (alert_cast<tracker_error_alert>(a))
 					{
-						TEST_CHECK(false && "unexpected tracker error");
+						TEST_ERROR("unexpected tracker error");
 					}
 				}
 			});
@@ -970,11 +970,13 @@ TORRENT_TEST(tracker_ipv6_argument)
 {
 	bool got_announce = false;
 	bool got_ipv6 = false;
+	bool got_ipv4 = false;
 	tracker_test(
 		[](lt::add_torrent_params& p, lt::session& ses)
 		{
 			settings_pack pack;
 			pack.set_bool(settings_pack::anonymous_mode, false);
+			pack.set_str(settings_pack::listen_interfaces, "10.0.0.3:0,[ffff::1337]:0");
 			ses.apply_settings(pack);
 			p.ti = make_torrent(true);
 			return 60;
@@ -984,13 +986,22 @@ TORRENT_TEST(tracker_ipv6_argument)
 		{
 			got_announce = true;
 			bool const stop_event = req.find("&event=stopped") != std::string::npos;
-			// stop events don't need to advertise the IPv6 address
-			std::string::size_type pos = req.find("&ipv6=");
-			TEST_CHECK(pos != std::string::npos || stop_event);
-			got_ipv6 |= pos != std::string::npos;
-			// make sure the IPv6 argument is url encoded
-			TEST_CHECK(req.substr(pos + 6, req.substr(pos + 6).find_first_of('&'))
-				== "ffff%3a%3a1337");
+			// stop events don't need to advertise the IPv6/IPv4 address
+			{
+				std::string::size_type const pos = req.find("&ipv6=");
+				TEST_CHECK(pos != std::string::npos || stop_event);
+				got_ipv6 |= pos != std::string::npos;
+				// make sure the IPv6 argument is url encoded
+				TEST_EQUAL(req.substr(pos + 6, req.substr(pos + 6).find_first_of('&'))
+					, "ffff%3a%3a1337");
+			}
+
+			{
+				std::string::size_type const pos = req.find("&ipv4=");
+				TEST_CHECK(pos != std::string::npos || stop_event);
+				got_ipv4 |= pos != std::string::npos;
+				TEST_EQUAL(req.substr(pos + 6, req.substr(pos + 6).find_first_of('&')), "10.0.0.3");
+			}
 			return sim::send_response(200, "OK", 11) + "d5:peers0:e";
 		}
 		, [](torrent_handle) {}
@@ -1003,13 +1014,13 @@ TORRENT_TEST(tracker_key_argument)
 {
 	std::set<std::string> keys;
 	tracker_test(
-		[](lt::add_torrent_params& p, lt::session& ses)
+		[](lt::add_torrent_params& p, lt::session&)
 		{
 			p.ti = make_torrent(true);
 			return 60;
 		},
-		[&](std::string method, std::string req
-			, std::map<std::string, std::string>& headers)
+		[&](std::string, std::string req
+			, std::map<std::string, std::string>&)
 		{
 			auto const pos = req.find("&key=");
 			TEST_CHECK(pos != std::string::npos);
@@ -1198,7 +1209,7 @@ TORRENT_TEST(tracker_tiers)
 	ses[1] = std::make_shared<lt::session>(pack, ios1);
 
 	// only monitor alerts for session 0 (the downloader)
-	print_alerts(*ses[0], [=](lt::session& ses, lt::alert const* a) {
+	print_alerts(*ses[0], [=](lt::session&, lt::alert const* a) {
 		if (auto ta = alert_cast<lt::add_torrent_alert>(a))
 		{
 			ta->handle.connect_peer(lt::tcp::endpoint(peer1, 6881));
@@ -1224,7 +1235,7 @@ TORRENT_TEST(tracker_tiers)
 	params.save_path = save_path(1);
 	ses[1]->async_add_torrent(params);
 
-	sim::timer t(sim, lt::minutes(30), [&](boost::system::error_code const& ec)
+	sim::timer t(sim, lt::minutes(30), [&](boost::system::error_code const&)
 	{
 		TEST_CHECK(received_announce[0] != received_announce[1]);
 		TEST_CHECK(ses[0]->get_torrents()[0].status().is_seeding);

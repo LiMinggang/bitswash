@@ -345,10 +345,8 @@ namespace libtorrent {
 
 	int piece_picker::get_download_queue_size() const
 	{
-		int ret = 0;
-		for (auto const& c : m_downloads)
-			ret += int(c.size());
-		return ret;
+		return std::accumulate(m_downloads.begin(), m_downloads.end(), 0
+			, [](int const acc, aux::vector<downloading_piece> const& q) { return acc + int(q.size()); });
 	}
 
 	void piece_picker::get_download_queue_sizes(int* partial
@@ -360,15 +358,15 @@ namespace libtorrent {
 		*zero_prio = int(m_downloads[piece_pos::piece_zero_prio].size());
 	}
 
-	aux::typed_span<piece_picker::block_info> piece_picker::mutable_blocks_for_piece(
+	span<piece_picker::block_info> piece_picker::mutable_blocks_for_piece(
 		downloading_piece const& dp)
 	{
 		int idx = int(dp.info_idx) * m_blocks_per_piece;
 		TORRENT_ASSERT(idx + m_blocks_per_piece <= int(m_block_info.size()));
-		return { &m_block_info[idx], static_cast<std::size_t>(blocks_in_piece(dp.index)) };
+		return { &m_block_info[idx], blocks_in_piece(dp.index) };
 	}
 
-	aux::typed_span<piece_picker::block_info const> piece_picker::blocks_for_piece(
+	span<piece_picker::block_info const> piece_picker::blocks_for_piece(
 		downloading_piece const& dp) const
 	{
 		return const_cast<piece_picker*>(this)->mutable_blocks_for_piece(dp);
@@ -381,8 +379,7 @@ namespace libtorrent {
 		for (auto const k : categories())
 		{
 			if (m_downloads[k].empty()) continue;
-			for (std::vector<downloading_piece>::const_iterator i = m_downloads[k].begin();
-				i != m_downloads[k].end() - 1; ++i)
+			for (auto i = m_downloads[k].begin(); i != m_downloads[k].end() - 1; ++i)
 			{
 				downloading_piece const& dp = *i;
 				downloading_piece const& next = *(i + 1);
@@ -391,13 +388,11 @@ namespace libtorrent {
 					+ m_blocks_per_piece <= int(m_block_info.size()));
 				for (auto const& bl : blocks_for_piece(dp))
 				{
-					if (bl.peer)
-					{
-						torrent_peer* p = bl.peer;
-						TORRENT_ASSERT(p->in_use);
-						TORRENT_ASSERT(p->connection == nullptr
-							|| static_cast<peer_connection*>(p->connection)->m_in_use);
-					}
+					if (!bl.peer) continue;
+					torrent_peer* p = bl.peer;
+					TORRENT_ASSERT(p->in_use);
+					TORRENT_ASSERT(p->connection == nullptr
+						|| static_cast<peer_connection*>(p->connection)->m_in_use);
 				}
 			}
 		}
@@ -472,29 +467,7 @@ namespace libtorrent {
 			last = b;
 		}
 
-		for (auto const k : categories())
-		{
-			if (m_downloads[k].empty()) continue;
-			for (std::vector<downloading_piece>::const_iterator i = m_downloads[k].begin();
-					i != m_downloads[k].end() - 1; ++i)
-			{
-				downloading_piece const& dp = *i;
-				downloading_piece const& next = *(i + 1);
-				TORRENT_ASSERT(dp.index < next.index);
-				TORRENT_ASSERT(int(dp.info_idx) * m_blocks_per_piece
-					+ m_blocks_per_piece <= int(m_block_info.size()));
-#if TORRENT_USE_ASSERTS
-				for (auto const& bl : blocks_for_piece(dp))
-				{
-					if (!bl.peer) continue;
-					torrent_peer* p = bl.peer;
-					TORRENT_ASSERT(p->in_use);
-					TORRENT_ASSERT(p->connection == nullptr
-						|| static_cast<peer_connection*>(p->connection)->m_in_use);
-				}
-#endif
-			}
-		}
+		check_piece_state();
 
 		if (t != nullptr)
 			TORRENT_ASSERT(num_pieces() == t->torrent_file().num_pieces());
@@ -1283,14 +1256,13 @@ namespace libtorrent {
 			return;
 		}
 
-		int const size = std::min(50, bitmask.size() / 2);
+		int const size = std::min(50, int(bitmask.size() / 2));
 
 		// this is an optimization where if just a few
 		// pieces end up changing, instead of making
 		// the piece list dirty, just update those pieces
 		// instead
 		TORRENT_ALLOCA(incremented, piece_index_t, size);
-		int num_inc = 0;
 
 		if (!m_dirty)
 		{
@@ -1300,6 +1272,7 @@ namespace libtorrent {
 			// this only matters if we're not already dirty, in which case the fasted
 			// thing to do is to just update the counters and be done
 			piece_index_t index = piece_index_t(0);
+			int num_inc = 0;
 			for (auto i = bitmask.begin(), end(bitmask.end()); i != end; ++i, ++index)
 			{
 				if (!*i) continue;
@@ -1379,14 +1352,13 @@ namespace libtorrent {
 			return;
 		}
 
-		int const size = std::min(50, bitmask.size() / 2);
+		int const size = std::min(50, int(bitmask.size() / 2));
 
 		// this is an optimization where if just a few
 		// pieces end up changing, instead of making
 		// the piece list dirty, just update those pieces
 		// instead
 		TORRENT_ALLOCA(decremented, piece_index_t, size);
-		int num_dec = 0;
 
 		if (!m_dirty)
 		{
@@ -1396,6 +1368,7 @@ namespace libtorrent {
 			// this only matters if we're not already dirty, in which case the fasted
 			// thing to do is to just update the counters and be done
 			piece_index_t index = piece_index_t(0);
+			int num_dec = 0;
 			for (auto i = bitmask.begin(), end(bitmask.end()); i != end; ++i, ++index)
 			{
 				if (!*i) continue;

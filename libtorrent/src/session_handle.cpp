@@ -67,7 +67,9 @@ namespace libtorrent {
 #endif
 
 	constexpr session_flags_t session_handle::add_default_plugins;
+#if TORRENT_ABI_VERSION == 1
 	constexpr session_flags_t session_handle::start_default_features;
+#endif
 
 	constexpr remove_flags_t session_handle::delete_files;
 	constexpr remove_flags_t session_handle::delete_partfile;
@@ -360,40 +362,49 @@ namespace {
 #endif // TORRENT_ABI_VERSION
 
 #ifndef BOOST_NO_EXCEPTIONS
-	torrent_handle session_handle::add_torrent(add_torrent_params const& params)
+	torrent_handle session_handle::add_torrent(add_torrent_params&& params)
 	{
 		TORRENT_ASSERT_PRECOND(!params.save_path.empty());
 
 #if TORRENT_ABI_VERSION == 1
-		add_torrent_params p = params;
-		handle_backwards_compatible_resume_data(p);
-#else
-		add_torrent_params const& p = params;
+		handle_backwards_compatible_resume_data(params);
 #endif
 		error_code ec;
 		auto ecr = std::ref(ec);
-		torrent_handle r = sync_call_ret<torrent_handle>(&session_impl::add_torrent, p, ecr);
+		torrent_handle r = sync_call_ret<torrent_handle>(&session_impl::add_torrent, std::move(params), ecr);
 		if (ec) aux::throw_ex<system_error>(ec);
 		return r;
 	}
+
+	torrent_handle session_handle::add_torrent(add_torrent_params const& params)
+	{
+		return add_torrent(add_torrent_params(params));
+	}
 #endif
 
-	torrent_handle session_handle::add_torrent(add_torrent_params const& params, error_code& ec)
+	torrent_handle session_handle::add_torrent(add_torrent_params&& params, error_code& ec)
 	{
 		TORRENT_ASSERT_PRECOND(!params.save_path.empty());
 
 		ec.clear();
 #if TORRENT_ABI_VERSION == 1
-		add_torrent_params p = params;
-		handle_backwards_compatible_resume_data(p);
-#else
-		add_torrent_params const& p = params;
+		handle_backwards_compatible_resume_data(params);
 #endif
 		auto ecr = std::ref(ec);
-		return sync_call_ret<torrent_handle>(&session_impl::add_torrent, p, ecr);
+		return sync_call_ret<torrent_handle>(&session_impl::add_torrent, std::move(params), ecr);
 	}
 
-	void session_handle::async_add_torrent(add_torrent_params params)
+	torrent_handle session_handle::add_torrent(add_torrent_params const& params, error_code& ec)
+	{
+		return add_torrent(add_torrent_params(params), ec);
+	}
+
+	void session_handle::async_add_torrent(add_torrent_params const& params)
+	{
+		async_add_torrent(add_torrent_params(params));
+	}
+
+	void session_handle::async_add_torrent(add_torrent_params&& params)
 	{
 		TORRENT_ASSERT_PRECOND(!params.save_path.empty());
 
@@ -940,7 +951,23 @@ namespace {
 	}
 #endif
 
-	void session_handle::apply_settings(settings_pack s)
+	void session_handle::apply_settings(settings_pack const& s)
+	{
+		TORRENT_ASSERT_PRECOND(!s.has_val(settings_pack::out_enc_policy)
+			|| s.get_int(settings_pack::out_enc_policy)
+				<= settings_pack::pe_disabled);
+		TORRENT_ASSERT_PRECOND(!s.has_val(settings_pack::in_enc_policy)
+			|| s.get_int(settings_pack::in_enc_policy)
+				<= settings_pack::pe_disabled);
+		TORRENT_ASSERT_PRECOND(!s.has_val(settings_pack::allowed_enc_level)
+			|| s.get_int(settings_pack::allowed_enc_level)
+				<= settings_pack::pe_both);
+
+		auto copy = std::make_shared<settings_pack>(s);
+		async_call(&session_impl::apply_settings_pack, copy);
+	}
+
+	void session_handle::apply_settings(settings_pack&& s)
 	{
 		TORRENT_ASSERT_PRECOND(!s.has_val(settings_pack::out_enc_policy)
 			|| s.get_int(settings_pack::out_enc_policy)
@@ -1026,7 +1053,7 @@ namespace {
 		// setting
 		settings_pack pack;
 		pack.set_bool(settings_pack::proxy_tracker_connections
-			, s.type != aux::proxy_settings::none);
+			, s.type != settings_pack::none);
 		apply_settings(pack);
 	}
 

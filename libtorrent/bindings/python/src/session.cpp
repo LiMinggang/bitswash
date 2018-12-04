@@ -818,7 +818,9 @@ void bind_session()
     {
         scope s = class_<dummy10>("session_flags_t");
         s.attr("add_default_plugins") = lt::session::add_default_plugins;
+#if TORRENT_ABI_VERSION == 1
         s.attr("start_default_features") = lt::session::start_default_features;
+#endif
     }
 
     {
@@ -942,8 +944,7 @@ void bind_session()
         .def("__init__", boost::python::make_constructor(&make_session
                 , default_call_policies()
                 , (arg("settings")
-                , arg("flags")=lt::session::start_default_features
-                    | lt::session::add_default_plugins))
+                , arg("flags")=lt::session::add_default_plugins))
         )
 #if TORRENT_ABI_VERSION == 1
         .def(
@@ -979,8 +980,8 @@ void bind_session()
 #endif // TORRENT_DISABLE_DHT
         .def("add_torrent", &add_torrent)
         .def("async_add_torrent", &async_add_torrent)
-        .def("async_add_torrent", &lt::session::async_add_torrent)
-        .def("add_torrent", allow_threads((lt::torrent_handle (session_handle::*)(add_torrent_params const&))&lt::session::add_torrent))
+        .def("async_add_torrent", static_cast<void (session_handle::*)(lt::add_torrent_params const&)>(&lt::session::async_add_torrent))
+        .def("add_torrent", allow_threads(static_cast<lt::torrent_handle (session_handle::*)(add_torrent_params const&)>(&lt::session::add_torrent)))
 #ifndef BOOST_NO_EXCEPTIONS
 #if TORRENT_ABI_VERSION == 1
         .def(

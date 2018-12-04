@@ -148,18 +148,22 @@ namespace libtorrent {
 			num_supported_messages
 		};
 
-		enum hp_message_t
+		enum class hp_message : std::uint8_t
 		{
 			// msg_types
-			hp_rendezvous = 0,
-			hp_connect = 1,
-			hp_failed = 2,
+			rendezvous = 0,
+			connect = 1,
+			failed = 2
+		};
 
+		enum class hp_error
+		{
 			// error codes
-			hp_no_such_peer = 1,
-			hp_not_connected = 2,
-			hp_no_support = 3,
-			hp_no_self = 4
+			no_error = 0,
+			no_such_peer = 1,
+			not_connected = 2,
+			no_support = 3,
+			no_self = 4
 		};
 
 		// called from the main loop when this connection has any
@@ -241,7 +245,8 @@ namespace libtorrent {
 		void write_upload_only(bool enabled) override;
 		void write_extensions();
 		void write_share_mode();
-		void write_holepunch_msg(int type, tcp::endpoint const& ep, int error);
+		void write_holepunch_msg(hp_message type, tcp::endpoint const& ep
+			, hp_error error = hp_error::no_error);
 
 		// DHT extension
 		void write_dht_port(int listen_port);
@@ -310,7 +315,7 @@ namespace libtorrent {
 		void write_pe4_sync(int crypto_select);
 
 		void write_pe_vc_cryptofield(span<char> write_buf
-			, int crypto_field, std::size_t pad_size);
+			, int crypto_field, int pad_size);
 
 		// helper to cut down on boilerplate
 		void rc4_decrypt(span<char> buf);
@@ -329,7 +334,7 @@ namespace libtorrent {
 			{
 				// if we're encrypting this buffer, we need to make a copy
 				// since we'll mutate it
-				buffer buf(std::size_t(size), {holder.data(), std::size_t(size)});
+				buffer buf(size, {holder.data(), size});
 				append_send_buffer(std::move(buf), size);
 			}
 			else

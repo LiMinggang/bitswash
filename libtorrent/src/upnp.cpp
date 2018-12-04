@@ -212,7 +212,7 @@ port_mapping_t upnp::add_mapping(portmap_protocol const p, int const external_po
 #ifndef TORRENT_DISABLE_LOGGING
 	if (should_log())
 	{
-		log("adding port map: [ protocol: %s ext_port: %u "
+		log("adding port map: [ protocol: %s ext_port: %d "
 			"local_ep: %s ] %s", (p == portmap_protocol::tcp?"tcp":"udp")
 			, external_port
 			, print_endpoint(local_ep).c_str(), m_disabled ? "DISABLED": "");
@@ -344,29 +344,33 @@ void upnp::resend_request(error_code const& ec)
 
 		// we don't have a WANIP or WANPPP url for this device,
 		// ask for it
-		rootdevice& d = const_cast<rootdevice&>(dev);
-		TORRENT_ASSERT(d.magic == 1337);
-		TORRENT_TRY
-		{
+		connect(const_cast<rootdevice&>(dev));
+	}
+}
+
+void upnp::connect(rootdevice& d)
+{
+	TORRENT_ASSERT(d.magic == 1337);
+	TORRENT_TRY
+	{
 #ifndef TORRENT_DISABLE_LOGGING
-			log("connecting to: %s", d.url.c_str());
+		log("connecting to: %s", d.url.c_str());
 #endif
-			if (d.upnp_connection) d.upnp_connection->close();
-			d.upnp_connection = std::make_shared<http_connection>(m_io_service
-				, m_resolver
-				, std::bind(&upnp::on_upnp_xml, self(), _1, _2
-					, std::ref(d), _4));
-			d.upnp_connection->get(d.url, seconds(30), 1);
-		}
-		TORRENT_CATCH (std::exception const& exc)
-		{
-			TORRENT_DECLARE_DUMMY(std::exception, exc);
-			TORRENT_UNUSED(exc);
+		if (d.upnp_connection) d.upnp_connection->close();
+		d.upnp_connection = std::make_shared<http_connection>(m_io_service
+			, m_resolver
+			, std::bind(&upnp::on_upnp_xml, self(), _1, _2
+				, std::ref(d), _4));
+		d.upnp_connection->get(d.url, seconds(30), 1);
+	}
+	TORRENT_CATCH (std::exception const& exc)
+	{
+		TORRENT_DECLARE_DUMMY(std::exception, exc);
+		TORRENT_UNUSED(exc);
 #ifndef TORRENT_DISABLE_LOGGING
-			log("connection failed to: %s %s", d.url.c_str(), exc.what());
+		log("connection failed to: %s %s", d.url.c_str(), exc.what());
 #endif
-			d.disabled = true;
-		}
+		d.disabled = true;
 	}
 }
 
@@ -687,29 +691,7 @@ void upnp::try_map_upnp(bool const timer)
 		{
 			// we don't have a WANIP or WANPPP url for this device,
 			// ask for it
-			rootdevice& d = const_cast<rootdevice&>(*i);
-			TORRENT_ASSERT(d.magic == 1337);
-			TORRENT_TRY
-			{
-#ifndef TORRENT_DISABLE_LOGGING
-				log("connecting to: %s", d.url.c_str());
-#endif
-				if (d.upnp_connection) d.upnp_connection->close();
-				d.upnp_connection = std::make_shared<http_connection>(m_io_service
-					, m_resolver
-					, std::bind(&upnp::on_upnp_xml, self(), _1, _2
-						, std::ref(d), _4));
-				d.upnp_connection->get(d.url, seconds(30), 1);
-			}
-			TORRENT_CATCH (std::exception const& exc)
-			{
-				TORRENT_DECLARE_DUMMY(std::exception, exc);
-				TORRENT_UNUSED(exc);
-#ifndef TORRENT_DISABLE_LOGGING
-				log("connection failed to: %s %s", d.url.c_str(), exc.what());
-#endif
-				d.disabled = true;
-			}
+			connect(const_cast<rootdevice&>(*i));
 		}
 	}
 }
@@ -1002,7 +984,7 @@ void upnp::on_upnp_xml(error_code const& e
 
 	parse_state s;
 	auto body = p.get_body();
-	xml_parse({body.data(), body.size()}, std::bind(&find_control_url, _1, _2, std::ref(s)));
+	xml_parse({body.data(), std::size_t(body.size())}, std::bind(&find_control_url, _1, _2, std::ref(s)));
 	if (s.control_url.empty())
 	{
 #ifndef TORRENT_DISABLE_LOGGING
@@ -1293,12 +1275,12 @@ void upnp::on_upnp_get_ip_address_response(error_code const& e
 	if (should_log())
 	{
 		log("get external IP address response: %s"
-			, std::string(body.data(), body.size()).c_str());
+			, std::string(body.data(), static_cast<std::size_t>(body.size())).c_str());
 	}
 #endif
 
 	ip_address_parse_state s;
-	xml_parse({body.data(), body.size()}, std::bind(&find_ip_address, _1, _2, std::ref(s)));
+	xml_parse({body.data(), std::size_t(body.size())}, std::bind(&find_ip_address, _1, _2, std::ref(s)));
 #ifndef TORRENT_DISABLE_LOGGING
 	if (s.error_code != -1)
 	{
@@ -1399,7 +1381,7 @@ void upnp::on_upnp_map_response(error_code const& e
 
 	error_code_parse_state s;
 	span<char const> body = p.get_body();
-	xml_parse({body.data(), body.size()}, std::bind(&find_error_code, _1, _2, std::ref(s)));
+	xml_parse({body.data(), std::size_t(body.size())}, std::bind(&find_error_code, _1, _2, std::ref(s)));
 
 	if (s.error_code != -1)
 	{
@@ -1444,7 +1426,7 @@ void upnp::on_upnp_map_response(error_code const& e
 	if (should_log())
 	{
 		log("map response: %s"
-			, std::string(body.data(), body.size()).c_str());
+			, std::string(body.data(), static_cast<std::size_t>(body.size())).c_str());
 	}
 #endif
 
@@ -1546,7 +1528,7 @@ void upnp::on_upnp_unmap_response(error_code const& e
 		{
 			span<char const> body = p.get_body();
 			log("unmap response: %s"
-				, std::string(body.data(), body.size()).c_str());
+				, std::string(body.data(), static_cast<std::size_t>(body.size())).c_str());
 		}
 #endif
 	}
@@ -1555,7 +1537,7 @@ void upnp::on_upnp_unmap_response(error_code const& e
 	if (p.header_finished())
 	{
 		span<char const> body = p.get_body();
-		xml_parse({body.data(), body.size()}, std::bind(&find_error_code, _1, _2, std::ref(s)));
+		xml_parse({body.data(), std::size_t(body.size())}, std::bind(&find_error_code, _1, _2, std::ref(s)));
 	}
 
 	portmap_protocol const proto = m_mappings[mapping].protocol;

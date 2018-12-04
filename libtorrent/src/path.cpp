@@ -90,10 +90,7 @@ POSSIBILITY OF SUCH DAMAGE.
 #include "libtorrent/utf8.hpp"
 #include "libtorrent/aux_/win_util.hpp"
 
-#ifndef WIN32_LEAN_AND_MEAN
-#define WIN32_LEAN_AND_MEAN
-#endif
-#include <windows.h>
+#include "libtorrent/aux_/windows.hpp"
 #include <winioctl.h>
 #ifndef TORRENT_MINGW
 #include <direct.h> // for _getcwd, _mkdir
@@ -129,7 +126,7 @@ namespace libtorrent {
 
 	int bufs_size(span<iovec_t const> bufs)
 	{
-		std::size_t size = 0;
+		std::ptrdiff_t size = 0;
 		for (auto buf : bufs) size += buf.size();
 		return int(size);
 	}

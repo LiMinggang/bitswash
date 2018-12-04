@@ -395,7 +395,11 @@ namespace aux {
 			void add_dht_router(std::pair<std::string, int> const& node);
 			void set_dht_settings(dht::dht_settings const& s);
 			dht::dht_settings const& get_dht_settings() const { return m_dht_settings; }
-			void set_dht_state(dht::dht_state state);
+
+			// you must give up ownership of the dht state
+			void set_dht_state(dht::dht_state&& state);
+			void set_dht_state(dht::dht_state const& state) = delete;
+
 			void set_dht_storage(dht::dht_storage_constructor_type sc);
 			void start_dht();
 			void stop_dht();
@@ -472,7 +476,7 @@ namespace aux {
 			port_filter const& get_port_filter() const override;
 			void ban_ip(address addr) override;
 
-			void queue_tracker_request(tracker_request& req
+			void queue_tracker_request(tracker_request&& req
 				, std::weak_ptr<request_callback> c) override;
 
 			// ==== peer class operations ====
@@ -505,7 +509,9 @@ namespace aux {
 				std::shared_ptr<torrent> const& torrent_ptr, void* userdata);
 #endif
 
-			torrent_handle add_torrent(add_torrent_params, error_code& ec);
+			// the add_torrent_params object must be moved in
+			torrent_handle add_torrent(add_torrent_params&&, error_code& ec);
+
 			// second return value is true if the torrent was added and false if an
 			// existing one was found.
 			std::pair<std::shared_ptr<torrent>, bool>
@@ -1193,7 +1199,9 @@ namespace aux {
 			aux::handler_storage<TORRENT_READ_HANDLER_MAX_SIZE> m_tick_handler_storage;
 
 			// abort may not fail and cannot allocate memory
-#ifdef _M_AMD64
+#if defined BOOST_ASIO_ENABLE_HANDLER_TRACKING
+			aux::handler_storage<100> m_abort_handler_storage;
+#elif defined _M_AMD64
 			aux::handler_storage<88> m_abort_handler_storage;
 #else
 			aux::handler_storage<56> m_abort_handler_storage;

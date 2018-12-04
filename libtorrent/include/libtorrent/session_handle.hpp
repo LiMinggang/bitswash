@@ -212,10 +212,13 @@ namespace libtorrent {
 		//
 		// all torrent_handles must be destructed before the session is destructed!
 #ifndef BOOST_NO_EXCEPTIONS
+		torrent_handle add_torrent(add_torrent_params&& params);
 		torrent_handle add_torrent(add_torrent_params const& params);
 #endif
+		torrent_handle add_torrent(add_torrent_params&& params, error_code& ec);
 		torrent_handle add_torrent(add_torrent_params const& params, error_code& ec);
-		void async_add_torrent(add_torrent_params params);
+		void async_add_torrent(add_torrent_params&& params);
+		void async_add_torrent(add_torrent_params const& params);
 
 #ifndef BOOST_NO_EXCEPTIONS
 #if TORRENT_ABI_VERSION == 1
@@ -750,9 +753,11 @@ namespace libtorrent {
 		// smart_ban and possibly others.
 		static constexpr session_flags_t add_default_plugins = 0_bit;
 
+#if TORRENT_ABI_VERSION == 1
 		// this will start features like DHT, local service discovery, UPnP
 		// and NAT-PMP.
-		static constexpr session_flags_t start_default_features = 1_bit;
+		static constexpr session_flags_t TORRENT_DEPRECATED_MEMBER start_default_features = 1_bit;
+#endif
 
 		// ``remove_torrent()`` will close all peer connections associated with
 		// the torrent and tell the tracker that we've stopped participating in
@@ -785,7 +790,8 @@ namespace libtorrent {
 		// Applies the settings specified by the settings_pack ``s``. This is an
 		// asynchronous operation that will return immediately and actually apply
 		// the settings to the main thread of libtorrent some time later.
-		void apply_settings(settings_pack s);
+		void apply_settings(settings_pack const& s);
+		void apply_settings(settings_pack&& s);
 		settings_pack get_settings() const;
 
 #if TORRENT_ABI_VERSION == 1

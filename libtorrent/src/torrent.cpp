@@ -99,7 +99,6 @@ POSSIBILITY OF SUCH DAMAGE.
 #include "libtorrent/disk_io_thread.hpp" // for cache_status
 #include "libtorrent/aux_/numeric_cast.hpp"
 #include "libtorrent/aux_/path.hpp"
-#include "libtorrent/aux_/set_socket_buffer.hpp"
 #include "libtorrent/aux_/generate_peer_id.hpp"
 
 #ifndef TORRENT_DISABLE_LOGGING
@@ -273,9 +272,8 @@ bool is_downloading_state(int const st)
 			ws.emplace_back(web_seed_t(u, web_seed_entry::url_seed));
 
 			// correct URLs to end with a "/" for multi-file torrents
-			std::string& url = ws.back().url;
 			if (multi_file)
-				ensure_trailing_slash(url);
+				ensure_trailing_slash(ws.back().url);
 		}
 
 		for (auto const& e : p.http_seeds)
@@ -634,6 +632,22 @@ bool is_downloading_state(int const st)
 			{
 				add_peer(peer, peer_info::resume_data);
 			}
+
+#ifndef TORRENT_DISABLE_LOGGING
+			if (should_log())
+			{
+				std::string str;
+				for (auto const& peer : p.peers)
+				{
+					error_code ec;
+					str += peer.address().to_string(ec);
+					str += ' ';
+				}
+				debug_log("add_torrent add_peer() [ %s] connect-candidates: %d"
+					, str.c_str(), m_peer_list
+					? m_peer_list->num_connect_candidates() : -1);
+			}
+#endif
 		}
 
 #ifndef TORRENT_DISABLE_LOGGING
@@ -774,11 +788,8 @@ bool is_downloading_state(int const st)
 		if (m_trackers.empty()) return true;
 		if (!settings().get_bool(settings_pack::use_dht_as_fallback)) return true;
 
-		int verified_trackers = 0;
-		for (auto const& tr : m_trackers)
-			if (tr.verified) ++verified_trackers;
-
-		return verified_trackers == 0;
+		return std::none_of(m_trackers.begin(), m_trackers.end()
+			, [](announce_entry const& tr) { return bool(tr.verified); });
 	}
 
 #endif
@@ -1260,6 +1271,7 @@ bool is_downloading_state(int const st)
 		for (auto const p : m_connections)
 		{
 			TORRENT_INCREMENT(m_iterating_connections);
+			if (p->is_disconnecting()) continue;
 			peer_has(p->get_bitfield(), p);
 		}
 	}
@@ -2010,6 +2022,22 @@ bool is_downloading_state(int const st)
 				add_peer(p , peer_info::resume_data);
 			}
 
+#ifndef TORRENT_DISABLE_LOGGING
+			if (should_log())
+			{
+				error_code ec;
+				std::string str;
+				for (auto const& peer : m_add_torrent_params->peers)
+				{
+					str += peer.address().to_string(ec);
+					str += ' ';
+				}
+				debug_log("resume-checked add_peer() [ %s] connect-candidates: %d"
+					, str.c_str(), m_peer_list
+					? m_peer_list->num_connect_candidates() : -1);
+			}
+#endif
+
 			for (auto const& p : m_add_torrent_params->banned_peers)
 			{
 				torrent_peer* peer = add_peer(p, peer_info::resume_data);
@@ -2024,7 +2052,8 @@ bool is_downloading_state(int const st)
 
 #ifndef TORRENT_DISABLE_LOGGING
 			if (m_peer_list && m_peer_list->num_peers() > 0)
-				debug_log("resume added peers (%d)", m_peer_list->num_peers());
+				debug_log("resume added peers (total peers: %d)"
+					, m_peer_list->num_peers());
 #endif
 		}
 
@@ -2139,7 +2168,7 @@ bool is_downloading_state(int const st)
 
 					need_picker();
 
-					const int num_bits = std::min(num_blocks_per_piece, blocks.size());
+					const int num_bits = std::min(num_blocks_per_piece, int(blocks.size()));
 					for (int k = 0; k < num_bits; ++k)
 					{
 						if (blocks.get_bit(k))
@@ -2566,9 +2595,9 @@ bool is_downloading_state(int const st)
 
 				if (settings().get_bool(settings_pack::use_dht_as_fallback))
 				{
-					int verified_trackers = 0;
-					for (auto const& t : m_trackers)
-						if (t.verified) ++verified_trackers;
+					int const verified_trackers = static_cast<int>(std::count_if(
+						m_trackers.begin(), m_trackers.end()
+						, [](announce_entry const& t) { return t.verified; }));
 
 					if (verified_trackers > 0)
 						debug_log("DHT: only using DHT as fallback, and there are %d working trackers", verified_trackers);
@@ -2641,6 +2670,22 @@ bool is_downloading_state(int const st)
 
 		for (auto& p : peers)
 			add_peer(p, peer_info::dht);
+
+#ifndef TORRENT_DISABLE_LOGGING
+		if (should_log())
+		{
+			error_code ec;
+			std::string str;
+			for (auto const& peer : peers)
+			{
+				str += peer.address().to_string(ec);
+				str += ' ';
+			}
+			debug_log("DHT add_peer() [ %s] connect-candidates: %d"
+				, str.c_str(), m_peer_list
+				? m_peer_list->num_connect_candidates() : -1);
+		}
+#endif
 
 		do_connect_boost();
 
@@ -2775,7 +2820,7 @@ bool is_downloading_state(int const st)
 
 		req.event = e;
 
-		// since sending our IPv6 address to the tracker may be sensitive. Only
+		// since sending our IPv4/v6 address to the tracker may be sensitive. Only
 		// do that if we're not in anonymous mode and if it's a private torrent
 		if (!settings().get_bool(settings_pack::anonymous_mode)
 			&& m_torrent_file
@@ -2783,11 +2828,13 @@ bool is_downloading_state(int const st)
 		{
 			m_ses.for_each_listen_socket([&](aux::listen_socket_handle const& s)
 			{
-				if (s.is_ssl() != is_ssl_torrent())
-					return;
-				if (!is_v6(s.get_local_endpoint()))
-					return;
-				req.ipv6.push_back(s.get_local_endpoint().address().to_v6());
+				if (s.is_ssl() != is_ssl_torrent()) return;
+				tcp::endpoint const ep = s.get_local_endpoint();
+				if (is_any(ep.address())) return;
+				if (is_v6(ep))
+					req.ipv6.push_back(ep.address().to_v6());
+				else
+					req.ipv4.push_back(ep.address().to_v4());
 			});
 		}
 
@@ -2899,33 +2946,36 @@ bool is_downloading_state(int const st)
 				req.outgoing_socket = aep.socket;
 
 #ifndef TORRENT_DISABLE_LOGGING
-				debug_log("==> TRACKER REQUEST \"%s\" event: %s abort: %d ssl: %p "
-					"port: %d ssl-port: %d fails: %d upd: %d"
-					, req.url.c_str()
-					, (req.event == tracker_request::stopped ? "stopped"
-						: req.event == tracker_request::started ? "started" : "")
-					, m_abort
+				if (should_log())
+				{
+					debug_log("==> TRACKER REQUEST \"%s\" event: %s abort: %d ssl: %p "
+						"port: %d ssl-port: %d fails: %d upd: %d"
+						, req.url.c_str()
+						, (req.event == tracker_request::stopped ? "stopped"
+							: req.event == tracker_request::started ? "started" : "")
+						, m_abort
 #ifdef TORRENT_USE_OPENSSL
-					, static_cast<void*>(req.ssl_ctx)
+						, static_cast<void*>(req.ssl_ctx)
 #else
-					, static_cast<void*>(nullptr)
+						, static_cast<void*>(nullptr)
 #endif
-					, m_ses.listen_port()
-					, m_ses.ssl_listen_port()
-					, aep.fails
-					, aep.updating);
+						, m_ses.listen_port()
+						, m_ses.ssl_listen_port()
+						, aep.fails
+						, aep.updating);
+				}
 
 				// if we're not logging session logs, don't bother creating an
 				// observer object just for logging
 				if (m_abort && m_ses.should_log())
 				{
 					auto tl = std::make_shared<aux::tracker_logger>(m_ses);
-					m_ses.queue_tracker_request(req, tl);
+					m_ses.queue_tracker_request(tracker_request(req), tl);
 				}
 				else
 #endif
 				{
-					m_ses.queue_tracker_request(req, shared_from_this());
+					m_ses.queue_tracker_request(tracker_request(req), shared_from_this());
 				}
 
 				aep.updating = true;
@@ -2980,7 +3030,7 @@ bool is_downloading_state(int const st)
 #endif
 		req.key = tracker_key();
 		req.triggered_manually = user_triggered;
-		m_ses.queue_tracker_request(req, shared_from_this());
+		m_ses.queue_tracker_request(std::move(req), shared_from_this());
 	}
 
 	void torrent::tracker_warning(tracker_request const& req, std::string const& msg)
@@ -3153,12 +3203,8 @@ bool is_downloading_state(int const st)
 				resolved_to += i.to_string();
 				resolved_to += ", ";
 			}
-			debug_log("TRACKER RESPONSE\n"
-					"interval: %d\n"
-					"min-interval: %d\n"
-					"external ip: %s\n"
-					"resolved to: %s\n"
-					"we connected to: %s\n"
+			debug_log("TRACKER RESPONSE [ interval: %d | min-interval: %d | "
+				"external ip: %s | resolved to: %s | we connected to: %s ]"
 				, interval.count()
 				, resp.min_interval.count()
 				, print_address(resp.external_ip).c_str()
@@ -3227,6 +3273,27 @@ bool is_downloading_state(int const st)
 			tcp::endpoint a(address_v6(i.ip), i.port);
 			need_update |= bool(add_peer(a, peer_info::tracker) != nullptr);
 		}
+
+#ifndef TORRENT_DISABLE_LOGGING
+		if (should_log())
+		{
+			error_code ec;
+			std::string str;
+			for (auto const& peer : resp.peers4)
+			{
+				str += address_v4(peer.ip).to_string(ec);
+				str += ' ';
+			}
+			for (auto const& peer : resp.peers6)
+			{
+				str += address_v6(peer.ip).to_string(ec);
+				str += ' ';
+			}
+			debug_log("tracker add_peer() [ %s] connect-candidates: %d"
+				, str.c_str(), m_peer_list
+				? m_peer_list->num_connect_candidates() : -1);
+		}
+#endif
 		if (need_update) state_updated();
 
 		update_want_peers();
@@ -3442,6 +3509,16 @@ bool is_downloading_state(int const st)
 
 		if (add_peer(host, peer_info::tracker))
 			state_updated();
+
+#ifndef TORRENT_DISABLE_LOGGING
+		if (should_log())
+		{
+			error_code ec;
+			debug_log("name-lookup add_peer() [ %s ] connect-candidates: %d"
+				, host.address().to_string(ec).c_str()
+				, m_peer_list ? m_peer_list->num_connect_candidates() : -1);
+		}
+#endif
 		update_want_peers();
 	}
 	catch (...) { handle_exception(); }
@@ -6432,9 +6509,12 @@ bool is_downloading_state(int const st)
 			if (sm == nullptr && !settings().get_bool(settings_pack::enable_outgoing_tcp))
 			{
 #ifndef TORRENT_DISABLE_LOGGING
-				debug_log("discarding peer \"%s\": TCP connections disabled "
-					"[ supports-utp: %d ]", peerinfo->to_string().c_str()
-					, peerinfo->supports_utp);
+				if (should_log())
+				{
+					debug_log("discarding peer \"%s\": TCP connections disabled "
+						"[ supports-utp: %d ]", peerinfo->to_string().c_str()
+						, peerinfo->supports_utp);
+				}
 #endif
 				return false;
 			}
@@ -6474,21 +6554,6 @@ bool is_downloading_state(int const st)
 				};
 			}
 #undef CASE
-#endif
-		}
-
-		{
-			error_code err;
-			aux::set_socket_buffer_size(*s, settings(), err);
-#ifndef TORRENT_DISABLE_LOGGING
-			if (err && should_log())
-			{
-				error_code ignore;
-				auto const lep = s->local_endpoint(ignore);
-				debug_log("socket buffer size [ %s %d]: (%d) %s"
-					, lep.address().to_string(ignore).c_str()
-					, lep.port(), err.value(), err.message().c_str());
-			}
 #endif
 		}
 
@@ -6903,15 +6968,12 @@ bool is_downloading_state(int const st)
 		}
 
 #ifndef TORRENT_DISABLE_LOGGING
-		debug_log("incoming peer (%d)", num_peers());
-#endif
-
-#ifndef TORRENT_DISABLE_LOGGING
 		if (should_log()) try
 		{
-			debug_log("ATTACHED CONNECTION \"%s\" connections: %d limit: %d"
+			debug_log("ATTACHED CONNECTION \"%s\" connections: %d limit: %d num-peers: %d"
 				, print_endpoint(p->remote()).c_str(), num_peers()
-				, m_max_connections);
+				, m_max_connections
+				, num_peers());
 		}
 		catch (std::exception const&) {}
 #endif
@@ -7928,7 +7990,8 @@ bool is_downloading_state(int const st)
 		if (int(m_max_uploads)!= limit && state_update) state_updated();
 		m_max_uploads = aux::numeric_cast<std::uint32_t>(limit);
 #ifndef TORRENT_DISABLE_LOGGING
-		debug_log("*** set-max-uploads: %d", m_max_uploads);
+		if (should_log() && state_update)
+			debug_log("*** set-max-uploads: %d", m_max_uploads);
 #endif
 
 		if (state_update)
@@ -7945,7 +8008,8 @@ bool is_downloading_state(int const st)
 		update_want_peers();
 
 #ifndef TORRENT_DISABLE_LOGGING
-		debug_log("*** set-max-connections: %d", m_max_connections);
+		if (should_log() && state_update)
+			debug_log("*** set-max-connections: %d", m_max_connections);
 #endif
 
 		if (num_peers() > int(m_max_connections))
@@ -9124,23 +9188,20 @@ bool is_downloading_state(int const st)
 			&& (num_peers * 100 / m_max_connections > 90
 				|| num_peers > 20))
 		{
-			// we are connected to more than 90% seeds (and we're beyond
+			// we are connected to more than 50% seeds (and we're beyond
 			// 90% of the max number of connections). That will
 			// limit our ability to upload. We need more downloaders.
 			// disconnect some seeds so that we don't have more than 50%
 			int const to_disconnect = num_seeds - num_peers / 2;
 			aux::vector<peer_connection*> seeds;
 			seeds.reserve(num_seeds);
-			for (auto const p : m_connections)
-			{
-				if (p->is_seed()) seeds.push_back(p);
-			}
+			std::copy_if(m_connections.begin(), m_connections.end(), std::back_inserter(seeds)
+				, [](peer_connection const* p) { return p->is_seed(); });
 
 			aux::random_shuffle(seeds.begin(), seeds.end());
 			TORRENT_ASSERT(to_disconnect <= seeds.end_index());
-			for (int i = 0; i < to_disconnect; ++i)
-				seeds[i]->disconnect(errors::upload_upload_connection
-					, operation_t::bittorrent);
+			for (auto const& p : span<peer_connection*>(seeds).first(to_disconnect))
+				p->disconnect(errors::upload_upload_connection, operation_t::bittorrent);
 		}
 
 		if (num_downloaders == 0) return;
@@ -9412,9 +9473,7 @@ bool is_downloading_state(int const st)
 
 		// then insert them into the interesting_blocks vector
 		for (auto const& block : busy_blocks)
-		{
 			interesting_blocks.emplace_back(piece, block.index);
-		}
 	}
 
 	void pick_time_critical_block(std::vector<peer_connection*>& peers
@@ -9978,15 +10037,6 @@ bool is_downloading_state(int const st)
 		torrent_state st = get_peer_list_state();
 		torrent_peer* p = m_peer_list->add_peer(adr, source, flags, &st);
 		peers_erased(st.erased);
-
-#ifndef TORRENT_DISABLE_LOGGING
-		if (should_log())
-		{
-			error_code ec;
-			debug_log("add_peer() %s connect-candidates: %d"
-				, adr.address().to_string(ec).c_str(), m_peer_list->num_connect_candidates());
-		}
-#endif
 
 		if (p)
 		{

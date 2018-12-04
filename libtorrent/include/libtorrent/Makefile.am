@@ -6,7 +6,6 @@ nobase_include_HEADERS = \
   alert.hpp                    \
   alert_manager.hpp            \
   alert_types.hpp              \
-  allocator.hpp                \
   announce_entry.hpp           \
   assert.hpp                   \
   bandwidth_limit.hpp          \
@@ -212,13 +211,13 @@ nobase_include_HEADERS = \
   aux_/unique_ptr.hpp               \
   aux_/alloca.hpp                   \
   aux_/throw.hpp                    \
-  aux_/typed_span.hpp               \
   aux_/array.hpp                    \
   aux_/ip_notifier.hpp              \
   aux_/noexcept_movable.hpp         \
   aux_/torrent_impl.hpp             \
   aux_/instantiate_connection.hpp   \
   aux_/range.hpp                    \
+  aux_/windows.hpp                  \
   \
   extensions/smart_ban.hpp          \
   extensions/ut_metadata.hpp        \

@@ -137,8 +137,8 @@ namespace libtorrent {
 			"abcdefghijklmnopqrstuvwxyz-_.!~*()";
 
 		// the random number
-		for (char& c : dest)
-			c = printable[random(sizeof(printable) - 2)];
+		std::generate(dest.begin(), dest.end()
+			, []{ return printable[random(sizeof(printable) - 2)]; });
 	}
 
 	bool string_ends_with(string_view s1, string_view s2)
@@ -151,7 +151,7 @@ namespace libtorrent {
 		TORRENT_ASSERT(!src.empty());
 		TORRENT_ASSERT(!target.empty());
 		TORRENT_ASSERT(target.size() >= src.size());
-		TORRENT_ASSERT(target.size() < std::size_t(std::numeric_limits<int>::max()));
+		TORRENT_ASSERT(target.size() < std::numeric_limits<int>::max());
 
 		auto const it = std::search(target.begin(), target.end(), src.begin(), src.end());
 

@@ -1,6 +1,6 @@
 /*
 
-Copyright (c) 2003-2018, Arvid Norberg
+Copyright (c) 2010-2018, Arvid Norberg
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
@@ -30,38 +30,45 @@ POSSIBILITY OF SUCH DAMAGE.
 
 */
 
-#include "libtorrent/aux_/proxy_settings.hpp"
-#include "libtorrent/settings_pack.hpp"
-#include "libtorrent/aux_/session_settings.hpp"
+#ifndef TORRENT_BUILD_CONFIG_HPP_INCLUDED
+#define TORRENT_BUILD_CONFIG_HPP_INCLUDED
 
-namespace libtorrent { namespace aux {
+#include "libtorrent/config.hpp"
+#include <boost/preprocessor/cat.hpp>
+#include <boost/preprocessor/stringize.hpp>
 
-namespace {
+// TODO: 2 instead of using a dummy function to cause link errors when
+// incompatible build configurations are used, make the namespace name
+// depend on the configuration, and have a using declaration in the headers
+// to pull it into libtorrent.
+#if TORRENT_USE_IPV6
+#define TORRENT_CFG_IPV6 ipv6_
+#else
+#define TORRENT_CFG_IPV6 noipv6_
+#endif
 
-template <typename Settings>
-void init(proxy_settings& p, Settings const& sett)
-{
-	p.hostname = sett.get_str(settings_pack::proxy_hostname);
-	p.username = sett.get_str(settings_pack::proxy_username);
-	p.password = sett.get_str(settings_pack::proxy_password);
-	p.type = settings_pack::proxy_type_t(sett.get_int(settings_pack::proxy_type));
-	p.port = std::uint16_t(sett.get_int(settings_pack::proxy_port));
-	p.proxy_hostnames = sett.get_bool(settings_pack::proxy_hostnames);
-	p.proxy_peer_connections = sett.get_bool(
-		settings_pack::proxy_peer_connections);
-	p.proxy_tracker_connections = sett.get_bool(
-		settings_pack::proxy_tracker_connections);
-}
+#ifdef TORRENT_NO_DEPRECATE
+#define TORRENT_CFG_DEPR nodeprecate_
+#else
+#define TORRENT_CFG_DEPR deprecated_
+#endif
 
-}
+#if defined TORRENT_EXPORT_EXTRA
+#if TORRENT_USE_ASSERTS
+#define TORRENT_CFG_ASSERTS asserts_
+#else
+#define TORRENT_CFG_ASSERTS noasserts_
+#endif
+#else
+#define TORRENT_CFG_ASSERTS
+#endif
 
-proxy_settings::proxy_settings() = default;
+#define TORRENT_CFG \
+	BOOST_PP_CAT(TORRENT_CFG_IPV6, \
+	BOOST_PP_CAT(TORRENT_CFG_DEPR, \
+	TORRENT_CFG_ASSERTS))
 
-proxy_settings::proxy_settings(settings_pack const& sett)
-{ init(*this, sett); }
+#define TORRENT_CFG_STRING BOOST_PP_STRINGIZE(TORRENT_CFG)
 
-proxy_settings::proxy_settings(aux::session_settings const& sett)
-{ init(*this, sett); }
+#endif
 
-} // namespace aux
-} // namespace libtorrent

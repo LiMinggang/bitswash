@@ -44,6 +44,10 @@ POSSIBILITY OF SUCH DAMAGE.
 #include <cstdint>
 #include <limits>
 
+#if TORRENT_USE_INVARIANT_CHECKS
+#include <numeric> // for accumulate
+#endif
+
 // the behavior of the sequence numbers as implemented by uTorrent is not
 // particularly regular. This switch indicates the odd parts.
 #define TORRENT_UT_SEQ 1
@@ -139,16 +143,7 @@ enum
 
 	// if a packet receives more than this number of
 	// duplicate acks, we'll trigger a fast re-send
-	dup_ack_limit = 3,
-
-	// the max number of packets to fast-resend per
-	// selective ack message
-	// only re-sending a single packet per sack
-	// appears to improve performance by making it
-	// less likely to loose the re-sent packet. Because
-	// when that happens, we must time-out in order
-	// to continue, which takes a long time.
-	sack_resend_limit = 1
+	dup_ack_limit = 3
 };
 
 // compare if lhs is less than rhs, taking wrapping
@@ -311,9 +306,8 @@ struct utp_socket_impl
 
 	// TODO: 2 it would be nice if not everything would have to be public here
 
-	void check_receive_buffers() const;
-
 #if TORRENT_USE_INVARIANT_CHECKS
+	void check_receive_buffers() const;
 	void check_invariant() const;
 #endif
 
@@ -1038,7 +1032,9 @@ std::size_t utp_stream::read_some(bool const clear_buffers)
 			break;
 		}
 
+#if TORRENT_USE_INVARIANT_CHECKS
 		m_impl->check_receive_buffers();
+#endif
 
 		packet* p = i->get();
 		int to_copy = std::min(p->size - p->header_size, aux::numeric_cast<int>(target->len));
@@ -1054,7 +1050,9 @@ std::size_t utp_stream::read_some(bool const clear_buffers)
 		p->header_size += std::uint16_t(to_copy);
 		if (target->len == 0) target = m_impl->m_read_buffer.erase(target);
 
+#if TORRENT_USE_INVARIANT_CHECKS
 		m_impl->check_receive_buffers();
+#endif
 
 		TORRENT_ASSERT(m_impl->m_receive_buffer_size >= 0);
 
@@ -1543,15 +1541,21 @@ std::pair<std::uint32_t, int> utp_socket_impl::parse_sack(std::uint16_t const pa
 	{
 		experienced_loss(m_fast_resend_seq_nr);
 		int num_resent = 0;
-		while (m_fast_resend_seq_nr != last_ack)
+
+		// only re-sending a single packet per sack
+		// appears to improve performance by making it
+		// less likely to loose the re-sent packet. Because
+		// when that happens, we must time-out in order
+		// to continue, which takes a long time.
+		if (m_fast_resend_seq_nr != last_ack)
 		{
 			packet* p = m_outbuf.at(m_fast_resend_seq_nr);
 			m_fast_resend_seq_nr = (m_fast_resend_seq_nr + 1) & ACK_MASK;
-			if (!p) continue;
-			++num_resent;
-			if (!resend_packet(p, true)) break;
-			m_duplicate_acks = 0;
-			if (num_resent >= sack_resend_limit) break;
+			if (p)
+			{
+				++num_resent;
+				if (resend_packet(p, true)) m_duplicate_acks = 0;
+			}
 		}
 	}
 
@@ -2394,7 +2398,9 @@ void utp_socket_impl::incoming(std::uint8_t const* buf, int size, packet_ptr p
 
 	UTP_LOGV("%8p: incoming: saving packet in receive buffer (%d)\n", static_cast<void*>(this), m_receive_buffer_size);
 
+#if TORRENT_USE_INVARIANT_CHECKS
 	check_receive_buffers();
+#endif
 }
 
 bool utp_socket_impl::cancel_handlers(error_code const& ec, bool shutdown)
@@ -2607,7 +2613,7 @@ bool utp_socket_impl::incoming_packet(span<std::uint8_t const> buf
 	auto const* ph = reinterpret_cast<utp_header const*>(buf.data());
 	m_sm.inc_stats_counter(counters::utp_packets_in);
 
-	if (buf.size() < sizeof(utp_header))
+	if (buf.size() < int(sizeof(utp_header)))
 	{
 		UTP_LOG("%8p: ERROR: incoming packet size too small:%d (ignored)\n"
 			, static_cast<void*>(this), int(buf.size()));
@@ -2876,13 +2882,6 @@ bool utp_socket_impl::incoming_packet(span<std::uint8_t const> buf
 		}
 		std::uint8_t const next_extension = *ptr++;
 		int const len = *ptr++;
-		if (len < 0)
-		{
-			UTP_LOGV("%8p: invalid extension length:%d packet:%d\n"
-				, static_cast<void*>(this), len, int(ptr - buf.data()));
-			m_sm.inc_stats_counter(counters::utp_invalid_pkts_in);
-			return true;
-		}
 		if (ptr - buf.data() + len > size)
 		{
 			UTP_LOG("%8p: ERROR: invalid extension header size:%d packet:%d\n"
@@ -3653,16 +3652,17 @@ void utp_socket_impl::tick(time_point const now)
 	}
 }
 
+#if TORRENT_USE_INVARIANT_CHECKS
 void utp_socket_impl::check_receive_buffers() const
 {
 	INVARIANT_CHECK;
 
-	int size = 0;
-	for (auto const& p : m_receive_buffer)
-		size += p ? p->size - p->header_size : 0;
+	int const size = std::accumulate(m_receive_buffer.begin(), m_receive_buffer.end(), 0
+		, [](int const acc, packet_ptr const& p) { return acc + (p ? p->size - p->header_size : 0); } );
 
 	TORRENT_ASSERT(size == m_receive_buffer_size);
 }
+#endif
 
 #if TORRENT_USE_INVARIANT_CHECKS
 void utp_socket_impl::check_invariant() const

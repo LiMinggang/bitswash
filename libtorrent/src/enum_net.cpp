@@ -70,10 +70,7 @@ POSSIBILITY OF SUCH DAMAGE.
 #endif // TORRENT_USE_SYSCTL
 
 #if TORRENT_USE_GETIPFORWARDTABLE || TORRENT_USE_GETADAPTERSADDRESSES
-#ifndef WIN32_LEAN_AND_MEAN
-#define WIN32_LEAN_AND_MEAN
-#endif
-#include <windows.h>
+#include "libtorrent/aux_/windows.hpp"
 #include <iphlpapi.h>
 #endif
 
@@ -220,8 +217,8 @@ namespace {
 
 		for (;;)
 		{
-			auto next_msg = buf.subspan(std::size_t(msg_len));
-			int read_len = int(recv(sock, next_msg.data(), next_msg.size(), 0));
+			auto next_msg = buf.subspan(msg_len);
+			int const read_len = int(recv(sock, next_msg.data(), static_cast<std::size_t>(next_msg.size()), 0));
 			if (read_len < 0) return -1;
 
 			nl_hdr = reinterpret_cast<nlmsghdr*>(next_msg.data());
@@ -540,12 +537,8 @@ int _System __libsocket_sysctl(int* mib, u_int namelen, void *oldp, size_t *oldl
 
 	bool in_local_network(std::vector<ip_interface> const& net, address const& addr)
 	{
-		for (auto const& i : net)
-		{
-			if (match_addr_mask(addr, i.interface_address, i.netmask))
-				return true;
-		}
-		return false;
+		return std::any_of(net.begin(), net.end(), [&addr](ip_interface const& i)
+			{ return match_addr_mask(addr, i.interface_address, i.netmask); });
 	}
 
 	std::vector<ip_interface> enum_net_interfaces(io_service& ios, error_code& ec)
@@ -993,7 +986,7 @@ int _System __libsocket_sysctl(int* mib, u_int namelen, void *oldp, size_t *oldl
 		return std::vector<ip_route>();
 	}
 
-	if (needed <= 0)
+	if (needed == 0)
 	{
 		return std::vector<ip_route>();
 	}
@@ -1251,10 +1244,11 @@ int _System __libsocket_sysctl(int* mib, u_int namelen, void *oldp, size_t *oldl
 	std::string device_for_address(address addr, io_service& ios, error_code& ec)
 	{
 		std::vector<ip_interface> ifs = enum_net_interfaces(ios, ec);
-		if (ec) return std::string();
+		if (ec) return {};
 
-		for (auto const& iface : ifs)
-			if (iface.interface_address == addr) return iface.name;
-		return std::string();
+		auto const iter = std::find_if(ifs.begin(), ifs.end()
+			, [&addr](ip_interface const& iface)
+			{ return iface.interface_address == addr; });
+		return (iter == ifs.end()) ? std::string() : iter->name;
 	}
 }

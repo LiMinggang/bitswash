@@ -1114,8 +1114,11 @@ TORRENT_VERSION_NAMESPACE_2
 	{
 		// internal
 		save_resume_data_alert(aux::stack_allocator& alloc
-			, add_torrent_params params
+			, add_torrent_params&& params
 			, torrent_handle const& h);
+		save_resume_data_alert(aux::stack_allocator& alloc
+			, add_torrent_params const& params
+			, torrent_handle const& h) = delete;
 
 		TORRENT_DEFINE_ALERT_PRIO(save_resume_data_alert, 37, alert_priority_critical)
 
@@ -2596,7 +2599,7 @@ TORRENT_VERSION_NAMESPACE_2
 	private:
 		std::reference_wrapper<aux::stack_allocator> m_alloc;
 		aux::allocation_slot m_msg_idx;
-		std::size_t const m_size;
+		int const m_size;
 #if TORRENT_ABI_VERSION == 1
 	public:
 		direction_t TORRENT_DEPRECATED_MEMBER dir;

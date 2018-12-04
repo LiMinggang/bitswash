@@ -39,10 +39,7 @@ POSSIBILITY OF SUCH DAMAGE.
 #include <cstring>
 
 #ifdef TORRENT_WINDOWS
-#ifndef WIN32_LEAN_AND_MEAN
-#define WIN32_LEAN_AND_MEAN
-#endif
-#include <windows.h>
+#include "libtorrent/aux_/windows.hpp"
 #endif
 
 #if TORRENT_USE_ICONV
@@ -189,15 +186,13 @@ namespace libtorrent {
 
 	void convert_path_to_posix(std::string& path)
 	{
-		for (char& c : path)
-			if (c == '\\') c = '/';
+		std::replace(path.begin(), path.end(), '\\', '/');
 	}
 
 #ifdef TORRENT_WINDOWS
 	void convert_path_to_windows(std::string& path)
 	{
-		for (char& c : path)
-			if (c == '/') c = '\\';
+		std::replace(path.begin(), path.end(), '/', '\\');
 	}
 #endif
 
@@ -628,7 +623,6 @@ namespace {
 		ws.resize(s.size());
 		std::size_t size = mbstowcs(&ws[0], s.c_str(), s.size());
 		if (size == std::size_t(-1)) return s;
-		std::string ret;
 		return libtorrent::wchar_utf8(ws);
 	}
 

@@ -148,7 +148,7 @@ namespace libtorrent {
 		std::shared_ptr<request_callback> cb = requester();
 		if (cb && cb->should_log())
 		{
-			cb->debug_log(R"(*** UDP_TRACKER [ host: "%s" ip: "%s" | error: "%s" ])"
+			cb->debug_log(R"(*** UDP_TRACKER [ host: "%s" ip: "%s" | ERROR: "%s" ])"
 				, m_hostname.c_str(), print_endpoint(m_target).c_str(), ec.message().c_str());
 		}
 #endif
@@ -267,10 +267,10 @@ namespace libtorrent {
 			// use if if it hasn't expired
 			if (aux::time_now() < cc->second.expires)
 			{
-				if (0 == (tracker_req().kind & tracker_request::scrape_request))
-					send_udp_announce();
-				else if (0 != (tracker_req().kind & tracker_request::scrape_request))
+				if (tracker_req().kind & tracker_request::scrape_request)
 					send_udp_scrape();
+				else
+					send_udp_announce();
 				return;
 			}
 			// if it expired, remove it from the cache
@@ -385,7 +385,7 @@ namespace libtorrent {
 		if (action == action_t::error)
 		{
 			fail(error_code(errors::tracker_failure)
-				, std::string(buf.data(), buf.size()).c_str());
+				, std::string(buf.data(), static_cast<std::size_t>(buf.size())).c_str());
 			return true;
 		}
 
@@ -513,7 +513,7 @@ namespace libtorrent {
 #ifndef TORRENT_DISABLE_LOGGING
 		if (cb && cb->should_log())
 		{
-			cb->debug_log("==> UDP_TRACKER_CONNECT [ to: %s ih: %s]"
+			cb->debug_log("==> UDP_TRACKER_CONNECT [ to: %s ih: %s ]"
 				, m_hostname.empty()
 					? print_endpoint(m_target).c_str()
 					: (m_hostname + ":" + to_string(m_target.port()).data()).c_str()
@@ -582,9 +582,8 @@ namespace libtorrent {
 		resp.incomplete = aux::read_int32(buf);
 		resp.complete = aux::read_int32(buf);
 
-		std::size_t const ip_stride = is_v6(m_target) ? 18 : 6;
-
-		std::size_t const num_peers = buf.size() / ip_stride;
+		int const ip_stride = is_v6(m_target) ? 18 : 6;
+		auto const num_peers = buf.size() / ip_stride;
 		if (buf.size() % ip_stride != 0)
 		{
 			fail(error_code(errors::invalid_tracker_response_length));
@@ -607,8 +606,8 @@ namespace libtorrent {
 
 		if (is_v6(m_target))
 		{
-			resp.peers6.reserve(num_peers);
-			for (std::size_t i = 0; i < num_peers; ++i)
+			resp.peers6.reserve(static_cast<std::size_t>(num_peers));
+			for (int i = 0; i < num_peers; ++i)
 			{
 				ipv6_peer_entry e{};
 				std::memcpy(e.ip.data(), buf.data(), 16);
@@ -619,8 +618,8 @@ namespace libtorrent {
 		}
 		else
 		{
-			resp.peers4.reserve(num_peers);
-			for (std::size_t i = 0; i < num_peers; ++i)
+			resp.peers4.reserve(static_cast<std::size_t>(num_peers));
+			for (int i = 0; i < num_peers; ++i)
 			{
 				ipv4_peer_entry e{};
 				std::memcpy(e.ip.data(), buf.data(), 4);
@@ -630,14 +629,12 @@ namespace libtorrent {
 			}
 		}
 
+		// TODO: why is this a linked list?
 		std::list<address> ip_list;
-		for (auto const& endp : m_endpoints)
-		{
-			ip_list.push_back(endp.address());
-		}
+		std::transform(m_endpoints.begin(), m_endpoints.end(), std::back_inserter(ip_list)
+			, [](tcp::endpoint const& ep) { return ep.address(); } );
 
-		cb->tracker_response(tracker_req(), m_target.address(), ip_list
-			, resp);
+		cb->tracker_response(tracker_req(), m_target.address(), ip_list, resp);
 
 		close();
 		return true;
@@ -658,7 +655,7 @@ namespace libtorrent {
 		if (action == action_t::error)
 		{
 			fail(error_code(errors::tracker_failure)
-				, std::string(buf.data(), buf.size()).c_str());
+				, std::string(buf.data(), static_cast<std::size_t>(buf.size())).c_str());
 			return true;
 		}
 
@@ -761,16 +758,16 @@ namespace libtorrent {
 		if (!m_hostname.empty())
 		{
 			m_man.send_hostname(bind_socket(), m_hostname.c_str()
-				, m_target.port(), {buf, std::size_t(sizeof(buf) - out.size())}, ec
+				, m_target.port(), {buf, int(sizeof(buf)) - out.size()}, ec
 				, udp_socket::tracker_connection);
 		}
 		else
 		{
-			m_man.send(bind_socket(), m_target, {buf, std::size_t(sizeof(buf) - out.size())}, ec
+			m_man.send(bind_socket(), m_target, {buf, int(sizeof(buf)) - out.size()}, ec
 				, udp_socket::tracker_connection);
 		}
 		m_state = action_t::announce;
-		sent_bytes(int(sizeof(buf) - out.size()) + 28); // assuming UDP/IP header
+		sent_bytes(int(sizeof(buf)) - int(out.size()) + 28); // assuming UDP/IP header
 		++m_attempts;
 		if (ec)
 		{
