@@ -1,0 +1,97 @@
+# Compiled Object files
+*.slo
+*.lo
+*.o
+*.obj
+
+# Precompiled Headers
+*.gch
+*.pch
+
+
+# Compiled Dynamic libraries
+*.so
+*.dylib
+*.dll
+
+# Compiled Static libraries
+*.lai
+*.la
+*.a
+*.lib
+
+# Executables
+*.exe
+*.out
+*.app
+
+# Logs
+*.log
+
+prj
+build/msw/vc14.1/*.user
+build/msw/vc14.1/*.ncb
+build/msw/vc14.1/*.suo
+build/msw/vc14.1/.vs
+build/msw/vc14.1/x64
+build/msw/vc14.1/win32
+build/msw/vc14.1/x86
+build/msw/vc14.1/Debug
+build/msw/vc14.1/Release
+build/msw/vc14.1/Unicode Debug
+build/msw/vc14.1/Unicode Release
+build/msw/vc14.1/*.user
+build/msw/vc14.1/*.ncb
+build/msw/vc14/*.suo
+build/msw/vc14/.vs
+build/msw/vc14/x64
+build/msw/vc14/win32
+build/msw/vc14/x86
+build/msw/vc14/Debug
+build/msw/vc14/Release
+build/msw/vc14/Unicode Debug
+build/msw/vc14/Unicode Release
+build/msw/vc80/*.user
+build/msw/vc80/*.ncb
+build/msw/vc80/*.suo
+build/msw/vc80/.vs
+build/msw/vc80/x64
+build/msw/vc80/win32
+build/msw/vc80/x86
+build/msw/vc80/Debug
+build/msw/vc80/Release
+build/msw/vc80/Unicode Debug
+build/msw/vc80/Unicode Release
+build/msw/vc90/*.user
+build/msw/vc90/*.ncb
+build/msw/vc90/*.suo
+build/msw/vc90/.vs
+build/msw/vc90/x64
+build/msw/vc90/win32
+build/msw/vc90/x86
+build/msw/vc90/Debug
+build/msw/vc90/Release
+build/msw/vc90/Unicode Debug
+build/msw/vc90/Unicode Release
+build/msw/vc10/*.user
+build/msw/vc10/*.ncb
+build/msw/vc10/*.suo
+build/msw/vc10/.vs
+build/msw/vc10/x64
+build/msw/vc10/win32
+build/msw/vc10/x86
+build/msw/vc10/Debug
+build/msw/vc10/Release
+build/msw/vc10/Unicode Debug
+build/msw/vc10/Unicode Release
+build/msw/vc12/*.user
+build/msw/vc12/*.ncb
+build/msw/vc12/*.suo
+build/msw/vc12/.vs
+build/msw/vc12/x64
+build/msw/vc12/win32
+build/msw/vc12/x86
+build/msw/vc12/Debug
+build/msw/vc12/Release
+build/msw/vc12/Unicode Debug
+build/msw/vc12/Unicode Release
