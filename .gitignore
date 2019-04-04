@@ -28,6 +28,8 @@
 # Logs
 *.log
 
+x64
+.vs
 prj
 build/msw/vc14.1/*.user
 build/msw/vc14.1/*.ncb
