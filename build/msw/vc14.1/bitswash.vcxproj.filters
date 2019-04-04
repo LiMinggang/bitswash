@@ -42,1599 +42,1587 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\..\..\libtorrent\include\libtorrent\add_torrent_params.hpp">
+    <ClInclude Include="libtorrent\include\libtorrent\add_torrent_params.hpp">
       <Filter>Header Files\libtorrent</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\libtorrent\include\libtorrent\address.hpp">
+    <ClInclude Include="libtorrent\include\libtorrent\address.hpp">
       <Filter>Header Files\libtorrent</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\libtorrent\include\libtorrent\alert.hpp">
+    <ClInclude Include="libtorrent\include\libtorrent\alert.hpp">
       <Filter>Header Files\libtorrent</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\libtorrent\include\libtorrent\alert_manager.hpp">
+    <ClInclude Include="libtorrent\include\libtorrent\alert_manager.hpp">
       <Filter>Header Files\libtorrent</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\libtorrent\include\libtorrent\alert_types.hpp">
+    <ClInclude Include="libtorrent\include\libtorrent\alert_types.hpp">
       <Filter>Header Files\libtorrent</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\libtorrent\include\libtorrent\allocator.hpp">
+    <ClInclude Include="libtorrent\include\libtorrent\alloca.hpp">
       <Filter>Header Files\libtorrent</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\libtorrent\include\libtorrent\assert.hpp">
+    <ClInclude Include="libtorrent\include\libtorrent\assert.hpp">
       <Filter>Header Files\libtorrent</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\libtorrent\include\libtorrent\bandwidth_limit.hpp">
+    <ClInclude Include="libtorrent\include\libtorrent\bandwidth_limit.hpp">
       <Filter>Header Files\libtorrent</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\libtorrent\include\libtorrent\bandwidth_manager.hpp">
+    <ClInclude Include="libtorrent\include\libtorrent\bandwidth_manager.hpp">
       <Filter>Header Files\libtorrent</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\libtorrent\include\libtorrent\bandwidth_queue_entry.hpp">
+    <ClInclude Include="libtorrent\include\libtorrent\bandwidth_queue_entry.hpp">
       <Filter>Header Files\libtorrent</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\libtorrent\include\libtorrent\bandwidth_socket.hpp">
+    <ClInclude Include="libtorrent\include\libtorrent\bandwidth_socket.hpp">
       <Filter>Header Files\libtorrent</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\libtorrent\include\libtorrent\bencode.hpp">
+    <ClInclude Include="libtorrent\include\libtorrent\bencode.hpp">
       <Filter>Header Files\libtorrent</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\libtorrent\include\libtorrent\bitfield.hpp">
+    <ClInclude Include="libtorrent\include\libtorrent\bitfield.hpp">
       <Filter>Header Files\libtorrent</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\libtorrent\include\libtorrent\bloom_filter.hpp">
+    <ClInclude Include="libtorrent\include\libtorrent\bloom_filter.hpp">
       <Filter>Header Files\libtorrent</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\libtorrent\include\libtorrent\broadcast_socket.hpp">
+    <ClInclude Include="libtorrent\include\libtorrent\broadcast_socket.hpp">
       <Filter>Header Files\libtorrent</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\libtorrent\include\libtorrent\bt_peer_connection.hpp">
+    <ClInclude Include="libtorrent\include\libtorrent\bt_peer_connection.hpp">
       <Filter>Header Files\libtorrent</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\libtorrent\include\libtorrent\buffer.hpp">
+    <ClInclude Include="libtorrent\include\libtorrent\buffer.hpp">
       <Filter>Header Files\libtorrent</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\libtorrent\include\libtorrent\build_config.hpp">
+    <ClInclude Include="libtorrent\include\libtorrent\chained_buffer.hpp">
       <Filter>Header Files\libtorrent</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\libtorrent\include\libtorrent\chained_buffer.hpp">
+    <ClInclude Include="libtorrent\include\libtorrent\config.hpp">
       <Filter>Header Files\libtorrent</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\libtorrent\include\libtorrent\config.hpp">
+    <ClInclude Include="libtorrent\include\libtorrent\connection_queue.hpp">
       <Filter>Header Files\libtorrent</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\libtorrent\include\libtorrent\connection_queue.hpp">
+    <ClInclude Include="libtorrent\include\libtorrent\ConvertUTF.h">
       <Filter>Header Files\libtorrent</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\libtorrent\include\libtorrent\ConvertUTF.h">
+    <ClInclude Include="libtorrent\include\libtorrent\copy_ptr.hpp">
       <Filter>Header Files\libtorrent</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\libtorrent\include\libtorrent\copy_ptr.hpp">
+    <ClInclude Include="libtorrent\zlib\crc32.h">
       <Filter>Header Files\libtorrent</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\libtorrent\zlib\crc32.h">
+    <ClInclude Include="libtorrent\include\libtorrent\create_torrent.hpp">
       <Filter>Header Files\libtorrent</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\libtorrent\include\libtorrent\create_torrent.hpp">
+    <ClInclude Include="libtorrent\include\libtorrent\deadline_timer.hpp">
       <Filter>Header Files\libtorrent</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\libtorrent\include\libtorrent\deadline_timer.hpp">
+    <ClInclude Include="libtorrent\include\libtorrent\debug.hpp">
       <Filter>Header Files\libtorrent</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\libtorrent\include\libtorrent\debug.hpp">
+    <ClInclude Include="libtorrent\zlib\deflate.h">
       <Filter>Header Files\libtorrent</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\libtorrent\zlib\deflate.h">
+    <ClInclude Include="libtorrent\include\libtorrent\kademlia\dht_observer.hpp">
       <Filter>Header Files\libtorrent</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\libtorrent\include\libtorrent\kademlia\dht_observer.hpp">
+    <ClInclude Include="libtorrent\include\libtorrent\kademlia\dht_tracker.hpp">
       <Filter>Header Files\libtorrent</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\libtorrent\include\libtorrent\kademlia\dht_tracker.hpp">
+    <ClInclude Include="libtorrent\include\libtorrent\disk_buffer_holder.hpp">
       <Filter>Header Files\libtorrent</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\libtorrent\include\libtorrent\disk_buffer_holder.hpp">
+    <ClInclude Include="libtorrent\include\libtorrent\disk_buffer_pool.hpp">
       <Filter>Header Files\libtorrent</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\libtorrent\include\libtorrent\disk_buffer_pool.hpp">
+    <ClInclude Include="libtorrent\include\libtorrent\disk_io_thread.hpp">
       <Filter>Header Files\libtorrent</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\libtorrent\include\libtorrent\disk_io_thread.hpp">
+    <ClInclude Include="libtorrent\include\libtorrent\ed25519.hpp">
       <Filter>Header Files\libtorrent</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\libtorrent\include\libtorrent\ed25519.hpp">
+    <ClInclude Include="libtorrent\include\libtorrent\entry.hpp">
       <Filter>Header Files\libtorrent</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\libtorrent\include\libtorrent\entry.hpp">
+    <ClInclude Include="libtorrent\include\libtorrent\enum_net.hpp">
       <Filter>Header Files\libtorrent</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\libtorrent\include\libtorrent\enum_net.hpp">
+    <ClInclude Include="libtorrent\include\libtorrent\error.hpp">
       <Filter>Header Files\libtorrent</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\libtorrent\include\libtorrent\error.hpp">
+    <ClInclude Include="libtorrent\include\libtorrent\error_code.hpp">
       <Filter>Header Files\libtorrent</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\libtorrent\include\libtorrent\error_code.hpp">
+    <ClInclude Include="libtorrent\include\libtorrent\escape_string.hpp">
       <Filter>Header Files\libtorrent</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\libtorrent\include\libtorrent\escape_string.hpp">
+    <ClInclude Include="libtorrent\include\libtorrent\export.hpp">
       <Filter>Header Files\libtorrent</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\libtorrent\include\libtorrent\export.hpp">
+    <ClInclude Include="libtorrent\include\libtorrent\extensions.hpp">
       <Filter>Header Files\libtorrent</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\libtorrent\include\libtorrent\extensions.hpp">
+    <ClInclude Include="libtorrent\include\libtorrent\file.hpp">
       <Filter>Header Files\libtorrent</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\libtorrent\include\libtorrent\file.hpp">
+    <ClInclude Include="libtorrent\include\libtorrent\file_pool.hpp">
       <Filter>Header Files\libtorrent</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\libtorrent\include\libtorrent\file_pool.hpp">
+    <ClInclude Include="libtorrent\include\libtorrent\file_storage.hpp">
       <Filter>Header Files\libtorrent</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\libtorrent\include\libtorrent\file_storage.hpp">
+    <ClInclude Include="libtorrent\include\libtorrent\kademlia\find_data.hpp">
       <Filter>Header Files\libtorrent</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\libtorrent\include\libtorrent\kademlia\find_data.hpp">
+    <ClInclude Include="libtorrent\include\libtorrent\fingerprint.hpp">
       <Filter>Header Files\libtorrent</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\libtorrent\include\libtorrent\fingerprint.hpp">
+    <ClInclude Include="libtorrent\include\libtorrent\GeoIP.h">
       <Filter>Header Files\libtorrent</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\libtorrent\include\libtorrent\GeoIP.h">
+    <ClInclude Include="libtorrent\include\libtorrent\kademlia\get_item.hpp">
       <Filter>Header Files\libtorrent</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\libtorrent\include\libtorrent\kademlia\get_item.hpp">
+    <ClInclude Include="libtorrent\include\libtorrent\kademlia\get_peers.hpp">
       <Filter>Header Files\libtorrent</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\libtorrent\include\libtorrent\kademlia\get_peers.hpp">
+    <ClInclude Include="libtorrent\include\libtorrent\gzip.hpp">
       <Filter>Header Files\libtorrent</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\libtorrent\include\libtorrent\gzip.hpp">
+    <ClInclude Include="libtorrent\include\libtorrent\hasher.hpp">
       <Filter>Header Files\libtorrent</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\libtorrent\include\libtorrent\hasher.hpp">
+    <ClInclude Include="libtorrent\include\libtorrent\http_connection.hpp">
       <Filter>Header Files\libtorrent</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\libtorrent\include\libtorrent\http_connection.hpp">
+    <ClInclude Include="libtorrent\include\libtorrent\http_parser.hpp">
       <Filter>Header Files\libtorrent</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\libtorrent\include\libtorrent\http_parser.hpp">
+    <ClInclude Include="libtorrent\include\libtorrent\http_seed_connection.hpp">
       <Filter>Header Files\libtorrent</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\libtorrent\include\libtorrent\http_seed_connection.hpp">
+    <ClInclude Include="libtorrent\include\libtorrent\http_stream.hpp">
       <Filter>Header Files\libtorrent</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\libtorrent\include\libtorrent\http_stream.hpp">
+    <ClInclude Include="libtorrent\include\libtorrent\http_tracker_connection.hpp">
       <Filter>Header Files\libtorrent</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\libtorrent\include\libtorrent\http_tracker_connection.hpp">
+    <ClInclude Include="libtorrent\include\libtorrent\i2p_stream.hpp">
       <Filter>Header Files\libtorrent</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\libtorrent\include\libtorrent\i2p_stream.hpp">
+    <ClInclude Include="libtorrent\include\libtorrent\identify_client.hpp">
       <Filter>Header Files\libtorrent</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\libtorrent\include\libtorrent\identify_client.hpp">
+    <ClInclude Include="libtorrent\zlib\inffast.h">
       <Filter>Header Files\libtorrent</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\libtorrent\zlib\inffast.h">
+    <ClInclude Include="libtorrent\zlib\inffixed.h">
       <Filter>Header Files\libtorrent</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\libtorrent\zlib\inffixed.h">
+    <ClInclude Include="libtorrent\zlib\inflate.h">
       <Filter>Header Files\libtorrent</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\libtorrent\zlib\inflate.h">
+    <ClInclude Include="libtorrent\zlib\inftrees.h">
       <Filter>Header Files\libtorrent</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\libtorrent\zlib\inftrees.h">
+    <ClInclude Include="libtorrent\include\libtorrent\instantiate_connection.hpp">
       <Filter>Header Files\libtorrent</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\libtorrent\include\libtorrent\instantiate_connection.hpp">
+    <ClInclude Include="libtorrent\include\libtorrent\intrusive_ptr_base.hpp">
       <Filter>Header Files\libtorrent</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\libtorrent\include\libtorrent\intrusive_ptr_base.hpp">
+    <ClInclude Include="libtorrent\include\libtorrent\invariant_check.hpp">
       <Filter>Header Files\libtorrent</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\libtorrent\include\libtorrent\invariant_check.hpp">
+    <ClInclude Include="libtorrent\include\libtorrent\io.hpp">
       <Filter>Header Files\libtorrent</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\libtorrent\include\libtorrent\io.hpp">
+    <ClInclude Include="libtorrent\include\libtorrent\io_service.hpp">
       <Filter>Header Files\libtorrent</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\libtorrent\include\libtorrent\io_service.hpp">
+    <ClInclude Include="libtorrent\include\libtorrent\io_service_fwd.hpp">
       <Filter>Header Files\libtorrent</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\libtorrent\include\libtorrent\io_service_fwd.hpp">
+    <ClInclude Include="libtorrent\include\libtorrent\ip_filter.hpp">
       <Filter>Header Files\libtorrent</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\libtorrent\include\libtorrent\ip_filter.hpp">
+    <ClInclude Include="libtorrent\include\libtorrent\ip_voter.hpp">
       <Filter>Header Files\libtorrent</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\libtorrent\include\libtorrent\ip_voter.hpp">
+    <ClInclude Include="libtorrent\include\libtorrent\kademlia\item.hpp">
       <Filter>Header Files\libtorrent</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\libtorrent\include\libtorrent\kademlia\item.hpp">
+    <ClInclude Include="libtorrent\include\libtorrent\lazy_entry.hpp">
       <Filter>Header Files\libtorrent</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\libtorrent\include\libtorrent\lazy_entry.hpp">
+    <ClInclude Include="libtorrent\include\libtorrent\extensions\logger.hpp">
       <Filter>Header Files\libtorrent</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\libtorrent\include\libtorrent\extensions\logger.hpp">
+    <ClInclude Include="libtorrent\include\libtorrent\kademlia\logging.hpp">
       <Filter>Header Files\libtorrent</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\libtorrent\include\libtorrent\kademlia\logging.hpp">
+    <ClInclude Include="libtorrent\include\libtorrent\lsd.hpp">
       <Filter>Header Files\libtorrent</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\libtorrent\include\libtorrent\lsd.hpp">
+    <ClInclude Include="libtorrent\include\libtorrent\extensions\lt_trackers.hpp">
       <Filter>Header Files\libtorrent</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\libtorrent\include\libtorrent\extensions\lt_trackers.hpp">
+    <ClInclude Include="libtorrent\include\libtorrent\magnet_uri.hpp">
       <Filter>Header Files\libtorrent</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\libtorrent\include\libtorrent\magnet_uri.hpp">
+    <ClInclude Include="libtorrent\include\libtorrent\max.hpp">
       <Filter>Header Files\libtorrent</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\libtorrent\include\libtorrent\extensions\metadata_transfer.hpp">
+    <ClInclude Include="libtorrent\include\libtorrent\extensions\metadata_transfer.hpp">
       <Filter>Header Files\libtorrent</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\libtorrent\include\libtorrent\kademlia\msg.hpp">
+    <ClInclude Include="libtorrent\include\libtorrent\kademlia\msg.hpp">
       <Filter>Header Files\libtorrent</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\libtorrent\include\libtorrent\natpmp.hpp">
+    <ClInclude Include="libtorrent\include\libtorrent\natpmp.hpp">
       <Filter>Header Files\libtorrent</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\libtorrent\include\libtorrent\kademlia\node.hpp">
+    <ClInclude Include="libtorrent\include\libtorrent\kademlia\node.hpp">
       <Filter>Header Files\libtorrent</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\libtorrent\include\libtorrent\kademlia\node_entry.hpp">
+    <ClInclude Include="libtorrent\include\libtorrent\kademlia\node_entry.hpp">
       <Filter>Header Files\libtorrent</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\libtorrent\include\libtorrent\kademlia\node_id.hpp">
+    <ClInclude Include="libtorrent\include\libtorrent\kademlia\node_id.hpp">
       <Filter>Header Files\libtorrent</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\libtorrent\include\libtorrent\kademlia\observer.hpp">
+    <ClInclude Include="libtorrent\include\libtorrent\kademlia\observer.hpp">
       <Filter>Header Files\libtorrent</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\libtorrent\include\libtorrent\packet_buffer.hpp">
+    <ClInclude Include="libtorrent\include\libtorrent\packet_buffer.hpp">
       <Filter>Header Files\libtorrent</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\libtorrent\include\libtorrent\parse_url.hpp">
+    <ClInclude Include="libtorrent\include\libtorrent\parse_url.hpp">
       <Filter>Header Files\libtorrent</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\libtorrent\include\libtorrent\pe_crypto.hpp">
+    <ClInclude Include="libtorrent\include\libtorrent\pe_crypto.hpp">
       <Filter>Header Files\libtorrent</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\libtorrent\include\libtorrent\peer.hpp">
+    <ClInclude Include="libtorrent\include\libtorrent\peer.hpp">
       <Filter>Header Files\libtorrent</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\libtorrent\include\libtorrent\peer_connection.hpp">
+    <ClInclude Include="libtorrent\include\libtorrent\peer_connection.hpp">
       <Filter>Header Files\libtorrent</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\libtorrent\include\libtorrent\peer_id.hpp">
+    <ClInclude Include="libtorrent\include\libtorrent\peer_id.hpp">
       <Filter>Header Files\libtorrent</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\libtorrent\include\libtorrent\peer_info.hpp">
+    <ClInclude Include="libtorrent\include\libtorrent\peer_info.hpp">
       <Filter>Header Files\libtorrent</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\libtorrent\include\libtorrent\peer_request.hpp">
+    <ClInclude Include="libtorrent\include\libtorrent\peer_request.hpp">
       <Filter>Header Files\libtorrent</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\libtorrent\include\libtorrent\piece_block_progress.hpp">
+    <ClInclude Include="libtorrent\include\libtorrent\piece_block_progress.hpp">
       <Filter>Header Files\libtorrent</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\libtorrent\include\libtorrent\piece_picker.hpp">
+    <ClInclude Include="libtorrent\include\libtorrent\piece_picker.hpp">
       <Filter>Header Files\libtorrent</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\libtorrent\include\libtorrent\policy.hpp">
+    <ClInclude Include="libtorrent\include\libtorrent\policy.hpp">
       <Filter>Header Files\libtorrent</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\libtorrent\include\libtorrent\proxy_base.hpp">
+    <ClInclude Include="libtorrent\include\libtorrent\proxy_base.hpp">
       <Filter>Header Files\libtorrent</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\libtorrent\include\libtorrent\ptime.hpp">
+    <ClInclude Include="libtorrent\include\libtorrent\ptime.hpp">
       <Filter>Header Files\libtorrent</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\libtorrent\include\libtorrent\puff.hpp">
+    <ClInclude Include="libtorrent\include\libtorrent\puff.hpp">
       <Filter>Header Files\libtorrent</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\libtorrent\include\libtorrent\random.hpp">
+    <ClInclude Include="libtorrent\include\libtorrent\random.hpp">
       <Filter>Header Files\libtorrent</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\libtorrent\include\libtorrent\kademlia\refresh.hpp">
+    <ClInclude Include="libtorrent\include\libtorrent\kademlia\refresh.hpp">
       <Filter>Header Files\libtorrent</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\libtorrent\include\libtorrent\kademlia\routing_table.hpp">
+    <ClInclude Include="libtorrent\include\libtorrent\kademlia\routing_table.hpp">
       <Filter>Header Files\libtorrent</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\libtorrent\include\libtorrent\kademlia\rpc_manager.hpp">
+    <ClInclude Include="libtorrent\include\libtorrent\kademlia\rpc_manager.hpp">
       <Filter>Header Files\libtorrent</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\libtorrent\include\libtorrent\session.hpp">
+    <ClInclude Include="libtorrent\include\libtorrent\rss.hpp">
       <Filter>Header Files\libtorrent</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\libtorrent\include\libtorrent\aux_\session_impl.hpp">
+    <ClInclude Include="libtorrent\include\libtorrent\session.hpp">
       <Filter>Header Files\libtorrent</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\libtorrent\include\libtorrent\session_settings.hpp">
+    <ClInclude Include="libtorrent\include\libtorrent\aux_\session_impl.hpp">
       <Filter>Header Files\libtorrent</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\libtorrent\include\libtorrent\session_status.hpp">
+    <ClInclude Include="libtorrent\include\libtorrent\session_settings.hpp">
       <Filter>Header Files\libtorrent</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\libtorrent\include\libtorrent\settings.hpp">
+    <ClInclude Include="libtorrent\include\libtorrent\session_status.hpp">
       <Filter>Header Files\libtorrent</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\libtorrent\include\libtorrent\sha1_hash.hpp">
+    <ClInclude Include="libtorrent\include\libtorrent\settings.hpp">
       <Filter>Header Files\libtorrent</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\libtorrent\include\libtorrent\size_type.hpp">
+    <ClInclude Include="libtorrent\include\libtorrent\sha1_hash.hpp">
       <Filter>Header Files\libtorrent</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\libtorrent\include\libtorrent\sliding_average.hpp">
+    <ClInclude Include="libtorrent\include\libtorrent\size_type.hpp">
       <Filter>Header Files\libtorrent</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\libtorrent\include\libtorrent\socket.hpp">
+    <ClInclude Include="libtorrent\include\libtorrent\sliding_average.hpp">
       <Filter>Header Files\libtorrent</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\libtorrent\include\libtorrent\socket_io.hpp">
+    <ClInclude Include="libtorrent\include\libtorrent\socket.hpp">
       <Filter>Header Files\libtorrent</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\libtorrent\include\libtorrent\socket_type.hpp">
+    <ClInclude Include="libtorrent\include\libtorrent\socket_io.hpp">
       <Filter>Header Files\libtorrent</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\libtorrent\include\libtorrent\socket_type_fwd.hpp">
+    <ClInclude Include="libtorrent\include\libtorrent\socket_type.hpp">
       <Filter>Header Files\libtorrent</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\libtorrent\include\libtorrent\socks5_stream.hpp">
+    <ClInclude Include="libtorrent\include\libtorrent\socket_type_fwd.hpp">
       <Filter>Header Files\libtorrent</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\libtorrent\include\libtorrent\ssl_stream.hpp">
+    <ClInclude Include="libtorrent\include\libtorrent\socks5_stream.hpp">
       <Filter>Header Files\libtorrent</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\libtorrent\include\libtorrent\stat.hpp">
+    <ClInclude Include="libtorrent\include\libtorrent\ssl_stream.hpp">
       <Filter>Header Files\libtorrent</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\libtorrent\include\libtorrent\storage.hpp">
+    <ClInclude Include="libtorrent\include\libtorrent\stat.hpp">
       <Filter>Header Files\libtorrent</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\libtorrent\include\libtorrent\storage_defs.hpp">
+    <ClInclude Include="libtorrent\include\libtorrent\storage.hpp">
       <Filter>Header Files\libtorrent</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\libtorrent\include\libtorrent\string_util.hpp">
+    <ClInclude Include="libtorrent\include\libtorrent\storage_defs.hpp">
       <Filter>Header Files\libtorrent</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\libtorrent\include\libtorrent\time.hpp">
+    <ClInclude Include="libtorrent\include\libtorrent\string_util.hpp">
       <Filter>Header Files\libtorrent</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\libtorrent\include\libtorrent\timestamp_history.hpp">
+    <ClInclude Include="libtorrent\include\libtorrent\thread.hpp">
       <Filter>Header Files\libtorrent</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\libtorrent\include\libtorrent\torrent.hpp">
+    <ClInclude Include="libtorrent\include\libtorrent\time.hpp">
       <Filter>Header Files\libtorrent</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\libtorrent\include\libtorrent\torrent_handle.hpp">
+    <ClInclude Include="libtorrent\include\libtorrent\timestamp_history.hpp">
       <Filter>Header Files\libtorrent</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\libtorrent\include\libtorrent\tracker_manager.hpp">
+    <ClInclude Include="libtorrent\include\libtorrent\tommath.h">
       <Filter>Header Files\libtorrent</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\libtorrent\include\libtorrent\kademlia\traversal_algorithm.hpp">
+    <ClInclude Include="libtorrent\include\libtorrent\tommath_class.h">
       <Filter>Header Files\libtorrent</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\libtorrent\zlib\trees.h">
+    <ClInclude Include="libtorrent\include\libtorrent\tommath_private.h">
       <Filter>Header Files\libtorrent</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\libtorrent\include\libtorrent\udp_socket.hpp">
+    <ClInclude Include="libtorrent\include\libtorrent\tommath_superclass.h">
       <Filter>Header Files\libtorrent</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\libtorrent\include\libtorrent\udp_tracker_connection.hpp">
+    <ClInclude Include="libtorrent\include\libtorrent\torrent.hpp">
       <Filter>Header Files\libtorrent</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\libtorrent\include\libtorrent\union_endpoint.hpp">
+    <ClInclude Include="libtorrent\include\libtorrent\torrent_handle.hpp">
       <Filter>Header Files\libtorrent</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\libtorrent\include\libtorrent\upnp.hpp">
+    <ClInclude Include="libtorrent\include\libtorrent\tracker_manager.hpp">
       <Filter>Header Files\libtorrent</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\libtorrent\include\libtorrent\utf8.hpp">
+    <ClInclude Include="libtorrent\include\libtorrent\kademlia\traversal_algorithm.hpp">
       <Filter>Header Files\libtorrent</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\libtorrent\include\libtorrent\utp_socket_manager.hpp">
+    <ClInclude Include="libtorrent\zlib\trees.h">
       <Filter>Header Files\libtorrent</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\libtorrent\include\libtorrent\utp_stream.hpp">
+    <ClInclude Include="libtorrent\include\libtorrent\udp_socket.hpp">
       <Filter>Header Files\libtorrent</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\libtorrent\include\libtorrent\version.hpp">
+    <ClInclude Include="libtorrent\include\libtorrent\udp_tracker_connection.hpp">
       <Filter>Header Files\libtorrent</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\libtorrent\include\libtorrent\web_connection_base.hpp">
+    <ClInclude Include="libtorrent\include\libtorrent\union_endpoint.hpp">
       <Filter>Header Files\libtorrent</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\libtorrent\include\libtorrent\web_peer_connection.hpp">
+    <ClInclude Include="libtorrent\include\libtorrent\upnp.hpp">
       <Filter>Header Files\libtorrent</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\libtorrent\include\libtorrent\xml_parse.hpp">
+    <ClInclude Include="libtorrent\include\libtorrent\utf8.hpp">
       <Filter>Header Files\libtorrent</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\libtorrent\zlib\zconf.h">
+    <ClInclude Include="libtorrent\include\libtorrent\utp_socket_manager.hpp">
       <Filter>Header Files\libtorrent</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\libtorrent\zlib\zlib.h">
+    <ClInclude Include="libtorrent\include\libtorrent\utp_stream.hpp">
       <Filter>Header Files\libtorrent</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\libtorrent\zlib\zutil.h">
+    <ClInclude Include="libtorrent\include\libtorrent\version.hpp">
       <Filter>Header Files\libtorrent</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\src\mainframe.h">
+    <ClInclude Include="libtorrent\include\libtorrent\web_connection_base.hpp">
+      <Filter>Header Files\libtorrent</Filter>
+    </ClInclude>
+    <ClInclude Include="libtorrent\include\libtorrent\web_peer_connection.hpp">
+      <Filter>Header Files\libtorrent</Filter>
+    </ClInclude>
+    <ClInclude Include="libtorrent\include\libtorrent\xml_parse.hpp">
+      <Filter>Header Files\libtorrent</Filter>
+    </ClInclude>
+    <ClInclude Include="libtorrent\zlib\zconf.h">
+      <Filter>Header Files\libtorrent</Filter>
+    </ClInclude>
+    <ClInclude Include="libtorrent\zlib\zlib.h">
+      <Filter>Header Files\libtorrent</Filter>
+    </ClInclude>
+    <ClInclude Include="libtorrent\zlib\zutil.h">
+      <Filter>Header Files\libtorrent</Filter>
+    </ClInclude>
+    <ClInclude Include="src\mainframe.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\src\filelistctrl.h">
+    <ClInclude Include="src\filelistctrl.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\src\extensionsetting.h">
+    <ClInclude Include="src\extensionsetting.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\src\autosizeinput.h">
+    <ClInclude Include="src\autosizeinput.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\src\bitswash.h">
+    <ClInclude Include="src\bitswash.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\src\bittorrentsession.h">
+    <ClInclude Include="src\bittorrentsession.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\src\compat.h">
+    <ClInclude Include="src\compat.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\src\configuration.h">
+    <ClInclude Include="src\configuration.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\src\connectionsetting.h">
+    <ClInclude Include="src\connectionsetting.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\src\functions.h">
+    <ClInclude Include="src\functions.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\src\torrentsetting.h">
+    <ClInclude Include="src\torrentsetting.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\src\torrentproperty.h">
+    <ClInclude Include="src\torrentproperty.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\src\torrentinfo.h">
+    <ClInclude Include="src\torrentinfo.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\src\torrentconfig.h">
+    <ClInclude Include="src\torrentconfig.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\src\torrentlistctrl.h">
+    <ClInclude Include="src\torrentlistctrl.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\libtorrent\include\libtorrent\torrent_info.hpp">
+    <ClInclude Include="libtorrent\include\libtorrent\torrent_info.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\src\trackerlistctrl.h">
+    <ClInclude Include="src\trackerlistctrl.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\src\urldialog.h">
+    <ClInclude Include="src\urldialog.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\src\loggerctrl.h">
+    <ClInclude Include="src\loggerctrl.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\src\generalsetting.h">
+    <ClInclude Include="src\generalsetting.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\src\resource.h">
+    <ClInclude Include="src\resource.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\src\peerlistctrl.h">
+    <ClInclude Include="src\peerlistctrl.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\src\summarypane.h">
+    <ClInclude Include="src\summarypane.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\src\swashlistctrl.h">
+    <ClInclude Include="src\swashlistctrl.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\src\swashsetting.h">
+    <ClInclude Include="src\swashgauge.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\src\swashtrayicon.h">
+    <ClInclude Include="src\swashsetting.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\src\swashstatbar.h">
+    <ClInclude Include="src\swashtrayicon.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\libtorrent\include\libtorrent\announce_entry.hpp">
+    <ClInclude Include="src\swashstatbar.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="libtorrent\include\libtorrent\announce_entry.hpp">
       <Filter>Header Files\libtorrent</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\libtorrent\include\libtorrent\bdecode.hpp">
+    <ClInclude Include="libtorrent\include\libtorrent\bdecode.hpp">
       <Filter>Header Files\libtorrent</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\libtorrent\include\libtorrent\block_cache.hpp">
+    <ClInclude Include="libtorrent\include\libtorrent\block_cache.hpp">
       <Filter>Header Files\libtorrent</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\libtorrent\include\libtorrent\choker.hpp">
+    <ClInclude Include="libtorrent\include\libtorrent\choker.hpp">
       <Filter>Header Files\libtorrent</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\libtorrent\include\libtorrent\close_reason.hpp">
+    <ClInclude Include="libtorrent\include\libtorrent\close_reason.hpp">
       <Filter>Header Files\libtorrent</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\libtorrent\include\libtorrent\crc32c.hpp">
+    <ClInclude Include="libtorrent\include\libtorrent\crc32c.hpp">
       <Filter>Header Files\libtorrent</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\libtorrent\include\libtorrent\disk_interface.hpp">
+    <ClInclude Include="libtorrent\include\libtorrent\disk_interface.hpp">
       <Filter>Header Files\libtorrent</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\libtorrent\include\libtorrent\disk_io_job.hpp">
+    <ClInclude Include="libtorrent\include\libtorrent\disk_io_job.hpp">
       <Filter>Header Files\libtorrent</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\libtorrent\include\libtorrent\disk_job_pool.hpp">
+    <ClInclude Include="libtorrent\include\libtorrent\disk_job_pool.hpp">
       <Filter>Header Files\libtorrent</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\libtorrent\include\libtorrent\disk_observer.hpp">
+    <ClInclude Include="libtorrent\include\libtorrent\disk_observer.hpp">
       <Filter>Header Files\libtorrent</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\libtorrent\include\libtorrent\heterogeneous_queue.hpp">
+    <ClInclude Include="libtorrent\include\libtorrent\heterogeneous_queue.hpp">
       <Filter>Header Files\libtorrent</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\libtorrent\include\libtorrent\hex.hpp">
+    <ClInclude Include="libtorrent\include\libtorrent\hex.hpp">
       <Filter>Header Files\libtorrent</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\libtorrent\include\libtorrent\link.hpp">
+    <ClInclude Include="libtorrent\include\libtorrent\link.hpp">
       <Filter>Header Files\libtorrent</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\libtorrent\include\libtorrent\linked_list.hpp">
+    <ClInclude Include="libtorrent\include\libtorrent\linked_list.hpp">
       <Filter>Header Files\libtorrent</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\libtorrent\include\libtorrent\operations.hpp">
+    <ClInclude Include="libtorrent\include\libtorrent\network_thread_pool.hpp">
       <Filter>Header Files\libtorrent</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\libtorrent\include\libtorrent\part_file.hpp">
+    <ClInclude Include="libtorrent\include\libtorrent\operations.hpp">
       <Filter>Header Files\libtorrent</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\libtorrent\include\libtorrent\peer_class.hpp">
+    <ClInclude Include="libtorrent\include\libtorrent\part_file.hpp">
       <Filter>Header Files\libtorrent</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\libtorrent\include\libtorrent\peer_class_set.hpp">
+    <ClInclude Include="libtorrent\include\libtorrent\peer_class.hpp">
       <Filter>Header Files\libtorrent</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\libtorrent\include\libtorrent\peer_class_type_filter.hpp">
+    <ClInclude Include="libtorrent\include\libtorrent\peer_class_set.hpp">
       <Filter>Header Files\libtorrent</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\libtorrent\include\libtorrent\peer_connection_handle.hpp">
+    <ClInclude Include="libtorrent\include\libtorrent\peer_class_type_filter.hpp">
       <Filter>Header Files\libtorrent</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\libtorrent\include\libtorrent\peer_connection_interface.hpp">
+    <ClInclude Include="libtorrent\include\libtorrent\peer_connection_handle.hpp">
       <Filter>Header Files\libtorrent</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\libtorrent\include\libtorrent\peer_list.hpp">
+    <ClInclude Include="libtorrent\include\libtorrent\peer_connection_interface.hpp">
       <Filter>Header Files\libtorrent</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\libtorrent\include\libtorrent\platform_util.hpp">
+    <ClInclude Include="libtorrent\include\libtorrent\peer_list.hpp">
       <Filter>Header Files\libtorrent</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\libtorrent\include\libtorrent\receive_buffer.hpp">
+    <ClInclude Include="libtorrent\include\libtorrent\platform_util.hpp">
       <Filter>Header Files\libtorrent</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\libtorrent\include\libtorrent\request_blocks.hpp">
+    <ClInclude Include="libtorrent\include\libtorrent\receive_buffer.hpp">
       <Filter>Header Files\libtorrent</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\libtorrent\include\libtorrent\resolve_links.hpp">
+    <ClInclude Include="libtorrent\include\libtorrent\request_blocks.hpp">
       <Filter>Header Files\libtorrent</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\libtorrent\include\libtorrent\resolver.hpp">
+    <ClInclude Include="libtorrent\include\libtorrent\resolve_links.hpp">
       <Filter>Header Files\libtorrent</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\libtorrent\include\libtorrent\resolver_interface.hpp">
+    <ClInclude Include="libtorrent\include\libtorrent\resolver.hpp">
       <Filter>Header Files\libtorrent</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\libtorrent\include\libtorrent\session_handle.hpp">
+    <ClInclude Include="libtorrent\include\libtorrent\resolver_interface.hpp">
       <Filter>Header Files\libtorrent</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\libtorrent\include\libtorrent\session_stats.hpp">
+    <ClInclude Include="libtorrent\include\libtorrent\session_handle.hpp">
       <Filter>Header Files\libtorrent</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\libtorrent\include\libtorrent\settings_pack.hpp">
+    <ClInclude Include="libtorrent\include\libtorrent\session_stats.hpp">
       <Filter>Header Files\libtorrent</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\libtorrent\include\libtorrent\sha1.hpp">
+    <ClInclude Include="libtorrent\include\libtorrent\settings_pack.hpp">
       <Filter>Header Files\libtorrent</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\libtorrent\include\libtorrent\stack_allocator.hpp">
+    <ClInclude Include="libtorrent\include\libtorrent\sha1.hpp">
       <Filter>Header Files\libtorrent</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\libtorrent\include\libtorrent\stat_cache.hpp">
+    <ClInclude Include="libtorrent\include\libtorrent\stack_allocator.hpp">
       <Filter>Header Files\libtorrent</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\libtorrent\include\libtorrent\tailqueue.hpp">
+    <ClInclude Include="libtorrent\include\libtorrent\stat_cache.hpp">
       <Filter>Header Files\libtorrent</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\libtorrent\include\libtorrent\torrent_peer.hpp">
+    <ClInclude Include="libtorrent\include\libtorrent\tailqueue.hpp">
       <Filter>Header Files\libtorrent</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\libtorrent\include\libtorrent\torrent_status.hpp">
+    <ClInclude Include="libtorrent\include\libtorrent\thread_pool.hpp">
       <Filter>Header Files\libtorrent</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\libtorrent\include\libtorrent\vector_utils.hpp">
+    <ClInclude Include="libtorrent\include\libtorrent\torrent_peer.hpp">
       <Filter>Header Files\libtorrent</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\libtorrent\include\libtorrent\performance_counters.hpp">
+    <ClInclude Include="libtorrent\include\libtorrent\torrent_status.hpp">
       <Filter>Header Files\libtorrent</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\libtorrent\include\libtorrent\torrent_peer_allocator.hpp">
+    <ClInclude Include="libtorrent\include\libtorrent\uncork_interface.hpp">
       <Filter>Header Files\libtorrent</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\libtorrent\include\libtorrent\kademlia\dht_storage.hpp">
+    <ClInclude Include="libtorrent\include\libtorrent\vector_utils.hpp">
+      <Filter>Header Files\libtorrent</Filter>
+    </ClInclude>
+    <ClInclude Include="libtorrent\include\libtorrent\performance_counters.hpp">
+      <Filter>Header Files\libtorrent</Filter>
+    </ClInclude>
+    <ClInclude Include="libtorrent\include\libtorrent\torrent_peer_allocator.hpp">
+      <Filter>Header Files\libtorrent</Filter>
+    </ClInclude>
+    <ClInclude Include="libtorrent\include\libtorrent\kademlia\dht_storage.hpp">
       <Filter>Header Files\libtorrent\kademlia</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\libtorrent\include\libtorrent\kademlia\direct_request.hpp">
+    <ClInclude Include="libtorrent\include\libtorrent\kademlia\direct_request.hpp">
       <Filter>Header Files\libtorrent\kademlia</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\libtorrent\include\libtorrent\kademlia\dos_blocker.hpp">
+    <ClInclude Include="libtorrent\include\libtorrent\kademlia\dos_blocker.hpp">
       <Filter>Header Files\libtorrent\kademlia</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\libtorrent\include\libtorrent\kademlia\put_data.hpp">
+    <ClInclude Include="libtorrent\include\libtorrent\kademlia\put_data.hpp">
       <Filter>Header Files\libtorrent\kademlia</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\libgeoip\GeoIP.h">
+    <ClInclude Include="libgeoip\GeoIP.h">
       <Filter>Header Files\libgeoip</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\libgeoip\GeoIP_internal.h">
+    <ClInclude Include="libgeoip\GeoIP_internal.h">
       <Filter>Header Files\libgeoip</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\libgeoip\GeoIPCity.h">
+    <ClInclude Include="libgeoip\GeoIPCity.h">
       <Filter>Header Files\libgeoip</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\libgeoip\pread.h">
+    <ClInclude Include="libgeoip\pread.h">
       <Filter>Header Files\libgeoip</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\src\icon.h">
+    <ClInclude Include="src\icon.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\libtorrent\include\libtorrent\kademlia\dht_settings.hpp">
+    <ClInclude Include="libtorrent\include\libtorrent\kademlia\dht_settings.hpp">
       <Filter>Header Files\libtorrent\kademlia</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\libtorrent\include\libtorrent\kademlia\dht_state.hpp">
+    <ClInclude Include="libtorrent\include\libtorrent\kademlia\dht_state.hpp">
       <Filter>Header Files\libtorrent\kademlia</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\libtorrent\include\libtorrent\kademlia\ed25519.hpp">
+    <ClInclude Include="libtorrent\include\libtorrent\kademlia\ed25519.hpp">
       <Filter>Header Files\libtorrent\kademlia</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\libtorrent\include\libtorrent\kademlia\io.hpp">
+    <ClInclude Include="libtorrent\include\libtorrent\kademlia\io.hpp">
       <Filter>Header Files\libtorrent\kademlia</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\libtorrent\include\libtorrent\kademlia\sample_infohashes.hpp">
+    <ClInclude Include="libtorrent\include\libtorrent\kademlia\sample_infohashes.hpp">
       <Filter>Header Files\libtorrent\kademlia</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\libtorrent\include\libtorrent\kademlia\types.hpp">
+    <ClInclude Include="libtorrent\include\libtorrent\kademlia\types.hpp">
       <Filter>Header Files\libtorrent\kademlia</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\libtorrent\include\libtorrent\disk_io_thread_pool.hpp">
+    <ClInclude Include="libtorrent\include\libtorrent\disk_io_thread_pool.hpp">
       <Filter>Header Files\libtorrent</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\libtorrent\include\libtorrent\download_priority.hpp">
+    <ClInclude Include="libtorrent\include\libtorrent\download_priority.hpp">
       <Filter>Header Files\libtorrent</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\libtorrent\include\libtorrent\flags.hpp">
+    <ClInclude Include="libtorrent\include\libtorrent\flags.hpp">
       <Filter>Header Files\libtorrent</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\libtorrent\include\libtorrent\hasher512.hpp">
+    <ClInclude Include="libtorrent\include\libtorrent\hasher512.hpp">
       <Filter>Header Files\libtorrent</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\libtorrent\include\libtorrent\netlink.hpp">
+    <ClInclude Include="libtorrent\include\libtorrent\netlink.hpp">
       <Filter>Header Files\libtorrent</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\libtorrent\include\libtorrent\packet_pool.hpp">
+    <ClInclude Include="libtorrent\include\libtorrent\packet_pool.hpp">
       <Filter>Header Files\libtorrent</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\libtorrent\include\libtorrent\piece_block.hpp">
+    <ClInclude Include="libtorrent\include\libtorrent\piece_block.hpp">
       <Filter>Header Files\libtorrent</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\libtorrent\include\libtorrent\portmap.hpp">
+    <ClInclude Include="libtorrent\include\libtorrent\portmap.hpp">
       <Filter>Header Files\libtorrent</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\libtorrent\include\libtorrent\read_resume_data.hpp">
+    <ClInclude Include="libtorrent\include\libtorrent\read_resume_data.hpp">
       <Filter>Header Files\libtorrent</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\libtorrent\include\libtorrent\session_types.hpp">
+    <ClInclude Include="libtorrent\include\libtorrent\session_types.hpp">
       <Filter>Header Files\libtorrent</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\libtorrent\include\libtorrent\sha512.hpp">
+    <ClInclude Include="libtorrent\include\libtorrent\sha512.hpp">
       <Filter>Header Files\libtorrent</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\libtorrent\include\libtorrent\span.hpp">
+    <ClInclude Include="libtorrent\include\libtorrent\span.hpp">
       <Filter>Header Files\libtorrent</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\libtorrent\include\libtorrent\string_view.hpp">
+    <ClInclude Include="libtorrent\include\libtorrent\string_view.hpp">
       <Filter>Header Files\libtorrent</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\libtorrent\include\libtorrent\torrent_flags.hpp">
+    <ClInclude Include="libtorrent\include\libtorrent\torrent_flags.hpp">
       <Filter>Header Files\libtorrent</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\libtorrent\include\libtorrent\units.hpp">
+    <ClInclude Include="libtorrent\include\libtorrent\units.hpp">
       <Filter>Header Files\libtorrent</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\libtorrent\include\libtorrent\write_resume_data.hpp">
+    <ClInclude Include="libtorrent\include\libtorrent\write_resume_data.hpp">
       <Filter>Header Files\libtorrent</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\libtorrent\include\libtorrent\aux_\aligned_storage.hpp">
+    <ClInclude Include="libtorrent\include\libtorrent\aux_\aligned_storage.hpp">
       <Filter>Header Files\libtorrent\aux</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\libtorrent\include\libtorrent\aux_\aligned_union.hpp">
+    <ClInclude Include="libtorrent\include\libtorrent\aux_\aligned_union.hpp">
       <Filter>Header Files\libtorrent\aux</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\libtorrent\include\libtorrent\aux_\alloca.hpp">
+    <ClInclude Include="libtorrent\include\libtorrent\aux_\alloca.hpp">
       <Filter>Header Files\libtorrent\aux</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\libtorrent\include\libtorrent\aux_\allocating_handler.hpp">
+    <ClInclude Include="libtorrent\include\libtorrent\aux_\allocating_handler.hpp">
       <Filter>Header Files\libtorrent\aux</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\libtorrent\include\libtorrent\aux_\array.hpp">
+    <ClInclude Include="libtorrent\include\libtorrent\aux_\array.hpp">
       <Filter>Header Files\libtorrent\aux</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\libtorrent\include\libtorrent\aux_\bind_to_device.hpp">
+    <ClInclude Include="libtorrent\include\libtorrent\aux_\bind_to_device.hpp">
       <Filter>Header Files\libtorrent\aux</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\libtorrent\include\libtorrent\aux_\block_cache_reference.hpp">
+    <ClInclude Include="libtorrent\include\libtorrent\aux_\block_cache_reference.hpp">
       <Filter>Header Files\libtorrent\aux</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\libtorrent\include\libtorrent\aux_\byteswap.hpp">
+    <ClInclude Include="libtorrent\include\libtorrent\aux_\byteswap.hpp">
       <Filter>Header Files\libtorrent\aux</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\libtorrent\include\libtorrent\aux_\cppint_import_export.hpp">
+    <ClInclude Include="libtorrent\include\libtorrent\aux_\cppint_import_export.hpp">
       <Filter>Header Files\libtorrent\aux</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\libtorrent\include\libtorrent\aux_\cpuid.hpp">
+    <ClInclude Include="libtorrent\include\libtorrent\aux_\cpuid.hpp">
       <Filter>Header Files\libtorrent\aux</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\libtorrent\include\libtorrent\aux_\deferred_handler.hpp">
+    <ClInclude Include="libtorrent\include\libtorrent\aux_\deferred_handler.hpp">
       <Filter>Header Files\libtorrent\aux</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\libtorrent\include\libtorrent\aux_\deque.hpp">
+    <ClInclude Include="libtorrent\include\libtorrent\aux_\deque.hpp">
       <Filter>Header Files\libtorrent\aux</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\libtorrent\include\libtorrent\aux_\dev_random.hpp">
+    <ClInclude Include="libtorrent\include\libtorrent\aux_\dev_random.hpp">
       <Filter>Header Files\libtorrent\aux</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\libtorrent\include\libtorrent\aux_\disable_warnings_pop.hpp">
+    <ClInclude Include="libtorrent\include\libtorrent\aux_\disable_warnings_pop.hpp">
       <Filter>Header Files\libtorrent\aux</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\libtorrent\include\libtorrent\aux_\disable_warnings_push.hpp">
+    <ClInclude Include="libtorrent\include\libtorrent\aux_\disable_warnings_push.hpp">
       <Filter>Header Files\libtorrent\aux</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\libtorrent\include\libtorrent\aux_\disk_job_fence.hpp">
+    <ClInclude Include="libtorrent\include\libtorrent\aux_\disk_job_fence.hpp">
       <Filter>Header Files\libtorrent\aux</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\libtorrent\include\libtorrent\aux_\escape_string.hpp">
+    <ClInclude Include="libtorrent\include\libtorrent\aux_\escape_string.hpp">
       <Filter>Header Files\libtorrent\aux</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\libtorrent\include\libtorrent\aux_\ffs.hpp">
+    <ClInclude Include="libtorrent\include\libtorrent\aux_\ffs.hpp">
       <Filter>Header Files\libtorrent\aux</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\libtorrent\include\libtorrent\aux_\file_progress.hpp">
+    <ClInclude Include="libtorrent\include\libtorrent\aux_\file_progress.hpp">
       <Filter>Header Files\libtorrent\aux</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\libtorrent\include\libtorrent\aux_\has_block.hpp">
+    <ClInclude Include="libtorrent\include\libtorrent\aux_\has_block.hpp">
       <Filter>Header Files\libtorrent\aux</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\libtorrent\include\libtorrent\aux_\io.hpp">
+    <ClInclude Include="libtorrent\include\libtorrent\aux_\io.hpp">
       <Filter>Header Files\libtorrent\aux</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\libtorrent\include\libtorrent\aux_\ip_notifier.hpp">
+    <ClInclude Include="libtorrent\include\libtorrent\aux_\ip_notifier.hpp">
       <Filter>Header Files\libtorrent\aux</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\libtorrent\include\libtorrent\aux_\listen_socket_handle.hpp">
+    <ClInclude Include="libtorrent\include\libtorrent\aux_\listen_socket_handle.hpp">
       <Filter>Header Files\libtorrent\aux</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\libtorrent\include\libtorrent\aux_\lsd.hpp">
+    <ClInclude Include="libtorrent\include\libtorrent\aux_\lsd.hpp">
       <Filter>Header Files\libtorrent\aux</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\libtorrent\include\libtorrent\aux_\max_path.hpp">
+    <ClInclude Include="libtorrent\include\libtorrent\aux_\max_path.hpp">
       <Filter>Header Files\libtorrent\aux</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\libtorrent\include\libtorrent\aux_\merkle.hpp">
+    <ClInclude Include="libtorrent\include\libtorrent\aux_\merkle.hpp">
       <Filter>Header Files\libtorrent\aux</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\libtorrent\include\libtorrent\aux_\noexcept_movable.hpp">
+    <ClInclude Include="libtorrent\include\libtorrent\aux_\noexcept_movable.hpp">
       <Filter>Header Files\libtorrent\aux</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\libtorrent\include\libtorrent\aux_\numeric_cast.hpp">
+    <ClInclude Include="libtorrent\include\libtorrent\aux_\numeric_cast.hpp">
       <Filter>Header Files\libtorrent\aux</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\libtorrent\include\libtorrent\aux_\openssl.hpp">
+    <ClInclude Include="libtorrent\include\libtorrent\aux_\openssl.hpp">
       <Filter>Header Files\libtorrent\aux</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\libtorrent\include\libtorrent\aux_\path.hpp">
+    <ClInclude Include="libtorrent\include\libtorrent\aux_\path.hpp">
       <Filter>Header Files\libtorrent\aux</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\libtorrent\include\libtorrent\aux_\portmap.hpp">
+    <ClInclude Include="libtorrent\include\libtorrent\aux_\portmap.hpp">
       <Filter>Header Files\libtorrent\aux</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\libtorrent\include\libtorrent\aux_\proxy_settings.hpp">
+    <ClInclude Include="libtorrent\include\libtorrent\aux_\proxy_settings.hpp">
       <Filter>Header Files\libtorrent\aux</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\libtorrent\include\libtorrent\aux_\range.hpp">
+    <ClInclude Include="libtorrent\include\libtorrent\aux_\range.hpp">
       <Filter>Header Files\libtorrent\aux</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\libtorrent\include\libtorrent\aux_\scope_end.hpp">
+    <ClInclude Include="libtorrent\include\libtorrent\aux_\scope_end.hpp">
       <Filter>Header Files\libtorrent\aux</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\libtorrent\include\libtorrent\aux_\session_call.hpp">
+    <ClInclude Include="libtorrent\include\libtorrent\aux_\session_call.hpp">
       <Filter>Header Files\libtorrent\aux</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\libtorrent\include\libtorrent\aux_\session_interface.hpp">
+    <ClInclude Include="libtorrent\include\libtorrent\aux_\session_interface.hpp">
       <Filter>Header Files\libtorrent\aux</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\libtorrent\include\libtorrent\aux_\session_settings.hpp">
+    <ClInclude Include="libtorrent\include\libtorrent\aux_\session_settings.hpp">
       <Filter>Header Files\libtorrent\aux</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\libtorrent\include\libtorrent\aux_\session_udp_sockets.hpp">
+    <ClInclude Include="libtorrent\include\libtorrent\aux_\session_udp_sockets.hpp">
       <Filter>Header Files\libtorrent\aux</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\libtorrent\include\libtorrent\aux_\storage_piece_set.hpp">
+    <ClInclude Include="libtorrent\include\libtorrent\aux_\storage_piece_set.hpp">
       <Filter>Header Files\libtorrent\aux</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\libtorrent\include\libtorrent\aux_\storage_utils.hpp">
+    <ClInclude Include="libtorrent\include\libtorrent\aux_\storage_utils.hpp">
       <Filter>Header Files\libtorrent\aux</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\libtorrent\include\libtorrent\aux_\string_ptr.hpp">
+    <ClInclude Include="libtorrent\include\libtorrent\aux_\string_ptr.hpp">
       <Filter>Header Files\libtorrent\aux</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\libtorrent\include\libtorrent\aux_\suggest_piece.hpp">
+    <ClInclude Include="libtorrent\include\libtorrent\aux_\suggest_piece.hpp">
       <Filter>Header Files\libtorrent\aux</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\libtorrent\include\libtorrent\aux_\throw.hpp">
+    <ClInclude Include="libtorrent\include\libtorrent\aux_\throw.hpp">
       <Filter>Header Files\libtorrent\aux</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\libtorrent\include\libtorrent\aux_\time.hpp">
+    <ClInclude Include="libtorrent\include\libtorrent\aux_\time.hpp">
       <Filter>Header Files\libtorrent\aux</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\libtorrent\include\libtorrent\aux_\typed_span.hpp">
+    <ClInclude Include="libtorrent\include\libtorrent\aux_\unique_ptr.hpp">
       <Filter>Header Files\libtorrent\aux</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\libtorrent\include\libtorrent\aux_\unique_ptr.hpp">
+    <ClInclude Include="libtorrent\include\libtorrent\aux_\vector.hpp">
       <Filter>Header Files\libtorrent\aux</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\libtorrent\include\libtorrent\aux_\vector.hpp">
+    <ClInclude Include="libtorrent\include\libtorrent\aux_\win_crypto_provider.hpp">
       <Filter>Header Files\libtorrent\aux</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\libtorrent\include\libtorrent\aux_\win_crypto_provider.hpp">
+    <ClInclude Include="libtorrent\include\libtorrent\aux_\win_util.hpp">
       <Filter>Header Files\libtorrent\aux</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\libtorrent\include\libtorrent\aux_\win_util.hpp">
-      <Filter>Header Files\libtorrent\aux</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\libtorrent\include\libtorrent\optional.hpp">
-      <Filter>Header Files\libtorrent</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\libtorrent\include\libtorrent\extensions\ut_metadata.hpp">
+    <ClInclude Include="libtorrent\include\libtorrent\extensions\smart_ban.hpp">
       <Filter>Header Files\libtorrent\extention</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\libtorrent\include\libtorrent\extensions\ut_pex.hpp">
+    <ClInclude Include="libtorrent\include\libtorrent\extensions\ut_metadata.hpp">
       <Filter>Header Files\libtorrent\extention</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\libtorrent\include\libtorrent\extensions\smart_ban.hpp">
+    <ClInclude Include="libtorrent\include\libtorrent\extensions\ut_pex.hpp">
       <Filter>Header Files\libtorrent\extention</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\libtorrent\include\libtorrent\aux_\torrent_impl.hpp">
-      <Filter>Header Files\libtorrent\aux</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\libtorrent\include\libtorrent\aux_\route.h">
-      <Filter>Header Files\libtorrent\aux</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\libtorrent\include\libtorrent\aux_\set_socket_buffer.hpp">
-      <Filter>Header Files\libtorrent\aux</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\libtorrent\include\libtorrent\aux_\socket_type.hpp">
-      <Filter>Header Files\libtorrent\aux</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\libtorrent\include\libtorrent\aux_\container_wrapper.hpp">
-      <Filter>Header Files\libtorrent\aux</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\libtorrent\include\libtorrent\aux_\generate_peer_id.hpp">
-      <Filter>Header Files\libtorrent\aux</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\libtorrent\include\libtorrent\kademlia\announce_flags.hpp">
-      <Filter>Header Files\libtorrent\kademlia</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\libtorrent\include\libtorrent\fwd.hpp">
-      <Filter>Header Files\libtorrent</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\libtorrent\include\libtorrent\index_range.hpp">
-      <Filter>Header Files\libtorrent</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\libtorrent\include\libtorrent\pex_flags.hpp">
-      <Filter>Header Files\libtorrent</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\libtorrent\include\libtorrent\aux_\export.hpp">
-      <Filter>Header Files\libtorrent\aux</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\libtorrent\include\libtorrent\aux_\instantiate_connection.hpp">
-      <Filter>Header Files\libtorrent\aux</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <ResourceCompile Include="..\..\..\src\bitswash.rc">
+    <ResourceCompile Include="src\bitswash.rc">
       <Filter>Resource Files</Filter>
     </ResourceCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="..\..\..\src\autosizeinput.cpp">
+    <ClCompile Include="src\autosizeinput.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\src\bitswash.cpp">
+    <ClCompile Include="src\bitswash.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\src\bittorrentsession.cpp">
+    <ClCompile Include="src\bittorrentsession.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\src\configuration.cpp">
+    <ClCompile Include="src\configuration.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\src\connectionsetting.cpp">
+    <ClCompile Include="src\connectionsetting.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\src\extensionsetting.cpp">
+    <ClCompile Include="src\extensionsetting.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\src\filelistctrl.cpp">
+    <ClCompile Include="src\filelistctrl.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\src\functions.cpp">
+    <ClCompile Include="src\functions.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\src\generalsetting.cpp">
+    <ClCompile Include="src\generalsetting.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\src\loggerctrl.cpp">
+    <ClCompile Include="src\loggerctrl.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\src\mainframe.cpp">
+    <ClCompile Include="src\mainframe.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\src\peerlistctrl.cpp">
+    <ClCompile Include="src\peerlistctrl.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\src\summarypane.cpp">
+    <ClCompile Include="src\summarypane.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\src\swashlistctrl.cpp">
+    <ClCompile Include="src\swashgauge.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\src\swashsetting.cpp">
+    <ClCompile Include="src\swashlistctrl.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\src\swashstatbar.cpp">
+    <ClCompile Include="src\swashsetting.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\src\swashtrayicon.cpp">
+    <ClCompile Include="src\swashstatbar.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\src\torrentconfig.cpp">
+    <ClCompile Include="src\swashtrayicon.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\src\torrentlistctrl.cpp">
+    <ClCompile Include="libtorrent\src\torrent_info.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\src\torrentproperty.cpp">
+    <ClCompile Include="src\torrentconfig.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\src\torrentsetting.cpp">
+    <ClCompile Include="src\torrentlistctrl.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\src\trackerlistctrl.cpp">
+    <ClCompile Include="src\torrentproperty.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\src\urldialog.cpp">
+    <ClCompile Include="src\torrentsetting.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\libtorrent\ed25519\src\add_scalar.cpp">
+    <ClCompile Include="src\trackerlistctrl.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\urldialog.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="libtorrent\ed25519\src\add_scalar.cpp">
       <Filter>Source Files\ed25519</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\libtorrent\ed25519\src\fe.cpp">
+    <ClCompile Include="libtorrent\ed25519\src\fe.cpp">
       <Filter>Source Files\ed25519</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\libtorrent\ed25519\src\ge.cpp">
+    <ClCompile Include="libtorrent\ed25519\src\ge.cpp">
       <Filter>Source Files\ed25519</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\libtorrent\ed25519\src\key_exchange.cpp">
+    <ClCompile Include="libtorrent\ed25519\src\key_exchange.cpp">
       <Filter>Source Files\ed25519</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\libtorrent\ed25519\src\keypair.cpp">
+    <ClCompile Include="libtorrent\ed25519\src\keypair.cpp">
       <Filter>Source Files\ed25519</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\libtorrent\ed25519\src\sc.cpp">
+    <ClCompile Include="libtorrent\ed25519\src\sc.cpp">
       <Filter>Source Files\ed25519</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\libtorrent\ed25519\src\sign.cpp">
+    <ClCompile Include="libtorrent\ed25519\src\sign.cpp">
       <Filter>Source Files\ed25519</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\libtorrent\ed25519\src\verify.cpp">
+    <ClCompile Include="libtorrent\ed25519\src\verify.cpp">
       <Filter>Source Files\ed25519</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\libtorrent\zlib\adler32.c">
+    <ClCompile Include="libtorrent\zlib\adler32.c">
       <Filter>Source Files\libtorrent</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\libtorrent\src\alert.cpp">
+    <ClCompile Include="libtorrent\src\alert.cpp">
       <Filter>Source Files\libtorrent</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\libtorrent\src\alert_manager.cpp">
+    <ClCompile Include="libtorrent\src\alert_manager.cpp">
       <Filter>Source Files\libtorrent</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\libtorrent\src\allocator.cpp">
+    <ClCompile Include="libtorrent\src\assert.cpp">
       <Filter>Source Files\libtorrent</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\libtorrent\src\assert.cpp">
+    <ClCompile Include="libtorrent\src\bandwidth_limit.cpp">
       <Filter>Source Files\libtorrent</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\libtorrent\src\bandwidth_limit.cpp">
+    <ClCompile Include="libtorrent\src\bandwidth_manager.cpp">
       <Filter>Source Files\libtorrent</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\libtorrent\src\bandwidth_manager.cpp">
+    <ClCompile Include="libtorrent\src\bandwidth_queue_entry.cpp">
       <Filter>Source Files\libtorrent</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\libtorrent\src\bandwidth_queue_entry.cpp">
+    <ClCompile Include="libtorrent\src\bloom_filter.cpp">
       <Filter>Source Files\libtorrent</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\libtorrent\src\bloom_filter.cpp">
+    <ClCompile Include="libtorrent\src\broadcast_socket.cpp">
       <Filter>Source Files\libtorrent</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\libtorrent\src\broadcast_socket.cpp">
+    <ClCompile Include="libtorrent\src\bt_peer_connection.cpp">
       <Filter>Source Files\libtorrent</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\libtorrent\src\bt_peer_connection.cpp">
+    <ClCompile Include="libtorrent\src\chained_buffer.cpp">
       <Filter>Source Files\libtorrent</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\libtorrent\src\chained_buffer.cpp">
+    <ClCompile Include="libtorrent\zlib\compress.c">
       <Filter>Source Files\libtorrent</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\libtorrent\zlib\compress.c">
+    <ClCompile Include="libtorrent\src\ConvertUTF.cpp">
       <Filter>Source Files\libtorrent</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\libtorrent\src\ConvertUTF.cpp">
+    <ClCompile Include="libtorrent\zlib\crc32.c">
       <Filter>Source Files\libtorrent</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\libtorrent\zlib\crc32.c">
+    <ClCompile Include="libtorrent\src\create_torrent.cpp">
       <Filter>Source Files\libtorrent</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\libtorrent\src\create_torrent.cpp">
+    <ClCompile Include="libtorrent\zlib\deflate.c">
       <Filter>Source Files\libtorrent</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\libtorrent\zlib\deflate.c">
+    <ClCompile Include="libtorrent\src\disk_buffer_holder.cpp">
       <Filter>Source Files\libtorrent</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\libtorrent\src\disk_buffer_holder.cpp">
+    <ClCompile Include="libtorrent\src\disk_buffer_pool.cpp">
       <Filter>Source Files\libtorrent</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\libtorrent\src\disk_buffer_pool.cpp">
+    <ClCompile Include="libtorrent\src\disk_io_thread.cpp">
       <Filter>Source Files\libtorrent</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\libtorrent\src\disk_io_thread.cpp">
+    <ClCompile Include="libtorrent\src\entry.cpp">
       <Filter>Source Files\libtorrent</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\libtorrent\src\entry.cpp">
+    <ClCompile Include="libtorrent\src\enum_net.cpp">
       <Filter>Source Files\libtorrent</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\libtorrent\src\enum_net.cpp">
+    <ClCompile Include="libtorrent\src\error_code.cpp">
       <Filter>Source Files\libtorrent</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\libtorrent\src\error_code.cpp">
+    <ClCompile Include="libtorrent\src\escape_string.cpp">
       <Filter>Source Files\libtorrent</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\libtorrent\src\escape_string.cpp">
+    <ClCompile Include="libtorrent\src\file.cpp">
       <Filter>Source Files\libtorrent</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\libtorrent\src\file.cpp">
+    <ClCompile Include="libtorrent\src\file_pool.cpp">
       <Filter>Source Files\libtorrent</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\libtorrent\src\file_pool.cpp">
+    <ClCompile Include="libtorrent\src\file_storage.cpp">
       <Filter>Source Files\libtorrent</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\libtorrent\src\file_storage.cpp">
+    <ClCompile Include="libtorrent\src\gzip.cpp">
       <Filter>Source Files\libtorrent</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\libtorrent\src\gzip.cpp">
+    <ClCompile Include="libtorrent\src\hasher.cpp">
       <Filter>Source Files\libtorrent</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\libtorrent\src\hasher.cpp">
+    <ClCompile Include="libtorrent\src\http_connection.cpp">
       <Filter>Source Files\libtorrent</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\libtorrent\src\http_connection.cpp">
+    <ClCompile Include="libtorrent\src\http_parser.cpp">
       <Filter>Source Files\libtorrent</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\libtorrent\src\http_parser.cpp">
+    <ClCompile Include="libtorrent\src\http_seed_connection.cpp">
       <Filter>Source Files\libtorrent</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\libtorrent\src\http_seed_connection.cpp">
+    <ClCompile Include="libtorrent\src\http_stream.cpp">
       <Filter>Source Files\libtorrent</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\libtorrent\src\http_stream.cpp">
+    <ClCompile Include="libtorrent\src\http_tracker_connection.cpp">
       <Filter>Source Files\libtorrent</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\libtorrent\src\http_tracker_connection.cpp">
+    <ClCompile Include="libtorrent\src\i2p_stream.cpp">
       <Filter>Source Files\libtorrent</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\libtorrent\src\i2p_stream.cpp">
+    <ClCompile Include="libtorrent\src\identify_client.cpp">
       <Filter>Source Files\libtorrent</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\libtorrent\src\identify_client.cpp">
+    <ClCompile Include="libtorrent\zlib\infback.c">
       <Filter>Source Files\libtorrent</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\libtorrent\zlib\infback.c">
+    <ClCompile Include="libtorrent\zlib\inffast.c">
       <Filter>Source Files\libtorrent</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\libtorrent\zlib\inffast.c">
+    <ClCompile Include="libtorrent\zlib\inflate.c">
       <Filter>Source Files\libtorrent</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\libtorrent\zlib\inflate.c">
+    <ClCompile Include="libtorrent\zlib\inftrees.c">
       <Filter>Source Files\libtorrent</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\libtorrent\zlib\inftrees.c">
+    <ClCompile Include="libtorrent\src\instantiate_connection.cpp">
       <Filter>Source Files\libtorrent</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\libtorrent\src\instantiate_connection.cpp">
+    <ClCompile Include="libtorrent\src\ip_filter.cpp">
       <Filter>Source Files\libtorrent</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\libtorrent\src\ip_filter.cpp">
+    <ClCompile Include="libtorrent\src\ip_voter.cpp">
       <Filter>Source Files\libtorrent</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\libtorrent\src\ip_voter.cpp">
+    <ClCompile Include="libtorrent\src\lazy_bdecode.cpp">
       <Filter>Source Files\libtorrent</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\libtorrent\src\lazy_bdecode.cpp">
+    <ClCompile Include="libtorrent\src\lsd.cpp">
       <Filter>Source Files\libtorrent</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\libtorrent\src\lsd.cpp">
+    <ClCompile Include="libtorrent\src\magnet_uri.cpp">
       <Filter>Source Files\libtorrent</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\libtorrent\src\magnet_uri.cpp">
+    <ClCompile Include="libtorrent\src\natpmp.cpp">
       <Filter>Source Files\libtorrent</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\libtorrent\src\natpmp.cpp">
+    <ClCompile Include="libtorrent\src\packet_buffer.cpp">
       <Filter>Source Files\libtorrent</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\libtorrent\src\packet_buffer.cpp">
+    <ClCompile Include="libtorrent\src\parse_url.cpp">
       <Filter>Source Files\libtorrent</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\libtorrent\src\parse_url.cpp">
+    <ClCompile Include="libtorrent\src\pe_crypto.cpp">
       <Filter>Source Files\libtorrent</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\libtorrent\src\pe_crypto.cpp">
+    <ClCompile Include="libtorrent\src\peer_connection.cpp">
       <Filter>Source Files\libtorrent</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\libtorrent\src\peer_connection.cpp">
+    <ClCompile Include="libtorrent\src\piece_picker.cpp">
       <Filter>Source Files\libtorrent</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\libtorrent\src\piece_picker.cpp">
+    <ClCompile Include="libtorrent\src\puff.cpp">
       <Filter>Source Files\libtorrent</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\libtorrent\src\puff.cpp">
+    <ClCompile Include="libtorrent\src\random.cpp">
       <Filter>Source Files\libtorrent</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\libtorrent\src\random.cpp">
+    <ClCompile Include="libtorrent\src\session.cpp">
       <Filter>Source Files\libtorrent</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\libtorrent\src\session.cpp">
+    <ClCompile Include="libtorrent\src\session_impl.cpp">
       <Filter>Source Files\libtorrent</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\libtorrent\src\session_impl.cpp">
+    <ClCompile Include="libtorrent\src\sha1.cpp">
       <Filter>Source Files\libtorrent</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\libtorrent\src\sha1.cpp">
+    <ClCompile Include="libtorrent\src\smart_ban.cpp">
       <Filter>Source Files\libtorrent</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\libtorrent\src\smart_ban.cpp">
+    <ClCompile Include="libtorrent\src\socket_io.cpp">
       <Filter>Source Files\libtorrent</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\libtorrent\src\socket_io.cpp">
+    <ClCompile Include="libtorrent\src\socket_type.cpp">
       <Filter>Source Files\libtorrent</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\libtorrent\src\socket_type.cpp">
+    <ClCompile Include="libtorrent\src\socks5_stream.cpp">
       <Filter>Source Files\libtorrent</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\libtorrent\src\socks5_stream.cpp">
+    <ClCompile Include="libtorrent\src\stat.cpp">
       <Filter>Source Files\libtorrent</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\libtorrent\src\stat.cpp">
+    <ClCompile Include="libtorrent\src\storage.cpp">
       <Filter>Source Files\libtorrent</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\libtorrent\src\storage.cpp">
+    <ClCompile Include="libtorrent\src\string_util.cpp">
       <Filter>Source Files\libtorrent</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\libtorrent\src\string_util.cpp">
+    <ClCompile Include="libtorrent\src\time.cpp">
       <Filter>Source Files\libtorrent</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\libtorrent\src\time.cpp">
+    <ClCompile Include="libtorrent\src\timestamp_history.cpp">
       <Filter>Source Files\libtorrent</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\libtorrent\src\timestamp_history.cpp">
+    <ClCompile Include="libtorrent\src\torrent.cpp">
       <Filter>Source Files\libtorrent</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\libtorrent\src\torrent.cpp">
+    <ClCompile Include="libtorrent\src\torrent_handle.cpp">
       <Filter>Source Files\libtorrent</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\libtorrent\src\torrent_handle.cpp">
+    <ClCompile Include="src\torrentinfo.cpp">
       <Filter>Source Files\libtorrent</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\libtorrent\src\tracker_manager.cpp">
+    <ClCompile Include="libtorrent\src\tracker_manager.cpp">
       <Filter>Source Files\libtorrent</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\libtorrent\zlib\trees.c">
+    <ClCompile Include="libtorrent\zlib\trees.c">
       <Filter>Source Files\libtorrent</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\libtorrent\src\udp_socket.cpp">
+    <ClCompile Include="libtorrent\src\udp_socket.cpp">
       <Filter>Source Files\libtorrent</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\libtorrent\src\udp_tracker_connection.cpp">
+    <ClCompile Include="libtorrent\src\udp_tracker_connection.cpp">
       <Filter>Source Files\libtorrent</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\libtorrent\zlib\uncompr.c">
+    <ClCompile Include="libtorrent\zlib\uncompr.c">
       <Filter>Source Files\libtorrent</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\libtorrent\src\upnp.cpp">
+    <ClCompile Include="libtorrent\src\upnp.cpp">
       <Filter>Source Files\libtorrent</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\libtorrent\src\ut_metadata.cpp">
+    <ClCompile Include="libtorrent\src\ut_metadata.cpp">
       <Filter>Source Files\libtorrent</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\libtorrent\src\ut_pex.cpp">
+    <ClCompile Include="libtorrent\src\ut_pex.cpp">
       <Filter>Source Files\libtorrent</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\libtorrent\src\utf8.cpp">
+    <ClCompile Include="libtorrent\src\utf8.cpp">
       <Filter>Source Files\libtorrent</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\libtorrent\src\utp_socket_manager.cpp">
+    <ClCompile Include="libtorrent\src\utp_socket_manager.cpp">
       <Filter>Source Files\libtorrent</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\libtorrent\src\utp_stream.cpp">
+    <ClCompile Include="libtorrent\src\utp_stream.cpp">
       <Filter>Source Files\libtorrent</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\libtorrent\src\web_connection_base.cpp">
+    <ClCompile Include="libtorrent\src\web_connection_base.cpp">
       <Filter>Source Files\libtorrent</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\libtorrent\src\web_peer_connection.cpp">
+    <ClCompile Include="libtorrent\src\web_peer_connection.cpp">
       <Filter>Source Files\libtorrent</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\libtorrent\src\xml_parse.cpp">
+    <ClCompile Include="libtorrent\src\xml_parse.cpp">
       <Filter>Source Files\libtorrent</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\libtorrent\zlib\zutil.c">
+    <ClCompile Include="libtorrent\zlib\zutil.c">
       <Filter>Source Files\libtorrent</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\libtorrent\src\version.cpp">
+    <ClCompile Include="libtorrent\src\version.cpp">
       <Filter>Source Files\libtorrent</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\src\infohash.cpp">
+    <ClCompile Include="src\infohash.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\src\magneturi.cpp">
+    <ClCompile Include="src\magneturi.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\src\trackerentry.cpp">
+    <ClCompile Include="src\trackerentry.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\libtorrent\src\announce_entry.cpp">
+    <ClCompile Include="libtorrent\src\announce_entry.cpp">
       <Filter>Source Files\libtorrent</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\libtorrent\src\bdecode.cpp">
+    <ClCompile Include="libtorrent\src\bdecode.cpp">
       <Filter>Source Files\libtorrent</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\libtorrent\src\bitfield.cpp">
+    <ClCompile Include="libtorrent\src\bitfield.cpp">
       <Filter>Source Files\libtorrent</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\libtorrent\src\block_cache.cpp">
+    <ClCompile Include="libtorrent\src\block_cache.cpp">
       <Filter>Source Files\libtorrent</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\libtorrent\src\choker.cpp">
+    <ClCompile Include="libtorrent\src\choker.cpp">
       <Filter>Source Files\libtorrent</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\libtorrent\src\close_reason.cpp">
+    <ClCompile Include="libtorrent\src\close_reason.cpp">
       <Filter>Source Files\libtorrent</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\libtorrent\src\cpuid.cpp">
+    <ClCompile Include="libtorrent\src\cpuid.cpp">
       <Filter>Source Files\libtorrent</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\libtorrent\src\crc32c.cpp">
+    <ClCompile Include="libtorrent\src\crc32c.cpp">
       <Filter>Source Files\libtorrent</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\libtorrent\src\disk_job_pool.cpp">
+    <ClCompile Include="libtorrent\src\disk_job_pool.cpp">
       <Filter>Source Files\libtorrent</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\libtorrent\src\file_progress.cpp">
+    <ClCompile Include="libtorrent\src\file_progress.cpp">
       <Filter>Source Files\libtorrent</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\libtorrent\src\fingerprint.cpp">
+    <ClCompile Include="libtorrent\src\fingerprint.cpp">
       <Filter>Source Files\libtorrent</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\libtorrent\src\hex.cpp">
+    <ClCompile Include="libtorrent\src\hex.cpp">
       <Filter>Source Files\libtorrent</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\libtorrent\src\merkle.cpp">
+    <ClCompile Include="libtorrent\src\merkle.cpp">
       <Filter>Source Files\libtorrent</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\libtorrent\src\part_file.cpp">
+    <ClCompile Include="libtorrent\src\part_file.cpp">
       <Filter>Source Files\libtorrent</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\libtorrent\src\peer_class.cpp">
+    <ClCompile Include="libtorrent\src\peer_class.cpp">
       <Filter>Source Files\libtorrent</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\libtorrent\src\peer_class_set.cpp">
+    <ClCompile Include="libtorrent\src\peer_class_set.cpp">
       <Filter>Source Files\libtorrent</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\libtorrent\src\peer_connection_handle.cpp">
+    <ClCompile Include="libtorrent\src\peer_connection_handle.cpp">
       <Filter>Source Files\libtorrent</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\libtorrent\src\peer_list.cpp">
+    <ClCompile Include="libtorrent\src\peer_list.cpp">
       <Filter>Source Files\libtorrent</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\libtorrent\src\performance_counters.cpp">
+    <ClCompile Include="libtorrent\src\performance_counters.cpp">
       <Filter>Source Files\libtorrent</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\libtorrent\src\platform_util.cpp">
+    <ClCompile Include="libtorrent\src\platform_util.cpp">
       <Filter>Source Files\libtorrent</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\libtorrent\src\proxy_base.cpp">
+    <ClCompile Include="libtorrent\src\proxy_base.cpp">
       <Filter>Source Files\libtorrent</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\libtorrent\src\proxy_settings.cpp">
+    <ClCompile Include="libtorrent\src\proxy_settings.cpp">
       <Filter>Source Files\libtorrent</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\libtorrent\src\receive_buffer.cpp">
+    <ClCompile Include="libtorrent\src\receive_buffer.cpp">
       <Filter>Source Files\libtorrent</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\libtorrent\src\request_blocks.cpp">
+    <ClCompile Include="libtorrent\src\request_blocks.cpp">
       <Filter>Source Files\libtorrent</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\libtorrent\src\resolve_links.cpp">
+    <ClCompile Include="libtorrent\src\resolve_links.cpp">
       <Filter>Source Files\libtorrent</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\libtorrent\src\resolver.cpp">
+    <ClCompile Include="libtorrent\src\resolver.cpp">
       <Filter>Source Files\libtorrent</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\libtorrent\src\session_call.cpp">
+    <ClCompile Include="libtorrent\src\session_call.cpp">
       <Filter>Source Files\libtorrent</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\libtorrent\src\session_handle.cpp">
+    <ClCompile Include="libtorrent\src\session_handle.cpp">
       <Filter>Source Files\libtorrent</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\libtorrent\src\session_settings.cpp">
+    <ClCompile Include="libtorrent\src\session_settings.cpp">
       <Filter>Source Files\libtorrent</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\libtorrent\src\session_stats.cpp">
+    <ClCompile Include="libtorrent\src\session_stats.cpp">
       <Filter>Source Files\libtorrent</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\libtorrent\src\settings_pack.cpp">
+    <ClCompile Include="libtorrent\src\settings_pack.cpp">
       <Filter>Source Files\libtorrent</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\libtorrent\src\stat_cache.cpp">
+    <ClCompile Include="libtorrent\src\stat_cache.cpp">
       <Filter>Source Files\libtorrent</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\libtorrent\src\torrent_peer.cpp">
+    <ClCompile Include="libtorrent\src\torrent_peer.cpp">
       <Filter>Source Files\libtorrent</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\libtorrent\src\torrent_peer_allocator.cpp">
+    <ClCompile Include="libtorrent\src\torrent_peer_allocator.cpp">
       <Filter>Source Files\libtorrent</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\libtorrent\src\torrent_status.cpp">
+    <ClCompile Include="libtorrent\src\torrent_status.cpp">
       <Filter>Source Files\libtorrent</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\libtorrent\src\kademlia\dht_storage.cpp">
+    <ClCompile Include="libtorrent\src\kademlia\dht_storage.cpp">
       <Filter>Source Files\libtorrent\kademlia</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\libtorrent\src\kademlia\dos_blocker.cpp">
+    <ClCompile Include="libtorrent\src\kademlia\dos_blocker.cpp">
       <Filter>Source Files\libtorrent\kademlia</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\libtorrent\src\kademlia\dht_tracker.cpp">
+    <ClCompile Include="libtorrent\src\kademlia\dht_tracker.cpp">
       <Filter>Source Files\libtorrent\kademlia</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\libtorrent\src\kademlia\find_data.cpp">
+    <ClCompile Include="libtorrent\src\kademlia\find_data.cpp">
       <Filter>Source Files\libtorrent\kademlia</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\libtorrent\src\kademlia\get_item.cpp">
+    <ClCompile Include="libtorrent\src\kademlia\get_item.cpp">
       <Filter>Source Files\libtorrent\kademlia</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\libtorrent\src\kademlia\get_peers.cpp">
+    <ClCompile Include="libtorrent\src\kademlia\get_peers.cpp">
       <Filter>Source Files\libtorrent\kademlia</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\libtorrent\src\kademlia\item.cpp">
+    <ClCompile Include="libtorrent\src\kademlia\item.cpp">
       <Filter>Source Files\libtorrent\kademlia</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\libtorrent\src\kademlia\node.cpp">
+    <ClCompile Include="libtorrent\src\kademlia\node.cpp">
       <Filter>Source Files\libtorrent\kademlia</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\libtorrent\src\kademlia\node_id.cpp">
+    <ClCompile Include="libtorrent\src\kademlia\node_id.cpp">
       <Filter>Source Files\libtorrent\kademlia</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\libtorrent\src\kademlia\refresh.cpp">
+    <ClCompile Include="libtorrent\src\kademlia\refresh.cpp">
       <Filter>Source Files\libtorrent\kademlia</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\libtorrent\src\kademlia\routing_table.cpp">
+    <ClCompile Include="libtorrent\src\kademlia\routing_table.cpp">
       <Filter>Source Files\libtorrent\kademlia</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\libtorrent\src\kademlia\rpc_manager.cpp">
+    <ClCompile Include="libtorrent\src\kademlia\rpc_manager.cpp">
       <Filter>Source Files\libtorrent\kademlia</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\libtorrent\src\kademlia\traversal_algorithm.cpp">
+    <ClCompile Include="libtorrent\src\kademlia\traversal_algorithm.cpp">
       <Filter>Source Files\libtorrent\kademlia</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\libtorrent\src\kademlia\msg.cpp">
+    <ClCompile Include="libtorrent\src\kademlia\msg.cpp">
       <Filter>Source Files\libtorrent\kademlia</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\libtorrent\src\kademlia\node_entry.cpp">
+    <ClCompile Include="libtorrent\src\kademlia\node_entry.cpp">
       <Filter>Source Files\libtorrent\kademlia</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\libtorrent\src\kademlia\put_data.cpp">
+    <ClCompile Include="libtorrent\src\kademlia\put_data.cpp">
       <Filter>Source Files\libtorrent\kademlia</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\libtorrent\src\disk_io_job.cpp">
+    <ClCompile Include="libtorrent\src\disk_io_job.cpp">
       <Filter>Source Files\libtorrent</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\libgeoip\GeoIP.c">
+    <ClCompile Include="libgeoip\GeoIP.c">
       <Filter>Source Files\libgeoip</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\libgeoip\GeoIP_deprecated.c">
+    <ClCompile Include="libgeoip\GeoIP_deprecated.c">
       <Filter>Source Files\libgeoip</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\libgeoip\GeoIPCity.c">
+    <ClCompile Include="libgeoip\GeoIPCity.c">
       <Filter>Source Files\libgeoip</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\libgeoip\pread.c">
+    <ClCompile Include="libgeoip\pread.c">
       <Filter>Source Files\libgeoip</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\libgeoip\regionName.c">
+    <ClCompile Include="libgeoip\regionName.c">
       <Filter>Source Files\libgeoip</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\libgeoip\timeZone.c">
+    <ClCompile Include="libgeoip\timeZone.c">
       <Filter>Source Files\libgeoip</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\src\icons.cpp">
+    <ClCompile Include="src\icons.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\libtorrent\src\add_torrent_params.cpp">
+    <ClCompile Include="libtorrent\src\add_torrent_params.cpp">
       <Filter>Source Files\libtorrent</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\libtorrent\src\disk_io_thread_pool.cpp">
+    <ClCompile Include="libtorrent\src\disk_io_thread_pool.cpp">
       <Filter>Source Files\libtorrent</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\libtorrent\src\disk_job_fence.cpp">
+    <ClCompile Include="libtorrent\src\disk_job_fence.cpp">
       <Filter>Source Files\libtorrent</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\libtorrent\src\ffs.cpp">
+    <ClCompile Include="libtorrent\src\ffs.cpp">
       <Filter>Source Files\libtorrent</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\libtorrent\src\hasher512.cpp">
+    <ClCompile Include="libtorrent\src\hasher512.cpp">
       <Filter>Source Files\libtorrent</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\libtorrent\src\ip_notifier.cpp">
+    <ClCompile Include="libtorrent\src\ip_notifier.cpp">
       <Filter>Source Files\libtorrent</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\libtorrent\src\listen_socket_handle.cpp">
+    <ClCompile Include="libtorrent\src\listen_socket_handle.cpp">
       <Filter>Source Files\libtorrent</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\libtorrent\src\path.cpp">
+    <ClCompile Include="libtorrent\src\path.cpp">
       <Filter>Source Files\libtorrent</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\libtorrent\src\peer_info.cpp">
+    <ClCompile Include="libtorrent\src\peer_info.cpp">
       <Filter>Source Files\libtorrent</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\libtorrent\src\read_resume_data.cpp">
+    <ClCompile Include="libtorrent\src\read_resume_data.cpp">
       <Filter>Source Files\libtorrent</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\libtorrent\src\session_udp_sockets.cpp">
+    <ClCompile Include="libtorrent\src\session_udp_sockets.cpp">
       <Filter>Source Files\libtorrent</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\libtorrent\src\sha1_hash.cpp">
+    <ClCompile Include="libtorrent\src\sha1_hash.cpp">
       <Filter>Source Files\libtorrent</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\libtorrent\src\sha512.cpp">
+    <ClCompile Include="libtorrent\src\sha512.cpp">
       <Filter>Source Files\libtorrent</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\libtorrent\src\stack_allocator.cpp">
+    <ClCompile Include="libtorrent\src\stack_allocator.cpp">
       <Filter>Source Files\libtorrent</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\libtorrent\src\storage_piece_set.cpp">
+    <ClCompile Include="libtorrent\src\storage_piece_set.cpp">
       <Filter>Source Files\libtorrent</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\libtorrent\src\storage_utils.cpp">
+    <ClCompile Include="libtorrent\src\storage_utils.cpp">
       <Filter>Source Files\libtorrent</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\libtorrent\src\write_resume_data.cpp">
+    <ClCompile Include="libtorrent\src\write_resume_data.cpp">
       <Filter>Source Files\libtorrent</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\libtorrent\src\kademlia\dht_settings.cpp">
+    <ClCompile Include="libtorrent\src\kademlia\dht_settings.cpp">
       <Filter>Source Files\libtorrent\kademlia</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\libtorrent\src\kademlia\dht_state.cpp">
+    <ClCompile Include="libtorrent\src\kademlia\dht_state.cpp">
       <Filter>Source Files\libtorrent\kademlia</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\libtorrent\src\kademlia\ed25519.cpp">
+    <ClCompile Include="libtorrent\src\kademlia\ed25519.cpp">
       <Filter>Source Files\libtorrent\kademlia</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\libtorrent\src\kademlia\sample_infohashes.cpp">
+    <ClCompile Include="libtorrent\src\kademlia\sample_infohashes.cpp">
       <Filter>Source Files\libtorrent\kademlia</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\libtorrent\src\torrent_info.cpp">
-      <Filter>Source Files\libtorrent</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\src\torrentinfo.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\libtorrent\src\generate_peer_id.cpp">
+    <ClCompile Include="libtorrent\src\generate_peer_id.cpp">
       <Filter>Source Files\libtorrent</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <None Include="..\..\..\src\wx\msw\hand.cur">
-      <Filter>Resource Files</Filter>
-    </None>
-    <None Include="..\..\..\src\wx\msw\bullseye.cur">
-      <Filter>Resource Files</Filter>
-    </None>
-    <None Include="..\..\..\src\wx\msw\pencil.cur">
-      <Filter>Resource Files</Filter>
-    </None>
-    <None Include="..\..\..\src\wx\msw\magnif1.cur">
-      <Filter>Resource Files</Filter>
-    </None>
-    <None Include="..\..\..\src\wx\msw\roller.cur">
-      <Filter>Resource Files</Filter>
-    </None>
-    <None Include="..\..\..\src\wx\msw\pbrush.cur">
-      <Filter>Resource Files</Filter>
-    </None>
-    <None Include="..\..\..\src\wx\msw\pntleft.cur">
-      <Filter>Resource Files</Filter>
-    </None>
-    <None Include="..\..\..\src\wx\msw\pntright.cur">
-      <Filter>Resource Files</Filter>
-    </None>
-    <None Include="..\..\..\src\wx\msw\blank.cur">
-      <Filter>Resource Files</Filter>
-    </None>
-    <None Include="..\..\..\src\wx\msw\cross.cur">
-      <Filter>Resource Files</Filter>
-    </None>
-    <None Include="..\..\..\libtorrent\include\libtorrent\Makefile.am">
+    <None Include="libtorrent\include\libtorrent\Makefile.am">
       <Filter>Header Files\libtorrent</Filter>
     </None>
+    <None Include="src\wx\msw\hand.cur">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="src\wx\msw\bullseye.cur">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="src\wx\msw\pencil.cur">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="src\wx\msw\magnif1.cur">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="src\wx\msw\roller.cur">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="src\wx\msw\pbrush.cur">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="src\wx\msw\pntleft.cur">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="src\wx\msw\pntright.cur">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="src\wx\msw\blank.cur">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="src\wx\msw\cross.cur">
+      <Filter>Resource Files</Filter>
+    </None>
   </ItemGroup>
   <ItemGroup>
-    <Image Include="..\..\..\bitswash_48x48.ico">
+    <Image Include="bitswash_48x48.ico">
       <Filter>Resource Files</Filter>
     </Image>
-    <Image Include="..\..\..\src\wx\msw\std.ico">
+    <Image Include="src\wx\msw\std.ico">
       <Filter>Resource Files</Filter>
     </Image>
-    <Image Include="..\..\..\src\wx\msw\folder1.ico">
+    <Image Include="src\wx\msw\folder1.ico">
       <Filter>Resource Files</Filter>
     </Image>
-    <Image Include="..\..\..\src\wx\msw\folder2.ico">
+    <Image Include="src\wx\msw\folder2.ico">
       <Filter>Resource Files</Filter>
     </Image>
-    <Image Include="..\..\..\src\wx\msw\file1.ico">
+    <Image Include="src\wx\msw\file1.ico">
       <Filter>Resource Files</Filter>
     </Image>
-    <Image Include="..\..\..\src\wx\msw\computer.ico">
+    <Image Include="src\wx\msw\computer.ico">
       <Filter>Resource Files</Filter>
     </Image>
-    <Image Include="..\..\..\src\wx\msw\drive.ico">
+    <Image Include="src\wx\msw\drive.ico">
       <Filter>Resource Files</Filter>
     </Image>
-    <Image Include="..\..\..\src\wx\msw\cdrom.ico">
+    <Image Include="src\wx\msw\cdrom.ico">
       <Filter>Resource Files</Filter>
     </Image>
-    <Image Include="..\..\..\src\wx\msw\floppy.ico">
+    <Image Include="src\wx\msw\floppy.ico">
       <Filter>Resource Files</Filter>
     </Image>
-    <Image Include="..\..\..\src\wx\msw\removble.ico">
+    <Image Include="src\wx\msw\removble.ico">
       <Filter>Resource Files</Filter>
     </Image>
-    <Image Include="..\..\..\src\wx\msw\csquery.bmp">
+    <Image Include="src\wx\msw\csquery.bmp">
       <Filter>Resource Files</Filter>
     </Image>
-    <Image Include="..\..\..\src\wx\msw\colours.bmp">
+    <Image Include="src\wx\msw\colours.bmp">
       <Filter>Resource Files</Filter>
     </Image>
   </ItemGroup>
