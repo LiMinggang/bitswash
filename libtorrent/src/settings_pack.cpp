@@ -316,7 +316,7 @@ constexpr int CLOSE_FILE_INTERVAL = 0;
 		SET(checking_mem_usage, 1024, nullptr),
 		SET(predictive_piece_announce, 0, nullptr),
 		SET(aio_threads, 4, &session_impl::update_disk_threads),
-		SET(aio_max, 300, nullptr),
+		DEPRECATED_SET(aio_max, 300, nullptr),
 		DEPRECATED_SET(network_threads, 0, nullptr),
 		DEPRECATED_SET(ssl_listen, 0, &session_impl::update_ssl_listen),
 		SET(tracker_backoff, 250, nullptr),
@@ -341,6 +341,7 @@ constexpr int CLOSE_FILE_INTERVAL = 0;
 		SET(urlseed_max_request_bytes, 16 * 1024 * 1024, nullptr),
 		SET(web_seed_name_lookup_retry, 1800, nullptr),
 		SET(close_file_interval, CLOSE_FILE_INTERVAL, nullptr),
+		SET(utp_cwnd_reduce_timer, 100, nullptr),
 		SET(max_web_seed_connections, 3, nullptr),
 		SET(resolver_cache_timeout, 1200, &session_impl::update_resolver_cache_timeout),
 	}});
@@ -350,7 +351,7 @@ constexpr int CLOSE_FILE_INTERVAL = 0;
 
 	} // anonymous namespace
 
-	int setting_by_name(std::string const& key)
+	int setting_by_name(string_view const key)
 	{
 		for (int k = 0; k < str_settings.end_index(); ++k)
 		{

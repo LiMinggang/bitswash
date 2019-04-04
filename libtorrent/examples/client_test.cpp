@@ -47,6 +47,10 @@ POSSIBILITY OF SUCH DAMAGE.
 #include <sys/stat.h>
 #endif
 
+#ifdef TORRENT_UTP_LOG_ENABLE
+#include "libtorrent/utp_stream.hpp"
+#endif
+
 #include "libtorrent/torrent_info.hpp"
 #include "libtorrent/announce_entry.hpp"
 #include "libtorrent/entry.hpp"
@@ -1022,8 +1026,13 @@ CLIENT OPTIONS
                         previous command line options, so be sure to specify this first
   -G                    Add torrents in seed-mode (i.e. assume all pieces
                         are present and check hashes on-demand)
-  -O                    print session stats counters to the log
-
+  -O                    print session stats counters to the log)"
+#ifdef TORRENT_UTP_LOG_ENABLE
+R"(
+  -q                    Enable uTP transport-level verbose logging
+)"
+#endif
+R"(
 LIBTORRENT SETTINGS
   --<name-of-setting>=<value>
                         set the libtorrent setting <name> to <value>
@@ -1070,8 +1079,6 @@ example alert_masks:
 
 	lt::session_params params;
 
-	lt::error_code ec;
-
 #ifndef TORRENT_DISABLE_DHT
 	params.dht_settings.privacy_lookups = true;
 
@@ -1079,6 +1086,7 @@ example alert_masks:
 	if (load_file(".ses_state", in))
 	{
 		lt::bdecode_node e;
+		lt::error_code ec;
 		if (bdecode(&in[0], &in[0] + in.size(), e, ec) == 0)
 			params = read_session_params(e, session_handle::save_dht_state);
 	}
@@ -1191,6 +1199,11 @@ example alert_masks:
 			case 'G': seed_mode = true; --i; break;
 			case 's': save_path = make_absolute_path(arg); break;
 			case 'O': stats_enabled = true; --i; break;
+#ifdef TORRENT_UTP_LOG_ENABLE
+			case 'q':
+				libtorrent::set_utp_stream_logging(true);
+				break;
+#endif
 			case 'U': torrent_upload_limit = atoi(arg) * 1000; break;
 			case 'D': torrent_download_limit = atoi(arg) * 1000; break;
 			case 'm': monitor_dir = make_absolute_path(arg); break;

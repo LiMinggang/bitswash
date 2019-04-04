@@ -60,9 +60,6 @@
     <ClInclude Include="libtorrent\include\libtorrent\alloca.hpp">
       <Filter>Header Files\libtorrent</Filter>
     </ClInclude>
-    <ClInclude Include="libtorrent\include\libtorrent\allocator.hpp">
-      <Filter>Header Files\libtorrent</Filter>
-    </ClInclude>
     <ClInclude Include="libtorrent\include\libtorrent\assert.hpp">
       <Filter>Header Files\libtorrent</Filter>
     </ClInclude>
@@ -378,9 +375,6 @@
     <ClInclude Include="libtorrent\include\libtorrent\sliding_average.hpp">
       <Filter>Header Files\libtorrent</Filter>
     </ClInclude>
-    <ClInclude Include="libtorrent\include\libtorrent\extensions\smart_ban.hpp">
-      <Filter>Header Files\libtorrent</Filter>
-    </ClInclude>
     <ClInclude Include="libtorrent\include\libtorrent\socket.hpp">
       <Filter>Header Files\libtorrent</Filter>
     </ClInclude>
@@ -457,12 +451,6 @@
       <Filter>Header Files\libtorrent</Filter>
     </ClInclude>
     <ClInclude Include="libtorrent\include\libtorrent\upnp.hpp">
-      <Filter>Header Files\libtorrent</Filter>
-    </ClInclude>
-    <ClInclude Include="libtorrent\include\libtorrent\extensions\ut_metadata.hpp">
-      <Filter>Header Files\libtorrent</Filter>
-    </ClInclude>
-    <ClInclude Include="libtorrent\include\libtorrent\extensions\ut_pex.hpp">
       <Filter>Header Files\libtorrent</Filter>
     </ClInclude>
     <ClInclude Include="libtorrent\include\libtorrent\utf8.hpp">
@@ -933,9 +921,6 @@
     <ClInclude Include="libtorrent\include\libtorrent\aux_\time.hpp">
       <Filter>Header Files\libtorrent\aux</Filter>
     </ClInclude>
-    <ClInclude Include="libtorrent\include\libtorrent\aux_\typed_span.hpp">
-      <Filter>Header Files\libtorrent\aux</Filter>
-    </ClInclude>
     <ClInclude Include="libtorrent\include\libtorrent\aux_\unique_ptr.hpp">
       <Filter>Header Files\libtorrent\aux</Filter>
     </ClInclude>
@@ -947,6 +932,15 @@
     </ClInclude>
     <ClInclude Include="libtorrent\include\libtorrent\aux_\win_util.hpp">
       <Filter>Header Files\libtorrent\aux</Filter>
+    </ClInclude>
+    <ClInclude Include="libtorrent\include\libtorrent\extensions\smart_ban.hpp">
+      <Filter>Header Files\libtorrent\extention</Filter>
+    </ClInclude>
+    <ClInclude Include="libtorrent\include\libtorrent\extensions\ut_metadata.hpp">
+      <Filter>Header Files\libtorrent\extention</Filter>
+    </ClInclude>
+    <ClInclude Include="libtorrent\include\libtorrent\extensions\ut_pex.hpp">
+      <Filter>Header Files\libtorrent\extention</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -1061,9 +1055,6 @@
       <Filter>Source Files\libtorrent</Filter>
     </ClCompile>
     <ClCompile Include="libtorrent\src\alert_manager.cpp">
-      <Filter>Source Files\libtorrent</Filter>
-    </ClCompile>
-    <ClCompile Include="libtorrent\src\allocator.cpp">
       <Filter>Source Files\libtorrent</Filter>
     </ClCompile>
     <ClCompile Include="libtorrent\src\assert.cpp">
@@ -1564,9 +1555,6 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="libtorrent\include\libtorrent\Makefile.am">
-      <Filter>Header Files\libtorrent</Filter>
-    </None>
-    <None Include="libtorrent\include\libtorrent\Makefile.in">
       <Filter>Header Files\libtorrent</Filter>
     </None>
     <None Include="src\wx\msw\hand.cur">

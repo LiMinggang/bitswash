@@ -79,8 +79,8 @@ You'll find boost here__.
 __ https://www.boost.org/users/download/#live
 
 Extract the archive to some directory where you want it. For the sake of this
-guide, let's assume you extract the package to ``c:\boost_1_68_0``. You'll
-need at least version 1.56 of the boost library in order to build libtorrent.
+guide, let's assume you extract the package to ``c:\boost_1_69_0``. You'll
+need at least version 1.58 of the boost library in order to build libtorrent.
 
 
 Step 2: Setup BBv2
@@ -235,7 +235,8 @@ For more build configuration flags see `Build configurations`_.
 When enabling linking against openssl (by setting the ``crypto`` feature to
 ``openssl``) the Jamfile will look in some default directory for the openssl
 headers and libraries. On macOS, it will look for the homebrew openssl package.
-On windows it will look in ``c:\openssl`` and MinGW in ``c:\OpenSSL-Win32``.
+On Windows, it will look in ``C:\OpenSSL-Win32``, or ``C:\OpenSSL-Win64`` if
+compiling in 64-bit.
 
 To customize the library path and include path for openssl, set the features
 ``openssl-lib`` and ``openssl-include`` respectively.
@@ -482,7 +483,7 @@ If you enabled test in the configuration step, to run them, run::
 
 building with other build systems
 ---------------------------------
-  
+
 If you're building in MS Visual Studio, you may have to set the compiler
 options "force conformance in for loop scope", "treat wchar_t as built-in
 type" and "Enable Run-Time Type Info" to Yes.

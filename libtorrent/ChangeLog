@@ -1,5 +1,7 @@
 1.2 release
 
+	* requires boost >= 1.58 to build
+	* tweak heuristic of how to interpret url seeds in multi-file torrents
 	* support &ipv4= tracker argument for private torrents
 	* renamed debug_notification to connect_notification
 	* when updating listen sockets, only post alerts for new ones
@@ -91,6 +93,10 @@
 	* improved support for listening on multiple sockets and interfaces
 	* resume data no longer has timestamps of files
 	* require C++11 to build libtorrent
+
+1.1.12 release
+
+	* uTP performance fixes
 
 1.1.11 release
 

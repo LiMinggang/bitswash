@@ -201,7 +201,6 @@
     <ClInclude Include="libtorrent\include\libtorrent\alert_manager.hpp" />
     <ClInclude Include="libtorrent\include\libtorrent\alert_types.hpp" />
     <ClInclude Include="libtorrent\include\libtorrent\alloca.hpp" />
-    <ClInclude Include="libtorrent\include\libtorrent\allocator.hpp" />
     <ClInclude Include="libtorrent\include\libtorrent\announce_entry.hpp" />
     <ClInclude Include="libtorrent\include\libtorrent\assert.hpp" />
     <ClInclude Include="libtorrent\include\libtorrent\aux_\aligned_storage.hpp" />
@@ -249,7 +248,6 @@
     <ClInclude Include="libtorrent\include\libtorrent\aux_\suggest_piece.hpp" />
     <ClInclude Include="libtorrent\include\libtorrent\aux_\throw.hpp" />
     <ClInclude Include="libtorrent\include\libtorrent\aux_\time.hpp" />
-    <ClInclude Include="libtorrent\include\libtorrent\aux_\typed_span.hpp" />
     <ClInclude Include="libtorrent\include\libtorrent\aux_\unique_ptr.hpp" />
     <ClInclude Include="libtorrent\include\libtorrent\aux_\vector.hpp" />
     <ClInclude Include="libtorrent\include\libtorrent\aux_\win_crypto_provider.hpp" />
@@ -527,7 +525,6 @@
       <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(IntDir)%(Filename)1.xdc</XMLDocumentationFileName>
     </ClCompile>
     <ClCompile Include="libtorrent\src\alert_manager.cpp" />
-    <ClCompile Include="libtorrent\src\allocator.cpp" />
     <ClCompile Include="libtorrent\src\announce_entry.cpp" />
     <ClCompile Include="libtorrent\src\assert.cpp" />
     <ClCompile Include="libtorrent\src\bandwidth_limit.cpp" />
@@ -760,7 +757,6 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="libtorrent\include\libtorrent\Makefile.am" />
-    <None Include="libtorrent\include\libtorrent\Makefile.in" />
     <None Include="src\wx\msw\blank.cur" />
     <None Include="src\wx\msw\bullseye.cur" />
     <None Include="src\wx\msw\cross.cur" />

@@ -114,11 +114,6 @@ struct iovec
 #endif
 #include <windows.h>
 #include <winioctl.h>
-#ifndef TORRENT_MINGW
-#include <direct.h> // for _getcwd, _mkdir
-#else
-#include <dirent.h>
-#endif
 #include <sys/types.h>
 #else
 // posix part
@@ -361,8 +356,6 @@ static_assert(!(open_mode::sparse & open_mode::attribute_mask), "internal flags 
 		native_path_string f = convert_to_native_path_string(p);
 
 #ifdef TORRENT_WINDOWS
-		m_inode = 0;
-
 		m_handle = FindFirstFileW(f.c_str(), &m_fd);
 		if (m_handle == INVALID_HANDLE_VALUE)
 		{
@@ -371,7 +364,6 @@ static_assert(!(open_mode::sparse & open_mode::attribute_mask), "internal flags 
 			return;
 		}
 #else
-
 		m_handle = ::opendir(f.c_str());
 		if (m_handle == nullptr)
 		{
@@ -381,7 +373,7 @@ static_assert(!(open_mode::sparse & open_mode::attribute_mask), "internal flags 
 		}
 		// read the first entry
 		next(ec);
-#endif
+#endif // TORRENT_WINDOWS
 	}
 
 	directory::~directory()
@@ -392,11 +384,6 @@ static_assert(!(open_mode::sparse & open_mode::attribute_mask), "internal flags 
 #else
 		if (m_handle) ::closedir(m_handle);
 #endif
-	}
-
-	std::uint64_t directory::inode() const
-	{
-		return m_inode;
 	}
 
 	std::string directory::file() const
@@ -425,7 +412,6 @@ static_assert(!(open_mode::sparse & open_mode::attribute_mask), "internal flags 
 		errno = 0;
 		if ((de = ::readdir(m_handle)) != nullptr)
 		{
-			m_inode = de->d_ino;
 			m_name = de->d_name;
 		}
 		else
@@ -1262,57 +1248,6 @@ namespace {
 			return -1;
 		}
 		return fs.st_size;
-#endif
-	}
-
-	std::int64_t file::sparse_end(std::int64_t start) const
-	{
-#ifdef TORRENT_WINDOWS
-
-#ifndef FSCTL_QUERY_ALLOCATED_RANGES
-typedef struct _FILE_ALLOCATED_RANGE_BUFFER {
-	LARGE_INTEGER FileOffset;
-	LARGE_INTEGER Length;
-} FILE_ALLOCATED_RANGE_BUFFER;
-#define FSCTL_QUERY_ALLOCATED_RANGES ((0x9 << 16) | (1 << 14) | (51 << 2) | 3)
-#endif // TORRENT_MINGW
-
-		FILE_ALLOCATED_RANGE_BUFFER buffer;
-		DWORD bytes_returned = 0;
-		FILE_ALLOCATED_RANGE_BUFFER in;
-		error_code ec;
-		std::int64_t file_size = get_size(ec);
-		if (ec) return start;
-
-		in.FileOffset.QuadPart = start;
-		in.Length.QuadPart = file_size - start;
-
-		if (!DeviceIoControl(native_handle(), FSCTL_QUERY_ALLOCATED_RANGES
-			, &in, sizeof(FILE_ALLOCATED_RANGE_BUFFER)
-			, &buffer, sizeof(FILE_ALLOCATED_RANGE_BUFFER), &bytes_returned, 0))
-		{
-			if (GetLastError() != ERROR_INSUFFICIENT_BUFFER) return start;
-		}
-
-		// if there are no allocated regions within the rest
-		// of the file, return the end of the file
-		if (bytes_returned == 0) return file_size;
-
-		// assume that this range overlaps the start of the
-		// region we were interested in, and that start actually
-		// resides in an allocated region.
-		if (buffer.FileOffset.QuadPart < start) return start;
-
-		// return the offset to the next allocated region
-		return buffer.FileOffset.QuadPart;
-
-#elif defined SEEK_DATA
-		// this is supported on solaris
-		std::int64_t ret = ::lseek(native_handle(), start, SEEK_DATA);
-		if (ret < 0) return start;
-		return start;
-#else
-		return start;
 #endif
 	}
 }
