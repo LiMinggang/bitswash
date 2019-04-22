@@ -1,0 +1,788 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug|Win32">
+      <Configuration>Debug</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Debug|x64">
+      <Configuration>Debug</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|Win32">
+      <Configuration>Release</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|x64">
+      <Configuration>Release</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <ProjectGuid>{4EFBB1F8-4E95-43CE-8873-628348CBD8E9}</ProjectGuid>
+    <RootNamespace>bitswash-win32</RootNamespace>
+    <Keyword>Win32Proj</Keyword>
+    <WindowsTargetPlatformVersion>10.0.17134.0</WindowsTargetPlatformVersion>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <PlatformToolset>v141</PlatformToolset>
+    <CharacterSet>Unicode</CharacterSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <PlatformToolset>v141</PlatformToolset>
+    <CharacterSet>Unicode</CharacterSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <PlatformToolset>v141</PlatformToolset>
+    <UseOfMfc>false</UseOfMfc>
+    <UseOfAtl>false</UseOfAtl>
+    <CharacterSet>Unicode</CharacterSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <PlatformToolset>v141</PlatformToolset>
+    <UseOfMfc>false</UseOfMfc>
+    <UseOfAtl>false</UseOfAtl>
+    <CharacterSet>Unicode</CharacterSet>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ImportGroup Label="ExtensionSettings">
+  </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <PropertyGroup Label="UserMacros" />
+  <PropertyGroup>
+    <_ProjectFileVersion>14.0.25420.1</_ProjectFileVersion>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <OutDir>$(Configuration)\</OutDir>
+    <IntDir>$(Configuration)\</IntDir>
+    <IgnoreImportLibrary>false</IgnoreImportLibrary>
+    <LinkIncremental>true</LinkIncremental>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <IgnoreImportLibrary>false</IgnoreImportLibrary>
+    <LinkIncremental>true</LinkIncremental>
+    <IntDir>$(SolutionDir)$(Platform)\$(Configuration)\</IntDir>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <OutDir>$(Configuration)\</OutDir>
+    <IntDir>$(Configuration)\</IntDir>
+    <LinkIncremental>false</LinkIncremental>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <LinkIncremental>false</LinkIncremental>
+  </PropertyGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <ClCompile>
+      <Optimization>Disabled</Optimization>
+      <AdditionalIncludeDirectories>$(WXWIN)\include;$(WXWIN)\include\msvc;$(OPENSSL)\include;$(BOOST);.\libtorrent\include\libtorrent;.\libtorrent\include\;$(LIBTORRENT)\zlib;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>BOOST_ALL_NO_LIB;BOOST_ASIO_ENABLE_CANCELIO;BOOST_ASIO_HASH_MAP_BUCKETS=1021;BOOST_ASIO_DISABLE_CONNECTEX;BOOST_USE_WINAPI_VERSION=0x0501;BOOST_SYSTEM_STATIC_LINK=1;BOOST_THREAD_USE_LIB;BOOST_THREAD_BUILD_LIB=1;BOOST_MULTI_INDEX_DISABLE_SERIALIZATION;TORRENT_USE_I2P=1;TORRENT_USE_TOMMATH;TORRENT_DEBUG;TORRENT_USE_OPENSSL;TORRENT_NO_DEPRECATE;_SCL_SECURE_NO_DEPRECATE;_CRT_SECURE_NO_WARNINGS;UNICODE;_UNICODE;WIN32;_DEBUG;_WINDOWS;WIN32_LEAN_AND_MEAN;_CRT_SECURE_NO_DEPRECATE;_FILE_OFFSET_BITS=64;_WIN32_WINNT=0x0501;__USE_W32_SOCKETS;__WXMSW__;__WXDEBUG__;wxUSE_LIBPNG=1;WXVER=310;GEOIP_STATIC;USE_LIBGEOIP;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <MinimalRebuild>true</MinimalRebuild>
+      <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
+      <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
+      <RuntimeTypeInfo>true</RuntimeTypeInfo>
+      <PrecompiledHeader />
+      <WarningLevel>Level3</WarningLevel>
+      <DebugInformationFormat>EditAndContinue</DebugInformationFormat>
+    </ClCompile>
+    <ProjectReference>
+      <LinkLibraryDependencies>false</LinkLibraryDependencies>
+      <UseLibraryDependencyInputs>false</UseLibraryDependencyInputs>
+    </ProjectReference>
+    <Link>
+      <AdditionalDependencies>wxmsw31ud_aui.lib;wxmsw31ud_html.lib;wxmsw31ud_adv.lib;wxmsw31ud_core.lib;wxbase31ud_xml.lib;wxbase31ud.lib;wxtiffd.lib;wxjpegd.lib;wxpngd.lib;wxzlibd.lib;wxregexud.lib;wxexpatd.lib;winmm.lib;comctl32.lib;rpcrt4.lib;odbc32.lib;libboost_filesystem-vc140-mt-sgd-1_62.lib;libboost_regex-vc140-mt-sgd-1_62.lib;libboost_iostreams-vc140-mt-sgd-1_62.lib;libboost_thread-vc140-mt-sgd-1_62.lib;libboost_system-vc140-mt-sgd-1_62.lib;libssl.lib;libcrypto.lib;Iphlpapi.lib;Ws2_32.lib;DbgHelp.lib;CRYPT32.LIB;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>$(WXWIN)\lib\vc_lib\;$(OPENSSL);$(BOOST)\stage\lib;$(SolutionDir)$(Platform)\$(Configuration);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <IgnoreAllDefaultLibraries>false</IgnoreAllDefaultLibraries>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <SubSystem>Windows</SubSystem>
+      <TargetMachine>MachineX86</TargetMachine>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <ClCompile>
+      <Optimization>Disabled</Optimization>
+      <AdditionalIncludeDirectories>$(WXWIN)\include;$(WXWIN)\include\msvc;$(OPENSSL)\include;$(BOOST);.\libtorrent\include\libtorrent;.\libtorrent\include\;.\libtorrent\zlib;.\libgeoip;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>BOOST_ALL_NO_LIB;BOOST_ASIO_ENABLE_CANCELIO;BOOST_ASIO_DISABLE_CONNECTEX;BOOST_ASIO_HASH_MAP_BUCKETS=1021;BOOST_USE_WINAPI_VERSION=0x0601;BOOST_SYSTEM_STATIC_LINK=1;BOOST_THREAD_USE_LIB;BOOST_THREAD_BUILD_LIB=1;BOOST_MULTI_INDEX_DISABLE_SERIALIZATION;TORRENT_USE_I2P=1;TORRENT_USE_TOMMATH;TORRENT_DEBUG;TORRENT_USE_OPENSSL;TORRENT_USE_LIBCRYPTO;TORRENT_NO_DEPRECATE;_SCL_SECURE_NO_DEPRECATE;_CRT_SECURE_NO_WARNINGS;UNICODE;_UNICODE;WIN32;_DEBUG;_WINDOWS;WIN32_LEAN_AND_MEAN;_CRT_SECURE_NO_DEPRECATE;_FILE_OFFSET_BITS=64;_WIN32_WINNT=0x0601;__USE_W32_SOCKETS;__WXMSW__;__WXDEBUG__;wxUSE_LIBPNG=1;WXVER=311;GEOIP_STATIC;USE_LIBGEOIP;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
+      <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
+      <RuntimeTypeInfo>true</RuntimeTypeInfo>
+      <PrecompiledHeader>
+      </PrecompiledHeader>
+      <WarningLevel>Level3</WarningLevel>
+      <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
+      <DisableSpecificWarnings>4099</DisableSpecificWarnings>
+    </ClCompile>
+    <ProjectReference>
+      <LinkLibraryDependencies>false</LinkLibraryDependencies>
+      <UseLibraryDependencyInputs>false</UseLibraryDependencyInputs>
+    </ProjectReference>
+    <Link>
+      <AdditionalDependencies>wxmsw31ud_aui.lib;wxmsw31ud_html.lib;wxmsw31ud_adv.lib;wxmsw31ud_core.lib;wxbase31ud_xml.lib;wxbase31ud.lib;wxtiffd.lib;wxjpegd.lib;wxpngd.lib;wxzlibd.lib;wxregexud.lib;wxexpatd.lib;winmm.lib;comctl32.lib;rpcrt4.lib;odbc32.lib;libboost_filesystem-vc140-mt-sgd-x64-1_68.lib;libboost_regex-vc140-mt-sgd-x64-1_68.lib;libboost_iostreams-vc140-mt-sgd-x64-1_68.lib;libboost_thread-vc140-mt-sgd-x64-1_68.lib;libboost_system-vc140-mt-sgd-x64-1_68.lib;libssl.lib;libcrypto.lib;Iphlpapi.lib;Ws2_32.lib;DbgHelp.lib;CRYPT32.LIB;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>$(WXWIN)\lib\vc_x64_lib\;$(OPENSSL);$(BOOST)\stage\lib;$(SolutionDir)$(Platform)\$(Configuration);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <SubSystem>Windows</SubSystem>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <ClCompile>
+      <AdditionalIncludeDirectories>$(WXWIN)\include;$(WXWIN)\include\msvc;$(OPENSSL)\include;$(BOOST);.\libtorrent\include\libtorrent;.\libtorrent\include\;$(LIBTORRENT)\zlib;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>BOOST_ALL_NO_LIB;BOOST_ASIO_ENABLE_CANCELIO;BOOST_ASIO_HASH_MAP_BUCKETS=1021;BOOST_ASIO_DISABLE_CONNECTEX;BOOST_USE_WINAPI_VERSION=0x0501;BOOST_EXCEPTION_DISABLE;BOOST_SYSTEM_STATIC_LINK=1;BOOST_THREAD_USE_LIB;BOOST_THREAD_BUILD_LIB=1;BOOST_MULTI_INDEX_DISABLE_SERIALIZATION;TORRENT_USE_I2P=1;TORRENT_USE_TOMMATH;TORRENT_USE_OPENSSL;TORRENT_NO_DEPRECATE;UNICODE;_UNICODE;WIN32;NDEBUG;_WINDOWS;WIN32_LEAN_AND_MEAN;_SCL_SECURE_NO_DEPRECATE;_CRT_SECURE_NO_WARNINGS;_CRT_SECURE_NO_DEPRECATE;_FILE_OFFSET_BITS=64;_WIN32_WINNT=0x0501;__USE_W32_SOCKETS;__WXMSW__;wxUSE_LIBPNG=1;WXVER=310;GEOIP_STATIC;USE_LIBGEOIP;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <StringPooling>true</StringPooling>
+      <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <PrecompiledHeader />
+      <WarningLevel>Level3</WarningLevel>
+      <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
+    </ClCompile>
+    <ProjectReference>
+      <LinkLibraryDependencies>true</LinkLibraryDependencies>
+    </ProjectReference>
+    <Link>
+      <AdditionalDependencies>wxmsw31u_aui.lib;wxmsw31u_html.lib;wxmsw31u_adv.lib;wxmsw31u_core.lib;wxbase31u_xml.lib;wxbase31u.lib;wxtiff.lib;wxjpeg.lib;wxpng.lib;wxzlib.lib;wxregexu.lib;wxexpat.lib;winmm.lib;comctl32.lib;rpcrt4.lib;odbc32.lib;libboost_filesystem-vc140-mt-s-1_62.lib;libboost_regex-vc140-mt-s-1_62.lib;libboost_iostreams-vc140-mt-s-1_62.lib;libboost_thread-vc140-mt-s-1_62.lib;libboost_system-vc140-mt-s-1_62.lib;libssl.lib;libcrypto.lib;Iphlpapi.lib;Ws2_32.lib;DbgHelp.lib;CRYPT32.LIB;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>$(WXWIN)\lib\vc_lib\;$(OPENSSL);$(BOOST)\stage\lib;$(SolutionDir)$(Platform)\$(Configuration);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <IgnoreAllDefaultLibraries>false</IgnoreAllDefaultLibraries>
+      <GenerateDebugInformation>false</GenerateDebugInformation>
+      <SubSystem>Windows</SubSystem>
+      <OptimizeReferences />
+      <EnableCOMDATFolding />
+      <TargetMachine>MachineX86</TargetMachine>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <ClCompile>
+      <AdditionalIncludeDirectories>$(WXWIN)\include;$(WXWIN)\include\msvc;$(OPENSSL)\include;$(BOOST);.\libtorrent\include\libtorrent;.\libtorrent\include\;$(LIBTORRENT)\zlib;.\libgeoip;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>BOOST_ALL_NO_LIB;BOOST_ASIO_DISABLE_CONNECTEX;BOOST_ASIO_ENABLE_CANCELIO;BOOST_ASIO_HASH_MAP_BUCKETS=1021;BOOST_EXCEPTION_DISABLE;BOOST_SYSTEM_STATIC_LINK=1;BOOST_THREAD_USE_LIB;BOOST_THREAD_BUILD_LIB=1;BOOST_MULTI_INDEX_DISABLE_SERIALIZATION;TORRENT_USE_I2P=1;TORRENT_USE_TOMMATH;TORRENT_USE_OPENSSL;TORRENT_USE_LIBCRYPTO;TORRENT_NO_DEPRECATE;UNICODE;_UNICODE;WIN32;_WINDOWS;WIN32_LEAN_AND_MEAN;_SCL_SECURE_NO_DEPRECATE;_CRT_SECURE_NO_WARNINGS;_CRT_SECURE_NO_DEPRECATE;_FILE_OFFSET_BITS=64;_WIN32_WINNT=0x0501;__USE_W32_SOCKETS;__WXMSW__;wxUSE_LIBPNG=1;WXVER=310;GEOIP_STATIC;USE_LIBGEOIP;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <StringPooling>true</StringPooling>
+      <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <PrecompiledHeader>
+      </PrecompiledHeader>
+      <WarningLevel>Level3</WarningLevel>
+      <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
+    </ClCompile>
+    <ProjectReference>
+      <LinkLibraryDependencies>true</LinkLibraryDependencies>
+    </ProjectReference>
+    <Link>
+      <AdditionalDependencies>wxmsw31u_aui.lib;wxmsw31u_html.lib;wxmsw31u_adv.lib;wxmsw31u_core.lib;wxbase31u_xml.lib;wxbase31u.lib;wxtiff.lib;wxjpeg.lib;wxpng.lib;wxzlib.lib;wxregexu.lib;wxexpat.lib;winmm.lib;comctl32.lib;rpcrt4.lib;odbc32.lib;libboost_filesystem-vc141-mt-s-x64-1_68.lib;libboost_regex-vc141-mt-s-x64-1_68.lib;libboost_iostreams-vc141-mt-s-x64-1_68.lib;libboost_thread-vc141-mt-s-x64-1_68.lib;libboost_system-vc141-mt-s-x64-1_68.lib;libssl.lib;libcrypto.lib;Iphlpapi.lib;Ws2_32.lib;DbgHelp.lib;CRYPT32.LIB;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>$(WXWIN)\lib\vc_x64_lib\;$(OPENSSL);$(BOOST)\stage\lib;$(SolutionDir)$(Platform)\$(Configuration);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <IgnoreAllDefaultLibraries>false</IgnoreAllDefaultLibraries>
+      <GenerateDebugInformation>false</GenerateDebugInformation>
+      <SubSystem>Windows</SubSystem>
+      <OptimizeReferences>
+      </OptimizeReferences>
+      <EnableCOMDATFolding>
+      </EnableCOMDATFolding>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemGroup>
+    <ClInclude Include="libgeoip\GeoIP.h" />
+    <ClInclude Include="libgeoip\GeoIPCity.h" />
+    <ClInclude Include="libgeoip\GeoIP_internal.h" />
+    <ClInclude Include="libgeoip\pread.h" />
+    <ClInclude Include="libtorrent\include\libtorrent\address.hpp" />
+    <ClInclude Include="libtorrent\include\libtorrent\add_torrent_params.hpp" />
+    <ClInclude Include="libtorrent\include\libtorrent\alert.hpp" />
+    <ClInclude Include="libtorrent\include\libtorrent\alert_manager.hpp" />
+    <ClInclude Include="libtorrent\include\libtorrent\alert_types.hpp" />
+    <ClInclude Include="libtorrent\include\libtorrent\alloca.hpp" />
+    <ClInclude Include="libtorrent\include\libtorrent\announce_entry.hpp" />
+    <ClInclude Include="libtorrent\include\libtorrent\assert.hpp" />
+    <ClInclude Include="libtorrent\include\libtorrent\aux_\aligned_storage.hpp" />
+    <ClInclude Include="libtorrent\include\libtorrent\aux_\aligned_union.hpp" />
+    <ClInclude Include="libtorrent\include\libtorrent\aux_\alloca.hpp" />
+    <ClInclude Include="libtorrent\include\libtorrent\aux_\allocating_handler.hpp" />
+    <ClInclude Include="libtorrent\include\libtorrent\aux_\array.hpp" />
+    <ClInclude Include="libtorrent\include\libtorrent\aux_\bind_to_device.hpp" />
+    <ClInclude Include="libtorrent\include\libtorrent\aux_\block_cache_reference.hpp" />
+    <ClInclude Include="libtorrent\include\libtorrent\aux_\byteswap.hpp" />
+    <ClInclude Include="libtorrent\include\libtorrent\aux_\cppint_import_export.hpp" />
+    <ClInclude Include="libtorrent\include\libtorrent\aux_\cpuid.hpp" />
+    <ClInclude Include="libtorrent\include\libtorrent\aux_\deferred_handler.hpp" />
+    <ClInclude Include="libtorrent\include\libtorrent\aux_\deque.hpp" />
+    <ClInclude Include="libtorrent\include\libtorrent\aux_\dev_random.hpp" />
+    <ClInclude Include="libtorrent\include\libtorrent\aux_\disable_warnings_pop.hpp" />
+    <ClInclude Include="libtorrent\include\libtorrent\aux_\disable_warnings_push.hpp" />
+    <ClInclude Include="libtorrent\include\libtorrent\aux_\disk_job_fence.hpp" />
+    <ClInclude Include="libtorrent\include\libtorrent\aux_\escape_string.hpp" />
+    <ClInclude Include="libtorrent\include\libtorrent\aux_\ffs.hpp" />
+    <ClInclude Include="libtorrent\include\libtorrent\aux_\file_progress.hpp" />
+    <ClInclude Include="libtorrent\include\libtorrent\aux_\has_block.hpp" />
+    <ClInclude Include="libtorrent\include\libtorrent\aux_\io.hpp" />
+    <ClInclude Include="libtorrent\include\libtorrent\aux_\ip_notifier.hpp" />
+    <ClInclude Include="libtorrent\include\libtorrent\aux_\listen_socket_handle.hpp" />
+    <ClInclude Include="libtorrent\include\libtorrent\aux_\lsd.hpp" />
+    <ClInclude Include="libtorrent\include\libtorrent\aux_\max_path.hpp" />
+    <ClInclude Include="libtorrent\include\libtorrent\aux_\merkle.hpp" />
+    <ClInclude Include="libtorrent\include\libtorrent\aux_\noexcept_movable.hpp" />
+    <ClInclude Include="libtorrent\include\libtorrent\aux_\numeric_cast.hpp" />
+    <ClInclude Include="libtorrent\include\libtorrent\aux_\openssl.hpp" />
+    <ClInclude Include="libtorrent\include\libtorrent\aux_\path.hpp" />
+    <ClInclude Include="libtorrent\include\libtorrent\aux_\portmap.hpp" />
+    <ClInclude Include="libtorrent\include\libtorrent\aux_\proxy_settings.hpp" />
+    <ClInclude Include="libtorrent\include\libtorrent\aux_\range.hpp" />
+    <ClInclude Include="libtorrent\include\libtorrent\aux_\scope_end.hpp" />
+    <ClInclude Include="libtorrent\include\libtorrent\aux_\session_call.hpp" />
+    <ClInclude Include="libtorrent\include\libtorrent\aux_\session_impl.hpp" />
+    <ClInclude Include="libtorrent\include\libtorrent\aux_\session_interface.hpp" />
+    <ClInclude Include="libtorrent\include\libtorrent\aux_\session_settings.hpp" />
+    <ClInclude Include="libtorrent\include\libtorrent\aux_\session_udp_sockets.hpp" />
+    <ClInclude Include="libtorrent\include\libtorrent\aux_\storage_piece_set.hpp" />
+    <ClInclude Include="libtorrent\include\libtorrent\aux_\storage_utils.hpp" />
+    <ClInclude Include="libtorrent\include\libtorrent\aux_\string_ptr.hpp" />
+    <ClInclude Include="libtorrent\include\libtorrent\aux_\suggest_piece.hpp" />
+    <ClInclude Include="libtorrent\include\libtorrent\aux_\throw.hpp" />
+    <ClInclude Include="libtorrent\include\libtorrent\aux_\time.hpp" />
+    <ClInclude Include="libtorrent\include\libtorrent\aux_\unique_ptr.hpp" />
+    <ClInclude Include="libtorrent\include\libtorrent\aux_\vector.hpp" />
+    <ClInclude Include="libtorrent\include\libtorrent\aux_\win_crypto_provider.hpp" />
+    <ClInclude Include="libtorrent\include\libtorrent\aux_\win_util.hpp" />
+    <ClInclude Include="libtorrent\include\libtorrent\bandwidth_limit.hpp" />
+    <ClInclude Include="libtorrent\include\libtorrent\bandwidth_manager.hpp" />
+    <ClInclude Include="libtorrent\include\libtorrent\bandwidth_queue_entry.hpp" />
+    <ClInclude Include="libtorrent\include\libtorrent\bandwidth_socket.hpp" />
+    <ClInclude Include="libtorrent\include\libtorrent\bdecode.hpp" />
+    <ClInclude Include="libtorrent\include\libtorrent\bencode.hpp" />
+    <ClInclude Include="libtorrent\include\libtorrent\bitfield.hpp" />
+    <ClInclude Include="libtorrent\include\libtorrent\block_cache.hpp" />
+    <ClInclude Include="libtorrent\include\libtorrent\bloom_filter.hpp" />
+    <ClInclude Include="libtorrent\include\libtorrent\broadcast_socket.hpp" />
+    <ClInclude Include="libtorrent\include\libtorrent\bt_peer_connection.hpp" />
+    <ClInclude Include="libtorrent\include\libtorrent\buffer.hpp" />
+    <ClInclude Include="libtorrent\include\libtorrent\chained_buffer.hpp" />
+    <ClInclude Include="libtorrent\include\libtorrent\choker.hpp" />
+    <ClInclude Include="libtorrent\include\libtorrent\close_reason.hpp" />
+    <ClInclude Include="libtorrent\include\libtorrent\config.hpp" />
+    <ClInclude Include="libtorrent\include\libtorrent\connection_queue.hpp" />
+    <ClInclude Include="libtorrent\include\libtorrent\ConvertUTF.h" />
+    <ClInclude Include="libtorrent\include\libtorrent\copy_ptr.hpp" />
+    <ClInclude Include="libtorrent\include\libtorrent\crc32c.hpp" />
+    <ClInclude Include="libtorrent\include\libtorrent\create_torrent.hpp" />
+    <ClInclude Include="libtorrent\include\libtorrent\deadline_timer.hpp" />
+    <ClInclude Include="libtorrent\include\libtorrent\debug.hpp" />
+    <ClInclude Include="libtorrent\include\libtorrent\disk_buffer_holder.hpp" />
+    <ClInclude Include="libtorrent\include\libtorrent\disk_buffer_pool.hpp" />
+    <ClInclude Include="libtorrent\include\libtorrent\disk_interface.hpp" />
+    <ClInclude Include="libtorrent\include\libtorrent\disk_io_job.hpp" />
+    <ClInclude Include="libtorrent\include\libtorrent\disk_io_thread.hpp" />
+    <ClInclude Include="libtorrent\include\libtorrent\disk_io_thread_pool.hpp" />
+    <ClInclude Include="libtorrent\include\libtorrent\disk_job_pool.hpp" />
+    <ClInclude Include="libtorrent\include\libtorrent\disk_observer.hpp" />
+    <ClInclude Include="libtorrent\include\libtorrent\download_priority.hpp" />
+    <ClInclude Include="libtorrent\include\libtorrent\ed25519.hpp" />
+    <ClInclude Include="libtorrent\include\libtorrent\entry.hpp" />
+    <ClInclude Include="libtorrent\include\libtorrent\enum_net.hpp" />
+    <ClInclude Include="libtorrent\include\libtorrent\error.hpp" />
+    <ClInclude Include="libtorrent\include\libtorrent\error_code.hpp" />
+    <ClInclude Include="libtorrent\include\libtorrent\escape_string.hpp" />
+    <ClInclude Include="libtorrent\include\libtorrent\export.hpp" />
+    <ClInclude Include="libtorrent\include\libtorrent\extensions.hpp" />
+    <ClInclude Include="libtorrent\include\libtorrent\extensions\logger.hpp" />
+    <ClInclude Include="libtorrent\include\libtorrent\extensions\lt_trackers.hpp" />
+    <ClInclude Include="libtorrent\include\libtorrent\extensions\metadata_transfer.hpp" />
+    <ClInclude Include="libtorrent\include\libtorrent\extensions\smart_ban.hpp" />
+    <ClInclude Include="libtorrent\include\libtorrent\extensions\ut_metadata.hpp" />
+    <ClInclude Include="libtorrent\include\libtorrent\extensions\ut_pex.hpp" />
+    <ClInclude Include="libtorrent\include\libtorrent\file.hpp" />
+    <ClInclude Include="libtorrent\include\libtorrent\file_pool.hpp" />
+    <ClInclude Include="libtorrent\include\libtorrent\file_storage.hpp" />
+    <ClInclude Include="libtorrent\include\libtorrent\fingerprint.hpp" />
+    <ClInclude Include="libtorrent\include\libtorrent\flags.hpp" />
+    <ClInclude Include="libtorrent\include\libtorrent\GeoIP.h" />
+    <ClInclude Include="libtorrent\include\libtorrent\gzip.hpp" />
+    <ClInclude Include="libtorrent\include\libtorrent\hasher.hpp" />
+    <ClInclude Include="libtorrent\include\libtorrent\hasher512.hpp" />
+    <ClInclude Include="libtorrent\include\libtorrent\heterogeneous_queue.hpp" />
+    <ClInclude Include="libtorrent\include\libtorrent\hex.hpp" />
+    <ClInclude Include="libtorrent\include\libtorrent\http_connection.hpp" />
+    <ClInclude Include="libtorrent\include\libtorrent\http_parser.hpp" />
+    <ClInclude Include="libtorrent\include\libtorrent\http_seed_connection.hpp" />
+    <ClInclude Include="libtorrent\include\libtorrent\http_stream.hpp" />
+    <ClInclude Include="libtorrent\include\libtorrent\http_tracker_connection.hpp" />
+    <ClInclude Include="libtorrent\include\libtorrent\i2p_stream.hpp" />
+    <ClInclude Include="libtorrent\include\libtorrent\identify_client.hpp" />
+    <ClInclude Include="libtorrent\include\libtorrent\instantiate_connection.hpp" />
+    <ClInclude Include="libtorrent\include\libtorrent\intrusive_ptr_base.hpp" />
+    <ClInclude Include="libtorrent\include\libtorrent\invariant_check.hpp" />
+    <ClInclude Include="libtorrent\include\libtorrent\io.hpp" />
+    <ClInclude Include="libtorrent\include\libtorrent\io_service.hpp" />
+    <ClInclude Include="libtorrent\include\libtorrent\io_service_fwd.hpp" />
+    <ClInclude Include="libtorrent\include\libtorrent\ip_filter.hpp" />
+    <ClInclude Include="libtorrent\include\libtorrent\ip_voter.hpp" />
+    <ClInclude Include="libtorrent\include\libtorrent\kademlia\dht_observer.hpp" />
+    <ClInclude Include="libtorrent\include\libtorrent\kademlia\dht_settings.hpp" />
+    <ClInclude Include="libtorrent\include\libtorrent\kademlia\dht_state.hpp" />
+    <ClInclude Include="libtorrent\include\libtorrent\kademlia\dht_storage.hpp" />
+    <ClInclude Include="libtorrent\include\libtorrent\kademlia\dht_tracker.hpp" />
+    <ClInclude Include="libtorrent\include\libtorrent\kademlia\direct_request.hpp" />
+    <ClInclude Include="libtorrent\include\libtorrent\kademlia\dos_blocker.hpp" />
+    <ClInclude Include="libtorrent\include\libtorrent\kademlia\ed25519.hpp" />
+    <ClInclude Include="libtorrent\include\libtorrent\kademlia\find_data.hpp" />
+    <ClInclude Include="libtorrent\include\libtorrent\kademlia\get_item.hpp" />
+    <ClInclude Include="libtorrent\include\libtorrent\kademlia\get_peers.hpp" />
+    <ClInclude Include="libtorrent\include\libtorrent\kademlia\io.hpp" />
+    <ClInclude Include="libtorrent\include\libtorrent\kademlia\item.hpp" />
+    <ClInclude Include="libtorrent\include\libtorrent\kademlia\logging.hpp" />
+    <ClInclude Include="libtorrent\include\libtorrent\kademlia\msg.hpp" />
+    <ClInclude Include="libtorrent\include\libtorrent\kademlia\node.hpp" />
+    <ClInclude Include="libtorrent\include\libtorrent\kademlia\node_entry.hpp" />
+    <ClInclude Include="libtorrent\include\libtorrent\kademlia\node_id.hpp" />
+    <ClInclude Include="libtorrent\include\libtorrent\kademlia\observer.hpp" />
+    <ClInclude Include="libtorrent\include\libtorrent\kademlia\put_data.hpp" />
+    <ClInclude Include="libtorrent\include\libtorrent\kademlia\refresh.hpp" />
+    <ClInclude Include="libtorrent\include\libtorrent\kademlia\routing_table.hpp" />
+    <ClInclude Include="libtorrent\include\libtorrent\kademlia\rpc_manager.hpp" />
+    <ClInclude Include="libtorrent\include\libtorrent\kademlia\sample_infohashes.hpp" />
+    <ClInclude Include="libtorrent\include\libtorrent\kademlia\traversal_algorithm.hpp" />
+    <ClInclude Include="libtorrent\include\libtorrent\kademlia\types.hpp" />
+    <ClInclude Include="libtorrent\include\libtorrent\lazy_entry.hpp" />
+    <ClInclude Include="libtorrent\include\libtorrent\link.hpp" />
+    <ClInclude Include="libtorrent\include\libtorrent\linked_list.hpp" />
+    <ClInclude Include="libtorrent\include\libtorrent\lsd.hpp" />
+    <ClInclude Include="libtorrent\include\libtorrent\magnet_uri.hpp" />
+    <ClInclude Include="libtorrent\include\libtorrent\max.hpp" />
+    <ClInclude Include="libtorrent\include\libtorrent\natpmp.hpp" />
+    <ClInclude Include="libtorrent\include\libtorrent\netlink.hpp" />
+    <ClInclude Include="libtorrent\include\libtorrent\network_thread_pool.hpp" />
+    <ClInclude Include="libtorrent\include\libtorrent\operations.hpp" />
+    <ClInclude Include="libtorrent\include\libtorrent\packet_buffer.hpp" />
+    <ClInclude Include="libtorrent\include\libtorrent\packet_pool.hpp" />
+    <ClInclude Include="libtorrent\include\libtorrent\parse_url.hpp" />
+    <ClInclude Include="libtorrent\include\libtorrent\part_file.hpp" />
+    <ClInclude Include="libtorrent\include\libtorrent\peer.hpp" />
+    <ClInclude Include="libtorrent\include\libtorrent\peer_class.hpp" />
+    <ClInclude Include="libtorrent\include\libtorrent\peer_class_set.hpp" />
+    <ClInclude Include="libtorrent\include\libtorrent\peer_class_type_filter.hpp" />
+    <ClInclude Include="libtorrent\include\libtorrent\peer_connection.hpp" />
+    <ClInclude Include="libtorrent\include\libtorrent\peer_connection_handle.hpp" />
+    <ClInclude Include="libtorrent\include\libtorrent\peer_connection_interface.hpp" />
+    <ClInclude Include="libtorrent\include\libtorrent\peer_id.hpp" />
+    <ClInclude Include="libtorrent\include\libtorrent\peer_info.hpp" />
+    <ClInclude Include="libtorrent\include\libtorrent\peer_list.hpp" />
+    <ClInclude Include="libtorrent\include\libtorrent\peer_request.hpp" />
+    <ClInclude Include="libtorrent\include\libtorrent\performance_counters.hpp" />
+    <ClInclude Include="libtorrent\include\libtorrent\pe_crypto.hpp" />
+    <ClInclude Include="libtorrent\include\libtorrent\piece_block.hpp" />
+    <ClInclude Include="libtorrent\include\libtorrent\piece_block_progress.hpp" />
+    <ClInclude Include="libtorrent\include\libtorrent\piece_picker.hpp" />
+    <ClInclude Include="libtorrent\include\libtorrent\platform_util.hpp" />
+    <ClInclude Include="libtorrent\include\libtorrent\policy.hpp" />
+    <ClInclude Include="libtorrent\include\libtorrent\portmap.hpp" />
+    <ClInclude Include="libtorrent\include\libtorrent\proxy_base.hpp" />
+    <ClInclude Include="libtorrent\include\libtorrent\ptime.hpp" />
+    <ClInclude Include="libtorrent\include\libtorrent\puff.hpp" />
+    <ClInclude Include="libtorrent\include\libtorrent\random.hpp" />
+    <ClInclude Include="libtorrent\include\libtorrent\read_resume_data.hpp" />
+    <ClInclude Include="libtorrent\include\libtorrent\receive_buffer.hpp" />
+    <ClInclude Include="libtorrent\include\libtorrent\request_blocks.hpp" />
+    <ClInclude Include="libtorrent\include\libtorrent\resolver.hpp" />
+    <ClInclude Include="libtorrent\include\libtorrent\resolver_interface.hpp" />
+    <ClInclude Include="libtorrent\include\libtorrent\resolve_links.hpp" />
+    <ClInclude Include="libtorrent\include\libtorrent\rss.hpp" />
+    <ClInclude Include="libtorrent\include\libtorrent\session.hpp" />
+    <ClInclude Include="libtorrent\include\libtorrent\session_handle.hpp" />
+    <ClInclude Include="libtorrent\include\libtorrent\session_settings.hpp" />
+    <ClInclude Include="libtorrent\include\libtorrent\session_stats.hpp" />
+    <ClInclude Include="libtorrent\include\libtorrent\session_status.hpp" />
+    <ClInclude Include="libtorrent\include\libtorrent\session_types.hpp" />
+    <ClInclude Include="libtorrent\include\libtorrent\settings.hpp" />
+    <ClInclude Include="libtorrent\include\libtorrent\settings_pack.hpp" />
+    <ClInclude Include="libtorrent\include\libtorrent\sha1.hpp" />
+    <ClInclude Include="libtorrent\include\libtorrent\sha1_hash.hpp" />
+    <ClInclude Include="libtorrent\include\libtorrent\sha512.hpp" />
+    <ClInclude Include="libtorrent\include\libtorrent\size_type.hpp" />
+    <ClInclude Include="libtorrent\include\libtorrent\sliding_average.hpp" />
+    <ClInclude Include="libtorrent\include\libtorrent\socket.hpp" />
+    <ClInclude Include="libtorrent\include\libtorrent\socket_io.hpp" />
+    <ClInclude Include="libtorrent\include\libtorrent\socket_type.hpp" />
+    <ClInclude Include="libtorrent\include\libtorrent\socket_type_fwd.hpp" />
+    <ClInclude Include="libtorrent\include\libtorrent\socks5_stream.hpp" />
+    <ClInclude Include="libtorrent\include\libtorrent\span.hpp" />
+    <ClInclude Include="libtorrent\include\libtorrent\ssl_stream.hpp" />
+    <ClInclude Include="libtorrent\include\libtorrent\stack_allocator.hpp" />
+    <ClInclude Include="libtorrent\include\libtorrent\stat.hpp" />
+    <ClInclude Include="libtorrent\include\libtorrent\stat_cache.hpp" />
+    <ClInclude Include="libtorrent\include\libtorrent\storage.hpp" />
+    <ClInclude Include="libtorrent\include\libtorrent\storage_defs.hpp" />
+    <ClInclude Include="libtorrent\include\libtorrent\string_util.hpp" />
+    <ClInclude Include="libtorrent\include\libtorrent\string_view.hpp" />
+    <ClInclude Include="libtorrent\include\libtorrent\tailqueue.hpp" />
+    <ClInclude Include="libtorrent\include\libtorrent\thread.hpp" />
+    <ClInclude Include="libtorrent\include\libtorrent\thread_pool.hpp" />
+    <ClInclude Include="libtorrent\include\libtorrent\time.hpp" />
+    <ClInclude Include="libtorrent\include\libtorrent\timestamp_history.hpp" />
+    <ClInclude Include="libtorrent\include\libtorrent\tommath.h" />
+    <ClInclude Include="libtorrent\include\libtorrent\tommath_class.h" />
+    <ClInclude Include="libtorrent\include\libtorrent\tommath_private.h" />
+    <ClInclude Include="libtorrent\include\libtorrent\tommath_superclass.h" />
+    <ClInclude Include="libtorrent\include\libtorrent\torrent.hpp" />
+    <ClInclude Include="libtorrent\include\libtorrent\torrent_flags.hpp" />
+    <ClInclude Include="libtorrent\include\libtorrent\torrent_handle.hpp" />
+    <ClInclude Include="libtorrent\include\libtorrent\torrent_info.hpp" />
+    <ClInclude Include="libtorrent\include\libtorrent\torrent_peer.hpp" />
+    <ClInclude Include="libtorrent\include\libtorrent\torrent_peer_allocator.hpp" />
+    <ClInclude Include="libtorrent\include\libtorrent\torrent_status.hpp" />
+    <ClInclude Include="libtorrent\include\libtorrent\tracker_manager.hpp" />
+    <ClInclude Include="libtorrent\include\libtorrent\udp_socket.hpp" />
+    <ClInclude Include="libtorrent\include\libtorrent\udp_tracker_connection.hpp" />
+    <ClInclude Include="libtorrent\include\libtorrent\uncork_interface.hpp" />
+    <ClInclude Include="libtorrent\include\libtorrent\union_endpoint.hpp" />
+    <ClInclude Include="libtorrent\include\libtorrent\units.hpp" />
+    <ClInclude Include="libtorrent\include\libtorrent\upnp.hpp" />
+    <ClInclude Include="libtorrent\include\libtorrent\utf8.hpp" />
+    <ClInclude Include="libtorrent\include\libtorrent\utp_socket_manager.hpp" />
+    <ClInclude Include="libtorrent\include\libtorrent\utp_stream.hpp" />
+    <ClInclude Include="libtorrent\include\libtorrent\vector_utils.hpp" />
+    <ClInclude Include="libtorrent\include\libtorrent\version.hpp" />
+    <ClInclude Include="libtorrent\include\libtorrent\web_connection_base.hpp" />
+    <ClInclude Include="libtorrent\include\libtorrent\web_peer_connection.hpp" />
+    <ClInclude Include="libtorrent\include\libtorrent\write_resume_data.hpp" />
+    <ClInclude Include="libtorrent\include\libtorrent\xml_parse.hpp" />
+    <ClInclude Include="libtorrent\zlib\crc32.h" />
+    <ClInclude Include="libtorrent\zlib\deflate.h" />
+    <ClInclude Include="libtorrent\zlib\inffast.h" />
+    <ClInclude Include="libtorrent\zlib\inffixed.h" />
+    <ClInclude Include="libtorrent\zlib\inflate.h" />
+    <ClInclude Include="libtorrent\zlib\inftrees.h" />
+    <ClInclude Include="libtorrent\zlib\trees.h" />
+    <ClInclude Include="libtorrent\zlib\zconf.h" />
+    <ClInclude Include="libtorrent\zlib\zlib.h" />
+    <ClInclude Include="libtorrent\zlib\zutil.h" />
+    <ClInclude Include="src\autosizeinput.h" />
+    <ClInclude Include="src\bitswash.h" />
+    <ClInclude Include="src\bittorrentsession.h" />
+    <ClInclude Include="src\compat.h" />
+    <ClInclude Include="src\configuration.h" />
+    <ClInclude Include="src\connectionsetting.h" />
+    <ClInclude Include="src\extensionsetting.h" />
+    <ClInclude Include="src\filelistctrl.h" />
+    <ClInclude Include="src\functions.h" />
+    <ClInclude Include="src\generalsetting.h" />
+    <ClInclude Include="src\icon.h" />
+    <ClInclude Include="src\loggerctrl.h" />
+    <ClInclude Include="src\mainframe.h" />
+    <ClInclude Include="src\peerlistctrl.h" />
+    <ClInclude Include="src\resource.h" />
+    <ClInclude Include="src\summarypane.h" />
+    <ClInclude Include="src\swashgauge.h" />
+    <ClInclude Include="src\swashlistctrl.h" />
+    <ClInclude Include="src\swashsetting.h" />
+    <ClInclude Include="src\swashstatbar.h" />
+    <ClInclude Include="src\swashtrayicon.h" />
+    <ClInclude Include="src\torrentconfig.h" />
+    <ClInclude Include="src\torrentinfo.h" />
+    <ClInclude Include="src\torrentlistctrl.h" />
+    <ClInclude Include="src\torrentproperty.h" />
+    <ClInclude Include="src\torrentsetting.h" />
+    <ClInclude Include="src\trackerlistctrl.h" />
+    <ClInclude Include="src\urldialog.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="src\bitswash.rc">
+      <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(WXWIN)\include;$(WXWIN)\include\msvc;</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(WXWIN)\include;$(WXWIN)\include\msvc;</AdditionalIncludeDirectories>
+    </ResourceCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="libgeoip\GeoIP.c" />
+    <ClCompile Include="libgeoip\GeoIPCity.c" />
+    <ClCompile Include="libgeoip\GeoIP_deprecated.c" />
+    <ClCompile Include="libgeoip\pread.c" />
+    <ClCompile Include="libgeoip\regionName.c" />
+    <ClCompile Include="libgeoip\timeZone.c" />
+    <ClCompile Include="libtorrent\ed25519\src\add_scalar.cpp" />
+    <ClCompile Include="libtorrent\ed25519\src\fe.cpp" />
+    <ClCompile Include="libtorrent\ed25519\src\ge.cpp" />
+    <ClCompile Include="libtorrent\ed25519\src\keypair.cpp" />
+    <ClCompile Include="libtorrent\ed25519\src\key_exchange.cpp" />
+    <ClCompile Include="libtorrent\ed25519\src\sc.cpp" />
+    <ClCompile Include="libtorrent\ed25519\src\sign.cpp" />
+    <ClCompile Include="libtorrent\ed25519\src\verify.cpp" />
+    <ClCompile Include="libtorrent\src\add_torrent_params.cpp" />
+    <ClCompile Include="libtorrent\src\alert.cpp">
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)%(Filename)1.obj</ObjectFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(IntDir)%(Filename)1.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)%(Filename)1.xdc</XMLDocumentationFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(IntDir)%(Filename)1.xdc</XMLDocumentationFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)%(Filename)1.obj</ObjectFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(IntDir)%(Filename)1.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)%(Filename)1.xdc</XMLDocumentationFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(IntDir)%(Filename)1.xdc</XMLDocumentationFileName>
+    </ClCompile>
+    <ClCompile Include="libtorrent\src\alert_manager.cpp" />
+    <ClCompile Include="libtorrent\src\announce_entry.cpp" />
+    <ClCompile Include="libtorrent\src\assert.cpp" />
+    <ClCompile Include="libtorrent\src\bandwidth_limit.cpp" />
+    <ClCompile Include="libtorrent\src\bandwidth_manager.cpp" />
+    <ClCompile Include="libtorrent\src\bandwidth_queue_entry.cpp" />
+    <ClCompile Include="libtorrent\src\bdecode.cpp" />
+    <ClCompile Include="libtorrent\src\bitfield.cpp" />
+    <ClCompile Include="libtorrent\src\block_cache.cpp" />
+    <ClCompile Include="libtorrent\src\bloom_filter.cpp" />
+    <ClCompile Include="libtorrent\src\broadcast_socket.cpp" />
+    <ClCompile Include="libtorrent\src\bt_peer_connection.cpp" />
+    <ClCompile Include="libtorrent\src\chained_buffer.cpp" />
+    <ClCompile Include="libtorrent\src\choker.cpp" />
+    <ClCompile Include="libtorrent\src\close_reason.cpp" />
+    <ClCompile Include="libtorrent\src\ConvertUTF.cpp" />
+    <ClCompile Include="libtorrent\src\cpuid.cpp" />
+    <ClCompile Include="libtorrent\src\crc32c.cpp" />
+    <ClCompile Include="libtorrent\src\create_torrent.cpp" />
+    <ClCompile Include="libtorrent\src\disk_buffer_holder.cpp" />
+    <ClCompile Include="libtorrent\src\disk_buffer_pool.cpp" />
+    <ClCompile Include="libtorrent\src\disk_io_job.cpp" />
+    <ClCompile Include="libtorrent\src\disk_io_thread.cpp" />
+    <ClCompile Include="libtorrent\src\disk_io_thread_pool.cpp" />
+    <ClCompile Include="libtorrent\src\disk_job_fence.cpp" />
+    <ClCompile Include="libtorrent\src\disk_job_pool.cpp" />
+    <ClCompile Include="libtorrent\src\entry.cpp">
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)%(Filename)1.obj</ObjectFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(IntDir)%(Filename)1.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)%(Filename)1.xdc</XMLDocumentationFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(IntDir)%(Filename)1.xdc</XMLDocumentationFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)%(Filename)1.obj</ObjectFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(IntDir)%(Filename)1.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)%(Filename)1.xdc</XMLDocumentationFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(IntDir)%(Filename)1.xdc</XMLDocumentationFileName>
+    </ClCompile>
+    <ClCompile Include="libtorrent\src\enum_net.cpp" />
+    <ClCompile Include="libtorrent\src\error_code.cpp" />
+    <ClCompile Include="libtorrent\src\escape_string.cpp" />
+    <ClCompile Include="libtorrent\src\ffs.cpp" />
+    <ClCompile Include="libtorrent\src\file.cpp" />
+    <ClCompile Include="libtorrent\src\file_pool.cpp" />
+    <ClCompile Include="libtorrent\src\file_progress.cpp" />
+    <ClCompile Include="libtorrent\src\file_storage.cpp" />
+    <ClCompile Include="libtorrent\src\fingerprint.cpp" />
+    <ClCompile Include="libtorrent\src\generate_peer_id.cpp" />
+    <ClCompile Include="libtorrent\src\gzip.cpp" />
+    <ClCompile Include="libtorrent\src\hasher.cpp" />
+    <ClCompile Include="libtorrent\src\hasher512.cpp" />
+    <ClCompile Include="libtorrent\src\hex.cpp" />
+    <ClCompile Include="libtorrent\src\http_connection.cpp" />
+    <ClCompile Include="libtorrent\src\http_parser.cpp" />
+    <ClCompile Include="libtorrent\src\http_seed_connection.cpp" />
+    <ClCompile Include="libtorrent\src\http_stream.cpp" />
+    <ClCompile Include="libtorrent\src\http_tracker_connection.cpp" />
+    <ClCompile Include="libtorrent\src\i2p_stream.cpp" />
+    <ClCompile Include="libtorrent\src\identify_client.cpp" />
+    <ClCompile Include="libtorrent\src\instantiate_connection.cpp" />
+    <ClCompile Include="libtorrent\src\ip_filter.cpp" />
+    <ClCompile Include="libtorrent\src\ip_notifier.cpp" />
+    <ClCompile Include="libtorrent\src\ip_voter.cpp" />
+    <ClCompile Include="libtorrent\src\kademlia\dht_settings.cpp" />
+    <ClCompile Include="libtorrent\src\kademlia\dht_state.cpp" />
+    <ClCompile Include="libtorrent\src\kademlia\dht_storage.cpp" />
+    <ClCompile Include="libtorrent\src\kademlia\dht_tracker.cpp" />
+    <ClCompile Include="libtorrent\src\kademlia\dos_blocker.cpp" />
+    <ClCompile Include="libtorrent\src\kademlia\ed25519.cpp" />
+    <ClCompile Include="libtorrent\src\kademlia\find_data.cpp" />
+    <ClCompile Include="libtorrent\src\kademlia\get_item.cpp" />
+    <ClCompile Include="libtorrent\src\kademlia\get_peers.cpp" />
+    <ClCompile Include="libtorrent\src\kademlia\item.cpp" />
+    <ClCompile Include="libtorrent\src\kademlia\msg.cpp" />
+    <ClCompile Include="libtorrent\src\kademlia\node.cpp" />
+    <ClCompile Include="libtorrent\src\kademlia\node_entry.cpp" />
+    <ClCompile Include="libtorrent\src\kademlia\node_id.cpp" />
+    <ClCompile Include="libtorrent\src\kademlia\put_data.cpp" />
+    <ClCompile Include="libtorrent\src\kademlia\refresh.cpp" />
+    <ClCompile Include="libtorrent\src\kademlia\routing_table.cpp" />
+    <ClCompile Include="libtorrent\src\kademlia\rpc_manager.cpp" />
+    <ClCompile Include="libtorrent\src\kademlia\sample_infohashes.cpp" />
+    <ClCompile Include="libtorrent\src\kademlia\traversal_algorithm.cpp" />
+    <ClCompile Include="libtorrent\src\lazy_bdecode.cpp" />
+    <ClCompile Include="libtorrent\src\listen_socket_handle.cpp" />
+    <ClCompile Include="libtorrent\src\lsd.cpp" />
+    <ClCompile Include="libtorrent\src\magnet_uri.cpp" />
+    <ClCompile Include="libtorrent\src\merkle.cpp" />
+    <ClCompile Include="libtorrent\src\natpmp.cpp" />
+    <ClCompile Include="libtorrent\src\packet_buffer.cpp" />
+    <ClCompile Include="libtorrent\src\parse_url.cpp" />
+    <ClCompile Include="libtorrent\src\part_file.cpp" />
+    <ClCompile Include="libtorrent\src\path.cpp" />
+    <ClCompile Include="libtorrent\src\peer_class.cpp" />
+    <ClCompile Include="libtorrent\src\peer_class_set.cpp" />
+    <ClCompile Include="libtorrent\src\peer_connection.cpp" />
+    <ClCompile Include="libtorrent\src\peer_connection_handle.cpp" />
+    <ClCompile Include="libtorrent\src\peer_info.cpp" />
+    <ClCompile Include="libtorrent\src\peer_list.cpp" />
+    <ClCompile Include="libtorrent\src\performance_counters.cpp" />
+    <ClCompile Include="libtorrent\src\pe_crypto.cpp" />
+    <ClCompile Include="libtorrent\src\piece_picker.cpp" />
+    <ClCompile Include="libtorrent\src\platform_util.cpp" />
+    <ClCompile Include="libtorrent\src\proxy_base.cpp" />
+    <ClCompile Include="libtorrent\src\proxy_settings.cpp" />
+    <ClCompile Include="libtorrent\src\puff.cpp" />
+    <ClCompile Include="libtorrent\src\random.cpp" />
+    <ClCompile Include="libtorrent\src\read_resume_data.cpp" />
+    <ClCompile Include="libtorrent\src\receive_buffer.cpp" />
+    <ClCompile Include="libtorrent\src\request_blocks.cpp" />
+    <ClCompile Include="libtorrent\src\resolver.cpp" />
+    <ClCompile Include="libtorrent\src\resolve_links.cpp" />
+    <ClCompile Include="libtorrent\src\session.cpp">
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)%(Filename)1.obj</ObjectFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(IntDir)%(Filename)1.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)%(Filename)1.xdc</XMLDocumentationFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(IntDir)%(Filename)1.xdc</XMLDocumentationFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)%(Filename)1.obj</ObjectFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(IntDir)%(Filename)1.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)%(Filename)1.xdc</XMLDocumentationFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(IntDir)%(Filename)1.xdc</XMLDocumentationFileName>
+    </ClCompile>
+    <ClCompile Include="libtorrent\src\session_call.cpp" />
+    <ClCompile Include="libtorrent\src\session_handle.cpp" />
+    <ClCompile Include="libtorrent\src\session_impl.cpp" />
+    <ClCompile Include="libtorrent\src\session_settings.cpp" />
+    <ClCompile Include="libtorrent\src\session_stats.cpp" />
+    <ClCompile Include="libtorrent\src\session_udp_sockets.cpp" />
+    <ClCompile Include="libtorrent\src\settings_pack.cpp" />
+    <ClCompile Include="libtorrent\src\sha1.cpp" />
+    <ClCompile Include="libtorrent\src\sha1_hash.cpp" />
+    <ClCompile Include="libtorrent\src\sha512.cpp" />
+    <ClCompile Include="libtorrent\src\smart_ban.cpp" />
+    <ClCompile Include="libtorrent\src\socket_io.cpp" />
+    <ClCompile Include="libtorrent\src\socket_type.cpp" />
+    <ClCompile Include="libtorrent\src\socks5_stream.cpp" />
+    <ClCompile Include="libtorrent\src\stack_allocator.cpp" />
+    <ClCompile Include="libtorrent\src\stat.cpp" />
+    <ClCompile Include="libtorrent\src\stat_cache.cpp" />
+    <ClCompile Include="libtorrent\src\storage.cpp" />
+    <ClCompile Include="libtorrent\src\storage_piece_set.cpp" />
+    <ClCompile Include="libtorrent\src\storage_utils.cpp" />
+    <ClCompile Include="libtorrent\src\string_util.cpp" />
+    <ClCompile Include="libtorrent\src\time.cpp" />
+    <ClCompile Include="libtorrent\src\timestamp_history.cpp" />
+    <ClCompile Include="libtorrent\src\torrent.cpp">
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)%(Filename)1.obj</ObjectFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(IntDir)%(Filename)1.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)%(Filename)1.xdc</XMLDocumentationFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(IntDir)%(Filename)1.xdc</XMLDocumentationFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)%(Filename)1.obj</ObjectFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(IntDir)%(Filename)1.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)%(Filename)1.xdc</XMLDocumentationFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(IntDir)%(Filename)1.xdc</XMLDocumentationFileName>
+    </ClCompile>
+    <ClCompile Include="libtorrent\src\torrent_handle.cpp">
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)%(Filename)1.obj</ObjectFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(IntDir)%(Filename)1.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)%(Filename)1.xdc</XMLDocumentationFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(IntDir)%(Filename)1.xdc</XMLDocumentationFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)%(Filename)1.obj</ObjectFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(IntDir)%(Filename)1.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)%(Filename)1.xdc</XMLDocumentationFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(IntDir)%(Filename)1.xdc</XMLDocumentationFileName>
+    </ClCompile>
+    <ClCompile Include="libtorrent\src\torrent_info.cpp">
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)%(Filename)1.obj</ObjectFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(IntDir)%(Filename)1.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)%(Filename)1.xdc</XMLDocumentationFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(IntDir)%(Filename)1.xdc</XMLDocumentationFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)%(Filename)1.obj</ObjectFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(IntDir)%(Filename)1.obj</ObjectFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)%(Filename)1.xdc</XMLDocumentationFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(IntDir)%(Filename)1.xdc</XMLDocumentationFileName>
+    </ClCompile>
+    <ClCompile Include="libtorrent\src\torrent_peer.cpp" />
+    <ClCompile Include="libtorrent\src\torrent_peer_allocator.cpp" />
+    <ClCompile Include="libtorrent\src\torrent_status.cpp" />
+    <ClCompile Include="libtorrent\src\tracker_manager.cpp" />
+    <ClCompile Include="libtorrent\src\udp_socket.cpp" />
+    <ClCompile Include="libtorrent\src\udp_tracker_connection.cpp" />
+    <ClCompile Include="libtorrent\src\upnp.cpp" />
+    <ClCompile Include="libtorrent\src\utf8.cpp" />
+    <ClCompile Include="libtorrent\src\utp_socket_manager.cpp" />
+    <ClCompile Include="libtorrent\src\utp_stream.cpp" />
+    <ClCompile Include="libtorrent\src\ut_metadata.cpp" />
+    <ClCompile Include="libtorrent\src\ut_pex.cpp" />
+    <ClCompile Include="libtorrent\src\version.cpp" />
+    <ClCompile Include="libtorrent\src\web_connection_base.cpp" />
+    <ClCompile Include="libtorrent\src\web_peer_connection.cpp" />
+    <ClCompile Include="libtorrent\src\write_resume_data.cpp" />
+    <ClCompile Include="libtorrent\src\xml_parse.cpp" />
+    <ClCompile Include="libtorrent\zlib\adler32.c" />
+    <ClCompile Include="libtorrent\zlib\compress.c" />
+    <ClCompile Include="libtorrent\zlib\crc32.c" />
+    <ClCompile Include="libtorrent\zlib\deflate.c" />
+    <ClCompile Include="libtorrent\zlib\infback.c" />
+    <ClCompile Include="libtorrent\zlib\inffast.c" />
+    <ClCompile Include="libtorrent\zlib\inflate.c" />
+    <ClCompile Include="libtorrent\zlib\inftrees.c" />
+    <ClCompile Include="libtorrent\zlib\trees.c" />
+    <ClCompile Include="libtorrent\zlib\uncompr.c" />
+    <ClCompile Include="libtorrent\zlib\zutil.c" />
+    <ClCompile Include="src\autosizeinput.cpp" />
+    <ClCompile Include="src\bitswash.cpp" />
+    <ClCompile Include="src\bittorrentsession.cpp" />
+    <ClCompile Include="src\configuration.cpp" />
+    <ClCompile Include="src\connectionsetting.cpp" />
+    <ClCompile Include="src\extensionsetting.cpp" />
+    <ClCompile Include="src\filelistctrl.cpp" />
+    <ClCompile Include="src\functions.cpp" />
+    <ClCompile Include="src\generalsetting.cpp" />
+    <ClCompile Include="src\icons.cpp" />
+    <ClCompile Include="src\infohash.cpp" />
+    <ClCompile Include="src\loggerctrl.cpp" />
+    <ClCompile Include="src\magneturi.cpp" />
+    <ClCompile Include="src\mainframe.cpp" />
+    <ClCompile Include="src\peerlistctrl.cpp" />
+    <ClCompile Include="src\summarypane.cpp" />
+    <ClCompile Include="src\swashgauge.cpp" />
+    <ClCompile Include="src\swashlistctrl.cpp" />
+    <ClCompile Include="src\swashsetting.cpp" />
+    <ClCompile Include="src\swashstatbar.cpp" />
+    <ClCompile Include="src\swashtrayicon.cpp" />
+    <ClCompile Include="src\torrentconfig.cpp" />
+    <ClCompile Include="src\torrentinfo.cpp" />
+    <ClCompile Include="src\torrentlistctrl.cpp" />
+    <ClCompile Include="src\torrentproperty.cpp" />
+    <ClCompile Include="src\torrentsetting.cpp" />
+    <ClCompile Include="src\trackerentry.cpp" />
+    <ClCompile Include="src\trackerlistctrl.cpp" />
+    <ClCompile Include="src\urldialog.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="libtorrent\include\libtorrent\Makefile.am" />
+    <None Include="src\wx\msw\blank.cur" />
+    <None Include="src\wx\msw\bullseye.cur" />
+    <None Include="src\wx\msw\cross.cur" />
+    <None Include="src\wx\msw\hand.cur" />
+    <None Include="src\wx\msw\magnif1.cur" />
+    <None Include="src\wx\msw\pbrush.cur" />
+    <None Include="src\wx\msw\pencil.cur" />
+    <None Include="src\wx\msw\pntleft.cur" />
+    <None Include="src\wx\msw\pntright.cur" />
+    <None Include="src\wx\msw\roller.cur" />
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="bitswash_48x48.ico" />
+    <Image Include="src\wx\msw\cdrom.ico" />
+    <Image Include="src\wx\msw\colours.bmp" />
+    <Image Include="src\wx\msw\computer.ico" />
+    <Image Include="src\wx\msw\csquery.bmp" />
+    <Image Include="src\wx\msw\drive.ico" />
+    <Image Include="src\wx\msw\file1.ico" />
+    <Image Include="src\wx\msw\floppy.ico" />
+    <Image Include="src\wx\msw\folder1.ico" />
+    <Image Include="src\wx\msw\folder2.ico" />
+    <Image Include="src\wx\msw\removble.ico" />
+    <Image Include="src\wx\msw\std.ico" />
+  </ItemGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ImportGroup Label="ExtensionTargets">
+  </ImportGroup>
+</Project>
