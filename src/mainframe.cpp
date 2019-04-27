@@ -481,7 +481,7 @@ void MainFrame::OnMenuTorrentOpenDir( wxCommandEvent& event )
 	{
 		//XXX windows might needs special treatment here!
 #if  defined(__WXMSW__)
-		wxExecute( _T( "Explorer " ) + pTorrent->config->GetDownloadPath() + wxConvUTF8.cMB2WC(pTorrent->info->name().c_str() ) + wxFileName::GetPathSeparator(), wxEXEC_ASYNC, nullptr );
+		wxExecute( _T( "Explorer.exe /select, \"" ) + pTorrent->config->GetDownloadPath() + wxConvUTF8.cMB2WC(pTorrent->info->name().c_str() ) + wxT("\""), wxEXEC_ASYNC, nullptr );
 #elif defined(__APPLE__)
 		wxExecute( _T( "/usr/bin/open ") + pTorrent->config->GetDownloadPath() + wxConvUTF8.cMB2WC(pTorrent->info->name().c_str() ) + wxFileName::GetPathSeparator(), wxEXEC_ASYNC, nullptr );
 #elif defined(__WXGTK__)
