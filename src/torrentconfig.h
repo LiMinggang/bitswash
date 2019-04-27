@@ -23,8 +23,8 @@
 #include <wx/arrstr.h>
 #include <map>
 #include <vector>
-#include "libtorrent/announce_entry.hpp"
-#include "libtorrent/download_priority.hpp"
+#include <libtorrent/announce_entry.hpp>
+#include <libtorrent/download_priority.hpp>
 #include "storage.hpp"
 
 enum

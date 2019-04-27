@@ -19,9 +19,15 @@ Currently supported Languages:
 Build:
 -----
 BOOST
-.\bjam.exe define=_WIN32_WINNT=0x0601 --with-thread --with-filesystem
+.\bjam.exe define=_WIN32_WINNT=0x0601 --with-thread --with-filesystem --with-system
 --with-regex --with-iostreams threading=multi variant=release link=static
 address-model=64 runtime-link=static stage
+
+libtorrent
+export OPENSSL_ROOT, LIBTORRENT_ROOT and BOOST_ROOT
+cmake -DCMAKE_BUILD_TYPE=Release -DCMAKE_CXX_STANDARD=11 -DBUILD_SHARED_LIBS=OFF
+-Dstatic_runtime=ON
+use VS to build after changing to Unicode
 
 News:
 ----
@@ -30,8 +36,9 @@ New: Connection boost counter config for torrent
 Fix: Open directory not take effect in next run
 Fix: Remove canclled Magnet URI download
 Fix: Text blurry issue under high DPI Windows 10
+Remove libtorrent code
 Update translations
-Update libTorrent to 4abeb2641fc18e30054b07ec7e9e265d4e874add
+Update libTorrent to 1_2_RC
 
 0.0.9
 New: Drag and Drop for both file and URL/Magnet URI strings

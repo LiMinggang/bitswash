@@ -34,8 +34,6 @@
 #include <libtorrent/torrent_handle.hpp>
 #include <libtorrent/announce_entry.hpp>
 
-
-
 #define ID_FILELIST_CTRL_START wxID_HIGHEST + 1
 
 #include "swashlistctrl.h"
