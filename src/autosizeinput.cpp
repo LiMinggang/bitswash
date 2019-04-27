@@ -78,11 +78,6 @@ void AutoSizeInput::SetValue(long val)
 	m_comboUnit->SetValue(units[i] + m_unit_base);
 }
 
-long AutoSizeInput::GetValue()
-{
-	return m_value;
-}
-
 void AutoSizeInput::OnSpinUpdate(wxSpinEvent& WXUNUSED(event))
 {
 	long mply =((long)1) << (m_comboidx * 10);

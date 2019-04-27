@@ -35,7 +35,7 @@ class AutoSizeInput : public wxPanel
 public:
 	AutoSizeInput(wxWindow* parent, wxString unitbase = _T("B"), int usize = 3, int id = wxID_ANY, wxPoint pos = wxDefaultPosition, wxSize size = wxDefaultSize, int style = wxTAB_TRAVERSAL);
 	void SetValue(long val);
-	long GetValue();
+	long GetValue() { return m_value; }
 
 protected:
 	wxSpinCtrl* m_spinValue;
