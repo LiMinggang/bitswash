@@ -26,7 +26,7 @@ address-model=64 runtime-link=static stage
 libtorrent
 export OPENSSL_ROOT, LIBTORRENT_ROOT and BOOST_ROOT
 cmake -DCMAKE_BUILD_TYPE=Release -DCMAKE_CXX_STANDARD=11 -DBUILD_SHARED_LIBS=OFF
--Dstatic_runtime=ON -D_WIN32_WINNT=0x0601 -DCMAKE_GENERATOR_PLATFORM=x64
+-Dstatic_runtime=ON -D_WIN32_WINNT=0x0601 -DCMAKE_GENERATOR_PLATFORM=x64 -Ddeprecated-functions=OFF
 use VS to build after changing to Unicode
 
 News:
