@@ -2164,7 +2164,10 @@ void BitTorrentSession::RemoveTorrent( int idx, bool deletedata )
 {
 	std::shared_ptr<torrent_t> torrent = GetTorrent( idx );
 	if(torrent)
+	{
+		StopTorrent( torrent );
 		RemoveTorrent( torrent, deletedata);
+	}
 }
 
 void BitTorrentSession::StartTorrent( int idx, bool force )

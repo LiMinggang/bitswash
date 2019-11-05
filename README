@@ -41,9 +41,12 @@ Fix: Open directory not take effect in next run
 Fix: Remove canclled Magnet URI download
 Fix: Text blurry issue under high DPI Windows 10
 Fix: Can't select the directory by Open dir memu
+Fix: Stop Torrent before remove
 Remove libtorrent code
 Update translations
-Update libTorrent to 1_2_RC
+Update libTorrent to 1_2_2
+Update wxWidgets 3.1.3
+Update boost to 1.71
 
 0.0.9
 New: Drag and Drop for both file and URL/Magnet URI strings
