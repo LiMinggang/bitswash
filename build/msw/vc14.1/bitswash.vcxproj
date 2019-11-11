@@ -22,7 +22,7 @@
     <ProjectGuid>{4EFBB1F8-4E95-43CE-8873-628348CBD8E9}</ProjectGuid>
     <RootNamespace>bitswash-win32</RootNamespace>
     <Keyword>Win32Proj</Keyword>
-    <WindowsTargetPlatformVersion>10.0.16299.0</WindowsTargetPlatformVersion>
+    <WindowsTargetPlatformVersion>10.0.17763.0</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
@@ -116,8 +116,8 @@
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <ClCompile>
       <Optimization>Disabled</Optimization>
-      <AdditionalIncludeDirectories>$(WXWIN)\include;$(WXWIN)\include\msvc;$(OPENSSL_ROOT_DIR)\include;$(BOOST_ROOT);$(LIBTORRENT_ROOT)\include\libtorrent;$(LIBTORRENT_ROOT)\include\;$(LIBTORRENT_ROOT)\zlib;..\..\..\libgeoip;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <PreprocessorDefinitions>BOOST_ALL_NO_LIB;BOOST_ASIO_ENABLE_CANCELIO;BOOST_ASIO_DISABLE_CONNECTEX;BOOST_ASIO_HASH_MAP_BUCKETS=1021;BOOST_USE_WINAPI_VERSION=0x0601;BOOST_SYSTEM_STATIC_LINK=1;BOOST_ASIO_HAS_STD_CHRONO;BOOST_EXCEPTION_DISABLE;BOOST_THREAD_USE_LIB;BOOST_THREAD_BUILD_LIB=1;BOOST_MULTI_INDEX_DISABLE_SERIALIZATION;TORRENT_ABI_VERSION=1;TORRENT_USE_I2P=1;TORRENT_USE_TOMMATH;TORRENT_DEBUG;TORRENT_USE_OPENSSL;TORRENT_USE_LIBCRYPTO;TORRENT_USE_ASSERTS;TORRENT_NO_DEPRECATE;_SCL_SECURE_NO_DEPRECATE;_CRT_SECURE_NO_WARNINGS;USE_INTERNAL_GEOIP;UNICODE;_UNICODE;WIN32;_DEBUG;_WINDOWS;WIN32_LEAN_AND_MEAN;_CRT_SECURE_NO_DEPRECATE;_FILE_OFFSET_BITS=64;_WIN32_WINNT=0x0601;__USE_W32_SOCKETS;__WXMSW__;__WXDEBUG__;wxUSE_LIBPNG=1;WXVER=311;GEOIP_STATIC;USE_LIBGEOIP;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>$(WXWIN)\include;$(WXWIN)\include\msvc;$(OPENSSL_ROOT)\include;$(BOOST_ROOT);$(LIBTORRENT_ROOT)\include\libtorrent;$(LIBTORRENT_ROOT)\include\;$(LIBTORRENT_ROOT)\zlib;..\..\..\libgeoip;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>BOOST_ALL_NO_LIB;BOOST_ASIO_ENABLE_CANCELIO;BOOST_ASIO_DISABLE_CONNECTEX;BOOST_ASIO_HASH_MAP_BUCKETS=1021;BOOST_USE_WINAPI_VERSION=0x0601;BOOST_SYSTEM_STATIC_LINK=1;BOOST_ASIO_HAS_STD_CHRONO;BOOST_EXCEPTION_DISABLE;BOOST_THREAD_USE_LIB;BOOST_THREAD_BUILD_LIB=1;BOOST_MULTI_INDEX_DISABLE_SERIALIZATION;TORRENT_USE_I2P=1;TORRENT_USE_TOMMATH;TORRENT_DEBUG;TORRENT_USE_OPENSSL;TORRENT_USE_LIBCRYPTO;TORRENT_USE_ASSERTS;TORRENT_NO_DEPRECATE;_SCL_SECURE_NO_DEPRECATE;_CRT_SECURE_NO_WARNINGS;USE_INTERNAL_GEOIP;UNICODE;_UNICODE;WIN32;_DEBUG;_WINDOWS;WIN32_LEAN_AND_MEAN;_CRT_SECURE_NO_DEPRECATE;_FILE_OFFSET_BITS=64;_WIN32_WINNT=0x0601;__USE_W32_SOCKETS;__WXMSW__;__WXDEBUG__;wxUSE_LIBPNG=1;WXVER=311;GEOIP_STATIC;USE_LIBGEOIP;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
       <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
       <RuntimeTypeInfo>true</RuntimeTypeInfo>
@@ -132,8 +132,8 @@
       <UseLibraryDependencyInputs>false</UseLibraryDependencyInputs>
     </ProjectReference>
     <Link>
-      <AdditionalDependencies>wxmsw31ud_aui.lib;wxmsw31ud_html.lib;wxmsw31ud_adv.lib;wxmsw31ud_core.lib;wxbase31ud_xml.lib;wxbase31ud.lib;wxtiffd.lib;wxjpegd.lib;wxpngd.lib;wxzlibd.lib;wxregexud.lib;wxexpatd.lib;torrent-rasterbar.lib;libboost_filesystem-vc141-mt-sgd-x64-1_70.lib;libboost_regex-vc141-mt-sgd-x64-1_70.lib;libboost_iostreams-vc141-mt-sgd-x64-1_70.lib;libboost_thread-vc141-mt-sgd-x64-1_70.lib;libboost_system-vc141-mt-sgd-x64-1_70.lib;libssl.lib;libcrypto.lib;Iphlpapi.lib;Ws2_32.lib;DbgHelp.lib;winmm.lib;comctl32.lib;rpcrt4.lib;odbc32.lib;crypt32.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <AdditionalLibraryDirectories>$(WXWIN)\lib\vc_x64_lib\;$(OPENSSL_ROOT_DIR);$(BOOST_ROOT)\stage\lib;$(LIBTORRENT_ROOT)\Debug;$(SolutionDir)$(Platform)\$(Configuration);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>wxmsw31ud_aui.lib;wxmsw31ud_html.lib;wxmsw31ud_adv.lib;wxmsw31ud_core.lib;wxbase31ud_xml.lib;wxbase31ud.lib;wxtiffd.lib;wxjpegd.lib;wxpngd.lib;wxzlibd.lib;wxregexud.lib;wxexpatd.lib;torrent-rasterbar.lib;libboost_filesystem-vc141-mt-sgd-x64-1_71.lib;libboost_regex-vc141-mt-sgd-x64-1_71.lib;libboost_iostreams-vc141-mt-sgd-x64-1_71.lib;libboost_thread-vc141-mt-sgd-x64-1_71.lib;libboost_system-vc141-mt-sgd-x64-1_71.lib;libssl.lib;libcrypto.lib;Iphlpapi.lib;Ws2_32.lib;DbgHelp.lib;winmm.lib;comctl32.lib;rpcrt4.lib;odbc32.lib;crypt32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>$(WXWIN)\lib\vc_x64_lib\;$(OPENSSL_ROOT);$(BOOST_ROOT)\stage\lib;$(LIBTORRENT_ROOT)\cmake\Debug;$(SolutionDir)$(Platform)\$(Configuration);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <SubSystem>Windows</SubSystem>
     </Link>
@@ -165,7 +165,7 @@
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <ClCompile>
-      <AdditionalIncludeDirectories>$(WXWIN)\include;$(WXWIN)\include\msvc;$(OPENSSL_ROOT_DIR)\include;$(BOOST_ROOT);$(LIBTORRENT_ROOT)\include\libtorrent;$(LIBTORRENT_ROOT)\include\;$(LIBTORRENT_ROOT)\zlib;..\..\..\libgeoip;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(WXWIN)\include;$(WXWIN)\include\msvc;$(OPENSSL_ROOT)\include;$(BOOST_ROOT);$(LIBTORRENT_ROOT)\include\libtorrent;$(LIBTORRENT_ROOT)\include\;$(LIBTORRENT_ROOT)\zlib;..\..\..\libgeoip;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>BOOST_ALL_NO_LIB;BOOST_ASIO_ENABLE_CANCELIO;BOOST_ASIO_DISABLE_CONNECTEX;BOOST_ASIO_HASH_MAP_BUCKETS=1021;BOOST_USE_WINAPI_VERSION=0x0601;BOOST_SYSTEM_STATIC_LINK=1;BOOST_ASIO_HAS_STD_CHRONO;BOOST_EXCEPTION_DISABLE;BOOST_THREAD_USE_LIB;BOOST_THREAD_BUILD_LIB=1;BOOST_MULTI_INDEX_DISABLE_SERIALIZATION;TORRENT_USE_I2P=1;TORRENT_USE_TOMMATH;TORRENT_USE_OPENSSL;TORRENT_USE_LIBCRYPTO;TORRENT_USE_ASSERTS;TORRENT_NO_DEPRECATE;_SCL_SECURE_NO_DEPRECATE;_CRT_SECURE_NO_WARNINGS;USE_INTERNAL_GEOIP;NDEBUG;UNICODE;_UNICODE;WIN32;_WINDOWS;WIN32_LEAN_AND_MEAN;_CRT_SECURE_NO_DEPRECATE;_FILE_OFFSET_BITS=64;_WIN32_WINNT=0x0601;__USE_W32_SOCKETS;__WXMSW__;wxUSE_LIBPNG=1;WXVER=312;GEOIP_STATIC;USE_LIBGEOIP;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <StringPooling>true</StringPooling>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
@@ -180,7 +180,7 @@
     </ProjectReference>
     <Link>
       <AdditionalDependencies>wxmsw31u_aui.lib;wxmsw31u_html.lib;wxmsw31u_adv.lib;wxmsw31u_core.lib;wxbase31u_xml.lib;wxbase31u.lib;wxtiff.lib;wxjpeg.lib;wxpng.lib;wxzlib.lib;wxregexu.lib;wxexpat.lib;torrent-rasterbar.lib;libboost_filesystem-vc141-mt-s-x64-1_70.lib;libboost_regex-vc141-mt-s-x64-1_70.lib;libboost_iostreams-vc141-mt-s-x64-1_70.lib;libboost_thread-vc141-mt-s-x64-1_70.lib;libboost_system-vc141-mt-s-x64-1_70.lib;libssl.lib;libcrypto.lib;Iphlpapi.lib;Ws2_32.lib;DbgHelp.lib;winmm.lib;comctl32.lib;rpcrt4.lib;odbc32.lib;crypt32.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <AdditionalLibraryDirectories>$(WXWIN)\lib\vc_x64_lib\;$(OPENSSL_ROOT_DIR);$(BOOST_ROOT)\stage\lib;$(LIBTORRENT_ROOT)\Release;$(SolutionDir)$(Platform)\$(Configuration);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>$(WXWIN)\lib\vc_x64_lib\;$(OPENSSL_ROOT);$(BOOST_ROOT)\stage\lib;$(LIBTORRENT_ROOT)\cmake\Release;$(SolutionDir)$(Platform)\$(Configuration);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <IgnoreAllDefaultLibraries>false</IgnoreAllDefaultLibraries>
       <GenerateDebugInformation>false</GenerateDebugInformation>
       <SubSystem>Windows</SubSystem>
