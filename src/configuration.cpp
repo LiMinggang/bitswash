@@ -286,33 +286,35 @@ void Configuration::Load()
 	m_cfg->Read( _T( "/Config/exclude_seed" ), &m_exclude_seed, true );
 #ifdef __WXMSW__
 	m_cfg->Read( _T( "/Config/run_at_startup" ), &m_run_at_startup, false );
-	wxRegKey regKey( m_startup_regkey );
-	if( regKey.Exists() )
-	{
-		if( !m_run_at_startup )
-		{
-			wxString value;
-			if( regKey.QueryValue( APPNAME, value ) )
-				regKey.DeleteValue( APPNAME );
-		}
-		else
-		{
-			wxString exepath( _T( "\"" ) );
-			exepath += GetExecutablePath() + _T( "\"" );
-			regKey.SetValue( APPNAME, exepath );
-		}
-	}
-
 	m_cfg->Read( _T( "/Config/associate_torrent" ), &m_associate_torrent, false );
-	if(m_associate_torrent)
-		AddType( _T(".torrent") );
-	else
-		RemoveType(_T(".torrent"));
-	m_cfg->Read( _T( "/Config/associate_magneturi" ), &m_associate_magneturi, false );
-	if (m_associate_magneturi)
-		AddMagnetLinkType();
-	else
-		RemoveMagnetLinkType();
+	{
+		wxLogNull logNull;
+		wxRegKey regKey( m_startup_regkey );
+		if( regKey.Exists() )
+		{
+			if( !m_run_at_startup )
+			{
+				wxString value;
+				if( regKey.QueryValue( APPNAME, value ) )
+					regKey.DeleteValue( APPNAME );
+			}
+			else
+			{
+				wxString exepath( _T( "\"" ) );
+				exepath += GetExecutablePath() + _T( "\"" );
+				regKey.SetValue( APPNAME, exepath );
+			}
+		}
+		if(m_associate_torrent)
+			AddType( _T(".torrent") );
+		else
+			RemoveType(_T(".torrent"));
+		m_cfg->Read( _T( "/Config/associate_magneturi" ), &m_associate_magneturi, false );
+		if (m_associate_magneturi)
+			AddMagnetLinkType();
+		else
+			RemoveMagnetLinkType();
+	}
 #endif
 	//
 	m_cfg->Read( _T( "/Config/enable_upnp" ), &m_enable_upnp, true );
