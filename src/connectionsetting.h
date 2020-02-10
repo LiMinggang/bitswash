@@ -60,7 +60,7 @@ public:
 	bool GetAllowMultipleConnectionsPerIp();
 	int  GetChokingAlgorithm();
 	int  GetSeedChokingAlgorithm();
-	const wxString& GetDhtBootstrapNodes();
+	wxString GetDhtBootstrapNodes();
 
 private: 
 		//(*Declarations(ConnectionSettingPane)

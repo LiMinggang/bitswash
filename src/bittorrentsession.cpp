@@ -551,7 +551,7 @@ void BitTorrentSession::Configure(lt::settings_pack &settingsPack)
 		| lt::alert::stats_notification);
 	settingsPack.set_str(lt::settings_pack::peer_fingerprint, peerId);
 	settingsPack.set_bool(lt::settings_pack::listen_system_port_fallback, false);
-	settingsPack.set_bool(lt::settings_pack::upnp_ignore_nonrouters, true);
+	//settingsPack.set_bool(lt::settings_pack::upnp_ignore_nonrouters, true);
 	settingsPack.set_bool(lt::settings_pack::use_dht_as_fallback, false);
 	// Disable support for SSL torrents for now
 	//settingsPack.set_int(lt::settings_pack::ssl_listen, 0);

@@ -26,11 +26,9 @@
 #include <wx/sstream.h>
 #include <wx/textctrl.h>
 
-
 #include <wx/log.h>
 
 #include "mainframe.h"
-
 #include "connectionsetting.h"
 #include "configuration.h"
 #include "functions.h"
@@ -287,17 +285,17 @@ bool ConnectionSettingPane::GetAllowMultipleConnectionsPerIp()
 	return m_check_rate_limit_ip_overhead->GetValue();
 }
 
-int  ConnectionSettingPane::GetChokingAlgorithm()
+int ConnectionSettingPane::GetChokingAlgorithm()
 {
 	return m_choice_choking_algorithm->GetSelection();
 }
 
-int  ConnectionSettingPane::GetSeedChokingAlgorithm()
+int ConnectionSettingPane::GetSeedChokingAlgorithm()
 {
 	return m_choice_seed_choking_algorithm->GetSelection();
 }
 
-const wxString& ConnectionSettingPane::GetDhtBootstrapNodes()
+wxString ConnectionSettingPane::GetDhtBootstrapNodes()
 {
 	return m_dht_bootstrap_nodes->GetValue();
 }
