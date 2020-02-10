@@ -884,7 +884,7 @@ bool BitTorrentSession::AddTorrent( std::shared_ptr<torrent_t>& torrent )
 			}
 
 			int idx = (int)m_torrent_queue.size();
-			wxASSERT(idx > 0);
+			//wxASSERT(idx >= 0);
 
 			m_torrent_queue.push_back( torrent );
 			m_running_torrent_map.insert( std::pair<wxString, int>( thash, idx) );
@@ -1497,6 +1497,19 @@ std::shared_ptr<torrent_t> BitTorrentSession::LoadMagnetUri( MagnetUri& magnetur
 					torrent->config.reset( new TorrentConfig( thash ) );
 					torrent->config->SetTorrentMagnetUri(magneturi.url());
 					torrent->config->SetTorrentState( TORRENT_STATE_START );
+
+					std::vector<wxString>&historypath = m_config->GetSavePathHistory();
+					std::vector<wxString>::reverse_iterator path  = historypath.rbegin();
+					wxString spath(wxEmptyString);
+					if(path != historypath.rend())
+					{
+						spath = *path;
+					}
+					if(spath == wxEmptyString)
+					{
+						spath = wxFileName::GetTempDir();
+					}
+					torrent->config->SetDownloadPath(spath);
 
 					torrent->isvalid = false;
 					AddMagnetUriToSession(torrent);

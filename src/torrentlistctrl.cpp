@@ -282,7 +282,7 @@ void TorrentListCtrl::OnLeftDClick(wxMouseEvent& event)
 {
 	auto pTorrent = m_pMainFrame->GetSelectedTorrent();
 
-	if( pTorrent )
+	if( pTorrent && pTorrent->info )
 	{
 		bool openpath = false, nopriority = false;
 		int fileidx = -1;

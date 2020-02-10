@@ -554,7 +554,7 @@ bool Configuration::DetectType(const wxString& type)
 
 void Configuration::AddType( const wxString& type )
 {
-	wxString value;
+	wxString value(wxEmptyString);
 	wxString bitswash_type = wxString( APPNAME ) + type;
 	wxRegKey *pRegKey = new wxRegKey( m_bitswash_regkey_path + type );
 

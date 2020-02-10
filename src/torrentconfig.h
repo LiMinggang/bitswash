@@ -76,8 +76,8 @@ public:
 
 	int GetQIndex() { return m_qindex; }
 	void SetQIndex( int qindex ) { m_qindex = qindex; }
-	const wxString GetDownloadPath() { return m_downloadpath; }
-	void SetDownloadPath( wxString path ) { m_downloadpath = path; }
+	const wxString& GetDownloadPath() { return m_downloadpath; }
+	void SetDownloadPath( wxString& path ) { m_downloadpath = path; }
 
 	bool GetEnableVideoPreview() { return m_enable_video_preview; }
 	void SetEnableVideoPreview( bool enable ) { m_enable_video_preview = enable; }
