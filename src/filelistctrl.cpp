@@ -653,7 +653,7 @@ void FileListCtrl::OnMenuOpenPath( wxCommandEvent& event )
 			m_pTorrent.reset();
 	}
 
-	if( pTorrent )
+	if( pTorrent && pTorrent->info )
 	{
 		int selectedfiles = GetFirstSelected();
 		if( selectedfiles != -1 )
