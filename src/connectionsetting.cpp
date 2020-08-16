@@ -157,9 +157,11 @@ ConnectionSettingPane::ConnectionSettingPane( wxWindow* parent, wxWindowID id,co
 	m_check_os_cache = new wxCheckBox(this, wxID_ANY, _("Enable OS Cache"), wxDefaultPosition, wxDefaultSize, 0, wxDefaultValidator, _T("wxID_ANY"));
 	m_check_os_cache->SetValue(pcfg->GetUseOSCache());
 	FlexGridSizer4->Add(m_check_os_cache, 1, wxALL|wxALIGN_LEFT|wxALIGN_CENTER_VERTICAL, 5);
+#if TORRENT_ABI_VERSION == 1
 	m_check_supper_seeding = new wxCheckBox(this, wxID_ANY, _("Supper Seeding"), wxDefaultPosition, wxDefaultSize, 0, wxDefaultValidator, _T("wxID_ANY"));
 	m_check_supper_seeding->SetValue(pcfg->GetSupperSeeding());
 	FlexGridSizer4->Add(m_check_supper_seeding, 1, wxALL|wxALIGN_LEFT|wxALIGN_CENTER_VERTICAL, 5);
+#endif
 	m_check_prefer_udp_trackers = new wxCheckBox(this, wxID_ANY, _("Prefer UDP trackers"), wxDefaultPosition, wxDefaultSize, 0, wxDefaultValidator, _T("wxID_ANY"));
 	m_check_prefer_udp_trackers->SetValue(pcfg->GetPreferUdpTrackers());
 	FlexGridSizer4->Add(m_check_prefer_udp_trackers, 1, wxALL|wxALIGN_LEFT|wxALIGN_CENTER_VERTICAL, 5);
@@ -183,7 +185,9 @@ ConnectionSettingPane::ConnectionSettingPane( wxWindow* parent, wxWindowID id,co
 	m_choice_choking_algorithm = new wxChoice(this, wxID_ANY, wxDefaultPosition, wxDefaultSize, 0, 0, 0, wxDefaultValidator, _T("wxID_ANY"));
 	m_choice_choking_algorithm->Append(_("Fixed Slots"));
 	m_choice_choking_algorithm->Append(_("Rate Based"));
+#if TORRENT_ABI_VERSION == 1
 	m_choice_choking_algorithm->Append(_("BitTyrant"));
+#endif
 	m_choice_choking_algorithm->Select(pcfg->GetChokingAlgorithm());
 	FlexGridSizer5->Add(m_choice_choking_algorithm, 1, wxALL|wxALIGN_LEFT|wxALIGN_CENTER_VERTICAL, 5);
 	StaticText12 = new wxStaticText(this, wxID_ANY, _("Seed Choking Algorithm"), wxDefaultPosition, wxDefaultSize, 0, _T("wxID_ANY"));
@@ -261,10 +265,12 @@ bool ConnectionSettingPane::UseOSCache()
 	return m_check_os_cache->GetValue();
 }
 
+#if TORRENT_ABI_VERSION == 1
 bool ConnectionSettingPane::GetSupperSeeding()
 {
 	return m_check_supper_seeding->GetValue();
 }
+#endif
 
 int ConnectionSettingPane::GetEnabledProtocols()
 {

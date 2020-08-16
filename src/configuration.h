@@ -53,7 +53,9 @@ public:
 	{
 		FIXED_SLOTS = 0,
 		RATE_BASED  = 1,
+#if TORRENT_ABI_VERSION == 1
 		BITTYRANT   = 2,
+#endif
 	};
 
 	enum seed_choking_algorithm
@@ -355,8 +357,10 @@ public:
 	int GetMaxActiveSeeds() { return m_max_active_seeds; }
 	void SetMaxActiveSeeds(int active_seeds) { m_max_active_seeds = active_seeds; }
 
+#if TORRENT_ABI_VERSION == 1
 	bool GetSupperSeeding() { return m_super_seeding; }
 	void SetSupperSeeding( bool supperseeding ) { m_super_seeding = supperseeding; }
+#endif
 
 	bool GetIgnoreSlowTorrents() { return m_ignore_slow_torrents; }
 	void SetIgnoreSlowTorrents( bool ignore ) { m_ignore_slow_torrents = ignore; }

@@ -51,7 +51,9 @@ public:
 	int  GetMaxConnections();
 	bool IsAnonymousMode();
 	bool UseOSCache();
+#if TORRENT_ABI_VERSION == 1
 	bool GetSupperSeeding();
+#endif
 	int  GetEnabledProtocols();
 	bool GetRateLimitIpOverhead();
 	bool GetRateLimitUtp();
@@ -74,7 +76,9 @@ private:
 		wxCheckBox* m_check_rate_limit_ip_overhead;
 		wxCheckBox* m_check_rate_limit_peers_on_lan;
 		wxCheckBox* m_check_rate_limit_utp_protocol;
+#if TORRENT_ABI_VERSION == 1
 		wxCheckBox* m_check_supper_seeding;
+#endif
 		wxChoice* m_choice_choking_algorithm;
 		wxChoice* m_choice_enabled_protocols;
 		wxChoice* m_choice_seed_choking_algorithm;

@@ -509,7 +509,9 @@ void BitTorrentSession::Configure(lt::settings_pack &settingsPack)
 	// IP address to announce to trackers
 	//settingsPack.set_str(lt::settings_pack::announce_ip, Utils::String::toStdString(announceIP()));
 	// Super seeding
+#if TORRENT_ABI_VERSION == 1
 	settingsPack.set_bool(lt::settings_pack::strict_super_seeding, m_config->GetSupperSeeding());
+#endif
 	switch(m_config->GetEnabledProtocols())
 	{
 		case Configuration::PROTO_TCP:
@@ -578,9 +580,11 @@ void BitTorrentSession::Configure(lt::settings_pack &settingsPack)
 	case Configuration::RATE_BASED:
 		settingsPack.set_int(lt::settings_pack::choking_algorithm, lt::settings_pack::rate_based_choker);
 		break;
+#if TORRENT_ABI_VERSION == 1
 	case Configuration::BITTYRANT:
 		settingsPack.set_int(lt::settings_pack::choking_algorithm, lt::settings_pack::bittyrant_choker);
 		break;
+#endif
 	}
 
 	switch (m_config->GetSeedChokingAlgorithm()) {

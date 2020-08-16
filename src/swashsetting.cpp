@@ -161,7 +161,9 @@ void SwashSetting::OnOK(wxCommandEvent& event)
 	m_pcfg->SetGlobalMaxUploads(m_pane_connectionsettings->GetMaxUploads());
 	m_pcfg->SetAnonymousMode(m_pane_connectionsettings->IsAnonymousMode());
 	m_pcfg->SetUseOSCache(m_pane_connectionsettings->UseOSCache());
+#if TORRENT_ABI_VERSION == 1
 	m_pcfg->SetSupperSeeding(m_pane_connectionsettings->GetSupperSeeding());
+#endif
 	m_pcfg->SetEnabledProtocols(m_pane_connectionsettings->GetEnabledProtocols());
 	m_pcfg->SetRateLimitIpOverhead(m_pane_connectionsettings->GetRateLimitIpOverhead());
 	m_pcfg->SetPreferUdpTrackers(m_pane_connectionsettings->GetPreferUdpTrackers());

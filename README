@@ -46,7 +46,7 @@ Fix: Crash on double click a torrent without meta data(magic URI)
 Fix: Error messages of RegKey on startup(Windows)
 Remove libtorrent code
 Update translations
-Update libTorrent to 1_2_2
+Update libTorrent to 1_2_6
 Update wxWidgets 3.1.3
 Update boost to 1.71
 
