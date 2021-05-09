@@ -61,13 +61,9 @@ UrlDialog::UrlDialog(wxWindow* parent,wxWindowID id,const wxPoint& pos,const wxS
 	StdDialogButtonSizer1->AddButton(new wxButton(Panel1, wxID_CANCEL, wxEmptyString));
 	StdDialogButtonSizer1->Realize();
 	FlexGridSizer1->Add(StdDialogButtonSizer1, 1, wxALL|wxALIGN_RIGHT|wxALIGN_CENTER_VERTICAL, 5);
-	Panel1->SetSizer(FlexGridSizer1);
-	FlexGridSizer1->Fit(Panel1);
-	FlexGridSizer1->SetSizeHints(Panel1);
+	Panel1->SetSizerAndFit(FlexGridSizer1);
 	BoxSizer1->Add(Panel1, 1, wxALL|wxALIGN_CENTER_HORIZONTAL|wxALIGN_CENTER_VERTICAL, 5);
-	SetSizer(BoxSizer1);
-	BoxSizer1->Fit(this);
-	BoxSizer1->SetSizeHints(this);
+	SetSizerAndFit(BoxSizer1);
 	//*)
 }
 

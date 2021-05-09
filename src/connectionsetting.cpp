@@ -146,9 +146,7 @@ ConnectionSettingPane::ConnectionSettingPane( wxWindow* parent, wxWindowID id,co
 	BoxSizer3 = new wxBoxSizer(wxHORIZONTAL);
 	StaticText9 = new wxStaticText(Panel3, wxID_ANY, _("Miscellaneous"), wxDefaultPosition, wxDefaultSize, 0, _T("wxID_ANY"));
 	BoxSizer3->Add(StaticText9, 1, wxALL|wxALIGN_CENTER_HORIZONTAL|wxALIGN_CENTER_VERTICAL, 5);
-	Panel3->SetSizer(BoxSizer3);
-	BoxSizer3->Fit(Panel3);
-	BoxSizer3->SetSizeHints(Panel3);
+	Panel3->SetSizerAndFit(BoxSizer3);
 	FlexGridSizer1->Add(Panel3, 1, wxALL|wxEXPAND, 5);
 	FlexGridSizer4 = new wxFlexGridSizer(0, 2, 0, 0);
 	m_check_anonymous_mode = new wxCheckBox(this, wxID_ANY, _("Anonymous Mode"), wxDefaultPosition, wxDefaultSize, 0, wxDefaultValidator, _T("wxID_ANY"));
@@ -204,9 +202,7 @@ ConnectionSettingPane::ConnectionSettingPane( wxWindow* parent, wxWindowID id,co
 	m_dht_bootstrap_nodes->SetMinSize(wxSize(300,-1));
 	FlexGridSizer5->Add(m_dht_bootstrap_nodes, 1, wxALL|wxALIGN_LEFT|wxALIGN_CENTER_VERTICAL, 5);
 	FlexGridSizer1->Add(FlexGridSizer5, 1, wxALL|wxALIGN_LEFT|wxALIGN_CENTER_VERTICAL, 5);
-	SetSizer(FlexGridSizer1);
-	FlexGridSizer1->Fit(this);
-	FlexGridSizer1->SetSizeHints(this);
+	SetSizerAndFit(FlexGridSizer1);
 	//*)
 }
 

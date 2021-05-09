@@ -43,9 +43,7 @@ TorrentProperty::TorrentProperty(std::shared_ptr<torrent_t>& pTorrent, wxWindow*
 	m_pane_boxsizer = new wxBoxSizer(wxVERTICAL);
 	m_pane_label_info = new wxStaticText(m_pane_info, wxID_ANY, _("Torrent Info"), wxDefaultPosition, wxDefaultSize, 0, _T("ID_STATICTEXT1"));
 	m_pane_boxsizer->Add(m_pane_label_info, 1, wxALL|wxEXPAND, 5);
-	m_pane_info->SetSizer(m_pane_boxsizer);
-	m_pane_boxsizer->Fit(m_pane_info);
-	m_pane_boxsizer->SetSizeHints(m_pane_info);
+	m_pane_info->SetSizerAndFit(m_pane_boxsizer);
 	m_torrentsettings_sizer->Add(m_pane_info, 1, wxALL|wxEXPAND, 5);
 	fgSizer11 = new wxFlexGridSizer(0, 2, 2, 2);
 	m_label_name = new wxStaticText(this, wxID_ANY, _("Name:"), wxDefaultPosition, wxDefaultSize, 0, _T("ID_STATICTEXT2"));
@@ -124,9 +122,7 @@ TorrentProperty::TorrentProperty(std::shared_ptr<torrent_t>& pTorrent, wxWindow*
 	ButtonCancel = new wxButton(this, wxID_CANCEL, _("Cancel"), wxDefaultPosition, wxDefaultSize, 0, wxDefaultValidator, _T("wxID_CANCEL"));
 	BoxSizer1->Add(ButtonCancel, 0, wxALL|wxALIGN_CENTER_HORIZONTAL|wxALIGN_CENTER_VERTICAL, 5);
 	m_torrentsettings_sizer->Add(BoxSizer1, 1, wxALL|wxALIGN_CENTER_HORIZONTAL|wxALIGN_CENTER_VERTICAL, 5);
-	m_torrentsettings_sizer->Fit(this);
-	m_torrentsettings_sizer->SetSizeHints(this);
-	SetSizer(m_torrentsettings_sizer);
+	SetSizerAndFit(m_torrentsettings_sizer);
 	Layout();
 	Center();
 

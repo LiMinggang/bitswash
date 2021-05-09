@@ -49,8 +49,7 @@ AutoSizeInput::AutoSizeInput( wxWindow* parent, wxString unitbase, int usize, in
 	}
 	fgSizer->Add( m_comboUnit, 0, wxALL, 2 );
 	
-	this->SetSizer( fgSizer );
-	this->Layout();
+	SetSizerAndFit(fgSizer);
 
 	fgSizer->Fit(this);
 	Bind( wxEVT_SPINCTRL, &AutoSizeInput::OnSpinUpdate, this, m_spinValue->GetId() );

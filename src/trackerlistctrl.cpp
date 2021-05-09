@@ -133,29 +133,30 @@ wxString TrackerListCtrl::GetItemValue(long item, long columnid) const
 		}
 		case TRACKERLIST_COLUMN_STATUS:
 		{
-			auto best_ae = std::min_element(tracker.endpoints.begin(), tracker.endpoints.end()
-				, [](lt::announce_endpoint const& l, lt::announce_endpoint const& r) { return l.fails < r.fails; } );
+			/*auto best_ae = std::min_element(tracker.endpoints.begin(), tracker.endpoints.end()
+				, [](lt::announce_endpoint const& l, lt::announce_endpoint const& r) { return l.info_hashes[1].fails < r.info_hashes[1].fails; } );
+
 			bool valid = (best_ae != tracker.endpoints.end());
 			if(tracker.verified && valid)
 			{
-				if(best_ae->is_working()) ret = _("Working");
-				else ret = wxString(best_ae->last_error.message());
+				if(best_ae->info_hashes[1].is_working()) ret = _("Working");
+				else ret = wxString(best_ae->info_hashes[1].last_error.message());
 			}
-			else
+			else*/
 				ret = _("Not connected");
 			break;
 		}
 		case TRACKERLIST_COLUMN_NEXT_ANNOUNCE:
 		{
-			auto best_ae = std::min_element(tracker.endpoints.begin(), tracker.endpoints.end()
-				, [](lt::announce_endpoint const& l, lt::announce_endpoint const& r) { return l.fails < r.fails; } );
+			/*auto best_ae = std::min_element(tracker.endpoints.begin(), tracker.endpoints.end()
+				, [](lt::announce_endpoint const& l, lt::announce_endpoint const& r) { return l.info_hashes[1].fails < r.info_hashes[1].fails; } );
 			bool valid = (best_ae != tracker.endpoints.end());
- 			if(tracker.verified && valid && best_ae->is_working())
+ 			if(tracker.verified && valid && best_ae->info_hashes[1].is_working())
 			{
 				lt::time_point const now = lt::clock_type::now();
-				ret = HumanReadableTime(int(lt::total_seconds(best_ae->next_announce - now)));
+				ret = HumanReadableTime(int(lt::total_seconds(best_ae->info_hashes[1].next_announce - now)));
 			}
-			else
+			else*/
 				ret = _T("N/A");
 			break;
 		}

@@ -24,6 +24,7 @@
 #include <cmath> 
 #include <vector>
 #include <algorithm> // for std::max
+#include <fstream>
 #include <wx/wx.h>
 #include <wx/app.h>
 #include <wx/dir.h>
@@ -53,6 +54,7 @@
 #include <libtorrent/read_resume_data.hpp>
 #include <libtorrent/write_resume_data.hpp>
 #include <libtorrent/disk_interface.hpp> // for open_file_state
+#include "libtorrent/session_params.hpp"
 
 //plugins
 #include <libtorrent/extensions/ut_metadata.hpp>
@@ -274,17 +276,20 @@ void BitTorrentSession::OnExit()
 	//save DHT lt::entry
 	WXLOGDEBUG(( _T( "BitTorrent Session exiting" ) ));
 
+#ifndef TORRENT_DISABLE_DHT
 	if( m_config->GetDHTEnabled() )
 	{
 		wxString dhtstatefile = wxGetApp().DHTStatePath();
 
 		try
 		{
-			lt::entry dht_state;
-			m_libbtsession->save_state(dht_state, lt::session::save_dht_state);
-			std::ofstream out( ( const char* )dhtstatefile.mb_str( wxConvFile ), std::ios_base::binary );
-			out.unsetf( std::ios_base::skipws );
-			bencode( std::ostream_iterator<char>( out ), dht_state );
+			//lt::entry dht_state;
+			std::vector<char> dht_state = write_session_params_buf(m_libbtsession->session_state(lt::session::save_dht_state));
+			//m_libbtsession->save_state(dht_state, lt::session::save_dht_state);
+			std::fstream out( ( const char* )dhtstatefile.mb_str( wxConvFile ), std::ios_base::trunc | std::ios_base::out | std::ios_base::binary );
+			out.write(dht_state.data(), int(dht_state.size()));
+			//out.unsetf( std::ios_base::skipws );
+			//bencode( std::ostream_iterator<char>( out ), dht_state );
 		}
 		catch( std::exception& e )
 		{
@@ -295,7 +300,7 @@ void BitTorrentSession::OnExit()
 			wxLogFatalError( _T( "Save DHT error!! exiting..." ) );
 		}
 	}
-
+#endif
 	m_libbtsession->pause();
 	SaveAllTorrent();
 	m_evt_queue.Clear();
@@ -550,7 +555,7 @@ void BitTorrentSession::Configure(lt::settings_pack &settingsPack)
 		| lt::alert::status_notification
 		| lt::alert::ip_block_notification
 //		| lt::alert::progress_notification
-		| lt::alert::stats_notification);
+/*		| lt::alert::stats_notification*/);
 	settingsPack.set_str(lt::settings_pack::peer_fingerprint, peerId);
 	settingsPack.set_bool(lt::settings_pack::listen_system_port_fallback, false);
 	//settingsPack.set_bool(lt::settings_pack::upnp_ignore_nonrouters, true);
@@ -601,6 +606,20 @@ void BitTorrentSession::Configure(lt::settings_pack &settingsPack)
 	}
 }
 
+bool load_file(std::string const& filename, std::vector<char>& v
+	, int limit = 8000000)
+{
+	std::fstream f(filename, std::ios_base::in | std::ios_base::binary);
+	f.seekg(0, std::ios_base::end);
+	auto const s = f.tellg();
+	if (s > limit || s < 0) return false;
+	f.seekg(0, std::ios_base::beg);
+	v.resize(static_cast<std::size_t>(s));
+	if (s == std::fstream::pos_type(0)) return !f.fail();
+	f.read(v.data(), int(v.size()));
+	return !f.fail();
+}
+
 void BitTorrentSession::ConfigureSession()
 {
 	lt::session_params params;
@@ -611,23 +630,36 @@ void BitTorrentSession::ConfigureSession()
 		wxString dhtstatefile = wxGetApp().DHTStatePath();
 		//struct lt::dht_settings& DHTSettings = params.settings;
 
-		params.dht_settings.privacy_lookups = true;
+		/*params.dht_settings.privacy_lookups = true;
 		params.dht_settings.max_peers_reply = m_config->GetDHTMaxPeers();
 		params.dht_settings.search_branching = m_config->GetDHTSearchBranching();
-		params.dht_settings.max_fail_count = m_config->GetDHTMaxFail();
+		params.dht_settings.max_fail_count = m_config->GetDHTMaxFail();*/
 		//m_libbtsession->set_dht_settings(params.dht_settings);
 
 		if( wxFileExists( dhtstatefile ) )
 		{
 			wxLogInfo( _T( "Restoring previous DHT state " ) + dhtstatefile );
-			std::vector<char> bufin;
+			/*std::vector<char> bufin;
 			std::ifstream in( ( const char* )dhtstatefile.mb_str( wxConvFile ), std::ios_base::binary );
 			in.unsetf( std::ios_base::skipws );
 			// get length of file:
 			in.seekg (0, in.end);
 			int length = in.tellg();
-			in.seekg (0, in.beg);
-			if(length > 0)
+			in.seekg (0, in.beg);*/
+
+			
+#ifndef TORRENT_DISABLE_DHT
+			std::vector<char> in;
+			if (load_file(( const char* )dhtstatefile.mb_str( wxConvFile ), in))
+				params = lt::read_session_params(in, lt::session_handle::save_dht_state);
+
+			params.settings.set_bool(lt::settings_pack::dht_privacy_lookups, true);
+			params.settings.set_int(lt::settings_pack::dht_max_peers_reply, m_config->GetDHTMaxPeers());
+			params.settings.set_int(lt::settings_pack::dht_search_branching, m_config->GetDHTSearchBranching());
+			params.settings.set_int(lt::settings_pack::dht_max_fail_count, m_config->GetDHTMaxFail());
+#endif
+			
+			/*if(length > 0)
 			{
 				bufin.resize(length);
 				in.read(&bufin[0], length);
@@ -646,7 +678,7 @@ void BitTorrentSession::ConfigureSession()
 				{
 					wxLogFatalError(_T("Unknown Exception: %s"), __FUNCTION__ );
 				}
-			}
+			}*/
 		}
 		else
 		{
@@ -1395,6 +1427,13 @@ void BitTorrentSession::SaveAllTorrent()
 	}
 }
 
+int save_file(std::string const& filename, std::vector<char> const& v)
+{
+	std::fstream f(filename, std::ios_base::trunc | std::ios_base::out | std::ios_base::binary);
+	f.write(v.data(), int(v.size()));
+	return !f.fail();
+}
+
 void BitTorrentSession::SaveTorrentResumeData( lt::save_resume_data_alert * p )
 {
 	//new api, write to disk in save_resume_data_alert
@@ -1405,12 +1444,9 @@ void BitTorrentSession::SaveTorrentResumeData( lt::save_resume_data_alert * p )
 		lt::torrent_status st = h.status(/*lt::torrent_handle::query_save_path*/);
 		if (st.has_metadata)
 		{
-			wxString resumefile = wxGetApp().SaveTorrentsPath() + to_hex(st.info_hash) + _T(".resume");
-			std::ofstream out((const char*)resumefile.mb_str(wxConvFile), std::ios_base::trunc | std::ios_base::out | std::ios_base::binary);
-			out.unsetf(std::ios_base::skipws);
-
-			lt::entry rd = lt::write_resume_data(p->params);
-			lt::bencode(std::ostream_iterator<char>(out), rd);
+			wxString resumefile = wxGetApp().SaveTorrentsPath() + to_hex(p->params.info_hashes.get_best()) + _T(".resume");
+			auto const buf = write_resume_data_buf(p->params);
+			save_file((const char*)resumefile.mb_str(wxConvFile), buf);
 		}
 	}
 }
@@ -2727,7 +2763,7 @@ void BitTorrentSession::HandleTorrentAlerts()
 						event_string << _T( "Fastresume: " ) << wxString::FromUTF8(p->message().c_str());
 					}
 					break;
-				case lt::stats_alert::alert_type:
+				//case lt::stats_alert::alert_type:
 				case lt::state_update_alert::alert_type:
 				case lt::piece_finished_alert::alert_type:
 				case lt::block_finished_alert::alert_type:
@@ -2806,7 +2842,7 @@ bool BitTorrentSession::HandleTorrentAddAlert(lt::add_torrent_alert * p)
 			torrent->isvalid = true;
 			if((torrent->config->GetTorrentMagnetUri()).IsEmpty())
 				torrent->config->SetTorrentMagnetUri(wxString::FromUTF8((lt::make_magnet_uri(p->handle)).c_str()));
-			torrent->handle.status().flags &= ~(lt::torrent_flags::auto_managed);
+			torrent->handle.unset_flags(lt::torrent_flags::auto_managed);
 			torrent->handle.pause(lt::torrent_handle::graceful_pause);
 			enum torrent_state state = ( enum torrent_state ) torrent->config->GetTorrentState();
 			//wxLogInfo( _T( "HandleAddTorrentAlert %s" ), torrent->name.c_str() );

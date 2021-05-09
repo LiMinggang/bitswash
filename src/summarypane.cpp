@@ -234,14 +234,16 @@ void SummaryPane::UpdateSummary()
 			{
 				if(tracker.url == s.current_tracker)
 				{
-					auto best_ae = std::min_element(tracker.endpoints.begin(), tracker.endpoints.end()
-						, [](lt::announce_endpoint const& l, lt::announce_endpoint const& r) { return l.fails < r.fails; } );
+					// info_hashes[0] is the v1 info hash (SHA1)
+					// info_hashes[1] is the v2 info hash (truncated SHA-256)
+					/*auto best_ae = std::min_element(tracker.endpoints.begin(), tracker.endpoints.end()
+						, [](lt::announce_endpoint const& l, lt::announce_endpoint const& r) { return l.info_hashes[1].fails < r.info_hashes[1].fails; } );
 					if(tracker.verified && (best_ae != tracker.endpoints.end()))
 					{
-						if(best_ae->is_working()) tstatus = _("Working");
-						else tstatus = wxString(best_ae->last_error.message());
+						if(best_ae->info_hashes[1].is_working()) tstatus = _("Working");
+						else tstatus = wxString(best_ae->info_hashes[1].last_error.message());
 					}
-					else
+					else*/
 						tstatus = _("Not connected");
 				}
 			}

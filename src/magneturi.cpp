@@ -99,7 +99,7 @@ MagnetUri::MagnetUri(const wxString &source)
 	if (ec) return;
 
 	m_valid = true;
-	m_hash = InfoHash(m_addTorrentParams.info_hash);
+	m_hash = InfoHash(m_addTorrentParams.info_hashes.get_best());
 	if(!m_addTorrentParams.name.empty())
 		m_name = wxString::FromUTF8(m_addTorrentParams.name.c_str());
 	else

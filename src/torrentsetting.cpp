@@ -78,9 +78,7 @@ TorrentSettingPane::TorrentSettingPane( wxWindow* parent, std::shared_ptr<torren
 	BoxSizer1 = new wxBoxSizer(wxVERTICAL);
 	pane_label_settings = new wxStaticText(pane_info1, wxID_ANY, _("Torrent Settings"), wxDefaultPosition, wxDefaultSize, 0, _T("wxID_ANY"));
 	BoxSizer1->Add(pane_label_settings, 1, wxALL|wxEXPAND, 5);
-	pane_info1->SetSizer(BoxSizer1);
-	BoxSizer1->Fit(pane_info1);
-	BoxSizer1->SetSizeHints(pane_info1);
+	pane_info1->SetSizerAndFit(BoxSizer1);
 	FlexGridSizer1->Add(pane_info1, 1, wxALL|wxEXPAND, 5);
 	FlexGridSizer2 = new wxFlexGridSizer(0, 1, 0, 0);
 	FlexGridSizer3 = new wxFlexGridSizer(0, 3, 5, 5);
@@ -272,9 +270,7 @@ TorrentSettingPane::TorrentSettingPane( wxWindow* parent, std::shared_ptr<torren
 	FlexGridSizer5->Add(m_spin_ratio, 1, wxALL|wxALIGN_LEFT|wxALIGN_CENTER_VERTICAL, 5);
 	FlexGridSizer2->Add(FlexGridSizer5, 1, wxALL|wxALIGN_LEFT|wxALIGN_CENTER_VERTICAL, 5);
 	FlexGridSizer1->Add(FlexGridSizer2, 1, wxALL|wxALIGN_LEFT|wxALIGN_CENTER_VERTICAL, 5);
-	SetSizer(FlexGridSizer1);
-	FlexGridSizer1->Fit(this);
-	FlexGridSizer1->SetSizeHints(this);
+	SetSizerAndFit(FlexGridSizer1);
 
 	//Connect(wxID_ANY,wxEVT_COMMAND_TEXT_ENTER,(wxObjectEventFunction)&TorrentSettingPane::OnSaveDirectoryChanged);
 	//Connect(wxID_ANY,wxEVT_COMMAND_BUTTON_CLICKED,(wxObjectEventFunction)&TorrentSettingPane::OnButtonSaveDirClick);

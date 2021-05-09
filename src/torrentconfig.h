@@ -25,7 +25,8 @@
 #include <vector>
 #include <libtorrent/announce_entry.hpp>
 #include <libtorrent/download_priority.hpp>
-#include "storage.hpp"
+#include <libtorrent/disk_interface.hpp>
+//#include "storage.hpp"
 
 enum
 {

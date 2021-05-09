@@ -132,7 +132,7 @@
       <UseLibraryDependencyInputs>false</UseLibraryDependencyInputs>
     </ProjectReference>
     <Link>
-      <AdditionalDependencies>wxmsw31ud_aui.lib;wxmsw31ud_html.lib;wxmsw31ud_adv.lib;wxmsw31ud_core.lib;wxbase31ud_xml.lib;wxbase31ud.lib;wxtiffd.lib;wxjpegd.lib;wxpngd.lib;wxzlibd.lib;wxregexud.lib;wxexpatd.lib;torrent-rasterbar.lib;libboost_filesystem-vc142-mt-sgd-x64-1_72.lib;libboost_regex-vc142-mt-sgd-x64-1_72.lib;libboost_iostreams-vc142-mt-sgd-x64-1_72.lib;libboost_thread-vc142-mt-sgd-x64-1_72.lib;libboost_system-vc142-mt-sgd-x64-1_72.lib;libssl.lib;libcrypto.lib;Iphlpapi.lib;Ws2_32.lib;DbgHelp.lib;winmm.lib;comctl32.lib;rpcrt4.lib;odbc32.lib;crypt32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>wxmsw31ud_aui.lib;wxmsw31ud_html.lib;wxmsw31ud_adv.lib;wxmsw31ud_core.lib;wxbase31ud_xml.lib;wxbase31ud.lib;wxtiffd.lib;wxjpegd.lib;wxpngd.lib;wxzlibd.lib;wxregexud.lib;wxexpatd.lib;torrent-rasterbar.lib;libboost_filesystem-vc142-mt-sgd-x64-1_76.lib;libboost_regex-vc142-mt-sgd-x64-1_76.lib;libboost_iostreams-vc142-mt-sgd-x64-1_76.lib;libboost_thread-vc142-mt-sgd-x64-1_76.lib;libboost_system-vc142-mt-sgd-x64-1_76.lib;libssl.lib;libcrypto.lib;Iphlpapi.lib;Ws2_32.lib;DbgHelp.lib;winmm.lib;comctl32.lib;rpcrt4.lib;odbc32.lib;crypt32.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <AdditionalLibraryDirectories>$(WXWIN)\lib\vc_x64_lib\;$(OPENSSL_ROOT);$(BOOST_ROOT)\stage\lib;$(LIBTORRENT_ROOT)\Debug;$(SolutionDir)$(Platform)\$(Configuration);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <SubSystem>Windows</SubSystem>
@@ -179,7 +179,7 @@
       <LinkLibraryDependencies>true</LinkLibraryDependencies>
     </ProjectReference>
     <Link>
-      <AdditionalDependencies>wxmsw31u_aui.lib;wxmsw31u_html.lib;wxmsw31u_adv.lib;wxmsw31u_core.lib;wxbase31u_xml.lib;wxbase31u.lib;wxtiff.lib;wxjpeg.lib;wxpng.lib;wxzlib.lib;wxregexu.lib;wxexpat.lib;torrent-rasterbar.lib;libboost_filesystem-vc142-mt-s-x64-1_72.lib;libboost_regex-vc142-mt-s-x64-1_72.lib;libboost_iostreams-vc142-mt-s-x64-1_72.lib;libboost_thread-vc142-mt-s-x64-1_72.lib;libboost_system-vc142-mt-s-x64-1_72.lib;libssl.lib;libcrypto.lib;Iphlpapi.lib;Ws2_32.lib;DbgHelp.lib;winmm.lib;comctl32.lib;rpcrt4.lib;odbc32.lib;crypt32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>wxmsw31u_aui.lib;wxmsw31u_html.lib;wxmsw31u_adv.lib;wxmsw31u_core.lib;wxbase31u_xml.lib;wxbase31u.lib;wxtiff.lib;wxjpeg.lib;wxpng.lib;wxzlib.lib;wxregexu.lib;wxexpat.lib;torrent-rasterbar.lib;libboost_filesystem-vc142-mt-s-x64-1_76.lib;libboost_regex-vc142-mt-s-x64-1_76.lib;libboost_iostreams-vc142-mt-s-x64-1_76.lib;libboost_thread-vc142-mt-s-x64-1_76.lib;libboost_system-vc142-mt-s-x64-1_76.lib;libssl.lib;libcrypto.lib;Iphlpapi.lib;Ws2_32.lib;DbgHelp.lib;winmm.lib;comctl32.lib;rpcrt4.lib;odbc32.lib;crypt32.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <AdditionalLibraryDirectories>$(WXWIN)\lib\vc_x64_lib\;$(OPENSSL_ROOT);$(BOOST_ROOT)\stage\lib;$(LIBTORRENT_ROOT)\Release;$(SolutionDir)$(Platform)\$(Configuration);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <IgnoreAllDefaultLibraries>false</IgnoreAllDefaultLibraries>
       <GenerateDebugInformation>false</GenerateDebugInformation>

@@ -63,9 +63,7 @@ ExtensionSettingPane::ExtensionSettingPane(wxWindow* parent,wxWindowID id,const 
 	BoxSizer1 = new wxBoxSizer(wxHORIZONTAL);
 	StaticText1 = new wxStaticText(Panel1, wxID_ANY, _("Extensions"), wxDefaultPosition, wxDefaultSize, 0, _T("wxID_ANY"));
 	BoxSizer1->Add(StaticText1, 1, wxALL|wxALIGN_CENTER_VERTICAL, 5);
-	Panel1->SetSizer(BoxSizer1);
-	BoxSizer1->Fit(Panel1);
-	BoxSizer1->SetSizeHints(Panel1);
+	Panel1->SetSizerAndFit(BoxSizer1);
 	FlexGridSizer1->Add(Panel1, 1, wxALL|wxEXPAND, 5);
 	FlexGridSizer2 = new wxFlexGridSizer(0, 1, 0, 0);
 	m_check_metadata = new wxCheckBox(this, wxID_ANY, _("Enable Metadata"), wxDefaultPosition, wxDefaultSize, 0, wxDefaultValidator, _T("wxID_ANY"));
@@ -80,9 +78,7 @@ ExtensionSettingPane::ExtensionSettingPane(wxWindow* parent,wxWindowID id,const 
 	BoxSizer2 = new wxBoxSizer(wxHORIZONTAL);
 	StaticText2 = new wxStaticText(Panel2, wxID_ANY, _("Protocol Encryption"), wxDefaultPosition, wxDefaultSize, 0, _T("wxID_ANY"));
 	BoxSizer2->Add(StaticText2, 1, wxALL|wxALIGN_CENTER_HORIZONTAL|wxALIGN_CENTER_VERTICAL, 5);
-	Panel2->SetSizer(BoxSizer2);
-	BoxSizer2->Fit(Panel2);
-	BoxSizer2->SetSizeHints(Panel2);
+	Panel2->SetSizerAndFit(BoxSizer2);
 	FlexGridSizer1->Add(Panel2, 1, wxALL|wxEXPAND, 5);
 	FlexGridSizer3 = new wxFlexGridSizer(0, 1, 0, 0);
 	m_check_pe = new wxCheckBox(this, wxID_ANY, _("Enable Encryption"), wxDefaultPosition, wxDefaultSize, 0, wxDefaultValidator, _T("wxID_ANY"));
@@ -97,9 +93,7 @@ ExtensionSettingPane::ExtensionSettingPane(wxWindow* parent,wxWindowID id,const 
 	BoxSizer3 = new wxBoxSizer(wxHORIZONTAL);
 	StaticText3 = new wxStaticText(Panel3, wxID_ANY, _("NAT Service"), wxDefaultPosition, wxDefaultSize, 0, _T("wxID_ANY"));
 	BoxSizer3->Add(StaticText3, 1, wxALL|wxALIGN_CENTER_HORIZONTAL|wxALIGN_CENTER_VERTICAL, 5);
-	Panel3->SetSizer(BoxSizer3);
-	BoxSizer3->Fit(Panel3);
-	BoxSizer3->SetSizeHints(Panel3);
+	Panel3->SetSizerAndFit(BoxSizer3);
 	FlexGridSizer1->Add(Panel3, 1, wxALL|wxEXPAND, 5);
 	FlexGridSizer4 = new wxFlexGridSizer(0, 1, 0, 0);
 	m_check_upnp = new wxCheckBox(this, wxID_ANY, _("Enable UPnP"), wxDefaultPosition, wxDefaultSize, 0, wxDefaultValidator, _T("wxID_ANY"));
@@ -112,9 +106,7 @@ ExtensionSettingPane::ExtensionSettingPane(wxWindow* parent,wxWindowID id,const 
 	m_check_lsd->SetValue( m_pcfg->GetEnableLsd() );
 	FlexGridSizer4->Add(m_check_lsd, 1, wxALL|wxALIGN_LEFT|wxALIGN_CENTER_VERTICAL, 5);
 	FlexGridSizer1->Add(FlexGridSizer4, 1, wxALL|wxALIGN_LEFT|wxALIGN_CENTER_VERTICAL, 5);
-	SetSizer(FlexGridSizer1);
-	FlexGridSizer1->Fit(this);
-	FlexGridSizer1->SetSizeHints(this);
+	SetSizerAndFit(FlexGridSizer1);
 
 	//Connect(wxID_ANY,wxEVT_COMMAND_CHECKBOX_CLICKED,(wxObjectEventFunction)&ExtensionSettingPane::OnEnablePe);
 	//*)
