@@ -427,10 +427,6 @@ void Configuration::ReadSavePath()
 			}
 		}
 	}
-	else
-	{
-		wxLogError( _T( "Failed opening download path history file %s\n" ), historypathfile.c_str() );
-	}
 }
 
 void Configuration::WriteSavePath()
