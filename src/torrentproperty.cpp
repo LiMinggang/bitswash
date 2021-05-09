@@ -75,7 +75,7 @@ TorrentProperty::TorrentProperty(std::shared_ptr<torrent_t>& pTorrent, wxWindow*
 	m_notebook_property = new wxNotebook(this, wxID_ANY, wxDefaultPosition, wxDefaultSize, 0, _T("ID_NOTEBOOK1"));
 	m_notebook_property->SetMinSize( wxSize( 600,-1 ) );
 	
-	m_filespane= new FileListCtrl( m_notebook_property, wxEmptyString, wxID_ANY );
+	m_filespane = new FileListCtrl( m_notebook_property, wxEmptyString, wxID_ANY );
 
 	m_filespane->SetStaticHandle(pTorrent); 
 	m_filespane->SetItemCount(pTorrent->info->num_files()); 

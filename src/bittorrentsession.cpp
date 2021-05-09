@@ -67,11 +67,11 @@
 #include "bitswash.h"
 #include "bittorrentsession.h"
 
-//namespace lt = libtorrent;
-
 #ifdef TORRENT_DISABLE_DHT
 	#error you must not disable DHT
 #endif
+
+BitwashStrSet BitTorrentSession::m_preview_ext_set;
 
 std::string to_hex(lt::sha1_hash const& s)
 {
@@ -80,7 +80,25 @@ std::string to_hex(lt::sha1_hash const& s)
 	return ret.str();
 }
 
-BitwashStrSet BitTorrentSession::m_preview_ext_set;
+bool load_file(std::string const& filename, std::vector<char>& v, int limit = 8000000)
+{
+	std::fstream f(filename, std::ios_base::in | std::ios_base::binary);
+	f.seekg(0, std::ios_base::end);
+	auto const s = f.tellg();
+	if (s > limit || s < 0) return false;
+	f.seekg(0, std::ios_base::beg);
+	v.resize(static_cast<std::size_t>(s));
+	if (s == std::fstream::pos_type(0)) return !f.fail();
+	f.read(v.data(), int(v.size()));
+	return !f.fail();
+}
+
+int save_file(std::string const& filename, std::vector<char> const& v)
+{
+	std::fstream f(filename, std::ios_base::trunc | std::ios_base::out | std::ios_base::binary);
+	f.write(v.data(), int(v.size()));
+	return !f.fail();
+}
 
 BitTorrentSession::BitTorrentSession( wxApp* pParent, Configuration* config, wxMutex *mutex/* = 0*/, wxCondition *condition/* = 0*/ )
 	: wxThread( wxTHREAD_JOINABLE ), m_upnp_started( false ), m_natpmp_started( false ), m_lsd_started( false ), m_libbtsession( nullptr ), m_dht_changed(true),
@@ -199,7 +217,6 @@ void *BitTorrentSession::Entry()
 
 	ScanTorrentsDirectory( wxGetApp().SaveTorrentsPath() );
 
-	//( ( BitSwash* )m_pParent )->BTInitDone();
 	bts_event evt = BTS_EVENT_INVALID;
 	wxMessageQueueError result = wxMSGQUEUE_NO_ERROR;
 	time_t starttime = wxDateTime::GetTimeNow(), now;
@@ -283,13 +300,9 @@ void BitTorrentSession::OnExit()
 
 		try
 		{
-			//lt::entry dht_state;
 			std::vector<char> dht_state = write_session_params_buf(m_libbtsession->session_state(lt::session::save_dht_state));
-			//m_libbtsession->save_state(dht_state, lt::session::save_dht_state);
 			std::fstream out( ( const char* )dhtstatefile.mb_str( wxConvFile ), std::ios_base::trunc | std::ios_base::out | std::ios_base::binary );
 			out.write(dht_state.data(), int(dht_state.size()));
-			//out.unsetf( std::ios_base::skipws );
-			//bencode( std::ostream_iterator<char>( out ), dht_state );
 		}
 		catch( std::exception& e )
 		{
@@ -553,9 +566,7 @@ void BitTorrentSession::Configure(lt::settings_pack &settingsPack)
 		| lt::alert::storage_notification
 		| lt::alert::tracker_notification
 		| lt::alert::status_notification
-		| lt::alert::ip_block_notification
-//		| lt::alert::progress_notification
-/*		| lt::alert::stats_notification*/);
+		| lt::alert::ip_block_notification);
 	settingsPack.set_str(lt::settings_pack::peer_fingerprint, peerId);
 	settingsPack.set_bool(lt::settings_pack::listen_system_port_fallback, false);
 	//settingsPack.set_bool(lt::settings_pack::upnp_ignore_nonrouters, true);
@@ -606,48 +617,17 @@ void BitTorrentSession::Configure(lt::settings_pack &settingsPack)
 	}
 }
 
-bool load_file(std::string const& filename, std::vector<char>& v
-	, int limit = 8000000)
-{
-	std::fstream f(filename, std::ios_base::in | std::ios_base::binary);
-	f.seekg(0, std::ios_base::end);
-	auto const s = f.tellg();
-	if (s > limit || s < 0) return false;
-	f.seekg(0, std::ios_base::beg);
-	v.resize(static_cast<std::size_t>(s));
-	if (s == std::fstream::pos_type(0)) return !f.fail();
-	f.read(v.data(), int(v.size()));
-	return !f.fail();
-}
-
 void BitTorrentSession::ConfigureSession()
 {
 	lt::session_params params;
 
 	if( m_config->GetDHTEnabled() )
 	{
-		//lt::entry dht_state;
 		wxString dhtstatefile = wxGetApp().DHTStatePath();
-		//struct lt::dht_settings& DHTSettings = params.settings;
-
-		/*params.dht_settings.privacy_lookups = true;
-		params.dht_settings.max_peers_reply = m_config->GetDHTMaxPeers();
-		params.dht_settings.search_branching = m_config->GetDHTSearchBranching();
-		params.dht_settings.max_fail_count = m_config->GetDHTMaxFail();*/
-		//m_libbtsession->set_dht_settings(params.dht_settings);
 
 		if( wxFileExists( dhtstatefile ) )
 		{
 			wxLogInfo( _T( "Restoring previous DHT state " ) + dhtstatefile );
-			/*std::vector<char> bufin;
-			std::ifstream in( ( const char* )dhtstatefile.mb_str( wxConvFile ), std::ios_base::binary );
-			in.unsetf( std::ios_base::skipws );
-			// get length of file:
-			in.seekg (0, in.end);
-			int length = in.tellg();
-			in.seekg (0, in.beg);*/
-
-			
 #ifndef TORRENT_DISABLE_DHT
 			std::vector<char> in;
 			if (load_file(( const char* )dhtstatefile.mb_str( wxConvFile ), in))
@@ -658,27 +638,6 @@ void BitTorrentSession::ConfigureSession()
 			params.settings.set_int(lt::settings_pack::dht_search_branching, m_config->GetDHTSearchBranching());
 			params.settings.set_int(lt::settings_pack::dht_max_fail_count, m_config->GetDHTMaxFail());
 #endif
-			
-			/*if(length > 0)
-			{
-				bufin.resize(length);
-				in.read(&bufin[0], length);
-				try
-				{
-					lt::bdecode_node e;
-					lt::error_code ec;
-					if (bdecode(&bufin[0], &bufin[0] + bufin.size(), e, ec) == 0)
-						params = read_session_params(e, lt::session_handle::save_dht_state);
-				}
-				catch( std::exception& e )
-				{
-					wxLogFatalError( _T( "Unable to restore dht state file %s - %s" ), dhtstatefile.c_str(), wxString::FromUTF8( e.what() ).c_str() );
-				}
-				catch (...)
-				{
-					wxLogFatalError(_T("Unknown Exception: %s"), __FUNCTION__ );
-				}
-			}*/
 		}
 		else
 		{
@@ -1425,13 +1384,6 @@ void BitTorrentSession::SaveAllTorrent()
 			magneturifile.Close();
 		}
 	}
-}
-
-int save_file(std::string const& filename, std::vector<char> const& v)
-{
-	std::fstream f(filename, std::ios_base::trunc | std::ios_base::out | std::ios_base::binary);
-	f.write(v.data(), int(v.size()));
-	return !f.fail();
 }
 
 void BitTorrentSession::SaveTorrentResumeData( lt::save_resume_data_alert * p )

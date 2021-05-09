@@ -14,13 +14,11 @@
  *  Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  */
 
-
 //
 // Class: SwashSetting
 // Created by: lim k. c. <admin@bitswash.org>
 // Created on: Thu May 17 21:45:53 MYT 2007
 //
-
 
 #include <wx/wx.h>
 #include <wx/imaglist.h>
@@ -34,7 +32,6 @@
 SwashSetting::SwashSetting( wxWindow* parent, Configuration *pcfg, int id, wxString title, wxPoint pos, wxSize size, int style ) : wxDialog( parent, id, title, pos, size, style )
 {
 	//wxASSERT(pcfg == nullptr);
-
 	m_pcfg = pcfg;
 
 	this->SetSizeHints( wxSize( -1,-1 ), wxDefaultSize );
@@ -43,7 +40,6 @@ SwashSetting::SwashSetting( wxWindow* parent, Configuration *pcfg, int id, wxStr
 	wxFlexGridSizer* fgMain;
 	fgMain = new wxFlexGridSizer( 2, 1, 0, 0 );
 
-	
 	m_panel_main = new wxPanel( this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL );
 	wxFlexGridSizer* fgInner;
 	fgInner = new wxFlexGridSizer( 1, 1, 0, 0 );
