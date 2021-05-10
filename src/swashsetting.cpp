@@ -210,4 +210,3 @@ void SwashSetting::OnCancel(wxCommandEvent& event)
 	EndModal (wxID_CANCEL);
 	event.Skip();
 }
-

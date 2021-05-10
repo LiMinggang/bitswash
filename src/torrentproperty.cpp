@@ -158,7 +158,10 @@ void TorrentProperty::OnOK(wxCommandEvent& event)
 	pConfig->SetEnableVideoPreview(m_panel_settings->GetEnableVideoPreview());
 	pConfig->SetSequentialDownload(m_panel_settings->GetSquentialDownload());
 
-	pConfig->SetTorrentState(m_panel_settings->GetStartTorrent()?TORRENT_STATE_QUEUE:TORRENT_STATE_STOP);
+	int torrent_state = pConfig->GetTorrentState();
+	if (torrent_state != TORRENT_STATE_FORCE_START)
+		torrent_state = (m_panel_settings->GetStartTorrent()?TORRENT_STATE_QUEUE:TORRENT_STATE_STOP);
+	pConfig->SetTorrentState(torrent_state);
 
 	pMainConfig->SetUseDefault(m_panel_settings->GetUseDefault());
 

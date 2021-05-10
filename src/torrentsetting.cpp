@@ -167,9 +167,10 @@ TorrentSettingPane::TorrentSettingPane( wxWindow* parent, std::shared_ptr<torren
 	m_check_start = new wxCheckBox(this, wxID_ANY, _("Start Torrent"), wxDefaultPosition, wxDefaultSize, 0, wxDefaultValidator, _T("wxID_ANY"));
 	if (m_pTorrent)
 	{
-		if ( (m_pTorrent->config->GetTorrentState() == TORRENT_STATE_START) ||
+		if ((m_pTorrent->config->GetTorrentState() == TORRENT_STATE_START) ||
+			(m_pTorrent->config->GetTorrentState() == TORRENT_STATE_FORCE_START) ||
 			(m_pTorrent->config->GetTorrentState() == TORRENT_STATE_QUEUE) ||
-			 (m_pTorrent->config->GetTorrentState() == TORRENT_STATE_PAUSE) )
+			(m_pTorrent->config->GetTorrentState() == TORRENT_STATE_PAUSE))
 				m_check_start->SetValue(true) ;
 		else
 				m_check_start->SetValue(false);
