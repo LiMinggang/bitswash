@@ -1287,7 +1287,7 @@ void MainFrame::OnUpdateUI_MenuTorrentForceStart( wxUpdateUIEvent& event )
 				if(torrent &&& torrent->isvalid)
 				{
 					int torrent_state = torrent->config->GetTorrentState();
-					if( torrent_state != TORRENT_STATE_FORCE_START )
+					if( torrent_state != TORRENT_STATE_START && torrent_state != TORRENT_STATE_FORCE_START)
 					{
 						enable = true;
 						break;

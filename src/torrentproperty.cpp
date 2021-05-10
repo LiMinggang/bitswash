@@ -154,7 +154,7 @@ void TorrentProperty::OnOK(wxCommandEvent& event)
 
 	//pConfig->SetTorrentCompactAlloc(m_panel_settings->GetCompactAlloc());
 	pConfig->SetTorrentStorageMode(m_panel_settings->GetStorageMode());
-	
+
 	pConfig->SetEnableVideoPreview(m_panel_settings->GetEnableVideoPreview());
 	pConfig->SetSequentialDownload(m_panel_settings->GetSquentialDownload());
 
@@ -175,7 +175,6 @@ void TorrentProperty::OnOK(wxCommandEvent& event)
 	pConfig->Save();
 	EndModal(wxID_OK);
 	event.Skip();
-
 }
 
 void TorrentProperty::OnCancel(wxCommandEvent& event)
