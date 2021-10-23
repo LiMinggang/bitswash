@@ -2625,7 +2625,7 @@ void BitTorrentSession::HandleTorrentAlerts()
 					if( lt::peer_error_alert* p = lt::alert_cast<lt::peer_error_alert>( alert ) )
 					{
 						log_severity = 4;
-						event_string << _T( "Peer: " ) << identify_client( p->pid ) << _T( ": " ) << wxString::FromUTF8(p->message().c_str());
+						event_string << _T( "Peer: " ) << lt::aux::identify_client_impl( p->pid ) << _T( ": " ) << wxString::FromUTF8(p->message().c_str());
 					}
 					break;
 				case lt::peer_blocked_alert::alert_type:
