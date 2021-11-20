@@ -77,7 +77,7 @@ public:
 	std::shared_ptr<torrent_t> GetTorrent(int idx) { return m_btsession->GetTorrent(idx);}
 	const PeerListCtrl::peer_list_t* GetPeersList() { return & m_peerlistitems;  }
 
-	wxMutex& GetListLock() {return     m_listlock; }
+	wxMutex& GetListLock() {return m_listlock; }
 	wxString GetStatusDownloadRate();
 	wxString GetStatusUploadRate();
 	wxString GetStatusPeers();
@@ -98,7 +98,7 @@ public:
 
 	void OnListItemClick( long item );
 
-	static void ReceiveTorrent(const       wxString & fileorurl );
+	static void ReceiveTorrent(const wxString & fileorurl );
 	static const long ID_OPTIONS_PREFERENCES; // Share with Tray Icon;
 
 private:

@@ -1025,6 +1025,34 @@ void BitTorrentSession::RemoveTorrent( std::shared_ptr<torrent_t>& torrent, bool
 		}
 	}
 
+	wxString uri = torrent->config->GetTorrentMagnetUri();
+	if(!uri.IsEmpty())
+	{
+		wxString urifname = wxGetApp().SaveTorrentsPath() + APPBINNAME + _T( ".magneturi" );
+		wxTextFile magneturifile(urifname);
+		if( magneturifile.Exists() )
+		{
+			magneturifile.Open( wxConvFile );
+			if( magneturifile.IsOpened() )
+			{
+				size_t n = 0;
+				wxString url;
+				for ( url = magneturifile.GetFirstLine(); !magneturifile.Eof(); url = magneturifile.GetNextLine() )
+				{
+					if(!url.IsEmpty())
+					{
+						if(url == uri)
+						{
+							magneturifile.RemoveLine(n);
+							break;
+						}
+					}
+					++n;
+				}
+			}
+		}
+	}
+	
 	if( ( state == TORRENT_STATE_START ) ||
 			( state == TORRENT_STATE_FORCE_START ) ||
 				( state == TORRENT_STATE_PAUSE ) )
@@ -1179,7 +1207,7 @@ void BitTorrentSession::ScanTorrentsDirectory( const wxString& dirname )
 			}
 		}
 	}
-		
+
 	std::vector<size_t> start_torrents;
 	{
 		int maxstart = m_config->GetMaxStart(), started = 0;
@@ -2639,7 +2667,7 @@ void BitTorrentSession::HandleTorrentAlerts()
 					if( lt::invalid_request_alert* p = lt::alert_cast<lt::invalid_request_alert>( alert ) )
 					{
 						log_severity = 4;
-						event_string << identify_client( p->pid ) << _T( ": " ) << wxString::FromUTF8(p->message().c_str());
+						event_string << lt::aux::identify_client_impl( p->pid ) << _T( ": " ) << wxString::FromUTF8(p->message().c_str());
 					}
 					break;
 				case lt::tracker_warning_alert::alert_type:
